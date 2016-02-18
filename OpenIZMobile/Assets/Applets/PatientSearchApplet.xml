@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<AppletManifest xmlns="http://openiz.org/mobile/applet">
+	<info>
+		<name>Patient Search</name>
+		<version>1.0.0.0</version>
+		<author>OpenIZ.org Community</author>
+		<id>7297f317-3584-436d-a16a-f6ff1f80e9c8</id>
+	</info>
+	<tile size="sm">
+		<text>Search Patients</text>
+		<icon>@drawable/search_patient</icon>
+	</tile>
+	<asset name="index.html">
+		<contentXml>
+			<body>
+				
+			</body>
+		</contentXml>
+	</asset>
+
+</AppletManifest>

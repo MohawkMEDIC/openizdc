@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    <declare-styleable name="FlowLayout">
+        <attr name="horizontalSpacing" format="dimension" value="2" />
+        <attr name="verticalSpacing" format="dimension" value="2" />
+    </declare-styleable>
+    <declare-styleable name="FlowLayout_LayoutParams">
+    	<attr name="layout_breakLine" format="boolean" />
+        <attr name="layout_horizontalSpacing" format="dimension" />
+    </declare-styleable>
+</resources>
