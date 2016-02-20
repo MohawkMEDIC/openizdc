@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<AppletManifest xmlns="http://openiz.org/mobile/applet">
+	<info>
+		<name>Walk-in</name>
+		<version>1.0.0.0</version>
+		<author>OpenIZ.org Community</author>
+		<icon>@drawable/foot</icon>
+		<id>org.openiz.applets.core.walkin</id>
+		<groupName>Encounter Management</groupName>
+	</info>
+	<tile size="sm">
+		<text>Walk-in</text>
+		<icon>@drawable/foot</icon>
+	</tile>
+	<asset name="index" mimeType="text/html">
+		<contentXml>
+			<body xmlns="http://www.w3.org/1999/xhtml">
+				<h3>Hello!</h3>
+
+			</body>
+		</contentXml>
+	</asset>
+
+</AppletManifest>

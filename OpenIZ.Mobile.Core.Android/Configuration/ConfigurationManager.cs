@@ -4,8 +4,9 @@ using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Configuration;
 using Android.Content.Res;
+using OpenIZ.Mobile.Core.Applets;
 
-namespace OpenIZMobile
+namespace OpenIZ.Mobile.Core.Android.Configuration
 {
 	/// <summary>
 	/// Configuration manager for the application
@@ -47,6 +48,21 @@ namespace OpenIZMobile
 				using (var fs = File.Create (configPath))
 					xsz.Serialize (fs, this.m_configuration);
 			}
+
+			this.m_configuration.Applets = new System.Collections.Generic.List<OpenIZ.Mobile.Core.Applets.AppletManifest> ();
+			// Load all user-downloaded applets in the data directory
+			foreach (var itm in Directory.GetFiles(this.m_configuration.AppletDir)) {
+				using (var fs = File.OpenRead (itm)) {
+					AppletManifest manifest = AppletManifest.Load (fs);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Unload the configuration
+		/// </summary>
+		public void Unload() {
+			s_configManager = null;
 		}
 
 		/// <summary>

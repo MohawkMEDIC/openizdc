@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<resources>
-	<style name="DefaultFont" parent="@android:style/TextAppearance.Medium">
-		<item name="android:textColor">#2c3e50</item>
-	</style>
-	<style name="AppletTyle">
-		<item name="android:background">#2c3e50</item>
-	</style>
-</resources>

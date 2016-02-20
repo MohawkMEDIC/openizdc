@@ -21,6 +21,24 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
+		/// Language
+		/// </summary>
+		[XmlAttribute("lang")]
+		public String Language {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Mime type
+		/// </summary>
+		[XmlAttribute("mimeType")]
+		public String MimeType {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Gets or sets the content of the asset
 		/// </summary>
 		[XmlElement("contentText", Type = typeof(String))]

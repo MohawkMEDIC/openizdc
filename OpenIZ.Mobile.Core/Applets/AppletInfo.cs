@@ -13,11 +13,53 @@ namespace OpenIZ.Mobile.Core.Applets
 	{
 
 		/// <summary>
+		/// Gets the specified name
+		/// </summary>
+		public String GetName(String language, bool returnNuetralIfNotFound = true)
+		{
+			var str = this.Names?.Find(o=>o.Language == language);
+			if(str == null && returnNuetralIfNotFound)
+				str = this.Names?.Find(o=>o.Language == null);
+			return str?.Value;
+		}
+
+		/// <summary>
+		/// Gets the specified name
+		/// </summary>
+		public String GetGroupName(String language, bool returnNuetralIfNotFound = true)
+		{
+			var str = this.GroupNames?.Find(o=>o.Language == language);
+			if(str == null && returnNuetralIfNotFound)
+				str = this.GroupNames?.Find(o=>o.Language == null);
+			return str?.Value;
+		}
+
+		/// <summary>
+		/// Gets or sets the icon resource
+		/// </summary>
+		/// <value>The icon.</value>
+		[XmlElement("icon")]
+		public String Icon {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Gets or sets the name of the applet info
 		/// </summary>
 		/// <value>The name.</value>
 		[XmlElement("name")]
-		public String Name {
+		public List<LocaleString> Names {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the applet info
+		/// </summary>
+		/// <value>The name.</value>
+		[XmlElement("groupName")]
+		public List<LocaleString> GroupNames {
 			get;
 			set;
 		}
@@ -35,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Applets
 		/// Gets or sets the identifier of the applet
 		/// </summary>
 		[XmlElement("id")]
-		public Guid Id {
+		public String Id {
 			get;
 			set;
 		}

@@ -1,6 +1,8 @@
 ﻿using System;
 using SQLite;
 using System.Xml.Serialization;
+using OpenIZ.Mobile.Core.Applets;
+using System.Collections.Generic;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -13,7 +15,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlType(nameof(OpenIZConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
 	public class OpenIZConfiguration
 	{
-
+		
 		/// <summary>
 		/// Application database file
 		/// </summary>
@@ -69,6 +71,13 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
+		/// <summary>
+		/// The list of applets configured and/or detected
+		/// </summary>
+		public List<AppletManifest> Applets {
+			get;
+			set;
+		}
 	}
 }
 

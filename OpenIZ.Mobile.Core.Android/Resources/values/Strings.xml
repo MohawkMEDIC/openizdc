@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="library_name">OpenIZ.Mobile.Core.Android</string>
+	<string name="confirm">Ok</string>
+	<string name="cancel">Cancel</string>
+</resources>

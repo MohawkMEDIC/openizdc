@@ -1,8 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">OpenIZ Demo</string>
+	<string name="app_name">OpenIZ Mobile</string>
 	<string name="user_name">User Name</string>
 	<string name="password">Password</string>
 	<string name="login">Login</string>
 	<string name="login_title">OpenIZ Demo Login</string>
+	<string name="startup">Loading</string>
+
+	<!-- Errors -->
+	<string name="err_general">Oops! Something went wrong!</string>
+	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
 </resources>

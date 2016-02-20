@@ -1,40 +1,91 @@
 ﻿using System;
+using System.Linq;
 using Android.Views;
 using Android.Graphics;
 using Android.Content;
 using Android.Util;
 using Android.Content.Res;
+using OpenIZ.Mobile.Core.Applets;
+using System.Collections.Generic;
+using Android.Text;
+using Android.Graphics.Drawables;
 
 namespace OpenIZMobile.Layout
 {
 	/// <summary>
 	/// Represents a flow layout used for rendering tiles
 	/// </summary>
-	public class UIFlowLayout : ViewGroup
+	public class UITileContainer : ViewGroup
 	{
 
 		// Padding
-		private int m_horizontalPadding ;
+		private int m_horizontalPadding;
 		private int m_verticalPadding;
 
 		// Paint
+		private LinearGradient m_gradient;
 		private Paint m_paint;
+		private TextPaint m_textPaint;
 
+		/// <summary>
+		/// Gets or sets the test of the header
+		/// </summary>
+		/// <value>The text.</value>
+		public String Title {
+			get;
+			set;
+		}
 
-		public UIFlowLayout (Context context, IAttributeSet attrs) : base(context, attrs)
+		/// <summary>
+		/// Gets or sets the vertical padding
+		/// </summary>
+		/// <value>The vertical padding.</value>
+		public int VerticalPadding {
+			get { return this.m_verticalPadding; }
+			set { this.m_verticalPadding = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the horizontal padding
+		/// </summary>
+		/// <value>The horizontal padding.</value>
+		public int HorizontalPadding {
+			get { return this.m_horizontalPadding; }
+			set { this.m_horizontalPadding = value; }
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZMobile.Layout.UITileContainer"/> class.
+		/// </summary>
+		/// <param name="context">Context.</param>
+		public UITileContainer(Context context) : this(context, null)
+		{
+			
+		}
+
+		public UITileContainer (Context context, IAttributeSet attrs) : base(context, attrs)
 		{
 
 			// Get styled attributes
-			using(TypedArray ta = context.ObtainStyledAttributes (attrs, Resource.Styleable.FlowLayout))
-			{
-				this.m_horizontalPadding = ta.GetDimensionPixelSize(Resource.Styleable.FlowLayout_horizontalSpacing, 0);
-				this.m_verticalPadding = ta.GetDimensionPixelSize(Resource.Styleable.FlowLayout_verticalSpacing, 0);
+			if (attrs != null) {
+				using (TypedArray ta = context.ObtainStyledAttributes (attrs, Resource.Styleable.FlowLayout)) {
+					this.m_horizontalPadding = ta.GetDimensionPixelSize (Resource.Styleable.FlowLayout_horizontalSpacing, 0);
+					this.m_verticalPadding = ta.GetDimensionPixelSize (Resource.Styleable.FlowLayout_verticalSpacing, 0);
+				}
 			}
 
+			this.m_gradient = new LinearGradient (0, 0, 1, 0, Color.ParseColor("#2c3e50"), Color.ParseColor("#18bc9c"), Shader.TileMode.Repeat);
 			this.m_paint = new Paint ();
 			this.m_paint.AntiAlias = true;
-			this.m_paint.Color = Color.White;
-			this.m_paint.StrokeWidth = 2.0f;
+			this.m_paint.SetShader(this.m_gradient);
+
+			this.m_textPaint = new TextPaint ();
+			this.m_textPaint.Color = Color.Black;
+			this.m_textPaint.TextSize = (int)this.ConvertDpToPx(14);
+			this.m_textPaint.SetTypeface(Typeface.SansSerif);
+
+			this.m_verticalPadding = this.m_horizontalPadding = (int)this.ConvertDpToPx(6);
+
 		}
 
 		/// <summary>
@@ -79,7 +130,7 @@ namespace OpenIZMobile.Layout
 
 				// Calculate X/Y
 				lParms.X = cWidth;
-				lParms.Y = height;
+				lParms.Y = height + this.m_verticalPadding * 2 + (int)this.ConvertDpToPx(16);
 
 				cWidth += child.MeasuredWidth + spacing;
 				cHeight = Math.Max (cHeight, child.MeasuredHeight);
@@ -93,7 +144,7 @@ namespace OpenIZMobile.Layout
 			}
 
 			width += PaddingRight;
-			height += PaddingBottom;
+			height += PaddingBottom + this.m_verticalPadding * 2 + (int)this.ConvertDpToPx(16);
 			this.SetMeasuredDimension (ResolveSize (width, widthMeasureSpec), ResolveSize (height, heightMeasureSpec));
 
 		}
@@ -123,7 +174,17 @@ namespace OpenIZMobile.Layout
 		/// </summary>
 		protected override bool DrawChild (Canvas canvas, View child, long drawingTime)
 		{
+
+			// Get child at specific location
+			if (child == this.GetChildAt (0)) {
+				StaticLayout st = new StaticLayout (this.Title, this.m_textPaint, canvas.Width, Android.Text.Layout.Alignment.AlignNormal, 1, 0, true);
+				st.Draw (canvas);
+				canvas.DrawLine (0, this.m_verticalPadding + (int)this.ConvertDpToPx (16), canvas.Width, this.m_verticalPadding + (int)this.ConvertDpToPx (16), this.m_paint);
+			}
+
+
 			bool more = base.DrawChild (canvas, child, drawingTime);
+
 			var lParms = (LayoutParams)child.LayoutParameters;
 			if (lParms.HorizontalSpacing > 0) {
 				float x = child.Right;
@@ -148,7 +209,7 @@ namespace OpenIZMobile.Layout
 		/// <returns><c>true</c>, if layout parameters was checked, <c>false</c> otherwise.</returns>
 		protected override bool CheckLayoutParams (ViewGroup.LayoutParams p)
 		{
-			return p is UIFlowLayout.LayoutParams;
+			return p is UITileContainer.LayoutParams;
 		}
 
 		/// <summary>
@@ -233,7 +294,16 @@ namespace OpenIZMobile.Layout
 			public LayoutParams(int w, int h) : base(w, h) {
 			}
 		}
-		
+
+		/// <summary>
+		/// Convert pixels to DP
+		/// </summary>
+		private double ConvertDpToPx(double dp){
+			var resources = this.Context.Resources;
+			DisplayMetrics metrics = resources.DisplayMetrics;
+			double px = dp * ((int)metrics.DensityDpi / (int)DisplayMetrics.DensityDefault);
+			return px;
+		}
 	}
 }
 

@@ -31,10 +31,22 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
-		/// Applet tile name
+		/// Gets the specified name
 		/// </summary>
+		public String GetText(String language, bool returnNuetralIfNotFound = true)
+		{
+			var str = this.Text?.Find(o=>o.Language == language);
+			if(str == null && returnNuetralIfNotFound)
+				str = this.Text?.Find(o=>o.Language == null);
+			return str?.Value;
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the applet info
+		/// </summary>
+		/// <value>The name.</value>
 		[XmlElement("text")]
-		public String Text { 
+		public List<LocaleString> Text {
 			get;
 			set;
 		}

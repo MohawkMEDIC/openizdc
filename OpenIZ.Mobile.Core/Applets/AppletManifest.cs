@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Xml.Serialization;
-using System.Xml.Linq;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Applets
 {
@@ -21,7 +22,6 @@ namespace OpenIZ.Mobile.Core.Applets
 		{
 			XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
 			return xsz.Deserialize (resourceStream) as AppletManifest;
-
 		}
 
 		/// <summary>

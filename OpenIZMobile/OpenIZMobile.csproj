@@ -53,16 +53,16 @@
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HomeActivity.cs" />
-    <Compile Include="ConfigurationManager.cs" />
     <Compile Include="Layout\UIAppletTile.cs" />
-    <Compile Include="Layout\UIFlowLayout.cs" />
     <Compile Include="LoginActivity.cs" />
+    <Compile Include="AppletActivity.cs" />
+    <Compile Include="SplashActivity.cs" />
+    <Compile Include="Layout\UITileContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
-    <None Include="Resources\layout\portrait_header.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\mipmap-hdpi\Icon.png" />
@@ -73,11 +73,72 @@
     <AndroidResource Include="Resources\layout\Home.axml" />
     <AndroidResource Include="Resources\layout\Login.axml" />
     <AndroidResource Include="Resources\drawable\logo.png" />
-    <AndroidResource Include="Resources\values\DefaultTheme.xml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\values\attrs.xml" />
+    <AndroidResource Include="Resources\layout\Applet.axml" />
+    <AndroidResource Include="Resources\drawable\logo_lg.png" />
+    <AndroidResource Include="Resources\drawable\circle_bg.xml" />
+    <AndroidResource Include="Resources\values\Styles.xml" />
+    <AndroidResource Include="Resources\layout\Splash.axml" />
+    <AndroidResource Include="Resources\drawable\splash_gradient.xml" />
+    <AndroidResource Include="Resources\drawable\aefi.png" />
+    <AndroidResource Include="Resources\drawable\announce.png" />
+    <AndroidResource Include="Resources\drawable\app.png" />
+    <AndroidResource Include="Resources\drawable\app_alt.png" />
+    <AndroidResource Include="Resources\drawable\appbar.user.png" />
+    <AndroidResource Include="Resources\drawable\baby.png" />
+    <AndroidResource Include="Resources\drawable\bed.png" />
+    <AndroidResource Include="Resources\drawable\brick.png" />
+    <AndroidResource Include="Resources\drawable\calendar.png" />
+    <AndroidResource Include="Resources\drawable\check.png" />
+    <AndroidResource Include="Resources\drawable\checkin.png" />
+    <AndroidResource Include="Resources\drawable\cogs.png" />
+    <AndroidResource Include="Resources\drawable\drk_aefi.png" />
+    <AndroidResource Include="Resources\drawable\drk_announce.png" />
+    <AndroidResource Include="Resources\drawable\drk_applet.png" />
+    <AndroidResource Include="Resources\drawable\drk_applet_alt.png" />
+    <AndroidResource Include="Resources\drawable\drk_baby.png" />
+    <AndroidResource Include="Resources\drawable\drk_barcode.png" />
+    <AndroidResource Include="Resources\drawable\drk_bed.png" />
+    <AndroidResource Include="Resources\drawable\drk_brick.png" />
+    <AndroidResource Include="Resources\drawable\drk_calendar.png" />
+    <AndroidResource Include="Resources\drawable\drk_check.png" />
+    <AndroidResource Include="Resources\drawable\drk_checkin.png" />
+    <AndroidResource Include="Resources\drawable\drk_cogs.png" />
+    <AndroidResource Include="Resources\drawable\drk_delete.png" />
+    <AndroidResource Include="Resources\drawable\drk_foot.png" />
+    <AndroidResource Include="Resources\drawable\drk_group.png" />
+    <AndroidResource Include="Resources\drawable\drk_help.png" />
+    <AndroidResource Include="Resources\drawable\drk_home.png" />
+    <AndroidResource Include="Resources\drawable\drk_logout.png" />
+    <AndroidResource Include="Resources\drawable\drk_patient.png" />
+    <AndroidResource Include="Resources\drawable\drk_patient_alt.png" />
+    <AndroidResource Include="Resources\drawable\drk_patient_search.png" />
+    <AndroidResource Include="Resources\drawable\drk_patient_search_alt.png" />
+    <AndroidResource Include="Resources\drawable\drk_queue.png" />
+    <AndroidResource Include="Resources\drawable\drk_register_patient.png" />
+    <AndroidResource Include="Resources\drawable\drk_shield.png" />
+    <AndroidResource Include="Resources\drawable\drk_stock.png" />
+    <AndroidResource Include="Resources\drawable\drk_temp.png" />
+    <AndroidResource Include="Resources\drawable\drk_user.png" />
+    <AndroidResource Include="Resources\drawable\drk_weigh.png" />
+    <AndroidResource Include="Resources\drawable\foot.png" />
+    <AndroidResource Include="Resources\drawable\group.png" />
+    <AndroidResource Include="Resources\drawable\help.png" />
+    <AndroidResource Include="Resources\drawable\home.png" />
+    <AndroidResource Include="Resources\drawable\logout.png" />
+    <AndroidResource Include="Resources\drawable\patient.png" />
+    <AndroidResource Include="Resources\drawable\patient_alt.png" />
+    <AndroidResource Include="Resources\drawable\patient_search.png" />
+    <AndroidResource Include="Resources\drawable\patient_search_alt.png" />
+    <AndroidResource Include="Resources\drawable\queue.png" />
+    <AndroidResource Include="Resources\drawable\shield.png" />
+    <AndroidResource Include="Resources\drawable\stock.png" />
+    <AndroidResource Include="Resources\drawable\temp.png" />
+    <AndroidResource Include="Resources\drawable\weigh.png" />
     <AndroidResource Include="Resources\drawable\register_patient.png" />
-    <AndroidResource Include="Resources\drawable\search_patient.png" />
+    <AndroidResource Include="Resources\drawable\drk_encounters.png" />
+    <AndroidResource Include="Resources\drawable\encounters.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
@@ -85,16 +146,33 @@
     <Folder Include="Assets\Applets\" />
     <Folder Include="Layout\" />
     <Folder Include="Resources\layout\gfx\" />
+    <Folder Include="Assets\css\" />
+    <Folder Include="Assets\js\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\PatientSearchApplet.xml" />
     <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
+    <AndroidAsset Include="Assets\css\bootstrap.css" />
+    <AndroidAsset Include="Assets\css\bootstrap-theme.css" />
+    <AndroidAsset Include="Assets\js\angular.min.js" />
+    <AndroidAsset Include="Assets\js\bootstrap.js" />
+    <AndroidAsset Include="Assets\Applets\PatientCheckinApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\AppointmentsApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\WalkinAppointmentApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\EncountersApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\VaccinationQueueApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\AefiQuickReportApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\SettingsApplet.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Mobile.Core.Android\OpenIZ.Mobile.Core.Android.csproj">
+      <Project>{00EE5306-AAE5-4145-B430-6BA3FB07054B}</Project>
+      <Name>OpenIZ.Mobile.Core.Android</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

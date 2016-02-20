@@ -37,6 +37,18 @@
     <Compile Include="Applets\AppletInfo.cs" />
     <Compile Include="Applets\AppletTile.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
+    <Compile Include="Authentication\IAuthenticationProvider.cs" />
+    <Compile Include="Authentication\Credentials.cs" />
+    <Compile Include="Http\InvalidCertificateEventArgs.cs" />
+    <Compile Include="Http\AuthorizationEventArgs.cs" />
+    <Compile Include="Http\IRestClient.cs" />
+    <Compile Include="Http\IBodySerializer.cs" />
+    <Compile Include="Http\DefaultBodySerializerBinder.cs" />
+    <Compile Include="Http\XmlBodySerializer.cs" />
+    <Compile Include="Http\JsonBodySerializer.cs" />
+    <Compile Include="Http\RestClientException.cs" />
+    <Compile Include="Http\RestClientBase.cs" />
+    <Compile Include="Applets\LocaleString.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -54,6 +66,8 @@
     <Folder Include="Applets\" />
     <Folder Include="Data\" />
     <Folder Include="Configuration\" />
+    <Folder Include="Authentication\" />
+    <Folder Include="Http\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

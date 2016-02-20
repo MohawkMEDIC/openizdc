@@ -26,8 +26,8 @@ namespace OpenIZMobile.Layout
 	{
 
 		// Tile sizes in DP
-		private const int SZ_SMALL_TILE = 196;
-		private const int SZ_LARGE_TILE = 256;
+		private const int SZ_SMALL_TILE = 145;
+		private const int SZ_LARGE_TILE = 290;
 
 		// Applet
 		private AppletManifest m_applet;
@@ -47,7 +47,7 @@ namespace OpenIZMobile.Layout
 			// Get the default tile
 			// TODO: Load from configuration the tile layout to use, right now they will all be small
 			this.m_currentTile = applet.Tiles.FirstOrDefault();
-
+			this.m_applet = applet;
 
 			this.m_outlinePaint = new Paint ();
 			this.m_outlinePaint.StrokeWidth = 2.0f;
@@ -56,7 +56,7 @@ namespace OpenIZMobile.Layout
 
 			this.m_textPaint = new TextPaint ();
 			this.m_textPaint.Color = Color.White;
-			this.m_textPaint.TextSize = (int)this.ConvertDpToPx(16);
+			this.m_textPaint.TextSize = (int)this.ConvertDpToPx(14);
 			this.m_textPaint.SetTypeface(Typeface.SansSerif);
 
 		}
@@ -96,11 +96,15 @@ namespace OpenIZMobile.Layout
 					d.SetBounds (lfIcon, lfIcon, lfIcon + szIcon, lfIcon + szIcon);
 					d.Draw (canvas);
 				}
-
+				else {
+					int szIcon = (int)this.ConvertDpToPx (SZ_SMALL_TILE * 0.5);
+					d.SetBounds (10, 10, 10 + szIcon, 10 + szIcon);
+					d.Draw (canvas);
+				}
 			}
 
 			// Draw the text for the tile
-			using (StaticLayout sl = new StaticLayout (this.m_currentTile.Text, this.m_textPaint,
+			using (StaticLayout sl = new StaticLayout (this.m_currentTile.GetText(this.Resources.Configuration.Locale.DisplayLanguage), this.m_textPaint,
 				                        canvas.Width, Android.Text.Layout.Alignment.AlignCenter, 1, 0, true)) {
 				canvas.Translate (canvas.Width - sl.Width, canvas.Height - sl.Height - 30);
 				sl.Draw (canvas);
@@ -108,9 +112,27 @@ namespace OpenIZMobile.Layout
 			}
 			base.Draw (canvas);
 		}
-		
 
-
+		/// <param name="e">The motion event.</param>
+		/// <summary>
+		/// Implement this method to handle touch screen motion events.
+		/// </summary>
+		/// <returns>To be added.</returns>
+		public override bool OnTouchEvent (MotionEvent e)
+		{
+			// Determine the action
+			switch (e.Action) {
+				case MotionEventActions.Down:
+				{
+					Intent viewIntent = new Intent (this.Context, typeof(AppletActivity));
+					viewIntent.PutExtra("appletId", this.m_applet.Info.Id.ToString());
+					this.Context.StartActivity (viewIntent);
+					break;
+				}
+			}
+			return base.OnTouchEvent (e);
+		}
+			
 		/// <summary>
 		/// Convert pixels to DP
 		/// </summary>
