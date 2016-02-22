@@ -22,14 +22,11 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>DEBUG;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,8 +47,6 @@
     <Compile Include="Applets\LocaleString.cs" />
     <Compile Include="Configuration\Data\IDbMigration.cs" />
     <Compile Include="Configuration\Data\DataMigrationLog.cs" />
-    <Compile Include="Data\IdentifiedData.cs" />
-    <Compile Include="Data\Concepts\Concept.cs" />
     <Compile Include="Applets\AppletReference.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialCatalog.cs" />
     <Compile Include="Configuration\Data\DataMigrator.cs" />
@@ -70,6 +65,20 @@
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Applets\AppletPackage.cs" />
+    <Compile Include="Data\Concepts\DbConceptRelationshipType.cs" />
+    <Compile Include="Data\Concepts\DbConceptClass.cs" />
+    <Compile Include="Data\Concepts\DbConceptRelationship.cs" />
+    <Compile Include="Data\Concepts\DbConceptSet.cs" />
+    <Compile Include="Data\Concepts\DbConcept.cs" />
+    <Compile Include="Data\Concepts\DbConceptName.cs" />
+    <Compile Include="Data\DataType\DbIdentifier.cs" />
+    <Compile Include="Data\DataType\DbIdentifierType.cs" />
+    <Compile Include="Data\Extensibility\DbExtension.cs" />
+    <Compile Include="Data\Extensibility\DbExtensionType.cs" />
+    <Compile Include="Data\Extensibility\DbNote.cs" />
+    <Compile Include="Data\DbVersionedData.cs" />
+    <Compile Include="Data\DbIdentified.cs" />
+    <Compile Include="Data\DbBaseData.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -95,6 +104,8 @@
     <Folder Include="Configuration\Data\Migrations\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Diagnostics\" />
+    <Folder Include="Data\Extensibility\" />
+    <Folder Include="Data\DataType\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

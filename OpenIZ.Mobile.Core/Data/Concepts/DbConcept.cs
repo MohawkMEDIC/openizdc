@@ -6,8 +6,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 	/// <summary>
 	/// Physical data layer implemntation of concept
 	/// </summary>
-	[Table("Concept")]
-	public class Concept : IdentifiedData
+	[Table("concept")]
+	public class DbConcept : DbVersionedData
 	{
 
 		/// <summary>
@@ -23,7 +23,7 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// Gets or sets the object mnemonic
 		/// </summary>
 		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Unique]
+		[Column("mnemonic"), Unique, NotNull]
 		public string Mnemonic {
 			get;
 			set;
@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("statusId"), Indexed]
+		[Column("statusId"), Indexed, NotNull]
 		public int StatusId {
 			get;
 			set;
@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("classId")]
+		[Column("classId"), NotNull]
 		public int ClassId {
 			get;
 			set;

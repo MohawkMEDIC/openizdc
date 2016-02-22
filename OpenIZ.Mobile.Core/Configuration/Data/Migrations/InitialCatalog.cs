@@ -2,6 +2,8 @@
 using SQLite;
 using OpenIZ.Mobile.Core.Data.Concepts;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Data.DataType;
+using OpenIZ.Mobile.Core.Data.Extensibility;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -29,8 +31,27 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 
 				db.TableChanged += (s, e) => tracer.TraceInfo ("Updating {0}", e.Table.TableName);
 				// Create tables
-				tracer.TraceVerbose("Installing Concepts...");
-				db.CreateTable<Concept> (CreateFlags.None);
+				tracer.TraceInfo("Installing Concepts...");
+				db.CreateTable<DbConcept> (CreateFlags.None);
+				db.CreateTable<DbConceptName> (CreateFlags.None);
+				db.CreateTable<DbConceptClass> (CreateFlags.None);
+				db.CreateTable<DbConceptRelationship> (CreateFlags.None);
+				db.CreateTable<DbConceptRelationshipType> (CreateFlags.None);
+				db.CreateTable<DbConceptSet> (CreateFlags.None);
+				db.CreateTable<DbConceptSetConceptAssociation> (CreateFlags.None);
+
+				tracer.TraceInfo ("Installing Identiifers...");
+				db.CreateTable<DbEntityIdentifier> (CreateFlags.None);
+				db.CreateTable<DbActIdentifier> (CreateFlags.None);
+				db.CreateTable<DbIdentifierType> (CreateFlags.None);
+
+				tracer.TraceInfo ("Installing Extensability...");
+				db.CreateTable<DbActExtension> (CreateFlags.None);
+				db.CreateTable<DbActNote> (CreateFlags.None);
+				db.CreateTable<DbEntityExtension> (CreateFlags.None);
+				db.CreateTable<DbEntityNote> (CreateFlags.None);
+				db.CreateTable<DbExtensionType> (CreateFlags.None);
+
 
 			}
 			return true;

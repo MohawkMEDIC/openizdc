@@ -4,35 +4,15 @@ using SQLite;
 namespace OpenIZ.Mobile.Core.Data
 {
 	/// <summary>
-	/// Represents data that is identified in some way
+	/// Represents data which has authorship information attached
 	/// </summary>
-	public class IdentifiedData
+	public abstract class DbBaseData : DbIdentified
 	{
-
-		/// <summary>
-		/// Gets or sets the identifier of the identified data
-		/// </summary>
-		/// <value>The identifier.</value>
-		[PrimaryKey, AutoIncrement, Column("id")]
-		public int Id {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the universal identifier for the object
-		/// </summary>
-		[Column("uuid"), MaxLength(16), Indexed]
-		public byte[] Uuid {
-			get;
-			set;
-		}
-
 		/// <summary>
 		/// Gets or sets the creation time
 		/// </summary>
 		/// <value>The creation time.</value>
-		[Column("creation_time")]
+		[Column("creation_time"), NotNull]
 		public DateTime CreationTime {
 			get;
 			set;
@@ -49,10 +29,20 @@ namespace OpenIZ.Mobile.Core.Data
 		}
 
 		/// <summary>
+		/// Gets or sets the updated time.
+		/// </summary>
+		/// <value>The updated time.</value>
+		[Column("updated_time")]
+		public DateTime UpdatedTime {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Gets or sets the user that created the data
 		/// </summary>
 		/// <value>The created by identifier.</value>
-		[Column("created_by")]
+		[Column("created_by"), NotNull]
 		public int CreatedById {
 			get;
 			set;
@@ -69,18 +59,13 @@ namespace OpenIZ.Mobile.Core.Data
 		}
 
 		/// <summary>
-		/// Gets or sets the server version UUID, this is used to ensure that the version on a server
-		/// equals the version here
+		/// Gets or sets the updated by identifier.
 		/// </summary>
-		/// <value>The version UUID.</value>
-		[Column("version_uuid"), MaxLength(16)]
-		public byte[] VersionUuid
-		{
+		/// <value>The updated by identifier.</value>
+		[Column("updated_by")]
+		public int UpdatedById {
 			get;
 			set;
-		}
-
-
-	}
+		}	}
 }
 

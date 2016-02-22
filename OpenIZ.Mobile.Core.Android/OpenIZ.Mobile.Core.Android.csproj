@@ -29,16 +29,13 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <LangVersion>6</LangVersion>
-    <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>DEBUG;</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

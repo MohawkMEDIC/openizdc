@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 		private List<AppletManifest> m_applets = new List<AppletManifest> ();
 
 		// Tracer
-		private Tracer m_tracer ;
+		private Tracer m_tracer;
 
 		// Configuration
 		private OpenIZConfiguration m_configuration;
@@ -96,9 +96,9 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			};
 
 			// Trace writer
+			#if DEBUG
 			DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection () {
 				TraceWriter = new System.Collections.Generic.List<TraceWriterConfiguration> () {
-#if DEBUG
 					new TraceWriterConfiguration () { 
 						Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
 						InitializationData = "OpenIZ",
@@ -109,16 +109,17 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 						InitializationData = "OpenIZ",
 						TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
 					}
-#else 
-					new TraceWriterConfiguration() {
-					Filter = System.Diagnostics.Tracing.EventLevel.Warning,
-					InitializationData = "OpenIZ",
-					TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-					}
-#endif
 				}
 			};
-
+			#else 
+			DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection () {
+				new TraceWriterConfiguration() {
+				Filter = System.Diagnostics.Tracing.EventLevel.Error,
+				InitializationData = "OpenIZ",
+				TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+				}
+			}
+			#endif
 			retVal.Sections.Add (appletSection);
 			retVal.Sections.Add (dataSection);
 			retVal.Sections.Add (diagSection);
@@ -154,16 +155,15 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
 				try {
 					this.m_tracer.TraceInfo ("Loading applet {0}", appletInfo);
-					String appletPath = Path.Combine(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
+					String appletPath = Path.Combine (this.m_configuration.GetSection<AppletConfigurationSection> ().AppletDirectory, appletInfo.Id);
 					using (var fs = File.OpenRead (appletPath)) {
 						AppletManifest manifest = AppletManifest.Load (fs);
 						// Is this applet in the allowed applets
 
 						// public key token match?
 						if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken ||
-						   !this.VerifyManifest (manifest, appletInfo))
-						{
-						this.m_tracer.TraceWarning("Applet {0} failed validation", appletInfo);
+						    !this.VerifyManifest (manifest, appletInfo)) {
+							this.m_tracer.TraceWarning ("Applet {0} failed validation", appletInfo);
 							; // TODO: Raise an error
 						}
 
@@ -174,21 +174,18 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 				}
 
 			// Ensure data migration exists
-			try
-			{
+			try {
 				// If the DB File doesn't exist we have to clear the migrations
-				if(!File.Exists(this.m_configuration.GetConnectionString(this.m_configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value))
-				{
-					this.m_tracer.TraceWarning("Can't find the OpenIZ database, will re-install all migrations");
-					this.m_configuration.GetSection<DataConfigurationSection>().MigrationLog.Entry.Clear();
+				if (!File.Exists (this.m_configuration.GetConnectionString (this.m_configuration.GetSection<DataConfigurationSection> ().MainDataSourceConnectionStringName).Value)) {
+					this.m_tracer.TraceWarning ("Can't find the OpenIZ database, will re-install all migrations");
+					this.m_configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Clear ();
 				}
 
-				DataMigrator migrator = new DataMigrator(this.m_configuration);
+				DataMigrator migrator = new DataMigrator (this.m_configuration);
 				migrator.Ensure ();
-				if(this.IsConfigured)
-					this.Save();
-			}
-			catch(Exception e) {
+				if (this.IsConfigured)
+					this.Save ();
+			} catch (Exception e) {
 				this.m_tracer.TraceError (e.ToString ());
 				if (this.IsConfigured)
 					this.Save ();
@@ -215,33 +212,32 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 				Directory.CreateDirectory (appletSection.AppletDirectory);
 			
 			String appletPath = Path.Combine (appletSection.AppletDirectory, package.Meta.Id);
-			if (File.Exists (appletPath))
-			{
+			if (File.Exists (appletPath)) {
 				
 				if (!isUpgrade)
 					throw new InvalidOperationException ("Duplicate package name");
 
 				// Unload the loaded applet version
-				this.m_applets.RemoveAll(o=>o.Info.Id == package.Meta.Id);
-				appletSection.Applets.RemoveAll(o=>o.Id == package.Meta.Id);
+				this.m_applets.RemoveAll (o => o.Info.Id == package.Meta.Id);
+				appletSection.Applets.RemoveAll (o => o.Id == package.Meta.Id);
 			}
 
 			// Save the applet
-			XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+			XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
 			// Serialize the data to disk
 			using (FileStream fs = File.Create (appletPath)) {
-				fs.Write(package.Manifest, 0, package.Manifest.Length);
+				fs.Write (package.Manifest, 0, package.Manifest.Length);
 				fs.Flush ();
 			}
 
 			// TODO: Sign this with my private key
 			// For now sign with SHA256
-			SHA256 sha = SHA256.Create();
+			SHA256 sha = SHA256.Create ();
 			package.Meta.Hash = sha.ComputeHash (package.Manifest);
 			appletSection.Applets.Add (package.Meta);
 
-			using(MemoryStream ms = new MemoryStream(package.Manifest))
-				this.LoadApplet (AppletManifest.Load(ms));
+			using (MemoryStream ms = new MemoryStream (package.Manifest))
+				this.LoadApplet (AppletManifest.Load (ms));
 
 		}
 
@@ -290,18 +286,16 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 		/// </summary>
 		public void Save ()
 		{
-			try
-			{
-				this.m_tracer.TraceInfo("Saving configuration to {0}", this.m_configPath);
-				if(!Directory.Exists(Path.GetDirectoryName(this.m_configPath)))
-					Directory.CreateDirectory(Path.GetDirectoryName(this.m_configPath));
+			try {
+				this.m_tracer.TraceInfo ("Saving configuration to {0}", this.m_configPath);
+				if (!Directory.Exists (Path.GetDirectoryName (this.m_configPath)))
+					Directory.CreateDirectory (Path.GetDirectoryName (this.m_configPath));
 				
 				using (FileStream fs = File.Create (this.m_configPath)) {
 					this.m_configuration.Save (fs);
 					fs.Flush ();
 				}
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 				this.m_tracer.TraceError (e.ToString ());
 			}
 		}
