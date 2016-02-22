@@ -2,6 +2,7 @@
 using OpenIZ.Mobile.Core.Authentication;
 using System.Net;
 using System.Collections.Generic;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Http
 {
@@ -10,17 +11,7 @@ namespace OpenIZ.Mobile.Core.Http
 	/// </summary>
 	public interface IRestClient
 	{
-
-		/// <summary>
-		/// Occurs when invalid certificate.
-		/// </summary>
-		event EventHandler<InvalidCertificateEventArgs> InvalidCertificate;
-
-		/// <summary>
-		/// Occurs when unauthorized.
-		/// </summary>
-		event EventHandler<AuthorizationEventArgs> Unauthorized;
-
+		
 		/// <summary>
 		/// Gets or sets the credentials to be used for this client
 		/// </summary>
@@ -109,11 +100,10 @@ namespace OpenIZ.Mobile.Core.Http
 		TResult Options<TResult> (String url);
 
 		/// <summary>
-		/// Gets or sets the serializer
+		/// Gets the service client description
 		/// </summary>
-		/// <value>The serializer.</value>
-		IBodySerializerBinder SerializationBinder { get; set; }
-
+		/// <value>The description.</value>
+		ServiceClient Description { get; }
 	}
 }
 

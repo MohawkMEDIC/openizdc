@@ -29,6 +29,10 @@ namespace OpenIZMobile.Layout
 		private const int SZ_SMALL_TILE = 145;
 		private const int SZ_LARGE_TILE = 290;
 
+
+		private float m_touchPointStartX = 0;
+		private float m_touchPointStartY = 0;
+
 		// Applet
 		private AppletManifest m_applet;
 
@@ -76,6 +80,7 @@ namespace OpenIZMobile.Layout
 
 		}
 
+
 		/// <param name="canvas">The Canvas to which the View is rendered.</param>
 		/// <summary>
 		/// Draw the child
@@ -84,32 +89,33 @@ namespace OpenIZMobile.Layout
 		{
 			canvas.DrawRect (0, 0, canvas.Width, canvas.Height, this.m_outlinePaint);
 
-
 			// Draw the image of the tile
 			if (m_currentTile.Icon.StartsWith ("@drawable")) { // Builtin
-				var id = Resources.GetIdentifier (m_currentTile.Icon.Replace ("@drawable/", ""), "drawable", "org.openiz.openiz_mobile");
-				Drawable d = Resources.GetDrawable (id);
+				var id = Resources.GetIdentifier (m_currentTile.Icon.Replace ("@drawable/" , ""), "drawable", this.Context.PackageName);
+				BitmapDrawable d = Resources.GetDrawable (id) as BitmapDrawable;
 
 				if (this.m_currentTile.Size == AppletTileSize.Small) {
 					int szIcon = (int)this.ConvertDpToPx (SZ_SMALL_TILE * 0.75);
 					int lfIcon = (int)((canvas.Width - szIcon) / 2);
-					d.SetBounds (lfIcon, lfIcon, lfIcon + szIcon, lfIcon + szIcon);
-					d.Draw (canvas);
+
+					var bitmap = Bitmap.CreateScaledBitmap(d.Bitmap, szIcon, szIcon, false);
+					canvas.DrawBitmap (bitmap, lfIcon, lfIcon, this.m_outlinePaint);
 				}
 				else {
 					int szIcon = (int)this.ConvertDpToPx (SZ_SMALL_TILE * 0.5);
-					d.SetBounds (10, 10, 10 + szIcon, 10 + szIcon);
-					d.Draw (canvas);
+					var bitmap = Bitmap.CreateScaledBitmap(d.Bitmap, szIcon, szIcon, false);
+					canvas.DrawBitmap (bitmap, 10, 10, this.m_outlinePaint);
 				}
 			}
 
 			// Draw the text for the tile
 			using (StaticLayout sl = new StaticLayout (this.m_currentTile.GetText(this.Resources.Configuration.Locale.DisplayLanguage), this.m_textPaint,
-				                        canvas.Width, Android.Text.Layout.Alignment.AlignCenter, 1, 0, true)) {
-				canvas.Translate (canvas.Width - sl.Width, canvas.Height - sl.Height - 30);
+				canvas.Width, this.m_currentTile.Size == AppletTileSize.Small ? Android.Text.Layout.Alignment.AlignCenter : Android.Text.Layout.Alignment.AlignNormal, 1, 0, true)) {
+				canvas.Translate (this.m_currentTile.Size == AppletTileSize.Small ? 0 : (int)this.ConvertDpToPx(10), canvas.Height - sl.Height - 30);
 				sl.Draw (canvas);
 				canvas.Restore ();
 			}
+
 			base.Draw (canvas);
 		}
 
@@ -121,13 +127,27 @@ namespace OpenIZMobile.Layout
 		public override bool OnTouchEvent (MotionEvent e)
 		{
 			// Determine the action
-			switch (e.Action) {
-				case MotionEventActions.Down:
+			switch (e.ActionMasked) {
+			case MotionEventActions.Down:
 				{
-					Intent viewIntent = new Intent (this.Context, typeof(AppletActivity));
-					viewIntent.PutExtra("appletId", this.m_applet.Info.Id.ToString());
-					this.Context.StartActivity (viewIntent);
-					break;
+					this.m_touchPointStartX = e.GetX();
+					this.m_touchPointStartY = e.GetY ();
+					return true;
+				}
+			case MotionEventActions.Up:
+				{
+
+					float finalX = e.GetX (),
+						finalY = e.GetY ();
+
+					if (Math.Abs (finalX - this.m_touchPointStartX) < 20 &&
+					   Math.Abs (finalY - this.m_touchPointStartY) < 20) { // tap
+						Intent viewIntent = new Intent (this.Context, typeof(AppletActivity));
+						viewIntent.PutExtra ("appletId", this.m_applet.Info.Id.ToString ());
+						this.Context.StartActivity (viewIntent);
+						return false;
+					}
+					return true;
 				}
 			}
 			return base.OnTouchEvent (e);

@@ -10,4 +10,5 @@
 	<!-- Errors -->
 	<string name="err_general">Oops! Something went wrong!</string>
 	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
+	<string name="err_startup">An serious error occurred during startup. OpenIZ Mobile cannot continue. Please reference the following error code when seeking help:</string>
 </resources>

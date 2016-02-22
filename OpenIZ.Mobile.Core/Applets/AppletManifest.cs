@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Applets
 {
@@ -25,6 +26,24 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
+		/// Create an unsigned package
+		/// </summary>
+		/// <returns>The package.</returns>
+		public AppletPackage CreatePackage()
+		{
+			AppletPackage retVal = new AppletPackage () {
+				Meta = this.Info.AsReference ()
+			};
+			using (MemoryStream ms = new MemoryStream ()) {
+				XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
+				xsz.Serialize (ms, this);
+				retVal.Manifest = ms.ToArray ();
+			}
+			return retVal;
+
+		}
+
+		/// <summary>
 		/// Gets or sets the tile sizes the applet can have
 		/// </summary>
 		[XmlElement("tile")]
@@ -43,19 +62,11 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
-		/// Gets or sets the signature which can be used to validate the file
+		/// Initial applet configuration
 		/// </summary>
-		[XmlElement("dsig")]
-		public byte[] Signature {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets the thumbprint of the key that signed the signature
-		/// </summary>
-		[XmlElement("dsig_key")]
-		public String SignatureKey {
+		/// <value>The configuration.</value>
+		[XmlElement("configuration", Namespace = "http://openiz.org/mobile/configuration")]
+		public AppletConfiguration Configuration {
 			get;
 			set;
 		}

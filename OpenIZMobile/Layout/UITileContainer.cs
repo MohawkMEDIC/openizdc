@@ -138,10 +138,8 @@ namespace OpenIZMobile.Layout
 			}
 
 			// No new line re-calc
-			if (!newLine) {
-				height += cHeight;
-				width = Math.Max (width, cWidth - spacing);
-			}
+			height += cHeight;
+			width = Math.Max (width, cWidth - spacing);
 
 			width += PaddingRight;
 			height += PaddingBottom + this.m_verticalPadding * 2 + (int)this.ConvertDpToPx(16);

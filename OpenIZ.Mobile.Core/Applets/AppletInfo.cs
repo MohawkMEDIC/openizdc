@@ -90,6 +90,32 @@ namespace OpenIZ.Mobile.Core.Applets
 			get;
 			set;
 		}
+
+		/// <summary>
+		/// Gets the thumbprint of the key that signed the signature
+		/// </summary>
+		[XmlElement("publicKeyToken")]
+		public String PublicKeyToken {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the applet's dependencies
+		/// </summary>
+		[XmlElement("dependency")]
+		public List<AppletReference> Dependencies {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Return this applet reference
+		/// </summary>
+		public AppletReference AsReference()
+		{
+			return new AppletReference (this.Id, this.Version, this.PublicKeyToken);
+		}
 	}
 
 }

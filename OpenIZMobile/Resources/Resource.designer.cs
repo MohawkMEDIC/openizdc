@@ -351,6 +351,9 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050009
 			public const int err_general = 2131034121;
 			
+			// aapt resource value: 0x7f05000b
+			public const int err_startup = 2131034123;
+			
 			// aapt resource value: 0x7f050000
 			public const int library_name = 2131034112;
 			

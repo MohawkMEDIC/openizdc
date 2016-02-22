@@ -31,6 +31,16 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
+		/// The live source indicates the data source from which live information should be given
+		/// </summary>
+		/// <value>The live source SQL query to execute.</value>
+		[XmlElement("liveSourceSql")]
+		public String LiveSourceSql {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Gets the specified name
 		/// </summary>
 		public String GetText(String language, bool returnNuetralIfNotFound = true)

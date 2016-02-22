@@ -16,6 +16,8 @@
     <AssemblyName>OpenIZMobile</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,16 +28,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AndroidLinkMode>None</AndroidLinkMode>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -48,6 +53,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Android.Export" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -148,6 +154,8 @@
     <Folder Include="Resources\layout\gfx\" />
     <Folder Include="Assets\css\" />
     <Folder Include="Assets\js\" />
+    <Folder Include="Assets\fonts\" />
+    <Folder Include="Assets\css\img\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
@@ -164,6 +172,37 @@
     <AndroidAsset Include="Assets\Applets\VaccinationQueueApplet.xml" />
     <AndroidAsset Include="Assets\Applets\AefiQuickReportApplet.xml" />
     <AndroidAsset Include="Assets\Applets\SettingsApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\AnnouncementsApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\AuditApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\QuickReceiveStockApplet.xml" />
+    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.eot" />
+    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.ttf" />
+    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff" />
+    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff2" />
+    <AndroidAsset Include="Assets\js\jquery.js" />
+    <AndroidAsset Include="Assets\js\jqBootstrapValidation.js" />
+    <AndroidAsset Include="Assets\js\jquery.easing.min.js" />
+    <AndroidAsset Include="Assets\js\jquery-ui.js" />
+    <AndroidAsset Include="Assets\css\jquery-ui.custom.css" />
+    <AndroidAsset Include="Assets\css\jquery-ui.theme.css" />
+    <AndroidAsset Include="Assets\css\img\ui-icons_222222_256x240.png" />
+    <AndroidAsset Include="Assets\css\img\ui-icons_454545_256x240.png" />
+    <AndroidAsset Include="Assets\css\img\ui-icons_888888_256x240.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_flat_75_ffffff_40x100.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_glass_65_ffffff_1x400.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_dadada_1x400.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_glass_95_fef1ec_1x400.png" />
+    <AndroidAsset Include="Assets\css\img\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <AndroidAsset Include="Assets\css\img\ui-icons_2e83ff_256x240.png" />
+    <AndroidAsset Include="Assets\css\img\ui-icons_cd0a0a_256x240.png" />
+    <AndroidAsset Include="Assets\js\openiz-applet-helper.js" />
+    <AndroidAsset Include="Assets\css\img\circle_loader.gif" />
+    <AndroidAsset Include="Assets\js\Chart.min.js" />
+    <AndroidAsset Include="Assets\js\select2.min.js" />
+    <AndroidAsset Include="Assets\css\select2.min.css" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Linq;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Http
 {
@@ -10,21 +11,24 @@ namespace OpenIZ.Mobile.Core.Http
 	/// </summary>
 	public abstract class RestClientBase : IRestClient
 	{
+
+		// Configuration
+		private ServiceClient m_configuration;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Http.RestClient"/> class.
 		/// </summary>
 		public RestClientBase ()
 		{
-			this.SerializationBinder = new DefaultBodySerializerBinder ();
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Http.RestClient"/> class.
 		/// </summary>
 		/// <param name="binder">The serialization binder to use.</param>
-		public RestClientBase (IBodySerializerBinder binder)
+		public RestClientBase (ServiceClient config)
 		{
-			this.SerializationBinder = binder;
+			this.m_configuration = config;
 		}
 
 		/// <summary>
@@ -68,41 +72,6 @@ namespace OpenIZ.Mobile.Core.Http
 		}
 
 		#region IRestClient implementation
-		/// <summary>
-		/// Occurs when invalid certificate.
-		/// </summary>
-		public event EventHandler<InvalidCertificateEventArgs> InvalidCertificate;
-		/// <summary>
-		/// Occurs when unauthorized.
-		/// </summary>
-		public event EventHandler<AuthorizationEventArgs> Unauthorized;
-
-		/// <summary>
-		/// Fires the invalid certificate event to let the user know that there was something wrong with the
-		/// trust relationship
-		/// </summary>
-		protected bool FireInvalidCertificate(String remoteCertificateDN)
-		{
-			InvalidCertificateEventArgs e = new InvalidCertificateEventArgs () {
-				CertificateDN = remoteCertificateDN
-			};
-
-			this.InvalidCertificate?.Invoke (this, e);
-
-			return e.Cancel;
-		}
-
-		/// <summary>
-		/// Fires the unauthorized event
-		/// </summary>
-		protected void FireUnauthorized()
-		{
-			AuthorizationEventArgs e = new AuthorizationEventArgs () {
-				Credentials = this.Credentials
-			};
-			this.Unauthorized?.Invoke(this, e);
-			this.Credentials = e.Credentials;
-		}
 
 		/// <summary>
 		/// Gets the specified item
@@ -217,11 +186,67 @@ namespace OpenIZ.Mobile.Core.Http
 		}
 
 		/// <summary>
-		/// Gets or sets the serializer
+		/// Get the description of this service 
 		/// </summary>
-		public IBodySerializerBinder SerializationBinder { get; set; }
+		/// <value>The description.</value>
+		public ServiceClient Description { get { return this.m_configuration; } }
 
 		#endregion
+
+		/// <summary>
+		/// Validate the response
+		/// </summary>
+		/// <returns><c>true</c>, if response was validated, <c>false</c> otherwise.</returns>
+		/// <param name="response">Response.</param>
+		protected virtual ServiceClientErrorType ValidateResponse(WebResponse response)
+		{
+			if (response is HttpWebResponse) {
+				var httpResponse = response as HttpWebResponse;
+				switch (httpResponse.StatusCode) {
+					case HttpStatusCode.Unauthorized:
+						{
+							if (response.Headers ["WWW-Authenticate"]?.StartsWith (this.Description.Binding.Security.Mode.ToString (), StringComparison.CurrentCultureIgnoreCase) == false)
+								return ServiceClientErrorType.AuthenticationSchemeMismatch;
+							else {
+								// Validate the realm
+								string wwwAuth = response.Headers ["WWW-Authenticate"];
+								int realmStart = wwwAuth.IndexOf ("realm=\"") + 7;
+								if (realmStart < 0)
+									return ServiceClientErrorType.SecurityError; // No realm
+								string realm = wwwAuth.Substring (realmStart, wwwAuth.IndexOf ('"', realmStart) - realmStart);
+
+								if (!String.IsNullOrEmpty (this.Description.Binding.Security.AuthRealm) &&
+								    !this.Description.Binding.Security.AuthRealm.Equals (realm))
+									return ServiceClientErrorType.RealmMismatch;
+								
+								// Credential provider
+								if (this.Description.Binding.Security.CredentialProvider != null) {
+									this.Credentials = this.Description.Binding.Security.CredentialProvider.GetCredentials (this);
+									return ServiceClientErrorType.Valid;
+								} else
+									return ServiceClientErrorType.SecurityError;
+								}
+						}
+					default:
+						return ServiceClientErrorType.Valid;
+				}
+			} else
+				return ServiceClientErrorType.GenericError;
+		}
+
 	}
+
+	/// <summary>
+	/// Service client error type
+	/// </summary>
+	public enum ServiceClientErrorType
+	{
+		Valid,
+		GenericError,
+		AuthenticationSchemeMismatch,
+		SecurityError,
+		RealmMismatch
+	}
+
 }
 

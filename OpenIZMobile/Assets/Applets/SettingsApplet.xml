@@ -1,2 +1,24 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
+<AppletManifest xmlns="http://openiz.org/mobile/applet">
+	<info>
+		<name>Settings</name>
+		<version>1.0.0.0</version>
+		<author>OpenIZ.org Community</author>
+		<icon>@drawable/cogs</icon>
+		<id>org.openiz.applets.core.settings</id>
+		<groupName>Administration</groupName>
+	</info>
+	<tile size="sm">
+		<text>System Settings</text>
+		<icon>@drawable/cogs</icon>
+	</tile>
+	<asset name="index" mimeType="text/html">
+		<contentXml>
+			<body xmlns="http://www.w3.org/1999/xhtml">
+				<h3>Hello!</h3>
 
+			</body>
+		</contentXml>
+	</asset>
+
+</AppletManifest>

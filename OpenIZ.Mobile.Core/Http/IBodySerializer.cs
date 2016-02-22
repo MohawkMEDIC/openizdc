@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Http
 	/// <summary>
 	/// Defines a class that binds a series of serializers to content/types
 	/// </summary>
-	public interface IBodySerializerBinder
+	public interface IContentTypeMapper
 	{
 
 		/// <summary>

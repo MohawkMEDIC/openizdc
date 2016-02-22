@@ -5,6 +5,8 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using OpenIZ.Mobile.Core.Authentication;
+using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -14,20 +16,28 @@ namespace OpenIZ.Mobile.Core.Android.Http
 	public class RestClient : RestClientBase
 	{
 
+		// Tracer
+		private Tracer m_tracer;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Http.RestClient"/> class.
 		/// </summary>
 		public RestClient () : base()
 		{
+			this.m_tracer = TracerHelper.GetTracer (this.GetType ());
 			this.ClientCertificates = new X509Certificate2Collection ();
 		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Http.RestClient"/> class.
 		/// </summary>
-		public RestClient (IBodySerializerBinder binder) : base(binder)
+		public RestClient (ServiceClient config) : base(config)
 		{
+			this.m_tracer = TracerHelper.GetTracer (this.GetType ());
 			this.ClientCertificates = new X509Certificate2Collection ();
+			// Find the specified certificate
+
+
 		}
 
 		/// <summary>
@@ -72,35 +82,52 @@ namespace OpenIZ.Mobile.Core.Android.Http
 					if (body != null) {
 						if (contentType == null)
 							throw new ArgumentNullException (nameof (contentType));
-						serializer = this.SerializationBinder.GetSerializer (contentType, typeof(TBody));
+						
+						serializer = this.Description.Binding.ContentTypeMapper.GetSerializer (contentType, typeof(TBody));
 						// Serialize
 						serializer.Serialize (requestObj.GetRequestStream (), body);
 					}
 
 					// Response
 					var response = requestObj.GetResponse ();
-
+					var validationResult = this.ValidateResponse(response);
+					if(validationResult != ServiceClientErrorType.Valid)
+					{
+						this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
+						throw new WebException("Response failed validation", null, WebExceptionStatus.Success, response);
+					}	
 					// De-serialize
-					serializer = this.SerializationBinder.GetSerializer (response.ContentType, typeof(TResult));
-					return (TResult)serializer.DeSerialize (response.GetResponseStream ());
+					serializer = this.Description.Binding.ContentTypeMapper.GetSerializer (response.ContentType, typeof(TResult));
+
+					var retVal = (TResult)serializer.DeSerialize (response.GetResponseStream ());
 				} catch (WebException e) {
+
+					this.m_tracer.TraceError (e.ToString ());
 
 					// status
 					switch (e.Status) {
 						case WebExceptionStatus.ProtocolError:
+
+								// Deserialize
 							var errorResponse = (e.Response as HttpWebResponse);
-							var serializer = this.SerializationBinder.GetSerializer (e.Response.ContentType, typeof(TResult));
-									
+							var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer (e.Response.ContentType, typeof(TResult));
+							TResult result = (TResult)serializer.DeSerialize (e.Response.GetResponseStream ());
+
 							switch (errorResponse.StatusCode) {
-							case HttpStatusCode.Unauthorized:
-								this.FireUnauthorized ();
-								break;
-							default:
-								throw new RestClientException<TResult> (
-									(TResult)serializer.DeSerialize (e.Response.GetResponseStream ()), 
-									e, 
-									e.Status, 
-									e.Response); 
+								case HttpStatusCode.Unauthorized: // Validate the response
+									if (this.ValidateResponse (errorResponse) != ServiceClientErrorType.Valid)
+										throw new RestClientException<TResult> (
+											result, 
+											e, 
+											e.Status, 
+											e.Response); 
+									break;						
+								default:
+									throw new RestClientException<TResult> (
+										result, 
+										e, 
+										e.Status, 
+										e.Response); 
 							}
 							break;
 						default:

@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<AppletManifest xmlns="http://openiz.org/mobile/applet">
+	<info>
+		<name>Audits</name>
+		<version>1.0.0.0</version>
+		<author>OpenIZ.org Community</author>
+		<icon>@drawable/shield</icon>
+		<id>org.openiz.applets.core.audit</id>
+		<groupName>Administration</groupName>
+	</info>
+	<tile size="sm">
+		<text>Audit Log</text>
+		<icon>@drawable/shield</icon>
+	</tile>
+	<asset name="index" mimeType="text/html">
+		<contentXml>
+			<body xmlns="http://www.w3.org/1999/xhtml">
+				<h3>Hello!</h3>
+
+			</body>
+		</contentXml>
+	</asset>
+
+</AppletManifest>

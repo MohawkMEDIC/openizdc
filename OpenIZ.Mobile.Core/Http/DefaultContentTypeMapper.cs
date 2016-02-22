@@ -5,7 +5,7 @@ namespace OpenIZ.Mobile.Core.Http
 	/// <summary>
 	/// Default body binder.
 	/// </summary>
-	internal class DefaultBodySerializerBinder : IBodySerializerBinder
+	internal class DefaultContentTypeMapper : IContentTypeMapper
 	{
 		#region IBodySerializerBinder implementation
 

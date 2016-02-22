@@ -17,7 +17,10 @@
 			<body xmlns="http://www.w3.org/1999/xhtml">
 				<h3>Hello!</h3>
 
-				<img src="applet:myimage"/>
+				<img src="myimage"/>
+				<a href="app://openiz.org/applet/org.openiz.applets.core.patient.search/index">Search instead</a>
+				<a href="app://openiz.org/applet/org.openiz.applets.core.patient.search/">Search instead</a>
+				
 			</body>
 		</contentXml>
 	</asset>

@@ -6,16 +6,13 @@ namespace OpenIZ.Mobile.Core.Http
 	/// <summary>
 	/// Authorization event args
 	/// </summary>
-	public class AuthorizationEventArgs : EventArgs
+	public interface ICredentialProvider 
 	{
 
 		/// <summary>
 		/// Gets or sets the credentials which are used to authenticate
 		/// </summary>
-		public Credentials Credentials {
-			get;
-			set;
-		}
+		Credentials GetCredentials(IRestClient context);
 
 	}
 

@@ -1,0 +1,92 @@
+using System;
+using System.Reflection;
+using SQLite;
+using System.Xml.Serialization;
+using OpenIZ.Mobile.Core.Applets;
+using System.Collections.Generic;
+using OpenIZ.Mobile.Core.Configuration.Data;
+using System.IO;
+using System.Diagnostics.Tracing;
+using OpenIZ.Mobile.Core.Diagnostics;
+
+namespace OpenIZ.Mobile.Core.Configuration
+{
+
+	/// <summary>
+	/// Diagnostics configuration
+	/// </summary>
+	[XmlType(nameof(DiagnosticsConfigurationSection), Namespace ="http://openiz.org/mobile/configuration")]
+	public class DiagnosticsConfigurationSection :IConfigurationSection
+	{
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Configuration.DiagnosticsConfigurationSection"/> class.
+		/// </summary>
+		public DiagnosticsConfigurationSection ()
+		{
+			this.TraceWriter = new List<TraceWriterConfiguration> ();
+		}
+
+		/// <summary>
+		/// Trace writers
+		/// </summary>
+		[XmlElement("trace")]
+		public List<TraceWriterConfiguration> TraceWriter {
+			get;
+			set;
+		}
+
+	}
+
+	/// <summary>
+	/// Trace writer configuration
+	/// </summary>
+	[XmlType(nameof(TraceWriterConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
+	public class TraceWriterConfiguration
+	{
+
+		/// <summary>
+		/// Trace writer
+		/// </summary>
+		/// <value>The trace writer.</value>
+		[XmlIgnore]
+		public TraceWriter TraceWriter {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the initialization data.
+		/// </summary>
+		/// <value>The initialization data.</value>
+		[XmlAttribute("initializationData")]
+		public String InitializationData {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the writer implementation
+		/// </summary>
+		[XmlAttribute("writer")]
+		public String TraceWriterClassXml {
+			get { return this.TraceWriter.GetType ().AssemblyQualifiedName; }
+			set { 
+				this.TraceWriter = Activator.CreateInstance (Type.GetType (value), this.Filter, this.InitializationData) as TraceWriter; 
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the filter of the trace writer
+		/// </summary>
+		/// <value>The filter.</value>
+		[XmlAttribute("filter")]
+		public EventLevel Filter {
+			get;
+			set;
+		}
+
+	}
+
+}
+

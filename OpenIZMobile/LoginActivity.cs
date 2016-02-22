@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace OpenIZMobile
 {
-	[Activity (Label = "Login to OpenIZ", NoHistory = true, Theme = "@style/OpenIZ.NoTitle")]			
+	[Activity (Label = "Login to OpenIZ", NoHistory = true, Theme = "@style/OpenIZ.NoTitle")]
 	public class LoginActivity : Activity
 	{
 

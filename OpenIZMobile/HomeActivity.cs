@@ -14,6 +14,8 @@ using OpenIZ.Mobile.Core.Applets;
 using System.IO;
 using OpenIZMobile.Layout;
 using OpenIZ.Mobile.Core.Android.Configuration;
+using OpenIZ.Mobile.Core.Configuration;
+using Android.Util;
 
 namespace OpenIZMobile
 {
@@ -45,24 +47,30 @@ namespace OpenIZMobile
 		private void AddAppletTiles()
 		{
 
-			var tiles = ConfigurationManager.Current.Configuration.Applets;
-			string language = this.Resources.Configuration.Locale.DisplayLanguage;
-
-			this.m_homeLayout.RemoveAllViews ();
-			foreach(var itm in tiles.GroupBy(o => o.Info.GetGroupName(language)  ?? "Uncategorized", o=>o))
+			try
 			{
-				UITileContainer tileContainer = new UITileContainer (this);
-				tileContainer.Title = itm.Key;
-				foreach (var app in itm.OrderBy(o=>o.Info.GetName(language))) {
-					// Applet tiles
-					UIAppletTile appletTile = new UIAppletTile (this, app);
+				// TODO: Base this on user prefs instead of system prefs
+				var tiles = ConfigurationManager.Current.LoadedApplets;
+				string language = this.Resources.Configuration.Locale.DisplayLanguage;
 
-					// TODO: Query configuration to see if the user has this tile enabled
-					tileContainer.AddView (appletTile);
+				this.m_homeLayout.RemoveAllViews ();
+				foreach(var itm in tiles.GroupBy(o => o.Info.GetGroupName(language)  ?? "Uncategorized", o=>o).OrderBy(o=>ConfigurationManager.Current.Configuration.GetSection<AppletConfigurationSection>().AppletGroupOrder.IndexOf(o.Key)))
+				{
+					UITileContainer tileContainer = new UITileContainer (this);
+					tileContainer.Title = itm.Key;
+					foreach (var app in itm.OrderBy(o=>o.Info.GetName(language))) {
+						// Applet tiles
+						UIAppletTile appletTile = new UIAppletTile (this, app);
+
+						// TODO: Query configuration to see if the user has this tile enabled
+						tileContainer.AddView (appletTile);
+					}
+					this.m_homeLayout.AddView (tileContainer);
 				}
-				this.m_homeLayout.AddView (tileContainer);
 			}
-
+			catch(Exception e) {
+				
+			}
 		}
 	}
 }
