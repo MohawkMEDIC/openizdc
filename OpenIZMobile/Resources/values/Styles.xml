@@ -9,6 +9,14 @@
 	<item name="android:background">#2c3e50</item>
 </style>
 
+<style name="BlueTitle">
+	<item name="android:background">@drawable/splash_gradient</item>
+</style>
+
+<style name="GrayTitle">
+	<item name="android:background">@drawable/gray_gradient</item>
+</style>
+
 <style name="OpenIZ" parent="android:Theme.Holo.Light.DarkActionBar">
     <item name="android:actionBarStyle">@style/ActionBar</item>
 </style>
@@ -25,5 +33,6 @@
     <style name="OpenIZ.Splash" >
     <item name="android:windowBackground">@drawable/splash_gradient</item>
     <item name="android:windowNoTitle">true</item>  
+    <item name="android:textColor">#fff</item>
   </style>
 </resources>

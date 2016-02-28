@@ -25,6 +25,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// <param name="context">Context.</param>
 		public AppletFunctionBridge (Context context, AppletWebView view)
 		{
+			
 			this.m_context = context;
 			this.m_view = view;
 		}
@@ -46,10 +47,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		[JavascriptInterface]
 		public void Back()
 		{
-			if (this.m_view.CanGoBack ())
-				this.m_view.GoBack ();
-			else
-				(this.m_context as Activity).Finish ();
+			Application.SynchronizationContext.Post (_ => {
+				if (this.m_view.CanGoBack ())
+					this.m_view.GoBack ();
+				else
+					(this.m_context as Activity).Finish ();
+			}, null);
 		}
 
 		/// <summary>

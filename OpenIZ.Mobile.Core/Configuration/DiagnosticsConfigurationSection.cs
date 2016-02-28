@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <summary>
 		/// Gets or sets the writer implementation
 		/// </summary>
-		[XmlAttribute("writer")]
+		[XmlElement("writer")]
 		public String TraceWriterClassXml {
 			get { return this.TraceWriter.GetType ().AssemblyQualifiedName; }
 			set { 

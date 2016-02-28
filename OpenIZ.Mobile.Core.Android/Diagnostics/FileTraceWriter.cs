@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Android.Diagnostics
 
 			this.m_logFile = logFileBase;
 				
-			this.TraceInfo ("Startup", "OpenIZ.Mobile.Core Version: {0}", typeof(TraceWriter).Assembly.GetName ().Version);
+			this.WriteTrace (EventLevel.Informational, "Startup", "OpenIZ.Mobile.Core Version: {0} logging at level [{1}]", typeof(TraceWriter).Assembly.GetName ().Version, filter);
 		}
 
 		#region implemented abstract members of TraceWriter

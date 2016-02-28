@@ -20,10 +20,11 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Exceptions;
 using System.Threading;
+using OpenIZ.Mobile.Core.Android;
 
 namespace OpenIZMobile
 {
-	[Activity (Label = "OpenIZ", Theme="@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
+	[Activity (Label = "OpenIZ", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
 	public class SplashActivity : Activity
 	{
 		// Tracer
@@ -42,6 +43,7 @@ namespace OpenIZMobile
 		protected override void OnResume ()
 		{
 			base.OnResume ();
+			OpenIZ.Mobile.Core.ApplicationContext.Current = null;
 
 			this.FindViewById<TextView> (Resource.Id.txt_splash_version).Text = String.Format ("V {0} ({1})",
 				typeof(SplashActivity).Assembly.GetName ().Version,
@@ -51,71 +53,119 @@ namespace OpenIZMobile
 			CancellationTokenSource ctSource = new CancellationTokenSource ();
 			CancellationToken ct = ctSource.Token;
 
-			Task startupWork = new Task(() => {
-				if(!this.DoConfigure())
-					ctSource.Cancel();
+			Task startupWork = new Task (() => {
+				Task.Delay (1000);
+				if (!this.DoConfigure ())
+					ctSource.Cancel ();
 			}, ct);
 
-			startupWork.ContinueWith(t => {
-				if(!ct.IsCancellationRequested)
-					StartActivity(new Intent(this.ApplicationContext, typeof(LoginActivity)));
-			}, TaskScheduler.FromCurrentSynchronizationContext());
+			startupWork.ContinueWith (t => {
+				if (!ct.IsCancellationRequested)
+					StartActivity (new Intent (this.ApplicationContext, typeof(LoginActivity)));
+			}, TaskScheduler.FromCurrentSynchronizationContext ());
 
-			startupWork.Start();
+			startupWork.Start ();
 
 		}
 
 		/// <summary>
 		/// Startup is complete
 		/// </summary>
-		private bool DoConfigure()
+		private bool DoConfigure ()
 		{
 
-			try
-			{
+			try {
 
-				// Force unload
-				ConfigurationManager.Unload();
 
-				// Now we load the configuration
-				var configuration = ConfigurationManager.Current;
-				this.m_tracer = TracerHelper.GetTracer(typeof(SplashActivity));
-				// Not yet configured
-				if (!configuration.IsConfigured) ; // TODO: Configuration screen
+				if (!AndroidApplicationContext.Start ()) {
 
-				// Upgrade applets from our app manifest
-				foreach (var itm in Assets.List ("Applets")) {
-					try {
-						AppletManifest manifest = AppletManifest.Load (Assets.Open (String.Format ("Applets/{0}", itm)));
-						// Write data to assets directory
-						configuration.InstallApplet(manifest.CreatePackage(), true);
-					} catch (Exception e) {
-						this.m_tracer.TraceError (e.ToString ());
+					CancellationTokenSource ctSource = new CancellationTokenSource();
+					CancellationToken ct = ctSource.Token;
+
+					Task notifyUserWork = new Task (() => {
+
+						this.RunOnUiThread (() => this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.needs_setup));
+						Task.Delay (2000);
+
+						try {
+							if (AndroidApplicationContext.StartTemporary ()) {
+								this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
+
+								try {
+									AppletManifest manifest = AppletManifest.Load (Assets.Open ("Applets/SettingsApplet.xml"));
+									// Write data to assets directory
+									AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
+								} catch (Exception e) {
+									this.m_tracer.TraceError (e.ToString ());
+								}
+
+							}
+						} catch (Exception e) {
+							this.m_tracer.TraceError (e.ToString ());
+							ctSource.Cancel();
+							this.ShowException (e);
+						}
+					}, ct);
+
+					// Now show the configuration screen.
+					notifyUserWork.ContinueWith (t => {
+						if(!ct.IsCancellationRequested)
+						{
+							Intent viewIntent = new Intent (this, typeof(AppletActivity));
+							viewIntent.PutExtra ("appletId", "org.openiz.applets.core.settings");
+							viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
+							this.StartActivity (viewIntent);
+
+						}
+					}, TaskScheduler.Current);
+
+					notifyUserWork.Start ();
+					return false;
+				} else {
+
+					RunOnUiThread (() => { 
+						this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.installing_applets);
+					});
+
+					// Upgrade applets from our app manifest
+					foreach (var itm in Assets.List ("Applets")) {
+						try {
+							AppletManifest manifest = AppletManifest.Load (Assets.Open (String.Format ("Applets/{0}", itm)));
+							// Write data to assets directory
+							AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
+						} catch (Exception e) {
+							this.m_tracer.TraceError (e.ToString ());
+						}
 					}
 				}
-
-				if (!configuration.IsConfigured)
-					configuration.Save ();
 				return true;
-			}
-			catch(Exception e) {
+			} catch (Exception e) {
 
-				while (e is TargetInvocationException)
-					e = e.InnerException;
-				this.RunOnUiThread (() => {
-					var alertDialogBuilder = new AlertDialog.Builder (this) 
-						.SetMessage (String.Format("{0} : {1}", Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message)) 
-						.SetCancelable (false) 
-						.SetPositiveButton (Resource.String.confirm, (sender, args) => { 
-							this.Finish();
-						}); 
-						 
-					alertDialogBuilder.Show ();
-				});
+				this.ShowException (e);
 				return false;
 			}
 		}
 
+
+		/// <summary>
+		/// Shows an exception message box
+		/// </summary>
+		/// <param name="e">E.</param>
+		private void ShowException (Exception e)
+		{
+			while (e is TargetInvocationException)
+				e = e.InnerException;
+			this.RunOnUiThread (() => {
+				var alertDialogBuilder = new AlertDialog.Builder (this) 
+					.SetMessage (String.Format ("{0} : {1}", Resources.GetString (Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message)) 
+					.SetCancelable (false) 
+					.SetPositiveButton (Resource.String.confirm, (sender, args) => { 
+					this.Finish ();
+				}); 
+
+				alertDialogBuilder.Show ();
+			});
+		}
 	}
 }
 

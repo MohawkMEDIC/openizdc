@@ -16,6 +16,7 @@ using OpenIZMobile.Layout;
 using OpenIZ.Mobile.Core.Android.Configuration;
 using OpenIZ.Mobile.Core.Configuration;
 using Android.Util;
+using OpenIZ.Mobile.Core.Android;
 
 namespace OpenIZMobile
 {
@@ -50,11 +51,11 @@ namespace OpenIZMobile
 			try
 			{
 				// TODO: Base this on user prefs instead of system prefs
-				var tiles = ConfigurationManager.Current.LoadedApplets;
+				var tiles = AndroidApplicationContext.Current.LoadedApplets;
 				string language = this.Resources.Configuration.Locale.DisplayLanguage;
 
 				this.m_homeLayout.RemoveAllViews ();
-				foreach(var itm in tiles.GroupBy(o => o.Info.GetGroupName(language)  ?? "Uncategorized", o=>o).OrderBy(o=>ConfigurationManager.Current.Configuration.GetSection<AppletConfigurationSection>().AppletGroupOrder.IndexOf(o.Key)))
+				foreach(var itm in tiles.GroupBy(o => o.Info.GetGroupName(language)  ?? "Uncategorized", o=>o).OrderBy(o=>AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletGroupOrder.IndexOf(o.Key)))
 				{
 					UITileContainer tileContainer = new UITileContainer (this);
 					tileContainer.Title = itm.Key;

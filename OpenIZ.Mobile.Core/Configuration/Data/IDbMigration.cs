@@ -8,13 +8,6 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 	public interface IDbMigration
 	{
 
-		/// <summary>
-		/// Gets or sets the configuration value
-		/// </summary>
-		/// <value>The configuration.</value>
-		OpenIZConfiguration Configuration { get;
-			set;
-		}
 
 		/// <summary>
 		/// Gets the identifier of the migration

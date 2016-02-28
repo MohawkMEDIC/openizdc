@@ -110,6 +110,15 @@ namespace OpenIZ.Mobile.Core.Applets
 		}
 
 		/// <summary>
+		/// Gets or sets the applets required policies for a user to run
+		/// </summary>
+		[XmlElement("demand")]
+		public List<String> Policies {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Return this applet reference
 		/// </summary>
 		public AppletReference AsReference()

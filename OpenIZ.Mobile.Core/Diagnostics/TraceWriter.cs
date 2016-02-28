@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Diagnostics
 		public virtual void TraceEvent(EventLevel level, String source, String format, params Object[] args){
 			if (this.m_filter == EventLevel.LogAlways)
 				this.WriteTrace (level, source, format, args);
-			else if (this.m_filter <= level)
+			else if (this.m_filter >= level)
 				this.WriteTrace(level, source, format, args);
 		}
 

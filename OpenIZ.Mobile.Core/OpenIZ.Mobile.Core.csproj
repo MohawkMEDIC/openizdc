@@ -79,6 +79,38 @@
     <Compile Include="Data\DbVersionedData.cs" />
     <Compile Include="Data\DbIdentified.cs" />
     <Compile Include="Data\DbBaseData.cs" />
+    <Compile Include="Security\PolicyDecisionOutcome.cs" />
+    <Compile Include="Security\IPolicyInstance.cs" />
+    <Compile Include="Security\IPolicy.cs" />
+    <Compile Include="Security\ClaimsPrincipal.cs" />
+    <Compile Include="Security\ClaimsIdentity.cs" />
+    <Compile Include="Security\Claim.cs" />
+    <Compile Include="Security\ClaimTypes.cs" />
+    <Compile Include="Exceptions\PolicyViolationException.cs" />
+    <Compile Include="ApplicationContext.cs" />
+    <Compile Include="Security\PolicyIdentifiers.cs" />
+    <Compile Include="Services\IIdentityProviderService.cs" />
+    <Compile Include="Services\IPolicyDecisionService.cs" />
+    <Compile Include="Services\IPolicyInformationService.cs" />
+    <Compile Include="Services\IRoleProviderService.cs" />
+    <Compile Include="Security\LocalPolicyDecisionService.cs" />
+    <Compile Include="Security\LocalPolicyInformationService.cs" />
+    <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
+    <Compile Include="Synchronization\SynchronizationQueue.cs" />
+    <Compile Include="Data\Security\DbSecurityPolicyInstance.cs" />
+    <Compile Include="Data\Security\DbSecurityPolicy.cs" />
+    <Compile Include="Data\Security\DbSecurityUser.cs" />
+    <Compile Include="Data\Security\DbSecurityRole.cs" />
+    <Compile Include="Data\Security\DbSecurityDevice.cs" />
+    <Compile Include="Data\Security\DbSecurityApplication.cs" />
+    <Compile Include="Data\Entities\DbEntity.cs" />
+    <Compile Include="Data\Extensibility\Tag.cs" />
+    <Compile Include="Data\Entities\DbApplicationEntity.cs" />
+    <Compile Include="Data\Entities\DbDeviceEntity.cs" />
+    <Compile Include="Data\Entities\DbEntityName.cs" />
+    <Compile Include="Data\Entities\DbEntityAddress.cs" />
+    <Compile Include="Data\Entities\DbTelecomAddress.cs" />
+    <Compile Include="Data\Entities\DbMaterial.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -106,6 +138,12 @@
     <Folder Include="Diagnostics\" />
     <Folder Include="Data\Extensibility\" />
     <Folder Include="Data\DataType\" />
+    <Folder Include="Security\" />
+    <Folder Include="Services\" />
+    <Folder Include="Synchronization\" />
+    <Folder Include="Synchronization\Model\" />
+    <Folder Include="Data\Security\" />
+    <Folder Include="Data\Entities\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

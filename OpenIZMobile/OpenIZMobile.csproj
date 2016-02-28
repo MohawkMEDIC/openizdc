@@ -144,6 +144,13 @@
     <AndroidResource Include="Resources\drawable\register_patient.png" />
     <AndroidResource Include="Resources\drawable\drk_encounters.png" />
     <AndroidResource Include="Resources\drawable\encounters.png" />
+    <AndroidResource Include="Resources\drawable\orange_gradient.xml" />
+    <AndroidResource Include="Resources\drawable\blue_gradient.xml" />
+    <AndroidResource Include="Resources\drawable\gray_gradient.xml" />
+    <AndroidResource Include="Resources\drawable\drk_grid.png" />
+    <AndroidResource Include="Resources\drawable\grid.png" />
+    <AndroidResource Include="Resources\drawable\drk_facility.png" />
+    <AndroidResource Include="Resources\drawable\facility.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />

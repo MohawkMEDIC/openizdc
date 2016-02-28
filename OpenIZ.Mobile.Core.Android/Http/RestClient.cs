@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		/// </summary>
 		public RestClient () : base()
 		{
-			this.m_tracer = TracerHelper.GetTracer (this.GetType ());
+			this.m_tracer = Tracer.GetTracer (this.GetType ());
 			this.ClientCertificates = new X509Certificate2Collection ();
 		}
 
@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		/// </summary>
 		public RestClient (ServiceClient config) : base(config)
 		{
-			this.m_tracer = TracerHelper.GetTracer (this.GetType ());
+			this.m_tracer = Tracer.GetTracer (this.GetType ());
 			this.ClientCertificates = new X509Certificate2Collection ();
 			// Find the specified certificate
 

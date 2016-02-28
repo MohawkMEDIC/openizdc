@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("statusId"), Indexed, NotNull]
+		[Column("status_id"), Indexed, NotNull]
 		public int StatusId {
 			get;
 			set;
@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("classId"), NotNull]
+		[Column("class_id"), NotNull]
 		public int ClassId {
 			get;
 			set;

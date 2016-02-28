@@ -8,6 +8,13 @@ namespace OpenIZ.Mobile.Core.Data
 	/// </summary>
 	public abstract class DbIdentified
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Data.DbIdentified"/> class.
+		/// </summary>
+		public DbIdentified ()
+		{
+			this.Uuid = Guid.NewGuid ().ToByteArray ();
+		}
 
 		/// <summary>
 		/// Gets or sets the identifier of the identified data

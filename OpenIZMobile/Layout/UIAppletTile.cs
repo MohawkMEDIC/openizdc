@@ -95,7 +95,7 @@ namespace OpenIZMobile.Layout
 				BitmapDrawable d = Resources.GetDrawable (id) as BitmapDrawable;
 
 				if (this.m_currentTile.Size == AppletTileSize.Small) {
-					int szIcon = (int)this.ConvertDpToPx (SZ_SMALL_TILE * 0.75);
+					int szIcon = (int)this.ConvertDpToPx (SZ_SMALL_TILE * 0.65);
 					int lfIcon = (int)((canvas.Width - szIcon) / 2);
 
 					var bitmap = Bitmap.CreateScaledBitmap(d.Bitmap, szIcon, szIcon, false);

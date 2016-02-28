@@ -13,7 +13,7 @@ using Android.Widget;
 
 namespace OpenIZMobile
 {
-	[Activity (Label = "Login to OpenIZ", NoHistory = true, Theme = "@style/OpenIZ.NoTitle")]
+	[Activity (Label = "@string/activity_login", NoHistory = true, Theme = "@style/OpenIZ.NoTitle")]
 	public class LoginActivity : Activity
 	{
 
@@ -37,7 +37,6 @@ namespace OpenIZMobile
 			this.m_btnLogin.Click += (o,e)=>
 			{
 				Intent mainPageIntent = new Intent(ApplicationContext, typeof(HomeActivity));
-
 				this.StartActivity(mainPageIntent);
 			};
 

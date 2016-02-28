@@ -29,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 	{
 
 		// Tracer
-		private Tracer m_tracer = TracerHelper.GetTracer(typeof(AppletWebView));
+		private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
 
 		/// <summary>
 		/// Occurs when applet changed.
@@ -73,7 +73,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.Settings.BlockNetworkLoads = true;
 			this.Settings.BuiltInZoomControls = false;
 			this.Settings.DisplayZoomControls = false;
-			this.AddJavascriptInterface (new AppletFunctionBridge (context, this), "OpenIZApplication");
+			this.AddJavascriptInterface (new AppletFunctionBridge (context, this), "OpenIZApplicationService");
+			this.AddJavascriptInterface (new ConfigurationServiceBridge(), "OpenIZConfigurationService");
+
 
 		}
 
@@ -144,7 +146,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		{
 
 			// Tracer
-			private Tracer m_tracer = TracerHelper.GetTracer(typeof(AppletWebView));
+			private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
 
 			// Applet scheme - Accessing asset in another applet
 			private const string APPLET_SCHEME = "app://openiz.org/applet/";
@@ -186,15 +188,18 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 							new XElement(xhtml + "meta", new XAttribute("content", "true"), new XAttribute("name", "HandheldFriendly")), 
 							new XElement(xhtml + "meta", new XAttribute("content", "width=640px, initial-scale=0.50, maximum-scale=0.50, minimum-scale=0.50, user-scalable=0"), new XAttribute("name", "viewport")), 
 							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap.css"), new XAttribute ("rel", "stylesheet")),
+							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/select2.min.css"), new XAttribute ("rel", "stylesheet")),
+
 //							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap-theme.css"), new XAttribute ("rel", "stylesheet"))
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.custom.css"), new XAttribute ("rel", "stylesheet")),
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.theme.css"), new XAttribute ("rel", "stylesheet")),
+							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.custom.css"), new XAttribute ("rel", "stylesheet")),
+							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.theme.css"), new XAttribute ("rel", "stylesheet")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/angular.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/bootstrap.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.easing.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jqBootstrapValidation.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery-ui.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.easing.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jqBootstrapValidation.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery-ui.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/select2.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", asset.Name + "-controller"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 						},
 						jsLinks = new XElement[] {
@@ -279,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 					path = "index";
 
 				// Now set scope
-				return ConfigurationManager.Current.GetApplet (targetApplet);
+				return AndroidApplicationContext.Current.GetApplet (targetApplet);
 			}
 
 			/// <summary>
@@ -409,7 +414,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		{
 
 			// Tracer
-			private Tracer m_tracer = TracerHelper.GetTracer(typeof(AppletWebChromeClient));
+			private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebChromeClient));
 
 			// Context
 			private Context m_context;

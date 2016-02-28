@@ -81,169 +81,190 @@ namespace OpenIZMobile
 			public const int bed = 2130837510;
 			
 			// aapt resource value: 0x7f020007
-			public const int brick = 2130837511;
+			public const int blue_gradient = 2130837511;
 			
 			// aapt resource value: 0x7f020008
-			public const int calendar = 2130837512;
+			public const int brick = 2130837512;
 			
 			// aapt resource value: 0x7f020009
-			public const int check = 2130837513;
+			public const int calendar = 2130837513;
 			
 			// aapt resource value: 0x7f02000a
-			public const int checkin = 2130837514;
+			public const int check = 2130837514;
 			
 			// aapt resource value: 0x7f02000b
-			public const int circle_bg = 2130837515;
+			public const int checkin = 2130837515;
 			
 			// aapt resource value: 0x7f02000c
-			public const int cogs = 2130837516;
+			public const int circle_bg = 2130837516;
 			
 			// aapt resource value: 0x7f02000d
-			public const int drk_aefi = 2130837517;
+			public const int cogs = 2130837517;
 			
 			// aapt resource value: 0x7f02000e
-			public const int drk_announce = 2130837518;
+			public const int drk_aefi = 2130837518;
 			
 			// aapt resource value: 0x7f02000f
-			public const int drk_applet = 2130837519;
+			public const int drk_announce = 2130837519;
 			
 			// aapt resource value: 0x7f020010
-			public const int drk_applet_alt = 2130837520;
+			public const int drk_applet = 2130837520;
 			
 			// aapt resource value: 0x7f020011
-			public const int drk_baby = 2130837521;
+			public const int drk_applet_alt = 2130837521;
 			
 			// aapt resource value: 0x7f020012
-			public const int drk_barcode = 2130837522;
+			public const int drk_baby = 2130837522;
 			
 			// aapt resource value: 0x7f020013
-			public const int drk_bed = 2130837523;
+			public const int drk_barcode = 2130837523;
 			
 			// aapt resource value: 0x7f020014
-			public const int drk_brick = 2130837524;
+			public const int drk_bed = 2130837524;
 			
 			// aapt resource value: 0x7f020015
-			public const int drk_calendar = 2130837525;
+			public const int drk_brick = 2130837525;
 			
 			// aapt resource value: 0x7f020016
-			public const int drk_check = 2130837526;
+			public const int drk_calendar = 2130837526;
 			
 			// aapt resource value: 0x7f020017
-			public const int drk_checkin = 2130837527;
+			public const int drk_check = 2130837527;
 			
 			// aapt resource value: 0x7f020018
-			public const int drk_cogs = 2130837528;
+			public const int drk_checkin = 2130837528;
 			
 			// aapt resource value: 0x7f020019
-			public const int drk_delete = 2130837529;
+			public const int drk_cogs = 2130837529;
 			
 			// aapt resource value: 0x7f02001a
-			public const int drk_encounters = 2130837530;
+			public const int drk_delete = 2130837530;
 			
 			// aapt resource value: 0x7f02001b
-			public const int drk_foot = 2130837531;
+			public const int drk_encounters = 2130837531;
 			
 			// aapt resource value: 0x7f02001c
-			public const int drk_group = 2130837532;
+			public const int drk_facility = 2130837532;
 			
 			// aapt resource value: 0x7f02001d
-			public const int drk_help = 2130837533;
+			public const int drk_foot = 2130837533;
 			
 			// aapt resource value: 0x7f02001e
-			public const int drk_home = 2130837534;
+			public const int drk_grid = 2130837534;
 			
 			// aapt resource value: 0x7f02001f
-			public const int drk_logout = 2130837535;
+			public const int drk_group = 2130837535;
 			
 			// aapt resource value: 0x7f020020
-			public const int drk_patient = 2130837536;
+			public const int drk_help = 2130837536;
 			
 			// aapt resource value: 0x7f020021
-			public const int drk_patient_alt = 2130837537;
+			public const int drk_home = 2130837537;
 			
 			// aapt resource value: 0x7f020022
-			public const int drk_patient_search = 2130837538;
+			public const int drk_logout = 2130837538;
 			
 			// aapt resource value: 0x7f020023
-			public const int drk_patient_search_alt = 2130837539;
+			public const int drk_patient = 2130837539;
 			
 			// aapt resource value: 0x7f020024
-			public const int drk_queue = 2130837540;
+			public const int drk_patient_alt = 2130837540;
 			
 			// aapt resource value: 0x7f020025
-			public const int drk_register_patient = 2130837541;
+			public const int drk_patient_search = 2130837541;
 			
 			// aapt resource value: 0x7f020026
-			public const int drk_shield = 2130837542;
+			public const int drk_patient_search_alt = 2130837542;
 			
 			// aapt resource value: 0x7f020027
-			public const int drk_stock = 2130837543;
+			public const int drk_queue = 2130837543;
 			
 			// aapt resource value: 0x7f020028
-			public const int drk_temp = 2130837544;
+			public const int drk_register_patient = 2130837544;
 			
 			// aapt resource value: 0x7f020029
-			public const int drk_user = 2130837545;
+			public const int drk_shield = 2130837545;
 			
 			// aapt resource value: 0x7f02002a
-			public const int drk_weigh = 2130837546;
+			public const int drk_stock = 2130837546;
 			
 			// aapt resource value: 0x7f02002b
-			public const int encounters = 2130837547;
+			public const int drk_temp = 2130837547;
 			
 			// aapt resource value: 0x7f02002c
-			public const int foot = 2130837548;
+			public const int drk_user = 2130837548;
 			
 			// aapt resource value: 0x7f02002d
-			public const int group = 2130837549;
+			public const int drk_weigh = 2130837549;
 			
 			// aapt resource value: 0x7f02002e
-			public const int help = 2130837550;
+			public const int encounters = 2130837550;
 			
 			// aapt resource value: 0x7f02002f
-			public const int home = 2130837551;
+			public const int facility = 2130837551;
 			
 			// aapt resource value: 0x7f020030
-			public const int logo = 2130837552;
+			public const int foot = 2130837552;
 			
 			// aapt resource value: 0x7f020031
-			public const int logo_lg = 2130837553;
+			public const int gray_gradient = 2130837553;
 			
 			// aapt resource value: 0x7f020032
-			public const int logout = 2130837554;
+			public const int grid = 2130837554;
 			
 			// aapt resource value: 0x7f020033
-			public const int patient = 2130837555;
+			public const int group = 2130837555;
 			
 			// aapt resource value: 0x7f020034
-			public const int patient_alt = 2130837556;
+			public const int help = 2130837556;
 			
 			// aapt resource value: 0x7f020035
-			public const int patient_search = 2130837557;
+			public const int home = 2130837557;
 			
 			// aapt resource value: 0x7f020036
-			public const int patient_search_alt = 2130837558;
+			public const int logo = 2130837558;
 			
 			// aapt resource value: 0x7f020037
-			public const int queue = 2130837559;
+			public const int logo_lg = 2130837559;
 			
 			// aapt resource value: 0x7f020038
-			public const int register_patient = 2130837560;
+			public const int logout = 2130837560;
 			
 			// aapt resource value: 0x7f020039
-			public const int shield = 2130837561;
+			public const int orange_gradient = 2130837561;
 			
 			// aapt resource value: 0x7f02003a
-			public const int splash_gradient = 2130837562;
+			public const int patient = 2130837562;
 			
 			// aapt resource value: 0x7f02003b
-			public const int stock = 2130837563;
+			public const int patient_alt = 2130837563;
 			
 			// aapt resource value: 0x7f02003c
-			public const int temp = 2130837564;
+			public const int patient_search = 2130837564;
 			
 			// aapt resource value: 0x7f02003d
-			public const int weigh = 2130837565;
+			public const int patient_search_alt = 2130837565;
+			
+			// aapt resource value: 0x7f02003e
+			public const int queue = 2130837566;
+			
+			// aapt resource value: 0x7f02003f
+			public const int register_patient = 2130837567;
+			
+			// aapt resource value: 0x7f020040
+			public const int shield = 2130837568;
+			
+			// aapt resource value: 0x7f020041
+			public const int splash_gradient = 2130837569;
+			
+			// aapt resource value: 0x7f020042
+			public const int stock = 2130837570;
+			
+			// aapt resource value: 0x7f020043
+			public const int temp = 2130837571;
+			
+			// aapt resource value: 0x7f020044
+			public const int weigh = 2130837572;
 			
 			static Drawable()
 			{
@@ -280,7 +301,10 @@ namespace OpenIZMobile
 			public const int txt_login_username = 2131165188;
 			
 			// aapt resource value: 0x7f070007
-			public const int txt_splash_version = 2131165191;
+			public const int txt_splash_info = 2131165191;
+			
+			// aapt resource value: 0x7f070008
+			public const int txt_splash_version = 2131165192;
 			
 			static Id()
 			{
@@ -336,6 +360,12 @@ namespace OpenIZMobile
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f050017
+			public const int activity_login = 2131034135;
+			
+			// aapt resource value: 0x7f050018
+			public const int activity_setup = 2131034136;
+			
 			// aapt resource value: 0x7f050003
 			public const int app_name = 2131034115;
 			
@@ -345,14 +375,17 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050001
 			public const int confirm = 2131034113;
 			
+			// aapt resource value: 0x7f05001a
+			public const int err_applet_not_found = 2131034138;
+			
+			// aapt resource value: 0x7f050019
+			public const int err_general = 2131034137;
+			
+			// aapt resource value: 0x7f05001b
+			public const int err_startup = 2131034139;
+			
 			// aapt resource value: 0x7f05000a
-			public const int err_applet_not_found = 2131034122;
-			
-			// aapt resource value: 0x7f050009
-			public const int err_general = 2131034121;
-			
-			// aapt resource value: 0x7f05000b
-			public const int err_startup = 2131034123;
+			public const int installing_applets = 2131034122;
 			
 			// aapt resource value: 0x7f050000
 			public const int library_name = 2131034112;
@@ -363,8 +396,47 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050007
 			public const int login_title = 2131034119;
 			
+			// aapt resource value: 0x7f050009
+			public const int needs_setup = 2131034121;
+			
 			// aapt resource value: 0x7f050005
 			public const int password = 2131034117;
+			
+			// aapt resource value: 0x7f050015
+			public const int setting_log = 2131034133;
+			
+			// aapt resource value: 0x7f050016
+			public const int setting_log_desc = 2131034134;
+			
+			// aapt resource value: 0x7f050013
+			public const int setting_offline_only = 2131034131;
+			
+			// aapt resource value: 0x7f050014
+			public const int setting_offline_only_desc = 2131034132;
+			
+			// aapt resource value: 0x7f05000c
+			public const int setup_subTitle = 2131034124;
+			
+			// aapt resource value: 0x7f050010
+			public const int setup_subTitle_app = 2131034128;
+			
+			// aapt resource value: 0x7f050012
+			public const int setup_subTitle_lnf = 2131034130;
+			
+			// aapt resource value: 0x7f05000e
+			public const int setup_subTitle_sec = 2131034126;
+			
+			// aapt resource value: 0x7f05000b
+			public const int setup_title = 2131034123;
+			
+			// aapt resource value: 0x7f05000f
+			public const int setup_title_app = 2131034127;
+			
+			// aapt resource value: 0x7f050011
+			public const int setup_title_lnf = 2131034129;
+			
+			// aapt resource value: 0x7f05000d
+			public const int setup_title_sec = 2131034125;
 			
 			// aapt resource value: 0x7f050008
 			public const int startup = 2131034120;
@@ -385,23 +457,29 @@ namespace OpenIZMobile
 		public partial class Style
 		{
 			
-			// aapt resource value: 0x7f060003
-			public const int ActionBar = 2131099651;
+			// aapt resource value: 0x7f060005
+			public const int ActionBar = 2131099653;
 			
 			// aapt resource value: 0x7f060001
 			public const int AppletTile = 2131099649;
 			
+			// aapt resource value: 0x7f060002
+			public const int BlueTitle = 2131099650;
+			
 			// aapt resource value: 0x7f060000
 			public const int DefaultFont = 2131099648;
 			
-			// aapt resource value: 0x7f060002
-			public const int OpenIZ = 2131099650;
+			// aapt resource value: 0x7f060003
+			public const int GrayTitle = 2131099651;
 			
 			// aapt resource value: 0x7f060004
-			public const int OpenIZ_NoTitle = 2131099652;
+			public const int OpenIZ = 2131099652;
 			
-			// aapt resource value: 0x7f060005
-			public const int OpenIZ_Splash = 2131099653;
+			// aapt resource value: 0x7f060006
+			public const int OpenIZ_NoTitle = 2131099654;
+			
+			// aapt resource value: 0x7f060007
+			public const int OpenIZ_Splash = 2131099655;
 			
 			static Style()
 			{

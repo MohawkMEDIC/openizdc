@@ -8,6 +8,15 @@ namespace OpenIZ.Mobile.Core.Data.DataType
 	/// </summary>
 	public abstract class DbIdentifier : DbIdentified
 	{
+		/// <summary>
+		/// Gets or sets the source identifier.
+		/// </summary>
+		/// <value>The source identifier.</value>
+		[Column("source_id"), Indexed]
+		public int SourceId {
+			get;
+			set;
+		}
 
 		/// <summary>
 		/// Gets or sets the value.

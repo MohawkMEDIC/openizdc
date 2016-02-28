@@ -17,9 +17,6 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 		// Tracer
 		private Tracer m_tracer;
 
-		// Configuration
-		private OpenIZConfiguration m_configuration;
-
 		// Migrations
 		private List<IDbMigration> m_migrations;
 
@@ -27,10 +24,9 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Configuration.Data.DataMigrator"/> class.
 		/// </summary>
 		/// <param name="configuration">Configuration.</param>
-		public DataMigrator (OpenIZConfiguration configuration)
+		public DataMigrator ()
 		{
-			this.m_tracer = Tracer.CreateTracer (this.GetType (), configuration);
-			this.m_configuration = configuration;
+			this.m_tracer = Tracer.GetTracer(this.GetType ());
 			this.m_migrations = new List<IDbMigration> ();
 
 			this.m_tracer.TraceInfo ("Scanning for data migrations...");
@@ -38,9 +34,11 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			// Scan for migrations 
 			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.ExportedTypes) {
 				try {
+					if(dbm == typeof(DataMigrator))
+						continue;
+					
 					IDbMigration migration = Activator.CreateInstance (dbm) as IDbMigration;
 					if (migration != null) {
-						migration.Configuration = configuration;
 						this.m_tracer.TraceVerbose ("Found data migrator {0}...", migration.Id);
 						this.m_migrations.Add (migration);
 					}
@@ -62,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 				if (!m.Install ())
 					throw new DataMigrationException (m);
 				else
-					this.m_configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Add (new DataMigrationLog.DataMigrationEntry (m));
+					ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Add (new DataMigrationLog.DataMigrationEntry (m));
 			}
 
 		}
@@ -77,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 
 			this.m_tracer.TraceInfo ("Generating data migration proposal...");
 			foreach (var itm in this.m_migrations.OrderBy(o=>o.Id)) {
-				var migrationLog = this.m_configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Find (o => o.Id == itm.Id);
+				var migrationLog = ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Find (o => o.Id == itm.Id);
 				this.m_tracer.TraceVerbose ("Migration {0} ... {1}", itm.Id, migrationLog == null ? "Install" : "Skip - Installed on " + migrationLog.Date.ToString ());
 				if (migrationLog == null)
 					retVal.Add (itm);

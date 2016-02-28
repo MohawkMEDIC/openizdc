@@ -11,7 +11,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 	public static class X509CertificateUtils
 	{
 
-		private static Tracer s_tracer = TracerHelper.GetTracer(typeof(X509CertificateUtils));
+		private static Tracer s_tracer = Tracer.GetTracer(typeof(X509CertificateUtils));
 
 		/// <summary>
 		/// Find configuration value from configuration values

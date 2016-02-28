@@ -30,10 +30,18 @@ namespace OpenIZ.Mobile.Core.Diagnostics
 		/// <summary>
 		/// Creates a logging interface for the specified source
 		/// </summary>
-		public static Tracer CreateTracer (Type sourceType, OpenIZConfiguration config)
+		public static Tracer GetTracer (Type sourceType)
+		{
+			return GetTracer (sourceType, ApplicationContext.Current.Configuration);
+		}
+
+		/// <summary>
+		/// Creates a logging interface for the specified source
+		/// </summary>
+		public static Tracer GetTracer (Type sourceType, OpenIZConfiguration configuration)
 		{
 			var retVal = new Tracer (sourceType.FullName);
-			retVal.m_writers = new List<TraceWriter> (config.GetSection<DiagnosticsConfigurationSection> ()?.TraceWriter.Select (o => o.TraceWriter));
+			retVal.m_writers = new List<TraceWriter> (configuration.GetSection<DiagnosticsConfigurationSection> ()?.TraceWriter.Select (o => o.TraceWriter));
 			return retVal;
 		}
 

@@ -57,9 +57,11 @@
     <Compile Include="AppletEngine\AppletWebView.cs" />
     <Compile Include="AppletEngine\JNI\AppletFunctionBridge.cs" />
     <Compile Include="Security\X509CertificateUtils.cs" />
-    <Compile Include="Diagnostics\TracerExtension.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Diagnostics\FileTraceWriter.cs" />
+    <Compile Include="Security\PolicyPermissionAttribute.cs" />
+    <Compile Include="AndroidApplicationContext.cs" />
+    <Compile Include="AppletEngine\JNI\ConfigurationServiceBridge.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

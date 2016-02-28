@@ -15,7 +15,7 @@
   <asset name="index" mimeType="text/html">
     <contentXml>
       <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientSearchController">
-        <form name="filter">
+        <form name="filterForm">
           <div class="container">
             <div class="row">
               <div class="col-md-12">
@@ -37,11 +37,12 @@
                         <div class="panel-body">
                           <div class="input-group">
                             <span class="input-group-addon" id="barcodeLabel">Identifier:</span>
-                            <input ng-model="barcodeId" type="text" class="form-control" placeholder="0303030303" name="barcodeId" id="barcodeId" aria-describedby="barcodeLabel" />
+                            <input ng-model="searchFilter.barcodeId" type="text" class="form-control" placeholder="0303030303" name="barcodeId" id="barcodeId" aria-describedby="barcodeLabel" />
                             <span class="input-group-addon">
-                              <a href="javascript:OpenIZ.barcodeScan($('#barcodeId'))">
+                              <a ng-click="scanBarcode('#barcodeId')">
                                 <span class="glyphicon glyphicon-barcode">
                                 </span>
+                                Scan
                               </a>
                             </span>
                           </div>
@@ -57,23 +58,23 @@
                           <div class="panel-body">
                             <div class="input-group">
                               <span class="input-group-addon" id="firstNameLabel">First Name:</span>
-                              <input ng-model="patient.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="firstName" id="firstName" aria-describedby="firstNameLabel" />
+                              <input ng-model="searchFilter.patient.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="firstName" id="firstName" aria-describedby="firstNameLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="lastNameLabel">Last Name:</span>
-                              <input ng-model="patient.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="lastName" id="lastName" aria-describedby="lastNameLabel" />
+                              <input ng-model="searchFilter.patient.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="lastName" id="lastName" aria-describedby="lastNameLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="dobDateFromLabel">Date of Birth (from):</span>
-                              <input ng-model="patient.dobFrom" data-type="date" style="background-color:#fff" readonly="readonly" class="datepicker datepicker-pointer form-control" data-max-date="0 d" data-date-format="dd-M-yy" type="text" name="dobDateFrom" id="dobDateFrom" aria-describedby="dobDateFromLabel" />
+                              <input ng-model="searchFilter.patient.dobFrom" type="date" class="form-control" ng-blur="updateDobToMin(searchFilter)" data-max-date="0" name="dobDateFrom" id="dobDateFrom" aria-describedby="dobDateFromLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="dobDateToLabel">Date of Birth (to):</span>
-                              <input ng-model="patient.dobTo" data-type="date"  style="background-color:#fff" readonly="readonly" class="datepicker datepicker-pointer form-control" data-max-date="0 d" data-date-format="dd-M-yy" type="text" name="dobDateTo" id="dobDateTo" aria-describedby="dobDateToLabel" />
+                              <input ng-model="searchFilter.patient.dobTo" class="form-control" data-max-date="0" type="date" name="dobDateTo" id="dobDateTo" aria-describedby="dobDateToLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="genderLabel">Gender:</span>
-                              <select ng-model="patient.gender" class="form-control">
+                              <select ng-model="searchFilter.patient.gender" class="form-control">
                                 <option>---</option>
                                 <option value="M">Male</option>
                                 <option value="F">Female</option>
@@ -93,7 +94,7 @@
                           <div class="panel-body">
                             <div class="input-group">
                               <span class="input-group-addon" id="relationLabel">Relationship to Client:</span>
-                              <select ng-model="nok.relationshipKind" id="relation" class="form-control">
+                              <select ng-model="searchFilter.nok.relationshipKind" id="relation" class="form-control">
                                 <option value="MTH">Mother</option>
                                 <option value="FTH">Father</option>
                                 <option value="UNC">Aunt/Uncle</option>
@@ -102,11 +103,11 @@
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="nokFirstNameLabel">First Name:</span>
-                              <input ng-model="nok.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="nokFirstName" id="nokFirstName" aria-describedby="nokFirstNameLabel" />
+                              <input ng-model="searchFilter.nok.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="nokFirstName" id="nokFirstName" aria-describedby="nokFirstNameLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="nokLastNameLabel">Last Name:</span>
-                              <input ng-model="nok.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="nokLastName" id="nokLastName" aria-describedby="nokLastNameLabel" />
+                              <input ng-model="searchFilter.nok.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="nokLastName" id="nokLastName" aria-describedby="nokLastNameLabel" />
                             </div>
                           </div>
                         </div>
@@ -120,24 +121,24 @@
                         <div id="additionalParms" class="panel-collapse collapse">
                           <div class="panel-body">
                             <div class="input-group">
-                              <span class="input-group-addon" id="village">Village:</span>
-                              <input ng-model="patient.city" type="text" class="form-control" placeholder="Village" name="villageId" id="villageId" aria-describedby="villiageLabel" />
+                              <span class="input-group-addon" id="village">City/Village:</span>
+                              <input ng-model="searchFilter.patient.city" type="text" class="form-control" placeholder="Village" name="villageId" id="villageId" aria-describedby="villiageLabel" />
                             </div>
                             <div class="input-group">
                               <span class="input-group-addon" id="telephoneLabel">Telephone:</span>
-                              <input ng-model="patient.telecom" type="text" class="form-control" placeholder="Telephone Number" name="telephone" id="telephone" aria-describedby="telephoneLabel" />
+                              <input ng-model="searchFilter.patient.telecom" type="text" class="form-control" placeholder="Telephone Number" name="telephone" id="telephone" aria-describedby="telephoneLabel" />
                             </div>
                           </div>
                         </div>
                       </div>
                       <div class="pull-right btn-group">
-                        <a class="btn btn-lg btn-danger" href="javascript:doClose();">
+                        <button class="btn btn-lg btn-danger" ng-click="close()">
                           <span class="glyphicon glyphicon-remove">
                           </span> Cancel
-                        </a>
-                        <a class="btn btn-lg btn-default" ng-click="search(filter)">
+                        </button>
+                        <button class="btn btn-lg btn-primary" ng-click="search(searchFilter)">
                           Search <span class="glyphicon glyphicon-search"></span>
-                        </a>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -161,16 +162,30 @@
 
 				$scope.master = {};
 
+				// scan barcode
+				$scope.scanBarcode = function(barcodeTarget)
+				{
+					$(barcodeTarget).val(OpenIZ.App.scanBarcode());
+				}
+
 				// search
 				$scope.search = function(filter) {
-					alert(filter);
+					OpenIZ.Patient.search(filter);
 				};
 
-				$scope.reset = function() {
-					$scope.user = angular.copy($scope.master);
+				//$scope.reset = function() {
+				//		$scope.user = angular.copy($scope.master);
+				//};
+
+				$scope.close = function() {
+					OpenIZ.App.close();
 				};
 
-				$scope.reset();
+				$scope.updateDobToMin = function(filter)
+				{
+					$("#dobDateTo").attr("min", OpenIZ.Util.toDateInputString(filter.patient.dobFrom));
+				}
+				//$scope.reset();
 			}]);
 
 		]]>
