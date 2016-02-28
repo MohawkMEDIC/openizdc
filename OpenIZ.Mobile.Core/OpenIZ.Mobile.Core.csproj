@@ -104,13 +104,13 @@
     <Compile Include="Data\Security\DbSecurityDevice.cs" />
     <Compile Include="Data\Security\DbSecurityApplication.cs" />
     <Compile Include="Data\Entities\DbEntity.cs" />
-    <Compile Include="Data\Extensibility\Tag.cs" />
     <Compile Include="Data\Entities\DbApplicationEntity.cs" />
     <Compile Include="Data\Entities\DbDeviceEntity.cs" />
     <Compile Include="Data\Entities\DbEntityName.cs" />
     <Compile Include="Data\Entities\DbEntityAddress.cs" />
     <Compile Include="Data\Entities\DbTelecomAddress.cs" />
     <Compile Include="Data\Entities\DbMaterial.cs" />
+    <Compile Include="Data\Extensibility\DbTag.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

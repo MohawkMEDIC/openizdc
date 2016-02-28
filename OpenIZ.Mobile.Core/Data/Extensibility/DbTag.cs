@@ -6,7 +6,7 @@ namespace OpenIZ.Mobile.Core.Data.Extensibility
 	/// <summary>
 	/// Represents a simpe tag (version independent)
 	/// </summary>
-	public abstract class Tag : DbIdentified
+	public abstract class DbTag : DbIdentified
 	{
 		/// <summary>
 		/// Gets or sets the source.
@@ -39,6 +39,21 @@ namespace OpenIZ.Mobile.Core.Data.Extensibility
 		}
 	}
 
+	/// <summary>
+	/// Represents a tag associated with an enttiy
+	/// </summary>
+	[Table("entity_tag")]
+	public class DbEntityTag : DbTag
+	{
+	}
+
+	/// <summary>
+	/// Represents a tag associated with an act
+	/// </summary>
+	[Table("act_tag")]
+	public class DbActTag : DbTag
+	{
+	}
 
 }
 
