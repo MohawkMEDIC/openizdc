@@ -7,6 +7,12 @@ namespace OpenIZ.Mobile.Core.Security
 	/// </summary>
 	public static class ClaimTypes
 	{
+
+		/// <summary>
+		/// The open iz scope claim.
+		/// </summary>
+		public const string OpenIzScopeClaim = "http://openiz.org/claims/scope";
+
 		/// <summary>
 		/// Granted policy claim
 		/// </summary>
@@ -47,6 +53,30 @@ namespace OpenIZ.Mobile.Core.Security
 		/// </summary>
 		public const string XspaUserIdentifierClaim = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
 
+		/// <summary>
+		/// Authentication type
+		/// </summary>
+		public const string AuthenticationType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authentication";
+		/// <summary>
+		/// The authentication instant claim.
+		/// </summary>
+		public const string AuthenticationInstant = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationinstant";
+		/// <summary>
+		/// The authentication method claim.
+		/// </summary>
+		public const string AuthenticationMethod = "http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod";
+		/// <summary>
+		/// The expiration claim.
+		/// </summary>
+		public const string Expiration = "http://schemas.microsoft.com/ws/2008/06/identity/claims/expiration";
+		/// <summary>
+		/// The security identifier claim.
+		/// </summary>
+		public const string Sid = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/sid";
+		/// <summary>
+		/// Email address claim
+		/// </summary>
+		public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
 	}
 }
 

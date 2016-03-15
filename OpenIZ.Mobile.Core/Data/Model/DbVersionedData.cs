@@ -1,7 +1,9 @@
 ﻿using System;
 using SQLite;
+using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 
-namespace OpenIZ.Mobile.Core.Data
+namespace OpenIZ.Mobile.Core.Data.Model
 {
 	/// <summary>
 	/// Versioned data
@@ -18,6 +20,17 @@ namespace OpenIZ.Mobile.Core.Data
 		{
 			get;
 			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the version key.
+		/// </summary>
+		/// <value>The version key.</value>
+		[Ignore]
+		public Guid VersionKey
+		{
+			get { return this.VersionUuid == null ? Guid.Empty : new Guid (this.VersionUuid); }
+			set { this.VersionUuid = value.ToByteArray (); }
 		}
 
 	}

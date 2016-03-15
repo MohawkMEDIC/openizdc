@@ -26,7 +26,35 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
+		/// <summary>
+		/// Gets or sets the allowed token type
+		/// </summary>
+		/// <value>The type of the token.</value>
+		[XmlElement("tokenType")]
+		public String TokenType {
+			get;
+			set;
+		}
 
+		/// <summary>
+		/// Gets or sets the token algorithms.
+		/// </summary>
+		/// <value>The token algorithms.</value>
+		[XmlElement("tokenAlg")]
+		public List<String> TokenAlgorithms {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the token symmetric secrets.
+		/// </summary>
+		/// <value>The token symmetric secrets.</value>
+		[XmlElement("secret")]
+		public List<Byte[]> TokenSymmetricSecrets
+		{
+			get;set;
+		}
 	}
 
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents a material in the database
 	/// </summary>
 	[Table("material")]
-	public class DbMaterial : DbEntity
+	public class DbMaterial : DbEntityLink
 	{
 
 		/// <summary>
@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("form_concept"), Indexed, NotNull)]
+		[Column("form_concept"), Indexed, NotNull]
 		public int FormConcept {
 			get;
 			set;
@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Entities
 		/// Gets or sets the lot number.
 		/// </summary>
 		/// <value>The lot number.</value>
-		[Column("lot"), NotNull, Indexed)]
+		[Column("lot"), NotNull, Indexed]
 		public String LotNumber {
 			get;
 			set;

@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Security
+namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
 	/// <summary>
 	/// Represents a single security policy

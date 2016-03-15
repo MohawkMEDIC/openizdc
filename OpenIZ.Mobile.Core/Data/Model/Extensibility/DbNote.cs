@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Extensibility
+namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 {
 	/// <summary>
 	/// Represents note storage

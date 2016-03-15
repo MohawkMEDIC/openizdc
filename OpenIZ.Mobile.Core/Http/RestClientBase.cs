@@ -35,9 +35,18 @@ namespace OpenIZ.Mobile.Core.Http
 		/// Create the HTTP request
 		/// </summary>
 		/// <param name="url">URL.</param>
-		protected virtual WebRequest CreateHttpRequest(String url, params KeyValuePair<String, Object>[] query)
+		protected virtual WebRequest CreateHttpRequest(String resourceName, params KeyValuePair<String, Object>[] query)
 		{
-
+			// URL is relative to base address
+			Uri baseUrl = new Uri(this.Description.Endpoint[0].Address);
+			UriBuilder uriBuilder = new UriBuilder ();
+			uriBuilder.Scheme = baseUrl.Scheme;
+			uriBuilder.Host = baseUrl.Host;
+			uriBuilder.Port = baseUrl.Port;
+			uriBuilder.Path = uriBuilder.Path;
+			if (!String.IsNullOrEmpty (resourceName))
+				uriBuilder.Path += "/" + resourceName;
+			
 			// Add query string
 			if (query != null) {
 				String queryString = String.Empty;
@@ -46,13 +55,10 @@ namespace OpenIZ.Mobile.Core.Http
 					if (!kv.Equals(query.Last ()))
 						queryString += "&";
 				}
-				if (url.Contains ("?"))
-					url += "&" + queryString;
-				else
-					url += "?" + queryString;
+				uriBuilder.Query = queryString;
 			}
 
-			Uri uri = new Uri (url);
+			Uri uri = uriBuilder.Uri;
 
 			// Add headers
 			WebRequest retVal = HttpWebRequest.Create(uri.ToString());
@@ -234,6 +240,17 @@ namespace OpenIZ.Mobile.Core.Http
 				return ServiceClientErrorType.GenericError;
 		}
 
+		/// <summary>
+		/// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+		/// </summary>
+		/// <filterpriority>2</filterpriority>
+		/// <remarks>Call <see cref="Dispose"/> when you are finished using the <see cref="OpenIZ.Mobile.Core.Http.RestClientBase"/>.
+		/// The <see cref="Dispose"/> method leaves the <see cref="OpenIZ.Mobile.Core.Http.RestClientBase"/> in an unusable
+		/// state. After calling <see cref="Dispose"/>, you must release all references to the
+		/// <see cref="OpenIZ.Mobile.Core.Http.RestClientBase"/> so the garbage collector can reclaim the memory that the
+		/// <see cref="OpenIZ.Mobile.Core.Http.RestClientBase"/> was occupying.</remarks>
+		public void Dispose() {
+		}
 	}
 
 	/// <summary>

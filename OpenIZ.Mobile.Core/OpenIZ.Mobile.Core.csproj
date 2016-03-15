@@ -36,7 +36,6 @@
     <Compile Include="Applets\AppletInfo.cs" />
     <Compile Include="Applets\AppletTile.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
-    <Compile Include="Authentication\IAuthenticationProvider.cs" />
     <Compile Include="Authentication\Credentials.cs" />
     <Compile Include="Http\IRestClient.cs" />
     <Compile Include="Http\IBodySerializer.cs" />
@@ -65,20 +64,6 @@
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Applets\AppletPackage.cs" />
-    <Compile Include="Data\Concepts\DbConceptRelationshipType.cs" />
-    <Compile Include="Data\Concepts\DbConceptClass.cs" />
-    <Compile Include="Data\Concepts\DbConceptRelationship.cs" />
-    <Compile Include="Data\Concepts\DbConceptSet.cs" />
-    <Compile Include="Data\Concepts\DbConcept.cs" />
-    <Compile Include="Data\Concepts\DbConceptName.cs" />
-    <Compile Include="Data\DataType\DbIdentifier.cs" />
-    <Compile Include="Data\DataType\DbIdentifierType.cs" />
-    <Compile Include="Data\Extensibility\DbExtension.cs" />
-    <Compile Include="Data\Extensibility\DbExtensionType.cs" />
-    <Compile Include="Data\Extensibility\DbNote.cs" />
-    <Compile Include="Data\DbVersionedData.cs" />
-    <Compile Include="Data\DbIdentified.cs" />
-    <Compile Include="Data\DbBaseData.cs" />
     <Compile Include="Security\PolicyDecisionOutcome.cs" />
     <Compile Include="Security\IPolicyInstance.cs" />
     <Compile Include="Security\IPolicy.cs" />
@@ -97,20 +82,52 @@
     <Compile Include="Security\LocalPolicyInformationService.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
     <Compile Include="Synchronization\SynchronizationQueue.cs" />
-    <Compile Include="Data\Security\DbSecurityPolicyInstance.cs" />
-    <Compile Include="Data\Security\DbSecurityPolicy.cs" />
-    <Compile Include="Data\Security\DbSecurityUser.cs" />
-    <Compile Include="Data\Security\DbSecurityRole.cs" />
-    <Compile Include="Data\Security\DbSecurityDevice.cs" />
-    <Compile Include="Data\Security\DbSecurityApplication.cs" />
-    <Compile Include="Data\Entities\DbEntity.cs" />
-    <Compile Include="Data\Entities\DbApplicationEntity.cs" />
-    <Compile Include="Data\Entities\DbDeviceEntity.cs" />
-    <Compile Include="Data\Entities\DbEntityName.cs" />
-    <Compile Include="Data\Entities\DbEntityAddress.cs" />
-    <Compile Include="Data\Entities\DbTelecomAddress.cs" />
-    <Compile Include="Data\Entities\DbMaterial.cs" />
-    <Compile Include="Data\Extensibility\DbTag.cs" />
+    <Compile Include="Services\IDataPersistenceService.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityApplication.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityDevice.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityPolicy.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityPolicyInstance.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityRole.cs" />
+    <Compile Include="Data\Model\Security\DbSecurityUser.cs" />
+    <Compile Include="Data\Model\DbBaseData.cs" />
+    <Compile Include="Data\Model\DbIdentified.cs" />
+    <Compile Include="Data\Model\DbVersionedData.cs" />
+    <Compile Include="Data\Model\Concepts\DbConcept.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptClass.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptName.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptRelationship.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptRelationshipType.cs" />
+    <Compile Include="Data\Model\Concepts\DbConceptSet.cs" />
+    <Compile Include="Data\Model\DataType\DbIdentifier.cs" />
+    <Compile Include="Data\Model\DataType\DbIdentifierType.cs" />
+    <Compile Include="Data\Model\Entities\DbApplicationEntity.cs" />
+    <Compile Include="Data\Model\Entities\DbDeviceEntity.cs" />
+    <Compile Include="Data\Model\Entities\DbEntity.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityAddress.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityName.cs" />
+    <Compile Include="Data\Model\Entities\DbMaterial.cs" />
+    <Compile Include="Data\Model\Entities\DbTelecomAddress.cs" />
+    <Compile Include="Data\Model\Extensibility\DbExtension.cs" />
+    <Compile Include="Data\Model\Extensibility\DbExtensionType.cs" />
+    <Compile Include="Data\Model\Extensibility\DbNote.cs" />
+    <Compile Include="Data\Model\Extensibility\DbTag.cs" />
+    <Compile Include="Data\LocalDataPersistenceService.cs" />
+    <Compile Include="Data\Model\Roles\DbPatient.cs" />
+    <Compile Include="Data\Model\Entities\DbPerson.cs" />
+    <Compile Include="Data\Model\Roles\DbProvider.cs" />
+    <Compile Include="Data\Model\Entities\DbOrganization.cs" />
+    <Compile Include="Data\Model\Entities\DbPlace.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityLink.cs" />
+    <Compile Include="Data\Model\ModelExtensions.cs" />
+    <Compile Include="Exceptions\LocalPersistenceException.cs" />
+    <Compile Include="Data\Persistence\IdentifiedPersistenceService.cs" />
+    <Compile Include="Data\Persistence\BaseDataPersistenceService.cs" />
+    <Compile Include="Security\LocalIdentityService.cs" />
+    <Compile Include="Services\IPasswordHashingService.cs" />
+    <Compile Include="Http\ConfigurationExtensions.cs" />
+    <Compile Include="Http\FormBodySerializer.cs" />
+    <Compile Include="Services\IConceptService.cs" />
+    <Compile Include="Services\Impl\LocalConceptService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -136,14 +153,20 @@
     <Folder Include="Configuration\Data\Migrations\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Diagnostics\" />
-    <Folder Include="Data\Extensibility\" />
-    <Folder Include="Data\DataType\" />
     <Folder Include="Security\" />
     <Folder Include="Services\" />
     <Folder Include="Synchronization\" />
     <Folder Include="Synchronization\Model\" />
-    <Folder Include="Data\Security\" />
-    <Folder Include="Data\Entities\" />
+    <Folder Include="Data\Model\" />
+    <Folder Include="Data\Model\Security\" />
+    <Folder Include="Data\Model\Concepts\" />
+    <Folder Include="Data\Model\DataType\" />
+    <Folder Include="Data\Model\Entities\" />
+    <Folder Include="Data\Model\Extensibility\" />
+    <Folder Include="Data\Model\Roles\" />
+    <Folder Include="Data\Persistence\" />
+    <Folder Include="Data\Map\" />
+    <Folder Include="Services\Impl\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -154,4 +177,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Map\ModelMap.xml" />
+  </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents an entity which is used to represent an application
 	/// </summary>
 	[Table("application")]
-	public class DbApplicationEntity
+	public class DbApplicationEntity : DbEntityLink
 	{
 		/// <summary>
 		/// Gets or sets the security application.

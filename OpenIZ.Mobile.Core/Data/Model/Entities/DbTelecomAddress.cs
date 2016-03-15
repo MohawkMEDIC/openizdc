@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents a telecommunications address
 	/// </summary>
 	[Table("entity_telecom")]
-	public class DbTelecomAddress : DbIdentified
+	public class DbTelecomAddress : DbEntityLink
 	{
 
 		/// <summary>

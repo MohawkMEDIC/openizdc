@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Concepts
+namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
 	/// <summary>
 	/// Represents a concept name
@@ -14,8 +14,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// Gets or sets the concept identifier.
 		/// </summary>
 		/// <value>The concept identifier.</value>
-		[Column("concept_id"), Indexed, NotNull]
-		public int ConceptId {
+		[Column("concept_uuid"), Indexed, NotNull, MaxLength(16)]
+		public byte[] ConceptUuid {
 			get;
 			set;
 		}
@@ -54,8 +54,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phon_alg")]
-		public int PhoneticAlgorithmId {
+		[Column("phon_alg"), MaxLength(16)]
+		public byte[] PhoneticAlgorithmUuid {
 			get;
 			set;
 		}

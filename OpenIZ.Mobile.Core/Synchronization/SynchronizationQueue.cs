@@ -13,6 +13,43 @@ using System.Xml.Serialization;
 namespace OpenIZ.Mobile.Core.Synchronization
 {
 	/// <summary>
+	/// Synchronization queue helper.
+	/// </summary>
+	public static class SynchronizationQueue
+	{
+		/// <summary>
+		/// Gets the current inbound queue
+		/// </summary>
+		/// <value>The inbound.</value>
+		public static SynchronizationQueue<InboundQueueEntry> Inbound {
+			get {
+				return SynchronizationQueue<InboundQueueEntry>.Current;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current outbound queue
+		/// </summary>
+		/// <value>The inbound.</value>
+		public static SynchronizationQueue<OutboundQueueEntry> Outbound {
+			get {
+				return SynchronizationQueue<OutboundQueueEntry>.Current;
+			}
+		}
+
+		/// <summary>
+		/// Gets the current deadletter queue
+		/// </summary>
+		/// <value>The inbound.</value>
+		public static SynchronizationQueue<DeadLetterQueueEntry> DeadLetter {
+			get {
+				return SynchronizationQueue<DeadLetterQueueEntry>.Current;
+			}
+		}
+
+	}
+
+	/// <summary>
 	/// Represents a generic synchronization queue
 	/// </summary>
 	public class SynchronizationQueue<TQueueEntry> where TQueueEntry : SynchronizationQueueEntry, new()
@@ -63,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// <summary>
 		/// Enqueue the specified entry data
 		/// </summary>
-		public TQueueEntry Enqueue(IdentifiedData data)
+		public TQueueEntry Enqueue(IdentifiedData data, DataOperationType operation)
 		{
 			// Serialize object
 			XmlSerializer xsz = new XmlSerializer (data.GetType ());
@@ -75,6 +112,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				TQueueEntry queueEntry = new TQueueEntry () {
 					Data = ms.ToArray (),
 					CreationTime = DateTime.Now,
+					Operation = operation,
 					Type = data.GetType ().FullName
 				};
 

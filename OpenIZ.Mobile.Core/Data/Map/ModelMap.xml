@@ -1,2 +1,10 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 
+<modelMap xmlns="http://openiz.org/model/map">
+	<class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityUser, OpenIZ.Mobile.Core, Version=0.1.0.0">
+		<property modelName="CreatedByKey" domainName="CreatedByUuid"/>
+		<property modelName="UpdatedByKey" domainName="UpdatedByKey"/>
+		<property modelName="ObsoletedByKey" domainName="ObsoletedByKey"/>
+	</class>
+</modelMap>

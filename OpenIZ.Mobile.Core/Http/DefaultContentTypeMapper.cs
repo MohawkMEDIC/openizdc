@@ -22,6 +22,8 @@ namespace OpenIZ.Mobile.Core.Http
 					return new XmlBodySerializer (typeHint);
 				case "application/json":
 					return new JsonBodySerializer (typeHint);
+				case "application/x-www-urlform-encoded":
+					return new FormBodySerializer ();
 				default:
 					throw new InvalidOperationException ();
 			}

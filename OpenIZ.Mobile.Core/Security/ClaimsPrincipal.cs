@@ -13,7 +13,7 @@ namespace OpenIZ.Mobile.Core.Security
 
 
 		// Get the identities
-		private List<ClaimsIdentity> m_identities;
+		protected List<ClaimsIdentity> m_identities;
 
 		/// <summary>
 		/// Create a new claims principal

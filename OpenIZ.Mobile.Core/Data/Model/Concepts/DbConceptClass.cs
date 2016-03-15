@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Concepts
+namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
 	/// <summary>
 	/// Represents storage entity for concept class

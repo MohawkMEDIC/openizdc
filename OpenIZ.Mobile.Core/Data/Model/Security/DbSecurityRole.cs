@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Security
+namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
 	/// <summary>
 	/// Represents a security role
 	/// </summary>
 	[Table("security_role")]
-	public class DbSecurityRole
+	public class DbSecurityRole :DbIdentified
 	{
 		/// <summary>
 		/// Gets or sets the name.

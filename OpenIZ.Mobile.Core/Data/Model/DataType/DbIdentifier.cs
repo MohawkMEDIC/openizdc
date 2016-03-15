@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.DataType
+namespace OpenIZ.Mobile.Core.Data.Model.DataType
 {
 	/// <summary>
 	/// Represents an identifier

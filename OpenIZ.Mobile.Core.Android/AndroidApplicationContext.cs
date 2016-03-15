@@ -14,6 +14,7 @@ using System.Diagnostics.Tracing;
 using Android.Util;
 using Android.Widget;
 using Android.Runtime;
+using System.Runtime.InteropServices;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -22,6 +23,13 @@ namespace OpenIZ.Mobile.Core.Android
 	/// </summary>
 	public class AndroidApplicationContext : ApplicationContext
 	{
+
+		// Application Secret
+		public static readonly byte[] secret = new byte[]{
+			0xFF, 0x00, 0x43, 0x23, 0x55, 0x98, 0xA0, 0x20,
+			0xC3, 0xE3, 0xE2, 0xA1, 0x42, 0x92, 0x81, 0xE3
+		};
+
 
 		// Applets
 		private List<AppletManifest> m_applets = new List<AppletManifest>();
@@ -271,6 +279,7 @@ namespace OpenIZ.Mobile.Core.Android
 				return this.m_configurationManager.Configuration;
 			}
 		}
+
 
 		#endregion
 	}

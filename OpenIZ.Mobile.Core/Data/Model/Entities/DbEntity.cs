@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents an entity in the database

@@ -7,6 +7,29 @@ using System.Reflection;
 namespace OpenIZ.Mobile.Core.Synchronization.Model
 {
 	/// <summary>
+	/// Synchronization operation type.
+	/// </summary>
+	public enum DataOperationType 
+	{
+		/// <summary>
+		/// The operation represents an inbound entry (sync)
+		/// </summary>
+		Sync = 0,
+		/// <summary>
+		/// Operation represents an insert (create) only if not existing
+		/// </summary>
+		Insert = 1,
+		/// <summary>
+		/// Operation represents an update
+		/// </summary>
+		Update = 2,
+		/// <summary>
+		/// Operation represents an obsolete
+		/// </summary>
+		Obsolete = 3
+	}
+
+	/// <summary>
 	/// The message queue represents outbound or inbound data requests found by the sync service
 	/// </summary>
 	public abstract class SynchronizationQueueEntry 
@@ -18,6 +41,16 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// <value>The identifier.</value>
 		[PrimaryKey, AutoIncrement, Column("id")]
 		public int Id {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the operation.
+		/// </summary>
+		/// <value>The operation.</value>
+		[Column("operation"), NotNull]
+		public DataOperationType Operation {
 			get;
 			set;
 		}

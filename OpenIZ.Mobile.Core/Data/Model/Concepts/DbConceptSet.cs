@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Concepts
+namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
 	/// <summary>
 	/// Concept set
@@ -42,8 +42,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// Gets or sets the concept identifier.
 		/// </summary>
 		/// <value>The concept identifier.</value>
-		[Column("concept"), NotNull]
-		public int ConceptId {
+		[Column("concept"), NotNull, MaxLength(16)]
+		public byte[] ConceptUuid {
 			get;
 			set;
 		}
@@ -52,8 +52,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// Gets or sets the concept set identifier.
 		/// </summary>
 		/// <value>The concept set identifier.</value>
-		[Column("concept_set"), NotNull]
-		public int ConceptSetId {
+		[Column("concept_set"), NotNull, MaxLength(16)]
+		public int ConceptSetUuid {
 			get;
 			set;
 		}

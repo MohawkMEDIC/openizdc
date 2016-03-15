@@ -53,6 +53,9 @@
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android.Export" />
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\Solution Items\SQLitePCL.raw.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -166,7 +169,6 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\PatientSearchApplet.xml" />
-    <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
     <AndroidAsset Include="Assets\css\bootstrap.css" />
     <AndroidAsset Include="Assets\css\bootstrap-theme.css" />
     <AndroidAsset Include="Assets\js\angular.min.js" />
@@ -209,6 +211,7 @@
     <AndroidAsset Include="Assets\js\Chart.min.js" />
     <AndroidAsset Include="Assets\js\select2.min.js" />
     <AndroidAsset Include="Assets\css\select2.min.css" />
+    <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Security
+namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
 	/// <summary>
 	/// Represents a security device. This table should only have one row (the current device)

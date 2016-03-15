@@ -9,7 +9,7 @@ namespace OpenIZ.Mobile.Core.Http
 	/// <summary>
 	/// Represents a RESTFul client which encapsulates some of the functions of the request
 	/// </summary>
-	public interface IRestClient
+	public interface IRestClient : IDisposable
 	{
 		
 		/// <summary>

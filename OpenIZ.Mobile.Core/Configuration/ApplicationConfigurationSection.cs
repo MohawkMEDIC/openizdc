@@ -17,6 +17,9 @@ namespace OpenIZ.Mobile.Core.Configuration
 	public class ApplicationConfigurationSection : IConfigurationSection
 	{
 
+		// Services
+		private List<Object> m_services = new List<object>();
+
 		/// <summary>
 		/// The location of the directory where user preferences are stored
 		/// </summary>
@@ -36,6 +39,34 @@ namespace OpenIZ.Mobile.Core.Configuration
 		public StyleSchemeType Style {
 			get;
 			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the services.
+		/// </summary>
+		/// <value>The services.</value>
+		[XmlElement("service")]
+		public List<String> ServiceTypes {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Sets the services.
+		/// </summary>
+		/// <value>The services.</value>
+		[XmlIgnore]
+		public List<Object> Services {
+			get {
+				if (this.m_services == null) {
+					this.m_services = new List<object> ();
+					foreach (var itm in this.ServiceTypes) {
+						Type t = Type.GetType (itm);
+						this.m_services.Add (Activator.CreateInstance (t));
+					}
+				}
+				return this.m_services;
+			}
 		}
 
 	}

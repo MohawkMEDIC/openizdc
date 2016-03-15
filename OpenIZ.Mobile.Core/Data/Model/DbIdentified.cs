@@ -1,7 +1,8 @@
 ﻿using System;
 using SQLite;
+using OpenIZ.Core.Model;
 
-namespace OpenIZ.Mobile.Core.Data
+namespace OpenIZ.Mobile.Core.Data.Model
 {
 	/// <summary>
 	/// Represents data that is identified in some way
@@ -9,7 +10,7 @@ namespace OpenIZ.Mobile.Core.Data
 	public abstract class DbIdentified
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Data.DbIdentified"/> class.
+		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Data.Model.Model.DbIdentified"/> class.
 		/// </summary>
 		public DbIdentified ()
 		{
@@ -17,22 +18,23 @@ namespace OpenIZ.Mobile.Core.Data
 		}
 
 		/// <summary>
-		/// Gets or sets the identifier of the identified data
+		/// Gets or sets the universal identifier for the object
 		/// </summary>
-		/// <value>The identifier.</value>
-		[PrimaryKey, AutoIncrement, Column("id"), NotNull]
-		public int Id {
+		[PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull]
+		public byte[] Uuid {
 			get;
 			set;
 		}
 
 		/// <summary>
-		/// Gets or sets the universal identifier for the object
+		/// Gets or sets the key (GUID) on the persistence item
 		/// </summary>
-		[Column("uuid"), MaxLength(16), Indexed, NotNull]
-		public byte[] Uuid {
-			get;
-			set;
+		/// <value>The key.</value>
+		[Ignore]
+		public Guid Key
+		{
+			get { return this.Uuid.ToGuid() ?? Guid.Empty; }
+			set { this.Uuid = value.ToByteArray (); }
 		}
 
 	}

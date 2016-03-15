@@ -110,6 +110,13 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlType (nameof (ServiceClientBinding), Namespace = "http://openiz.org/mobile/configuration")]
 	public class ServiceClientBinding
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Configuration.ServiceClientBinding"/> class.
+		/// </summary>
+		public ServiceClientBinding ()
+		{
+			this.ContentTypeMapper = new DefaultContentTypeMapper ();
+		}
 
 		/// <summary>
 		/// Gets or sets the type which dictates how a body maps to a 

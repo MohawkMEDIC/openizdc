@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents an entity name related to an entity
 	/// </summary>
 	[Table("entity_name")]
-	public class DbEntityName : DbIdentified
+	public class DbEntityName : DbEntityLink
 	{
 
 		/// <summary>
@@ -39,10 +39,20 @@ namespace OpenIZ.Mobile.Core.Data.Entities
 	{
 
 		/// <summary>
+		/// Gets or sets the name identifier.
+		/// </summary>
+		/// <value>The name identifier.</value>
+		[Column("name_id")]
+		public int NameId {
+			get;
+			set;
+		}
+
+		/// <summary>
 		/// Gets or sets the value.
 		/// </summary>
 		/// <value>The value.</value>
-		[Column("value"), NotNull, Indexed)]
+		[Column("value"), NotNull, Indexed]
 		public String Value {
 			get;
 			set;
@@ -62,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Entities
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phon_alg"), NotNull)]
+		[Column("phon_alg"), NotNull]
 		public int PhoneticAlgorithmId {
 			get;
 			set;

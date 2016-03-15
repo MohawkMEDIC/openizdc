@@ -1,13 +1,14 @@
 ﻿using System;
 using SQLite;
+using OpenIZ.Core.Model.Security;
 
-namespace OpenIZ.Mobile.Core.Data.Security
+namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
 	/// <summary>
 	/// Represents a user for the purpose of authentication
 	/// </summary>
 	[Table("security_user")]
-	public class DbSecurityUser
+	public class DbSecurityUser : DbBaseData
 	{
 
 		/// <summary>
@@ -31,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="OpenIZ.Mobile.Core.Data.Security.DbSecurityUser"/> lockout enabled.
+		/// Gets or sets a value indicating whether this <see cref="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityUser"/> lockout enabled.
 		/// </summary>
 		/// <value><c>true</c> if lockout enabled; otherwise, <c>false</c>.</value>
 		[Column("locked")]
@@ -55,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		/// </summary>
 		/// <value>The security stamp.</value>
 		[Column("security_stamp")]
-		public String SecurityStamp {
+		public String SecurityHash {
 			get;
 			set;
 		}
@@ -65,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		/// </summary>
 		/// <value><c>true</c> if this instance is two factor enabled; otherwise, <c>false</c>.</value>
 		[Column("tfa_enabled")]
-		public bool IsTwoFactorEnabled {
+		public bool TwoFactorEnabled {
 			get;
 			set;
 		}
@@ -85,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		/// </summary>
 		/// <value>The last login.</value>
 		[Column("last_login")]
-		public DateTime LastLogin {
+		public DateTime? LastLoginTime {
 			get;
 			set;
 		}
@@ -112,8 +113,8 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		/// Gets or sets the role identifier
 		/// </summary>
 		/// <value>The role identifier.</value>
-		[Column("role_id"), Indexed]
-		public int RoleId {
+		[Column("role_id"), Indexed, MaxLength(16)]
+		public byte[] RoleUuid {
 			get;
 			set;
 		}
@@ -122,11 +123,13 @@ namespace OpenIZ.Mobile.Core.Data.Security
 		/// Gets or sets the user identifier
 		/// </summary>
 		/// <value>The user identifier.</value>
-		[Column("user_id"), Indexed]
-		public int UserId {
+		[Column("user_id"), Indexed, MaxLength(16)]
+		public byte[] UserUuid {
 			get;
 			set;
 		}
+
+
 	}
 }
 

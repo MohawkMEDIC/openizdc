@@ -3,27 +3,68 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core
 {
 	/// <summary>
 	/// Application context.
 	/// </summary>
-	public abstract class ApplicationContext
+	public abstract class ApplicationContext : IServiceProvider
 	{
 
 		// Context singleton
 		private static ApplicationContext s_context;
+
+		// Providers
+		private List<Object> m_providers;
+
+		// A cache of already found providers
+		private Dictionary<Type, Object> m_cache = new Dictionary<Type, object>();
+
+		// Lock object
+		private Object m_lockObject = new object();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.ApplicationContext"/> class.
 		/// </summary>
 		public ApplicationContext ()
 		{
-			this.PolicyDecisionService = new LocalPolicyDecisionService ();
-			this.PolicyInformationService = new LocalPolicyInformationService ();
-
 		}
+
+		#region IServiceProvider implementation
+
+		/// <summary>
+		/// Gets the service.
+		/// </summary>
+		/// <returns>The service.</returns>
+		/// <typeparam name="TService">The 1st type parameter.</typeparam>
+		public TService GetService<TService>()
+		{
+			return (TService)this.GetService (typeof(TService));
+		}
+
+		/// <summary>
+		/// Gets the service object of the specified type.
+		/// </summary>
+		/// <returns>The service.</returns>
+		/// <param name="serviceType">Service type.</param>
+		public object GetService (Type serviceType)
+		{
+			
+			Object candidateService = null;
+			if (!this.m_cache.TryGetValue (serviceType, out candidateService)) {
+				ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection> ();
+				candidateService = appSection.Services.Find (o => serviceType.GetTypeInfo().IsAssignableFrom(o.GetType().GetTypeInfo()));
+				if (candidateService != null)
+					lock (this.m_lockObject)
+						this.m_cache.Add (serviceType, candidateService);
+			}
+			return candidateService;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Gets the current application context
@@ -44,22 +85,22 @@ namespace OpenIZ.Mobile.Core
 		/// Gets the policy information service.
 		/// </summary>
 		/// <value>The policy information service.</value>
-		public IPolicyInformationService PolicyInformationService { get; private set; }
+		public IPolicyInformationService PolicyInformationService { get { return this.GetService(typeof(IPolicyInformationService)) as IPolicyInformationService; } }
 		/// <summary>
 		/// Gets the policy decision service.
 		/// </summary>
 		/// <value>The policy decision service.</value>
-		public IPolicyDecisionService PolicyDecisionService { get; private set; }
+		public IPolicyDecisionService PolicyDecisionService { get { return this.GetService(typeof(IPolicyDecisionService)) as IPolicyDecisionService; } }
 		/// <summary>
 		/// Gets the identity provider service.
 		/// </summary>
 		/// <value>The identity provider service.</value>
-		public IIdentityProviderService IdentityProviderService { get; private set; }
+		public IIdentityProviderService IdentityProviderService { get { return this.GetService(typeof(IIdentityProviderService)) as IIdentityProviderService; } }
 		/// <summary>
 		/// Gets the role provider service.
 		/// </summary>
 		/// <value>The role provider service.</value>
-		public IRoleProviderService RoleProviderService { get; private set; }
+		public IRoleProviderService RoleProviderService { get { return this.GetService(typeof(IRoleProviderService)) as IRoleProviderService; } }
 		/// <summary>
 		/// Gets or sets the principal.
 		/// </summary>
@@ -70,7 +111,6 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The configuration.</value>
 		public abstract OpenIZConfiguration Configuration { get; }
-
 	}
 }
 

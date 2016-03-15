@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using SQLite;
-using OpenIZ.Mobile.Core.Data.Concepts;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Mobile.Core.Data.DataType;
-using OpenIZ.Mobile.Core.Data.Extensibility;
-using OpenIZ.Mobile.Core.Data.Security;
+using OpenIZ.Mobile.Core.Data.Model.DataType;
+using OpenIZ.Mobile.Core.Data.Model.Extensibility;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {

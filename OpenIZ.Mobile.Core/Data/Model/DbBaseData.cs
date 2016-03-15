@@ -1,7 +1,9 @@
 ﻿using System;
 using SQLite;
+using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 
-namespace OpenIZ.Mobile.Core.Data
+namespace OpenIZ.Mobile.Core.Data.Model
 {
 	/// <summary>
 	/// Represents data which has authorship information attached
@@ -13,7 +15,7 @@ namespace OpenIZ.Mobile.Core.Data
 		/// </summary>
 		/// <value>The creation time.</value>
 		[Column("creation_time"), NotNull]
-		public DateTime CreationTime {
+		public DateTime? CreationTime {
 			get;
 			set;
 		}
@@ -23,7 +25,7 @@ namespace OpenIZ.Mobile.Core.Data
 		/// </summary>
 		/// <value>The obsoletion time.</value>
 		[Column("obsoletion_time")]
-		public DateTime ObsoletionTime {
+		public DateTime? ObsoletionTime {
 			get;
 			set;
 		}
@@ -33,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Data
 		/// </summary>
 		/// <value>The updated time.</value>
 		[Column("updated_time")]
-		public DateTime UpdatedTime {
+		public DateTime? UpdatedTime {
 			get;
 			set;
 		}
@@ -42,8 +44,8 @@ namespace OpenIZ.Mobile.Core.Data
 		/// Gets or sets the user that created the data
 		/// </summary>
 		/// <value>The created by identifier.</value>
-		[Column("created_by"), NotNull]
-		public int CreatedById {
+		[Column("created_by"), NotNull, MaxLength(16)]
+		public byte[] CreatedByUuid {
 			get;
 			set;
 		}
@@ -52,8 +54,8 @@ namespace OpenIZ.Mobile.Core.Data
 		/// Obsoletion user
 		/// </summary>
 		/// <value>The obsoleted by identifier.</value>
-		[Column("obsoleted_by")]
-		public int ObsoletedById { 
+		[Column("obsoleted_by"), MaxLength(16)]
+		public byte[] ObsoletedByUuid { 
 			get;
 			set;
 		}
@@ -62,10 +64,41 @@ namespace OpenIZ.Mobile.Core.Data
 		/// Gets or sets the updated by identifier.
 		/// </summary>
 		/// <value>The updated by identifier.</value>
-		[Column("updated_by")]
-		public int UpdatedById {
+		[Column("updated_by"), MaxLength(16)]
+		public byte[] UpdatedByUuid {
 			get;
 			set;
-		}	}
+		}	
+
+		/// <summary>
+		/// Sets the created by key.
+		/// </summary>
+		/// <value>The created by key.</value>
+		[Ignore]
+		internal Guid CreatedByKey {
+			get { return this.CreatedByUuid.ToGuid() ?? Guid.Empty; }
+			set { this.CreatedByUuid = value.ToByteArray (); }
+		}
+			
+		/// <summary>
+		/// Gets or sets the updated by key.
+		/// </summary>
+		/// <value>The updated by key.</value>
+		[Ignore]
+		internal Guid? UpdatedByKey {
+			get { return this.UpdatedByUuid?.ToGuid(); }
+			set { this.UpdatedByUuid = value?.ToByteArray (); }
+		}
+
+		/// <summary>
+		/// Gets or sets the obsoleted by key.
+		/// </summary>
+		/// <value>The obsoleted by key.</value>
+		[Ignore]
+		internal Guid? ObsoletedByKey {
+			get { return this.CreatedByUuid?.ToGuid(); }
+			set { this.ObsoletedByUuid = value?.ToByteArray (); }
+		}
+	}
 }
 

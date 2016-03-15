@@ -73,6 +73,20 @@ var OpenIZ = {
 			}
 		}
 	},
+	Concept : {
+		getConceptSet : function(setName) {
+			try
+			{
+				var results = JSON.parse(OpenIZConceptService.GetConceptSet(setName));
+				return results;
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		}
+	},
+	// Patient Functions
 	Patient : {
 
 		// Instruct the mobile app to look for patients
@@ -90,11 +104,26 @@ var OpenIZ = {
 	},
 	Configuration : {
 		joinRealm : function(address) {
-			alert("I will join " + address);
+			try
+			{
+				OpenIZConfigurationService.JoinRealm(address);
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
 		},
 		leaveRealm : function() {
-			if(!confirm('You are about to leave the realm ' + configuration.realm.address + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
-				return;
+			try
+			{
+				if(!confirm('You are about to leave the realm ' + configuration.realm.address + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
+					return;
+				OpenIZConfigurationService.LeaveRealm();
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
 		},
 		save : function(configuration) {
 			try

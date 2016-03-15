@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents one or more entity addresses linked to an Entity
 	/// </summary>
 	[Table("entity_address")]
-	public class DbEntityAddress : DbIdentified
+	public class DbEntityAddress : DbEntityLink
 	{
 
 		/// <summary>
@@ -38,6 +38,16 @@ namespace OpenIZ.Mobile.Core.Data.Entities
 	[Table("entity_address_comp")]
 	public class EntityAddressComponent : DbIdentified
 	{
+
+		/// <summary>
+		/// Gets or sets the address identifier.
+		/// </summary>
+		/// <value>The address identifier.</value>
+		[Column("address_id")]
+		public int AddressId {
+			get;
+			set;
+		}
 
 		/// <summary>
 		/// Gets or sets the type identifier.

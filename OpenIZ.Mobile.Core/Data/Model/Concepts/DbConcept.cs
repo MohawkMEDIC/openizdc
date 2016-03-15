@@ -1,7 +1,7 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Concepts
+namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
 	/// <summary>
 	/// Physical data layer implemntation of concept
@@ -32,8 +32,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("status_id"), Indexed, NotNull]
-		public int StatusId {
+		[Column("status_uuid"), Indexed, NotNull, MaxLength(16)]
+		public byte[] StatusUuid {
 			get;
 			set;
 		}
@@ -41,8 +41,8 @@ namespace OpenIZ.Mobile.Core.Data.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("class_id"), NotNull]
-		public int ClassId {
+		[Column("class_uuid"), NotNull, MaxLength(16)]
+		public byte[] ClassUuid {
 			get;
 			set;
 		}

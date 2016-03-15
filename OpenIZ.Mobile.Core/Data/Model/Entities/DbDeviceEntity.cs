@@ -1,13 +1,13 @@
 ﻿using System;
 using SQLite;
 
-namespace OpenIZ.Mobile.Core.Data.Entities
+namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
 	/// <summary>
 	/// Represents the entity representation of an object
 	/// </summary>
 	[Table("device")]
-	public class DbDeviceEntity
+	public class DbDeviceEntity : DbEntityLink
 	{
 
 		/// <summary>

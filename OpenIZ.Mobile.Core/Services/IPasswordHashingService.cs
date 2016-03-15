@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenIZ.Mobile.Core.Security
+namespace OpenIZ.Mobile.Core.Serices
 {
 	/// <summary>
 	/// Password hashing service.
