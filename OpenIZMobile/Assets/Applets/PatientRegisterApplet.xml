@@ -86,10 +86,8 @@
 													</div>
 													<div class="input-group" id="dob">
 														<span class="input-group-addon" id="genderLabel">Gender:</span>
-														<select ng-model="patient.gender" class="form-control" name="gender" id="gender" aria-describedBy="genderLabel">
-															<option value="M">Male</option>
-															<option value="F">Female</option>
-															<option value="UN">Undifferentiated</option>
+														<select ng-model="patient.gender" ng-options="item.Key as item.Mnemonic for item in administrativeGenderConcepts" class="form-control" name="gender" id="gender" aria-describedBy="genderLabel">
+															<option value="">Gender</option>
 														</select>
 													</div>
 												</div>
@@ -267,8 +265,10 @@
 		var registerApp = angular.module('index', []);
 
 		registerApp.controller('RegisterPatientController', ['$scope', function ($scope)
-		{
+		{	
+			$scope.administrativeGenderConcepts = OpenIZ.Concept.getConceptSet('AdministrativeGender');
 			$scope.master = {};
+
 	    }]);
       ]]></contentText>
 	</asset>
