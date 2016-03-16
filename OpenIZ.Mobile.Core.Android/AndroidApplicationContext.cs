@@ -15,6 +15,8 @@ using Android.Util;
 using Android.Widget;
 using Android.Runtime;
 using System.Runtime.InteropServices;
+using OpenIZ.Mobile.Core.Interop.Util;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -50,6 +52,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		/// <value>The current.</value>
 		static AndroidApplicationContext() {
+
 
 			AppDomain.CurrentDomain.UnhandledException += (s,e)=> {
 				if(AndroidApplicationContext.Current != null)

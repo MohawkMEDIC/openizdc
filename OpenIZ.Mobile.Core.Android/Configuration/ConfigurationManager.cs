@@ -11,6 +11,10 @@ using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.Security.Cryptography;
 using OpenIZ.Mobile.Core.Configuration.Data;
+using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Mobile.Core.Services.Impl;
+using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Data;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -78,11 +82,22 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			// Initial applet style
 			ApplicationConfigurationSection appSection = new ApplicationConfigurationSection () {
 				Style = StyleSchemeType.Dark,
-				UserPrefDir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "userpref")
+				UserPrefDir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "userpref"),
+				ServiceTypes = new List<string>() {
+					typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
+					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
+					typeof(LocalConceptService).AssemblyQualifiedName,
+					typeof(SHA256PasswordHasher).AssemblyQualifiedName,
+					typeof(OAuthIdentityProvider).AssemblyQualifiedName,
+					typeof(LocalPersistenceService).AssemblyQualifiedName
+				}
 			};
+
+
 
 			// Security configuration
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
+				
 			};
 
 			// Rest Client Configuration

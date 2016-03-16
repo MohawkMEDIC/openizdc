@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Http
 		/// </summary>
 		/// <returns>The service description.</returns>
 		/// <param name="me">Me.</param>
-		public static ServiceClient GetServiceDescription(this OpenIZConfiguration me, String clientName)
+		public static ServiceClientDescription GetServiceDescription(this OpenIZConfiguration me, String clientName)
 		{
 
 			var configSection = me.GetSection<ServiceClientConfigurationSection> ();

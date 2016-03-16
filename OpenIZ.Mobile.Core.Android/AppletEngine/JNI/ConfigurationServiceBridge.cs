@@ -45,7 +45,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 			// Demand policy
 			try
 			{
-				new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
+				if(AndroidApplicationContext.Current.ConfigurationManager.IsConfigured)
+					new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
 
 				// Configure the stuff to the appropriate realm info
 				var serviceClientSection = AndroidApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
@@ -65,24 +66,25 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 					oauthUri = String.Format("http://{0}:{1}/auth", baseUri.Host, baseUri.Port);
 
 				// Parse IMSI URI
-				serviceClientSection.Client.Add(new ServiceClient() {
+				serviceClientSection.Client.Add(new ServiceClientDescription() {
 					Binding = new ServiceClientBinding() {
 						Security = new ServiceClientSecurity() {
 							AuthRealm = realmUri,
 							Mode = SecurityScheme.Bearer,
 							CredentialProvider = new TokenCredentialProvider()
-						}
+						},
+						Optimize = true
 					},
 					Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
 						new ServiceClientEndpoint() {
 							Address = imsiUri
 						}
 					},
-					Name = "acs"
+					Name = "imsi"
 				});
 
 				// Parse ACS URI
-				serviceClientSection.Client.Add(new ServiceClient() {
+				serviceClientSection.Client.Add(new ServiceClientDescription() {
 					Binding = new ServiceClientBinding() {
 						Security = new ServiceClientSecurity() {
 							AuthRealm = realmUri,
@@ -102,6 +104,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 			catch(PolicyViolationException e)
 			{
 				// TODO: Login permission
+
 			}
 			catch(Exception e)
 			{

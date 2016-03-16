@@ -54,7 +54,6 @@
     <Compile Include="Configuration\AppletConfigurationSection.cs" />
     <Compile Include="Configuration\DataConfigurationSection.cs" />
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
-    <Compile Include="Configuration\ServiceClientConfigurationSection.cs" />
     <Compile Include="Http\DefaultContentTypeMapper.cs" />
     <Compile Include="Http\ICredentialProvider.cs" />
     <Compile Include="Http\ICertificateValidator.cs" />
@@ -111,7 +110,6 @@
     <Compile Include="Data\Model\Extensibility\DbExtensionType.cs" />
     <Compile Include="Data\Model\Extensibility\DbNote.cs" />
     <Compile Include="Data\Model\Extensibility\DbTag.cs" />
-    <Compile Include="Data\LocalDataPersistenceService.cs" />
     <Compile Include="Data\Model\Roles\DbPatient.cs" />
     <Compile Include="Data\Model\Entities\DbPerson.cs" />
     <Compile Include="Data\Model\Roles\DbProvider.cs" />
@@ -128,6 +126,13 @@
     <Compile Include="Http\FormBodySerializer.cs" />
     <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\Impl\LocalConceptService.cs" />
+    <Compile Include="Data\Persistence\ConceptSetPersistenceService.cs" />
+    <Compile Include="Data\LocalPersistenceServiceBase.cs" />
+    <Compile Include="Data\LocalPersistenceService.cs" />
+    <Compile Include="Interop\Clients\ImsiServiceClient.cs" />
+    <Compile Include="Configuration\ServiceClientDescriptionConfigurationSection.cs" />
+    <Compile Include="Interop\Clients\ServiceClientBase.cs" />
+    <Compile Include="Interop\Util\HttpQueryExpressionBuilder.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -167,6 +172,9 @@
     <Folder Include="Data\Persistence\" />
     <Folder Include="Data\Map\" />
     <Folder Include="Services\Impl\" />
+    <Folder Include="Interop\" />
+    <Folder Include="Interop\Clients\" />
+    <Folder Include="Interop\Util\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

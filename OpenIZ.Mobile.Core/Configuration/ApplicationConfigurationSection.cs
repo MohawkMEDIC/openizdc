@@ -18,7 +18,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 	{
 
 		// Services
-		private List<Object> m_services = new List<object>();
+		private List<Object> m_services;
 
 		/// <summary>
 		/// The location of the directory where user preferences are stored

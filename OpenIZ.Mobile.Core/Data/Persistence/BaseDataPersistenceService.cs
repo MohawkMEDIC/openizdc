@@ -8,7 +8,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 	/// <summary>
 	/// Base data persistence service
 	/// </summary>
-	public class BaseDataPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain>
+	public abstract class BaseDataPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain>
 		where TModel : BaseEntityData, new()
 		where TDomain : DbBaseData, new()
 	{

@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 	/// <summary>
 	/// Generic persistence service which can persist between two simple types.
 	/// </summary>
-	public class IdentifiedPersistenceService<TModel, TDomain> : LocalDataPersistenceService<TModel> 
+	public abstract class IdentifiedPersistenceService<TModel, TDomain> : LocalPersistenceServiceBase<TModel> 
 		where TModel : IdentifiedData, new()
 		where TDomain : DbIdentified, new()
 	{

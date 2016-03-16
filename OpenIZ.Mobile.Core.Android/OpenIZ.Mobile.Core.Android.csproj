@@ -50,6 +50,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Model">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -73,6 +76,7 @@
     <Compile Include="Security\OAuth2CredentialProvider.cs" />
     <Compile Include="Security\TokenCredentialProvider.cs" />
     <Compile Include="Security\TokenCredentials.cs" />
+    <Compile Include="AppletEngine\JNI\JniUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

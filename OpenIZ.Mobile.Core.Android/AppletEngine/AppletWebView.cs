@@ -75,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.Settings.DisplayZoomControls = false;
 			this.AddJavascriptInterface (new AppletFunctionBridge (context, this), "OpenIZApplicationService");
 			this.AddJavascriptInterface (new ConfigurationServiceBridge(), "OpenIZConfigurationService");
+			this.AddJavascriptInterface (new ConceptServiceBridge (), "OpenIZConceptService");
 
 
 		}

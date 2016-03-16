@@ -7,6 +7,9 @@ using System.Linq;
 using OpenIZ.Mobile.Core.Authentication;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Android.Security;
+using System.Security;
+using System.IO.Compression;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -31,13 +34,23 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Http.RestClient"/> class.
 		/// </summary>
-		public RestClient (ServiceClient config) : base(config)
+		public RestClient (ServiceClientDescription config) : base(config)
 		{
 			this.m_tracer = Tracer.GetTracer (this.GetType ());
 			this.ClientCertificates = new X509Certificate2Collection ();
 			// Find the specified certificate
-
-
+			if (config.Binding.Security.ClientCertificate != null) {
+				var cert = X509CertificateUtils.FindCertificate (config.Binding.Security.ClientCertificate.FindType, 
+					          config.Binding.Security.ClientCertificate.StoreLocation,
+					          config.Binding.Security.ClientCertificate.StoreName,
+					          config.Binding.Security.ClientCertificate.FindValue);
+				if (cert == null)
+					throw new SecurityException (String.Format("Certificate described by {0} could not be found in {1}/{2}", 
+						config.Binding.Security.ClientCertificate.FindValue,
+						config.Binding.Security.ClientCertificate.StoreLocation,
+						config.Binding.Security.ClientCertificate.StoreName));
+				this.ClientCertificates.Add (cert);
+			}
 		}
 
 		/// <summary>
@@ -47,6 +60,9 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		{
 			var retVal = (HttpWebRequest)base.CreateHttpRequest (url, query);
 			retVal.ClientCertificates = this.ClientCertificates;
+
+			if(this.Description.Binding.Optimize)
+				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate gzip");
 			return retVal;
 		}
 
@@ -84,8 +100,15 @@ namespace OpenIZ.Mobile.Core.Android.Http
 							throw new ArgumentNullException (nameof (contentType));
 						
 						serializer = this.Description.Binding.ContentTypeMapper.GetSerializer (contentType, typeof(TBody));
-						// Serialize
-						serializer.Serialize (requestObj.GetRequestStream (), body);
+						// Serialize and compress with deflate
+						if(this.Description.Binding.Optimize)
+						{
+							requestObj.Headers.Add(HttpResponseHeader.ContentEncoding, "deflate");
+							using(var df = new DeflateStream(requestObj.GetRequestStream(), CompressionMode.Compress))
+								serializer.Serialize (df, body);
+						}
+						else
+							serializer.Serialize(requestObj.GetRequestStream(), body);
 					}
 
 					// Response
@@ -99,7 +122,21 @@ namespace OpenIZ.Mobile.Core.Android.Http
 					// De-serialize
 					serializer = this.Description.Binding.ContentTypeMapper.GetSerializer (response.ContentType, typeof(TResult));
 
-					var retVal = (TResult)serializer.DeSerialize (response.GetResponseStream ());
+					// Compression?
+					switch(response.Headers[HttpResponseHeader.ContentEncoding])
+					{
+						case "deflate":
+							using(DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+								return (TResult)serializer.DeSerialize(df);
+							break;
+						case "gzip":
+							using(GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+								return (TResult)serializer.DeSerialize(df);
+						break;
+							default:
+								return (TResult)serializer.DeSerialize (response.GetResponseStream ());
+								break;
+					}
 				} catch (WebException e) {
 
 					this.m_tracer.TraceError (e.ToString ());

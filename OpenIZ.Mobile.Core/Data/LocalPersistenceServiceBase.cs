@@ -20,17 +20,17 @@ namespace OpenIZ.Mobile.Core.Data
 	/// <summary>
 	/// Represents a data persistence service which stores data in the local SQLite data store
 	/// </summary>
-	public abstract class LocalDataPersistenceService<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+	public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
 	{
 
 		// Get tracer
-		private Tracer m_tracer = Tracer.GetTracer (typeof(LocalDataPersistenceService<TData>));
+		private Tracer m_tracer = Tracer.GetTracer (typeof(LocalPersistenceServiceBase<TData>));
 
 		// Configuration
 		protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
 
 		// Mapper
-		protected static ModelMapper m_mapper = new ModelMapper(typeof(LocalDataPersistenceService<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
+		protected static ModelMapper m_mapper = new ModelMapper(typeof(LocalPersistenceServiceBase<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
 
 		#region IDataPersistenceService implementation
 		/// <summary>
@@ -96,6 +96,7 @@ namespace OpenIZ.Mobile.Core.Data
 				try
 				{
 					this.m_tracer.TraceVerbose("INSERT {0}", data);
+
 					connection.BeginTransaction ();
 
 					data = this.Insert(connection, data);
@@ -222,7 +223,7 @@ namespace OpenIZ.Mobile.Core.Data
 				{
 					this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-					var results = this.Query(connection, query);
+					var results = this.Query(connection, query).ToList();
 
 					this.Queried?.Invoke (this, new DataQueryResultEventArgs<TData> (query, results));
 
@@ -259,7 +260,7 @@ namespace OpenIZ.Mobile.Core.Data
 			{
 				this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-				var results = this.Query(connection, storedQueryName, parms);
+				var results = this.Query(connection, storedQueryName, parms).ToList();
 
 				this.Queried?.Invoke (this, new DataStoredQueryResultEventArgs<TData> (storedQueryName, parms, results));
 

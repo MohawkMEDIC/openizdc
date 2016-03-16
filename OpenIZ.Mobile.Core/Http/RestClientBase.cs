@@ -13,7 +13,7 @@ namespace OpenIZ.Mobile.Core.Http
 	{
 
 		// Configuration
-		private ServiceClient m_configuration;
+		private ServiceClientDescription m_configuration;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Http.RestClient"/> class.
@@ -26,7 +26,7 @@ namespace OpenIZ.Mobile.Core.Http
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Http.RestClient"/> class.
 		/// </summary>
 		/// <param name="binder">The serialization binder to use.</param>
-		public RestClientBase (ServiceClient config)
+		public RestClientBase (ServiceClientDescription config)
 		{
 			this.m_configuration = config;
 		}
@@ -195,7 +195,7 @@ namespace OpenIZ.Mobile.Core.Http
 		/// Get the description of this service 
 		/// </summary>
 		/// <value>The description.</value>
-		public ServiceClient Description { get { return this.m_configuration; } }
+		public ServiceClientDescription Description { get { return this.m_configuration; } }
 
 		#endregion
 

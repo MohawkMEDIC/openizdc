@@ -21,7 +21,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// </summary>
 		public ServiceClientConfigurationSection ()
 		{
-			this.Client = new List<ServiceClient> ();
+			this.Client = new List<ServiceClientDescription> ();
 		}
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// </summary>
 		/// <value>The client.</value>
 		[XmlElement ("client")]
-		public List<ServiceClient> Client {
+		public List<ServiceClientDescription> Client {
 			get;
 			set;
 		}
@@ -60,14 +60,14 @@ namespace OpenIZ.Mobile.Core.Configuration
 	/// <summary>
 	/// A service client reprsent a single client to a service 
 	/// </summary>
-	[XmlType (nameof (ServiceClient), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceClient
+	[XmlType (nameof (ServiceClientDescription), Namespace = "http://openiz.org/mobile/configuration")]
+	public class ServiceClientDescription
 	{
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Configuration.ServiceClient"/> class.
 		/// </summary>
-		public ServiceClient ()
+		public ServiceClientDescription ()
 		{
 			this.Endpoint = new List<ServiceClientEndpoint> ();
 		}
@@ -148,6 +148,16 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether this <see cref="OpenIZ.Mobile.Core.Configuration.ServiceClientBinding"/>
+		/// is optimized
+		/// </summary>
+		/// <value><c>true</c> if optimize; otherwise, <c>false</c>.</value>
+		[XmlElement("optimize")]
+		public bool Optimize
+		{
+			get;set;
+		}
 	}
 
 	/// <summary>

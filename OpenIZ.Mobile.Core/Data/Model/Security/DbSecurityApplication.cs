@@ -7,7 +7,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Security application data. Should only be one entry here as well
 	/// </summary>
 	[Table("security_application")]
-	public class DbSecurityApplication
+	public class DbSecurityApplication : DbIdentified
 	{
 	}
 }

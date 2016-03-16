@@ -103,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Http
 		/// Gets the service client description
 		/// </summary>
 		/// <value>The description.</value>
-		ServiceClient Description { get; }
+		ServiceClientDescription Description { get; }
 	}
 }
 
