@@ -145,6 +145,39 @@
                 </div>
               </div>
             </div>
+            <div class="row">
+            	<div class="col-md-12">
+            		<div class="panel panel-default">
+            			<div class="panel-heading">
+            				<h2 class="panel-title">
+            					<a role="button" href="#searchResults" data-toggle="collapse">Search Results</a>
+            				</h2>
+            			</div>
+            			<table id="searchResults" class="collapse table">
+            				<tr>
+            					<th>ID</th>
+            					<th>Name</th>
+            					<th>Gender</th>
+            					<th>Date of Birth</th>
+            					<th></th>
+            				</tr>
+            				<tr>
+            					<td>1029</td>
+            					<td>Smith, Jennifer</td>
+            					<td>F</td>
+            					<td>2014-MAR-03</td>
+            					<td>
+            						<a class="btn btn-primary" href="app://openiz.org/applet/org.openiz.applets.core.patient.checkin/?pid=1029"><span class="glyphicon glyphicon-ok-circle"></span> Check-in</a>
+            						<a class="btn btn-default" href="view?pid=1026"><span class="glyphicon glyphicon-circle-arrow-right"></span> View</a>
+            					</td>
+            				</tr>
+            				<tr>
+            					<td colspan="5"><a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applets.core.patient.register/"><span class="glyphicon glyphicon-credit-card"></span> Register</a></td>
+            				</tr>
+            			</table>
+            		</div>
+            	</div>
+            </div>
           </div>
         </form>
         <!-- OpenIZ:Scripts -->
@@ -170,7 +203,9 @@
 
 				// search
 				$scope.search = function(filter) {
-					OpenIZ.Patient.search(filter);
+					//OpenIZ.Patient.search(filter);
+					$("#searchParms").collapse(false);
+					$("#searchResults").collapse(true);
 				};
 
 				//$scope.reset = function() {
@@ -190,5 +225,24 @@
 
 		]]>
     </contentText>
+  </asset>
+  <asset name="view" mimeType="text/html">
+  	<contentXml>
+      <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientViewController">
+      Viewing Patient
+	  </body>
+  	</contentXml>
+  </asset>
+  <asset name="view-controller" mimeType="text/javascript">
+  	<contentText>
+  		<![CDATA[
+			var viewApp = angular.module('view', []);
+
+			viewApp.controller('PatientViewController', ['$scope', function ($scope) 
+			{
+			}]);
+
+  		]]>
+  	</contentText>
   </asset>
 </AppletManifest>

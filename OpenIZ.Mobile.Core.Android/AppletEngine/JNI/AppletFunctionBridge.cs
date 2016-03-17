@@ -5,6 +5,7 @@ using Android.Widget;
 using Android.Content;
 using Org.Json;
 using Android.App;
+using Android.Content.Res;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -38,6 +39,31 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		public void ShowToast(String toastText)
 		{
 			Toast.MakeText (this.m_context, toastText, ToastLength.Short).Show();
+		}
+
+		/// <summary>
+		/// Navigate the specified appletId and context.
+		/// </summary>
+		/// <param name="appletId">Applet identifier.</param>
+		/// <param name="context">Context.</param>
+		[Export]
+		[JavascriptInterface]
+		public void Navigate(String appletId, String context)
+		{
+			// TODO: Parameters
+			this.m_view.LoadUrl(String.Format("app://openiz.org/applet/{0}", appletId));
+		}
+
+		/// <summary>
+		/// Get the specified string
+		/// </summary>
+		/// <returns>The string.</returns>
+		/// <param name="stringId">String identifier.</param>
+		[Export]
+		[JavascriptInterface]
+		public String GetString(String stringId)
+		{
+			return this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
 		}
 
 		/// <summary>

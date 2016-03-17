@@ -40,6 +40,9 @@ namespace OpenIZ.Mobile.Core.Android
 		public partial class String
 		{
 			
+			// aapt resource value: 0x7f020003
+			public static int applet_confirm_close = 2130837507;
+			
 			// aapt resource value: 0x7f020002
 			public static int cancel = 2130837506;
 			

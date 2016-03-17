@@ -3,4 +3,6 @@
 	<string name="library_name">OpenIZ.Mobile.Core.Android</string>
 	<string name="confirm">Ok</string>
 	<string name="cancel">Cancel</string>
+
+	<string name="applet_confirm_close">You have unsaved data on this page. Do you want to close it?</string>
 </resources>

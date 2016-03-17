@@ -110,12 +110,12 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>Luke Bension Thomas Smith</td>
-												<td>02-MAY-2015</td>
-												<td>Male</td>
-												<td>Village 1</td>
+												<td>Smith, Jennifer Ardell</td>
+												<td>02-MAR-2015</td>
+												<td>Female</td>
+												<td>Village 2</td>
 												<td>
-													<a href="#" class="btn btn-default">
+													<a href="app://openiz.org/applet/org.openiz.applets.core.patient.search/view?pid=1023" class="btn btn-default">
 														View <span class="glyphicon glyphicon-eye-open"></span></a>
 												</td>
 											</tr>
@@ -253,6 +253,23 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="pull-right btn-group">
+		                        <button class="btn btn-lg btn-danger" ng-click="close()">
+		                          <span class="glyphicon glyphicon-remove">
+		                          </span> 
+		                          Cancel
+		                        </button>
+		                        <button class="btn btn-lg btn-primary" ng-click="saveClose(patient)">
+		                          Save &amp; Close
+		                          <span class="glyphicon glyphicon-floppy">
+		                          </span> 
+		                        </button>
+		                        <button class="btn btn-lg btn-success" ng-click="saveCheckin(patient)">
+		                          Save &amp; Check-in <span class="glyphicon glyphicon-floppy-saved"></span>
+		                        </button>
+		                      </div>
+						</div>
 					</div>
 				</form>
 				<!-- OpenIZ:Scripts -->
@@ -269,6 +286,16 @@
 			$scope.administrativeGenderConcepts = OpenIZ.Concept.getConceptSet('AdministrativeGender');
 			$scope.master = {};
 
+			$scope.close = function() {
+				if(confirm(OpenIZ.App.getString("applet_confirm_close")))
+					OpenIZ.App.close();
+			};
+			$scope.saveCheckin = function(patient) {
+				OpenIZ.App.navigateApplet("org.openiz.applets.core.patient.checkin", patient);
+			};
+			$scope.saveClose = function(patient) {
+				OpenIZ.App.close();
+			};
 	    }]);
       ]]></contentText>
 	</asset>

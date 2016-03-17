@@ -36,6 +36,17 @@ namespace OpenIZMobile
 			base.OnConfigurationChanged (newConfig);
 		}
 
+		/// <summary>
+		/// Called when the activity has detected the user's press of the back
+		///  key.
+		/// </summary>
+		public override void OnBackPressed ()
+		{
+			if (this.m_webView.CanGoBack())
+				this.m_webView.GoBack ();
+			else
+				base.OnBackPressed ();
+		}
 
 		protected override void OnCreate (Bundle savedInstanceState)
 		{

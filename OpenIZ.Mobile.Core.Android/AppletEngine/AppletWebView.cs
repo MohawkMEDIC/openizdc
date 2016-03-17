@@ -275,6 +275,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 				this.m_tracer.TraceVerbose ("Resolving asset path {0}", assetPath);
 
 				String targetApplet = assetPath;
+				if (targetApplet.Contains ("?"))
+					targetApplet = targetApplet.Substring (0, targetApplet.IndexOf ("?"));
 				// Page in the target applet
 				if (targetApplet.Contains ("/")) {
 					path = targetApplet.Substring (targetApplet.IndexOf ("/") + 1);
@@ -300,7 +302,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 					this.m_tracer.TraceInfo ("Intercepting request {0}", url);
 
 					AppletManifest scope = (view as AppletWebView).Applet;
-					string assetPath = url;
+					string assetPath = url, 
+					query = String.Empty;
 					if(assetPath.StartsWith(APPLET_SCHEME))
 					{
 						assetPath = assetPath.Substring (APPLET_SCHEME.Length);
@@ -313,8 +316,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 						return null;
 					}
 
-					if (assetPath.Contains ("?"))
-						assetPath = assetPath.Substring (0, assetPath.IndexOf ("?") - 1);
+					// Extract query
+					if (url.Contains ("?")) {
+						query = url.Substring (url.IndexOf ("?") + 1);
+					}
 
 					string language = view.Resources.Configuration.Locale.DisplayName;
 

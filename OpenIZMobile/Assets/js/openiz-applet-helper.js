@@ -32,11 +32,12 @@ $(document).ready(function() {
 
 // OpenIZ Bridge functions
 var OpenIZ = {
-
+	urlParams : {},
 	Util : {
 		toDateInputString : function(date) {
 			return date.toISOString().substring(0,10)
-		}
+		},
+
 	},
 	// Instruct the mobile app to perform a barcode scan, placing the result in @target
 	App : {
@@ -66,6 +67,28 @@ var OpenIZ = {
 			try
 			{
 				var value = OpenIZApplicationService.ShowToast(text);
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		},
+		// Navigates to an applet
+		navigateApplet : function(appletId, context)
+		{
+			try
+			{
+				OpenIZApplicationService.Navigate(appletId, JSON.stringify(context));
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		},
+		getString : function(stringId) {
+			try
+			{
+				return OpenIZApplicationService.GetString(stringId);
 			}
 			catch(e)
 			{
@@ -143,3 +166,16 @@ var OpenIZ = {
 		}
 	}
 };
+
+// Parameters
+(window.onpopstate = function () {
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    OpenIZ.urlParams = {};
+    while (match = search.exec(query))
+       OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
+})();
