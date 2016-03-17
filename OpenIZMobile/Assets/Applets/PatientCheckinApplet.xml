@@ -188,7 +188,7 @@
 				gender : "F"
 			};
 			$scope.close = function() {
-				OpenIZ.App.close();
+				OpenIZ.App.back();
 			};
 			$scope.queue = function(patient) {
 				if(confirm("Continue to check-in this patient?"))

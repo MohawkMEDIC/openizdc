@@ -288,7 +288,7 @@
 
 			$scope.close = function() {
 				if(confirm(OpenIZ.App.getString("applet_confirm_close")))
-					OpenIZ.App.close();
+					OpenIZ.App.back();
 			};
 			$scope.saveCheckin = function(patient) {
 				OpenIZ.App.navigateApplet("org.openiz.applets.core.patient.checkin", patient);

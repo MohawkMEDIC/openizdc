@@ -53,10 +53,20 @@ var OpenIZ = {
 				console.error(e);
 			}
 		},
-		close : function() {
+		back : function() {
 			try
 			{
 				var value = OpenIZApplicationService.Back();
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		},
+		close : function() {
+			try
+			{
+				var value = OpenIZApplicationService.Close();
 			}
 			catch(e)
 			{

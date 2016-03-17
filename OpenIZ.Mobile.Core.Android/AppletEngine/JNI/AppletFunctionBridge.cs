@@ -83,6 +83,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 			}, null);
 		}
 
+
+		/// <summary>Close the applet</summary>
+		[Export]
+		[JavascriptInterface]
+		public void Close() {
+			Application.SynchronizationContext.Post (_ => {
+				(this.m_context as Activity).Finish ();
+			}, null);
+		}
+
 		/// <summary>
 		/// Performs a barcode scan
 		/// </summary>
