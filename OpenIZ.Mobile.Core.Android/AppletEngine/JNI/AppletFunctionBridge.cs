@@ -51,7 +51,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		public void Navigate(String appletId, String context)
 		{
 			// TODO: Parameters
-			this.m_view.LoadUrl(String.Format("app://openiz.org/applet/{0}", appletId));
+			Application.SynchronizationContext.Post (_ => {
+				this.m_view.LoadUrl(String.Format("app://openiz.org/applet/{0}/", appletId));
+			}, null);
 		}
 
 		/// <summary>

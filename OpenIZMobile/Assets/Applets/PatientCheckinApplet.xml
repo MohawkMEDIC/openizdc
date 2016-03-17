@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/mobile/applet">
 	<info>
 		<name>Patient Checkin</name>
@@ -14,9 +14,190 @@
 	</tile>
 	<asset name="index" mimeType="text/html">
 		<contentXml>
-			<body xmlns="http://www.w3.org/1999/xhtml">
-				<h3>Hello!</h3>
+			<body ng-controller="PatientCheckinController" xmlns="http://www.w3.org/1999/xhtml">
+				<form novalidate="novalidate">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h2 class="panel-title"><a href="#demographics" data-toggle="collapse">Demographic Information</a></h2>
+									</div>
+									<div class="panel-collapse in">
+										<div class="container-fluid">
+											<div class="row">
+												<div class="pull-left" style="width:20%; border: dashed 2px #555; ">
+													<img alt="user picture" id="patient-picture" src="app://openiz.org/drawable/drk_patient" style="width:100%" />
+												</div>
+												<div class="pull-right" style="width:79%">
+													<div class="input-group" id="given0">
+														<span class="input-group-addon" id="givenNameLabel0">Given:</span>
+														<input readonly="readonly" value="Jennifer" ng-model="patient.given" type="text" class="form-control" placeholder="Given Name" name="givenName0" id="givenName0" aria-describedby="givenNameLabel0" />
+													</div>
+													<div class="input-group" id="family0">
+														<span class="input-group-addon" id="familyNameLabel0">Family:</span>
+														<input readonly="readonly" value="Smith" ng-model="patient.family" type="text" class="form-control" placeholder="Family Name" name="familyName0" id="familyName0" aria-describedby="familyNameLabel0" />
+													</div>
+													<div class="input-group" id="dob">
+														<span class="input-group-addon" id="dobLabel">Date of Birth:</span>
+														<input readonly="readonly" value="2015-NOV-10" ng-model="patient.dob" type="date" data-max-date="0" class="form-control" name="dob" id="dob" aria-describedby="dobLabel" />
+														<span class="input-group-addon">
+															Accuracy:
+														</span>
+														<select ng-model="patient.dob_accuracy" class="form-control" name="dobAccuracy" id="dobAccuracy">
+															<option value="d" selected="selected">Day</option>
+															<option value="m">Month</option>
+															<option value="y">Year</option>
+														</select>
+													</div>
+													<div class="input-group" id="dob">
+														<span class="input-group-addon" id="genderLabel">Gender:</span>
+														<select ng-model="patient.gender" ng-options="item.Key as item.Mnemonic for item in administrativeGenderConcepts" class="form-control" name="gender" id="gender" aria-describedBy="genderLabel">
+															<option value="F" selected="selected">Female</option>
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="panel-footer">
+										<h2 class="panel-title"><a role="button" data-toggle="collapse" href="#yellowc">e-Yellow Card</a></h2>
+									</div>
+									<table class="table collapse" id="yellowc">
+										<thead>
+											<tr>
+												<th style="width:10%" rowspan="2">Antigen</th>
+												<th style="width:15%" rowspan="2">Disease(s)</th>
+												<th colspan="5">Dose</th>
+											</tr>
+											<tr>
+												<th style="width:15%">Birth</th>
+												<th style="width:15%">1</th>
+												<th style="width:15%">2</th>
+												<th style="width:15%">3</th>
+												<th style="width:15%">4</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>BCG</td>
+												<td>Tuberculosis</td>
+												<td>
+													<span class="glyphicon glyphicon-ok">
+													</span> <br/>10-NOV-2015</td>
+												<td colspan="4" style="background:solid #aaa">
+												</td>
+											</tr>
+											<tr>
+												<td>OPV</td>
+												<td>Polio</td>
+												<td>
+													<span class="glyphicon glyphicon-ok">
+													</span> <br/>(10-NOV-2015)</td>
+												<td>
+													<span class="glyphicon glyphicon-ok">
+													</span> <br/>(10-DEC-2015)</td>
+												<td>
+													<span class="glyphicon glyphicon-time">
+													</span> <br/> Missed (unsafe)<br/>(20-JAN-2016)</td>
+												<td>
+													<span class="glyphicon glyphicon-calendar">
+													</span> <br/>Alt Schedule<br/>(20-MAR-2016)</td>
+												<td>
+													<span class="glyphicon glyphicon-calendar">
+													</span> <br/>Alt Schedule<br/>(20-MAR-2016)</td>
+											</tr>
+											<tr>
+												<td>DTaP</td>
+												<td>Diptheria,<br/>Pertussis,<br/> Tetanus</td>
+												<td style="background:solid #aaa">
+												</td>
+												<td>
+													<span class="glyphicon glyphicon-ok">
+													</span> <br/>(10-JAN-2016)</td>
+												<td>
+													<span class="glyphicon glyphicon-remove">
+													</span><br/> Refused</td>
+												<td><span class="glyphicon glyphicon-remove"></span></td>
+												<td>
+												</td>
+											</tr>
+											<tr>
+												<td>ROTA</td>
+												<td>Rotavirus</td>
+												<td style="background:solid #aaa">
+												</td>
+												<td>
+													<span class="glyphicon glyphicon-calendar">
+													</span> <br/>(10-MAR-2016)<br/> Alt. Schedule</td>
+												<td>Due 30-AUG-2016</td>
+												<td colspan="2" style="background:solid #aaa">
+												</td>
+
+											</tr>
+										</tbody>
+										<tfoot>
+										</tfoot>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h2 class="panel-title">Current Encounter</h2>
+									</div>
+									<div class="panel-body">
+										
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="row">
+							<div class="pull-right btn-group">
+		                        <button class="btn btn-lg btn-danger" ng-click="close()">
+		                          <span class="glyphicon glyphicon-remove">
+		                          </span> 
+		                          Cancel
+		                        </button>
+		                        <button class="btn btn-lg btn-success" ng-click="queue(patient)">
+		                          Enqueue <span class="glyphicon glyphicon-log-in"></span>
+		                        </button>
+		                      </div>
+						</div>
+					</div>
+					<!-- OpenIZ:Scripts -->
+				</form>
 			</body>
 		</contentXml>
+	</asset>
+	<asset name="index-controller" mimeType="text/javascript">
+		<contentText><![CDATA[
+		 // angular stuff
+		var checkinApp = angular.module('index', []);
+
+		checkinApp.controller('PatientCheckinController', ['$scope', function ($scope)
+		{	
+			$scope.patient = {
+				given : [ "Jennifer", "Ashley" ],
+				family : "Smith",
+				dob : "10-NOV-2015",
+				dob_accuracy : "d",
+				gender : "F"
+			};
+			$scope.close = function() {
+				OpenIZ.App.close();
+			};
+			$scope.queue = function(patient) {
+				if(confirm("Continue to check-in this patient?"))
+				{
+					OpenIZ.App.toast("Patient Jennifer Ashley Smith added to queue");
+					OpenIZ.App.close();
+				}
+			};
+		}]);
+		]]></contentText>
 	</asset>
 </AppletManifest>

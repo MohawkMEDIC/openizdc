@@ -27,7 +27,7 @@
 										<div class="container-fluid">
 											<div class="row">
 												<div class="pull-left" style="width:20%; border: dashed 2px #555; ">
-													<img alt="user picture" id="patient-picture" src="app://openiz.org/drawable/drk_baby" style="width:100%" />
+													<img alt="user picture" id="patient-picture" src="app://openiz.org/drawable/drk_patient" style="width:100%" />
 													<div class="input-group">
 														<a ng-click="setPicture(patient)" class="input-group-addon">
 															<span class="glyphicon glyphicon-camera">
@@ -110,8 +110,8 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>Smith, Jennifer Ardell</td>
-												<td>02-MAR-2015</td>
+												<td>Smith, Jennifer Ashley</td>
+												<td>10-NOV-2015</td>
 												<td>Female</td>
 												<td>Village 2</td>
 												<td>
