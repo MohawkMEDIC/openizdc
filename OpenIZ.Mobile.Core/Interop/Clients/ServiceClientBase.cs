@@ -33,9 +33,8 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 		public ServiceClientBase(String clientName)
 		{
 
-			this.m_configuration = ApplicationContext.Current.Configuration.GetServiceDescription (clientName);
-			this.m_restClient = (IRestClient)Activator.CreateInstance(ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection> ().RestClientType, this.m_configuration);
-
+			this.m_restClient = ApplicationContext.Current.GetRestClient (clientName);
+			this.m_configuration = this.m_restClient.Description;
 		}
 
 	}

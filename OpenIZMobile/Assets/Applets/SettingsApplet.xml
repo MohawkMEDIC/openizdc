@@ -33,30 +33,28 @@
 											</div>
 										</div>
 									</div>
-									<form name="realmForm" novalidate="novalidate">
-										<div class="input-group">
-											<span class="input-group-addon" id="deviceNameLabel">Device Name:</span>
-											<input ng-model="realm.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Z][A-Z.0-9-]+$/i" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
-											<span class="input-group-addon">
-												<span class=" glyphicon glyphicon-phone">
-												</span>
+									<div class="input-group">
+										<span class="input-group-addon" id="deviceNameLabel">Device Name:</span>
+										<input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Z][A-Z.0-9-]+$/i" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+										<span class="input-group-addon">
+											<span class=" glyphicon glyphicon-phone">
 											</span>
-										</div>
-										<div class="input-group">
-											<span class="input-group-addon" id="realmServerLabel">Realm:</span>
-											<input ng-model="realm.address" ng-required="true" placeholder="https://demo.openiz.org:8443/realm" ng-pattern="/^https:\/\/([\w+?\.\w+])+([a-zA-Z0-9\~\!\@\#\$\%\^\&amp;\*\(\)_\-\=\+\\\/\?\.\:\;\'\,]*)?$/i" class="form-control" type="url" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
-											<span class="input-group-addon">
-												<span class=" glyphicon glyphicon-globe">
-												</span>
+										</span>
+									</div>
+									<div class="input-group">
+										<span class="input-group-addon" id="realmServerLabel">Realm:</span>
+										<input ng-model="config.security.domain" ng-required="true" placeholder="https://demo.openiz.org:8443/realm" ng-pattern="/^https:\/\/([\w+?\.\w+])+([a-zA-Z0-9\~\!\@\#\$\%\^\&amp;\*\(\)_\-\=\+\\\/\?\.\:\;\'\,]*)?$/i" class="form-control" type="url" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+										<span class="input-group-addon">
+											<span class=" glyphicon glyphicon-globe">
 											</span>
-										</div>
-										<div class="btn-group pull-right">
-											<button class="btn-danger btn" ng-disabled="realm.address !== null" ng-click="leaveRealm(realm)">
-												<span class="glyphicon glyphicon-resize-full">
-												</span> Leave Realm</button>
-											<button class="btn-primary btn" ng-click="joinRealm(realm)" ng-disabled="realmForm.$invalid">Join Realm <span class="glyphicon glyphicon-resize-small"></span></button>
-										</div>
-									</form>
+										</span>
+									</div>
+									<div class="btn-group pull-right">
+										<button class="btn-danger btn" ng-disabled="realm.address !== null" ng-click="leaveRealm(config.realm)">
+											<span class="glyphicon glyphicon-resize-full">
+											</span> Leave Realm</button>
+										<button class="btn-primary btn" ng-click="joinRealm(config.realm)" ng-disabled="realmForm.$invalid">Join Realm <span class="glyphicon glyphicon-resize-small"></span></button>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -153,6 +151,9 @@
 			configApp.controller('ConfigurationController', ['$scope', function ($scope)
 			{
 
+				$scope.config = {
+					security : OpenIZ.Configuration.getSection("SecurityConfigurationSection")
+				};
 				$scope.master = {};
 
 				// leave realm
@@ -163,7 +164,7 @@
 
 				// join realm
 				$scope.joinRealm = function(realm) {
-					OpenIZ.Configuration.joinRealm(realm.address);
+					OpenIZ.Configuration.joinRealm(realm.domain, realm.deviceName);
 				};
 
 				// Close app

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.IO;
 using System.Xml.Serialization;
@@ -15,6 +16,8 @@ using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Android.Security;
 using OpenIZ.Mobile.Core.Data;
+using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -24,6 +27,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 	public class ConfigurationManager
 	{
 
+		private const int PROVIDER_RSA_FULL = 1;
 
 		// Tracer
 		private Tracer m_tracer;
@@ -96,9 +100,15 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
 
 			// Security configuration
+			String macAddress = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o=>o.OperationalStatus == OperationalStatus.Up && o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)?.GetPhysicalAddress()?.ToString() ?? Guid.NewGuid().ToString();
+
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
-				
+				DeviceName = String.Format("{0}-{1}", Environment.MachineName, macAddress)
 			};
+
+			// Device key
+			var certificate = X509CertificateUtils.FindCertificate(X509FindType.FindBySubjectName, StoreLocation.LocalMachine, StoreName.My, String.Format("DN={0}.mobile.openiz.org", macAddress));
+			secSection.DeviceSecret = certificate?.Thumbprint;
 
 			// Rest Client Configuration
 			ServiceClientConfigurationSection serviceSection = new ServiceClientConfigurationSection () {
@@ -141,6 +151,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
 			return retVal;
 		}
+
 
 		/// <summary>
 		/// Creates a new instance of the configuration manager with the specified configuration file

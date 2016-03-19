@@ -93,6 +93,8 @@ namespace OpenIZ.Mobile.Core.Android.Http
 			Credentials triedAuth = null;
 			while(triedAuth != this.Credentials)
 				try {
+
+					// Try assigned credentials
 					triedAuth = this.Credentials;
 					IBodySerializer serializer = null;
 					if (body != null) {
@@ -158,6 +160,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
 											e, 
 											e.Status, 
 											e.Response); 
+
 									break;						
 								default:
 									throw new RestClientException<TResult> (

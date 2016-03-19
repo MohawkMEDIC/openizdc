@@ -49,6 +49,24 @@ namespace OpenIZ.Mobile.Core.Android
 			// aapt resource value: 0x7f020001
 			public static int confirm = 2130837505;
 			
+			// aapt resource value: 0x7f020005
+			public static int err_oauth2_invalid_client = 2130837509;
+			
+			// aapt resource value: 0x7f020006
+			public static int err_oauth2_invalid_grant = 2130837510;
+			
+			// aapt resource value: 0x7f020004
+			public static int err_oauth2_invalid_request = 2130837508;
+			
+			// aapt resource value: 0x7f020009
+			public static int err_oauth2_invalid_scope = 2130837513;
+			
+			// aapt resource value: 0x7f020007
+			public static int err_oauth2_unauthorized_client = 2130837511;
+			
+			// aapt resource value: 0x7f020008
+			public static int err_oauth2_unsupported_grant_type = 2130837512;
+			
 			// aapt resource value: 0x7f020000
 			public static int library_name = 2130837504;
 			

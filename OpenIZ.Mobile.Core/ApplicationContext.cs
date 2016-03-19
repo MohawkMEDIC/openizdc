@@ -5,6 +5,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
 using System.Collections.Generic;
 using System.Reflection;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -111,6 +112,16 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The configuration.</value>
 		public abstract OpenIZConfiguration Configuration { get; }
+		/// <summary>
+		/// Gets the application information for the currently running application.
+		/// </summary>
+		/// <value>The application.</value>
+		public abstract SecurityApplication Application { get; }
+		/// <summary>
+		/// Gets the device information for the currently running device
+		/// </summary>
+		/// <value>The device.</value>
+		public abstract SecurityDevice Device { get; }
 	}
 }
 

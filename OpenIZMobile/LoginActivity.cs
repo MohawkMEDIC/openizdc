@@ -10,6 +10,9 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using OpenIZ.Mobile.Core.Android;
+using OpenIZ.Mobile.Core.Services;
+using System.Security;
 
 namespace OpenIZMobile
 {
@@ -36,8 +39,25 @@ namespace OpenIZMobile
 			// Wire up events
 			this.m_btnLogin.Click += (o,e)=>
 			{
-				Intent mainPageIntent = new Intent(ApplicationContext, typeof(HomeActivity));
-				this.StartActivity(mainPageIntent);
+
+				// Get the identity service and attempt a login
+				try
+				{
+					AndroidApplicationContext.Current.Authenticate(this.m_txtUserName.Text, this.m_txtPassword.Text);
+					Intent mainPageIntent = new Intent(ApplicationContext, typeof(HomeActivity));
+					this.StartActivity(mainPageIntent);
+				}
+				catch(Exception ex)
+				{
+
+					// Get the message for the error
+					int msgId = Resources.GetIdentifier(ex.Message, "string", this.PackageName);
+					if(msgId != 0)
+						UserInterfaceUtils.ShowMessage(this, null, "{0} : {1}", Resources.GetString(Resource.String.err_login), Resources.GetString(msgId));
+					else
+						UserInterfaceUtils.ShowMessage(this, null, "{0} : {1}", Resources.GetString(Resource.String.err_login), ex.Message);
+
+				}
 			};
 
 		}

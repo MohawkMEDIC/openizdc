@@ -67,6 +67,7 @@
     <Compile Include="AppletActivity.cs" />
     <Compile Include="SplashActivity.cs" />
     <Compile Include="Layout\UITileContainer.cs" />
+    <Compile Include="UserInterfaceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

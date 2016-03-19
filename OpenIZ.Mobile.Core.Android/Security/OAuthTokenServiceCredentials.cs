@@ -32,13 +32,10 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// <returns>The http headers.</returns>
 		public override System.Collections.Generic.Dictionary<string, string> GetHttpHeaders ()
 		{
-			// Get password hash
-			SHA256 hasher = SHA256.Create();
-
 			// App ID credentials
-			String appId = typeof(OAuthTokenServiceCredentials).Assembly.GetCustomAttribute<GuidAttribute> ().Value,
-			devId = String.Empty;
-			String appAuthString = String.Format ("{0}:{1}", appId, BitConverter.ToString (hasher.ComputeHash (AndroidApplicationContext.secret)));
+			String appAuthString = String.Format ("{0}:{1}", 
+				ApplicationContext.Current.Application.Key.ToString(), 
+				ApplicationContext.Current.Application.ApplicationSecret);
 
 			// TODO: Add claims
 			List<Claim> claims = new List<Claim> () {

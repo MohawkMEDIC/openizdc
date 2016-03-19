@@ -28,7 +28,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Represents a service client
 		/// </summary>
 		/// <value>The client.</value>
-		[XmlElement ("client")]
+		[XmlElement("client")]
 		public List<ServiceClientDescription> Client {
 			get;
 			set;

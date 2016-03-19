@@ -16,8 +16,26 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	/// </summary>
 	public class ConfigurationServiceBridge : Java.Lang.Object
 	{
-
+		// Tracer
 		private Tracer m_tracer = Tracer.GetTracer (typeof(ConfigurationServiceBridge));
+
+		/// <summary>
+		/// Gets the specified section name
+		/// </summary>
+		/// <returns>The section.</returns>
+		/// <param name="sectionName">Section name.</param>
+		[Export]
+		[JavascriptInterface]
+		public String GetSection(String sectionName)
+		{
+			Type sectionType = Type.GetType (String.Format ("OpenIZ.Mobile.Core.Configuration.{0}, OpenIZ.Mobile.Core, Version=0.1.0.0", sectionName));
+			if (sectionType == null)
+				return null;
+			else {
+				return JniUtil.ToJson(ApplicationContext.Current.Configuration.GetSection (sectionType));
+			}
+		}
+
 		/// <summary>
 		/// Backs up the database to the user's SD card
 		/// </summary>
@@ -38,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// </summary>
 		[Export]
 		[JavascriptInterface]
-		public bool JoinRealm(String realmUri)
+		public bool JoinRealm(String realmUri, String deviceName)
 		{
 			this.m_tracer.TraceInfo ("Joining {0}", realmUri);
 

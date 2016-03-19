@@ -33,6 +33,17 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				return new TokenCredentials(ApplicationContext.Current.Principal);
 			}
 		}
+
+		/// <summary>
+		/// Authenticate a user - this occurs when reauth is required
+		/// </summary>
+		/// <param name="context">Context.</param>
+		public OpenIZ.Mobile.Core.Authentication.Credentials Authenticate (IRestClient context)
+		{
+
+			// TODO: Determine why we're reauthenticating... if it is an expired token we'll need to get the refresh token
+			return null;
+		}
 		#endregion
 	}
 

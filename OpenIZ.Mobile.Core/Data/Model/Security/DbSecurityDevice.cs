@@ -9,16 +9,17 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	[Table("security_device")]
 	public class DbSecurityDevice : DbIdentified
 	{
-
+		
 		/// <summary>
-		/// Device secret
+		/// Gets or sets the public identifier.
 		/// </summary>
-		/// <value>The device secret.</value>
-		[Column("secret"), Unique]
-		public String DeviceSecret {
+		/// <value>The public identifier.</value>
+		[Column("public_id"), Unique]
+		public String PublicId {
 			get;
 			set;
 		}
+
 
 	}
 }

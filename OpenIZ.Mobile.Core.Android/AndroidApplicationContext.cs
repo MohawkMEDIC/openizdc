@@ -17,6 +17,8 @@ using Android.Runtime;
 using System.Runtime.InteropServices;
 using OpenIZ.Mobile.Core.Interop.Util;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Mobile.Core.Services;
+using System.Security;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -26,12 +28,12 @@ namespace OpenIZ.Mobile.Core.Android
 	public class AndroidApplicationContext : ApplicationContext
 	{
 
-		// Application Secret
-		public static readonly byte[] secret = new byte[]{
-			0xFF, 0x00, 0x43, 0x23, 0x55, 0x98, 0xA0, 0x20,
-			0xC3, 0xE3, 0xE2, 0xA1, 0x42, 0x92, 0x81, 0xE3
+		// The application
+		private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication() {
+			ApplicationSecret = "cd1d75b4f3fdda5cfa57bbd37d109ba886c35d15503a5982993526b937245600",
+			Key = Guid.Parse("5248ea19-369d-4071-8947-413310872b7e"),
+			Name = "OpenIZ Disconnected Client"
 		};
-
 
 		// Applets
 		private List<AppletManifest> m_applets = new List<AppletManifest>();
@@ -157,6 +159,7 @@ namespace OpenIZ.Mobile.Core.Android
 
 						DataMigrator migrator = new DataMigrator ();
 						migrator.Ensure ();
+
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());
 						throw;
@@ -271,6 +274,17 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 
+		/// <summary>
+		/// Explicitly authenticate the specified user as the domain context
+		/// </summary>
+		public void Authenticate(String userName, String password)
+		{
+			var identityService = this.GetService<IIdentityProviderService>();
+			this.Principal = identityService.Authenticate(userName, password);
+			if(this.Principal == null)
+				throw new SecurityException("err_login_invalidusername");
+		}
+
 		#region implemented abstract members of ApplicationContext
 
 		/// <summary>
@@ -283,7 +297,30 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 
+		/// <summary>
+		/// Gets the application information for the currently running application.
+		/// </summary>
+		/// <value>The application.</value>
+		public override OpenIZ.Core.Model.Security.SecurityApplication Application {
+			get {
 
+				return c_application;
+			}
+		}
+
+		/// <summary>
+		/// Gets the device information for the currently running device
+		/// </summary>
+		/// <value>The device.</value>
+		public override OpenIZ.Core.Model.Security.SecurityDevice Device {
+			get {
+				// TODO: Load this from configuration
+				return new OpenIZ.Core.Model.Security.SecurityDevice () {
+					Name = this.Configuration.GetSection<SecurityConfigurationSection>().DeviceName,
+					DeviceSecret = this.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret
+				};
+			}
+		}
 		#endregion
 	}
 }

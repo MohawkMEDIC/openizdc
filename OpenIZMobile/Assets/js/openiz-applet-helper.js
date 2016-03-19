@@ -136,10 +136,20 @@ var OpenIZ = {
 		}
 	},
 	Configuration : {
-		joinRealm : function(address) {
+		getSection : function(sectionName) {
 			try
 			{
-				OpenIZConfigurationService.JoinRealm(address);
+				return JSON.parse(OpenIZConfigurationService.GetSection(sectionName));
+			}
+			catch(e)
+			{
+				console.error(e);
+			}
+		},
+		joinRealm : function(address, deviceName) {
+			try
+			{
+				OpenIZConfigurationService.JoinRealm(address, deviceName);
 			}
 			catch(e)
 			{

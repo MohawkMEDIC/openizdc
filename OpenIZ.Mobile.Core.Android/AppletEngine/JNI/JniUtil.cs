@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// <summary>
 		/// Convert object to JSON.
 		/// </summary>
-		public static String ToJson<T>(T obj) where T : IdentifiedData
+		public static String ToJson<T>(T obj) 
 		{
 
 			JsonSerializer jsz = new JsonSerializer ();
@@ -29,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// <summary>
 		/// Convert object from JSON
 		/// </summary>
-		public static T FromJson<T>(String json) where T : IdentifiedData
+		public static T FromJson<T>(String json) 
 		{
 			JsonSerializer jsz = new JsonSerializer ();
 			using (StringReader sr = new StringReader (json)) {

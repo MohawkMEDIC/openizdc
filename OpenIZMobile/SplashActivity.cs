@@ -155,16 +155,11 @@ namespace OpenIZMobile
 		{
 			while (e is TargetInvocationException)
 				e = e.InnerException;
-			this.RunOnUiThread (() => {
-				var alertDialogBuilder = new AlertDialog.Builder (this) 
-					.SetMessage (String.Format ("{0} : {1}", Resources.GetString (Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message)) 
-					.SetCancelable (false) 
-					.SetPositiveButton (Resource.String.confirm, (sender, args) => { 
+			UserInterfaceUtils.ShowMessage (this,
+				(s, a) => {
 					this.Finish ();
-				}); 
-
-				alertDialogBuilder.Show ();
-			});
+				},
+				"{0} : {1}", Resources.GetString (Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
 		}
 	}
 }

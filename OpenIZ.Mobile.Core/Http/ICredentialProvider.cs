@@ -14,6 +14,11 @@ namespace OpenIZ.Mobile.Core.Http
 		/// </summary>
 		Credentials GetCredentials(IRestClient context);
 
+		/// <summary>
+		/// Authenticate a user in the credential.
+		/// </summary>
+		/// <param name="context">Context.</param>
+		Credentials Authenticate(IRestClient context);
 	}
 
 }

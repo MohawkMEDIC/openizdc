@@ -227,7 +227,7 @@ namespace OpenIZ.Mobile.Core.Http
 								
 								// Credential provider
 								if (this.Description.Binding.Security.CredentialProvider != null) {
-									this.Credentials = this.Description.Binding.Security.CredentialProvider.GetCredentials (this);
+									this.Credentials = this.Description.Binding.Security.CredentialProvider.Authenticate (this);
 									return ServiceClientErrorType.Valid;
 								} else
 									return ServiceClientErrorType.SecurityError;

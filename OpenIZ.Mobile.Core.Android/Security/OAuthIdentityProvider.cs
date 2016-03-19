@@ -7,6 +7,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Security;
 using Newtonsoft.Json;
+using System.Security;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -22,6 +23,18 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		[JsonObject]
 		private class OAuthTokenResponse
 		{
+
+			/// <summary>
+			/// Gets or sets the error
+			/// </summary>
+			[JsonProperty("error")]
+			public String Error { get; set; }
+
+			/// <summary>
+			/// Description of the error
+			/// </summary>
+			[JsonProperty("error_description")]
+			public String ErrorDescription { get; set; }
 
 			/// <summary>
 			/// Access token
@@ -47,6 +60,13 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			[JsonProperty("refresh_token")]
 			public String RefreshToken { get; set; }
 
+			/// <summary>
+			/// Represent the object as a string
+			/// </summary>
+			public override string ToString ()
+			{
+				return string.Format ("[OAuthTokenResponse: Error={0}, ErrorDescription={1}, AccessToken={2}, TokenType={3}, ExpiresIn={4}, RefreshToken={5}]", Error, ErrorDescription, AccessToken, TokenType, ExpiresIn, RefreshToken);
+			}
 		}
 
 		/// <summary>
@@ -157,12 +177,30 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			IPrincipal retVal = null;
 			using (IRestClient restClient = ApplicationContext.Current.GetRestClient ("acs")) {
 
-				// Set credentials
-				restClient.Credentials = new OAuthTokenServiceCredentials(principal);
+				try
+				{
+					// Set credentials
+					restClient.Credentials = new OAuthTokenServiceCredentials(principal);
 
-				// Invoke
-				OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>(null, "application/x-www-urlform-encoded", new OAuthTokenRequest(principal.Identity.Name, password, scope));
-				retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType);
+					// Invoke
+					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", new OAuthTokenRequest(principal.Identity.Name, password, scope));
+					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType);
+				}
+				catch(RestClientException<OAuthTokenResponse> ex)
+				{
+					this.m_tracer.TraceError("REST client exception: {0}", ex);
+					throw new SecurityException(
+						String.Format("err_oauth2_{0}", ex.Result.Error), 
+						ex
+					);
+				}
+				catch(Exception ex)
+				{
+					this.m_tracer.TraceError("Generic exception: {0}", ex);
+					throw new SecurityException(
+						"err_exception",
+						ex);
+				}
 			}
 
 			this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });

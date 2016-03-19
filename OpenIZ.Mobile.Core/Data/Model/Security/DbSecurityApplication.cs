@@ -9,6 +9,16 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	[Table("security_application")]
 	public class DbSecurityApplication : DbIdentified
 	{
+
+		/// <summary>
+		/// Gets or sets the public identifier.
+		/// </summary>
+		/// <value>The public identifier.</value>
+		[Column("public_id"), Unique]
+		public String PublicId {
+			get;
+			set;
+		}
 	}
 }
 

@@ -89,7 +89,17 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <typeparam name="T">The 1st type parameter.</typeparam>
 		public T GetSection<T>() where T : IConfigurationSection
 		{
-			return (T)this.Sections.Find (o => o.GetType ().Equals (typeof(T)));
+			return (T)this.GetSection (typeof(T));
+		}
+
+		/// <summary>
+		/// Gets the section of specified type.
+		/// </summary>
+		/// <returns>The section.</returns>
+		/// <param name="t">T.</param>
+		public object GetSection(Type t)
+		{
+			return this.Sections.Find (o => o.GetType ().Equals (t));
 		}
 
 		/// <summary>
