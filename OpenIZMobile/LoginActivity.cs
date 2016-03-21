@@ -36,6 +36,8 @@ namespace OpenIZMobile
 			this.m_txtPassword = this.FindViewById<EditText>(Resource.Id.txt_login_password);
 			this.m_btnLogin = this.FindViewById<Button> (Resource.Id.btn_login_login);
 
+			this.m_txtUserName.Text = "administrator";
+			this.m_txtPassword.Text = "password";
 			// Wire up events
 			this.m_btnLogin.Click += (o,e)=>
 			{

@@ -32,12 +32,12 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			this.m_tracer.TraceInfo ("Scanning for data migrations...");
 
 			// Scan for migrations 
-			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.ExportedTypes) {
+			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.DefinedTypes) {
 				try {
-					if(dbm == typeof(DataMigrator))
+					if(dbm.AsType() == typeof(DataMigrator))
 						continue;
 					
-					IDbMigration migration = Activator.CreateInstance (dbm) as IDbMigration;
+					IDbMigration migration = Activator.CreateInstance (dbm.AsType()) as IDbMigration;
 					if (migration != null) {
 						this.m_tracer.TraceVerbose ("Found data migrator {0}...", migration.Id);
 						this.m_migrations.Add (migration);

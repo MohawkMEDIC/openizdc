@@ -43,6 +43,16 @@ namespace OpenIZ.Mobile.Core.Security
 			return this.Claims.Any (predicate);
 		}
 
+		/// <summary>
+		/// Finds the specified claim.
+		/// </summary>
+		/// <returns>The claim.</returns>
+		/// <param name="claimType">Claim type.</param>
+		public Claim FindClaim(String claimType)
+		{
+			return this.Claims.FirstOrDefault (o => o.Type == claimType);
+		}
+
 		#region IPrincipal implementation
 		/// <summary>
 		/// Determines whether the current principal belongs to the specified role.

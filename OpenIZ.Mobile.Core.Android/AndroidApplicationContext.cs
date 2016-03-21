@@ -19,6 +19,7 @@ using OpenIZ.Mobile.Core.Interop.Util;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Services;
 using System.Security;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -92,15 +93,22 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
 		public static bool StartTemporary()
 		{
-			var retVal = new AndroidApplicationContext();
-			retVal.m_configurationManager = new ConfigurationManager (ConfigurationManager.GetDefaultConfiguration());
-			retVal.Principal = new ClaimsPrincipal (new ClaimsIdentity ("SYSTEM", true, new Claim[] {
-				new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
-			}));
-			ApplicationContext.Current = retVal;
-			retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
+			try
+			{
+				var retVal = new AndroidApplicationContext();
+				retVal.m_configurationManager = new ConfigurationManager (ConfigurationManager.GetDefaultConfiguration());
+				retVal.Principal = new ClaimsPrincipal (new ClaimsIdentity ("SYSTEM", true, new Claim[] {
+					new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
+				}));
+				ApplicationContext.Current = retVal;
+				retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
 
-			return true;
+				return true;
+			}
+			catch(Exception e) {
+				Log.Error ("OpenIZ FATAL", e.ToString ());
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -159,6 +167,9 @@ namespace OpenIZ.Mobile.Core.Android
 
 						DataMigrator migrator = new DataMigrator ();
 						migrator.Ensure ();
+
+						// Set the entity source
+						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());

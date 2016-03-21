@@ -8,6 +8,8 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Core.Model;
 using System.Linq.Expressions;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Mobile.Core.Interop.Clients
 {
@@ -30,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 		/// Perform a query
 		/// </summary>
 		/// <param name="query">Query.</param>
-		public IEnumerable<TModel> Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
+		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
 		{
 			// Map the query to HTTP parameters
 			var queryParms = HttpQueryExpressionBuilder.BuildQuery(query);
@@ -39,7 +41,13 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
 
 			// The IMSI uses the XMLName as the root of the request
-			return this.Client.Get<List<TModel>>(resourceName, queryParms.ToArray());
+			var retVal = this.Client.Get<Bundle>(resourceName, queryParms.ToArray());
+
+			// Queue up the result
+			SynchronizationQueue.Inbound.Enqueue(retVal, OpenIZ.Mobile.Core.Synchronization.Model.DataOperationType.Sync);
+
+			// Return value
+			return retVal;
 		}
 
 	}

@@ -9,23 +9,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	[Table("entity_name")]
 	public class DbEntityName : DbEntityLink
 	{
-
-		/// <summary>
-		/// Gets or sets the entity identifier.
-		/// </summary>
-		/// <value>The entity identifier.</value>
-		[Column("source_id"), NotNull]
-		public int EntityId {
-			get;
-			set;
-		}
-
+		
 		/// <summary>
 		/// Gets or sets the use concept.
 		/// </summary>
 		/// <value>The use concept.</value>
-		[Column("use_concept")]
-		public int UseConcept {
+		[Column("use_concept_uuid"), MaxLength(16)]
+		public byte[] UseConcept {
 			get;
 			set;
 		}
@@ -42,8 +32,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the name identifier.
 		/// </summary>
 		/// <value>The name identifier.</value>
-		[Column("name_id")]
-		public int NameId {
+		[Column("name_id"), MaxLength(16)]
+		public byte[] NameId {
 			get;
 			set;
 		}
@@ -72,8 +62,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phon_alg"), NotNull]
-		public int PhoneticAlgorithmId {
+		[Column("phon_alg_uuid"), NotNull]
+		public byte[] PhoneticAlgorithmUuid {
 			get;
 			set;
 		}

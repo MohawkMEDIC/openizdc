@@ -133,20 +133,20 @@
     <Compile Include="Configuration\ServiceClientDescriptionConfigurationSection.cs" />
     <Compile Include="Interop\Clients\ServiceClientBase.cs" />
     <Compile Include="Interop\Util\HttpQueryExpressionBuilder.cs" />
+    <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
+    <Compile Include="Data\Persistence\SecurityUserPersistenceService.cs" />
+    <Compile Include="Data\LocalEntitySource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
-    </Reference>
     <Reference Include="SQLite-net">
       <HintPath>..\Solution Items\SQLite-net.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw">
-      <HintPath>..\Solution Items\SQLitePCL.raw.dll</HintPath>
+    <Reference Include="OpenIZ.Core.Model">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +175,7 @@
     <Folder Include="Interop\" />
     <Folder Include="Interop\Clients\" />
     <Folder Include="Interop\Util\" />
+    <Folder Include="Data\Sql\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
@@ -187,5 +188,6 @@
   </ProjectExtensions>
   <ItemGroup>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
 </Project>

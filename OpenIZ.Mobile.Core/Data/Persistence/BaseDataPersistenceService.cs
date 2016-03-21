@@ -21,7 +21,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
-			if (domainObject.Uuid == null)
+			if (data.Key == Guid.Empty)
 				data.Key = domainObject.Key = Guid.NewGuid ();
 
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
-			domainObject.UpdatedTime = domainObject.CreationTime ?? DateTime.Now;
+			domainObject.UpdatedTime = DateTime.Now;
 			context.Update(domainObject);
 
 			return data;

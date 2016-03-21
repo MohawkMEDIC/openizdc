@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 					return matches[0];
 			} catch (Exception ex) {
 				s_tracer.TraceError (ex.ToString ());
-				throw;
+				return null;
 			}
 			finally {
 				store.Close ();

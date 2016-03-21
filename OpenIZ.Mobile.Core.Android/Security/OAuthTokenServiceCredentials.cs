@@ -56,10 +56,13 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				claimString.Remove (claimString.Length - 1, 1);
 			
 			// Add authenticat header
-			return new System.Collections.Generic.Dictionary<string, string> () {
-				{ "Authorization", String.Format("BASIC {0}", Convert.ToBase64String(Encoding.UTF8.GetBytes(appAuthString))) },
-				{ "X-OpenIZClient-Claim", claimString.ToString() }
+			var retVal = new System.Collections.Generic.Dictionary<string, string> () {
+				{ "Authorization", String.Format("BASIC {0}", Convert.ToBase64String(Encoding.UTF8.GetBytes(appAuthString))) }
 			};
+			if (claimString.Length > 0)
+				retVal.Add ("X-OpenIZClient-Claim", claimString.ToString ());
+				
+			return retVal;
 		}
 		#endregion
 

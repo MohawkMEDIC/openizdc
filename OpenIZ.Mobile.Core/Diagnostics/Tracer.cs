@@ -16,7 +16,7 @@ namespace OpenIZ.Mobile.Core.Diagnostics
 		private String m_source;
 
 		// Writers
-		private List<TraceWriter> m_writers;
+		private List<TraceWriter> m_writers = new List<TraceWriter>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Diagnostics.Logger"/> class.
@@ -32,7 +32,10 @@ namespace OpenIZ.Mobile.Core.Diagnostics
 		/// </summary>
 		public static Tracer GetTracer (Type sourceType)
 		{
-			return GetTracer (sourceType, ApplicationContext.Current.Configuration);
+			if (ApplicationContext.Current == null)
+				return new Tracer (sourceType.FullName);
+			else
+				return GetTracer (sourceType, ApplicationContext.Current.Configuration);
 		}
 
 		/// <summary>

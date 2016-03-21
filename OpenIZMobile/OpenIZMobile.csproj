@@ -47,9 +47,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
-    <Reference Include="OpenIZ.Core.Model">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -214,6 +211,9 @@
     <AndroidAsset Include="Assets\js\select2.min.js" />
     <AndroidAsset Include="Assets\css\select2.min.css" />
     <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
+    <AndroidAsset Include="Assets\js\jquery.metro.js" />
+    <AndroidAsset Include="Assets\css\jquery.metro.css" />
+    <AndroidAsset Include="Assets\js\jquery.mobile.min.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

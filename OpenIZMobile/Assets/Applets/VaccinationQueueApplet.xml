@@ -11,6 +11,10 @@
 	<tile size="lg">
 		<text>Queue</text>
 		<icon>@drawable/queue</icon>
+		<liveSource type="function">
+			<service>IPatientEncounterService</service>
+			<method>GetCurrentQueue</method>
+		</liveSource>
 	</tile>
 	<asset name="index" mimeType="text/html">
 		<contentXml>

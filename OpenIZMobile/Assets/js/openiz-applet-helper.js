@@ -136,6 +136,9 @@ var OpenIZ = {
 		}
 	},
 	Configuration : {
+		getRealm : function() {
+			return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+		},
 		getSection : function(sectionName) {
 			try
 			{
@@ -150,6 +153,7 @@ var OpenIZ = {
 			try
 			{
 				OpenIZConfigurationService.JoinRealm(address, deviceName);
+				alert("Welcome to the " + address + " realm!");
 			}
 			catch(e)
 			{

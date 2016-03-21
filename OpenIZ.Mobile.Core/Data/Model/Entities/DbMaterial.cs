@@ -24,8 +24,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("form_concept"), Indexed, NotNull]
-		public int FormConcept {
+		[Column("form_concept_uuid"), Indexed, NotNull, MaxLength(16)]
+		public byte[] FormConcept {
 			get;
 			set;
 		}
@@ -34,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the quantity concept.
 		/// </summary>
 		/// <value>The quantity concept.</value>
-		[Column("quantity")]
-		public int QuantityConcept {
+		[Column("quantity_concept_uuid"), MaxLength(16)]
+		public byte[] QuantityConceptUuid {
 			get;
 			set;
 		}

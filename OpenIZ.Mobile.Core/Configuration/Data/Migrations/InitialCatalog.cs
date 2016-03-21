@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Linq;
 using SQLite;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
@@ -6,13 +7,15 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Mobile.Core.Data.Model.Security;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using System.IO;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
 	/// <summary>
 	/// This class is responsible for setting up an initial catalog of items in the SQL Lite database
 	/// </summary>
-	public class InitialCatalog : IDbMigration
+	internal class InitialCatalog : IDbMigration
 	{
 		
 		#region IDbMigration implementation
@@ -45,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 				db.CreateTable<DbActIdentifier> (CreateFlags.None);
 				db.CreateTable<DbIdentifierType> (CreateFlags.None);
 
-				tracer.TraceInfo ("Installing Extensability Tables...");
+				tracer.TraceInfo ("Installing Extensibility Tables...");
 				db.CreateTable<DbActExtension> (CreateFlags.None);
 				db.CreateTable<DbActNote> (CreateFlags.None);
 				db.CreateTable<DbEntityExtension> (CreateFlags.None);
@@ -62,7 +65,40 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 				db.CreateTable<DbEntitySecurityPolicy> (CreateFlags.None);
 				db.CreateTable<DbSecurityRole> (CreateFlags.None);
 				db.CreateTable<DbSecurityUser> (CreateFlags.None);
+				// Anonymous user
+				db.Insert (new DbSecurityUser () {
+					Key = Guid.Empty,
+					PasswordHash = "XXX",
+					SecurityHash = "XXX",
+					LockoutEnabled = true,
+					UserName = "ANONYMOUS",
+					CreationTime = DateTime.Now,
+					CreatedByKey = Guid.Empty
+				});
+
 				db.CreateTable<DbSecurityUserRole> (CreateFlags.None);
+
+				tracer.TraceInfo ("Installing Entity Tables...");
+				db.CreateTable<DbEntity> ();
+				db.CreateTable<DbApplicationEntity> ();
+				db.CreateTable<DbDeviceEntity> ();
+				db.CreateTable<DbEntityAddress> ();
+				db.CreateTable<DbEntityAddressComponent> ();
+				db.CreateTable<DbEntityName> ();
+				db.CreateTable<DbEntityNameComponent> ();
+				db.CreateTable<DbMaterial> ();
+				db.CreateTable<DbManufacturedMaterial> ();
+				db.CreateTable<DbOrganization> ();
+				db.CreateTable<DbPerson> ();
+				db.CreateTable<DbPlace> ();
+				db.CreateTable<DbTelecomAddress> ();
+
+				tracer.TraceInfo ("Installing Role Tables...");
+
+				// Run SQL Script
+				using (StreamReader sr = new StreamReader (typeof(InitialCatalog).GetTypeInfo ().Assembly.GetManifestResourceStream ("OpenIZ.Mobile.Core.Data.Sql.000_init_openiz_algonquin.sql"))) {
+					db.Execute (sr.ReadToEnd ());
+				}
 
 			}
 			return true;

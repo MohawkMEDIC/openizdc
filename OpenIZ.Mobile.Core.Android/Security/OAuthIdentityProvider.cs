@@ -8,6 +8,9 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Security;
 using Newtonsoft.Json;
 using System.Security;
+using OpenIZ.Mobile.Core.Android.Exceptions;
+using OpenIZ.Core.Model.Security;
+using OpenIZ.Mobile.Core.Serices;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -172,9 +175,11 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			String scope = "*";
 			if (principal is ClaimsPrincipal)
 				scope = (principal as ClaimsPrincipal).Claims.FirstOrDefault (o => o.Type == ClaimTypes.OpenIzScopeClaim)?.Value ?? scope;
-
+			else
+				scope = ApplicationContext.Current.GetRestClient ("imsi").Description.Endpoint [0].Address;
+			
 			// Authenticate
-			IPrincipal retVal = null;
+			ClaimsPrincipal retVal = null;
 			using (IRestClient restClient = ApplicationContext.Current.GetRestClient ("acs")) {
 
 				try
@@ -185,12 +190,41 @@ namespace OpenIZ.Mobile.Core.Android.Security
 					// Invoke
 					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", new OAuthTokenRequest(principal.Identity.Name, password, scope));
 					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType);
+
+					// Create a security user and ensure they exist!
+					// TODO: Use the business services instead
+					IDataPersistenceService<SecurityUser> persistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+					Guid sidKey = Guid.Parse(retVal.FindClaim(ClaimTypes.Sid).Value);
+					var localUser = persistence.Get(sidKey);
+					if(localUser == null)
+					{
+						persistence.Insert(new SecurityUser() {
+							Email = retVal.FindClaim(ClaimTypes.Email)?.Value,
+							LastLoginTime= DateTime.Now,
+							PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password),
+							SecurityHash = Guid.NewGuid().ToString(),
+							UserName = retVal.Identity.Name,
+							Key = sidKey
+						});
+					}
+					else 
+					{
+						localUser.PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password);
+						persistence.Update(localUser);
+					}
 				}
 				catch(RestClientException<OAuthTokenResponse> ex)
 				{
 					this.m_tracer.TraceError("REST client exception: {0}", ex);
 					throw new SecurityException(
 						String.Format("err_oauth2_{0}", ex.Result.Error), 
+						ex
+					);
+				}
+				catch(SecurityTokenException ex) {
+					this.m_tracer.TraceError ("TOKEN exception: {0}", ex);
+					throw new SecurityException (
+						String.Format ("err_token_{0}", ex.Type),
 						ex
 					);
 				}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
 using OpenIZ.Mobile.Core.Http;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -13,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 	/// <summary>
 	/// Service client configuration
 	/// </summary>
-	[XmlType (nameof (ServiceClientConfigurationSection), Namespace = "http://openiz.org/mobile/configuration")]
+	[XmlType (nameof (ServiceClientConfigurationSection), Namespace = "http://openiz.org/mobile/configuration"), JsonObject(nameof(ServiceClientConfigurationSection))]
 	public class ServiceClientConfigurationSection : IConfigurationSection
 	{
 		/// <summary>
@@ -22,6 +23,16 @@ namespace OpenIZ.Mobile.Core.Configuration
 		public ServiceClientConfigurationSection ()
 		{
 			this.Client = new List<ServiceClientDescription> ();
+		}
+
+		/// <summary>
+		/// Gets or sets the proxy address.
+		/// </summary>
+		/// <value>The proxy address.</value>
+		[XmlElement("proxyAddress"), JsonProperty("proxyAddress")]
+		public String ProxyAddress {
+			get;
+			set;
 		}
 
 		/// <summary>

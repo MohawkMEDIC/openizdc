@@ -6,6 +6,7 @@ using System.Security;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using OpenIZ.Mobile.Core.Android.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -55,22 +56,23 @@ namespace OpenIZ.Mobile.Core.Android.Security
 
 			// Algorithm is valid?
 			if (this.m_configuration.TokenAlgorithms?.Contains ((String)headers ["alg"]) == false)
-				throw new SecurityException (String.Format ("Token algorithm {0} not permitted", headers ["alg"]));
+				throw new SecurityTokenException(SecurityTokenExceptionType.InvalidTokenType, String.Format ("Token algorithm {0} not permitted", headers ["alg"]));
 
 
 			// Attempt to get the certificate
 			if (((String)headers ["alg"]).StartsWith ("RS")) {
 				var cert = X509CertificateUtils.FindCertificate (X509FindType.FindByThumbprint, StoreLocation.CurrentUser, StoreName.My, headers ["x5t"].ToString ());
-				if (cert == null)
-					throw new SecurityException (String.Format ("Cannot find certificate {0}", headers ["x5t"]));
-				// TODO: Verify
+				//if (cert == null)
+				//	throw new SecurityTokenException(SecurityTokenExceptionType.KeyNotFound, String.Format ("Cannot find certificate {0}", headers ["x5t"]));
+				// TODO: Verify signature
 			} else if (((String)headers ["alg"]).StartsWith ("HS")) {
 				int keyId = Int32.Parse ((String)headers ["keyid"]);
 				if (keyId > this.m_configuration.TokenSymmetricSecrets.Count)
-					throw new SecurityException ("Symmetric key not found");
-				// TODO: Verfiy
+					throw new SecurityTokenException (SecurityTokenExceptionType.KeyNotFound, "Symmetric key not found");
+				// TODO: Verfiy signature
 			} 
 				
+
 			
 			// Parse the jwt
 			List<Claim> claims = new List<Claim>();
@@ -82,6 +84,14 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				else
 					claims.AddRange (this.ProcessClaim (kf, claimName));
 			}
+
+			Claim expiry = claims.Find (o => o.Type == ClaimTypes.Expiration),
+				notBefore = claims.Find (o => o.Type == ClaimTypes.AuthenticationInstant);
+			if (expiry == null || DateTime.Parse (expiry.Value) < DateTime.Now)
+				throw new SecurityTokenException (SecurityTokenExceptionType.TokenExpired, "Token expired");
+			else if (notBefore == null || Math.Abs(DateTime.Parse (notBefore.Value).Subtract(DateTime.Now).TotalMinutes) > 2)
+				throw new SecurityTokenException (SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
+
 			this.m_identities.Clear ();
 			this.m_identities.Add(new ClaimsIdentity((String)body["unique_name"], true, claims));
 		}

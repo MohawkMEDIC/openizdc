@@ -189,12 +189,15 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 							new XElement(xhtml + "meta", new XAttribute("content", "true"), new XAttribute("name", "HandheldFriendly")), 
 							new XElement(xhtml + "meta", new XAttribute("content", "width=640px, initial-scale=0.50, maximum-scale=0.50, minimum-scale=0.50, user-scalable=0"), new XAttribute("name", "viewport")), 
 							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap.css"), new XAttribute ("rel", "stylesheet")),
+							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery.metro.css"), new XAttribute ("rel", "stylesheet")),
 							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/select2.min.css"), new XAttribute ("rel", "stylesheet")),
 
 //							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap-theme.css"), new XAttribute ("rel", "stylesheet"))
 							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.custom.css"), new XAttribute ("rel", "stylesheet")),
 							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.theme.css"), new XAttribute ("rel", "stylesheet")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.mobile.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.metro.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/angular.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/bootstrap.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.easing.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),

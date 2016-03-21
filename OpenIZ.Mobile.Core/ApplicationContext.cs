@@ -6,6 +6,7 @@ using OpenIZ.Mobile.Core.Services;
 using System.Collections.Generic;
 using System.Reflection;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Mobile.Core
 {

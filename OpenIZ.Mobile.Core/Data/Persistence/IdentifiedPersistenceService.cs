@@ -49,9 +49,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		internal override TModel Insert (SQLiteConnection context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
+
 			if (domainObject.Uuid == null)
 				data.Key = domainObject.Key = Guid.NewGuid ();
-
+			
 			context.Insert (domainObject);
 
 			return data;
@@ -86,10 +87,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="query">Query.</param>
-		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query)
+		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset = 0, int count = -1)
 		{
 			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
-			return context.Table<TDomain> ().Where (domainQuery).Select (o => this.ToModelInstance (o, context));
+			var retVal = context.Table<TDomain> ().Where (domainQuery).Skip (offset);
+			if (count >= 0)
+				retVal = retVal.Take (count);
+			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
 		}
 
 		/// <summary>
@@ -99,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// <param name="query">Query.</param>
 		/// <param name="storedQueryName">Stored query name.</param>
 		/// <param name="parms">Parms.</param>
-		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms)
+		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms, int offset = 0, int count = -1)
 		{
 
 			// Build a query
@@ -109,13 +113,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			if (parms.Count > 0) {
 				sb.Append (" WHERE ");
 				foreach (var s in parms) {
-					sb.AppendFormat (" {0} = ? AND ", s.Key);
+					sb.AppendFormat (" {0} = ? AND ", s.Key.Replace(".","_"));
 					vals.Add (s.Value);
 				}
 				sb.Remove (sb.Length - 4, 4);
 			}
 
-			return context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Select(o=>this.ToModelInstance(o, context));
+			var retVal = context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Skip (offset);
+			if (count >= 0)
+				retVal = retVal.Take (count);
+			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
 		}
 		#endregion
 	}

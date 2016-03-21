@@ -18,6 +18,7 @@ using OpenIZ.Mobile.Core.Android.Security;
 using OpenIZ.Mobile.Core.Data;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
+using AndroidOS = Android.OS;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -93,17 +94,23 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					typeof(LocalConceptService).AssemblyQualifiedName,
 					typeof(SHA256PasswordHasher).AssemblyQualifiedName,
 					typeof(OAuthIdentityProvider).AssemblyQualifiedName,
-					typeof(LocalPersistenceService).AssemblyQualifiedName
+					typeof(LocalPersistenceService).AssemblyQualifiedName,
+					typeof(LocalEntitySource).AssemblyQualifiedName
 				}
 			};
 
 
 
 			// Security configuration
-			String macAddress = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o=>o.OperationalStatus == OperationalStatus.Up && o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)?.GetPhysicalAddress()?.ToString() ?? Guid.NewGuid().ToString();
+			var wlan = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o=>o.NetworkInterfaceType == NetworkInterfaceType.Ethernet&& o.Description.StartsWith("wlan"));
+			String macAddress = Guid.NewGuid ().ToString ();
+			if (wlan != null)
+				macAddress = wlan.GetPhysicalAddress ().ToString ();
+		//else 
+				
 
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
-				DeviceName = String.Format("{0}-{1}", Environment.MachineName, macAddress)
+				DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ","")
 			};
 
 			// Device key

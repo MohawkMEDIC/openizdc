@@ -106,6 +106,8 @@ namespace OpenIZ.Mobile.Core.Data
 				catch(Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					connection.Rollback ();
+					throw new LocalPersistenceException(DataOperationType.Insert, data, e);
+					
 				}
 
 
@@ -223,7 +225,7 @@ namespace OpenIZ.Mobile.Core.Data
 				{
 					this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-					var results = this.Query(connection, query).ToList();
+					var results = this.Query(connection, query);
 
 					this.Queried?.Invoke (this, new DataQueryResultEventArgs<TData> (query, results));
 
@@ -283,10 +285,10 @@ namespace OpenIZ.Mobile.Core.Data
 		protected Guid CurrentUserUuid(SQLiteConnection context)
 		{
 			if (ApplicationContext.Current.Principal == null)
-				throw new InvalidOperationException ("Null Principal");
+				return Guid.Empty;
 			var securityUser = context.Table<DbSecurityUser>().SingleOrDefault(o=>o.UserName == ApplicationContext.Current.Principal.Identity.Name);
 			if (securityUser == null)
-				throw new InvalidOperationException ("Local principal does not exist");
+				throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
 			return securityUser.Key;
 		}
 
@@ -327,13 +329,13 @@ namespace OpenIZ.Mobile.Core.Data
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="query">Query.</param>
-		internal abstract IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> query);
+		internal abstract IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> query, int offset = 0, int count = -1);
 		/// <summary>
 		/// Performs the actual query
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="query">Query.</param>
-		internal abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms);
+		internal abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset = 0, int count = -1);
 	}
 }
 

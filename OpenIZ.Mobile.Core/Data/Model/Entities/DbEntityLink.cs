@@ -13,8 +13,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the entity identifier.
 		/// </summary>
 		/// <value>The entity identifier.</value>
-		[Column("entity_id"), NotNull, Indexed]
-		public int EntityId {
+		[Column("entity_uuid"), Indexed, MaxLength(16), NotNull]
+		public byte[] EntityUuid {
 			get;
 			set;
 		}

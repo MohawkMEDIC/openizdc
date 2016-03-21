@@ -53,6 +53,9 @@
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\Solution Items\SQLitePCL.raw.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Resources\Resource.designer.cs" />
@@ -77,6 +80,7 @@
     <Compile Include="Security\TokenCredentialProvider.cs" />
     <Compile Include="Security\TokenCredentials.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
+    <Compile Include="Exceptions\SecurityTokenException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -94,10 +98,10 @@
   <ItemGroup>
     <Folder Include="Http\" />
     <Folder Include="Configuration\" />
-    <Folder Include="Authentication\" />
     <Folder Include="AppletEngine\" />
     <Folder Include="AppletEngine\JNI\" />
     <Folder Include="Security\" />
     <Folder Include="Diagnostics\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 </Project>

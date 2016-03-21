@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Linq;
 using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Http
 {
@@ -14,6 +15,9 @@ namespace OpenIZ.Mobile.Core.Http
 
 		// Configuration
 		private ServiceClientDescription m_configuration;
+
+		// Get tracer
+		private Tracer m_tracer = Tracer.GetTracer (typeof(RestClientBase));
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Http.RestClient"/> class.
@@ -38,15 +42,16 @@ namespace OpenIZ.Mobile.Core.Http
 		protected virtual WebRequest CreateHttpRequest(String resourceName, params KeyValuePair<String, Object>[] query)
 		{
 			// URL is relative to base address
+
 			Uri baseUrl = new Uri(this.Description.Endpoint[0].Address);
 			UriBuilder uriBuilder = new UriBuilder ();
 			uriBuilder.Scheme = baseUrl.Scheme;
 			uriBuilder.Host = baseUrl.Host;
 			uriBuilder.Port = baseUrl.Port;
-			uriBuilder.Path = uriBuilder.Path;
+			uriBuilder.Path = baseUrl.AbsolutePath;
 			if (!String.IsNullOrEmpty (resourceName))
 				uriBuilder.Path += "/" + resourceName;
-			
+
 			// Add query string
 			if (query != null) {
 				String queryString = String.Empty;
@@ -60,10 +65,15 @@ namespace OpenIZ.Mobile.Core.Http
 
 			Uri uri = uriBuilder.Uri;
 
+
+			// Log
+			this.m_tracer.TraceVerbose ("Constructing WebRequest to {0}", uriBuilder);
+
 			// Add headers
 			WebRequest retVal = HttpWebRequest.Create(uri.ToString());
 			if (this.Credentials != null) {
 				foreach (var kv in this.Credentials.GetHttpHeaders ()) {
+					this.m_tracer.TraceVerbose ("Adding header {0}:{1}", kv.Key, kv.Value);
 					retVal.Headers[kv.Key] = kv.Value;
 				}
 			}
@@ -71,6 +81,7 @@ namespace OpenIZ.Mobile.Core.Http
 
 			// Compress?
 			if (!String.IsNullOrEmpty(this.Accept)) {
+				this.m_tracer.TraceVerbose ("Accepts {0}", this.Accept);
 				retVal.Headers ["Accept"] = this.Accept;
 			}
 					

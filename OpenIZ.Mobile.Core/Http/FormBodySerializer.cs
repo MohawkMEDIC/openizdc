@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Net;
 using System.Xml.Serialization;
 using System.IO;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Http
 {
@@ -37,6 +38,9 @@ namespace OpenIZ.Mobile.Core.Http
 	/// </summary>
 	public class FormBodySerializer : IBodySerializer
 	{
+
+		private Tracer m_tracer = Tracer.GetTracer (typeof(FormBodySerializer));
+
 		#region IBodySerializer implementation
 		/// <summary>
 		/// Serialize the specified object
@@ -46,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Http
 
 			// Get runtime properties
 			bool first = true;
-			using(StreamWriter sw = new StreamWriter(s))
+			using (StreamWriter sw = new StreamWriter (s)) {
 				foreach (var pi in o.GetType().GetRuntimeProperties()) {
 
 					// Use XML Attribute
@@ -55,17 +59,18 @@ namespace OpenIZ.Mobile.Core.Http
 						continue;
 
 					// Write
-					String value = pi.GetValue(o)?.ToString();
+					String value = pi.GetValue (o)?.ToString ();
 					if (String.IsNullOrEmpty (value))
 						continue;
 
 					if (!first)
 						sw.Write ("&");
-					sw.Write ("{0}={1}", fatt.Name, WebUtility.UrlEncode (value));
+					sw.Write ("{0}={1}", fatt.Name, value);
 					first = false;
 
 				}
 
+			}
 		}
 
 		/// <summary>

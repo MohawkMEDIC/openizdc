@@ -33,28 +33,30 @@
 											</div>
 										</div>
 									</div>
-									<div class="input-group">
-										<span class="input-group-addon" id="deviceNameLabel">Device Name:</span>
-										<input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Z][A-Z.0-9-]+$/i" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
-										<span class="input-group-addon">
-											<span class=" glyphicon glyphicon-phone">
+									<form name="realmForm" novalidate="novalidate">
+										<div class="input-group">
+											<span class="input-group-addon" id="deviceNameLabel">Device Name:</span>
+											<input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+											<span class="input-group-addon">
+												<span class=" glyphicon glyphicon-phone">
+												</span>
 											</span>
-										</span>
-									</div>
-									<div class="input-group">
-										<span class="input-group-addon" id="realmServerLabel">Realm:</span>
-										<input ng-model="config.security.domain" ng-required="true" placeholder="https://demo.openiz.org:8443/realm" ng-pattern="/^https:\/\/([\w+?\.\w+])+([a-zA-Z0-9\~\!\@\#\$\%\^\&amp;\*\(\)_\-\=\+\\\/\?\.\:\;\'\,]*)?$/i" class="form-control" type="url" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
-										<span class="input-group-addon">
-											<span class=" glyphicon glyphicon-globe">
+										</div>
+										<div class="input-group">
+											<span class="input-group-addon" id="realmServerLabel">Realm:</span>
+											<input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+											<span class="input-group-addon">
+												<span class=" glyphicon glyphicon-globe">
+												</span>
 											</span>
-										</span>
-									</div>
-									<div class="btn-group pull-right">
-										<button class="btn-danger btn" ng-disabled="realm.address !== null" ng-click="leaveRealm(config.realm)">
-											<span class="glyphicon glyphicon-resize-full">
-											</span> Leave Realm</button>
-										<button class="btn-primary btn" ng-click="joinRealm(config.realm)" ng-disabled="realmForm.$invalid">Join Realm <span class="glyphicon glyphicon-resize-small"></span></button>
-									</div>
+										</div>
+										<div class="btn-group pull-right">
+											<button class="btn-danger btn" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
+												<span class="glyphicon glyphicon-resize-full">
+												</span> Leave Realm</button>
+											<button class="btn-primary btn" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">Join Realm <span class="glyphicon glyphicon-resize-small"></span></button>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
@@ -116,17 +118,14 @@
 											<div class="input-group">
 												<span class="input-group-addon" id="facilityNameLabel">Facility:</span>
 												<select ng-required="true" ng-pattern="/\d+/" data-openiz-tag="select2" multiple="multiple" style="width:100%" ng-model="config.facility.fac" class="form-control" name="dataRetention" id="dataRetention" aria-describedBy="dataRetentionLabel">
-													
 												</select>
 											</div>
-
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
-												<div class="row">
+						<div class="row">
 							<div class="col-md-12">
 								<div class="btn-group pull-right">
 									<button class="btn-danger btn" ng-click="close()">
@@ -138,8 +137,7 @@
 						</div>
 					</div>
 				</form>
-		        <!-- OpenIZ:Scripts -->
-				
+				<!-- OpenIZ:Scripts -->
 			</body>
 		</contentXml>
 	</asset>
@@ -152,7 +150,8 @@
 			{
 
 				$scope.config = {
-					security : OpenIZ.Configuration.getSection("SecurityConfigurationSection")
+					security : OpenIZ.Configuration.getSection("SecurityConfigurationSection"),
+					realmName : OpenIZ.Configuration.getRealm()
 				};
 				$scope.master = {};
 

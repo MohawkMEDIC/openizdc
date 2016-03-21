@@ -19,7 +19,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		public string ComputeHash (string password)
 		{
 			SHA256 hasher = SHA256.Create();
-			return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password)));
+			return BitConverter.ToString(hasher.ComputeHash(Encoding.UTF8.GetBytes(password))).Replace("-","").ToLower();
 		}
 		#endregion
 	}

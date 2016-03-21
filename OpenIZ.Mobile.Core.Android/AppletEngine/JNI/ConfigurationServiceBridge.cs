@@ -66,6 +66,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 				if(AndroidApplicationContext.Current.ConfigurationManager.IsConfigured)
 					new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
 
+
 				// Configure the stuff to the appropriate realm info
 				var serviceClientSection = AndroidApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
 				if(serviceClientSection == null)
@@ -78,10 +79,18 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
 				// TODO: Actually contact the AMI for this information
 
-				// Parse URI
-				Uri baseUri = new Uri(realmUri);
-				String imsiUri = String.Format("http://{0}:{1}/imsi", baseUri.Host, baseUri.Port),
-					oauthUri = String.Format("http://{0}:{1}/auth", baseUri.Host, baseUri.Port);
+
+				ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName = deviceName;
+				ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().Domain = realmUri;
+				ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenAlgorithms = new System.Collections.Generic.List<string>() {
+					"RS256",
+					"HS256"
+				};
+				ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
+
+
+				String imsiUri = String.Format("http://{0}:8080/imsi", realmUri),
+					oauthUri = String.Format("http://{0}:8080/auth", realmUri);
 
 				// Parse IMSI URI
 				serviceClientSection.Client.Add(new ServiceClientDescription() {

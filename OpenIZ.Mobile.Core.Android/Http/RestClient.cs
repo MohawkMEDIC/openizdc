@@ -19,6 +19,8 @@ namespace OpenIZ.Mobile.Core.Android.Http
 	public class RestClient : RestClientBase
 	{
 
+		// Config section
+		private ServiceClientConfigurationSection m_configurationSection;
 		// Tracer
 		private Tracer m_tracer;
 
@@ -28,7 +30,8 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		public RestClient () : base()
 		{
 			this.m_tracer = Tracer.GetTracer (this.GetType ());
-			this.ClientCertificates = new X509Certificate2Collection ();
+			this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection> ();
+
 		}
 
 		/// <summary>
@@ -36,10 +39,11 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		/// </summary>
 		public RestClient (ServiceClientDescription config) : base(config)
 		{
+			this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection> ();
 			this.m_tracer = Tracer.GetTracer (this.GetType ());
-			this.ClientCertificates = new X509Certificate2Collection ();
 			// Find the specified certificate
 			if (config.Binding.Security.ClientCertificate != null) {
+				this.ClientCertificates = new X509Certificate2Collection ();
 				var cert = X509CertificateUtils.FindCertificate (config.Binding.Security.ClientCertificate.FindType, 
 					          config.Binding.Security.ClientCertificate.StoreLocation,
 					          config.Binding.Security.ClientCertificate.StoreName,
@@ -59,10 +63,18 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		protected override WebRequest CreateHttpRequest (string url, params KeyValuePair<string, object>[] query)
 		{
 			var retVal = (HttpWebRequest)base.CreateHttpRequest (url, query);
-			retVal.ClientCertificates = this.ClientCertificates;
 
+			// Certs?
+			if(this.ClientCertificates != null)
+				retVal.ClientCertificates.AddRange(this.ClientCertificates);
+
+			// Compress?
 			if(this.Description.Binding.Optimize)
 				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate gzip");
+
+			// Proxy?
+			if (!String.IsNullOrEmpty (this.m_configurationSection.ProxyAddress))
+				retVal.Proxy = new WebProxy (this.m_configurationSection.ProxyAddress);
 			return retVal;
 		}
 

@@ -13,8 +13,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the industry concept.
 		/// </summary>
 		/// <value>The industry concept.</value>
-		[Column("industry")]
-		public int IndustryConcept {
+		[Column("industry_concept_uuid"), MaxLength(16)]
+		public byte[] IndustryConceptUuid {
 			get;
 			set;
 		}

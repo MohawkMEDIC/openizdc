@@ -231,7 +231,33 @@
   <asset name="view" mimeType="text/html">
   	<contentXml>
       <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientViewController">
-
+      	<div class="ui-app-title">Smith, Jennifer</div>
+      	<div class="metro-pivot" id="pivot" style="overflow:hidden">
+  			<div class="pivot-item">
+  				<h3>Demographics</h3>
+  				<p>Some demographics</p>
+  			</div>
+  			<div class="pivot-item">
+  				<h3>Yellow Card</h3>
+  				<p>Some yellow card data</p>
+  			</div>
+  			<div class="pivot-item">
+  				<h3>Allergies / Intolerances</h3>
+  				<p>Some allergies</p>
+  			</div>
+  			<div class="pivot-item">
+  				<h3>Observations</h3>
+  				<p>Some observations</p>
+  			</div>
+  			<div class="pivot-item">
+  				<h3>Appointments / Encounters</h3>
+  				<p>Some observations</p>
+  			</div>
+  			<div class="pivot-item">
+  				<h3>Notes</h3>
+  				<p>Some observations</p>
+  			</div>
+      	</div>
 	  </body>
   	</contentXml>
   </asset>
@@ -244,6 +270,16 @@
 			{
 			}]);
 
+			var pivot = null;
+			$(document).ready(function() {
+				pivot = $("#pivot").metroPivot();
+				$("#pivot").on("swipeleft", function(e) { 
+						$("#pivot").data("controller").goToNext();
+					});
+				$("#pivot").on("swiperight", function(e) { 
+					$("#pivot").data("controller").goToPrevious();
+				});
+			});
   		]]>
   	</contentText>
   </asset>
