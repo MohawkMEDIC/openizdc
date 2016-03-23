@@ -17,7 +17,7 @@
         headerSelector: function (item) { return item.children("h3").first(); },
         itemSelector: function (item) { return item.children(".pivot-item"); },
         headerItemTemplate: function () { return $("<span class='header' />"); },
-        pivotItemTemplate: function () { return $("<div class='pivotItem' />"); },
+        pivotItemTemplate: function () { return $("<div class='pivotItem container' />"); },
         itemsTemplate: function () { return $("<div class='items' />"); },
         headersTemplate: function () { return $("<div class='headers' />"); },
         controlInitialized: undefined,

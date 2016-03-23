@@ -76,7 +76,9 @@ namespace OpenIZMobile
 
 			try {
 
-
+				if(AndroidApplicationContext.Current != null)
+					return true;
+				
 				if (!AndroidApplicationContext.Start ()) {
 
 					CancellationTokenSource ctSource = new CancellationTokenSource();
@@ -123,6 +125,8 @@ namespace OpenIZMobile
 					return false;
 				} else {
 
+					this.m_tracer = Tracer.GetTracer(this.GetType());
+
 					RunOnUiThread (() => { 
 						this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.installing_applets);
 					});
@@ -134,7 +138,7 @@ namespace OpenIZMobile
 							// Write data to assets directory
 							AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
 						} catch (Exception e) {
-							this.m_tracer.TraceError (e.ToString ());
+							this.m_tracer?.TraceError (e.ToString ());
 						}
 					}
 				}
@@ -153,6 +157,8 @@ namespace OpenIZMobile
 		/// <param name="e">E.</param>
 		private void ShowException (Exception e)
 		{
+			this.m_tracer?.TraceError ("Error during startup: {0}", e);
+			Log.Error ("FATAL", e.ToString ());
 			while (e is TargetInvocationException)
 				e = e.InnerException;
 			UserInterfaceUtils.ShowMessage (this,

@@ -23,7 +23,7 @@
 									<div class="panel-heading">
 										<h2 class="panel-title"><a href="#demographics" data-toggle="collapse">Demographic Information</a></h2>
 									</div>
-									<div class="panel-collapse in">
+									<div class="panel-collapse in" id="demographics">
 										<div class="container-fluid">
 											<div class="row">
 												<div class="pull-left" style="width:20%; border: dashed 2px #555; ">
@@ -163,7 +163,7 @@
 		                          Cancel
 		                        </button>
 		                        <button class="btn btn-lg btn-success" ng-click="queue(patient)">
-		                          Enqueue <span class="glyphicon glyphicon-log-in"></span>
+		                          Check-in <span class="glyphicon glyphicon-check"></span>
 		                        </button>
 		                      </div>
 						</div>

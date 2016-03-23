@@ -13,6 +13,7 @@
 		<icon>@drawable/register_patient</icon>
 	</tile>
 	<asset name="index" mimeType="text/html">
+		<reference>select2</reference>
 		<contentXml>
 			<body ng-controller="RegisterPatientController" xmlns="http://www.w3.org/1999/xhtml">
 				<form novalidate="novalidate" name="registrationForm">

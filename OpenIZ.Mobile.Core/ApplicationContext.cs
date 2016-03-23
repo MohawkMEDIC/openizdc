@@ -78,8 +78,7 @@ namespace OpenIZ.Mobile.Core
 			set {
 				if (s_context == null || value == null)
 					s_context = value;
-				else
-					throw new InvalidOperationException ("Application context already set");
+				
 			}
 		}
 

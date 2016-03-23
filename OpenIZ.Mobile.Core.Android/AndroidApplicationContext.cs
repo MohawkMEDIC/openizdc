@@ -169,7 +169,8 @@ namespace OpenIZ.Mobile.Core.Android
 						migrator.Ensure ();
 
 						// Set the entity source
-						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
+						if(EntitySource.Current == null)
+							EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());

@@ -1,194 +1,201 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/mobile/applet">
-  <info>
-    <name>Patient Search</name>
-    <version>1.0.0.0</version>
-    <author>OpenIZ.org Community</author>
-    <icon>@drawable/patient_search</icon>
-    <id>org.openiz.applets.core.patient.search</id>
-    <groupName>Patient Management</groupName>
-  </info>
-  <tile size="sm">
-    <text>Search Patients</text>
-    <icon>@drawable/patient_search</icon>
-  </tile>
-  <asset name="index" mimeType="text/html">
-    <contentXml>
-      <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientSearchController">
-        <form name="filterForm">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h2 class="panel-title">
-                      <a href="#searchParms" data-toggle="collapse">
-                        <span class="glyphicon glyphicon-search">
-                        </span> Search Parameters
+	<info>
+		<name>Patient Search</name>
+		<version>1.0.0.0</version>
+		<author>OpenIZ.org Community</author>
+		<icon>@drawable/patient_search</icon>
+		<id>org.openiz.applets.core.patient.search</id>
+		<groupName>Patient Management</groupName>
+	</info>
+	<tile size="sm">
+		<text>Search Patients</text>
+		<icon>@drawable/patient_search</icon>
+	</tile>
+	<asset name="index" mimeType="text/html">
+		<contentXml>
+			<body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientSearchController">
+				<form name="filterForm">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h2 class="panel-title">
+											<a href="#searchParms" data-toggle="collapse">
+												<span class="glyphicon glyphicon-search">
+												</span> Search Parameters
                       </a>
-                    </h2>
-                  </div>
-                  <div class="panel-collapse in" id="searchParms">
-                    <div class="panel-body">
-                      <div class="panel panel-default">
-                        <div class="panel-heading">
-                          <h3 class="panel-title">Barcode Scan</h3>
-                        </div>
-                        <div class="panel-body">
-                          <div class="input-group">
-                            <span class="input-group-addon" id="barcodeLabel">Identifier:</span>
-                            <input ng-model="searchFilter.barcodeId" type="text" class="form-control" placeholder="0303030303" name="barcodeId" id="barcodeId" aria-describedby="barcodeLabel" />
-                            <span class="input-group-addon">
-                              <a ng-click="scanBarcode('#barcodeId')">
-                                <span class="glyphicon glyphicon-barcode">
-                                </span>
+										</h2>
+									</div>
+									<div class="panel-collapse in" id="searchParms">
+										<div class="panel-body">
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h3 class="panel-title">Barcode Scan</h3>
+												</div>
+												<div class="panel-body">
+													<div class="input-group">
+														<span class="input-group-addon" id="barcodeLabel">Identifier:</span>
+														<input ng-model="searchFilter.barcodeId" type="text" class="form-control" placeholder="0303030303" name="barcodeId" id="barcodeId" aria-describedby="barcodeLabel" />
+														<span class="input-group-addon">
+															<a ng-click="scanBarcode('#barcodeId')">
+																<span class="glyphicon glyphicon-barcode">
+																</span>
                                 Scan
                               </a>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="panel panel-default">
-                        <div class="panel-heading">
-                          <h3 class="panel-title">
-                            <a role="button" data-toggle="collapse" href="#demoPanel">Patient Demographics Criteria</a>
-                          </h3>
-                        </div>
-                        <div class="panel-collapse collapse" id="demoPanel">
-                          <div class="panel-body">
-                            <div class="input-group">
-                              <span class="input-group-addon" id="firstNameLabel">First Name:</span>
-                              <input ng-model="searchFilter.patient.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="firstName" id="firstName" aria-describedby="firstNameLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="lastNameLabel">Last Name:</span>
-                              <input ng-model="searchFilter.patient.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="lastName" id="lastName" aria-describedby="lastNameLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="dobDateFromLabel">Date of Birth (from):</span>
-                              <input ng-model="searchFilter.patient.dobFrom" type="date" class="form-control" ng-blur="updateDobToMin(searchFilter)" data-max-date="0" name="dobDateFrom" id="dobDateFrom" aria-describedby="dobDateFromLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="dobDateToLabel">Date of Birth (to):</span>
-                              <input ng-model="searchFilter.patient.dobTo" class="form-control" data-max-date="0" type="date" name="dobDateTo" id="dobDateTo" aria-describedby="dobDateToLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="genderLabel">Gender:</span>
-                              <select ng-model="searchFilter.patient.gender" class="form-control">
-                                <option>---</option>
-                                <option value="M">Male</option>
-                                <option value="F">Female</option>
-                                <option value="UN">Undifferentiated</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="panel panel-default">
-                        <div class="panel-heading">
-                          <h3 class="panel-title">
-                            <a role="button" data-toggle="collapse" href="#nokPanel">Next of Kin</a>
-                          </h3>
-                        </div>
-                        <div class="panel-collapse collapse" id="nokPanel">
-                          <div class="panel-body">
-                            <div class="input-group">
-                              <span class="input-group-addon" id="relationLabel">Relationship to Client:</span>
-                              <select ng-model="searchFilter.nok.relationshipKind" id="relation" class="form-control">
-                                <option value="MTH">Mother</option>
-                                <option value="FTH">Father</option>
-                                <option value="UNC">Aunt/Uncle</option>
-                                <option value="SIB">Sibling</option>
-                              </select>
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="nokFirstNameLabel">First Name:</span>
-                              <input ng-model="searchFilter.nok.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="nokFirstName" id="nokFirstName" aria-describedby="nokFirstNameLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="nokLastNameLabel">Last Name:</span>
-                              <input ng-model="searchFilter.nok.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="nokLastName" id="nokLastName" aria-describedby="nokLastNameLabel" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="panel panel-default">
-                        <div class="panel-heading">
-                          <h3 class="panel-title">
-                            <a role="button" data-toggle="collapse" href="#additionalParms">Additional Search Criteria</a>
-                          </h3>
-                        </div>
-                        <div id="additionalParms" class="panel-collapse collapse">
-                          <div class="panel-body">
-                            <div class="input-group">
-                              <span class="input-group-addon" id="village">City/Village:</span>
-                              <input ng-model="searchFilter.patient.city" type="text" class="form-control" placeholder="Village" name="villageId" id="villageId" aria-describedby="villiageLabel" />
-                            </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="telephoneLabel">Telephone:</span>
-                              <input ng-model="searchFilter.patient.telecom" type="text" class="form-control" placeholder="Telephone Number" name="telephone" id="telephone" aria-describedby="telephoneLabel" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="pull-right btn-group">
-                        <button class="btn btn-lg btn-danger" ng-click="close()">
-                          <span class="glyphicon glyphicon-remove">
-                          </span> Cancel
+														</span>
+													</div>
+												</div>
+											</div>
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h3 class="panel-title">
+														<a role="button" data-toggle="collapse" href="#demoPanel">Patient Demographics Criteria</a>
+													</h3>
+												</div>
+												<div class="panel-collapse collapse" id="demoPanel">
+													<div class="panel-body">
+														<div class="input-group">
+															<span class="input-group-addon" id="firstNameLabel">First Name:</span>
+															<input ng-model="searchFilter.patient.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="firstName" id="firstName" aria-describedby="firstNameLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="lastNameLabel">Last Name:</span>
+															<input ng-model="searchFilter.patient.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="lastName" id="lastName" aria-describedby="lastNameLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="dobDateFromLabel">Date of Birth (from):</span>
+															<input ng-model="searchFilter.patient.dobFrom" type="date" class="form-control" ng-blur="updateDobToMin(searchFilter)" data-max-date="0" name="dobDateFrom" id="dobDateFrom" aria-describedby="dobDateFromLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="dobDateToLabel">Date of Birth (to):</span>
+															<input ng-model="searchFilter.patient.dobTo" class="form-control" data-max-date="0" type="date" name="dobDateTo" id="dobDateTo" aria-describedby="dobDateToLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="genderLabel">Gender:</span>
+															<select ng-model="searchFilter.patient.gender" class="form-control">
+																<option>---</option>
+																<option value="M">Male</option>
+																<option value="F">Female</option>
+																<option value="UN">Undifferentiated</option>
+															</select>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h3 class="panel-title">
+														<a role="button" data-toggle="collapse" href="#nokPanel">Next of Kin</a>
+													</h3>
+												</div>
+												<div class="panel-collapse collapse" id="nokPanel">
+													<div class="panel-body">
+														<div class="input-group">
+															<span class="input-group-addon" id="relationLabel">Relationship to Client:</span>
+															<select ng-model="searchFilter.nok.relationshipKind" id="relation" class="form-control">
+																<option value="MTH">Mother</option>
+																<option value="FTH">Father</option>
+																<option value="UNC">Aunt/Uncle</option>
+																<option value="SIB">Sibling</option>
+															</select>
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="nokFirstNameLabel">First Name:</span>
+															<input ng-model="searchFilter.nok.firstName" type="text" class="form-control" placeholder="First/Given Name(s)" name="nokFirstName" id="nokFirstName" aria-describedby="nokFirstNameLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="nokLastNameLabel">Last Name:</span>
+															<input ng-model="searchFilter.nok.lastName" type="text" class="form-control" placeholder="Last/Family Name(s)" name="nokLastName" id="nokLastName" aria-describedby="nokLastNameLabel" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<h3 class="panel-title">
+														<a role="button" data-toggle="collapse" href="#additionalParms">Additional Search Criteria</a>
+													</h3>
+												</div>
+												<div id="additionalParms" class="panel-collapse collapse">
+													<div class="panel-body">
+														<div class="input-group">
+															<span class="input-group-addon" id="village">City/Village:</span>
+															<input ng-model="searchFilter.patient.city" type="text" class="form-control" placeholder="Village" name="villageId" id="villageId" aria-describedby="villiageLabel" />
+														</div>
+														<div class="input-group">
+															<span class="input-group-addon" id="telephoneLabel">Telephone:</span>
+															<input ng-model="searchFilter.patient.telecom" type="text" class="form-control" placeholder="Telephone Number" name="telephone" id="telephone" aria-describedby="telephoneLabel" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="pull-right btn-group">
+												<button class="btn btn-lg btn-danger" ng-click="close()">
+													<span class="glyphicon glyphicon-remove">
+													</span> Cancel
                         </button>
-                        <button class="btn btn-lg btn-primary" ng-click="search(searchFilter)">
-                          Search <span class="glyphicon glyphicon-search"></span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-            	<div class="col-md-12">
-            		<div class="panel panel-default">
-            			<div class="panel-heading">
-            				<h2 class="panel-title">
-            					<a role="button" href="#searchResults" data-toggle="collapse">Search Results</a>
-            				</h2>
-            			</div>
-            			<table id="searchResults" class="collapse table">
-            				<tr>
-            					<th>ID</th>
-            					<th>Name</th>
-            					<th>Gender</th>
-            					<th>Date of Birth</th>
-            					<th>Village</th>
-            					<th></th>
-            				</tr>
-            				<tr>
-            					<td>1029</td>
-            					<td>Smith, Jennifer Ashley</td>
-            					<td>F</td>
-            					<td>2014-MAR-03</td>
-            					<td>Village 2</td>
-            					<td>
-            						<a class="btn btn-primary" href="app://openiz.org/applet/org.openiz.applets.core.patient.checkin/?pid=1029"><span class="glyphicon glyphicon-ok-circle"></span> Check-in</a>
-            						<a class="btn btn-default" href="view?pid=1026"><span class="glyphicon glyphicon-circle-arrow-right"></span> View</a>
-            					</td>
-            				</tr>
-            				<tr>
-            					<td colspan="5"><a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applets.core.patient.register/"><span class="glyphicon glyphicon-credit-card"></span> Register</a></td>
-            				</tr>
-            			</table>
-            		</div>
-            	</div>
-            </div>
-          </div>
-        </form>
-        <!-- OpenIZ:Scripts -->
-      </body>
-    </contentXml>
-  </asset>
-  <asset name="index-controller" mimeType="text/javascript">
-    <contentText>
-      <![CDATA[
+												<button class="btn btn-lg btn-primary" ng-click="search(searchFilter)">
+                          Search <span class="glyphicon glyphicon-search"></span></button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h2 class="panel-title">
+											<a role="button" href="#searchResults" data-toggle="collapse">Search Results</a>
+										</h2>
+									</div>
+									<table id="searchResults" class="collapse table">
+										<tr>
+											<th>ID</th>
+											<th>Name</th>
+											<th>Gender</th>
+											<th>Date of Birth</th>
+											<th>Village</th>
+											<th>
+											</th>
+										</tr>
+										<tr>
+											<td>1029</td>
+											<td>Smith, Jennifer Ashley</td>
+											<td>F</td>
+											<td>2015-NOV-10</td>
+											<td>Village 2</td>
+											<td>
+												<a class="btn btn-primary" href="app://openiz.org/applet/org.openiz.applets.core.patient.checkin/?pid=1029">
+													<span class="glyphicon glyphicon-ok-circle">
+													</span> Check-in</a>
+												<a class="btn btn-default" href="view?pid=1026">
+													<span class="glyphicon glyphicon-circle-arrow-right">
+													</span> View</a>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="5">
+												<a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applets.core.patient.register/">
+													<span class="glyphicon glyphicon-credit-card">
+													</span> Register</a>
+											</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+				<!-- OpenIZ:Scripts -->
+			</body>
+		</contentXml>
+	</asset>
+	<asset name="index-controller" mimeType="text/javascript">
+		<contentText><![CDATA[
 			// angular stuff
 			var searchApp = angular.module('index', []);
 
@@ -225,45 +232,419 @@
 				//$scope.reset();
 			}]);
 
-		]]>
-    </contentText>
-  </asset>
-  <asset name="view" mimeType="text/html">
-  	<contentXml>
-      <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientViewController">
-      	<div class="ui-app-title">Smith, Jennifer</div>
-      	<div class="metro-pivot" id="pivot" style="overflow:hidden">
-  			<div class="pivot-item">
-  				<h3>Demographics</h3>
-  				<p>Some demographics</p>
-  			</div>
-  			<div class="pivot-item">
-  				<h3>Yellow Card</h3>
-  				<p>Some yellow card data</p>
-  			</div>
-  			<div class="pivot-item">
-  				<h3>Allergies / Intolerances</h3>
-  				<p>Some allergies</p>
-  			</div>
-  			<div class="pivot-item">
-  				<h3>Observations</h3>
-  				<p>Some observations</p>
-  			</div>
-  			<div class="pivot-item">
-  				<h3>Appointments / Encounters</h3>
-  				<p>Some observations</p>
-  			</div>
-  			<div class="pivot-item">
-  				<h3>Notes</h3>
-  				<p>Some observations</p>
-  			</div>
-      	</div>
-	  </body>
-  	</contentXml>
-  </asset>
-  <asset name="view-controller" mimeType="text/javascript">
-  	<contentText>
-  		<![CDATA[
+		]]></contentText>
+	</asset>
+	<asset name="view" mimeType="text/html">
+		<reference>metro-ui</reference>
+		<reference>chart-js</reference>
+		<contentXml>
+			<body xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientViewController">
+				<div class="container fill">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="panel panel-default fill">
+								<div class="panel-heading">
+									<h2 class="panel-title pull-left">Smith, Jennifer Ashley <small>FEMALE - 4.5 Mon</small></h2>
+									<div class="btn-group pull-right">
+										<button class="btn btn-danger" ng-click="close()">
+											<span class="glyphicon glyphicon-remove">
+											</span> Close
+                        				</button>
+									</div>
+									<div class="clearfix">
+									</div>
+								</div>
+								<div class="panel-body">
+									<div class="metro-pivot" id="pivot" style="width:100%; overflow-x:hidden">
+										<div class="pivot-item">
+											<h3>Demographics</h3>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h2 class="panel-title">
+																<a href="#demographics" data-toggle="collapse">Demographic Information</a>
+															</h2>
+														</div>
+														<div class="panel-collapse in" id="demographics">
+															<div class="container-fluid">
+																<div class="row">
+																	<div class="pull-left" style="width:20%; border: dashed 2px #555; ">
+																		<img alt="user picture" id="patient-picture" src="app://openiz.org/drawable/drk_patient" style="width:100%" />
+																	</div>
+																	<div class="pull-right" style="width:79%">
+																		<div class="input-group" id="given0">
+																			<span class="input-group-addon" id="givenNameLabel0">Given:</span>
+																			<input readonly="readonly" value="Jennifer" ng-model="patient.given" type="text" class="form-control" placeholder="Given Name" name="givenName0" id="givenName0" aria-describedby="givenNameLabel0" />
+																		</div>
+																		<div class="input-group" id="family0">
+																			<span class="input-group-addon" id="familyNameLabel0">Family:</span>
+																			<input readonly="readonly" value="Smith" ng-model="patient.family" type="text" class="form-control" placeholder="Family Name" name="familyName0" id="familyName0" aria-describedby="familyNameLabel0" />
+																		</div>
+																		<div class="input-group" id="dob">
+																			<span class="input-group-addon" id="dobLabel">Date of Birth:</span>
+																			<input readonly="readonly" value="2015-NOV-10" ng-model="patient.dob" type="date" data-max-date="0" class="form-control" name="dob" id="dob" aria-describedby="dobLabel" />
+																			<span class="input-group-addon">Accuracy:</span>
+																			<select ng-model="patient.dob_accuracy" class="form-control" name="dobAccuracy" id="dobAccuracy">
+																				<option value="d" selected="selected">Day</option>
+																				<option value="m">Month</option>
+																				<option value="y">Year</option>
+																			</select>
+																		</div>
+																		<div class="input-group" id="dob">
+																			<span class="input-group-addon" id="genderLabel">Gender:</span>
+																			<select ng-model="patient.gender" ng-options="item.Key as item.Mnemonic for item in administrativeGenderConcepts" class="form-control" name="gender" id="gender" aria-describedBy="genderLabel">
+																				<option value="F" selected="selected">Female</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="pivot-item">
+											<h3>Yellow Card</h3>
+											<div class="row">
+												<div class="col-md-12">
+													<table class="table" id="yellowc">
+														<thead>
+															<tr>
+																<th style="width:10%" rowspan="2">Antigen</th>
+																<th style="width:15%" rowspan="2">Disease(s)</th>
+																<th colspan="5" style="text-align:center">Dose</th>
+															</tr>
+															<tr>
+																<th style="width:15%">Birth</th>
+																<th style="width:15%">1</th>
+																<th style="width:15%">2</th>
+																<th style="width:15%">3</th>
+																<th style="width:15%">4</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td>BCG</td>
+																<td>Tuberculosis</td>
+																<td>
+																	<span class="glyphicon glyphicon-ok">
+																	</span>
+																</td>
+																<td colspan="4" style="background:solid #aaa">
+																	<span>
+																	</span>
+																</td>
+															</tr>
+															<tr>
+																<td>OPV</td>
+																<td>Polio</td>
+																<td>
+																	<span class="glyphicon glyphicon-ok">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-ok">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-time">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-calendar">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-calendar">
+																	</span>
+																</td>
+															</tr>
+															<tr>
+																<td>DTaP</td>
+																<td>Diptheria,<br />Pertussis,<br /> Tetanus</td>
+																<td style="background:solid #aaa">
+																	<span>
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-ok">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-remove">
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-remove">
+																	</span>
+																</td>
+																<td style="background: solid #aaa">
+																	<span>
+																	</span>
+																</td>
+															</tr>
+															<tr>
+																<td>ROTA</td>
+																<td>Rotavirus</td>
+																<td style="background:solid #aaa">
+																	<span>
+																	</span>
+																</td>
+																<td>
+																	<span class="glyphicon glyphicon-calendar">
+																	</span>
+																</td>
+																<td colspan="3" style="background:solid #aaa">
+																	<span>
+																	</span>
+																</td>
+															</tr>
+														</tbody>
+														<tfoot>
+														</tfoot>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="pivot-item">
+											<h3>Observations</h3>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="panel panel-default">
+														<div class="panel-heading">
+															<h2 class="panel-title">
+																<a data-toggle="collapse" href="#weight">Weight</a>
+															</h2>
+														</div>
+														<div class="panel-collapse collapse in" id="weight">
+															<div class="row">
+																<div class="col-md-12">
+																	<center>
+																		<canvas width="400" height="400" id="weightChart">
+																		</canvas>
+																	</center>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-md-12">
+																	<ul>
+																		<li>
+																			<span style="background-color:#f88; color:#f88; width:10px">.</span> Minimum Healthy Weight (lb)</li>
+																		<li>
+																			<span style="background-color:#8f8; color:#8f8; width:10px">.</span> Healthy Weight Range(lb)</li>
+																		<li>
+																			<span style="background-color:#000; width:10px">.</span> Recorded Weight (lb)</li>
+																	</ul>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="panel-default">
+														<div class="panel-heading">
+															<h2 class="panel-title">
+																<a href="#conditions" data-toggle="collapse">Health Conditions</a>
+															</h2>
+														</div>
+														<table class="table collapse in" id="conditions">
+															<tr>
+																<th>Condition</th>
+																<th>Severity</th>
+																<th>Diagnosis</th>
+																<th>Notes</th>
+															</tr>
+															<tr>
+																<td>
+																	Immunodifficiency
+																</td>
+																<td>
+																	Mild
+																</td>
+																<td>Suspected</td>
+																<td>Do not give live vaccines</td>
+															</tr>
+														</table>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-md-12">
+													<div class="panel-default">
+														<div class="panel-heading">
+															<h2 class="panel-title">
+																<a href="#allergies" data-toggle="collapse">Allergies / Intolerances</a>
+															</h2>
+														</div>
+														<table class="table collapse in" id="allergies">
+															<tr>
+																<th>Agent / Allergen</th>
+																<th>Severity</th>
+																<th>Reaction</th>
+																<th>Notes</th>
+															</tr>
+															<tr>
+																<td>
+																	Egg
+																</td>
+																<td>
+																	Severe
+																</td>
+																<td>Anaphylaxis</td>
+																<td>Do not give ROTA</td>
+															</tr>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="pivot-item">
+											<h3>Appointments / Encounters</h3>
+											<ul class="nav nav-tabs" id="appointmentTab">
+												<li class="active">
+													<a href="#calendar">Calendar</a>
+												</li>
+												<li>
+													<a href="#list">List</a>
+												</li>
+											</ul>
+											<div class="tab-content">
+												<div role="tabpanel" class="tab-pane active" id="calendar">
+													<table class="table table-bordered">
+														<caption>March 2016</caption>
+														<tr>
+															<th style="width:14%">Sun</th>
+															<th style="width:14%">Mon</th>
+															<th style="width:14%">Tue</th>
+															<th style="width:14%">Wed</th>
+															<th style="width:14%">Thu</th>
+															<th style="width:14%">Fri</th>
+															<th style="width:14%">Sat</th>
+														</tr>
+														<tr>
+															<td style="background-color:#aaa; color:#999">28</td>
+															<td style="background-color:#aaa; color:#999">29</td>
+															<td>1</td>
+															<td>2</td>
+															<td>3</td>
+															<td>4</td>
+															<td>5</td>
+														</tr>
+														<tr>
+															<td>6</td>
+															<td>7</td>
+															<td>8</td>
+															<td>9</td>
+															<td>10</td>
+															<td>11</td>
+															<td>12</td>
+														</tr>
+														<tr>
+															<td>13</td>
+															<td>14</td>
+															<td>15</td>
+															<td>16</td>
+															<td>17</td>
+															<td>18</td>
+															<td>19</td>
+														</tr>
+														<tr>
+															<td>20</td>
+															<td>21</td>
+															<td>22</td>
+															<td>23</td>
+															<td>24 <span class="glyphicon glyphicon-tint"></span> OPV, PENTA</td>
+															<td>25</td>
+															<td>26</td>
+														</tr>
+														<tr>
+															<td>27</td>
+															<td>28</td>
+															<td>29</td>
+															<td>30</td>
+															<td>31</td>
+															<td style="background-color:#aaa; color:#999">1</td>
+															<td style="background-color:#aaa; color:#999">2</td>
+														</tr>
+													</table>
+												</div>
+												<div role="tabpanel" class="tab-pane" id="list">
+													<table class="table">
+														<tr>
+															<th>Date</th>
+															<th>Facility</th>
+															<th>Reason</th>
+															<th>Status</th>
+															<th>
+															</th>
+														</tr>
+														<tr>
+															<td>10-DEC-2015</td>
+															<td>Good Health Clinic</td>
+															<td>OPV, DTaP, PCV</td>
+															<td>Complete</td>
+															<td>
+																<a class="btn btn-default">
+																	<span class="glyphicon glyphicon-eye-open">
+																	</span> View</a>
+															</td>
+														</tr>
+														<tr>
+															<td>10-JAN-2015</td>
+															<td>Good Health Clinic</td>
+															<td>OPV, DTaP, PCV, ROTA</td>
+															<td>Complete</td>
+															<td>
+																<a class="btn btn-default">
+																	<span class="glyphicon glyphicon-eye-open">
+																	</span> View</a>
+															</td>
+														</tr>
+														<tr>
+															<td>10-FEB-2015</td>
+															<td>Good Health Clinic</td>
+															<td>DTaP</td>
+															<td>Complete</td>
+															<td>
+																<a class="btn btn-default">
+																	<span class="glyphicon glyphicon-eye-open">
+																	</span> View</a>
+															</td>
+														</tr>
+														<tr>
+															<td>10-MAR-2015</td>
+															<td>Good Health Clinic</td>
+															<td>PCV</td>
+															<td>Scheduled</td>
+															<td>
+																<a class="btn btn-default">
+																	<span class="glyphicon glyphicon-check">
+																	</span> Check-in</a>
+															</td>
+														</tr>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="pivot-item">
+											<h3>Notes</h3>
+											<p>Some observations</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</body>
+		</contentXml>
+	</asset>
+	<asset name="view-controller" mimeType="text/javascript">
+		<contentText><![CDATA[
 			var viewApp = angular.module('view', []);
 
 			viewApp.controller('PatientViewController', ['$scope', function ($scope) 
@@ -272,6 +653,37 @@
 
 			var pivot = null;
 			$(document).ready(function() {
+
+
+				var weightChartContext = $('#weightChart').get(0).getContext("2d");
+				var weightChart = new Chart(weightChartContext).Line({
+					labels : ["0 wk","4 wk","8 wk","12 wk", "16 wk"],
+					datasets : [
+						{
+							label : "Healthy Weight",
+							fillColor : "#dfd",
+							strokeColor : "#8f8",
+							data : [10, 14, 18, 22, 26]	
+						},
+						{
+							label : "Minimum Healthy Weight",
+							fillColor : "#fdd",
+							strokeColor : "#f88",
+							data : [4, 7, 10, 13, 16]	
+						},
+						{
+							label : "Measured Weight",
+							strokeColor : "#000",
+							fillColor : "rgba(0,0,0,0)",
+							data : [5, 6, 9, 14 ]
+						}
+					]
+				});
+				$('#appointmentTab a').click(function (e) {
+				  e.preventDefault()
+				  $(this).tab('show')
+				});
+
 				pivot = $("#pivot").metroPivot();
 				$("#pivot").on("swipeleft", function(e) { 
 						$("#pivot").data("controller").goToNext();
@@ -280,7 +692,6 @@
 					$("#pivot").data("controller").goToPrevious();
 				});
 			});
-  		]]>
-  	</contentText>
-  </asset>
+  		]]></contentText>
+	</asset>
 </AppletManifest>

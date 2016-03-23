@@ -207,13 +207,13 @@
     <AndroidAsset Include="Assets\css\img\ui-icons_cd0a0a_256x240.png" />
     <AndroidAsset Include="Assets\js\openiz-applet-helper.js" />
     <AndroidAsset Include="Assets\css\img\circle_loader.gif" />
-    <AndroidAsset Include="Assets\js\Chart.min.js" />
     <AndroidAsset Include="Assets\js\select2.min.js" />
     <AndroidAsset Include="Assets\css\select2.min.css" />
     <AndroidAsset Include="Assets\Applets\PatientRegisterApplet.xml" />
     <AndroidAsset Include="Assets\js\jquery.metro.js" />
     <AndroidAsset Include="Assets\css\jquery.metro.css" />
     <AndroidAsset Include="Assets\js\jquery.mobile.min.js" />
+    <AndroidAsset Include="Assets\js\chart.min.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

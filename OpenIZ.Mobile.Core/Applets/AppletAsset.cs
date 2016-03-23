@@ -1,6 +1,7 @@
 using System;
 using System.Xml.Serialization;
 using System.Xml.Linq;
+using System.Collections.Generic;
 
 namespace OpenIZ.Mobile.Core.Applets
 {
@@ -10,6 +11,13 @@ namespace OpenIZ.Mobile.Core.Applets
 	[XmlType(nameof(AppletAsset), Namespace = "http://openiz.org/mobile/applet")]
 	public class AppletAsset
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Applets.AppletAsset"/> class.
+		/// </summary>
+		public AppletAsset ()
+		{
+			this.Reference = new List<string>();
+		}
 
 		/// <summary>
 		/// Gets or sets the name of the asset
@@ -34,6 +42,16 @@ namespace OpenIZ.Mobile.Core.Applets
 		/// </summary>
 		[XmlAttribute("mimeType")]
 		public String MimeType {
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// References
+		/// </summary>
+		/// <value>The reference.</value>
+		[XmlElement("reference")]
+		public List<String> Reference {
 			get;
 			set;
 		}

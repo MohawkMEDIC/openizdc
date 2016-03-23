@@ -7,7 +7,7 @@
 	<string name="login_title">OpenIZ Demo Login</string>
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
-	<string name="installing_applets">Installing applets...</string>
+	<string name="installing_applets">Starting Applets...</string>
 
 	<!-- Setup screen -->
 	<string name="setup_title">Welcome to OpenIZ!</string>

@@ -184,29 +184,37 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 
 						XNamespace xhtml = "http://www.w3.org/1999/xhtml";
 							
-						// HTML header elements
-						XElement[] cssLinks = new XElement[] {
-							new XElement(xhtml + "meta", new XAttribute("content", "true"), new XAttribute("name", "HandheldFriendly")), 
-							new XElement(xhtml + "meta", new XAttribute("content", "width=640px, initial-scale=0.50, maximum-scale=0.50, minimum-scale=0.50, user-scalable=0"), new XAttribute("name", "viewport")), 
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap.css"), new XAttribute ("rel", "stylesheet")),
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery.metro.css"), new XAttribute ("rel", "stylesheet")),
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/select2.min.css"), new XAttribute ("rel", "stylesheet")),
 
-//							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap-theme.css"), new XAttribute ("rel", "stylesheet"))
-							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.custom.css"), new XAttribute ("rel", "stylesheet")),
-							//new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery-ui.theme.css"), new XAttribute ("rel", "stylesheet")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.mobile.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.metro.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/angular.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/bootstrap.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.easing.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jqBootstrapValidation.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							//new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery-ui.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/select2.min.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+						// HTML header elements
+						List<XElement> cssLinks = new List<XElement> {
+							new XElement (xhtml + "meta", new XAttribute ("content", "true"), new XAttribute ("name", "HandheldFriendly")), 
+							new XElement (xhtml + "meta", new XAttribute ("content", "width=640px, initial-scale=0.50, maximum-scale=0.50, minimum-scale=0.50, user-scalable=0"), new XAttribute ("name", "viewport")), 
+							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/jquery.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
+							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/jquery.mobile.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
+							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap.css"), new XAttribute ("rel", "stylesheet")),
+							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/bootstrap.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
+							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/angular.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
 							new XElement(xhtml+"script", new XAttribute("src", asset.Name + "-controller"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-						},
-						jsLinks = new XElement[] {
+						};
+
+						if (asset.Reference.Contains ("metro-ui"))
+							cssLinks.AddRange (new XElement[] {
+								new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.metro.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
+								new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery.metro.css"), new XAttribute ("rel", "stylesheet"))
+							});
+
+						if (asset.Reference.Contains ("select2"))
+							cssLinks.AddRange (new XElement[] {
+								new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/select2.min.css"), new XAttribute ("rel", "stylesheet")),
+								new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/select2.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data"))
+							});
+
+						if(asset.Reference.Contains("chart-js"))
+						{
+							cssLinks.Add(new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/chart.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")));
+						}
+
+						XElement[] jsLinks = new XElement[] {
 							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/openiz-applet-helper.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
 
 						};
