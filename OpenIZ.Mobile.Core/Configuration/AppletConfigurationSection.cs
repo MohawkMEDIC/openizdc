@@ -1,11 +1,11 @@
 using System;
 using SQLite;
 using System.Xml.Serialization;
-using OpenIZ.Mobile.Core.Applets;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
 using Newtonsoft.Json;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -23,14 +23,20 @@ namespace OpenIZ.Mobile.Core.Configuration
 		{
 			this.AppletConfiguration = new List<AppletConfiguration> ();
 			this.AppletGroupOrder = new List<string> ();
-			this.Applets = new List<AppletReference> ();
+			this.Applets = new List<AppletName> ();
 		}
 
-		/// <summary>
-		/// Gets or sets the directory where applets are stored
-		/// </summary>
-		/// <value>The applet directory.</value>
-		[XmlAttribute("appletDirectory"), JsonIgnore]
+        /// <summary>
+        /// Gets or sets the applet which is used for authentication requests
+        /// </summary>
+        [XmlElement("startup")]
+        public String StartupAsset { get; set; }
+
+        /// <summary>
+        /// Gets or sets the directory where applets are stored
+        /// </summary>
+        /// <value>The applet directory.</value>
+        [XmlAttribute("appletDirectory"), JsonIgnore]
 		public String AppletDirectory {
 			get;
 			set;
@@ -62,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// </summary>
 		/// <value>The applets.</value>
 		[XmlElement("applet"), JsonProperty("applet")]
-		public List<AppletReference> Applets {
+		public List<AppletName> Applets {
 			get;
 			set;
 		}

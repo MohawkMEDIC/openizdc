@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using SQLite;
 using System.Xml.Serialization;
-using OpenIZ.Mobile.Core.Applets;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;

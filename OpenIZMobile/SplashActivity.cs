@@ -13,7 +13,6 @@ using Android.Views;
 using Android.Widget;
 using OpenIZ.Mobile.Core.Android.Configuration;
 using System.IO;
-using OpenIZ.Mobile.Core.Applets;
 using System.Threading.Tasks;
 using Android.Util;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -21,6 +20,8 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Exceptions;
 using System.Threading;
 using OpenIZ.Mobile.Core.Android;
+using OpenIZ.Core.Applets.Model;
+using System.Xml.Serialization;
 
 namespace OpenIZMobile
 {
@@ -61,8 +62,14 @@ namespace OpenIZMobile
 
 			startupWork.ContinueWith (t => {
 				if (!ct.IsCancellationRequested)
-					StartActivity (new Intent (this.ApplicationContext, typeof(LoginActivity)));
-			}, TaskScheduler.FromCurrentSynchronizationContext ());
+                {
+                    Intent viewIntent = new Intent(this, typeof(AppletActivity));
+                    var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
+                    viewIntent.PutExtra("assetLink", appletConfig.StartupAsset);
+                    this.StartActivity(viewIntent);
+
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext ());
 
 			startupWork.Start ();
 
@@ -95,8 +102,10 @@ namespace OpenIZMobile
 
 								try {
 									AppletManifest manifest = AppletManifest.Load (Assets.Open ("Applets/SettingsApplet.xml"));
-									// Write data to assets directory
-									AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
+                                    // Write data to assets directory
+                                    var package = manifest.CreatePackage();
+
+                                    AndroidApplicationContext.Current.InstallApplet (package, true);
 								} catch (Exception e) {
 									this.m_tracer.TraceError (e.ToString ());
 								}
@@ -114,7 +123,7 @@ namespace OpenIZMobile
 						if(!ct.IsCancellationRequested)
 						{
 							Intent viewIntent = new Intent (this, typeof(AppletActivity));
-							viewIntent.PutExtra ("appletId", "org.openiz.applets.core.settings");
+							viewIntent.PutExtra ("assetLink", "app://openiz.org/applet/org.openiz.applets.core.settings");
 							viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
 							this.StartActivity (viewIntent);
 

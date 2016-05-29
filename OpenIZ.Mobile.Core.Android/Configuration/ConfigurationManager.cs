@@ -5,7 +5,6 @@ using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Configuration;
 using Android.Content.Res;
-using OpenIZ.Mobile.Core.Applets;
 using OpenIZ.Mobile.Core.Android.Http;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using System.Collections.Generic;
@@ -81,7 +80,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Encounter Management",
 					"Stock Management",
 					"Administration"
-				}
+				},
+                StartupAsset = "app://openiz.org/applet/org.openiz.applet.main/index"
 			};
 
 			// Initial applet style

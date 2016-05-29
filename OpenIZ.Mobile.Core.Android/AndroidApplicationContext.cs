@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using OpenIZ.Mobile.Core.Android.Configuration;
 using System.Collections.Generic;
-using OpenIZ.Mobile.Core.Applets;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Configuration;
 using System.IO;
@@ -20,6 +20,8 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Services;
 using System.Security;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Applets;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -37,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Android
 		};
 
 		// Applets
-		private List<AppletManifest> m_applets = new List<AppletManifest>();
+		private AppletCollection m_applets = new AppletCollection();
 
 		// The tracer
 		private Tracer m_tracer;
@@ -193,7 +195,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <param name="id">Identifier.</param>
 		public AppletManifest GetApplet (String id)
 		{
-			return this.m_applets.Find (o => o.Info.Id == id);
+			return this.m_applets.FirstOrDefault (o => o.Info.Id == id);
 		}
 
 		/// <summary>
@@ -209,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// Get the registered applets
 		/// </summary>
 		/// <value>The registered applets.</value>
-		public IEnumerable<AppletManifest> LoadedApplets {
+		public AppletCollection LoadedApplets {
 			get { 
 				return this.m_applets;
 			}
@@ -238,13 +240,16 @@ namespace OpenIZ.Mobile.Core.Android
 				if (!isUpgrade)
 					throw new InvalidOperationException ("Duplicate package name");
 
-				// Unload the loaded applet version
-				this.m_applets.RemoveAll (o => o.Info.Id == package.Meta.Id);
-				appletSection.Applets.RemoveAll (o => o.Id == package.Meta.Id);
-			}
+                // Unload the loaded applet version
+                var existingApplet = this.m_applets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
+                if (existingApplet != null)
+                    this.m_applets.Remove(existingApplet);
+                appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
 
-			// Save the applet
-			XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
+            }
+
+            // Save the applet
+            XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
 			// Serialize the data to disk
 			using (FileStream fs = File.Create (appletPath)) {
 				fs.Write (package.Manifest, 0, package.Manifest.Length);
@@ -271,7 +276,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		/// <returns><c>true</c>, if manifest was verifyed, <c>false</c> otherwise.</returns>
 		/// <param name="manifest">Manifest.</param>
-		public bool VerifyManifest (AppletManifest manifest, AppletReference configuredInfo)
+		public bool VerifyManifest (AppletManifest manifest, AppletName configuredInfo)
 		{
 			return true;
 		}

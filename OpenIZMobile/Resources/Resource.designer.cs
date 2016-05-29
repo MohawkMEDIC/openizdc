@@ -294,29 +294,11 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f070000
 			public const int applet_view = 2131165184;
 			
-			// aapt resource value: 0x7f070006
-			public const int btn_login_login = 2131165190;
+			// aapt resource value: 0x7f070001
+			public const int txt_splash_info = 2131165185;
 			
 			// aapt resource value: 0x7f070002
-			public const int header = 2131165186;
-			
-			// aapt resource value: 0x7f070001
-			public const int home_app_layout = 2131165185;
-			
-			// aapt resource value: 0x7f070003
-			public const int txtRealmName = 2131165187;
-			
-			// aapt resource value: 0x7f070005
-			public const int txt_login_password = 2131165189;
-			
-			// aapt resource value: 0x7f070004
-			public const int txt_login_username = 2131165188;
-			
-			// aapt resource value: 0x7f070007
-			public const int txt_splash_info = 2131165191;
-			
-			// aapt resource value: 0x7f070008
-			public const int txt_splash_version = 2131165192;
+			public const int txt_splash_version = 2131165186;
 			
 			static Id()
 			{
@@ -335,13 +317,7 @@ namespace OpenIZMobile
 			public const int Applet = 2130968576;
 			
 			// aapt resource value: 0x7f040001
-			public const int Home = 2130968577;
-			
-			// aapt resource value: 0x7f040002
-			public const int Login = 2130968578;
-			
-			// aapt resource value: 0x7f040003
-			public const int Splash = 2130968579;
+			public const int Splash = 2130968577;
 			
 			static Layout()
 			{

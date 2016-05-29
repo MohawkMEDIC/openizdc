@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using Android.Webkit;
-using OpenIZ.Mobile.Core.Applets;
 using System.Xml.Linq;
 using System.IO;
 using Webkit = Android.Webkit;
@@ -19,6 +18,8 @@ using Android.Widget;
 using System.Xml;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.Diagnostics.Tracing;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Applets;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
 {
@@ -34,13 +35,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		/// <summary>
 		/// Occurs when applet changed.
 		/// </summary>
-		public event EventHandler AppletChanged;
+		public event EventHandler AssetChanged;
 
 		// A web-view
-		private AppletManifest m_manifest;
+		private AppletAsset m_asset;
 
 		// Queue
-		private Stack<AppletManifest> m_backQueue = new Stack<AppletManifest> ();
+		private Stack<AppletAsset> m_backQueue = new Stack<AppletAsset> ();
 
 		/// <summary>
 		/// Create a new webview
@@ -88,30 +89,44 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.m_tracer.TraceVerbose ("Applet navigation : back");
 			base.GoBack ();
 			this.m_tracer.TraceVerbose ("Applet history stack size: {0}", this.m_backQueue.Count);
-			this.Applet = this.m_backQueue.Pop ();
+			this.Asset = this.m_backQueue.Pop ();
 		}
 
-		/// <summary>
-		/// Gets or sets the applet
-		/// </summary>
-		/// <value>The applet.</value>
-		public AppletManifest Applet {
+        /// <summary>
+        /// Applet manifest
+        /// </summary>
+        public AppletManifest Applet {
+            get { return this.m_asset.Manifest; }
+            set
+            {
+                // Find the "index"
+				string language = this.Resources.Configuration.Locale.DisplayName;
+
+                var indexValue = value.Assets.Find(o => o.Name == "index" && o.Language == language);
+                if (indexValue == null)
+                    indexValue = value.Assets.Find(o => o.Name == "index");
+                this.Asset = indexValue;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the applet
+        /// </summary>
+        /// <value>The applet.</value>
+        public AppletAsset Asset {
 			get {
-				return this.m_manifest;
+				return this.m_asset;
 			}
 			set {
-				this.m_tracer.TraceVerbose ("Applet Set {0} > {1}", this.m_manifest?.Info.Id, value?.Info.Id);
-				if (this.m_manifest != null)
-					this.m_backQueue.Push (this.m_manifest);
+				this.m_tracer.TraceVerbose ("Asset Set {0} > {1}", this.m_asset, value);
+				if (this.m_asset != null)
+					this.m_backQueue.Push (this.m_asset);
 				
-				this.m_manifest = value;
+				this.m_asset = value;
 				var webClient = new AppletWebViewClient();
 				this.SetWebViewClient (webClient);
 				this.SetWebChromeClient (new AppletWebChromeClient (this.Context));
-
-				Application.SynchronizationContext.Post(_=>this.AppletChanged?.Invoke (this, EventArgs.Empty), null); 
-
-
+				Application.SynchronizationContext.Post(_=>this.AssetChanged?.Invoke (this, EventArgs.Empty), null); 
 			}
 		}
 
@@ -128,35 +143,15 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			return "";
 		}
 
-		/// <summary>
-		/// Navigate to asset name
-		/// </summary>
-		/// <returns>The asset.</returns>
-		/// <param name="assetName">Asset name.</param>
-		public void NavigateAsset(String assetName)
-		{
-			this.m_tracer.TraceVerbose ("Navigate to {0}", assetName);
-			this.ClearCache (true);
-			this.LoadUrl ("app://openiz.org/applet/" + this.Applet.Info.Id + "/" + assetName);
-		}
 
-		/// <summary>
-		/// Applet web view client.
-		/// </summary>
-		private class AppletWebViewClient : WebViewClient
+        /// <summary>
+        /// Applet web view client.
+        /// </summary>
+        private class AppletWebViewClient : WebViewClient
 		{
 
 			// Tracer
 			private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
-
-			// Applet scheme - Accessing asset in another applet
-			private const string APPLET_SCHEME = "app://openiz.org/applet/";
-
-			// Applet scheme - Accessing asset in another applet
-			private const string ASSET_SCHEME = "app://openiz.org/asset/";
-
-			// Drawable scheme - Accessing drawable
-			private const string DRAWABLE_SCHEME = "app://openiz.org/drawable/";
 
 			/// <summary>
 			/// Initializes a new instance of the
@@ -167,86 +162,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			{
 			}
 
-			/// <summary>
-			/// Load asset
-			/// </summary>
-			private byte[] GetAssetContent(AppletAsset asset)
-			{
-				this.m_tracer.TraceInfo("Get asset content for {0}", asset.Name);
-
-				// Render content
-				if (asset.Content is String)
-					return Encoding.UTF8.GetBytes(asset.Content as String);
-				else if (asset.Content is XElement) {
-					XElement xe = asset.Content as XElement;
-					xe = xe.FirstNode as XElement;
-					if (xe.Name.LocalName != "html") {
-
-						XNamespace xhtml = "http://www.w3.org/1999/xhtml";
-							
-
-						// HTML header elements
-						List<XElement> cssLinks = new List<XElement> {
-							new XElement (xhtml + "meta", new XAttribute ("content", "true"), new XAttribute ("name", "HandheldFriendly")), 
-							new XElement (xhtml + "meta", new XAttribute ("content", "width=640px, initial-scale=0.50, maximum-scale=0.50, minimum-scale=0.50, user-scalable=0"), new XAttribute ("name", "viewport")), 
-							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/jquery.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
-							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/jquery.mobile.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
-							new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/bootstrap.css"), new XAttribute ("rel", "stylesheet")),
-							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/bootstrap.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
-							new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/angular.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")),
-							new XElement(xhtml+"script", new XAttribute("src", asset.Name + "-controller"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-						};
-
-						if (asset.Reference.Contains ("metro-ui"))
-							cssLinks.AddRange (new XElement[] {
-								new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/jquery.metro.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-								new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/jquery.metro.css"), new XAttribute ("rel", "stylesheet"))
-							});
-
-						if (asset.Reference.Contains ("select2"))
-							cssLinks.AddRange (new XElement[] {
-								new XElement (xhtml + "link", new XAttribute ("href", "app://openiz.org/asset/css/select2.min.css"), new XAttribute ("rel", "stylesheet")),
-								new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/select2.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data"))
-							});
-
-						if(asset.Reference.Contains("chart-js"))
-						{
-							cssLinks.Add(new XElement (xhtml + "script", new XAttribute ("src", "app://openiz.org/asset/js/chart.min.js"), new XAttribute ("type", "text/javascript"), new XText ("// Imported data")));
-						}
-
-						XElement[] jsLinks = new XElement[] {
-							new XElement(xhtml+"script", new XAttribute("src", "app://openiz.org/asset/js/openiz-applet-helper.js"), new XAttribute("type", "text/javascript"), new XText("// Imported data")),
-
-						};
-
-
-						// Add default CSS and JavaScript components here
-						xe = xe.Name.LocalName == "body" ? xe : new XElement(xhtml+"body", xe);
-
-						var xeScriptComment = xe.Nodes ().OfType<XComment>().SingleOrDefault (o=>o.Value.Trim() == "OpenIZ:Scripts");
-						if (xeScriptComment != null)
-							xeScriptComment.AddAfterSelf (jsLinks);
-						else
-							xe.Add (jsLinks);
-						xe = new XElement(xhtml+"html",
-							new XAttribute("ng-app", asset.Name),
-							new XElement(xhtml+"head", cssLinks),
-							xe
-						);
-					}
-
-					using (MemoryStream ms = new MemoryStream ())
-					using (XmlWriter xw = XmlWriter.Create (ms, new XmlWriterSettings() { Indent = true })) {
-						xe.WriteTo (xw);
-						xw.Flush ();
-						ms.Flush ();
-						return ms.ToArray ();
-					}
-				}
-				else
-					return asset.Content as byte[];
-			}
-
+			
 			/// <param name="view">The WebView that is initiating the callback.</param>
 			/// <param name="url">The url to be loaded.</param>
 			/// <summary>
@@ -256,50 +172,19 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			/// <returns>To be added.</returns>
 			public override bool ShouldOverrideUrlLoading (WebView view, string url)
 			{
-				if (!url.StartsWith(APPLET_SCHEME) &&
-					!url.StartsWith(ASSET_SCHEME) &&
-					!url.StartsWith(DRAWABLE_SCHEME) &&
+				if (!url.StartsWith(AppletCollection.APPLET_SCHEME) &&
+					!url.StartsWith(AppletCollection.ASSET_SCHEME) &&
+					!url.StartsWith(AppletCollection.DRAWABLE_SCHEME) &&
 					url.Contains(":"))
 					return false;
 
 				this.m_tracer.TraceInfo ("Overridding url {0}", url);
 
-				// Are we navigating away?
-				if(url.StartsWith(APPLET_SCHEME))
-				{
-					string assetPath = url.Substring (APPLET_SCHEME.Length);
-					String path = null;
-					var assetLink = this.ResolveAppletAsset (assetPath, out path);
-					if (assetLink != null)
-						(view as AppletWebView).Applet = assetLink;
-						
-				}
 				view.LoadUrl (url);
 				return true;
 			}
 
-			/// <summary>
-			/// Resolve asset
-			/// </summary>
-			private AppletManifest ResolveAppletAsset(string assetPath, out string path)
-			{
-				this.m_tracer.TraceVerbose ("Resolving asset path {0}", assetPath);
-
-				String targetApplet = assetPath;
-				if (targetApplet.Contains ("?"))
-					targetApplet = targetApplet.Substring (0, targetApplet.IndexOf ("?"));
-				// Page in the target applet
-				if (targetApplet.Contains ("/")) {
-					path = targetApplet.Substring (targetApplet.IndexOf ("/") + 1);
-					if (String.IsNullOrEmpty (path))
-						path = "index";
-					targetApplet = targetApplet.Substring (0, targetApplet.IndexOf ("/"));
-				} else
-					path = "index";
-
-				// Now set scope
-				return AndroidApplicationContext.Current.GetApplet (targetApplet);
-			}
+			
 
 			/// <summary>
 			/// Intercept the request
@@ -308,45 +193,24 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			{
 
 				// Set scope to applet viewer scope
-				if (url.StartsWith (APPLET_SCHEME) || !url.Contains(":")) {
+				if (url.StartsWith (AppletCollection.APPLET_SCHEME) || !url.Contains(":")) {
 
 					this.m_tracer.TraceInfo ("Intercepting request {0}", url);
 
-					AppletManifest scope = (view as AppletWebView).Applet;
-					string assetPath = url, 
-					query = String.Empty;
-					if(assetPath.StartsWith(APPLET_SCHEME))
-					{
-						assetPath = assetPath.Substring (APPLET_SCHEME.Length);
-						scope = this.ResolveAppletAsset(assetPath, out assetPath);
-					}
+                    // Language
+                    string language = view.Resources.Configuration.Locale.Language;
+                    AppletAsset scope = (view as AppletWebView).Asset;
+                    var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
 
-					// Applet scope not found
-					if (scope == null) {
-						this.m_tracer.TraceError ("Applet scope {0} not found", url);
-						return null;
-					}
-
-					// Extract query
-					if (url.Contains ("?")) {
-						query = url.Substring (url.IndexOf ("?") + 1);
-					}
-
-					string language = view.Resources.Configuration.Locale.DisplayName;
-
-					// Get the appropriate asset name
-					var asset = scope.Assets.Find (o => o.Name == assetPath && o.Language == language);
-					if (asset == null)
-						asset = scope.Assets.Find (o => o.Name == assetPath && o.Language == null);
-					if (asset == null)
+					if (navigateAsset == null)
 						return null;
 					else {
 
 						try {
-							var data = this.GetAssetContent (asset);
+							var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
 							this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString (data), data.Length);
 							var ms = new MemoryStream (data);
-							return new WebResourceResponse (asset.MimeType, "UTF-8", ms);
+							return new WebResourceResponse (navigateAsset.MimeType, "UTF-8", ms);
 						} catch (Exception ex) {
 							this.m_tracer.TraceError(ex.ToString ());
 							return null;
@@ -354,8 +218,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 						}
 					}
 
-				} else if (url.StartsWith (ASSET_SCHEME)) { 
-					String assetPath = url.Substring (ASSET_SCHEME.Length);
+				} else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
+					String assetPath = url.Substring (AppletCollection.ASSET_SCHEME.Length);
 					try {
 
 						// Determine mime
@@ -396,8 +260,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 						return null;
 					}
 
-				} else if (url.StartsWith (DRAWABLE_SCHEME)) {
-					String assetPath = url.Substring (DRAWABLE_SCHEME.Length);
+				} else if (url.StartsWith (AppletCollection.DRAWABLE_SCHEME)) {
+					String assetPath = url.Substring (AppletCollection.DRAWABLE_SCHEME.Length);
 					try {
 
 						// Return

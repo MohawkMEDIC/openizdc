@@ -10,10 +10,10 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using OpenIZ.Mobile.Core.Applets;
 using OpenIZ.Mobile.Core.Android.Configuration;
 using OpenIZ.Mobile.Core.Android.AppletEngine;
 using OpenIZ.Mobile.Core.Android;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZMobile
 {
@@ -25,46 +25,50 @@ namespace OpenIZMobile
 	public class AppletActivity : Activity
 	{
 
-		private AppletWebView m_webView;
 
-		/// <param name="newConfig">The new device configuration.</param>
-		/// <summary>
-		/// Configuration changed
+        // Home layout
+        private AppletWebView m_webView;
+
+        /// <summary>
+		/// Called when the activity has detected the user's press of the back
+		///  key.
 		/// </summary>
-		public override void OnConfigurationChanged (Android.Content.Res.Configuration newConfig)
+		public override void OnBackPressed()
+        {
+            if (this.m_webView.CanGoBack())
+                this.m_webView.GoBack();
+            else
+                base.OnBackPressed();
+        }
+
+        /// <param name="newConfig">The new device configuration.</param>
+        /// <summary>
+        /// Configuration changed
+        /// </summary>
+        public override void OnConfigurationChanged (Android.Content.Res.Configuration newConfig)
 		{
 			base.OnConfigurationChanged (newConfig);
 		}
 
-		/// <summary>
-		/// Called when the activity has detected the user's press of the back
-		///  key.
-		/// </summary>
-		public override void OnBackPressed ()
-		{
-			if (this.m_webView.CanGoBack())
-				this.m_webView.GoBack ();
-			else
-				base.OnBackPressed ();
-		}
-
+		
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
 
-			var activityId = this.Intent.Extras.Get ("appletId");
+			var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
 			// Find the applet
-			AppletManifest applet = AndroidApplicationContext.Current.GetApplet (activityId.ToString ());
-			if (applet == null) {
+			AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
+                assetLink, language: this.Resources.Configuration.Locale.Language);
+			if (asset == null) {
 				Toast.MakeText (this.ApplicationContext, this.GetString (Resource.String.err_applet_not_found), ToastLength.Short).Show ();
 				this.Finish ();
 				return;
 			}
 
 			// Applet has changed
-			this.m_webView.AppletChanged += (o, e) => {
+			this.m_webView.AssetChanged += (o, e) => {
 
 
 				var view = o as AppletWebView;
@@ -85,9 +89,9 @@ namespace OpenIZMobile
 					this.ActionBar.SetIcon (Resource.Drawable.app_alt);
 
 			};
-			this.m_webView.Applet = applet;
+            this.m_webView.Asset = asset;
+            this.m_webView.LoadUrl(assetLink);
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
-			this.m_webView.NavigateAsset("index"); // Navigate to the index page
 
 
 		}
