@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applets.core.error" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/app_alt</icon>
+    <author>OpenIZ Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+  </info>
+  <asset name="404" mimeType="text/html">
+    <contentHtml>
+      <bundle>bootstrap</bundle>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <h1>Error!</h1>
+          <p>The requested resource was not found</p>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+</AppletManifest>

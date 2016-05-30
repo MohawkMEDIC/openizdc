@@ -88,8 +88,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		{
 			this.m_tracer.TraceVerbose ("Applet navigation : back");
 			base.GoBack ();
-			this.m_tracer.TraceVerbose ("Applet history stack size: {0}", this.m_backQueue.Count);
-			this.Asset = this.m_backQueue.Pop ();
+
+            if (this.m_backQueue.Count > 0)
+            {
+                this.m_tracer.TraceVerbose("Applet history stack size: {0}", this.m_backQueue.Count);
+                this.Asset = this.m_backQueue.Pop();
+            }
 		}
 
         /// <summary>
@@ -184,14 +188,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 				return true;
 			}
 
-			
+            public override void OnLoadResource(WebView view, string url)
+            {
+                base.OnLoadResource(view, url);
+            }
 
-			/// <summary>
-			/// Intercept the request
-			/// </summary>
-			public override WebResourceResponse ShouldInterceptRequest (WebView view, string url)
+            /// <summary>
+            /// Intercept the request
+            /// </summary>
+            public override WebResourceResponse ShouldInterceptRequest (WebView view, string url)
 			{
-
 				// Set scope to applet viewer scope
 				if (url.StartsWith (AppletCollection.APPLET_SCHEME) || !url.Contains(":")) {
 
@@ -202,21 +208,24 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                     AppletAsset scope = (view as AppletWebView).Asset;
                     var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
 
-					if (navigateAsset == null)
-						return null;
-					else {
+                    if (navigateAsset == null)
+                    {
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.error/404");
+                    }
+                    
+                    try
+                    {
+                        var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
+                        this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
+                        var ms = new MemoryStream(data);
+                        return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
+                    }
+                    catch (Exception ex)
+                    {
+                        this.m_tracer.TraceError(ex.ToString());
+                        return null;
 
-						try {
-							var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
-							this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString (data), data.Length);
-							var ms = new MemoryStream (data);
-							return new WebResourceResponse (navigateAsset.MimeType, "UTF-8", ms);
-						} catch (Exception ex) {
-							this.m_tracer.TraceError(ex.ToString ());
-							return null;
-
-						}
-					}
+                    }
 
 				} else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
 					String assetPath = url.Substring (AppletCollection.ASSET_SCHEME.Length);

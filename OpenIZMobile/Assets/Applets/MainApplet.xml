@@ -19,6 +19,10 @@
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="HomeController">
           <h1>Welcome to {{config.realmName}}</h1>
+          <div>
+            <a href="app://openiz.org/applet/org.openiz.applets.core.authentication na/login">Login</a>
+            <a href="index">Me!</a>
+          </div>
         </body>
       </content>
     </contentHtml>
