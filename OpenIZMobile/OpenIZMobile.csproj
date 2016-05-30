@@ -210,4 +210,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\MainApplet.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
+  </ItemGroup>
 </Project>
