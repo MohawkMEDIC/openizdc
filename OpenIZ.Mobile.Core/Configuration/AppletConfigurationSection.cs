@@ -33,6 +33,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         public String StartupAsset { get; set; }
 
         /// <summary>
+        /// Gets or sets the asset which is used for authentication
+        /// </summary>
+        [XmlElement("login")]
+        public String AuthenticationAsset { get; set; }
+
+        /// <summary>
         /// Gets or sets the directory where applets are stored
         /// </summary>
         /// <value>The applet directory.</value>

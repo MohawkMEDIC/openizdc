@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applets.authentication" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/sheild.png</icon>
+    <name lang="en">OpenIZ Authentication Core</name>
+    <groupName lang="en">OpenIZ Core</groupName>
+    <author>OpenIZ Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+  </info>
+  <asset name="login" lang="en" mimeType="text/html">
+    <contentHtml>
+      <bundle>bootstrap</bundle>
+      <bundle>jquery</bundle>
+      <bundle>angular</bundle>
+      <script>login-controller</script>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
+          <h1>Log into OpenIZ at {{config.realmName}}</h1>
+          <form novalidate="novalidate">
+            <div class="container">
+              <div class="input-group">
+                <span class="input-group-addon">User Name:</span>
+                <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">Password:</span>
+                <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="password"/>
+              </div>
+              <div class="btn-group pull-right">
+                <button class="btn-danger btn" ng-disabled="username == null" ng-click="forgotPassword(username)">
+                  <span class="glyphicon glyphicon-resize-full">
+                  </span> Forgot Password
+                </button>
+                <button class="btn-primary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
+                  Login <span class="glyphicon glyphicon-login"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="login-controller" mimeType="text/javascript" lang="en">
+    <contentText>
+      <![CDATA[
+        // angular stuff
+			  var loginApp = angular.module('login', []);
+
+			  loginApp.controller('LoginController', ['$scope', function ($scope)
+			  {
+          
+          $scope.config = {
+            realmName : OpenIZ.Configuration.getRealm()
+          };
+          
+          $scope.login = function(username, password) {
+            alert(username);
+            alert(password);
+          };
+          
+          $scope.forgotPassword = function(username) {
+            alert(username);
+          };
+        }]);
+      
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

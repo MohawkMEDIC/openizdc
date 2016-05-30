@@ -204,4 +204,10 @@
       <Name>OpenIZ.Mobile.Core.Android</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\AuthenticationApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\MainApplet.xml" />
+  </ItemGroup>
 </Project>
