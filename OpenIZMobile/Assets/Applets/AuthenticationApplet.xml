@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applets.core.authentication" version="0.5.0.0">
+  <info id="org.openiz.applet.core.authentication" version="0.5.0.0">
     <icon>app://openiz.org/drawable/sheild.png</icon>
     <name lang="en">OpenIZ Authentication Core</name>
     <groupName lang="en">OpenIZ Core</groupName>
@@ -9,8 +9,8 @@
   </info>
   <asset name="login" lang="en" mimeType="text/html">
     <contentHtml>
-      <bundle>bootstrap</bundle>
       <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
       <bundle>angular</bundle>
       <script>login-controller</script>
       <content>
@@ -55,8 +55,18 @@
           };
           
           $scope.login = function(username, password) {
-            alert(username);
-            alert(password);
+            try
+            {
+              var session = OpenIZ.Authentication.login(username, password);
+              if(session == null)
+                alert(OpenIZ.Localization.getString("invalidCredential"));
+              else
+                window.location = OpenIZ.urlParams["returnUrl"];
+            }
+            catch(ex)
+            {
+              alert(ex);
+            }
           };
           
           $scope.forgotPassword = function(username) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OpenIZ.Mobile.Core.Configuration;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Security;
@@ -6,6 +7,7 @@ using System.Security.Principal;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Services;
+using SQLite;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -29,9 +31,20 @@ namespace OpenIZ.Mobile.Core.Security
 				throw new NotImplementedException ();
 			else if (securable is IPrincipal || securable is IIdentity) {
 				var identity = (securable as IPrincipal)?.Identity ?? securable as IIdentity;
-				throw new NotImplementedException ();
 
-			} else if (securable is Act) {
+                // Is the identity a claims identity? If yes, we just use the claims made in the policy
+                if(identity is ClaimsIdentity)
+                    return (identity as ClaimsIdentity).Claim.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim).Select(
+                        o=> new PolicyInstance(new Policy(o.Value, "ClaimPolicy", false), PolicyGrantType.Grant)
+                        );
+
+                IDataPersistenceService<SecurityUser> userPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+                var user = userPersistence.Query(u => u.UserName == identity.Name).SingleOrDefault();
+                if (user == null)
+                    throw new KeyNotFoundException("Identity not found");
+
+                return user.Policies.Select(o=>new PolicyInstance(new Policy(o.Policy.Oid, o.Policy.Name, o.Policy.CanOverride), o.GrantType));
+            } else if (securable is Act) {
 				var pAct = securable as Act;
 				throw new NotImplementedException ();
 

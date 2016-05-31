@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenIZ.Core.Model.Security;
+using System;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -8,7 +9,7 @@ namespace OpenIZ.Mobile.Core.Security
 	public interface IPolicyInstance
 	{
 		IPolicy Policy { get; }
-		PolicyDecisionOutcomeType Rule { get; }
+		PolicyGrantType Rule { get; }
 		object Securable { get; }
 	}
 }

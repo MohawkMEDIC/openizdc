@@ -11,6 +11,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	public class ConceptServiceBridge : Java.Lang.Object
 	{
 
+
 		/// <summary>
 		/// Gets the concept set.
 		/// </summary>

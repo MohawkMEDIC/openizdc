@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenIZ.Mobile.Core.Security;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Services
 {
@@ -13,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Services
 		/// <summary>
 		/// Get a policy decision outcome (i.e. make a policy decision)
 		/// </summary>
-		PolicyDecisionOutcomeType GetPolicyOutcome(IPrincipal principal, string policyId);
+		PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId);
 
 	}
 }
