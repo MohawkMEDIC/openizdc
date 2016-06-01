@@ -3,7 +3,6 @@ using System.Linq;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Services;
-using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -23,7 +22,7 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <summary>
 		/// Get a policy decision outcome (i.e. make a policy decision)
 		/// </summary>
-		public PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId)
+		public PolicyDecisionOutcomeType GetPolicyOutcome(IPrincipal principal, string policyId)
 		{
 			if (principal == null)
 				throw new ArgumentNullException(nameof(principal));
@@ -32,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Security
 
 			// Can we make this decision based on the claims? 
 			if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId))
-				return PolicyGrantType.Grant;
+				return PolicyDecisionOutcomeType.Grant;
 			
 			// Get the user object from the principal
 			var pip = ApplicationContext.Current.PolicyInformationService;
@@ -50,12 +49,12 @@ namespace OpenIZ.Mobile.Core.Security
 			if(policyInstance == null)
 			{
 				// TODO: Configure OptIn or OptOut
-				return PolicyGrantType.Deny;
+				return PolicyDecisionOutcomeType.Deny;
 			}
-			else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyGrantType.Elevate)
-				return PolicyGrantType.Deny;
+			else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyDecisionOutcomeType.Elevate)
+				return PolicyDecisionOutcomeType.Deny;
 			else if (!policyInstance.Policy.IsActive)
-				return PolicyGrantType.Grant;
+				return PolicyDecisionOutcomeType.Grant;
 
 			return policyInstance.Rule;
 

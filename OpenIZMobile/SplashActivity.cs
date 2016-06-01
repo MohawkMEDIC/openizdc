@@ -123,7 +123,7 @@ namespace OpenIZMobile
 						if(!ct.IsCancellationRequested)
 						{
 							Intent viewIntent = new Intent (this, typeof(AppletActivity));
-							viewIntent.PutExtra ("assetLink", "app://openiz.org/applet/org.openiz.applet.core.settings");
+							viewIntent.PutExtra ("assetLink", "app://openiz.org/applet/org.openiz.applets.core.settings");
 							viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
 							this.StartActivity (viewIntent);
 

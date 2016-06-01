@@ -19,9 +19,9 @@ var OpenIZModel = new function () {
         /**
          * The information related to the principal
          */
-        this.identity = {
-            name: sessionData.username,
-            roles: sessionData.roles
+        this.principal = {
+            name: sessionData.principal.name,
+            roles: sessionData.principal.roles
         };
         /**
          * The method of authentication, either local, oauth, or basic
@@ -30,11 +30,11 @@ var OpenIZModel = new function () {
         /**
          * The date on which the session will expire
          */
-        this.expires = sessionData.exp;
+        this.expires = sessionData.expires;
         /**
          * The date on which the session was issued
          */
-        this.issued = sessionData.nbf;
+        this.issued = sessionData.issued;
         /**
          * The token which can be used as a refresh
          */
@@ -130,26 +130,9 @@ var OpenIZ = new function () {
         * @param {String} userName the name of the user to authenticate
         * @param {String} password The user's password
         * @return A new OpenIZ.Session object with the current session information if successful, null if not
-        * @throws An applicable exception for the validation error.
         */
         login: function (userName, password) {
-            try
-            {
-                var data = OpenIZSessionService.Login(userName, password);
-                if (data.startsWith("err"))
-                    throw OpenIZ.Localization.getString(data);
-
-
-                if (data != null)
-                    return new OpenIZModel.Session(JSON.parse(data));
-                else
-                    return null;
-            }
-            catch(ex)
-            {
-                console.error(ex);
-                throw ex;
-            }
+            // TODO: Implement
         },
         /**
         * Sets the password for the specified user to some other password. 
@@ -170,7 +153,7 @@ var OpenIZ = new function () {
         * @param {String} tfaSecret The two-factor secret (SMS CODE, E-MAIL Code, etc.)
         * @return The granted session object if the login was successful
         */
-        loginEx: function (userName, password, tfaSecret) {
+        login: function (userName, password, tfaSecret) {
             // TODO: Implement
         },
         /**
@@ -188,18 +171,7 @@ var OpenIZ = new function () {
         * @return An instance of Session representing the current session
         */
         getSession: function () {
-            try
-            {
-                var data = OpenIZSessionService.GetSession();
-                if (data != null)
-                    return new OpenIZModel.Session(JSON.parse(data));
-                return null;
-            }
-            catch(ex)
-            {
-                console.error(ex);
-                return null;
-            }
+            // TODO: Implement
         }
     };
 
@@ -308,7 +280,7 @@ var OpenIZ = new function () {
          * @param {String} localeId The two digit ISO language code
          * @return The display string in the specified locale
          */
-        getStringEx : function(stringId, localeId) {
+        getString : function(stringId, localeId) {
             // TODO: Implement
         }
     };
@@ -522,18 +494,4 @@ $(document).ready(function () {
         });
     });
 })
-
-/** Allows String.Format() style stuff to work */
-if (!String.prototype.format) {
-    String.prototype.format = function () {
-        var str = this.toString();
-        if (!arguments.length)
-            return str;
-        var args = typeof arguments[0],
-            args = (("string" == args || "number" == args) ? arguments : arguments[0]);
-        for (arg in args)
-            str = str.replace(RegExp("\\{" + arg + "\\}", "gi"), args[arg]);
-        return str;
-    }
-}
 

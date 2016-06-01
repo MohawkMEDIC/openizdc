@@ -213,4 +213,19 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\DashboardApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\LoginApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\RegisterApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\coat_of_arms_of_tanzania.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\tanzaniaflagmap.png" />
+  </ItemGroup>
 </Project>

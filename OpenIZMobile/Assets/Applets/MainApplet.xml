@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.core" version="0.5.0.0">
+  <info id="org.openiz.applet.main" version="0.5.0.0">
     <icon>app://openiz.org/drawable/home.png</icon>
     <name lang="en">Main Applet</name>
     <groupName lang="en">OpenIZ Core</groupName>
@@ -18,7 +18,7 @@
       <script>index-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="HomeController">
-          <h1>Hi {{session.identity.name}} to {{config.realmName}}</h1>
+          <h1>Welcome to {{config.realmName}}</h1>
           <div>
             <a href="app://openiz.org/applet/org.openiz.applets.core.authentication na/login">Login</a>
             <a href="index">Me!</a>
@@ -36,10 +36,8 @@
 			indexApp.controller('HomeController', ['$scope', function ($scope)
 			{
         $scope.config = {
-          realmName : OpenIZ.Configuration.getRealm(),
+          realmName : OpenIZ.Configuration.getRealm()
         };
-        $scope.session = OpenIZ.Authentication.getSession();
-
       }]);
       ]]>
     </contentText>

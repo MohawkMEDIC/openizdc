@@ -20,9 +20,6 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using System.Diagnostics.Tracing;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
-using System.Security;
-using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Mobile.Core.Android.Security;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
 {
@@ -80,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.AddJavascriptInterface (new AppletFunctionBridge (context, this), "OpenIZApplicationService");
 			this.AddJavascriptInterface (new ConfigurationServiceBridge(), "OpenIZConfigurationService");
 			this.AddJavascriptInterface (new ConceptServiceBridge (), "OpenIZConceptService");
-            this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
+
 
 		}
 
@@ -213,32 +210,21 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 
                     if (navigateAsset == null)
                     {
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/404");
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applets.core.error/404");
                     }
                     
                     try
                     {
-                        return this.RenderWebResource(url, navigateAsset);
-                    }
-                    catch(SecurityException ex)
-                    {
-                        this.m_tracer.TraceError(ex.ToString());
-                        if (ApplicationContext.Current.Principal == null)
-                        {
-                            // HACK: Can't return a fake 302
-                            String redirectUrl = String.Format("<html><head><meta http-equiv=\"refresh\" content=\"0; url={0}?returnUrl={1}\"/></head></html>", AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset, url);
-                            return new WebResourceResponse("text/html", "UTF-8", new MemoryStream(Encoding.UTF8.GetBytes(redirectUrl)));
-                        }
-                        else
-                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/403");
-                        return this.RenderWebResource(url, navigateAsset);
-
+                        var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
+                        this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
+                        var ms = new MemoryStream(data);
+                        return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
                     }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError(ex.ToString());
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500");
-                        return this.RenderWebResource(url, navigateAsset);
+                        return null;
+
                     }
 
 				} else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
@@ -309,24 +295,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 					return base.ShouldInterceptRequest(view, url);
 			}
 
-            /// <summary>
-            /// Render web resource
-            /// </summary>
-            /// <param name="navigateAsset"></param>
-            /// <returns></returns>
-            private WebResourceResponse RenderWebResource(String url, AppletAsset navigateAsset)
-            {
-                // Demand policies
-                if(navigateAsset.Manifest.Info.Policies != null)
-                    foreach(var policy in navigateAsset.Manifest.Info.Policies)
-                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
-
-                var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
-                this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
-                var ms = new MemoryStream(data);
-                return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
-            }
-        }
+		}
 
 		/// <summary>
 		/// Chrome client

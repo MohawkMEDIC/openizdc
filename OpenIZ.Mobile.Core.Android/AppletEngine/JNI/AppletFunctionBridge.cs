@@ -6,7 +6,6 @@ using Android.Content;
 using Org.Json;
 using Android.App;
 using Android.Content.Res;
-using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -20,7 +19,6 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		// Context
 		private Context m_context;
 		private AppletWebView m_view;
-        private Tracer m_tracer = Tracer.GetTracer(typeof(AppletFunctionBridge));
 
 		/// <summary>
 		/// Gets the context of the function
@@ -67,15 +65,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		[JavascriptInterface]
 		public String GetString(String stringId)
 		{
-            try
-            {
-                return this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
-            }
-            catch(Exception e)
-            {
-                this.m_tracer.TraceError("Error retreiving string {0}: {1}", stringId, e);
-                return stringId;
-            }
+			return this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
 		}
 
 		/// <summary>
