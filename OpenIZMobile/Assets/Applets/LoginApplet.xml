@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.login" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/cog.png</icon>
+    <name lang="en">Login Applet</name>
+    <groupName lang="en">OpenIZ Core</groupName>
+    <author>OpenIZ Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <!-- The OpenIZ Login Policy -->
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+  </info>
+  <menuItem launch="app://openiz.org/applet/org.openiz.applet.login/index">
+    <icon>app://openiz.org/drawable/shield.png</icon>
+    <text lang="en">Login</text>
+  </menuItem>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <script>index-controller</script>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
+          <div class="container">
+            <div class ="row">
+              <div class="col-xs-12">
+                <h3 class="text-center">Login</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-4 col-xs-offset-4">
+                <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania" class="img-responsive"/>
+              </div>
+            </div>
+            <br/>
+            <form novalidate="novalidate">
+              <div class="input-group">
+                <div class="row">
+                  <div class="col-xs-6 col-xs-offset-3">
+                    <div class="input-group">
+                      <span class="input-group-addon">User Name:</span>
+                      <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+                <div class="row">
+                  <div class="col-xs-6 col-xs-offset-3">
+                    <div class="input-group">
+                      <span class="input-group-addon">Password:</span>
+                      <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="password"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <br/>
+                <div class ="row">
+                  <div class="col-xs-12 text-center">
+                    <a class="btn-primary btn" ng-disabled="username == null || password == null" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">
+                      Login <span class="glyphicon glyphicon-login"></span>
+                    </a>
+                    <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/reset"> Forgot Password?</a>
+                    <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="reset" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+
+            <div class="row">
+              <div class="text-center">
+                <h3 class ="text-center">Reset Method</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-2 col-xs-offset-5">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="resetMethod" value="Email"></input>
+                    Email
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-2 col-xs-offset-5">
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="resetMethod" value="Phone"></input>
+                    Phone
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class ="col-xs-2 col-xs-offset-5">
+                <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/verify"> Accept</a>
+              </div>
+            </div>
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="verify" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+            <div class="row">
+              <h3 class="text-center">A verification code has been sent</h3>
+            </div>
+            <div class="row">
+              <div class ="col-xs-6 col-xs-offset-3 text-center">
+              <label>
+                Verification Code
+                <input type="text"></input>
+              </label>
+            </div>
+           </div>
+          <div class = "row">
+            <div class="col-xs-2 col-xs-offset-5 text-center">
+            <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/index">Enter</a>
+            </div>
+          </div>
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="index-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        var loginApp = angular.module('index', []);
+
+		    loginApp.controller('LoginController', ['$scope', function ($scope)
+		    {	
+			    $scope.login = function(username, password) {
+            
+          };
+          
+	    }]);
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

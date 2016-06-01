@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.register" version="0.5.0.0">
+    <icon>@drawable/cogs</icon>
+    <name lang="en">Registration</name>
+    <name lang="sw">Daftari</name>
+    <groupName lang="en">Administration</groupName>
+    <groupName lang="sw">Utawala</groupName>
+    <author>OpenIZ.org Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <demand></demand>
+  </info>
+  <menuItem launch="app://openiz.org/applet/org.openiz.applet.register/index">
+    <icon>app://openiz.org/drawable/cogs.png</icon>
+    <text lang="en">Register</text>
+    <text lang="sw">Daftari</text>
+  </menuItem>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <content lang="en">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Register</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form action="" onsubmit="">
+                      <div class="row form-group" id="userName">
+                        <label for="userNameInput" class="col-xs-4 control-label">
+                          Username
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="text" name="userName" id="userNameInput"/>
+                        </div>
+                        <span id="error-userName" class=""></span>
+                      </div>
+                      <div class="row form-group" id="givenName">
+                        <label for="givenNameInput" class="col-xs-4 control-label">
+                          Given Name
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="text" name="givenName" id="givenNameInput"/>
+                        </div>
+                        <span id="error-givenName" class=""></span>
+                      </div>
+
+                      <div class="row form-group" id="familyName">
+                        <label for="familyNameInput" class="col-xs-4 control-label">
+                          Family Name
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="text" name="familyName" id="familyNameInput"/>
+                        </div>
+                        <span id="error-familyName" class=""></span>
+                      </div>
+
+                      <div class="row form-group" id="email">
+                        <label for="emailInput" class="col-xs-4 control-label">
+                          Email
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="text" name="email" id="emailInput"/>
+                        </div>
+                        <span id="error-email" class=""></span>
+                      </div>
+
+                      <div class="row form-group">
+                        <label for="phoneNumberInput" class="col-xs-4 control-label">
+                          Phone Number
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="text" name="phoneNumber" id="phoneNumberInput"/>
+                        </div>
+                        <span id="error-phoneNumber" class=""></span>
+                      </div>
+                      <div class="row form-group">
+                        <label for="passwordInput" class="col-xs-4 control-label">
+                          Password
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="password" name="password" id="passwordInput"/>
+                        </div>
+                        <span id="error-password" class=""></span>
+                      </div>
+                      <div class="row form-group">
+                        <label for="confirmPasswordInput" class="col-xs-4 control-label">
+                          Confirm Password
+                        </label>
+                        <div class="col-xs-8">
+                          <input type="password" name="confirmPassword" id="confirmPasswordInput"/>
+                        </div>
+                        <span id="error-confirmPassword" class=""></span>
+                      </div>
+                      <div class="row form-group">
+                        <div class="col-xs-offset-4 col-xs-8">
+                          <a type="submit" class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- OpenIZ:Scripts -->
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="index-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+			
+
+		  ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

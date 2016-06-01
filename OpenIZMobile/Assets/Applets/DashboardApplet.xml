@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.applet.dashboard" version="0.5.0.0">
+    <icon>@drawable/cogs</icon>
+    <name lang="en">Registration</name>
+    <name lang="sw">Daftari</name>
+    <groupName lang="en">Administration</groupName>
+    <groupName lang="sw">Utawala</groupName>
+    <author>OpenIZ.org Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <demand></demand>
+  </info>
+  <menuItem launch="app://openiz.org/applet/org.openiz.applet.dashboard/index">
+    <icon>app://openiz.org/drawable/cogs.png</icon>
+    <text lang="en">Register</text>
+    <text lang="sw">Daftari</text>
+  </menuItem>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <script>chart</script>
+      <content lang="en">
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          
+          <div class="container">
+          
+          Dashboard
+            
+          </div>
+          <!-- OpenIZ:Scripts -->
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="chart" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+			  
+
+		  ]]>
+    </contentText>
+  </asset>
+</AppletManifest>
