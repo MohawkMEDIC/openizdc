@@ -55,7 +55,8 @@
     <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
-    <Compile Include="Security\PolicyDecisionOutcome.cs" />
+    <Compile Include="Security\Policy.cs" />
+    <Compile Include="Security\PolicyInstance.cs" />
     <Compile Include="Security\IPolicyInstance.cs" />
     <Compile Include="Security\IPolicy.cs" />
     <Compile Include="Security\ClaimsPrincipal.cs" />

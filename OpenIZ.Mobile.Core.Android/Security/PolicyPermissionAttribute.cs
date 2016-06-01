@@ -6,6 +6,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using System.Text;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -90,18 +91,18 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			var pdp = ApplicationContext.Current.PolicyDecisionService;
 
 			// Non system principals must be authenticated
-			if (this.m_principal.Identity?.IsAuthenticated == false)
-				throw new PolicyViolationException (this.m_policyId, PolicyDecisionOutcomeType.Deny);
+			if (this.m_principal?.Identity?.IsAuthenticated == false || this.m_principal == null)
+				throw new PolicyViolationException (this.m_policyId, PolicyGrantType.Deny);
 
-			PolicyDecisionOutcomeType action = PolicyDecisionOutcomeType.Deny;
+            PolicyGrantType action = PolicyGrantType.Deny;
 			if (pdp == null) // No way to verify 
-					action = PolicyDecisionOutcomeType.Deny;
+					action = PolicyGrantType.Deny;
 			else if (pdp != null)
 				action = pdp.GetPolicyOutcome (this.m_principal, this.m_policyId);
 
 			this.m_traceSource.TraceInfo ("Policy Enforce: {0}({1}) = {2}", this.m_principal?.Identity?.Name, this.m_policyId, action);
 
-			if (action != PolicyDecisionOutcomeType.Grant)
+			if (action != PolicyGrantType.Grant)
 				throw new PolicyViolationException (this.m_policyId, action);
 		}
 
