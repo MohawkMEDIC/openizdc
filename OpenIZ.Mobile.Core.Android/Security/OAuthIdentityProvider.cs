@@ -216,10 +216,12 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				catch(RestClientException<OAuthTokenResponse> ex)
 				{
 					this.m_tracer.TraceError("REST client exception: {0}", ex);
-					throw new SecurityException(
-						String.Format("err_oauth2_{0}", ex.Result.Error), 
-						ex
-					);
+                    var se = new SecurityException(
+                        String.Format("err_oauth2_{0}", ex.Result.Error),
+                        ex
+                    );
+                    se.Data.Add("detail", ex.Result);
+                    throw se;
 				}
 				catch(SecurityTokenException ex) {
 					this.m_tracer.TraceError ("TOKEN exception: {0}", ex);

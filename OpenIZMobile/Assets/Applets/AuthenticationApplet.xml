@@ -65,7 +65,11 @@
             }
             catch(ex)
             {
-              alert(ex);
+              if(typeof(ex) == "string")
+                alert(ex);
+              else if(ex.description != undefined)
+                alert(ex.description);
+              
             }
           };
           

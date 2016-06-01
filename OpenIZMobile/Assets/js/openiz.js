@@ -136,18 +136,29 @@ var OpenIZ = new function () {
             try
             {
                 var data = OpenIZSessionService.Login(userName, password);
-                if (data.startsWith("err"))
-                    throw OpenIZ.Localization.getString(data);
 
-
-                if (data != null)
-                    return new OpenIZModel.Session(JSON.parse(data));
-                else
+                if (data == null)
                     return null;
+                else if (data.lastIndexOf("err", 0) == 0)
+                    throw OpenIZ.Localization.getString(data);
+                else
+                {
+                    var pData = JSON.parse(data);
+                    if (pData != null && pData.error !== undefined)
+                        throw {
+                            error: OpenIZ.Localization.getString("err_" + pData.error),
+                            description: pData.error_description
+                        };
+                    else if (data != null)
+                        return new OpenIZModel.Session(data);
+                    else
+                        return null;
+
+                }
             }
             catch(ex)
             {
-                console.error(ex);
+                console.info(ex);
                 throw ex;
             }
         },
