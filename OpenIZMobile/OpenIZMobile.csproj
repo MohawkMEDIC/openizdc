@@ -213,4 +213,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\openiz-model.js" />
+  </ItemGroup>
 </Project>
