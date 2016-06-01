@@ -55,8 +55,18 @@
           };
           
           $scope.login = function(username, password) {
-            alert(username);
-            alert(password);
+            try
+            {
+              var session = OpenIZ.Authentication.login(username, password);
+              if(session == null)
+                alert(OpenIZ.Localization.getString("invalidCredential"));
+              else
+                window.location = OpenIZ.urlParams["returnUrl"];
+            }
+            catch(ex)
+            {
+              alert(ex);
+            }
           };
           
           $scope.forgotPassword = function(username) {

@@ -17,6 +17,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Android.Security;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Diagnostics;
+using System.Security;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -58,10 +59,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 if(principal is ClaimsPrincipal)
                 {
                     var cp = principal as ClaimsPrincipal;
-                    this.Issued = DateTime.Parse(cp.FindClaim(ClaimTypes.AuthenticationInstant).Value);
-                    this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration).Value);
-                    this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray();
-                    this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod).Value;
+
+                    this.Issued = DateTime.Parse(cp.FindClaim(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString());
+                    this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration)?.Value ?? DateTime.MaxValue.ToString());
+                    this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToArray();
+                    this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
                 }
                 else
                 {
@@ -151,6 +153,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 {
                     return JniUtil.ToJson(new SessionInformation(ApplicationContext.Current.Principal));
                 }
+            }
+            catch(SecurityException e)
+            {
+                this.m_tracer.TraceError("Security Exception: {0}", e);
+                if (e.Data.Contains("detail"))
+                    return JniUtil.ToJson(e.Data["detail"]);
+                return e.Message;
             }
             catch(Exception e)
             {

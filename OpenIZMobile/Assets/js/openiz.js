@@ -19,9 +19,9 @@ var OpenIZModel = new function () {
         /**
          * The information related to the principal
          */
-        this.principal = {
-            name: sessionData.principal.name,
-            roles: sessionData.principal.roles
+        this.identity = {
+            name: sessionData.username,
+            roles: sessionData.roles
         };
         /**
          * The method of authentication, either local, oauth, or basic
@@ -30,11 +30,11 @@ var OpenIZModel = new function () {
         /**
          * The date on which the session will expire
          */
-        this.expires = sessionData.expires;
+        this.expires = sessionData.exp;
         /**
          * The date on which the session was issued
          */
-        this.issued = sessionData.issued;
+        this.issued = sessionData.nbf;
         /**
          * The token which can be used as a refresh
          */
@@ -130,9 +130,37 @@ var OpenIZ = new function () {
         * @param {String} userName the name of the user to authenticate
         * @param {String} password The user's password
         * @return A new OpenIZ.Session object with the current session information if successful, null if not
+        * @throws An applicable exception for the validation error.
         */
         login: function (userName, password) {
-            // TODO: Implement
+            try
+            {
+                var data = OpenIZSessionService.Login(userName, password);
+
+                if (data == null)
+                    return null;
+                else if (data.lastIndexOf("err", 0) == 0)
+                    throw OpenIZ.Localization.getString(data);
+                else
+                {
+                    var pData = JSON.parse(data);
+                    if (pData != null && pData.error !== undefined)
+                        throw {
+                            error: OpenIZ.Localization.getString("err_" + pData.error),
+                            description: pData.error_description
+                        };
+                    else if (data != null)
+                        return new OpenIZModel.Session(data);
+                    else
+                        return null;
+
+                }
+            }
+            catch(ex)
+            {
+                console.info(ex);
+                throw ex;
+            }
         },
         /**
         * Sets the password for the specified user to some other password. 
@@ -153,7 +181,7 @@ var OpenIZ = new function () {
         * @param {String} tfaSecret The two-factor secret (SMS CODE, E-MAIL Code, etc.)
         * @return The granted session object if the login was successful
         */
-        login: function (userName, password, tfaSecret) {
+        loginEx: function (userName, password, tfaSecret) {
             // TODO: Implement
         },
         /**
@@ -171,7 +199,18 @@ var OpenIZ = new function () {
         * @return An instance of Session representing the current session
         */
         getSession: function () {
-            // TODO: Implement
+            try
+            {
+                var data = OpenIZSessionService.GetSession();
+                if (data != null)
+                    return new OpenIZModel.Session(JSON.parse(data));
+                return null;
+            }
+            catch(ex)
+            {
+                console.error(ex);
+                return null;
+            }
         }
     };
 
@@ -280,7 +319,7 @@ var OpenIZ = new function () {
          * @param {String} localeId The two digit ISO language code
          * @return The display string in the specified locale
          */
-        getString : function(stringId, localeId) {
+        getStringEx : function(stringId, localeId) {
             // TODO: Implement
         }
     };
@@ -494,4 +533,18 @@ $(document).ready(function () {
         });
     });
 })
+
+/** Allows String.Format() style stuff to work */
+if (!String.prototype.format) {
+    String.prototype.format = function () {
+        var str = this.toString();
+        if (!arguments.length)
+            return str;
+        var args = typeof arguments[0],
+            args = (("string" == args || "number" == args) ? arguments : arguments[0]);
+        for (arg in args)
+            str = str.replace(RegExp("\\{" + arg + "\\}", "gi"), args[arg]);
+        return str;
+    }
+}
 
