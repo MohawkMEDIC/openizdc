@@ -22,6 +22,7 @@ using System.Security;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Applets;
 using OpenIZ.Core.Applets.Model;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -188,12 +189,23 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 
-		/// <summary>
-		/// Get applet by id
-		/// </summary>
-		/// <returns>The applet.</returns>
-		/// <param name="id">Identifier.</param>
-		public AppletManifest GetApplet (String id)
+        /// <summary>
+        /// Sets the current principal
+        /// </summary>
+        internal void SetPrincipal(IPrincipal p)
+        {
+            if (p != null && !p.Identity.IsAuthenticated)
+                throw new InvalidOperationException("Cannot set principal to unauthenticated identity");
+            else
+                this.Principal = p;
+        }
+
+        /// <summary>
+        /// Get applet by id
+        /// </summary>
+        /// <returns>The applet.</returns>
+        /// <param name="id">Identifier.</param>
+        public AppletManifest GetApplet (String id)
 		{
 			return this.m_applets.FirstOrDefault (o => o.Info.Id == id);
 		}

@@ -54,13 +54,13 @@ var OpenIZModel = new function () {
          * The abandon function is used to abandon the current session
          */
         this.abandon = function () {
-            // TODO: Implement
+            return OpenIZ.Authentication.abandonSession();
         };
         /**
          * The refresh function is used to refresh the current session 
          */
         this.refresh = function () {
-            // TODO: Implement
+            return OpenIZ.Authentication.refreshSession();
         };
     };
 

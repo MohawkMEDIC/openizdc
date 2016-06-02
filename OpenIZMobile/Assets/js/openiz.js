@@ -59,7 +59,7 @@ var OpenIZ = new function () {
             }
             catch(ex)
             {
-                console.info(ex);
+                console.warn(ex);
                 throw ex;
             }
         },
@@ -111,6 +111,59 @@ var OpenIZ = new function () {
             {
                 console.error(ex);
                 return null;
+            }
+        },
+        /**
+         * Destroys the current session
+         */
+        abandonSession: function () {
+            try {
+                OpenIZSessionService.Abandon();
+                return true;
+            }
+            catch (ex) {
+                console.error(ex);
+                return false;
+            }
+        },
+        /** 
+         * Refreshes the current session so that the token remains valid
+         * @return The newly created session
+         */
+        refreshSession: function () {
+            try
+            {
+                if (OpenIZ.Authentication.getSession() == null)
+                    throw {
+                        error: OpenIZ.Localization.getString("err_no_session"),
+                        description: OpenIZ.Localization.getString("err_no_session_detail")
+                    };
+                // Refresh the specified session data
+                var data = OpenIZSessionService.Refresh();
+
+                if (data == null)
+                    return null;
+                else if (data.lastIndexOf("err", 0) == 0)
+                    throw OpenIZ.Localization.getString(data);
+                else {
+                    alert(data);
+                    var pData = JSON.parse(data);
+                    if (pData != null && pData.error !== undefined)
+                        throw {
+                            error: OpenIZ.Localization.getString("err_" + pData.error),
+                            description: pData.error_description
+                        };
+                    else if (data != null)
+                        return new OpenIZModel.Session(data);
+                    else
+                        return null;
+
+                }
+            }
+            catch(ex)
+            {
+                console.warn(ex);
+                throw ex;
             }
         }
     };

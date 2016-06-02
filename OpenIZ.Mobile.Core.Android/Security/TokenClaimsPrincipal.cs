@@ -33,12 +33,17 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		// Configuration
 		private SecurityConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Security.TokenClaimsPrincipal"/> class.
-		/// </summary>
-		/// <param name="token">Token.</param>
-		/// <param name="tokenType">Token type.</param>
-		public TokenClaimsPrincipal (String token, String tokenType) : base(null)
+        /// <summary>
+        /// Gets the refresh token
+        /// </summary>
+        public String RefreshToken { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Security.TokenClaimsPrincipal"/> class.
+        /// </summary>
+        /// <param name="token">Token.</param>
+        /// <param name="tokenType">Token type.</param>
+        public TokenClaimsPrincipal (String token, String tokenType, String refreshToken) : base(null)
 		{
 			if (String.IsNullOrEmpty (token))
 				throw new ArgumentNullException (nameof (token));
@@ -91,6 +96,8 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				throw new SecurityTokenException (SecurityTokenExceptionType.TokenExpired, "Token expired");
 			else if (notBefore == null || Math.Abs(DateTime.Parse (notBefore.Value).Subtract(DateTime.Now).TotalMinutes) > 2)
 				throw new SecurityTokenException (SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
+
+            this.RefreshToken = refreshToken;
 
 			this.m_identities.Clear ();
 			this.m_identities.Add(new ClaimsIdentity((String)body["unique_name"], true, claims));
