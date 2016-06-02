@@ -61,8 +61,47 @@
                     <a class="btn-primary btn" ng-disabled="username == null || password == null" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">
                       Login <span class="glyphicon glyphicon-login"></span>
                     </a>
-                    <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/reset"> Forgot Password?</a>
+                    <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/resetName"> Forgot Password?</a>
                     <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="resetName" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+            <div class="row">
+              <div class="text-center">
+                <h3 class ="text-center">Enter Username</h3>
+              </div>
+            </div>
+            <form novalidate="novalidate">
+              <div class="input-group">
+                <div class="row">
+                  <div class="col-xs-6 col-xs-offset-3">
+                    <div class="input-group">
+                      <span class="input-group-addon">User Name:</span>
+                      <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
+                    </div>
+                  </div>
+                </div>
+                <br/>
+              </div>
+              <div>
+                <div class ="row">
+                  <div class="col-xs-12 text-center">
+                    <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/reset">Next</a>
                   </div>
                 </div>
               </div>
@@ -155,7 +194,22 @@
 		    loginApp.controller('LoginController', ['$scope', function ($scope)
 		    {	
 			    $scope.login = function(username, password) {
-            
+            try
+            {
+              var session = OpenIZ.Authentication.login(username, password);
+              alert(session);
+              if(session == null)
+                alert(OpenIZ.Localization.getString("invalidCredential"));
+              else
+                window.location = OpenIZ.urlParams["returnUrl"];
+            }
+            catch(ex)
+            {
+              if(typeof(ex) == "string")
+                alert(ex);
+               else if(ex.description != undefined)
+                alert(ex);
+            }
           };
           
 	    }]);
