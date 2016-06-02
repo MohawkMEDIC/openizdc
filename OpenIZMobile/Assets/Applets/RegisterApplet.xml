@@ -8,7 +8,6 @@
     <groupName lang="sw">Utawala</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
-    <demand></demand>
   </info>
   <menuItem launch="app://openiz.org/applet/org.openiz.applet.register/index">
     <icon>app://openiz.org/drawable/cogs.png</icon>
@@ -21,8 +20,10 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
+      <style>bootstrap-alterations</style>
+      <script>index-controller</script>
       <content lang="en">
-        <body xmlns="http://www.w3.org/1999/xhtml">
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="RegisterController">
           <div class="container">
             <div class="row">
               <div class="col-xs-12">
@@ -31,77 +32,75 @@
                     <h3 class="panel-title">Register</h3>
                   </div>
                   <div class="panel-body">
-                    <form action="" onsubmit="">
-                      <div class="row form-group" id="userName">
-                        <label for="userNameInput" class="col-xs-4 control-label">
-                          Username
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="text" name="userName" id="userNameInput"/>
+                    <form id="registerForm" action="" onsubmit="">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Personal Information</legend>
+                        
+                        <div class="form-group">
+                          <label for="givenNameInput" class="control-label">Given Name</label>
+                          <div>
+                            <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name"/>
+                          </div>
+                          <span id="error-givenName" class="row"></span> 
                         </div>
-                        <span id="error-userName" class=""></span>
-                      </div>
-                      <div class="row form-group" id="givenName">
-                        <label for="givenNameInput" class="col-xs-4 control-label">
-                          Given Name
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="text" name="givenName" id="givenNameInput"/>
-                        </div>
-                        <span id="error-givenName" class=""></span>
-                      </div>
 
-                      <div class="row form-group" id="familyName">
-                        <label for="familyNameInput" class="col-xs-4 control-label">
-                          Family Name
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="text" name="familyName" id="familyNameInput"/>
+                        <div class="form-group">
+                          <label for="familyNameInput" class="control-label">Family Name</label>
+                          <div>
+                            <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name"/>
+                          </div>
+                          <span id="error-familyName" class=""></span>  
                         </div>
-                        <span id="error-familyName" class=""></span>
-                      </div>
+                      </fieldset>
 
-                      <div class="row form-group" id="email">
-                        <label for="emailInput" class="col-xs-4 control-label">
-                          Email
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="text" name="email" id="emailInput"/>
+                      <fieldset class="form-group">
+                        <legend class="control-label">Contact Information</legend>
+                        
+                        <div class="form-group">
+                          <label for="emailInput" class="control-label">Email</label>
+                          <div>
+                            <input type="text" name="email" id="emailInput" class="form-control" placeholder="Email"/>
+                          </div>
+                          <span id="error-email" class="row"></span>
                         </div>
-                        <span id="error-email" class=""></span>
-                      </div>
 
-                      <div class="row form-group">
-                        <label for="phoneNumberInput" class="col-xs-4 control-label">
-                          Phone Number
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="text" name="phoneNumber" id="phoneNumberInput"/>
+                        <div class="form-group">
+                          <label for="phoneNumberInput" class="control-label">Phone Number</label>
+                          <div>
+                            <input type="text" name="phoneNumber" id="phoneNumberInput" class="form-control" placeholder="Phone Number"/>
+                          </div>
+                          <span id="error-phoneNumber" class="row"></span>
                         </div>
-                        <span id="error-phoneNumber" class=""></span>
-                      </div>
-                      <div class="row form-group">
-                        <label for="passwordInput" class="col-xs-4 control-label">
-                          Password
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="password" name="password" id="passwordInput"/>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <legend class="control-label">Account Information</legend>
+                        <div class="form-group">
+                          <label for="userNameInput" class="control-label">Username</label>
+                          <div class="">
+                            <input type="text" name="userName" id="userNameInput" class="form-control" placeholder="Username"/>
+                          </div>
+                          <span id="error-userName" class=""></span>  
                         </div>
-                        <span id="error-password" class=""></span>
-                      </div>
-                      <div class="row form-group">
-                        <label for="confirmPasswordInput" class="col-xs-4 control-label">
-                          Confirm Password
-                        </label>
-                        <div class="col-xs-8">
-                          <input type="password" name="confirmPassword" id="confirmPasswordInput"/>
+                        
+                        <div class="form-group">
+                          <label for="passwordInput" class="control-label">Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="passwordInput" class="form-control" placeholder="Password"/>
+                          </div>
+                          <span id="error-password" class=""></span>  
                         </div>
-                        <span id="error-confirmPassword" class=""></span>
-                      </div>
-                      <div class="row form-group">
-                        <div class="col-xs-offset-4 col-xs-8">
-                          <a type="submit" class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
+
+                        <div class="form-group">
+                          <label for="confirmPasswordInput" class="control-label">Confirm Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
+                          </div>
+                          <span id="error-confirmPassword" class=""></span>
                         </div>
+                      </fieldset>
+                      <div class="form-group">
+                          <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
                       </div>
                     </form>
                   </div>
@@ -114,12 +113,48 @@
       </content>
     </contentHtml>
   </asset>
+  <asset name="bootstrap-alterations" mimeType="text/css">
+    <contentText>
+      .panel.panel-default {
+      margin-top: 10px;
+      }
+
+      .panel-title{
+      font-size: 24px;
+      }
+
+      legend{
+      font-size: 18px;
+      }
+
+      input{
+      width: 100%;
+      }
+    </contentText>
+  </asset>
   <asset name="index-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-			
+      
+      $(document).ready(function(){
+      
+        if ($("#Password").val() != $("#ConfirmPassword").val()) {
+          alert("Passwords do not match.");
+        }
+      
+      
+      });
+      
+      var registerApp = angular.module('index', []);
 
-		  ]]>
+		  registerApp.controller('RegisterController', ['$scope', function ($scope)
+		  {	
+			$scope.login = function(username, password) {   
+      };
+          
+	    }]);  
+    
+      ]]>
     </contentText>
   </asset>
 </AppletManifest>
