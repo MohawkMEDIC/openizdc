@@ -137,6 +137,44 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         }
 
         /// <summary>
+        /// Abandons the session
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public void Abandon()
+        {
+            AndroidApplicationContext.Current.SetPrincipal(null);
+        }
+
+        /// <summary>
+        /// Refresh the current session
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String Refresh()
+        {
+            try
+            {
+                var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
+                var principal = idp.Authenticate(ApplicationContext.Current.Principal, null); // Force a re-issue
+                AndroidApplicationContext.Current.SetPrincipal(principal);
+                return JniUtil.ToJson(new SessionInformation(ApplicationContext.Current.Principal));
+            }
+            catch (SecurityException e)
+            {
+                this.m_tracer.TraceError("Security exception refreshing session: {0}", e);
+                if (e.Data.Contains("detail"))
+                    return JniUtil.ToJson(e.Data["detail"]);
+                return e.Message;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error refreshing session: {0}", e);
+                return e.Message;
+            }
+        }
+
+        /// <summary>
         /// Authenticates username / password
         /// </summary>
         [JavascriptInterface]

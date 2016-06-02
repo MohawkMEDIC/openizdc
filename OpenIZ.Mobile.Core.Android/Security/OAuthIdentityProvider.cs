@@ -90,7 +90,17 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				this.Username = username;
 				this.Password = password;
 				this.Scope = scope;
+                this.GrantType = "password";
 			}
+
+            /// <summary>
+            /// Token request for refresh
+            /// </summary>
+            public OAuthTokenRequest(TokenClaimsPrincipal current)
+            {
+                this.GrantType = "refresh_token";
+                this.RefreshToken = current.RefreshToken;
+            }
 
 			/// <summary>
 			/// Gets the type of the grant.
@@ -98,14 +108,20 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			/// <value>The type of the grant.</value>
 			[FormElement("grant_type")]
 			public String GrantType {
-				get { return "password"; }
+                get;set;
 			}
 
-			/// <summary>
-			/// Gets the username.
-			/// </summary>
-			/// <value>The username.</value>
-			[FormElement("username")]
+            /// <summary>
+            /// Gets the refresh token
+            /// </summary>
+            [FormElement("refresh_token")]
+            public String RefreshToken { get; private set; }
+
+            /// <summary>
+            /// Gets the username.
+            /// </summary>
+            /// <value>The username.</value>
+            [FormElement("username")]
 			public String Username {
 				get;
 				private set;
@@ -187,31 +203,42 @@ namespace OpenIZ.Mobile.Core.Android.Security
 					// Set credentials
 					restClient.Credentials = new OAuthTokenServiceCredentials(principal);
 
+                    // Create grant information
+                    OAuthTokenRequest request = null;
+                    if (!String.IsNullOrEmpty(password))
+                        request = new OAuthTokenRequest(principal.Identity.Name, password, scope);
+                    else if (principal is TokenClaimsPrincipal)
+                        request = new OAuthTokenRequest(principal as TokenClaimsPrincipal);
+
 					// Invoke
-					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", new OAuthTokenRequest(principal.Identity.Name, password, scope));
-					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType);
+					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
+					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType, response.RefreshToken);
 
 					// Create a security user and ensure they exist!
 					// TODO: Use the business services instead
 					IDataPersistenceService<SecurityUser> persistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 					Guid sidKey = Guid.Parse(retVal.FindClaim(ClaimTypes.Sid).Value);
 					var localUser = persistence.Get(sidKey);
-					if(localUser == null)
-					{
-						persistence.Insert(new SecurityUser() {
-							Email = retVal.FindClaim(ClaimTypes.Email)?.Value,
-							LastLoginTime= DateTime.Now,
-							PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password),
-							SecurityHash = Guid.NewGuid().ToString(),
-							UserName = retVal.Identity.Name,
-							Key = sidKey
-						});
-					}
-					else 
-					{
-						localUser.PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password);
-						persistence.Update(localUser);
-					}
+                    if (!String.IsNullOrEmpty(password))
+                    {
+                        if (localUser == null)
+                        {
+                            persistence.Insert(new SecurityUser()
+                            {
+                                Email = retVal.FindClaim(ClaimTypes.Email)?.Value,
+                                LastLoginTime = DateTime.Now,
+                                PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password),
+                                SecurityHash = Guid.NewGuid().ToString(),
+                                UserName = retVal.Identity.Name,
+                                Key = sidKey
+                            });
+                        }
+                        else
+                        {
+                            localUser.PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password);
+                            persistence.Update(localUser);
+                        }
+                    }
 				}
 				catch(RestClientException<OAuthTokenResponse> ex)
 				{
