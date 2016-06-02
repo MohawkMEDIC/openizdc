@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.main" version="0.5.0.0">
+  <info id="org.openiz.applet.core" version="0.5.0.0">
     <icon>app://openiz.org/drawable/home.png</icon>
     <name lang="en">Main Applet</name>
     <groupName lang="en">OpenIZ Core</groupName>
@@ -18,10 +18,16 @@
       <script>index-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="HomeController">
-          <h1>Welcome to {{config.realmName}}</h1>
+          <h1>Hi {{session.identity.name}} to {{config.realmName}}</h1>
           <div>
-            <a href="app://openiz.org/applet/org.openiz.applets.core.authentication na/login">Login</a>
-            <a href="index">Me!</a>
+            <ul>
+              <li>
+                <a href="#" ng-click="logout()">Logout</a>
+              </li>
+              <li>
+                <a href="#" ng-click="refresh()">Refresh</a>
+              </li>
+            </ul>
           </div>
         </body>
       </content>
@@ -36,7 +42,30 @@
 			indexApp.controller('HomeController', ['$scope', function ($scope)
 			{
         $scope.config = {
-          realmName : OpenIZ.Configuration.getRealm()
+          realmName : OpenIZ.Configuration.getRealm(),
+        };
+        $scope.session = OpenIZ.Authentication.getSession();
+
+        $scope.logout = function() {
+          $scope.session.abandon();
+          window.location = 'app://openiz.org/applet/org.openiz.applet.core/index';
+        };
+        
+        $scope.refresh = function() {
+          try
+          {
+            var ses = $scope.session.refresh();
+            if(ses != null) 
+              window.location = 'app://openiz.org/applet/org.openiz.applet.core/index';
+          }
+          catch(ex)
+          {
+            if(typeof(ex) == "string")
+              alert(ex);
+            else if(ex.description != undefined)
+              alert(ex.description);
+              
+          }
         };
       }]);
       ]]>

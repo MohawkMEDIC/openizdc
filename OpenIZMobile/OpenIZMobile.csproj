@@ -83,7 +83,9 @@
     <AndroidResource Include="Resources\drawable\logo_lg.png" />
     <AndroidResource Include="Resources\drawable\circle_bg.xml" />
     <AndroidResource Include="Resources\values\Styles.xml" />
-    <AndroidResource Include="Resources\layout\Splash.axml" />
+    <AndroidResource Include="Resources\layout\Splash.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
     <AndroidResource Include="Resources\drawable\splash_gradient.xml" />
     <AndroidResource Include="Resources\drawable\aefi.png" />
     <AndroidResource Include="Resources\drawable\announce.png" />
@@ -227,5 +229,8 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\tanzaniaflagmap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\openiz-model.js" />
   </ItemGroup>
 </Project>
