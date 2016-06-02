@@ -8,7 +8,6 @@
     <groupName lang="sw">Utawala</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
-    <demand></demand>
   </info>
   <menuItem launch="app://openiz.org/applet/org.openiz.applet.register/index">
     <icon>app://openiz.org/drawable/cogs.png</icon>
