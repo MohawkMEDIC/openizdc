@@ -33,76 +33,74 @@
                   </div>
                   <div class="panel-body">
                     <form id="registerForm" action="" onsubmit="">
-                      <div class="form-group" id="userName">
-                        <label for="userNameInput" class="control-label">
-                          Username
-                        </label>
-                        <div class="">
-                          <input type="text" name="userName" id="userNameInput" class="form-control" placeholder="Username"/>
+                      <fieldset class="form-group">
+                        <legend class="control-label">Personal Information</legend>
+                        
+                        <div class="form-group">
+                          <label for="givenNameInput" class="control-label">Given Name</label>
+                          <div>
+                            <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name"/>
+                          </div>
+                          <span id="error-givenName" class="row"></span> 
                         </div>
-                        <span id="error-userName" class=""></span>
-                      </div>
-                      
-                      <div class="form-group" id="givenName">
-                        <label for="givenNameInput" class="control-label">
-                          Given Name
-                        </label>
-                        <div class="">
-                          <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name"/>
-                        </div>
-                        <span id="error-givenName" class="row"></span>
-                      </div>
 
-                      <div class="form-group" id="familyName">
-                        <label for="familyNameInput" class="control-label">
-                          Family Name
-                        </label>
-                        <div class="">
-                          <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name"/>
+                        <div class="form-group">
+                          <label for="familyNameInput" class="control-label">Family Name</label>
+                          <div>
+                            <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name"/>
+                          </div>
+                          <span id="error-familyName" class=""></span>  
                         </div>
-                        <span id="error-familyName" class=""></span>
-                      </div>
+                      </fieldset>
 
-                      <div class="form-group" id="email">
-                        <label for="emailInput" class="control-label">
-                          Email
-                        </label>
-                        <div class="">
-                          <input type="text" name="email" id="emailInput" class="form-control" placeholder="Email"/>
+                      <fieldset class="form-group">
+                        <legend class="control-label">Contact Information</legend>
+                        
+                        <div class="form-group">
+                          <label for="emailInput" class="control-label">Email</label>
+                          <div>
+                            <input type="text" name="email" id="emailInput" class="form-control" placeholder="Email"/>
+                          </div>
+                          <span id="error-email" class="row"></span>
                         </div>
-                        <span id="error-email" class=""></span>
-                      </div>
 
-                      <div class="form-group">
-                        <label for="phoneNumberInput" class="control-label">
-                          Phone Number
-                        </label>
-                        <div class="">
-                          <input type="text" name="phoneNumber" id="phoneNumberInput" class="form-control" placeholder="Phone Number"/>
+                        <div class="form-group">
+                          <label for="phoneNumberInput" class="control-label">Phone Number</label>
+                          <div>
+                            <input type="text" name="phoneNumber" id="phoneNumberInput" class="form-control" placeholder="Phone Number"/>
+                          </div>
+                          <span id="error-phoneNumber" class="row"></span>
                         </div>
-                        <span id="error-phoneNumber" class=""></span>
-                      </div>
-                      
-                      <div class="form-group">
-                        <label for="passwordInput" class="control-label">
-                          Password
-                        </label>
-                        <div class="">
-                          <input type="password" name="password" id="passwordInput" class="form-control" placeholder="Phone Number"/>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <legend class="control-label">Account Information</legend>
+                        <div class="form-group">
+                          <label for="userNameInput" class="control-label">Username</label>
+                          <div class="">
+                            <input type="text" name="userName" id="userNameInput" class="form-control" placeholder="Username"/>
+                          </div>
+                          <span id="error-userName" class=""></span>  
                         </div>
-                        <span id="error-password" class=""></span>
-                      </div>
-                      <div class="form-group">
-                        <label for="confirmPasswordInput" class="control-label">
-                          Confirm Password
-                        </label>
-                        <div class="">
-                          <input type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="Phone Number"/>
+                        
+                        <div class="form-group">
+                          <label for="passwordInput" class="control-label">Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="passwordInput" class="form-control" placeholder="Password"/>
+                          </div>
+                          <span id="error-password" class=""></span>  
                         </div>
-                        <span id="error-confirmPassword" class=""></span>
-                      </div>
+
+                        <div class="form-group">
+                          <label for="confirmPasswordInput" class="control-label">Confirm Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
+                          </div>
+                          <span id="error-confirmPassword" class=""></span>
+                        </div>
+                      </fieldset>
                       <div class="form-group">
-                          <a type="submit" class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
+                          <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
                       </div>
                     </form>
                   </div>
@@ -119,11 +117,18 @@
     <contentText>
       .panel.panel-default {
       margin-top: 10px;
-      font-size: 125%;
       }
-      
+
+      .panel-title{
+      font-size: 24px;
+      }
+
+      legend{
+      font-size: 18px;
+      }
+
       input{
-      width: 95%;
+      width: 100%;
       }
     </contentText>
   </asset>
