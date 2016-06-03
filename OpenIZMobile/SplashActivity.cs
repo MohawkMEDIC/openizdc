@@ -25,7 +25,7 @@ using System.Xml.Serialization;
 
 namespace OpenIZMobile
 {
-	[Activity (Label = "OpenIZ", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
+	[Activity (Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
 	public class SplashActivity : Activity
 	{
 		// Tracer

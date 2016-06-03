@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.openiz.applet.dashboard" version="0.5.0.0">
-    <icon>@drawable/cogs</icon>
+    <icon>app://openiz.org/drawable/cogs</icon>
     <name lang="en">Registration</name>
     <name lang="sw">Daftari</name>
     <groupName lang="en">Administration</groupName>
