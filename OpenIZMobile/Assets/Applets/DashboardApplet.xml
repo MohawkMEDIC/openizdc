@@ -23,8 +23,10 @@
       <bundle>angular</bundle>
       <bundle>chart-js</bundle>
       <script>chart-controller</script>
+      <script>app://openiz.org/asset/js/toastr.min.js</script>
+      <style>app://openiz.org/asset/css/toastr.min.css</style>
       <content lang="en">
-        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="ChartController">
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="ChartController" ng-click="resetTimeout()" ng-touch="resetTimeout()">
           <nav class="navbar navbar-default">
             <div class="container-fluid">
               <!-- Brand and toggle get grouped for better mobile display -->
@@ -74,13 +76,28 @@
         
         
         var dashboardApp = angular.module('index', []);
-
-		    dashboardApp.controller('ChartController', ['$scope', '$window', '$timeout', '$document', function ($scope, $window, $timeout, $document)
+        
+        dashboardApp.controller('ChartController', ['$scope', '$window', '$timeout', '$document', function ($scope, $window, $timeout, $document)
 		    {
-          $timeout(function(){$scope.logout()}, 10000);
-        	
+          toastr.options = {"positionClass":"toast-top-center"};
+          var timer = $timeout(function(){timeoutWarning()}, 30000);
+        	$scope.resetTimeout = function(){
+              $timeout.cancel(timer);
+              timer = $timeout(function(){timeoutWarning()}, 30000);
+              toastr.clear();
+              toastr.options = {"positionClass":"toast-top-center",
+              "timeOut": "3000"};
+              toastr.success('You\'re back!');
+          }
+          function timeoutWarning(){
+            $timeout.cancel(timer);
+            timer = $timeout(function(){$scope.logout()}, 30000);
+            toastr.options = {"positionClass":"toast-top-center",
+            "timeOut": "30000"};
+            toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
+          }
+          
           $scope.logout = function(){
-            alert("FUCK");
             OpenIZ.Authentication.abandonSession();
             $window.location.href = "app://openiz.org/applet/org.openiz.applet.dashboard/index";
           }

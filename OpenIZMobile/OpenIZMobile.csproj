@@ -233,4 +233,10 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\js\openiz-model.js" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\toastr.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\css\toastr.min.css" />
+  </ItemGroup>
 </Project>
