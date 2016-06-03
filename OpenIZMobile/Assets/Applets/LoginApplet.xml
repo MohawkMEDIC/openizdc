@@ -17,7 +17,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>bootstrap-alterations</style>
+      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
       <script>index-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
@@ -46,7 +46,7 @@
                           <div class="col-xs-12 text-center">
                             <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
                             <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/resetName"> Forgot Password?</a>
-                            <a class="btn btn-primary pull-right" ng-disabled="username == null || password == null" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">Login</a>
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">Login</a>
                           </div>
                         </div>
                     </form>
@@ -65,34 +65,35 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
+      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
             <div class="row">
-              <div class="text-center">
-                <h3 class ="text-center">Enter Username</h3>
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title text-center">Forgot Password</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form novalidate="novalidate">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Enter your User Name below</legend>
+                        <div class="form-group">
+                            <label for="usernameInput" class="control-label">User Name:</label>
+                            <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="usernameInput"/>
+                        </div>
+                      </fieldset>
+                        <div class ="row">
+                          <div class="col-xs-12 text-center">
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/reset">Check User Name</a>
+                          </div>
+                        </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
-            <form novalidate="novalidate">
-              <div class="input-group">
-                <div class="row">
-                  <div class="col-xs-6 col-xs-offset-3">
-                    <div class="input-group">
-                      <span class="input-group-addon">User Name:</span>
-                      <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
-                    </div>
-                  </div>
-                </div>
-                <br/>
-              </div>
-              <div>
-                <div class ="row">
-                  <div class="col-xs-12 text-center">
-                    <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/reset">Next</a>
-                  </div>
-                </div>
-              </div>
-            </form>
           </div>
         </body>
       </content>
@@ -104,38 +105,37 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
+      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
-
             <div class="row">
-              <div class="text-center">
-                <h3 class ="text-center">Reset Method</h3>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-2 col-xs-offset-5">
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="resetMethod" value="Email"></input>
-                    Email
-                  </label>
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title text-center">Password Recovery</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form novalidate="novalidate">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Select your recovery method</legend>
+                        <div class="form-group">
+                          <label for="emailRadio" class="control-label">Email</label>
+                          <input id="emailRadio" type="radio" name="resetMethod" value="Email"></input>
+                        </div>
+                        <div class="form-group">
+                          <label for="phoneRadio" class="control-label">Phone Number</label>
+                          <input id="phoneRadio" type="radio" name="resetMethod" value="Email"></input>
+                        </div>
+                      </fieldset>
+                        <div class ="row">
+                          <div class="col-xs-12 text-center">
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/reset">Send Verification Code</a>
+                          </div>
+                        </div>
+                    </form>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-2 col-xs-offset-5">
-                <div class="radio">
-                  <label>
-                    <input type="radio" name="resetMethod" value="Phone"></input>
-                    Phone
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class ="col-xs-2 col-xs-offset-5">
-                <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/verify"> Accept</a>
               </div>
             </div>
           </div>
@@ -172,29 +172,6 @@
         </body>
       </content>
     </contentHtml>
-  </asset>
-  <asset name="bootstrap-alterations" mimeType="text/css">
-    <contentText>
-      .panel.panel-default {
-      margin-top: 10px;
-      }
-
-      .img-responsive {
-      max-width: 75%;
-      }
-
-      .panel-title {
-      font-size: 24px;
-      }
-
-      legend {
-      font-size: 18px;
-      }
-
-      input {
-      width: 100%;
-      }
-    </contentText>
   </asset>
   <asset name="index-controller" mimeType="text/javascript">
     <contentText>

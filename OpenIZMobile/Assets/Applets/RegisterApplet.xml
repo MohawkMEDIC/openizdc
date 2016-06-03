@@ -20,7 +20,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>bootstrap-alterations</style>
+      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
       <script>index-controller</script>
       <content lang="en">
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="RegisterController">
@@ -35,13 +35,13 @@
                     <form id="registerForm" action="" onsubmit="">
                       <fieldset class="form-group">
                         <legend class="control-label">Personal Information</legend>
-                        
+
                         <div class="form-group">
                           <label for="givenNameInput" class="control-label">Given Name</label>
                           <div>
                             <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name"/>
                           </div>
-                          <span id="error-givenName" class="row"></span> 
+                          <span id="error-givenName" class="row"></span>
                         </div>
 
                         <div class="form-group">
@@ -49,13 +49,13 @@
                           <div>
                             <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name"/>
                           </div>
-                          <span id="error-familyName" class=""></span>  
+                          <span id="error-familyName" class=""></span>
                         </div>
                       </fieldset>
 
                       <fieldset class="form-group">
                         <legend class="control-label">Contact Information</legend>
-                        
+
                         <div class="form-group">
                           <label for="emailInput" class="control-label">Email</label>
                           <div>
@@ -80,15 +80,15 @@
                           <div class="">
                             <input type="text" name="userName" id="userNameInput" class="form-control" placeholder="Username"/>
                           </div>
-                          <span id="error-userName" class=""></span>  
+                          <span id="error-userName" class=""></span>
                         </div>
-                        
+
                         <div class="form-group">
                           <label for="passwordInput" class="control-label">Password</label>
                           <div class="">
                             <input type="text" name="password" id="passwordInput" class="form-control" placeholder="Password"/>
                           </div>
-                          <span id="error-password" class=""></span>  
+                          <span id="error-password" class=""></span>
                         </div>
 
                         <div class="form-group">
@@ -113,47 +113,29 @@
       </content>
     </contentHtml>
   </asset>
-  <asset name="bootstrap-alterations" mimeType="text/css">
-    <contentText>
-      .panel.panel-default {
-      margin-top: 10px;
-      }
 
-      .panel-title{
-      font-size: 24px;
-      }
-
-      legend{
-      font-size: 18px;
-      }
-
-      input{
-      width: 100%;
-      }
-    </contentText>
-  </asset>
   <asset name="index-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      
+
       $(document).ready(function(){
-      
+
         if ($("#Password").val() != $("#ConfirmPassword").val()) {
           alert("Passwords do not match.");
         }
-      
-      
+
+
       });
-      
+
       var registerApp = angular.module('index', []);
 
 		  registerApp.controller('RegisterController', ['$scope', function ($scope)
-		  {	
-			$scope.login = function(username, password) {   
+		  {
+			$scope.login = function(username, password) {
       };
-          
-	    }]);  
-    
+
+	    }]);
+
       ]]>
     </contentText>
   </asset>
