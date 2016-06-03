@@ -57,6 +57,11 @@
           <div class="container">
 
             Dashboard
+            
+            <div ng-controller="ChartController">
+              <button ng-click="draw()">Draw</button>
+              <canvas id="stock-canvas" width="500px" height="500px"></canvas>
+            </div>
           </div>
         </body>
       </content>
@@ -101,12 +106,11 @@
         .controller('ChartController', ['$scope', '$window', '$document', function ($scope, $window, $document)
 		    {
             $scope.draw = function(){
-              var sctx = $document.getElementById("stock-canvas").getContext("2d");
+              var sctx = document.getElementById("stock-canvas").getContext("2d");
 		          $window.myLine = new Chart(sctx).Bar(stockChartData, {
 			          responsive: true
 		          });
 	        }
-        
 		var randomScalingFactor = function(){ return Math.round(Math.random()*10000)};
 		var stockChartData = {
 			labels : ["Clinic 1", "Clinic 2", "Clinic 3", "Clinic 4", "Clinic 5", "Clinic 6", "Clinic 7"],

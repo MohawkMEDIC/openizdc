@@ -14,6 +14,11 @@
     font-size: 24px;
 }
 
+.method-radio{
+    width: 100%;
+
+}
+
 legend {
     font-size: 18px;
 }
