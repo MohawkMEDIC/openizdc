@@ -17,53 +17,40 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
+      <style>bootstrap-alterations</style>
       <script>index-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
           <div class="container">
-            <div class ="row">
+            <div class="row">
               <div class="col-xs-12">
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="panel-title text-center">Login</h3>
                   </div>
-                  <div class="row">
-                    <div class="col-xs-4 col-xs-offset-4">
-                      <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania" class="img-responsive"/>
-                    </div>
+                  <div class="panel-body">
+                    <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania" class="img-responsive center-block"/>
+                    <form novalidate="novalidate">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Enter your username and password below</legend>
+                        <div class="form-group">
+                            <label for="usernameInput" class="control-label">User Name:</label>
+                            <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="usernameInput"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordInput" class="control-label">Password:</label>
+                            <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="passwordInput"/>
+                        </div>
+                      </fieldset>
+                        <div class ="row">
+                          <div class="col-xs-12 text-center">
+                            <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
+                            <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/resetName"> Forgot Password?</a>
+                            <a class="btn btn-primary pull-right" ng-disabled="username == null || password == null" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">Login</a>
+                          </div>
+                        </div>
+                    </form>
                   </div>
-                  <br/>
-                  <form novalidate="novalidate">
-                    <div class="form-group">
-                      <div class="row">
-                        <div class="col-xs-6 col-xs-offset-3">
-                          <div class="input-group">
-                            <span class="input-group-addon">User Name:</span>
-                            <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
-                          </div>
-                        </div>
-                      </div>
-                      <br/>
-                      <div class="row">
-                        <div class="col-xs-6 col-xs-offset-3">
-                          <div class="input-group">
-                            <span class="input-group-addon">Password:</span>
-                            <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="password"/>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <br/>
-                      <div class ="row">
-                        <div class="col-xs-12 text-center">
-                          <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
-                          <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/resetName"> Forgot Password?</a>
-                          <a class="btn-primary btn" ng-disabled="username == null || password == null" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">Login</a>
-                        </div>
-                      </div>
-                    </div>
-                  </form>
                 </div>
               </div>
             </div>
@@ -186,13 +173,36 @@
       </content>
     </contentHtml>
   </asset>
+  <asset name="bootstrap-alterations" mimeType="text/css">
+    <contentText>
+      .panel.panel-default {
+      margin-top: 10px;
+      }
+
+      .img-responsive {
+      max-width: 75%;
+      }
+
+      .panel-title {
+      font-size: 24px;
+      }
+
+      legend {
+      font-size: 18px;
+      }
+
+      input {
+      width: 100%;
+      }
+    </contentText>
+  </asset>
   <asset name="index-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
         var loginApp = angular.module('index', []);
 
 		    loginApp.controller('LoginController', ['$scope', function ($scope)
-		    {	
+		    {
 			    $scope.login = function(username, password) {
             try
             {
@@ -211,7 +221,7 @@
                 alert(ex);
             }
           };
-          
+
 	    }]);
       ]]>
     </contentText>
