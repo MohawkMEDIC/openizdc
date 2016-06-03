@@ -81,8 +81,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "app://openiz.org/applet/org.openiz.applet.dashboard/index",
-                AuthenticationAsset = "app://openiz.org/applet/org.openiz.applet.login/index"
+                StartupAsset = "app://openiz.org/applet/org.timr.applet.dashboard/index",
+                AuthenticationAsset = "app://openiz.org/applet/org.timr.applet.login/index"
             };
 
 			// Initial applet style

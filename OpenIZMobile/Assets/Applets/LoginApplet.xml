@@ -1,23 +1,19 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.login" version="0.5.0.0">
+  <info id="org.timr.applet.login" version="0.5.0.0">
     <icon>app://openiz.org/drawable/cog.png</icon>
     <name lang="en">Login Applet</name>
     <groupName lang="en">OpenIZ Core</groupName>
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
-  <menuItem launch="app://openiz.org/applet/org.openiz.applet.login/index">
-    <icon>app://openiz.org/drawable/shield.png</icon>
-    <text lang="en">Login</text>
-  </menuItem>
   <asset name="index" mimeType="text/html">
     <contentHtml>
       <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <script>index-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
@@ -44,9 +40,9 @@
                       </fieldset>
                         <div class ="row">
                           <div class="col-xs-12 text-center">
-                            <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.openiz.applet.register/index"> Register</a>
-                            <a class="btn btn-warning" href="app://openiz.org/applet/org.openiz.applet.login/resetName"> Forgot Password?</a>
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.dashboard/index" ng-click="login(username, password)">Login</a>
+                            <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.timr.applet.register/index"> Register</a>
+                            <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.login/resetName"> Forgot Password?</a>
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.dashboard/index" ng-click="login(username, password)">Login</a>
                           </div>
                         </div>
                     </form>
@@ -65,7 +61,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
@@ -86,7 +82,7 @@
                       </fieldset>
                         <div class ="row">
                           <div class="col-xs-12 text-center">
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/reset">Check User Name</a>
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/reset">Check User Name</a>
                           </div>
                         </div>
                     </form>
@@ -105,7 +101,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
@@ -130,7 +126,7 @@
                       </fieldset>
                         <div class ="row">
                           <div class="col-xs-12 text-center">
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/reset">Send Verification Code</a>
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/reset">Send Verification Code</a>
                           </div>
                         </div>
                     </form>
@@ -165,7 +161,7 @@
             </div>
             <div class = "row">
               <div class="col-xs-2 col-xs-offset-5 text-center">
-                <a class="btn btn-success" href="app://openiz.org/applet/org.openiz.applet.login/index">Enter</a>
+                <a class="btn btn-success" href="app://openiz.org/applet/org.timr.applet.login/index">Enter</a>
               </div>
             </div>
           </div>

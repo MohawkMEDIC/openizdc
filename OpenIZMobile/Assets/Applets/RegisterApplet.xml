@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.register" version="0.5.0.0">
+  <info id="org.timr.applet.register" version="0.5.0.0">
     <icon>app://openiz.org/drawable/cogs</icon>
     <name lang="en">Registration</name>
     <name lang="sw">Daftari</name>
@@ -9,7 +9,7 @@
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
-  <menuItem launch="app://openiz.org/applet/org.openiz.applet.register/index">
+  <menuItem launch="app://openiz.org/applet/org.timr.applet.register/index">
     <icon>app://openiz.org/drawable/cogs.png</icon>
     <text lang="en">Register</text>
     <text lang="sw">Daftari</text>
@@ -20,7 +20,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <script>index-controller</script>
       <content lang="en">
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="RegisterController">
@@ -100,7 +100,7 @@
                         </div>
                       </fieldset>
                       <div class="form-group">
-                          <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.openiz.applet.login/index">Register</a>
+                          <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/index">Register</a>
                       </div>
                     </form>
                   </div>
