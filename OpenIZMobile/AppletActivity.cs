@@ -14,6 +14,7 @@ using OpenIZ.Mobile.Core.Android.Configuration;
 using OpenIZ.Mobile.Core.Android.AppletEngine;
 using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Applets;
 
 namespace OpenIZMobile
 {
@@ -77,8 +78,8 @@ namespace OpenIZMobile
 				this.ActionBar.SetTitle(Resource.String.app_name);
 				this.ActionBar.Subtitle = view.Applet.Info.GetName(Resources.Configuration.Locale.DisplayLanguage);
 
-				if (view.Applet.Info.Icon?.StartsWith ("@drawable") == true) {
-					int iconId = this.Resources.GetIdentifier (view.Applet.Info.Icon.Substring (10), "drawable", "org.openiz.openiz_mobile");
+				if (view.Applet.Info.Icon?.StartsWith (AppletCollection.DRAWABLE_SCHEME) == true) {
+					int iconId = this.Resources.GetIdentifier (view.Applet.Info.Icon.Substring (AppletCollection.DRAWABLE_SCHEME.Length), "drawable", "org.openiz.openiz_mobile");
 					if (iconId != 0)
 						this.ActionBar.SetIcon (iconId);
 					else
@@ -89,7 +90,7 @@ namespace OpenIZMobile
 					this.ActionBar.SetIcon (Resource.Drawable.app_alt);
 
 			};
-            this.m_webView.Asset = asset;
+            //this.m_webView.Asset = asset;
             this.m_webView.LoadUrl(assetLink);
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
 

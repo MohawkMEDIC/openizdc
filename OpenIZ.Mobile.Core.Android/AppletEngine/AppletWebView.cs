@@ -82,6 +82,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.AddJavascriptInterface (new ConceptServiceBridge (), "OpenIZConceptService");
             this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
 
+            this.SetWebViewClient(new AppletWebViewClient());
+            this.SetWebChromeClient(new AppletWebChromeClient(this.Context));
 		}
 
 		/// <summary>
@@ -103,7 +105,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
         /// Applet manifest
         /// </summary>
         public AppletManifest Applet {
-            get { return this.m_asset.Manifest; }
+            get { return this.m_asset?.Manifest; }
             set
             {
                 // Find the "index"
@@ -130,9 +132,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 					this.m_backQueue.Push (this.m_asset);
 				
 				this.m_asset = value;
-				var webClient = new AppletWebViewClient();
-				this.SetWebViewClient (webClient);
-				this.SetWebChromeClient (new AppletWebChromeClient (this.Context));
+				//var webClient = new AppletWebViewClient();
+				//this.SetWebViewClient (webClient);
+				//this.SetWebChromeClient (new AppletWebChromeClient (this.Context));
 				Application.SynchronizationContext.Post(_=>this.AssetChanged?.Invoke (this, EventArgs.Empty), null); 
 			}
 		}
@@ -212,9 +214,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                     var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
 
                     if (navigateAsset == null)
-                    {
                         navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/404");
-                    }
                     
                     try
                     {
@@ -240,8 +240,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                         navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500");
                         return this.RenderWebResource(url, navigateAsset);
                     }
-
-				} else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
+                    finally
+                    {
+                        // Switch asset
+                        (view as AppletWebView).Asset = navigateAsset;
+                    }
+                } else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
 					String assetPath = url.Substring (AppletCollection.ASSET_SCHEME.Length);
 					try {
 
