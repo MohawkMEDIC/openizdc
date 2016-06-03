@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.openiz.applet.core" version="0.5.0.0">
-    <icon>app://openiz.org/drawable/home.png</icon>
+    <icon>app://openiz.org/drawable/home</icon>
     <name lang="en">Main Applet</name>
     <groupName lang="en">OpenIZ Core</groupName>
     <author>OpenIZ Community</author>
