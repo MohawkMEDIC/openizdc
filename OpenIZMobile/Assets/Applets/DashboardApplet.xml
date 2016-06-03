@@ -58,7 +58,7 @@
           <div class="chart-container">
             <canvas id="stock-canvas" height="450" width="600"></canvas>
             <canvas id="vaccination-canvas" height="450" width="600"></canvas>
-            <button ng-click="draw()">draw</button>
+            <button ng-click="logout()">draw</button>
           </div>
           </div>
           <!-- OpenIZ:Scripts -->
@@ -70,10 +70,21 @@
     <contentText>
       <![CDATA[
 			  
+        
+        
+        
         var dashboardApp = angular.module('index', []);
-		    dashboardApp.controller('ChartController', ['$scope', function ($scope)
+
+		    dashboardApp.controller('ChartController', ['$scope', '$window', '$timeout', '$document', function ($scope, $window, $timeout, $document)
 		    {
-        	  $scope.draw = function(){
+          $timeout(function(){$scope.logout()}, 10000);
+        	
+          $scope.logout = function(){
+            alert("FUCK");
+            OpenIZ.Authentication.abandonSession();
+            $window.location.href = "app://openiz.org/applet/org.openiz.applet.dashboard/index";
+          }
+            $scope.draw = function(){
 		          var sctx = document.getElementById("stock-canvas").getContext("2d");
 		          window.myLine = new Chart(sctx).Bar(vaccinationChartData, {
 			          responsive: true
