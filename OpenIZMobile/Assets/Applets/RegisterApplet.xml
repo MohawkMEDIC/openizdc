@@ -20,7 +20,7 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
-      <style>app://openiz.org/assets/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <script>index-controller</script>
       <content lang="en">
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="RegisterController">
