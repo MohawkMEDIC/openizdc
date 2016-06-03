@@ -116,17 +116,17 @@
                       <fieldset class="form-group">
                         <legend class="control-label">Select your recovery method</legend>
                         <div class="form-group">
-                          <label for="emailRadio" class="control-label">Email</label>
-                          <input id="emailRadio" type="radio" name="resetMethod" value="Email"></input>
+                          <div class="radio">
+                            <label for="emailRadio" class="radio-inline control-label">Email<input id="emailRadio" type="radio" name="resetMethod" value="Email"></input></label>  
+                          </div>
+                          <div class="radio">
+                            <label for="phoneRadio" class="radio-inline control-label">Phone Number<input id="phoneRadio" type="radio" name="resetMethod" value="Phone"></input></label>  
                         </div>
-                        <div class="form-group">
-                          <label for="phoneRadio" class="control-label">Phone Number</label>
-                          <input id="phoneRadio" type="radio" name="resetMethod" value="Email"></input>
                         </div>
                       </fieldset>
                         <div class ="row">
                           <div class="col-xs-12 text-center">
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/reset">Send Verification Code</a>
+                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/verify">Send Verification Code</a>
                           </div>
                         </div>
                     </form>

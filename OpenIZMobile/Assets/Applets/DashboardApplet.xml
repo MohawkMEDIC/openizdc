@@ -26,7 +26,7 @@
       <script>app://openiz.org/asset/js/toastr.min.js</script>
       <style>app://openiz.org/asset/css/toastr.min.css</style>
       <content lang="en">
-        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="ChartController" ng-click="resetTimeout()" ng-touch="resetTimeout()">
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController" ng-click="resetTimeout()" ng-touch="resetTimeout()">
           <nav class="navbar navbar-default">
             <div class="container-fluid">
               <!-- Brand and toggle get grouped for better mobile display -->
@@ -46,7 +46,7 @@
                     </li>
                     <li role="separator" class="divider"></li>
                     <li>
-                      <a href="">Log Off</a>
+                      <a href="" ng-click="logout()">Log Off</a>
                     </li>
                   </ul>
                 </li>
@@ -57,13 +57,7 @@
           <div class="container">
 
             Dashboard
-          <div class="chart-container">
-            <canvas id="stock-canvas" height="450" width="600"></canvas>
-            <canvas id="vaccination-canvas" height="450" width="600"></canvas>
-            <button ng-click="logout()">draw</button>
           </div>
-          </div>
-          <!-- OpenIZ:Scripts -->
         </body>
       </content>
     </contentHtml>
@@ -71,53 +65,54 @@
   <asset name="chart-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-			  
-        
-        
-        
         var dashboardApp = angular.module('index', []);
         
-        dashboardApp.controller('ChartController', ['$scope', '$window', '$timeout', '$document', function ($scope, $window, $timeout, $document)
-		    {
+        dashboardApp.controller('TimeoutController', ['$scope', '$window', '$timeout', function($scope, $window, $timeout){
           toastr.options = {"positionClass":"toast-top-center"};
-          var timer = $timeout(function(){timeoutWarning()}, 30000);
+          const TIMEOUT_TIME = 30000;
+          var timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
         	$scope.resetTimeout = function(){
               $timeout.cancel(timer);
-              timer = $timeout(function(){timeoutWarning()}, 30000);
+              timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
+              if(toastr.options.timeOut == TIMEOUT_TIME){
               toastr.clear();
               toastr.options = {"positionClass":"toast-top-center",
-              "timeOut": "3000"};
+                "timeOut": "5000"};
               toastr.success('You\'re back!');
+          }
+
           }
           function timeoutWarning(){
             $timeout.cancel(timer);
-            timer = $timeout(function(){$scope.logout()}, 30000);
+            timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
             toastr.options = {"positionClass":"toast-top-center",
-            "timeOut": "30000"};
+            "timeOut": TIMEOUT_TIME.toString()};
             toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
           }
+          
           
           $scope.logout = function(){
             OpenIZ.Authentication.abandonSession();
             $window.location.href = "app://openiz.org/applet/org.timr.applet.dashboard/index";
           }
+         
+        }])
+        
+        .controller('ChartController', ['$scope', '$window', '$document', function ($scope, $window, $document)
+		    {
             $scope.draw = function(){
-		          var sctx = document.getElementById("stock-canvas").getContext("2d");
-		          window.myLine = new Chart(sctx).Bar(vaccinationChartData, {
-			          responsive: true
-		          });
-              var vctx = document.getElementById("vaccination-canvas").getContext("2d");
-		          window.myLine = new Chart(vctx).Bar(stockChartData, {
+              var sctx = $document.getElementById("stock-canvas").getContext("2d");
+		          $window.myLine = new Chart(sctx).Bar(stockChartData, {
 			          responsive: true
 		          });
 	        }
         
 		var randomScalingFactor = function(){ return Math.round(Math.random()*10000)};
-		var vaccinationChartData = {
+		var stockChartData = {
 			labels : ["Clinic 1", "Clinic 2", "Clinic 3", "Clinic 4", "Clinic 5", "Clinic 6", "Clinic 7"],
 			datasets : [
 				{
-					label: "Vaccination Coverage",
+					label: "Stock Levels",
 					fillColor : "rgba(220,220,220,0.2)",
 					strokeColor : "rgba(220,220,220,1)",
 					pointColor : "rgba(220,220,220,1)",
@@ -127,21 +122,8 @@
 					data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
 				}
         ]}
-        var stockChartData = {
-        labels : ["Clinic 1", "Clinic 2", "Clinic 3", "Clinic 4", "Clinic 5", "Clinic 6", "Clinic 7"], 
-        datasets : [
-				{
-					label: "Clinic Stock",
-					fillColor : "rgba(151,187,205,0.2)",
-					strokeColor : "rgba(151,187,205,1)",
-					pointColor : "rgba(151,187,205,1)",
-					pointStrokeColor : "#fff",
-					pointHighlightFill : "#fff",
-					pointHighlightStroke : "rgba(151,187,205,1)",
-					data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
-				}
-			]}
         }]);
+
 
 		  ]]>
     </contentText>
