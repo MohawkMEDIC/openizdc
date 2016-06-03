@@ -239,4 +239,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\css\toastr.min.css" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\css\bootstrap-alterations.css" />
+  </ItemGroup>
 </Project>

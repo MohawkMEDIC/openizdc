@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/applet">
 	<info id="org.openiz.applet.core.settings" version="0.5.0.0">
-    <icon>@drawable/cogs</icon>
+    <icon>app://openiz.org/drawable/cogs</icon>
     <name>System Settings</name>
     <groupName>Administration</groupName>
     <author>OpenIZ.org Community</author>
