@@ -2,7 +2,7 @@
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.openiz.applet.core" version="0.5.0.0">
     <icon>app://openiz.org/drawable/home</icon>
-    <name lang="en">Main Applet</name>
+    <name lang="en">OpenIZ Core</name>
     <groupName lang="en">OpenIZ Core</groupName>
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
@@ -11,6 +11,7 @@
   </info>
   <asset lang="en" mimeType="text/html" name="index">
     <contentHtml>
+      <title lang="en">Home</title>
       <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <bundle>angular</bundle>

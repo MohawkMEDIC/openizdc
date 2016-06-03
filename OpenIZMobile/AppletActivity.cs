@@ -76,9 +76,10 @@ namespace OpenIZMobile
 
 				// Set the header and stuff
 				this.ActionBar.SetTitle(Resource.String.app_name);
-				this.ActionBar.Subtitle = view.Applet.Info.GetName(Resources.Configuration.Locale.Language);
+                this.ActionBar.Subtitle = (view.Asset.Content as AppletAssetHtml)?.GetTitle(Resources.Configuration.Locale.Language) ?? view.Applet.Info.GetName(Resources.Configuration.Locale.Language);
 
-				if (view.Applet.Info.Icon?.StartsWith (AppletCollection.DRAWABLE_SCHEME) == true) {
+
+                if (view.Applet.Info.Icon?.StartsWith (AppletCollection.DRAWABLE_SCHEME) == true) {
 					int iconId = this.Resources.GetIdentifier (view.Applet.Info.Icon.Substring (AppletCollection.DRAWABLE_SCHEME.Length), "drawable", "org.openiz.openiz_mobile");
 					if (iconId != 0)
 						this.ActionBar.SetIcon (iconId);
