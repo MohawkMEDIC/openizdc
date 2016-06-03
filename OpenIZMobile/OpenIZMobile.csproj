@@ -194,7 +194,7 @@
     <AndroidAsset Include="Assets\js\jquery.metro.js" />
     <AndroidAsset Include="Assets\css\jquery.metro.css" />
     <AndroidAsset Include="Assets\js\jquery.mobile.min.js" />
-    <AndroidAsset Include="Assets\js\chart.min.js" />
+    <AndroidAsset Include="Assets\js\chart.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

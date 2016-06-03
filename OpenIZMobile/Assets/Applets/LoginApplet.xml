@@ -35,7 +35,7 @@
                         </div>
                         <div class="form-group">
                             <label for="passwordInput" class="control-label">Password:</label>
-                            <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="passwordInput"/>
+                            <input ng-model="password" type="password" ng-required="true" placeholder="Password" class="form-control" name="password" id="passwordInput"/>
                         </div>
                       </fieldset>
                         <div class ="row">
@@ -116,11 +116,13 @@
                       <fieldset class="form-group">
                         <legend class="control-label">Select your recovery method</legend>
                         <div class="form-group">
-                          <div class="radio">
-                            <label for="emailRadio" class="radio-inline control-label">Email<input id="emailRadio" type="radio" name="resetMethod" value="Email"></input></label>  
+                          <div class="radio row">
+                            <label for="emailRadio" class="col-xs-4 radio-inline control-label">Email</label>
+                            <input id="emailRadio" class="col-xs-8" type="radio" name="resetMethod" value="Email"></input>  
                           </div>
-                          <div class="radio">
-                            <label for="phoneRadio" class="radio-inline control-label">Phone Number<input id="phoneRadio" type="radio" name="resetMethod" value="Phone"></input></label>  
+                          <div class="radio row">
+                            <label for="phoneRadio" class="col-xs-4 radio-inline control-label">Phone Number</label>
+                            <input id="phoneRadio" class="col-xs-8" type="radio" name="resetMethod" value="Phone"></input>  
                         </div>
                         </div>
                       </fieldset>
@@ -145,23 +147,83 @@
       <bundle>bootstrap</bundle>
       <bundle>select2</bundle>
       <bundle>angular</bundle>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
             <div class="row">
-              <h3 class="text-center">A verification code has been sent</h3>
-            </div>
-            <div class="row">
-              <div class ="col-xs-6 col-xs-offset-3 text-center">
-                <label>
-                  Verification Code
-                  <input type="text"></input>
-                </label>
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title text-center">Verification Code</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form novalidate="novalidate">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Enter your verification code</legend>
+                        <div class="form-group">
+                          <label for="verifyInput" class="control-label">Verification Code:</label>
+                          <input type="text" ng-required="true" placeholder="Verification Code" class="form-control" name="verifyCode" id="verifyCodeInput"/>
+                        </div>
+                      </fieldset>
+                      <div class ="row">
+                        <div class="col-xs-12 text-center">
+                          <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">Reset Password</a>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class = "row">
-              <div class="col-xs-2 col-xs-offset-5 text-center">
-                <a class="btn btn-success" href="app://openiz.org/applet/org.timr.applet.login/index">Enter</a>
+          </div>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+
+  <asset name="newPassword" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <content>
+        <body xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h3 class="panel-title text-center">Change Password</h3>
+                  </div>
+                  <div class="panel-body">
+                    <form novalidate="novalidate">
+                      <fieldset class="form-group">
+                        <legend class="control-label">Type and confirm a new password</legend>
+                        <div class="form-group">
+                          <label for="passwordInput" class="control-label">Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="passwordInput" class="form-control" placeholder="Password"/>
+                          </div>
+                          <span id="error-password" class=""></span>
+                        </div>
+
+                        <div class="form-group">
+                          <label for="confirmPasswordInput" class="control-label">Confirm Password</label>
+                          <div class="">
+                            <input type="text" name="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
+                          </div>
+                          <span id="error-confirmPassword" class=""></span>
+                        </div>
+                      </fieldset>
+                      <div class="form-group">
+                        <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/index">Reset Password</a>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
