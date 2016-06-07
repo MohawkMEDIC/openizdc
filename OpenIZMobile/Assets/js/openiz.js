@@ -3,29 +3,40 @@
 /**
  * @summary OpenIZ Javascript binding class.
  *
- * The purpose of this object is to facilitate and organize OpenIZ applet integration with the backing
- * OpenIZ container. For example, to allow an applet to get the current on/offline status, or authenticate
- * a user.
+ * @description The purpose of this object is to facilitate and organize OpenIZ applet integration with the backing  * OpenIZ container. For example, to allow an applet to get the current on/offline status, or authenticate a user.
+ * @class
+ * @property {Object} Authentication Represents a static member to access authentication functions such as login, logout, etc.
+ * @property {Object} Concept Represents a static member to access concept utility functions
+ * @property {Object} Patient Represents static member to access patient utility data
+ * @property {Object} Configuration Represents a static member to access configuration functions
+ * @property {Object} App Represents a static member to access application utilities such as toasts, closing windows, etc.
+ * @property {Object} _session the current session
+ * @property {Object} Localization Represents a static member to access localization fields
+ * @property {Object} Util Represents a static member to access utility functions
+ * @property {Object} urlParams Represents URL parameters passed to the applet
  */
 var OpenIZ = new function () {
 
-    /**
-    * @summary Represents URL parameters passed to the applet
-    */
     this.urlParams = {};
-    
     /**
      * @summary Utility functions
+     * @class
      */
-    this.Util = {
-        toDateInputString: function (date) {
+    this.UtilClass = function () {
+        /**
+         * @summary Changes the specified date string into an appropriate ISO string
+         * @param {String} date The date to be formatted
+         */
+        this.toDateInputString = function (date) {
             return date.toISOString().substring(0, 10)
-        }
+        };
     };
+
     /** 
     * @summary The authentication section is used to interface with OpenIZ's authentication sub-systems including session management information, etc.
+    * @class
     */
-    this.Authentication = {
+    this.AuthenticationUtil = function() {
         /**
         * @summary Performs a login with the authentication service returning the active Session object if applicable
         * @param {String} userName the name of the user to authenticate
@@ -33,7 +44,7 @@ var OpenIZ = new function () {
         * @returns A new OpenIZ.Session object with the current session information if successful, null if not
         * @throws An applicable exception for the validation error.
         */
-        login: function (userName, password) {
+        this.login = function (userName, password) {
             try
             {
                 
@@ -63,7 +74,7 @@ var OpenIZ = new function () {
                 console.warn(ex);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_login"), ex.error, ex);
             }
-        },
+        };
         /**
         * @summary Sets the password for the specified user to some other password. 
         * Note: You will need to have the ChangePassword policy or be changing the password of the currently 
@@ -72,9 +83,9 @@ var OpenIZ = new function () {
         * @param {String} password The password of the user.
         * @returns True if the password was successfully changed, false otherwise
         */
-        setPassword: function (userName, password) {
+        this.setPassword = function (userName, password) {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Performs a two-factor authentication login. 
         * Note: In the term of "forgot password" the back-end may require just the SMS short code in tfaSecret
@@ -83,9 +94,9 @@ var OpenIZ = new function () {
         * @param {String} tfaSecret The two-factor secret (SMS CODE, E-MAIL Code, etc.)
         * @returns The granted session object if the login was successful
         */
-        loginEx: function (userName, password, tfaSecret) {
+        this.loginEx = function (userName, password, tfaSecret) {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Registers the specified user data 
         * @param {String} userName The desired user name for the user
@@ -93,31 +104,29 @@ var OpenIZ = new function () {
         * @param {Object} profileData The data (instance of OpenIZUser class) which contains the user's data
         * @returns The user profile
         */
-        register: function (userName, password, profileData) {
+        this.register = function (userName, password, profileData) {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Gets the current session from the client host
         * @returns An instance of Session representing the current session
         */
-        getSession: function () {
-            try
-            {
+        this.getSession = function () {
+            try {
                 var data = OpenIZSessionService.GetSession();
                 if (data != null)
                     return new OpenIZModel.Session(JSON.parse(data));
                 return null;
             }
-            catch(ex)
-            {
+            catch (ex) {
                 console.error(ex);
                 return null;
             }
-        },
+        };
         /**
          * @summary Destroys the current session
          */
-        abandonSession: function () {
+        this.abandonSession = function () {
             try {
                 OpenIZSessionService.Abandon();
                 return true;
@@ -126,14 +135,13 @@ var OpenIZ = new function () {
                 console.error(ex);
                 return false;
             }
-        },
+        };
         /** 
          * @summary Refreshes the current session so that the token remains valid
          * @returns The newly created session
          */
-        refreshSession: function () {
-            try
-            {
+        this.refreshSession = function () {
+            try {
                 if (OpenIZ.Authentication.getSession() == null)
                     throw new OpenIZModel.Exception(
                         OpenIZ.Localization.getString("err_no_session"),
@@ -161,23 +169,23 @@ var OpenIZ = new function () {
 
                 }
             }
-            catch(ex)
-            {
+            catch (ex) {
                 console.warn(ex);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"), ex.message, ex);
             }
-        }
+        };
     };
 
     /**
     * @summary Represents application specific functions for interoperating with the mobile application itself
+    * @class
     */
-    this.App = {
+    this.AppUtil = function() {
         /**
          * @summary Uses the device camera to scan a barcode from the device
          * @returns The value of the barcode detected by the scanner
          */
-        scanBarcode: function () {
+        this.scanBarcode = function () {
             try {
                 var value = OpenIZApplicationService.BarcodeScan();
                 console.log('Barcode scan complete. Data: ' + value);
@@ -187,66 +195,67 @@ var OpenIZ = new function () {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"), e.message, e);
             }
-        },
+        };
         /**
          *@summary  Navigate backward, even if the back functionality crosses applets
          */
-        back: function () {
+        this.back = function () {
             try {
                 var value = OpenIZApplicationService.Back();
             }
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
          * @summary Closes the applet and kills the Android view
          */
-        close: function () {
+        this.close = function () {
             try {
                 var value = OpenIZApplicationService.Close();
             }
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
          * @summary Displays a TOAST on the user's screen
          * @param {String} text The text of the toast to be shown
          */
-        toast: function (text) {
+        this.toast = function (text) {
             try {
                 var value = OpenIZApplicationService.ShowToast(text);
             }
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
          * @summary Navigates to the specified applet passing any context variables to it via "context"
          * @param {String} appletId The ID of the applet to be navigated
          * @param {Object} context Any context variables to be passed to the applet
          */
-        navigateApplet: function (appletId, context) {
+        this.navigateApplet = function (appletId, context) {
             try {
                 OpenIZApplicationService.Navigate(appletId, JSON.stringify(context));
             }
             catch (e) {
                 console.error(e);
             }
-        }
+        };
     };
 
     /**
      * @summary Represents functions related to the localization of applets
+     * @class
      */
-    this.Localization = {
+    this.LocalizationUtil = function() {
         /**
          * @summary Gets the specified localized string the current display language from the resources file
          * @param {String} stringId The identifier of the string
          * @returns The specified string
          */
-        getString: function (stringId) {
+        this.getString = function (stringId) {
             try {
                 return OpenIZApplicationService.GetString(stringId);
             }
@@ -254,43 +263,44 @@ var OpenIZ = new function () {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_string"), e.message, e);
             }
-        },
+        };
         /**
          * @summary Gets the current user interface locale name
          * @returns The ISO language code of the current UI 
          */
-        getLocale: function () {
+        this.getLocale = function () {
             // TODO: Implement
-        },
+        };
         /**
          * @summary Sets the current user interface locale
          * @param {String} lcoale The locale to set the user interface to
          * @returns The locale the user interface is now operating in
          */
-        setLocale: function (locale) {
+        this.setLocale = function (locale) {
             // TODO: Implement
-        },
+        };
         /** 
          * @summary Gets the specified string in the specified locale
          * @param {String} stringId The identifier of the string resource
          * @param {String} localeId The two digit ISO language code
          * @returns The display string in the specified locale
          */
-        getStringEx : function(stringId, localeId) {
+        this.getStringEx = function(stringId, localeId) {
             // TODO: Implement
-        }
+        };
     };
 
     /**
      * @summary Represents functions related to the concept dictionary
+     * @class
      */
-    this.Concept = {
+    this.ConceptUtil = function() {
         /**
          * @summary Gets the concept by identifier
          * @param {String} conceptId The identifier of the concept to retrieve
          * @returns The retrieved concept
          */
-        getConcept: function(conceptId)
+        this.getConcept = function(conceptId)
         {
             try {
                 var data = OpenIZConceptService.GetConcept(conceptId);
@@ -306,13 +316,13 @@ var OpenIZ = new function () {
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"), e.message, e);
 
             }
-        },
+        };
         /**
          * @summary Gets the specified values of concepts from the concept set.
          * @param {String} setName The name of the concept set to retrieve (Ex: AdministrativeGender)
          * @returns A list of {OpenIZModel.Cocnept} objects which represent the concepts
          */
-        getConceptSet: function (setName) {
+        this.getConceptSet = function (setName) {
             try {
                 var data = OpenIZConceptService.GetConceptSet(setName);
 
@@ -332,15 +342,16 @@ var OpenIZ = new function () {
 
 
             }
-        }
+        };
     };
     
 
 
     /**
      * @summary Represents a series of functions related to patients
+     * @class
      */
-    this.Patient = {
+    this.PatientUtil = function() {
 
         /**
          * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
@@ -348,7 +359,7 @@ var OpenIZ = new function () {
          * @param {String} searchString The IMSI search string to be searched
          * @returns An array of {OpenIZModel.Patient} classes which represent the search results.
          */
-        search: function (searchString) {
+        this.search = function (searchString) {
             try {
                 var results = JSON.parse(OpenIZPatientService.Find(searchString));
 
@@ -364,14 +375,14 @@ var OpenIZ = new function () {
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"), e.message, e);
 
             }
-        },
+        };
         /**
          * @summary Register a patient in the IMS system returning the registered patient data
          * @param {Object} patient The patient to be insterted
          * @throw Exception if the patient is already registered
          * @returns The registered patient data
          */
-        insert : function (patient) {
+        this.insert = function (patient) {
             try
             {
                 if (typeof (patient) != "Patient")
@@ -388,14 +399,14 @@ var OpenIZ = new function () {
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"), e.message, e);
 
             }
-        },
+        };
         /**
          * @summary Updates the specified patient instance with the specified data
          * @param {Object} patient The patient to be updated, including their primary identifier key
          * @throw Exception if the patient does not exist
          * @returns The updated patient data
          */
-        update: function (patient) {
+        this.update = function (patient) {
             try
             {
                 if (typeof (patient) != "Patient")
@@ -413,14 +424,14 @@ var OpenIZ = new function () {
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"), e.message, e);
 
             }
-        },
+        };
         /**
          * @summary Obsoletes the specified patient instance in the IMS data
          * @param {String} patientId The unique identifier of the patient to be obsoleted
          * @throw Exception if the patient does not exist
          * @returns The obsoleted patient instance
          */
-        obsolete: function (patientId) {
+        this.obsolete = function (patientId) {
             try
             {
                 return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(patientId)));
@@ -430,72 +441,70 @@ var OpenIZ = new function () {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"), e.message, e);
             }
-        },
+        };
         /** 
          * @summary Retrieves the specified patient instance from the IMS datastore
          * @param {String} patientId The unique identifier of the patient to be retrieved
          * @returns The retrieved patient instance if exists, null if not found
          */
-        get: function (patientId) {
-            try
-            {
+        this.get = function (patientId) {
+            try {
                 var results = this.search("key=" + patientId);
                 if (results.length == 0)
                     return null;
                 else
                     return results[0];
             }
-            catch (e)
-            {
+            catch (e) {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"), e.message, e);
             }
-        }
+        };
     };
 
     /**
-    * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ
-    * system including realm, updating configuration, etc.
+    * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ system including realm, updating configuration, etc.
+    * @class
     */
-    this.Configuration = {
+    this.ConfigurationUtil = function() {
         /**
         * @summary Gets the current realm to which the client is connected
         */
-        getRealm: function () {
+        this.getRealm = function () {
             return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
-        },
+        };
         /**
         * @summary Gets the specified OpenIZ configuration section name. 
         * @returns A JSON object representing the configuration data for the particular section
         * @param {Object} sectionName The name of the section which should be retrieved.
         */
-        getSection: function (sectionName) {
+        this.getSection = function (sectionName) {
             try {
                 return JSON.parse(OpenIZConfigurationService.GetSection(sectionName));
             }
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
         * @summary Joins the current client to the specified realm. The backing container is responsible for performing all steps in terms of generating a client certificate, sending it to the realm auth service, etc.
         * @returns True if the specified realm was joined successfully
         * @param {String} address The address root of the realm. Example: demo.openiz.org
         * @param {String} deviceName A unique name for the device which is being joined
         */
-        joinRealm: function (address, deviceName) {
+        this.joinRealm = function (address, deviceName) {
             try {
                 return OpenIZConfigurationService.JoinRealm(address, deviceName);
             }
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
         * @summary Instructs the current client container to leave the currently configured realm
         * @returns True if the realm was successfully left.
         */
-        leaveRealm: function () {
+        this.leaveRealm = function () {
             try {
                 if (!confirm('You are about to leave the realm ' + configuration.realm.address + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
                     return false;
@@ -504,10 +513,10 @@ var OpenIZ = new function () {
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
         * @summary Instructs the container to save the specified configuration object to the local configuration file/source.
-        * The format of the configuration parameter is a JSON object in format:
+        * @description The format of the configuration parameter is a JSON object in format:
         *  {
         *      retention: "all|local|none", // The retention policy of all data in realm, local data only to tablet, or no offline data
         *      authentication: "online|offline", // The authentication policy of either must be online or offline allowed
@@ -520,7 +529,7 @@ var OpenIZ = new function () {
         * @param {Object} configuraton The configuration object to be saved for global configuration
         * @returns true if the save operation was successful
         */
-        save: function (configuration) {
+        this.save = function (configuration) {
             try {
                 if (OpenIZConfigurationService.Save(JSON.stringify(configuration))) {
                     OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted");
@@ -533,44 +542,48 @@ var OpenIZ = new function () {
             catch (e) {
                 console.error(e);
             }
-        },
+        };
         /**
         * @summary Get applet specific key/value pair configuration parameters which are currently set for the application
         * @param {String} appletId The identifier of the applet from which the settings should be retrieved
         * @returns A key/value pair representing the applet settings
         */
-        getAppletSettings: function (appletId) {
+        this.getAppletSettings =function (appletId) {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Saves the applet specific settings in a key/value pair format to the configuration store
         * @param {String} appletId The applet identification for which the settings apply
         * @param {Object} settings A key/value pair JSON object of the settings
         * @returns True if the settings save was successful
         */
-        saveAppletSettings: function (appletId, settings) {
+        this.saveAppletSettings =function (appletId, settings) {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Get local user preference strings in a key/value pair JSON object
         * @returns The user preferences of the current user
         */
-        getUserPreferences: function () {
+        this.getUserPreferences = function () {
             // TODO: Implement
-        },
+        };
         /**
         * @summary Save the user preferences in the key/value pair format
         * @param {Object} preferences The user preferences for the current user which should be saved
         * @returns true if the save was successful
         */
-        saveUserPreferences: function (preferences) {
+        this.saveUserPreferences = function (preferences) {
             // TODO: Implement
-        }
-    }
+        };
+    };
 
-    /**
-        * @summary Get the current session
-        */
+    this.Util = new OpenIZ.UtilClass();
+    this.AppUtil = new OpenIZ.AppUtil();
+    this.Authentication = new OpenIZ.AuthenticationUtil();
+    this.Concept = new OpenIZ.ConceptUtil();
+    this.Configuration = new OpenIZ.ConfigurationUtil();
+    this.Localization = new OpenIZ.LocalizationUtil();
+    this.Patient = new OpenIZ.PatientUtil();
     this._session = this.Authentication.getSession();
 
 };
@@ -585,7 +598,7 @@ var OpenIZ = new function () {
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
         query = window.location.search.substring(1);
-
+    
     OpenIZ.urlParams = {};
     while (match = search.exec(query))
         OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
@@ -594,7 +607,7 @@ var OpenIZ = new function () {
 // Bind datepickers
 $(document).ready(function () {
 
-
+    
     $('input[type="date"]').each(function (k, v) {
         if ($(v).attr('data-max-date')) {
             var date = new Date();
@@ -620,6 +633,7 @@ $(document).ready(function () {
     });
 })
 
+
 /** Allows String.Format() style stuff to work */
 if (!String.prototype.format) {
     String.prototype.format = function () {
@@ -633,4 +647,5 @@ if (!String.prototype.format) {
         return str;
     }
 }
+
 

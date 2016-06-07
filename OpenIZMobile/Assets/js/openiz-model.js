@@ -9,19 +9,27 @@
 
 /**
  * @summary Namespace for OpenIZ model wrapper JAvaScript classes
+ * @class
  */
 var OpenIZModel = new function () {
 
     /**
      * @summary Represents utilities for dealing with bundles
      * @param {Object} bundleData The IMSI formatted bundle
+     * @class
      */
     this.Bundle = function (bundleData) {
 
-        this._self = this;
+        var _self = this;
+
+        /** 
+         * @property {String} Identifier of the entry which is the first object for the bundle
+         */
         this.entry = bundleData.entry;
 
-        // Convert items
+        /**
+         * @property {Object} The collection of items contained within the bundle
+         */
         this.items = [];
         for (var itm in bundleData.item)
         {
@@ -86,54 +94,42 @@ var OpenIZModel = new function () {
 
     /**
      * @summary Represents OpenIZ session data, rather, the session that is currently in play.
-     * @class OpenIZ session information
+     * @class
      * @constructor
      * @param {Object} sessionData The IMSI formatted session data
+     * @property {Object} identity The identity of the authenticated user
+     * @property {String} method The method of authentication, either local, oauth, or basic
+     * @property {Date} expires The date on which the session will expire
+     * @property {Date} issued The date on which the session was issued
+     * @property {String} refresh_token The token which can be used as a refresh
+     * @property {String} jwt Contains the JWT token assets (name, etc.) from the session
      */
     this.Session = function (sessionData) {
 
-        /**
-         * The information related to the principal
-         */
         this.identity = {
             name: sessionData.username,
             roles: sessionData.roles
         };
-        /**
-         * The method of authentication, either local, oauth, or basic
-         */
         this.method = sessionData.method;
-        /**
-         * The date on which the session will expire
-         */
         this.expires = sessionData.exp;
-        /**
-         * The date on which the session was issued
-         */
         this.issued = sessionData.nbf;
-        /**
-         * The token which can be used as a refresh
-         */
         this.refresh_token = sessionData.refresh_token;
-        /**
-         * Contains the JWT token assets (name, etc.) from the session
-         */
         this.jwt = sessionData.jwt;
 
         /**
-         * Returns whether the current session is expired
+         * @summary Returns whether the current session is expired
          */
         this.isExpired = function () {
             return new Date() > this.expires;
         };
         /**
-         * The abandon function is used to abandon the current session
+         * @summary The abandon function is used to abandon the current session
          */
         this.abandon = function () {
             return OpenIZ.Authentication.abandonSession();
         };
         /**
-         * The refresh function is used to refresh the current session 
+         * @summary The refresh function is used to refresh the current session 
          */
         this.refresh = function () {
             return OpenIZ.Authentication.refreshSession();
@@ -145,31 +141,31 @@ var OpenIZModel = new function () {
      * @class Security User model
      * @constructor
      * @param {Object} securityUserData the IMSI formatted security user data
+    * @property {String} id The unique identifier of the user
+    * @property {String} email The email of the user
+    * @property {Bool} emailConfirmed Indicates whether the email is confirmed
+    * @property {Number} invalidLoginAttempts Number of invalid login attempts
+    * @property {Date} lockout When set, indicates the earliest time the user can log in again
+    * @property {String} userName The user name of the user
+    * @property {String} photo The photograph of the user
+    * @property {Object} entity The entity (userEntity) of the user
+    * @property {Date} lastLoginTime The last login time
+    * @property {String} phoneNumber The phone number of the user
+    * @property {Bool} phoneNumberConfirmed Whether the phone number is confirmed
      */
     this.SecurityUser = function (securityUserData) {
 
-        this._self = this;
-        // The unique identifier of the user
+        var _self = this;
         this.id = securityUserData.id;
-        // The email of the user
         this.email = securityUserData.email;
-        // Indicates whether the email is confirmed
         this.emailConfirmed = securityUserData.emailConfirmed;
-        // Number of invalid login attempts
         this.invalidLoginAttempts = securityUserData.invalidLoginAttempts
-        // When set, indicates the earliest time the user can log in again
         this.lockout = securityUserData.lockout;
-        // The user name of the user
         this.userName = securityUserData.userName;
-        // The photograph of the user
         this.photo = securityUserData.photo;
-        // The entity (userEntity) of the user
         this.entity = new OpenIZModel.UserEntity(securityUserData.entity);
-        // The last login time
         this.lastLoginTime = securityUserData.lastLoginTime;
-        // The phone number of the user
         this.phoneNumber = securityUserData.phoneNumber;
-        // Whether the phone number is confirmed
         this.phoneNumberConfirmed = securityUserData.phoneNumberConfirmed;
 
         /**
@@ -200,11 +196,13 @@ var OpenIZModel = new function () {
      * @class A complex name with use and multiple parts
      * @constructor
      * @param {Object} valueData The IMSI formatted GenericComponentData wrapper having use, component [{ type / value }] format
+     * @property {Object} use The prescribed use of the componentized value
+     * @property {Object} components The components with type/value of the component representing the value
      */
     this.ComponentizedValue = function(valueData)
     {
 
-        this._self = this;
+        var _self = this;
 
         // Use
         this.use = OpenIZ.Concept.getConcept(valueData.use);
@@ -238,37 +236,46 @@ var OpenIZModel = new function () {
      * @class The model patient class
      * @constructor
      * @param {Object} patientData The IMSI formatted patient data
+    * @property {String} id The unique identifier of the patient
+    * @property {String} versionId The version identifier of the patient
+    * @property {Date} deceasedDate The date that this patient bacame deceased
+    * @property {String} deceasedDatePrecision The precision of the deceased date (if unknown)
+    * @property {Number} multipleBirthOrder The order that this patient was in a multiple birth
+    * @property {String} gender The gender of the patient
+    * @property {Date} dateOfBirth The date of birth of the patient
+    * @property {String} dateOfBirthPrecision The precision of the date of birth if not exact
+    * @property {Object} statusConcept The status of the patient
+    * @property {Object} typeConcept The type concept
+    * @property {Object} identifiers All identifiers related to the patient
+    * @property {Object} relationship All Relationships that the patient holds
+    * @property {Object} languages Languages of communication the patient can be contacted in
+    * @property {Object} telecoms Telecommunications addresses for the patient
+    * @property {Object} extensions Extensions to the core patient object
+    * @property {Object} names The series of names which the patient uses
+    * @property {Object} addresses The series of contact addresses for the patient
+    * @property {Object} notes Additional textual notes about the patient
+    * @property {Object} tags A series of key/value pairs which are used to tag the patient record
+    * @property {Object} participations The series of acts that the patient participates in
+
      */
     this.Patient = function (patientData) {
 
         // Self reference
-        this._self = this;
+        var _self = this;
 
-        // The unique identifier of the patient
         this.id = patientData.id;
-
-        // The version identifier of the patient
         this.versionId = patientData.versionId;
-        // The date that this patient bacame deceased
         this.deceasedDate = patientData.deceasedDate;
-        // The precision of the deceased date (if unknown)
         this.deceasedDatePrecision = patientData.deceasedDatePrecision;
-        // The order that this patient was in a multiple birth
         this.multipleBirthOrder = patientData.multipleBirthOrder;
-        // The gender of the patient
         this.gender = OpenIZ.Concept.getConcept(patientData.genderConcept);
-        // The date of birth of the patient
         this.dateOfBirth = patientData.dateOfBirth;
-        // The precision of the date of birth if not exact
         this.dateOfBirthPrecision = patientData.dateOfBirthPrecision;
-        // The status of the patient
         this.statusConcept = OpenIZ.Concept.getConcept(patientData.statusConcept);
-        // The type concept
         this.typeConcept = OpenIZ.Concept.getConcept(patientData.typeConcept);
-        // All identifiers related to the patient
         this.identifiers = patientData.identifier;
 
-        // Relationships
+        // Map relationships
         this.relationships = [];
         for (var rel in patientData.relationship)
         {
@@ -279,10 +286,9 @@ var OpenIZModel = new function () {
                 });
         }
 
-        // Languages of communication
-        this.language = patientData.language;
+        this.languages = patientData.language;
 
-        // Telecommunications 
+        // Map telecoms
         this.telecoms = [];
         for (var tel in patientData.telecom)
             this.telecoms.push({
@@ -290,30 +296,28 @@ var OpenIZModel = new function () {
                 value: tel.value
             });
 
-        // Extensions
         this.extensions = patientData.extension;
 
-        // Names
+        // Map names
         this.names = [];
         for (var nam in patientData.name) {
             this.names.push(new OpenIZModel.ComponentizedValue(nam));
         }
 
-        // Addresses
+        // Map addresses
         this.addresses = [];
         for (var add in patientData.address) {
             this.addresses.push(new OpenIZModel.ComponentizedValue(add))
         }
 
-        // Notes
+        // Map notes
         this.notes = [];
         for (var nt in patientData.note)
             this.notes.push({ author: OpenIZ.Entity.get(nt.author), text: nt.text });
 
-        // Tags
         this.tags = patientData.tag;
             
-        // Participations
+        // Map participations
         this.participations = [];
         for (var ptcpt in patientData.participation)
             this.participations.push({
