@@ -262,7 +262,6 @@ var OpenIZModel = new function () {
 
         // Self reference
         var _self = this;
-
         this.id = patientData.id;
         this.versionId = patientData.versionId;
         this.deceasedDate = patientData.deceasedDate;
@@ -347,7 +346,7 @@ var OpenIZModel = new function () {
         }
 
         /**
-         * Represent as IMSI
+         * @summary Represent as IMSI
          */
         this.toImsi = function () {
             var retVal = {

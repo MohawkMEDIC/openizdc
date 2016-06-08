@@ -9,6 +9,9 @@ namespace OpenIZ.Mobile.Core.Exceptions
 	public class LocalPersistenceException : Exception
 	{
 
+        // Data object
+        private Object m_data;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Exceptions.LocalPersistenceException"/> class.
 		/// </summary>
@@ -57,8 +60,8 @@ namespace OpenIZ.Mobile.Core.Exceptions
 		/// </summary>
 		/// <value>The data object.</value>
 		public Object DataObject {
-			get { return this.Data ["object"]; }
-			private set { this.Data.Add ("object", value); }
+			get { return this.m_data; }
+			private set { this.m_data = value; }
 		}
 	}
 }

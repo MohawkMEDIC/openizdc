@@ -269,7 +269,7 @@ var OpenIZ = new function () {
          * @returns The ISO language code of the current UI 
          */
         this.getLocale = function () {
-            // TODO: Implement
+            return OpenIZApplicationService.GetLocale();
         };
         /**
          * @summary Sets the current user interface locale
@@ -277,16 +277,7 @@ var OpenIZ = new function () {
          * @returns The locale the user interface is now operating in
          */
         this.setLocale = function (locale) {
-            // TODO: Implement
-        };
-        /** 
-         * @summary Gets the specified string in the specified locale
-         * @param {String} stringId The identifier of the string resource
-         * @param {String} localeId The two digit ISO language code
-         * @returns The display string in the specified locale
-         */
-        this.getStringEx = function(stringId, localeId) {
-            // TODO: Implement
+            return OpenIZApplicationService.SetLocale(locale);
         };
     };
 

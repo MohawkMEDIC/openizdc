@@ -243,19 +243,19 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Insert the specified data.
 		/// </summary>
 		/// <param name="data">Data.</param>
-		void Insert(TData data);
+		TData Insert(TData data);
 
-		/// <summary>
-		/// Update the specified data
-		/// </summary>
-		/// <param name="data">Data.</param>
-		void Update(TData data);
+        /// <summary>
+        /// Update the specified data
+        /// </summary>
+        /// <param name="data">Data.</param>
+        TData Update(TData data);
 
-		/// <summary>
-		/// Obsolete the specified identified data
-		/// </summary>
-		/// <param name="data">Data.</param>
-		void Obsolete(TData data);
+        /// <summary>
+        /// Obsolete the specified identified data
+        /// </summary>
+        /// <param name="data">Data.</param>
+        TData Obsolete(TData data);
 
 		/// <summary>
 		/// Get the specified key.

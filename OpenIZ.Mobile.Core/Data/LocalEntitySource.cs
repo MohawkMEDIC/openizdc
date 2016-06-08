@@ -37,10 +37,18 @@ namespace OpenIZ.Mobile.Core.Data
 			return default(TObject);
 		}
 
-		/// <summary>
-		/// Query the specified object
-		/// </summary>
-		public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
+        /// <summary>
+        /// Get versioned relationships for the object
+        /// </summary>
+        public List<TObject> GetRelations<TObject>(Guid sourceKey, decimal sourceVersionSequence, List<TObject> currentInstance) where TObject : IdentifiedData, IVersionedAssociation
+        {
+            return this.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
+        }
+
+        /// <summary>
+        /// Query the specified object
+        /// </summary>
+        public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
 			if(persistenceService != null)
