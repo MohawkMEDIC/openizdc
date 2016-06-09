@@ -180,7 +180,7 @@ namespace OpenIZ.Mobile.Core.Security
 				DbSecurityUser dbs = connection.Table<DbSecurityUser>().FirstOrDefault(o=> o.UserName == principal.Identity.Name);
 				if (dbs == null)
 					throw new SecurityException ("Invalid username/password");
-				else if (dbs.LockoutEnabled)
+				else if (dbs.Lockout.HasValue && dbs.Lockout > DateTime.Now)
 					throw new SecurityException ("Account is currently locked");
 				else if (dbs.ObsoletionTime != null)
 					throw new SecurityException ("Account is obsolete");
@@ -188,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Security
 					dbs.InvalidLoginAttempts++;
 					connection.Update (connection);
 				} else if (dbs.InvalidLoginAttempts > 3) { //s TODO: Make this configurable
-					dbs.LockoutEnabled = true;
+					dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 3));
 					connection.Update (dbs);
 					throw new SecurityException ("Account is currently locked");
 				} else {

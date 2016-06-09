@@ -7,7 +7,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 	/// Represents a concept name
 	/// </summary>
 	[Table("concept_name")]
-	public class DbConceptName
+	public class DbConceptName : DbIdentified
 	{
 	
 		/// <summary>

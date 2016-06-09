@@ -50,6 +50,17 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets or sets the policy oid
+        /// </summary>
+        [Column("oid"), Unique]
+        public String Oid
+        {
+            get;
+            set;
+        }
+
+
+    }
 }
 

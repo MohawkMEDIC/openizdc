@@ -70,12 +70,22 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 					Key = Guid.Empty,
 					PasswordHash = "XXX",
 					SecurityHash = "XXX",
-					LockoutEnabled = true,
+					Lockout = DateTime.MaxValue,
 					UserName = "ANONYMOUS",
 					CreationTime = DateTime.Now,
 					CreatedByKey = Guid.Empty
 				});
-
+                // System user
+                db.Insert(new DbSecurityUser()
+                {
+                    Key = Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8"),
+                    PasswordHash = "XXXX",
+                    SecurityHash = "XXXX",
+                    Lockout = DateTime.MaxValue,
+                    UserName = "SYSTEM",
+                    CreationTime = DateTime.Now,
+                    CreatedByKey = Guid.Empty
+                });
 				db.CreateTable<DbSecurityUserRole> (CreateFlags.None);
 
 				tracer.TraceInfo ("Installing Entity Tables...");
@@ -97,8 +107,14 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 
 				// Run SQL Script
 				using (StreamReader sr = new StreamReader (typeof(InitialCatalog).GetTypeInfo ().Assembly.GetManifestResourceStream ("OpenIZ.Mobile.Core.Data.Sql.000_init_openiz_algonquin.sql"))) {
-					db.Execute (sr.ReadToEnd ());
-				}
+                    foreach(var stmt in sr.ReadToEnd().Split(';').Select(o=>o.Trim()))
+                    {
+                        if (String.IsNullOrEmpty(stmt)) continue;
+                        tracer.TraceVerbose("EXECUTE: {0}", stmt);
+                        db.Execute(stmt);
+
+                    }
+                }
 
 			}
 			return true;

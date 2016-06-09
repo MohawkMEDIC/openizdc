@@ -33,6 +33,23 @@ namespace OpenIZ.Mobile.Core.Data.Model
 			set { this.VersionUuid = value.ToByteArray (); }
 		}
 
-	}
+        /// <summary>
+        /// Replace previous version uuid
+        /// </summary>
+        [Column("replace_version_uuid"), MaxLength(16)]
+        public byte[] PreviousVersionUuid { get; set; }
+
+
+        /// <summary>
+        /// Gets or sets the version key.
+        /// </summary>
+        /// <value>The version key.</value>
+        [Ignore]
+        public Guid PreviousVersionKey
+        {
+            get { return this.PreviousVersionUuid == null ? Guid.Empty : new Guid(this.PreviousVersionUuid); }
+            set { this.PreviousVersionUuid = value.ToByteArray(); }
+        }
+    }
 }
 

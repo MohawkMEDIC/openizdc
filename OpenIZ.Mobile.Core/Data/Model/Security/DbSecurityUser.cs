@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// </summary>
 		/// <value><c>true</c> if lockout enabled; otherwise, <c>false</c>.</value>
 		[Column("locked")]
-		public bool LockoutEnabled {
+		public DateTime? Lockout {
 			get;
 			set;
 		}
@@ -113,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the role identifier
 		/// </summary>
 		/// <value>The role identifier.</value>
-		[Column("role_id"), Indexed, MaxLength(16)]
+		[Column("role_id"), Indexed(Name = "security_user_role_user_role", Unique = true), MaxLength(16)]
 		public byte[] RoleUuid {
 			get;
 			set;
@@ -123,7 +123,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the user identifier
 		/// </summary>
 		/// <value>The user identifier.</value>
-		[Column("user_id"), Indexed, MaxLength(16)]
+		[Column("user_id"), Indexed(Name = "security_user_role_user_role", Unique = true), MaxLength(16)]
 		public byte[] UserUuid {
 			get;
 			set;

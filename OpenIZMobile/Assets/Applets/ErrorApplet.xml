@@ -7,6 +7,8 @@
   </info>
   <asset name="404" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Page not found</title>
+      <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">
@@ -19,6 +21,8 @@
   </asset>
   <asset name="500" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Internal Server Error</title>
+      <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml">

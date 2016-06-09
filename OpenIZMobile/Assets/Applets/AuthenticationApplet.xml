@@ -9,6 +9,7 @@
   </info>
   <asset name="login" lang="en" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Login to OpenIZ</title>
       <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <bundle>angular</bundle>
