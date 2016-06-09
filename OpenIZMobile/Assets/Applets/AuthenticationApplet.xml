@@ -7,33 +7,66 @@
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
-  <asset name="login" lang="en" mimeType="text/html">
+  <asset name="login-strings" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        function getStrings() {
+        
+          if(OpenIZ.Localization.getLocale() == 'en')
+          {
+            return {
+              login : "Login to",
+              forgot : "Forgot Password",
+              password : "Password",
+              username : "User Name:"
+            };
+          }
+          else
+          {
+            return {
+              login : "Connecter a",
+              forgot : "Oubile mot passe",
+              password : "Mot de passe:",
+              username : "Nom:"
+            };
+          }
+          
+         }
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="login" mimeType="text/html">
     <contentHtml>
       <title lang="en">Login to OpenIZ</title>
       <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
       <bundle>angular</bundle>
       <script>login-controller</script>
+      <script>login-strings</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
-          <h1>Log into OpenIZ at {{config.realmName}}</h1>
+          <h1>{{locale.login}} OpenIZ ({{config.realmName}})</h1>
+          <hr/>
+          <a href="#" ng-click="localize('en')">EN</a>
+          <a href="#" ng-click="localize('fr')">FR</a>
+          <hr/>
           <form novalidate="novalidate">
             <div class="container">
               <div class="input-group">
-                <span class="input-group-addon">User Name:</span>
+                <span class="input-group-addon">{{locale.username}}:</span>
                 <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
               </div>
               <div class="input-group">
-                <span class="input-group-addon">Password:</span>
+                <span class="input-group-addon">{{locale.password}}:</span>
                 <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="password"/>
               </div>
               <div class="btn-group pull-right">
                 <button class="btn-danger btn" ng-disabled="username == null" ng-click="forgotPassword(username)">
                   <span class="glyphicon glyphicon-resize-full">
-                  </span> Forgot Password
+                  </span> {{locale.forgot}}
                 </button>
                 <button class="btn-primary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
-                  Login <span class="glyphicon glyphicon-login"></span>
+                  {{locale.login}} <span class="glyphicon glyphicon-login"></span>
                 </button>
               </div>
             </div>
@@ -54,6 +87,7 @@
           $scope.config = {
             realmName : OpenIZ.Configuration.getRealm()
           };
+          $scope.locale = getStrings();
           
           $scope.login = function(username, password) {
             try
@@ -73,6 +107,12 @@
               
             }
           };
+          
+          $scope.localize = function(lang)
+          {
+            OpenIZ.Localization.setLocale(lang);
+            window.location.reload(true);
+          }
           
           $scope.forgotPassword = function(username) {
             alert(username);
