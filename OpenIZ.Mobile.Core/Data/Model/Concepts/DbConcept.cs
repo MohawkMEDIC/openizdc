@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using SQLite;
+using System.Collections.Generic;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
@@ -46,6 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 			get;
 			set;
 		}
-	}
+
+    }
 }
 

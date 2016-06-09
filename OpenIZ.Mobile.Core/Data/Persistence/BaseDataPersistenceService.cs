@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model;
 using SQLite;
+using System.Collections.Generic;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -25,7 +28,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 				data.Key = domainObject.Key = Guid.NewGuid ();
 
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
-			domainObject.CreationTime = domainObject.CreationTime ?? DateTime.Now;
+			domainObject.CreationTime = domainObject.CreationTime == DateTime.MinValue || domainObject.CreationTime == null ? DateTime.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 			context.Insert (domainObject);
 
@@ -62,6 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			return data;
 		}
 
-	}
+       
+    }
 }
 

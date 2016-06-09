@@ -8,6 +8,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model;
 using System.Text;
 using System.Collections.Generic;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -50,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
-			if (domainObject.Uuid == null)
+			if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
 				data.Key = domainObject.Key = Guid.NewGuid ();
 			
 			context.Insert (domainObject);
@@ -65,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// <param name="data">Data.</param>
 		internal override TModel Update (SQLiteConnection context, TModel data)
 		{
-			var domainObject = this.FromModelInstance (data, context) as DbSecurityUser;
+			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			context.Update (domainObject);
 			return data;
 		}
@@ -77,8 +78,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// <param name="data">Data.</param>
 		internal override TModel Obsolete (SQLiteConnection context, TModel data)
 		{
-			var domainObject = this.FromModelInstance (data, context) as DbSecurityUser;
-			context.Update (domainObject);
+			var domainObject = this.FromModelInstance (data, context) as TDomain;
+			context.Delete (domainObject);
 			return data;
 		}
 
@@ -93,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			var retVal = context.Table<TDomain> ().Where (domainQuery).Skip (offset);
 			if (count >= 0)
 				retVal = retVal.Take (count);
-			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
+			return retVal.ToList().Select(o=>this.ToModelInstance(o, context)).ToList();
 		}
 
 		/// <summary>
@@ -124,7 +125,47 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 				retVal = retVal.Take (count);
 			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
 		}
-		#endregion
-	}
+
+
+        /// <summary>
+        /// Update associated version items
+        /// </summary>
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, SQLiteConnection dataContext)
+            where TAssociation : VersionedAssociation<TModelEx>, new()
+            where TModelEx : VersionedEntityData<TModelEx>
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;
+            if (persistenceService == null)
+            {
+                this.m_tracer.TraceInfo("Missing persister for type {0}", typeof(TAssociation).Name);
+                return;
+            }
+            // Ensure the source key is set
+            foreach (var itm in storage)
+                if (itm.SourceEntityKey == Guid.Empty)
+                    itm.SourceEntityKey = sourceKey;
+
+            // Remove old
+            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            foreach (var del in obsoleteRecords)
+                persistenceService.Obsolete(dataContext, del);
+
+            // Update those that need it
+            var updateRecords = storage.Where(o => existing.Any(ecn => ecn.Key == o.Key && o.Key != Guid.Empty && o != ecn));
+            foreach (var upd in updateRecords)
+                persistenceService.Update(dataContext, upd);
+
+            // Insert those that do not exist
+            var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
+            foreach (var ins in insertRecords)
+            {
+                ins.SourceEntityKey = sourceKey;
+                persistenceService.Insert(dataContext, ins);
+            }
+
+
+        }
+        #endregion
+    }
 }
 

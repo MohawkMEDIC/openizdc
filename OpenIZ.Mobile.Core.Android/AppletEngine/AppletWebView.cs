@@ -243,7 +243,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                     finally
                     {
                         // Switch asset
-                        (view as AppletWebView).Asset = navigateAsset;
+                        if(navigateAsset.Content is AppletAssetHtml)
+                            (view as AppletWebView).Asset = navigateAsset;
                     }
                 } else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
 					String assetPath = url.Substring (AppletCollection.ASSET_SCHEME.Length);

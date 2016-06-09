@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using Android.Webkit;
 using Java.Interop;
 using Android.Widget;
@@ -119,6 +120,35 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 				return null;
 			}
 		}
-	}
+
+        /// <summary>
+        /// Get the locale of the user interface
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetLocale()
+        {
+            return this.m_context.Resources.Configuration.Locale.Language;
+        }
+
+        /// <summary>
+        /// Set the locale of the application
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String SetLocale(String locale)
+        {
+            try
+            {
+                this.m_tracer.TraceVerbose("Setting locale to {0}", locale);
+                this.m_context.Resources.Configuration.SetLocale(new Java.Util.Locale(locale));
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error setting locale to {0}: {1}", locale, e);
+            }
+            return this.m_context.Resources.Configuration.Locale.Language;
+        }
+    }
 }
 

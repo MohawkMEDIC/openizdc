@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data
 	{
 
 		// Get tracer
-		private Tracer m_tracer = Tracer.GetTracer (typeof(LocalPersistenceServiceBase<TData>));
+		protected Tracer m_tracer = Tracer.GetTracer (typeof(LocalPersistenceServiceBase<TData>));
 
 		// Configuration
 		protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
@@ -79,7 +79,7 @@ namespace OpenIZ.Mobile.Core.Data
 		/// Insert the specified data.
 		/// </summary>
 		/// <param name="data">Data.</param>
-		public void Insert (TData data)
+		public TData Insert (TData data)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
@@ -88,7 +88,7 @@ namespace OpenIZ.Mobile.Core.Data
 			this.Inserting?.Invoke (this, preArgs);
 			if (preArgs.Cancel) {
 				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort insert for {0}", data);
-				return;
+				return data;
 			}
 
 			// Persist object
@@ -102,8 +102,13 @@ namespace OpenIZ.Mobile.Core.Data
 					data = this.Insert(connection, data);
 
 					connection.Commit();
-				}
-				catch(Exception e) {
+
+                    this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                    return data;
+
+                }
+                catch (Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					connection.Rollback ();
 					throw new LocalPersistenceException(DataOperationType.Insert, data, e);
@@ -111,14 +116,13 @@ namespace OpenIZ.Mobile.Core.Data
 				}
 
 
-			this.Inserted?.Invoke (this, new DataPersistenceEventArgs<TData> (data));
 
 		}
 		/// <summary>
 		/// Update the specified data
 		/// </summary>
 		/// <param name="data">Data.</param>
-		public void Update (TData data)
+		public TData Update (TData data)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
@@ -129,7 +133,7 @@ namespace OpenIZ.Mobile.Core.Data
 			this.Updating?.Invoke (this, preArgs);
 			if (preArgs.Cancel) {
 				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort update for {0}", data);
-				return;
+				return data;
 			}
 
 			// Persist object
@@ -142,22 +146,25 @@ namespace OpenIZ.Mobile.Core.Data
 					data = this.Update(connection, data);
 
 					connection.Commit();
-				}
-				catch(Exception e) {
+
+                    this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                    return data;
+                }
+                catch (Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					connection.Rollback ();
 					throw new LocalPersistenceException(DataOperationType.Update, data, e);
 
 				}
 
-			this.Updated?.Invoke (this, new DataPersistenceEventArgs<TData> (data));
 		}
 
 		/// <summary>
 		/// Obsolete the specified identified data
 		/// </summary>
 		/// <param name="data">Data.</param>
-		public void Obsolete (TData data)
+		public TData Obsolete (TData data)
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
@@ -168,7 +175,7 @@ namespace OpenIZ.Mobile.Core.Data
 			this.Obsoleting?.Invoke (this, preArgs);
 			if (preArgs.Cancel) {
 				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort for {0}", data);
-				return;
+				return data;
 			}
 
 			// Obsolete object
@@ -181,14 +188,17 @@ namespace OpenIZ.Mobile.Core.Data
 					data = this.Obsolete(connection, data);
 
 					connection.Commit();
-				}
-				catch(Exception e) {
+
+                    this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                    return data;
+                }
+                catch (Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					connection.Rollback ();
 					throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
 				}
 
-			this.Obsoleted?.Invoke (this, new DataPersistenceEventArgs<TData> (data));
 		}
 
 		/// <summary>
@@ -197,9 +207,6 @@ namespace OpenIZ.Mobile.Core.Data
 		/// <param name="key">Key.</param>
 		public TData Get(Guid key)
 		{
-			if (key == Guid.Empty)
-				throw new ArgumentOutOfRangeException (nameof (key));
-
 			return this.Query (o => o.Key == key)?.SingleOrDefault ();
 		}
 

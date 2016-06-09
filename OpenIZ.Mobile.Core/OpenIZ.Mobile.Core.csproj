@@ -29,6 +29,10 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\Persistence\ConceptClassPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ConceptNamePersistenceService.cs" />
+    <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
     <Compile Include="Authentication\Credentials.cs" />
