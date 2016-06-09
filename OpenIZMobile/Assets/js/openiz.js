@@ -16,13 +16,13 @@
  * @property {Object} urlParams Represents URL parameters passed to the applet
  */
 var OpenIZ = new function () {
-
+    console.info("Initializing OpenIZ Bridge");
     this.urlParams = {};
     /**
      * @summary Utility functions
      * @class
      */
-    this.UtilClass = function () {
+    this.Util = new function () {
         /**
          * @summary Changes the specified date string into an appropriate ISO string
          * @param {String} date The date to be formatted
@@ -36,7 +36,7 @@ var OpenIZ = new function () {
     * @summary The authentication section is used to interface with OpenIZ's authentication sub-systems including session management information, etc.
     * @class
     */
-    this.AuthenticationUtil = function() {
+    this.Authentication = new function() {
         /**
         * @summary Performs a login with the authentication service returning the active Session object if applicable
         * @param {String} userName the name of the user to authenticate
@@ -180,7 +180,7 @@ var OpenIZ = new function () {
     * @summary Represents application specific functions for interoperating with the mobile application itself
     * @class
     */
-    this.AppUtil = function() {
+    this.App = new function() {
         /**
          * @summary Uses the device camera to scan a barcode from the device
          * @returns The value of the barcode detected by the scanner
@@ -249,7 +249,7 @@ var OpenIZ = new function () {
      * @summary Represents functions related to the localization of applets
      * @class
      */
-    this.LocalizationUtil = function() {
+    this.Localization = new function() {
         /**
          * @summary Gets the specified localized string the current display language from the resources file
          * @param {String} stringId The identifier of the string
@@ -285,7 +285,7 @@ var OpenIZ = new function () {
      * @summary Represents functions related to the concept dictionary
      * @class
      */
-    this.ConceptUtil = function() {
+    this.Concept = new function() {
         /**
          * @summary Gets the concept by identifier
          * @param {String} conceptId The identifier of the concept to retrieve
@@ -342,7 +342,7 @@ var OpenIZ = new function () {
      * @summary Represents a series of functions related to patients
      * @class
      */
-    this.PatientUtil = function() {
+    this.Patient = new function() {
 
         /**
          * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
@@ -457,7 +457,7 @@ var OpenIZ = new function () {
     * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ system including realm, updating configuration, etc.
     * @class
     */
-    this.ConfigurationUtil = function() {
+    this.Configuration = new function() {
         /**
         * @summary Gets the current realm to which the client is connected
         */
@@ -568,13 +568,6 @@ var OpenIZ = new function () {
         };
     };
 
-    this.Util = new OpenIZ.UtilClass();
-    this.AppUtil = new OpenIZ.AppUtil();
-    this.Authentication = new OpenIZ.AuthenticationUtil();
-    this.Concept = new OpenIZ.ConceptUtil();
-    this.Configuration = new OpenIZ.ConfigurationUtil();
-    this.Localization = new OpenIZ.LocalizationUtil();
-    this.Patient = new OpenIZ.PatientUtil();
     this._session = this.Authentication.getSession();
 
 };
