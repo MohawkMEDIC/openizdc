@@ -1,0 +1,499 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.timr.applet.patientAdministration" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/cogs</icon>
+    <name lang="en">Patient Administration</name>
+    <groupName lang="en">Administration</groupName>
+    <author>OpenIZ.org Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0"/>
+  </info>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <script>patient-admin-controller</script>
+      <content lang="en">
+        <div class="row" ng-controller="PatientAdministrationController">
+          <div class="container">
+            <a class ="btn-lg btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientSearch">Patient Search</a>
+            <a class ="btn-lg btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientRegister">Patient Register</a>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patientSearch" mimeType="text/html">
+    <contentHtml>
+      <script>patient-search-controller</script>
+      <content lang="en">
+        <div class="row" ng-controller="PatientSearchController">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <form id="registerForm" role="form" novalidate="novalidate">
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#barcodeCollapse">Barcode Scan</a>
+                        </h3>
+                      </div>
+                      <div id="barcodeCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                          <fieldset class="form-group">
+                            <legend class="control-label"></legend>
+
+                            <div class="form-group">
+                              <div class="input-group">
+                                <span class="input-group-addon" id="barcodeAddon">Identifier</span>
+                                <input type="text" name="barcode" id="barcodeInput" class="form-control" placeholder="XXXXXXXXXXXX" aria-describedby="barcodeAddon" ng-model="barcode">
+                                  <span class="input-group-btn">
+                                  <button type="button" class="btn btn-default" ng-click="scanBarcode()">
+                                    <span class="glyphicon glyphicon-barcode">
+                                    </span>Scan
+                                  </button>
+                                  </span>
+                                </input>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#patientDemographicCollapse">Patient Demographics Criteria</a>
+                        </h3>
+                      </div>
+                      <div id="patientDemographicCollapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <fieldset class="form-group">
+                            <legend class="control-label"></legend>
+
+                            <div class="form-group">
+                              <div class="input-group">
+                                <span class="input-group-addon" id="givenNameAddon">Given Name</span>
+                                <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name" aria-describedby="givenNameAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="familyNameAddon">Family Name</span>
+                                <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name" aria-describedby="familyNameAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="dobFromAddon">Date of Birth(From)</span>
+                                <input type="date" name="dobFrom" id="dobFromInput" class="form-control" aria-describedby="dobAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="dobToAddon">Date of Birth(To)</span>
+                                <input type="text" name="dobTo" id="dobToInput" class="form-control" aria-describedby="dobAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="genderAddon">Gender</span>
+                                <select name="gender" id="genderSelect" class="form-control" aria-describedby="accuracyAddon">
+                                  <option ng-repeat="genderSelect in data.genderSelect" value="{{genderSelect.gender}}">{{genderSelect.gender}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#nextOfKinCollapse">Next Of Kin</a>
+                        </h3>
+                      </div>
+                      <div id="nextOfKinCollapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <fieldset class="form-group">
+                            <legend class="control-label"></legend>
+
+                            <div class="form-group">
+                              <div class="input-group">
+                                <span class="input-group-addon" id="clientRelationAddon">Relationship to Client</span>
+                                <select name="clientRelation" id="clientRelationSelect" class="form-control" aria-describedby="clientRelationAddon">
+                                  <option ng-repeat="relationSelect in data.relationshipSelect" value="{{relationSelect.relation}}">{{relationSelect.relation}}</option>
+                                </select>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="kinGivenNameAddon">Given Name</span>
+                                <input type="text" name="kinGivenName" id="kinGivenNameInput" class="form-control" placeholder="First/Given Name(s)" aria-describedby="givenNameAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="familyNameAddon">Family Name</span>
+                                <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Last/Family Name(s)" aria-describedby="familyNameAddon"/>
+                              </div>
+
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">Additional Search Criteria</a>
+                        </h3>
+                      </div>
+                      <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <fieldset class="form-group">
+                            <legend class="control-label"></legend>
+
+                            <div class="form-group">
+                              <div class="input-group">
+                                <span class="input-group-addon" id="cityAddon">City/Village:</span>
+                                <input type="text" name="city" id="cityInput" class="form-control" placeholder="Village" aria-describedby="cityAddon"/>
+                              </div>
+
+                              <div class="input-group">
+                                <span class="input-group-addon" id="telephoneAddon">Telephone:</span>
+                                <input type="text" name="telephone" id="telephoneInput" class="form-control" placeholder="Telephone Number" aria-describedby="telephoneAddon"/>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="btn-group pull-right">
+                    <button type="submit" class="btn btn-danger">
+                      <span class="glyphicon glyphicon-remove"></span>
+                      Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                      Search
+                      <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patientRegister" mimeType="text/html">
+    <contentHtml>
+      <script>patient-register-controller</script>
+      <content lang="en">
+        <div class="row" ng-controller="PatientRegisterController">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <form id="registerForm" role="form" novalidate="novalidate">
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a data-toggle="collapse" href="#demoInfoCollapse">Demographic Information</a>
+                        </h3>
+                      </div>
+                      <div id="demoInfoCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+
+                          <div class="row">
+                            <div class="col-xs-4">
+                                
+                            </div>
+                            <div class="col-xs-8">
+                              <fieldset class="form-group">
+                                <div class="form-group">
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="givenNameAddon">Given:</span>
+                                    <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name" aria-describedby="givenNameAddon"/>
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                      </button>
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="familyNameAddon">Family:</span>
+                                    <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name" aria-describedby="familyNameAddon"/>
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                      </button>
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="dobAddon">Date of Birth</span>
+                                    <input type="date" name="dob" id="dobInput" class="form-control" placeholder="mm/dd/yyyy" aria-describedby="dobAddon"/>
+                                    <span class="input-group-addon" id="accuracyAddon">Accuracy</span>
+                                    <select name="accuracy" id="accurracySelect" class="form-control" aria-describedby="accuracyAddon">
+                                      <option value="">Day</option>
+                                      <option value="">Month</option>
+                                      <option value="">Year</option>
+                                    </select>
+                                  </div>
+
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="genderAddon">Gender</span>
+                                    <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon">
+                                      <option value="">Male</option>
+                                      <option value="">Female</option>
+                                      <option value="">Other</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a data-toggle="collapse" href="#potentialDupCollapse">Potential Duplicates</a>
+                        </h3>
+                      </div>
+                      <div id="potentialDupCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body no-padding-top">
+                          <div class="row">
+                            <div class="table-responsive">
+                              <table class="table table-bordered table-hover">
+                                <tr>
+                                  <th>Name(s)</th>
+                                  <th>Birthdate</th>
+                                  <th>Gender</th>
+                                  <th>City/Village(s)</th>
+                                </tr>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a data-toggle="collapse" href="#identityCollapse">Identification</a>
+                        </h3>
+                      </div>
+                      <div id="identityCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <fieldset class="form-group">
+                                <div class="form-group">
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="idNumAddon">ID:</span>
+                                    <input type="number" name="idNum" id="idNumInput" class="form-control" placeholder="646465786868576" aria-describedby="idNumAddon"/>
+                                    <div class="input-group-btn">
+                                        <button class="btn btn-default" type="button">
+                                          <span class="glyphicon glyphicon-barcode"></span>
+                                          Scan
+                                        </button>
+                                    </div>
+                                    <select name="yellowCardID" id="yellowCardIDSelect" class="form-control">
+                                      <option value="" disabled="disabled" selected="selected">Yellow Card ID</option>
+                                      <option value="">WIP</option>
+                                      <option value="">WIP</option>
+                                      <option value="">WIP</option>
+                                    </select>
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                      </button>
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a data-toggle="collapse" href="#domicileCollapse">Domicile</a>
+                        </h3>
+                      </div>
+                      <div id="domicileCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <fieldset class="form-group">
+                                <div class="form-group">
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="cityOrVillageAddon">City/Village:</span>
+                                    <input type="text" name="cityOrVillage" id="cityOrVillageInput" class="form-control" aria-describedby="cityOrVillageAddon"/>
+                                  </div>
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="birthPlaceAddon">Birth Place:</span>
+                                    <select name="birthPlace" id="birthPlaceSelect" class="form-control" aria-describedby="birthPlaceAddon">
+                                      <option value="">Hospital 1</option>
+                                      <option value="">Hospital 2</option>
+                                      <option value="">Hospital 3</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a data-toggle="collapse" href="#contactCollapse">Contact Information</a>
+                        </h3>
+                      </div>
+                      <div id="contactCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <fieldset class="form-group">
+                                <div class="form-group">
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="phoneNumAddon">Tel:</span>
+                                    <input type="text" name="phoneNum" id="phoneNumInput" class="form-control" placeholder="465432345689976533" aria-describedby="phoneNumAddon"/>
+                                    <span class="input-group-addon" id="phoneTypeAddon">
+                                      <span class="glyphicon glyphicon-earphone"></span>
+                                    </span>
+                                    <select name="phoneType" id="phoneTypeSelect" class="form-control" aria-describedby="phoneTypeAddon">
+                                      <option value="">Mobile</option>
+                                      <option value="">Home</option>
+                                      <option value="">Work</option>
+                                    </select>
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                      </button>
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  <div class="input-group">
+                                    <span class="input-group-addon" id="emailAddon">E-Mail:</span>
+                                    <input type="email" name="email" id="emailInput" class="form-control" placeholder="someone@somedomain.com" aria-describedby="emailAddon"/>
+                                    <span class="input-group-addon" id="domainAddon">@</span>
+                                    <select name="domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
+                                      <option value="">WIP</option>
+                                      <option value="">WIP</option>
+                                      <option value="">WIP</option>
+                                    </select>
+                                    <div class="input-group-btn">
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                      </button>
+                                      <button class="btn btn-default btn-custom" type="button">
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right">Register</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patient-admin-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      var patientAdministrationApp = angular.module('layout', []);
+      
+		  patientAdministrationApp.controller('PatientAdministrationController', ['$scope', function ($scope)
+		  {
+      
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="patient-search-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      var patientSearchApp = angular.module('layout', []);
+      
+		  patientSearchApp.controller('PatientSearchController', ['$scope', function ($scope)
+		  {
+        $scope.scanBarcode = function()
+        {
+          //$scope.barcode = OpenIZ.App.scanBarcode(); //Once this is implemented
+          $scope.barcode = Math.floor((Math.random() * 899999999999) + 100000000000);
+        }
+        
+        $scope.data = {
+          genderSelect:[
+          {gender:"Female"}, 
+          {gender:"Male"}, 
+          {gender:"Other"}
+          ],
+          relationshipSelect:[
+          {relation:"Father"},
+          {relation:"Mother"},
+          {relation:"Son"},
+          {relation:"Daughter"},
+          {relation:"Husband"},
+          {relation:"Wife"},
+          {relation:"Brother"},
+          {relation:"Sister"},
+          {relation:"Grandfather"},
+          {relation:"Grandmother"},
+          {relation:"Grandson"},
+          {relation:"Granddaughter"},
+          {relation:"Uncle"},
+          {relation:"Aunt"},
+          {relation:"Nephew"},
+          {relation:"Niece"},
+          {relation:"Cousin"}
+          ],
+        };
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="patient-register-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      var patientRegisterApp = angular.module('layout', []);
+      
+		  patientRegisterApp.controller('PatientRegisterController', ['$scope', function ($scope)
+		  {
+      
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+
+</AppletManifest>

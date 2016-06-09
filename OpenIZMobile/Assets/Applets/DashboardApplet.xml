@@ -55,11 +55,14 @@
             <!-- /.container-fluid -->
           </nav>
           <div class="container">
-
-            Dashboard
+            <h2>Dashboard</h2>
             
-            <div ng-controller="ChartController">
-              <button ng-click="draw()">Draw</button>
+			<div class="row">
+			  <button class="btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/index">Patient Administration</button>
+			</div>
+			
+            <div class="row" ng-controller="ChartController">
+              <button class="btn btn-success" ng-click="draw()">Draw</button>
               <canvas id="stock-canvas" width="500px" height="500px"></canvas>
             </div>
           </div>
