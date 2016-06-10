@@ -8,6 +8,7 @@ using Org.Json;
 using Android.App;
 using Android.Content.Res;
 using OpenIZ.Mobile.Core.Diagnostics;
+using System.IO;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -70,7 +71,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		{
             try
             {
-                return this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
+                var appletResource = AndroidApplicationContext.Current.LoadedApplets.GetStrings(this.GetLocale()).FirstOrDefault(o => o.Key == stringId).Value;
+                return appletResource ?? this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
             }
             catch(Exception e)
             {
@@ -129,6 +131,28 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         public String GetLocale()
         {
             return this.m_context.Resources.Configuration.Locale.Language;
+        }
+
+        /// <summary>
+        /// Get the applet strings
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetStrings(String locale)
+        {
+            var strings = AndroidApplicationContext.Current.LoadedApplets.GetStrings(locale);
+
+            using (StringWriter sw = new StringWriter())
+            {
+                sw.Write("{");
+                foreach (var itm in strings)
+                {
+                    sw.Write("\"{0}\":\"{1}\",", itm.Key, itm.Value);
+                }
+                sw.Write("\"locale\":\"{0}\" }}", locale);
+                return sw.ToString();
+            }
+            
         }
 
         /// <summary>

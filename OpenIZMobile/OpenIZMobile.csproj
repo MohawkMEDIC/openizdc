@@ -217,4 +217,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\js\openiz-model.js" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\openiz-localize.js" />
+  </ItemGroup>
 </Project>
