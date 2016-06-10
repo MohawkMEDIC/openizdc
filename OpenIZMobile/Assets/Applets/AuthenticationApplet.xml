@@ -7,7 +7,7 @@
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
-  <asset name="login" lang="en" mimeType="text/html">
+  <asset name="login" mimeType="text/html">
     <contentHtml>
       <title lang="en">Login to OpenIZ</title>
       <bundle>jquery</bundle>
@@ -16,24 +16,28 @@
       <script>login-controller</script>
       <content>
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
-          <h1>Log into OpenIZ at {{config.realmName}}</h1>
+          <h1>{{ "login" | i18n}} OpenIZ ({{config.realmName}})</h1>
+          <hr/>
+          <button class="btn-primary btn" ng-click="setLocale('en')">EN</button>
+          <button class="btn-default btn" ng-click="setLocale('fr')">FR</button>
+          <hr/>
           <form novalidate="novalidate">
             <div class="container">
               <div class="input-group">
-                <span class="input-group-addon">User Name:</span>
+                <span class="input-group-addon">{{ "username" | i18n}}:</span>
                 <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="username"/>
               </div>
               <div class="input-group">
-                <span class="input-group-addon">Password:</span>
+                <span class="input-group-addon">{{ "password" | i18n}}:</span>
                 <input ng-model="password" type="password" ng-required="true" class="form-control" name="password" id="password"/>
               </div>
               <div class="btn-group pull-right">
                 <button class="btn-danger btn" ng-disabled="username == null" ng-click="forgotPassword(username)">
                   <span class="glyphicon glyphicon-resize-full">
-                  </span> Forgot Password
+                  </span> {{ "forgot" | i18n }}
                 </button>
                 <button class="btn-primary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
-                  Login <span class="glyphicon glyphicon-login"></span>
+                  {{ "login" | i18n }} <span class="glyphicon glyphicon-login"></span>
                 </button>
               </div>
             </div>
@@ -42,18 +46,19 @@
       </content>
     </contentHtml>
   </asset>
-  <asset name="login-controller" mimeType="text/javascript" lang="en">
+  <asset name="login-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
         // angular stuff
-			  var loginApp = angular.module('login', []);
+			  var loginApp = angular.module('login', ['localization']);
 
-			  loginApp.controller('LoginController', ['$scope', function ($scope)
+			  loginApp.controller('LoginController', ['$scope', 'localize', function ($scope, localize)
 			  {
           
-          $scope.config = {
-            realmName : OpenIZ.Configuration.getRealm()
-          };
+            $scope.config = {
+              realmName : OpenIZ.Configuration.getRealm()
+            };
+            $scope.locale = {};
           
           $scope.login = function(username, password) {
             try
@@ -70,12 +75,30 @@
             }
           };
           
+          $scope.setLocale = function(lang)
+          {
+              localize.setLanguage(lang);
+          }
+          
           $scope.forgotPassword = function(username) {
             alert(username);
           };
+
         }]);
       
       ]]>
     </contentText>
   </asset>
+  <strings lang="en">
+    <string key="login">Login to</string>
+    <string key="forgot">Forgot password</string>
+    <string key="password">Password</string>
+    <string key="username">User Name</string>
+  </strings>
+  <strings lang="fr">
+    <string key="login">Connecter a</string>
+    <string key="forgot">Oubile mot passe</string>
+    <string key="password">Mot de passe:</string>
+    <string key="username">Nom</string>
+  </strings>
 </AppletManifest>

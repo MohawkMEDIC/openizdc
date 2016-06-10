@@ -35,6 +35,23 @@ namespace OpenIZ.Mobile.Core.Http
 			this.m_configuration = config;
 		}
 
+        /// <summary>
+        /// Create the query string from a list of query parameters
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static String CreateQueryString(params KeyValuePair<String, Object>[] query)
+        {
+            String queryString = String.Empty;
+            foreach (var kv in query)
+            {
+                queryString += String.Format("{0}={1}", kv.Key, Uri.EscapeDataString(kv.Value.ToString()));
+                if (!kv.Equals(query.Last()))
+                    queryString += "&";
+            }
+            return queryString;
+        }
+
 		/// <summary>
 		/// Create the HTTP request
 		/// </summary>
@@ -53,15 +70,9 @@ namespace OpenIZ.Mobile.Core.Http
 				uriBuilder.Path += "/" + resourceName;
 
 			// Add query string
-			if (query != null) {
-				String queryString = String.Empty;
-				foreach (var kv in query) {
-					queryString += String.Format ("{0}={1}", kv.Key, Uri.EscapeDataString (kv.Value.ToString ()));
-					if (!kv.Equals(query.Last ()))
-						queryString += "&";
-				}
-				uriBuilder.Query = queryString;
-			}
+			if (query != null) 
+				uriBuilder.Query = CreateQueryString(query);
+			
 
 			Uri uri = uriBuilder.Uri;
 

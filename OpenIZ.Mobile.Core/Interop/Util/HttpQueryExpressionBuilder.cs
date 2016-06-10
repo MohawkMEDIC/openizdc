@@ -72,12 +72,46 @@ namespace OpenIZ.Mobile.Core.Interop.Util
 				}
 			}
 
-			/// <summary>
-			/// Visits the member access.
-			/// </summary>
-			/// <returns>The member access.</returns>
-			/// <param name="expr">Expr.</param>
-			protected virtual Expression VisitMemberAccess(MemberExpression node)
+            /// <summary>
+            /// Visit method call
+            /// </summary>
+            protected override Expression VisitMethodCall(MethodCallExpression node)
+            {
+                switch(node.Method.Name)
+                {
+                    case "Contains":
+                        {
+                            var parmName = this.ExtractPath(node.Object);
+                            object parmValue = this.ExtractValue(node.Arguments[0]);
+                            this.m_query.Add(new KeyValuePair<String, Object>(parmName, "~" + parmValue.ToString()));
+                            return null;
+                        }
+                    case "Any":
+                        {
+                            var parmName = this.ExtractPath(node.Arguments[0]);
+                            // Process lambda
+                            var result = new List<KeyValuePair<string, object>>();
+                            var subQueryExpressionVisitor = new HttpQueryExpressionVisitor(result);
+                            subQueryExpressionVisitor.Visit(node.Arguments[1]);
+
+                            // Result
+                            foreach (var itm in result)
+                                this.m_query.Add(new KeyValuePair<string, object>(String.Format("{0}.{1}", parmName, itm.Key), itm.Value));
+                            return null;
+                        }
+                    default:
+                        return base.VisitMethodCall(node);
+
+                }
+
+            }
+
+            /// <summary>
+            /// Visits the member access.
+            /// </summary>
+            /// <returns>The member access.</returns>
+            /// <param name="expr">Expr.</param>
+            protected virtual Expression VisitMemberAccess(MemberExpression node)
 			{
 				this.Visit (node.Expression);
 				return node;
@@ -183,7 +217,7 @@ namespace OpenIZ.Mobile.Core.Interop.Util
 
 					// Is this a delay load?
 					var delayLoadAttribute= memberExpr.Member.GetCustomAttribute<DelayLoadAttribute>();
-					if (delayLoadAttribute != null)
+					if (delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.KeyPropertyName))
 						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.KeyPropertyName);
 
 					// TODO: Delay and bound properties!!

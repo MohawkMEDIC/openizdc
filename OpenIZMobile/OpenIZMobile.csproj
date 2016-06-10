@@ -243,4 +243,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\css\bootstrap-alterations.css" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\openiz-localize.js" />
+  </ItemGroup>
 </Project>

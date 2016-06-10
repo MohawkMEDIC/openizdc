@@ -279,6 +279,26 @@ var OpenIZ = new function () {
         this.setLocale = function (locale) {
             return OpenIZApplicationService.SetLocale(locale);
         };
+        /**
+         * @summary Gets the complete localization string data
+         * @returns {Object} The string list of strings
+         */
+        this.getStrings = function (locale) {
+            try
+            {
+                var data = OpenIZApplicationService.GetStrings(locale);
+                if(data == null)
+                    return null;
+                else
+                    return JSON.parse(data);
+            }
+            catch(e)
+            {
+                console.error(e);
+                throw new OpenIZModel.Exception("Error getting string list", e.message, e);
+            }
+
+        }
     };
 
     /**
