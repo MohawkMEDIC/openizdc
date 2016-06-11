@@ -17,6 +17,8 @@
  */
 var OpenIZ = new function () {
     console.info("Initializing OpenIZ Bridge");
+
+
     this.urlParams = {};
     /**
      * @summary Utility functions
@@ -52,13 +54,13 @@ var OpenIZ = new function () {
 
                 if (data == null)
                     return null;
-                else if (data.lastIndexOf("err", 0) == 0)
+                else if (data.lastIndexOf("err", 0) == 0 && data != "err_oauth2_invalid_grant")
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString(data), null, null);
                 else
                 {
                     var pData = JSON.parse(data);
                     if (pData != null && pData.error !== undefined)
-                        throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_" + pData.error),
+                        throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_" + pData.error),
                             pData.error_description, 
                             null
                         );
@@ -72,7 +74,7 @@ var OpenIZ = new function () {
             catch(ex)
             {
                 console.warn(ex);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_login"), ex.error, ex);
+                throw new OpenIZModel.Exception(OpenIZ.Localization.getString(ex.message), ex.details, ex);
             }
         };
         /**
@@ -114,8 +116,8 @@ var OpenIZ = new function () {
         this.getSession = function () {
             try {
                 var data = OpenIZSessionService.GetSession();
-                if (data != null)
-                    return new OpenIZModel.Session(JSON.parse(data));
+                if (data != null && OpenIZModel !== undefined)
+                    return new OpenIZModel.Session(JSON.parse(data)) ;
                 return null;
             }
             catch (ex) {
@@ -588,12 +590,10 @@ var OpenIZ = new function () {
         };
     };
 
-    this._session = this.Authentication.getSession();
 
 };
 
 
-// ---- INITIALIZATION CODE -----
 
 // Parameters
 (window.onpopstate = function () {
@@ -602,7 +602,7 @@ var OpenIZ = new function () {
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
         query = window.location.search.substring(1);
-    
+
     OpenIZ.urlParams = {};
     while (match = search.exec(query))
         OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
@@ -611,7 +611,7 @@ var OpenIZ = new function () {
 // Bind datepickers
 $(document).ready(function () {
 
-    
+
     $('input[type="date"]').each(function (k, v) {
         if ($(v).attr('data-max-date')) {
             var date = new Date();
@@ -635,21 +635,5 @@ $(document).ready(function () {
 
         });
     });
-})
-
-
-/** Allows String.Format() style stuff to work */
-if (!String.prototype.format) {
-    String.prototype.format = function () {
-        var str = this.toString();
-        if (!arguments.length)
-            return str;
-        var args = typeof arguments[0],
-            args = (("string" == args || "number" == args) ? arguments : arguments[0]);
-        for (arg in args)
-            str = str.replace(RegExp("\\{" + arg + "\\}", "gi"), args[arg]);
-        return str;
-    }
-}
-
+});
 

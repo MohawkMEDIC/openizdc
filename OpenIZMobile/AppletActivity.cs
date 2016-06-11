@@ -55,9 +55,12 @@ namespace OpenIZMobile
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
+
+            this.RequestWindowFeature(WindowFeatures.Progress);
+            
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
-
+            
 			var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
 			// Find the applet
 			AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
@@ -67,6 +70,13 @@ namespace OpenIZMobile
 				this.Finish ();
 				return;
 			}
+
+            // Progress has changed
+            this.m_webView.ProgressChanged += (o, e) =>
+            {
+                this.SetProgressBarVisibility(this.m_webView.Progress > 0 && this.m_webView.Progress < 100);
+                this.SetProgress((WindowProgress.End - WindowProgress.Start) / 100 * this.m_webView.Progress);
+            };
 
 			// Applet has changed
 			this.m_webView.AssetChanged += (o, e) => {

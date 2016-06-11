@@ -107,8 +107,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms, int offset = 0, int count = -1)
 		{
 
-			// Build a query
-			StringBuilder sb = new StringBuilder("SELECT * FROM ");
+            // Build a query
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("SELECT * FROM {0} WHERE uuid IN (SELECT uuid FROM ", context.GetMapping<TDomain>().TableName);
 			sb.AppendFormat (storedQueryName);
 			List<Object> vals = new List<Object> ();
 			if (parms.Count > 0) {
@@ -119,7 +120,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 				}
 				sb.Remove (sb.Length - 4, 4);
 			}
-
+            sb.Append(");");
 			var retVal = context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Skip (offset);
 			if (count >= 0)
 				retVal = retVal.Take (count);
@@ -131,8 +132,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// Update associated version items
         /// </summary>
         protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, SQLiteConnection dataContext)
-            where TAssociation : VersionedAssociation<TModelEx>, new()
-            where TModelEx : VersionedEntityData<TModelEx>
+            where TAssociation : Association<TModelEx>, new()
+            where TModelEx : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;
             if (persistenceService == null)

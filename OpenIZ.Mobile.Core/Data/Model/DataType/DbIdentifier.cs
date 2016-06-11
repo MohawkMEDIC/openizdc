@@ -8,15 +8,6 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 	/// </summary>
 	public abstract class DbIdentifier : DbIdentified
 	{
-		/// <summary>
-		/// Gets or sets the source identifier.
-		/// </summary>
-		/// <value>The source identifier.</value>
-		[Column("source_id"), Indexed]
-		public int SourceId {
-			get;
-			set;
-		}
 
 		/// <summary>
 		/// Gets or sets the value.
@@ -41,8 +32,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the authority identifier.
 		/// </summary>
 		/// <value>The authority identifier.</value>
-		[Column("authority"), NotNull]
-		public int AuthorityId {
+		[Column("authority_uuid"), NotNull]
+		public int AuthorityUuid {
 			get;
 			set;
 		}
@@ -54,7 +45,17 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 	[Table("entity_identifier")]
 	public class DbEntityIdentifier : DbIdentifier
 	{
-	}
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("entity_uuid"), Indexed, MaxLength(16)]
+        public byte[] EntityUuid
+        {
+            get;
+            set;
+        }
+    }
 
 	/// <summary>
 	/// Act identifier storage.
@@ -62,6 +63,16 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 	[Table("act_identifier")]
 	public class DbActIdentifier : DbIdentifier
 	{
-	}
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("act_uuid"), Indexed, MaxLength(16)]
+        public byte[] ActUuid
+        {
+            get;
+            set;
+        }
+    }
 }
 

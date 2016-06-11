@@ -40,6 +40,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		/// </summary>
 		public event EventHandler AssetChanged;
 
+        // Progress has changed
+        public event EventHandler ProgressChanged;
+
 		// A web-view
 		private AppletAsset m_asset;
 
@@ -72,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		private void Initialize(Context context)
 		{
 			this.m_tracer.TraceVerbose ("Initializing applet web viewer");
-			this.Settings.CacheMode = CacheModes.NoCache;
+			this.Settings.CacheMode = CacheModes.Default;
 			this.Settings.JavaScriptEnabled = true;
 			this.Settings.BlockNetworkLoads = true;
 			this.Settings.BuiltInZoomControls = false;
@@ -85,7 +88,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             this.SetWebViewClient(new AppletWebViewClient());
             this.SetWebChromeClient(new AppletWebChromeClient(this.Context));
 		}
-
+        
 		/// <summary>
 		/// Go back to previous page
 		/// </summary>
@@ -100,6 +103,15 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                 this.Asset = this.m_backQueue.Pop();
             }
 		}
+
+        /// <summary>
+        /// Set progress
+        /// </summary>
+        /// <param name="progress"></param>
+        internal void FireProgressChanged()
+        {
+            this.ProgressChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Applet manifest
@@ -214,7 +226,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                     var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
 
                     if (navigateAsset == null)
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/404");
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/404", language: language);
                     
                     try
                     {
@@ -230,14 +242,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                             return new WebResourceResponse("text/html", "UTF-8", new MemoryStream(Encoding.UTF8.GetBytes(redirectUrl)));
                         }
                         else
-                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/403");
+                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/403", language: language);
                         return this.RenderWebResource(url, navigateAsset);
 
                     }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError(ex.ToString());
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500");
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500", language: language);
                         return this.RenderWebResource(url, navigateAsset);
                     }
                     finally
@@ -433,7 +445,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 				return true; 
 
 			}
-		}
+
+            /// <summary>
+            /// Progress has changed
+            /// </summary>
+            public override void OnProgressChanged(WebView view, int newProgress)
+            {
+                base.OnProgressChanged(view, newProgress);
+                (view as AppletWebView).FireProgressChanged();
+            }
+        }
 	}
 }
 

@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the telecom use.
 		/// </summary>
 		/// <value>The telecom use.</value>
-		[Column("use_concept_uuid"), MaxLength(16)]
+		[Column("use"), MaxLength(16)]
 		public byte[] TelecomUseUuid {
 			get;
 			set;

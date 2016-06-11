@@ -10,21 +10,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 	{
 
 		/// <summary>
-		/// Gets or sets the source identifier.
-		/// </summary>
-		/// <value>The source identifier.</value>
-		[Column ("source"), Indexed]
-		public int SourceId {
-			get;
-			set;
-		}
-
-		/// <summary>
 		/// Gets or sets the extension identifier.
 		/// </summary>
 		/// <value>The extension identifier.</value>
-		[Column ("extension_type")]
-		public int ExtensionId {
+		[Column ("extensionType"), MaxLength(16)]
+		public byte[] ExtensionTypeId {
 			get;
 			set;
 		}
@@ -47,15 +37,36 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 	[Table ("entity_extension")]
 	public class DbEntityExtension : DbExtension
 	{
-					
-	}
 
-	/// <summary>
-	/// Act extensions
-	/// </summary>
-	[Table ("act_extension")]
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("entity_uuid"), Indexed, MaxLength(16)]
+        public byte[] EntityUuid
+        {
+            get;
+            set;
+        }
+
+    }
+
+    /// <summary>
+    /// Act extensions
+    /// </summary>
+    [Table ("act_extension")]
 	public class DbActExtension : DbExtension
 	{
-	}
+        /// <summary>
+        /// Gets or sets the source identifier.
+        /// </summary>
+        /// <value>The source identifier.</value>
+        [Column("act_uuid"), Indexed, MaxLength(16)]
+        public byte[] ActUuid
+        {
+            get;
+            set;
+        }
+    }
 }
 

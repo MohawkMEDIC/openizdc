@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             }
             catch(Exception e)
             {
-                this.m_tracer.TraceError("Error retreiving string {0}: {1}", stringId, e);
+                this.m_tracer.TraceWarning("Error retreiving string {0}", stringId);
                 return stringId;
             }
 		}

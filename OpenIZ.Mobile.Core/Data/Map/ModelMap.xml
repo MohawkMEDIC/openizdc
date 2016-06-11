@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 
 <modelMap xmlns="http://openiz.org/model/map">
+  <!-- Security Users -->
 	<class modelClass="OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityUser, OpenIZ.Mobile.Core, Version=0.5.0.0">
 		<property modelName="Key" domainName="Uuid"/>
@@ -8,7 +9,6 @@
 		<property modelName="UpdatedByKey" domainName="UpdatedByUuid"/>
 		<property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
 	</class>
-  <!-- Entities -->
   
 	<!-- Concepts -->
 	<class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -32,6 +32,7 @@
     <property modelName="Key" domainName="Uuid"/>
   </class>
 
+  <!-- Concept Names -->
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.Concepts.DbConceptName, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
@@ -39,4 +40,33 @@
     <property modelName="SourceEntityKey" domainName="ConceptUuid"/>
   </class>
 
+  <!-- Entity Map -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="VersionKey" domainName="VersionUuid"/>
+    <property modelName="PreviousVersionKey" domainName="PreviousVersionUuid"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptUuid"/>
+    <property modelName="ClassConceptKey" domainName="ClassConceptUuid"/>
+    <property modelName="DeterminerConceptKey" domainName="DeterminerConceptUuid"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptUuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityName, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="NameUseKey" domainName="UseConceptUuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityNameComponent, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="NameUuid"/>
+    <property modelName="ComponentTypeKey" domainName="ComponentTypeUuid"/>
+    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmUuid"/>
+  </class>
 </modelMap>

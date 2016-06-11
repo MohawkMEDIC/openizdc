@@ -100,5 +100,10 @@
       <Name>OpenIZ.Mobile.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-fr\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-sw\Strings.xml" />
+  </ItemGroup>
 </Project>

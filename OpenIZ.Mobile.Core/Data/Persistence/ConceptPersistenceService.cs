@@ -25,7 +25,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;
-            modelInstance.ConceptSets = context.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set = concept_set.uuid) WHERE concept_concept_set.concept = ?", dbInstance.Uuid).Select(
+            modelInstance.ConceptSets = context.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
                 o => m_mapper.MapDomainInstance<DbConceptSet, ConceptSet>(o)
             ).ToList();
 

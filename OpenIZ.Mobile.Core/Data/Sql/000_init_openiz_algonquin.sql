@@ -1,7 +1,4 @@
-﻿CREATE VIEW IF NOT EXISTS FindConceptsByName AS
-	SELECT concept.*, concept_name.name as Name, concept_name.lang as Language FROM concept_name INNER JOIN concept ON (concept.uuid = concept_name.concept_uuid)
-	WHERE concept.obsoletion_time IS NULL;
-
+﻿-- DEFAULT DATA SECTION
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'5AC073EA5931C848BBCB741911D91CD2', '1.3.6.1.4.1.33349.3.1.5.9.2.0', 'Access Administrative Function', 0, 0);
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'CFC10AD86E3D9F42A4A088C0BBBC839D', '1.3.6.1.4.1.33349.3.1.5.9.2.0.1', 'Change Password', 0, 0);
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'AC650D9C3E61674A8BC65CE2C0B42160', '1.3.6.1.4.1.33349.3.1.5.9.2.0.2', 'Create Role', 0, 0);
@@ -60,3 +57,131 @@ INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'E6F8D74BB8E4BC4D93A7C
 INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'32BC9CDCEAB84441BEF1DC618E28F4D7', 'Drug or other Material', 'Material');
 INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'39346B0DBEC98044AF39EEB457C052D0', 'Other Classification', 'Other');
 INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'4A30D8FFEC43BC4E95FCFB4A4F2338F0', 'Stock control codes', 'Stock');
+
+-- QUERY HELPERS
+
+-- QUERY FOR CONCEPTS
+create view if not exists sqp_Concept AS 
+	select concept.*, 
+		status.mnemonic as statusConcept_mnemonic,
+		concept_class.mnemonic as class_mnemonic, 
+		concept_class.name as class_name,
+		concept_name.language as name_language,
+		concept_name.value as name_value,
+		concept_name.phoneticCode as name_phoneticCode,
+		concept_name.phoneticAlgorithm as name_phoneticAlgorithm,
+		concept_set.mnemonic as conceptSet_mnemonic,
+		concept_set.name as conceptSet_name,
+		concept_set.oid as conceptSet_oid,
+		concept_set.uuid as conceptSet_id
+		from concept left join concept as status on (concept.statusConcept = status.uuid)
+		inner join concept_class on (concept_class.uuid = concept.class)
+		left join concept_name on (concept_name.concept_uuid = concept.uuid)
+		left join concept_concept_set on (concept_concept_set.concept_uuid = concept.uuid)
+		left join concept_set on (concept_set.uuid = concept_concept_set.concept_set_uuid);
+
+
+-- ENTITY VIEW HELPER
+create view if not exists sqp_Entity as 
+	select entity.*,
+		class.mnemonic as classConcept_mnemonic,
+		determiner.mnemonic as determinerConcept_mnemonic,
+		type.mnemonic as typeConcept_mnemonic,
+		status.mnemonic as statusConcept_mnemonic,
+		entity_address.use as address_use,
+		entity_address_concept.mnemonic as address_use_mnemonic,
+		entity_address_comp.type as address_component_type,
+		entity_address_comp.value as address_component_value,
+		entity_address_comp_type.mnemonic as address_component_type_mnemonic,
+		entity_extension.extensionType as extension_type,
+		extension_type.name as extension_type_name,
+		entity_identifier.value as identifier_value,
+		assigning_authority.name as identifier_authority_name,
+		assigning_authority.domainName as identifier_authority_domainName,
+		assigning_authority.oid as identifier_authority_oid,
+		entity_name.use as name_use,
+		entity_name_concept.mnemonic as name_use_mnemonic,
+		entity_name_comp.type as name_component_type,
+		entity_name_comp.value as name_component_value,
+		entity_name_comp.phoneticCode as name_component_phoneticCode,
+		entity_name_comp.phoneticAlgorithm as name_component_phoneticAlgorithm,
+		entity_name_comp_type.mnemonic as name_component_type_mnemonic,
+		entity_relationship.relationshipType as relationship_type,
+		rel_entity_name.use as relationship_name_use,
+		rel_entity_name_comp.type as relationship_name_component_type,
+		rel_entity_name_comp.value as relationship_name_component_value,
+		rel_entity_name_comp.phoneticCode as relationship_name_component_phoneticCode,
+		rel_entity_name_comp.phoneticAlgorithm as relationship_name_component_phoneticAlgorithm,
+		entity_telecom.use as telecom_use,
+		entity_telecom.value as telecom_value
+	from entity inner join concept as class on (class.uuid = entity.classConcept)
+		inner join concept as determiner on (determiner.uuid = entity.determinerConcept)
+		left join concept as type on (type.uuid = entity.typeConcept)
+		left join concept as status on (status.uuid = entity.statusConcept)
+		left join entity_address on (entity.uuid = entity_address.entity_uuid)
+		left join concept as entity_address_concept on (entity_address_concept.uuid = entity_address.entity_uuid)
+		left join entity_address_comp on (entity_address.uuid = entity_address_comp.address_uuid)
+		left join concept as entity_address_comp_type on (entity_address_comp_type.uuid = entity_address_comp.type)
+		left join entity_extension on (entity.uuid = entity_extension.entity_uuid)
+		left join extension_type on (entity_extension.extensionType = extension_type.uuid)
+		left join entity_identifier on (entity.uuid = entity_identifier.entity_uuid)
+		left join assigning_authority on (entity_identifier.authority_uuid = assigning_authority.uuid)
+		left join entity_name on (entity.uuid = entity_name.entity_uuid)
+		left join concept as entity_name_concept on (entity_address_concept.uuid = entity_name.entity_uuid)
+		left join entity_name_comp on (entity_name.uuid = entity_name_comp.name_uuid)
+		left join concept as entity_name_comp_type on (entity_name_comp_type.uuid = entity_name_comp.type)
+		left join entity_relationship on (entity_relationship.entity_uuid = entity.uuid)
+		left join entity_telecom on (entity_telecom.entity_uuid = entity.uuid)
+		left join entity as rel_entity on (rel_entity.uuid = entity_relationship.entity_uuid)
+		left join entity_name as rel_entity_name on (rel_entity.uuid = rel_entity_name.entity_uuid)
+		left join entity_name_comp as rel_entity_name_comp on (rel_entity_name.uuid = rel_entity_name_comp.name_uuid)
+		left join entity_telecom as rel_entity_telecom on (rel_entity_telecom.entity_uuid = rel_entity.uuid);
+	
+-- PATIENT VIEW HELPER
+create view if not exists sqp_Patient as 
+	select patient.*,
+		entity.classConcept_mnemonic,
+		entity.determinerConcept_mnemonic,
+		entity.typeConcept_mnemonic,
+		entity.statusConcept_mnemonic,
+		entity.classConcept,
+		entity.created_by,
+		entity.creation_time,
+		entity.determinerConcept,
+		entity.obsoleted_by,
+		entity.obsoletion_time,
+		entity.replace_version_uuid,
+		entity.statusConcept,
+		entity.typeConcept,
+		entity.updated_by,
+		entity.updated_time,
+		entity.version_uuid,
+		entity.address_use,
+		entity.address_use_mnemonic,
+		entity.address_component_type,
+		entity.address_component_type_mnemonic,
+		entity.address_component_value,
+		entity.extension_type,
+		entity.extension_type_name,
+		entity.identifier_value,
+		entity.identifier_authority_name,
+		entity.identifier_authority_domainName,
+		entity.identifier_authority_oid,
+		entity.name_use,
+		entity.name_use_mnemonic,
+		entity.name_component_type,
+		entity.name_component_type_mnemonic,
+		entity.name_component_value,
+		entity.name_component_phoneticCode,
+		entity.name_component_phoneticAlgorithm,
+		entity.relationship_type,
+		entity.relationship_name_use,
+		entity.relationship_name_component_type,
+		entity.relationship_name_component_value,
+		entity.relationship_name_component_phoneticCode,
+		entity.relationship_name_component_phoneticAlgorithm,
+		entity.telecom_use,
+		entity.telecom_value
+	from patient inner join sqp_Entity as entity on (patient.entity_uuid = entity.uuid)
+		where entity.classConcept = X'6F9CCDBAA93F1E48963637457962804D';
+	

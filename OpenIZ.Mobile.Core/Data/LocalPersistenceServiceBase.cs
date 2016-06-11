@@ -14,23 +14,45 @@ using SQLite;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Interop.Util;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Data
 {
-	/// <summary>
-	/// Represents a data persistence service which stores data in the local SQLite data store
-	/// </summary>
-	public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
-	{
+    /// <summary>
+    /// Represents a data persistence service which stores data in the local SQLite data store
+    /// </summary>
+    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+    {
 
-		// Get tracer
-		protected Tracer m_tracer = Tracer.GetTracer (typeof(LocalPersistenceServiceBase<TData>));
+        // Get tracer
+        protected Tracer m_tracer = Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
 
-		// Configuration
-		protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
+        // Configuration
+        protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
 
-		// Mapper
-		protected static ModelMapper m_mapper = new ModelMapper(typeof(LocalPersistenceServiceBase<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
+        // Mapper
+        protected static ModelMapper m_mapper;
+
+        // Static CTOR
+        static LocalPersistenceServiceBase() {
+
+            var tracer = Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
+            try
+            {
+                m_mapper = new ModelMapper(typeof(LocalPersistenceServiceBase<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
+            }
+            catch(ModelMapValidationException ex)
+            {
+                tracer.TraceError("Error validating model map: {0}", ex);
+                throw ex;
+            }
+            catch(Exception ex)
+            {
+                tracer.TraceError("Error initializing persistence: {0}", ex);
+                throw ex;
+            }
+        }
 
 		#region IDataPersistenceService implementation
 		/// <summary>
@@ -239,6 +261,24 @@ namespace OpenIZ.Mobile.Core.Data
 					return results;
 
 				}
+                catch(NotSupportedException e)
+                {
+                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
+
+                    // Build dictionary
+                    var httpValues = HttpQueryExpressionBuilder.BuildQuery<TData>(query);
+                    var filter = new Dictionary<String, Object>();
+
+                    foreach (var f in httpValues)
+                    {
+                        if (filter.ContainsKey(f.Key))
+                            throw new NotSupportedException("Local query doesn't support OR semantics");
+                        else
+                            filter.Add(f.Key, f.Value);
+                    }
+                    // Query
+                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter);
+                }
 				catch(Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					throw;

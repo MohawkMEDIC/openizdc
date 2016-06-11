@@ -14,8 +14,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the class concept identifier.
 		/// </summary>
 		/// <value>The class concept identifier.</value>
-		[Column("class_concept_uuid"), MaxLength(16), NotNull]
-		public byte[] ClassConceptId {
+		[Column("classConcept"), MaxLength(16), NotNull]
+		public byte[] ClassConceptUuid {
 			get;
 			set;
 		}
@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the determiner concept identifier.
 		/// </summary>
 		/// <value>The determiner concept identifier.</value>
-		[Column("determiner_concept_uuid"), MaxLength(16)]
+		[Column("determinerConcept"), MaxLength(16)]
 		public byte[] DeterminerConceptUuid {
 			get;
 			set;
@@ -34,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the status concept identifier.
 		/// </summary>
 		/// <value>The status concept identifier.</value>
-		[Column("status_concept_uuid"), MaxLength(16)]
-		public byte[] StatusConceptId {
+		[Column("statusConcept"), MaxLength(16)]
+		public byte[] StatusConceptUuid {
 			get;
 			set;
 		}
@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the type concept identifier.
 		/// </summary>
 		/// <value>The type concept identifier.</value>
-		[Column("type_concept_uuid"), MaxLength(16)]
+		[Column("typeConcept"), MaxLength(16)]
 		public byte[] TypeConceptUuid {
 			get;
 			set;

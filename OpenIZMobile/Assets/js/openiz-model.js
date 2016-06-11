@@ -365,12 +365,11 @@ var OpenIZModel = new function () {
      */
     this.Exception = function(message, detail, cause)
     {
-        this._self = this;
+        _self = this;
+
         this.message = message;
         this.details = detail;
         this.caused_by = cause;
-        this.toString = function () {
-            return String.format("{message} ({details}) \r\n Caused By: {caused_by}", _self);
-        }
+
     }
 };

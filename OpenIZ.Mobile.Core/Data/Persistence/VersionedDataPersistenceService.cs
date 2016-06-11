@@ -12,7 +12,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Versioned domain data
     /// </summary>
-    public class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> where TDomain : DbVersionedData, new() 
+    public abstract class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> where TDomain : DbVersionedData, new() 
         where TModel : VersionedEntityData<TModel>, new()
     {
 

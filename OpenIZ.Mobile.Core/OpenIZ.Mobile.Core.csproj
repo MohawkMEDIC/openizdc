@@ -29,9 +29,14 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
+    <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
     <Compile Include="Data\Persistence\ConceptClassPersistenceService.cs" />
     <Compile Include="Data\Persistence\ConceptNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
@@ -149,7 +154,9 @@
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\001_init_openiz_core_data.sql" />
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -162,5 +169,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\Map\ModelMap.xml" />
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
 </Project>

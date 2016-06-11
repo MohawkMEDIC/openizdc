@@ -15,7 +15,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the date of birth.
 		/// </summary>
 		/// <value>The date of birth.</value>
-		[Column("dob")]
+		[Column("dateOfBirth")]
 		public DateTime? DateOfBirth {
 			get;
 			set;
@@ -25,7 +25,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the date of birth precision.
 		/// </summary>
 		/// <value>The date of birth precision.</value>
-		[Column("dob_precision")]
+		[Column("dateOfBirthPrecision")]
 		public DatePrecision? DateOfBirthPrecision {
 			get;
 			set;

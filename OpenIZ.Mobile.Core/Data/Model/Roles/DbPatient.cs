@@ -17,8 +17,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 		/// Gets or sets the gender concept
 		/// </summary>
 		/// <value>The gender concept.</value>
-		[Column("gender"), NotNull]
-		public int GenderConcept {
+		[Column("genderConcept"), NotNull]
+		public int GenderConceptUuid {
 			get;
 			set;
 		}
@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 		/// Gets or sets the deceased date.
 		/// </summary>
 		/// <value>The deceased date.</value>
-		[Column("deceased")]
+		[Column("deceasedDate")]
 		public DateTime? DeceasedDate {
 			get;
 			set;
@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 		/// Gets or sets the deceased date precision.
 		/// </summary>
 		/// <value>The deceased date precision.</value>
-		[Column("deceased_precision")]
+		[Column("deceasedDatePrevision")]
 		public DatePrecision? DeceasedDatePrecision {
 			get;
 			set;

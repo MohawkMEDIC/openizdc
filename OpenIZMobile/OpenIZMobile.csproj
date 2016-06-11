@@ -220,4 +220,10 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\js\openiz-localize.js" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-fr\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\values-sw\Strings.xml" />
+  </ItemGroup>
 </Project>

@@ -66,6 +66,7 @@
     <Compile Include="Interop\HttpQueryExpressionTest.cs" />
     <Compile Include="MobileTest.cs" />
     <Compile Include="Persistence\ConceptPersistenceServiceTest.cs" />
+    <Compile Include="Persistence\EntityPersistenceServiceTest.cs" />
     <Compile Include="Persistence\PersistenceTest.cs" />
     <Compile Include="Persistence\SecurityUserPersistenceServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
