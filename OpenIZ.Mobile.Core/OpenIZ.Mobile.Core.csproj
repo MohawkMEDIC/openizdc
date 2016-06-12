@@ -32,9 +32,8 @@
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
-    <Compile Include="Data\Persistence\ConceptClassPersistenceService.cs" />
-    <Compile Include="Data\Persistence\ConceptNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityAddressPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
@@ -136,7 +135,6 @@
     <Compile Include="Interop\Clients\ServiceClientBase.cs" />
     <Compile Include="Interop\Util\HttpQueryExpressionBuilder.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
-    <Compile Include="Data\Persistence\SecurityUserPersistenceService.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

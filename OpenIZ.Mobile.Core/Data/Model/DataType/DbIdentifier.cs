@@ -22,8 +22,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the type identifier.
 		/// </summary>
 		/// <value>The type identifier.</value>
-		[Column("type")]
-		public int TypeId {
+		[Column("type"), MaxLength(16)]
+		public byte[] TypeUuid {
 			get;
 			set;
 		}
@@ -32,8 +32,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the authority identifier.
 		/// </summary>
 		/// <value>The authority identifier.</value>
-		[Column("authority_uuid"), NotNull]
-		public int AuthorityUuid {
+		[Column("authority"), NotNull, MaxLength(16)]
+		public byte[] AuthorityUuid {
 			get;
 			set;
 		}

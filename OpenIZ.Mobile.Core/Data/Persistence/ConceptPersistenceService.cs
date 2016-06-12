@@ -38,9 +38,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert concept 
         /// </summary>
-        internal override Concept Insert(SQLiteConnection context, Concept data)
+        public override Concept Insert(SQLiteConnection context, Concept data)
         {
             data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
+            data.ClassKey = data.ClassKey == Guid.Empty ? ConceptClassKeys.Other : data.ClassKey;
+
+            // Ensure exists
+            data.Class?.EnsureExists(context);
+            data.StatusConcept?.EnsureExists(context);
+
+            // Persist
             var retVal = base.Insert(context, data);
 
             // Concept names
@@ -58,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override update to handle associated items
         /// </summary>
-        internal override Concept Update(SQLiteConnection context, Concept data)
+        public override Concept Update(SQLiteConnection context, Concept data)
         {
             var retVal = base.Update(context, data);
 
@@ -77,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        internal override Concept Obsolete(SQLiteConnection context, Concept data)
+        public override Concept Obsolete(SQLiteConnection context, Concept data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);

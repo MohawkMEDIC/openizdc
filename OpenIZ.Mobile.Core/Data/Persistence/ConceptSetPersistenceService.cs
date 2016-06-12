@@ -28,7 +28,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             return modelInstance;
         }
-
     }
 }
 

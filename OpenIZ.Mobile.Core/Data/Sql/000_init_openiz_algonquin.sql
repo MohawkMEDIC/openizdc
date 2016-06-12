@@ -125,7 +125,7 @@ create view if not exists sqp_Entity as
 		left join entity_extension on (entity.uuid = entity_extension.entity_uuid)
 		left join extension_type on (entity_extension.extensionType = extension_type.uuid)
 		left join entity_identifier on (entity.uuid = entity_identifier.entity_uuid)
-		left join assigning_authority on (entity_identifier.authority_uuid = assigning_authority.uuid)
+		left join assigning_authority on (entity_identifier.authority = assigning_authority.uuid)
 		left join entity_name on (entity.uuid = entity_name.entity_uuid)
 		left join concept as entity_name_concept on (entity_address_concept.uuid = entity_name.entity_uuid)
 		left join entity_name_comp on (entity_name.uuid = entity_name_comp.name_uuid)
@@ -145,16 +145,16 @@ create view if not exists sqp_Patient as
 		entity.typeConcept_mnemonic,
 		entity.statusConcept_mnemonic,
 		entity.classConcept,
-		entity.created_by,
-		entity.creation_time,
+		entity.createdBy,
+		entity.creationTime,
 		entity.determinerConcept,
-		entity.obsoleted_by,
-		entity.obsoletion_time,
+		entity.obsoletedBy,
+		entity.obsoletionTime,
 		entity.replace_version_uuid,
 		entity.statusConcept,
 		entity.typeConcept,
-		entity.updated_by,
-		entity.updated_time,
+		entity.updatedBy,
+		entity.updatedTime,
 		entity.version_uuid,
 		entity.address_use,
 		entity.address_use_mnemonic,

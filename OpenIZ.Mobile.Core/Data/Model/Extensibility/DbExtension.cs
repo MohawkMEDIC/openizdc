@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 		/// </summary>
 		/// <value>The extension identifier.</value>
 		[Column ("extensionType"), MaxLength(16)]
-		public byte[] ExtensionTypeId {
+		public byte[] ExtensionTypeUuid {
 			get;
 			set;
 		}

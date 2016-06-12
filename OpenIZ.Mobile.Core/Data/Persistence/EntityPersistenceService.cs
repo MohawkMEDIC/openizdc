@@ -9,6 +9,7 @@ using SQLite;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -21,8 +22,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
-        internal override Entity Insert(SQLiteConnection context, Entity data)
+        public override Entity Insert(SQLiteConnection context, Entity data)
         {
+
+            // Ensure FK exists
+            data.ClassConcept?.EnsureExists(context);
+            data.DeterminerConcept?.EnsureExists(context);
+            data.StatusConcept?.EnsureExists(context);
+            data.TypeConcept?.EnsureExists(context);
+
             var retVal = base.Insert(context, data);
 
 
@@ -96,8 +104,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified entity
         /// </summary>
-        internal override Entity Update(SQLiteConnection context, Entity data)
+        public override Entity Update(SQLiteConnection context, Entity data)
         {
+            // Esnure exists
+            data.ClassConcept?.EnsureExists(context);
+            data.DeterminerConcept?.EnsureExists(context);
+            data.StatusConcept?.EnsureExists(context);
+            data.TypeConcept?.EnsureExists(context);
+
             var retVal = base.Update(context, data);
 
             byte[] entityUuid = retVal.Key.ToByteArray();
@@ -167,6 +181,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context);
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Obsoleted status key
+        /// </summary>
+        public override Entity Obsolete(SQLiteConnection context, Entity data)
+        {
+            data.StatusConceptKey = StatusKeys.Obsolete;
+            return base.Obsolete(context, data);
         }
     }
 }

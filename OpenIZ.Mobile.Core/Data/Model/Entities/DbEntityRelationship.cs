@@ -18,7 +18,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Gets or sets the target entity
         /// </summary>
         [Column("target"), MaxLength(16), NotNull, Indexed(Name = "entity_relationship_target_type", Unique = true)]
-        public byte[] Target { get; set; }
+        public byte[] TargetUuid { get; set; }
 
 
         /// <summary>

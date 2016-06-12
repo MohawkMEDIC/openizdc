@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the creation time
 		/// </summary>
 		/// <value>The creation time.</value>
-		[Column("creation_time"), NotNull]
+		[Column("creationTime"), NotNull]
 		public DateTime? CreationTime {
 			get;
 			set;
@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the time that the record was obsoleted
 		/// </summary>
 		/// <value>The obsoletion time.</value>
-		[Column("obsoletion_time")]
+		[Column("obsoletionTime")]
 		public DateTime? ObsoletionTime {
 			get;
 			set;
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the updated time.
 		/// </summary>
 		/// <value>The updated time.</value>
-		[Column("updated_time")]
+		[Column("updatedTime")]
 		public DateTime? UpdatedTime {
 			get;
 			set;
@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the user that created the data
 		/// </summary>
 		/// <value>The created by identifier.</value>
-		[Column("created_by"), NotNull, MaxLength(16)]
+		[Column("createdBy"), NotNull, MaxLength(16)]
 		public byte[] CreatedByUuid {
 			get;
 			set;
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Obsoletion user
 		/// </summary>
 		/// <value>The obsoleted by identifier.</value>
-		[Column("obsoleted_by"), MaxLength(16)]
+		[Column("obsoletedBy"), MaxLength(16)]
 		public byte[] ObsoletedByUuid { 
 			get;
 			set;
@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the updated by identifier.
 		/// </summary>
 		/// <value>The updated by identifier.</value>
-		[Column("updated_by"), MaxLength(16)]
+		[Column("updatedBy"), MaxLength(16)]
 		public byte[] UpdatedByUuid {
 			get;
 			set;

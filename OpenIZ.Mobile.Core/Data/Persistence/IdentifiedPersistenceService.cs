@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
-		internal override TModel Insert (SQLiteConnection context, TModel data)
+		public override TModel Insert (SQLiteConnection context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
@@ -59,36 +59,36 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			return data;
 		}
 
-		/// <summary>
-		/// Perform the actual update.
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		internal override TModel Update (SQLiteConnection context, TModel data)
+        /// <summary>
+        /// Perform the actual update.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public override TModel Update (SQLiteConnection context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			context.Update (domainObject);
 			return data;
 		}
 
-		/// <summary>
-		/// Performs the actual obsoletion
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		internal override TModel Obsolete (SQLiteConnection context, TModel data)
+        /// <summary>
+        /// Performs the actual obsoletion
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public override TModel Obsolete (SQLiteConnection context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			context.Delete (domainObject);
 			return data;
 		}
 
-		/// <summary>
-		/// Performs the actual query
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="query">Query.</param>
-		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset = 0, int count = -1)
+        /// <summary>
+        /// Performs the actual query
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="query">Query.</param>
+        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset = 0, int count = -1)
 		{
 			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
 			var retVal = context.Table<TDomain> ().Where (domainQuery).Skip (offset);
@@ -97,14 +97,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			return retVal.ToList().Select(o=>this.ToModelInstance(o, context)).ToList();
 		}
 
-		/// <summary>
-		/// Performs the actual query
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="query">Query.</param>
-		/// <param name="storedQueryName">Stored query name.</param>
-		/// <param name="parms">Parms.</param>
-		internal override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms, int offset = 0, int count = -1)
+        /// <summary>
+        /// Performs the actual query
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="query">Query.</param>
+        /// <param name="storedQueryName">Stored query name.</param>
+        /// <param name="parms">Parms.</param>
+        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms, int offset = 0, int count = -1)
 		{
 
             // Build a query
@@ -115,13 +115,77 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			if (parms.Count > 0) {
 				sb.Append (" WHERE ");
 				foreach (var s in parms) {
-					sb.AppendFormat (" {0} = ? AND ", s.Key.Replace(".","_"));
-					vals.Add (s.Value);
-				}
-				sb.Remove (sb.Length - 4, 4);
+
+                    object value = s.Value;
+                    string key = s.Key.Replace(".", "_");
+                    if (value is String)
+                    {
+                        var sValue = value as String;
+                        switch (sValue[0])
+                        {
+                            case '<':
+                                if (sValue[1] == '=')
+                                {
+                                    sb.AppendFormat(" {0} <= ? AND ", key);
+                                    value = sValue.Substring(2);
+                                }
+                                else
+                                {
+                                    sb.AppendFormat(" {0} < ? AND ", key);
+                                    value = sValue.Substring(1);
+                                }
+                                break;
+                            case '>':
+                                if (sValue[1] == '=')
+                                {
+                                    sb.AppendFormat(" {0} >= ? AND ", key);
+                                    value = sValue.Substring(2);
+                                }
+                                else
+                                {
+                                    sb.AppendFormat(" {0} > ? AND ", key);
+                                    value = sValue.Substring(1);
+                                }
+                                break;
+                            case '!':
+                                sb.AppendFormat(" {0} <> ? AND ", key);
+                                value = sValue.Substring(1);
+                                break;
+                            case '~':
+                                sb.AppendFormat(" {0} LIKE '%' || ? || '%' AND ", key);
+                                value = sValue.Substring(1);
+                                break;
+                            default:
+                                sb.AppendFormat(" {0} = ? AND ", key);
+                                break;
+                        }
+                    }
+                    else
+                        sb.AppendFormat(" {0} = ? AND ", key);
+
+                    // Value correction
+                    DateTime tdateTime = default(DateTime);
+                    if (value is Guid)
+                        vals.Add(((Guid)value).ToByteArray());
+                    else if (DateTime.TryParse(value.ToString(), out tdateTime))
+                        vals.Add(tdateTime);
+                    else
+                        vals.Add(value);
+
+                }
+                sb.Remove (sb.Length - 4, 4);
 			}
             sb.Append(");");
-			var retVal = context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Skip (offset);
+
+            // Log
+#if DEBUG
+            this.m_tracer.TraceVerbose("EXECUTE: {0}", sb);
+            foreach (var v in vals)
+                this.m_tracer.TraceVerbose(" --> {0}", v);
+#endif
+            
+
+            var retVal = context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Skip (offset);
 			if (count >= 0)
 				retVal = retVal.Take (count);
 			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));

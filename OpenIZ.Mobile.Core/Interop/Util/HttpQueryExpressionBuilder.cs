@@ -143,7 +143,7 @@ namespace OpenIZ.Mobile.Core.Interop.Util
 
 				// Not able to map
 				if (!String.IsNullOrEmpty (parmName) && parmValue != null) {
-					String fParmValue = parmValue.ToString ();
+					Object fParmValue = parmValue;
 					if (parmValue is DateTime)
 						fParmValue = ((DateTime)parmValue).ToString ("o");
 					else if (parmValue is DateTimeOffset)
@@ -217,7 +217,8 @@ namespace OpenIZ.Mobile.Core.Interop.Util
 
 					// Is this a delay load?
 					var delayLoadAttribute= memberExpr.Member.GetCustomAttribute<DelayLoadAttribute>();
-					if (delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.KeyPropertyName))
+                    var xmlIgnoreAttribute = memberExpr.Member.GetCustomAttribute<XmlIgnoreAttribute>();
+					if (xmlIgnoreAttribute != null && delayLoadAttribute != null && !String.IsNullOrEmpty(delayLoadAttribute.KeyPropertyName))
 						memberInfo = memberExpr.Expression.Type.GetRuntimeProperty (delayLoadAttribute.KeyPropertyName);
 
 					// TODO: Delay and bound properties!!
@@ -225,11 +226,13 @@ namespace OpenIZ.Mobile.Core.Interop.Util
 					if (memberXattribute == null)
 						return null; // TODO: When this occurs?
 
-					// Return path
-					if (String.IsNullOrEmpty (path))
-						return memberXattribute.ElementName;
-					else
-						return String.Format("{0}.{1}", path, memberXattribute.ElementName);
+                    // Return path
+                    if (String.IsNullOrEmpty(path))
+                        return memberXattribute.ElementName;
+                    else if (memberXattribute.ElementName == "id") // ID can be ignored
+                        return path;
+                    else
+                        return String.Format("{0}.{1}", path, memberXattribute.ElementName);
 				}
 				return null;
 			}

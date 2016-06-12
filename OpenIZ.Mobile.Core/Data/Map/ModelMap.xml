@@ -40,7 +40,7 @@
     <property modelName="SourceEntityKey" domainName="ConceptUuid"/>
   </class>
 
-  <!-- Entity Map -->
+  <!-- Entity Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
@@ -69,4 +69,66 @@
     <property modelName="ComponentTypeKey" domainName="ComponentTypeUuid"/>
     <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmUuid"/>
   </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityAddress, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="AddressUseKey" domainName="UseConceptUuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityAddressComponent, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityAddressComponent, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="AddressUuid"/>
+    <property modelName="ComponentTypeKey" domainName="ComponentTypeUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbEntityIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="TypeKey" domainName="TypeUuid"/>
+    <property modelName="AuthorityKey" domainName="AuthorityUuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbIdentifierType, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbAssigningAuthority, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+    <property modelName="TargetEntityKey" domainName="TargetUuid"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbTelecomAddress, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="AddressUseKey" domainName="TelecomUseUuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbEntityExtension, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="ExtensionTypeKey" domainName="ExtensionTypeUuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbExtensionType, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+
 </modelMap>

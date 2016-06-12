@@ -121,7 +121,9 @@ namespace OpenIZ.Mobile.Core.Data
 
 					connection.BeginTransaction ();
 
+                    data.SetDelayLoad(false);
 					data = this.Insert(connection, data);
+                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -130,6 +132,7 @@ namespace OpenIZ.Mobile.Core.Data
                     return data;
 
                 }
+                
                 catch (Exception e) {
 					this.m_tracer.TraceError("Error : {0}", e);
 					connection.Rollback ();
@@ -165,7 +168,9 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("UPDATE {0}", data);
 					connection.BeginTransaction ();
 
+                    data.SetDelayLoad(false);
 					data = this.Update(connection, data);
+                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -207,7 +212,9 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
 					connection.BeginTransaction ();
 
+                    data.SetDelayLoad(false);
 					data = this.Obsolete(connection, data);
+                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -358,31 +365,40 @@ namespace OpenIZ.Mobile.Core.Data
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
-		internal abstract TData Insert(SQLiteConnection context, TData data);
-		/// <summary>
-		/// Perform the actual update.
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		internal abstract TData Update(SQLiteConnection context, TData data);
-		/// <summary>
-		/// Performs the actual obsoletion
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		internal abstract TData Obsolete(SQLiteConnection context, TData data);
-		/// <summary>
-		/// Performs the actual query
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="query">Query.</param>
-		internal abstract IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> query, int offset = 0, int count = -1);
-		/// <summary>
-		/// Performs the actual query
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="query">Query.</param>
-		internal abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset = 0, int count = -1);
-	}
+		public abstract TData Insert(SQLiteConnection context, TData data);
+        /// <summary>
+        /// Perform the actual update.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public abstract TData Update(SQLiteConnection context, TData data);
+        /// <summary>
+        /// Performs the actual obsoletion
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public abstract TData Obsolete(SQLiteConnection context, TData data);
+        /// <summary>
+        /// Performs the actual query
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="query">Query.</param>
+        public abstract IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> query, int offset = 0, int count = -1);
+        /// <summary>
+        /// Performs the actual query
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="query">Query.</param>
+        public abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset = 0, int count = -1);
+
+        /// <summary>
+        /// Get the specified key.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        internal TData Get(SQLiteConnection context, Guid key)
+        {
+            return this.Query(context, o => o.Key == key)?.SingleOrDefault();
+        }
+    }
 }
 
