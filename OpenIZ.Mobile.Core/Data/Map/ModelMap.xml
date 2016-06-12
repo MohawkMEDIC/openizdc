@@ -131,4 +131,16 @@
     <property modelName="Key" domainName="Uuid"/>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbEntityNote, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+    <property modelName="AuthorKey" domainName="AuthorUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.EntityTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbEntityTag, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
 </modelMap>

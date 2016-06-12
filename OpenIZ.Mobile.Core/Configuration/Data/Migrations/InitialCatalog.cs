@@ -108,6 +108,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbPerson>();
                     db.CreateTable<DbPlace>();
                     db.CreateTable<DbTelecomAddress>();
+                    db.CreateTable<DbEntityTag>();
 
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();

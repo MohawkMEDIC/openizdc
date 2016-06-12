@@ -51,6 +51,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreEqual(DeterminerKeys.Described, afterTest.DeterminerConceptKey);
             Assert.AreEqual(EntityClassKeys.Food, afterTest.ClassConceptKey);
             Assert.IsTrue(afterTest.Names.Exists(o => o.Component.Exists(c => c.Value == "Strawberries")));
+            Assert.Fail();
         }
 
         /// <summary>
@@ -302,5 +303,56 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreEqual(typeof(EntityPersistenceServiceTest), person.Extensions[0].ExtensionType.ExtensionHandler);
             Assert.IsTrue(BitConverter.ToBoolean(person.Extensions[0].ExtensionValue, 0));
         }
+
+        /// <summary>
+        /// Test the adding of notes to a patient
+        /// </summary>
+        [TestMethod]
+        public void TestEntityNotePersistence()
+        {
+            Entity person = new Entity()
+            {
+                DeterminerConceptKey = DeterminerKeys.Specific,
+                ClassConceptKey = EntityClassKeys.Person,
+                StatusConceptKey = StatusKeys.Active,
+                Names = new List<EntityName>()
+                {
+                    new EntityName(NameUseKeys.Legal, "Smith", "John")
+                }
+            };
+            person.Notes.Add(new EntityNote(Guid.Empty, "He doesn't even like Peanutbutter!!!!!"));
+
+            var afterInsert = base.DoTestInsert(person);
+            Assert.AreEqual(EntityClassKeys.Person, afterInsert.ClassConceptKey);
+            Assert.AreEqual(1, afterInsert.Notes.Count);
+            Assert.AreEqual(Guid.Empty, person.Notes[0].AuthorKey);
+            Assert.AreEqual("He doesn't even like Peanutbutter!!!!!", person.Notes[0].Text);
+        }
+
+        /// <summary>
+        /// Test the adding of tags to a patient
+        /// </summary>
+        [TestMethod]
+        public void TestEntityTagPersistence()
+        {
+            Entity person = new Entity()
+            {
+                DeterminerConceptKey = DeterminerKeys.Specific,
+                ClassConceptKey = EntityClassKeys.Person,
+                StatusConceptKey = StatusKeys.Active,
+                Names = new List<EntityName>()
+                {
+                    new EntityName(NameUseKeys.Legal, "Smith", "Johnny")
+                }
+            };
+            person.Tags.Add(new EntityTag("noPeanutButter", "true"));
+
+            var afterInsert = base.DoTestInsert(person);
+            Assert.AreEqual(EntityClassKeys.Person, afterInsert.ClassConceptKey);
+            Assert.AreEqual(1, afterInsert.Tags.Count);
+            Assert.AreEqual("noPeanutButter", person.Tags[0].TagKey);
+            Assert.AreEqual("true", person.Tags[0].Value);
+        }
+
     }
 }
