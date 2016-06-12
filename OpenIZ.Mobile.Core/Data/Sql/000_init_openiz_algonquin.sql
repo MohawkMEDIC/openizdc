@@ -140,6 +140,7 @@ create view if not exists sqp_Entity as
 -- PATIENT VIEW HELPER
 create view if not exists sqp_Patient as 
 	select patient.*,
+		concept.mnemonic as genderConcept_mnemonic,
 		entity.classConcept_mnemonic,
 		entity.determinerConcept_mnemonic,
 		entity.typeConcept_mnemonic,
@@ -182,6 +183,7 @@ create view if not exists sqp_Patient as
 		entity.relationship_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
-	from patient inner join sqp_Entity as entity on (patient.entity_uuid = entity.uuid)
+	from patient inner join sqp_Entity as entity on (patient.uuid = entity.uuid)
+		inner join concept on (concept.uuid = patient.genderConcept)
 		where entity.classConcept = X'6F9CCDBAA93F1E48963637457962804D';
 	

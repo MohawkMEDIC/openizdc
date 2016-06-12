@@ -36,6 +36,7 @@
     <Compile Include="Data\Persistence\EntityAddressPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\PatientPersistenceService.cs" />
     <Compile Include="Data\Persistence\PersonPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

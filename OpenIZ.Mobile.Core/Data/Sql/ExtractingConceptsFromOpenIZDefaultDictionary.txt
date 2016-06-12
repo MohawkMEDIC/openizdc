@@ -1,5 +1,6 @@
-﻿ select 
-	CONCAT('INSERT INTO concept (isReadonly, mnemonic, statusConcept, class, version_uuid, creation_time, created_by, uuid) VALUES (',
+﻿ 
+ select 
+	CONCAT('INSERT INTO concept (isReadonly, mnemonic, statusConcept, class, version_uuid, creationTime, createdBy, uuid) VALUES (',
 		IsSystemConcept, ', ''', 
 		Mnemonic, ''', X''',
 		CONVERT(VARCHAR(32), CONVERT(VARBINARY(16), StatusConceptId), 2), ''',X''',
@@ -27,7 +28,10 @@
 			'AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59',
 			'DE358951-24DC-48DC-8185-F10B7EA4DCD1',
 			'5285AF4B-E060-41B7-99D9-FD8237E5AECF',
-			'EFFC9F86-56E2-4920-A75A-FEC310AA1430'
+			'EFFC9F86-56E2-4920-A75A-FEC310AA1430',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA',
+			'8DF14280-3D05-45A6-BFAE-15B63DFC3791',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA'
 		))
 union
 select  CONCAT('INSERT INTO concept_name (concept_uuid, language, value, phoneticCode, phoneticAlgorithm, uuid) VALUES (X''',
@@ -54,7 +58,11 @@ select  CONCAT('INSERT INTO concept_name (concept_uuid, language, value, phoneti
 			'AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59',
 			'DE358951-24DC-48DC-8185-F10B7EA4DCD1',
 			'5285AF4B-E060-41B7-99D9-FD8237E5AECF',
-			'EFFC9F86-56E2-4920-A75A-FEC310AA1430'
+			'EFFC9F86-56E2-4920-A75A-FEC310AA1430',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA',
+			'8DF14280-3D05-45A6-BFAE-15B63DFC3791',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA'
+
 		))
 union
 select concat('INSERT INTO concept_set (name, mnemonic, oid, url, uuid) VALUES (''', 
@@ -79,7 +87,11 @@ select concat('INSERT INTO concept_set (name, mnemonic, oid, url, uuid) VALUES (
 			'AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59',
 			'DE358951-24DC-48DC-8185-F10B7EA4DCD1',
 			'5285AF4B-E060-41B7-99D9-FD8237E5AECF',
-			'EFFC9F86-56E2-4920-A75A-FEC310AA1430'
+			'EFFC9F86-56E2-4920-A75A-FEC310AA1430',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA',
+			'8DF14280-3D05-45A6-BFAE-15B63DFC3791',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA'
+
 		)
 union
 select concat('INSERT INTO concept_concept_set (concept_uuid, concept_set_uuid, uuid) VALUES (X''',
@@ -105,5 +117,9 @@ select concat('INSERT INTO concept_concept_set (concept_uuid, concept_set_uuid, 
 			'AAE906AA-27B3-4CDB-AFF1-F08B0FD31E59',
 			'DE358951-24DC-48DC-8185-F10B7EA4DCD1',
 			'5285AF4B-E060-41B7-99D9-FD8237E5AECF',
-			'EFFC9F86-56E2-4920-A75A-FEC310AA1430'
+			'EFFC9F86-56E2-4920-A75A-FEC310AA1430',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA',
+			'8DF14280-3D05-45A6-BFAE-15B63DFC3791',
+			'5CCA5869-8A7B-47A3-83DB-041D5AF5C9DA'
+
 		));

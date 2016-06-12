@@ -19,7 +19,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class PersonPersistenceService : IdentifiedPersistenceService<Person, DbPerson>
     {
         // Map
-        private Dictionary<DatePrecision, String> m_precisionMap = new Dictionary<DatePrecision, String>()
+        public static readonly Dictionary<DatePrecision, String> PrecisionMap = new Dictionary<DatePrecision, String>()
         {
             { DatePrecision.Day, "d" },
             { DatePrecision.Hour, "H" },
@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
             if (modelInstance.DateOfBirthPrecision.HasValue)
-                dbPerson.DateOfBirthPrecision = m_precisionMap[modelInstance.DateOfBirthPrecision.Value];
+                dbPerson.DateOfBirthPrecision = PrecisionMap[modelInstance.DateOfBirthPrecision.Value];
             return dbPerson;
         }
 
@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Reverse lookup
             if (!String.IsNullOrEmpty(person.DateOfBirthPrecision))
-                retVal.DateOfBirthPrecision = this.m_precisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
+                retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
             return retVal;
         }

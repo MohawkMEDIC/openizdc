@@ -149,5 +149,11 @@
        domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbPerson, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
   </class>
-  
+
+  <!-- Patient Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Roles.DbPatient, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="GenderConceptKey" domainName="GenderConceptUuid"/>
+  </class>
 </modelMap>
