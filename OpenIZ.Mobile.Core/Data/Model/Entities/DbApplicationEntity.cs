@@ -7,14 +7,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents an entity which is used to represent an application
 	/// </summary>
 	[Table("application")]
-	public class DbApplicationEntity : DbEntityLink
-	{
+	public class DbApplicationEntity : DbIdentified
+    {
 		/// <summary>
 		/// Gets or sets the security application.
 		/// </summary>
 		/// <value>The security application.</value>
-		[Column("security_application_uuid"), MaxLength(16)]
-		public byte[] SecurityApplication {
+		[Column("securityApplication"), MaxLength(16)]
+		public byte[] SecurityApplicationUuid {
 			get;
 			set;
 		}

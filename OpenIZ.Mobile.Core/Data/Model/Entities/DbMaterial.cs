@@ -7,8 +7,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a material in the database
 	/// </summary>
 	[Table("material")]
-	public class DbMaterial : DbEntityLink
-	{
+	public class DbMaterial : DbIdentified
+    {
 
 		/// <summary>
 		/// Gets or sets the quantity of an entity within its container.

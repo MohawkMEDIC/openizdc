@@ -143,4 +143,11 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
   </class>
+
+  <!-- Person Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbPerson, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+  
 </modelMap>

@@ -10,7 +10,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 	/// Represents a patient in the SQLite store
 	/// </summary>
 	[Table("patient")]
-	public class DbPatient : DbPerson
+	public class DbPatient
 	{
 
 		/// <summary>

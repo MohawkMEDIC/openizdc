@@ -20,6 +20,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     {
 
         /// <summary>
+        /// To model instance
+        /// </summary>
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnection context) where TEntityType : Entity, new()
+        {
+            return m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
+        }
+
+        /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
         public override Entity Insert(SQLiteConnection context, Entity data)

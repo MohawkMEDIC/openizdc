@@ -8,7 +8,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 	/// Represents a health care provider in the database
 	/// </summary>
 	[Table("provider")]
-	public class DbProvider : DbPerson
+	public class DbProvider
 	{
 
 		/// <summary>
