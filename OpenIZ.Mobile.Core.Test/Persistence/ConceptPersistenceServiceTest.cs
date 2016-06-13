@@ -148,6 +148,52 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             //Assert.AreEqual(originalId, afterTest.PreviousVersion.PreviousVersionKey);
         }
 
-     
+        /// <summary>
+        /// Tests that the concept persistence service can persist a 
+        /// simple concept which has a display name
+        /// </summary>
+        [TestMethod]
+        public void TestSearchNamedConcept()
+        {
+            Concept namedConcept = new Concept()
+            {
+                ClassKey = ConceptClassKeys.Other,
+                IsSystemConcept = false,
+                Mnemonic = "TESTCODE4"
+            };
+
+            // Names
+            namedConcept.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code 1",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+            namedConcept.ConceptNames.Add(new ConceptName()
+            {
+                Name = "Test Code 1",
+                Language = "en",
+                PhoneticAlgorithm = PhoneticAlgorithm.EmptyAlgorithm,
+                PhoneticCode = "E"
+            });
+
+            // Insert
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+            var afterTest = persistenceService.Insert(namedConcept);
+
+            Assert.AreEqual("TESTCODE4", afterTest.Mnemonic);
+            Assert.AreEqual("Other", afterTest.Class.Mnemonic);
+            Assert.IsFalse(afterTest.IsSystemConcept);
+            Assert.AreEqual(2, afterTest.ConceptNames.Count);
+            Assert.AreEqual("en", afterTest.ConceptNames[0].Language);
+            Assert.IsTrue(afterTest.ConceptNames.Exists(n => n.Name == "Test Code 1"));
+            Assert.AreEqual("E", afterTest.ConceptNames[0].PhoneticCode);
+            Assert.IsNotNull(afterTest.CreatedBy);
+
+            var originalId = afterTest.VersionKey;
+
+            this.DoTestQuery(o => o.ConceptNames.Any(p => p.Name == "Test Code 1"), afterTest.Key);
+        }
     }
 }

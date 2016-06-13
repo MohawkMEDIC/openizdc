@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the use concept identifier.
 		/// </summary>
 		/// <value>The use concept identifier.</value>
-		[Column("use_concept_uuid"), MaxLength(16)]
+		[Column("use"), MaxLength(16)]
 		public byte[] UseConceptUuid {
 			get;
 			set;
@@ -26,7 +26,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents an identified address component
 	/// </summary>
 	[Table("entity_address_comp")]
-	public class DbEntityAddressComponent : DbIdentified
+	public class DbEntityAddressComponent : DbGenericNameComponent
 	{
 
 		/// <summary>
@@ -38,26 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			get;
 			set;
 		}
-
-		/// <summary>
-		/// Gets or sets the type identifier.
-		/// </summary>
-		/// <value>The type identifier.</value>
-		[Column("type_uuid"), MaxLength(16), NotNull]
-		public byte[] TypeUuid {
-			get;
-			set;
-		}
-
-		/// <summary>
-		/// Gets or sets the value of the identifier
-		/// </summary>
-		/// <value>The value.</value>
-		[Column("value")]
-		public String Value {
-			get;
-			set;
-		}
+	
 
 	}
 

@@ -14,8 +14,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the type concept identifier.
 		/// </summary>
 		/// <value>The type concept identifier.</value>
-		[Column("type"), NotNull]
-		public int TypeConceptId {
+		[Column("typeConcept"), NotNull, MaxLength(16)]
+		public byte[] TypeConceptUuid {
 			get;
 			set;
 		}

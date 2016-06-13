@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Client Deconnecte OpenIZ</string>
+	<string name="startup">Commencement le OpenIZ</string>
+	<string name="needs_setup">Nous avons besoin de mettre des choses...</string>
+	<string name="installing_applets">Demarrage Applets...</string>
+
+
+	<!-- Errors -->
+	<string name="err_general">Oops! Something went wrong!</string>
+	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
+	<string name="err_startup">A serious error occurred during startup. OpenIZ Mobile cannot continue. Please reference the following error code when seeking help:</string>
+	<string name="err_login">Login error: </string>
+	<string name="err_login_invalidusername">Invalid username/password</string>
+	<string name="err_exception">An unexpected error occurred</string>
+</resources>

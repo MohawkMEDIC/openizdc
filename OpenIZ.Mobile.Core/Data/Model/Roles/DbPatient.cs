@@ -10,15 +10,15 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 	/// Represents a patient in the SQLite store
 	/// </summary>
 	[Table("patient")]
-	public class DbPatient : DbPerson
+	public class DbPatient : DbIdentified
 	{
 
 		/// <summary>
 		/// Gets or sets the gender concept
 		/// </summary>
 		/// <value>The gender concept.</value>
-		[Column("gender"), NotNull]
-		public int GenderConcept {
+		[Column("genderConcept"), NotNull, MaxLength(16)]
+		public byte[] GenderConceptUuid {
 			get;
 			set;
 		}
@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 		/// Gets or sets the deceased date.
 		/// </summary>
 		/// <value>The deceased date.</value>
-		[Column("deceased")]
+		[Column("deceasedDate")]
 		public DateTime? DeceasedDate {
 			get;
 			set;
@@ -37,8 +37,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 		/// Gets or sets the deceased date precision.
 		/// </summary>
 		/// <value>The deceased date precision.</value>
-		[Column("deceased_precision")]
-		public DatePrecision? DeceasedDatePrecision {
+		[Column("deceasedDatePrevision"), MaxLength(1)]
+		public string DeceasedDatePrecision {
 			get;
 			set;
 		}

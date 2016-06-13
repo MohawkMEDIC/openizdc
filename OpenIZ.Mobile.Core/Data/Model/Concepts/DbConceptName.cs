@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the language.
 		/// </summary>
 		/// <value>The language.</value>
-		[Column("lang")]
+		[Column("language")]
 		public String Language {
 			get;
 			set;
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name"), Indexed, NotNull]
+		[Column("value"), Indexed, NotNull]
 		public String Name {
 			get;
 			set;
@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the phonetic code.
 		/// </summary>
 		/// <value>The phonetic code.</value>
-		[Column("phon_code"), Indexed]
+		[Column("phoneticCode"), Indexed]
 		public String PhoneticCode {
 			get;
 			set;
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phon_alg"), MaxLength(16)]
+		[Column("phoneticAlgorithm"), MaxLength(16)]
 		public byte[] PhoneticAlgorithmUuid {
 			get;
 			set;

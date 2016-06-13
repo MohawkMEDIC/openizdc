@@ -7,8 +7,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a place in the local database
 	/// </summary>
 	[Table("place")]
-	public class DbPlace : DbEntityLink
-	{
+	public class DbPlace : DbIdentified
+    {
 		
 	}
 }

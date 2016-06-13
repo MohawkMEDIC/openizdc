@@ -7,6 +7,36 @@
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
+  <strings lang="en">
+    <string key="login">Login to</string>
+    <string key="btnForgot">Forgot password</string>
+    <string key="password">Password</string>
+    <string key="username">User Name</string>
+    <!-- Common -->
+    <string key="common_btnSave">Save</string>
+    <string key="common_btnCancel">Cancel</string>
+    <string key="common_btnLogin">Login</string>
+    <string key="common_btnLogout">Logout</string>
+    <string key="common_btnRefresh">Refresh</string>
+  </strings>
+  <strings lang="fr">
+    <string key="login">Connecter a</string>
+    <string key="password">Mot de passe:</string>
+    <string key="username">Nom</string>
+    <string key="btnForgot">Oubile mot passe</string>
+    <string key="common_btnSave">Sauver</string>
+    <string key="common_btnCancel">Annuler</string>
+    <string key="common_btnLogin">Login</string>
+    <string key="common_btnLogout">Deconnecter</string>
+    <string key="common_btnRefresh">Rafraichir</string>
+  </strings>
+  <strings lang="sw">
+    <string key="common_btnSave">Hifadhi</string>
+    <string key="common_btnCancel">Kufuta</string>
+    <string key="common_btnLogin">Ingia</string>
+    <string key="common_btnLogout">Ingia Kati</string>
+    <string key="common_btnRefresh">Burudisha</string>
+  </strings>
   <asset name="login" mimeType="text/html">
     <contentHtml>
       <title lang="en">Login to OpenIZ</title>
@@ -34,10 +64,10 @@
               <div class="btn-group pull-right">
                 <button class="btn-danger btn" ng-disabled="username == null" ng-click="forgotPassword(username)">
                   <span class="glyphicon glyphicon-resize-full">
-                  </span> {{ "forgot" | i18n }}
+                  </span> {{ "btnForgot" | i18n }}
                 </button>
                 <button class="btn-primary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
-                  {{ "login" | i18n }} <span class="glyphicon glyphicon-login"></span>
+                  {{ "common_btnLogin" | i18n }} <span class="glyphicon glyphicon-login"></span>
                 </button>
               </div>
             </div>
@@ -65,12 +95,17 @@
             {
               var session = OpenIZ.Authentication.login(username, password);
               if(session == null)
-                alert(OpenIZ.Localization.getString("invalidCredential"));
+                alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
               else
                 window.location = OpenIZ.urlParams["returnUrl"];
             }
             catch(ex)
             {
+              if(typeof(ex) == "string")
+                alert(ex);
+              else if(ex.message != undefined)
+                alert("" + ex.message + " - " + ex.details);
+              else
                 alert(ex);
             }
           };
@@ -89,16 +124,5 @@
       ]]>
     </contentText>
   </asset>
-  <strings lang="en">
-    <string key="login">Login to</string>
-    <string key="forgot">Forgot password</string>
-    <string key="password">Password</string>
-    <string key="username">User Name</string>
-  </strings>
-  <strings lang="fr">
-    <string key="login">Connecter a</string>
-    <string key="forgot">Oubile mot passe</string>
-    <string key="password">Mot de passe:</string>
-    <string key="username">Nom</string>
-  </strings>
+
 </AppletManifest>

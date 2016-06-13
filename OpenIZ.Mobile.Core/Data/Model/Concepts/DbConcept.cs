@@ -15,7 +15,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets whether the object is a system concept or not
 		/// </summary>
-		[Column("is_system")]
+		[Column("isReadonly")]
 		public bool IsSystemConcept {
 			get;
 			set;
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("status_uuid"), Indexed, NotNull, MaxLength(16)]
+		[Column("statusConcept"), Indexed, NotNull, MaxLength(16)]
 		public byte[] StatusUuid {
 			get;
 			set;
@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("class_uuid"), NotNull, MaxLength(16)]
+		[Column("class"), NotNull, MaxLength(16)]
 		public byte[] ClassUuid {
 			get;
 			set;

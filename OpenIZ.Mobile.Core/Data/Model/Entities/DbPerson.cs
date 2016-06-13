@@ -8,14 +8,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a person
 	/// </summary>
 	[Table("person")]
-	public class DbPerson : DbEntityLink
+	public class DbPerson : DbIdentified
 	{
 
 		/// <summary>
 		/// Gets or sets the date of birth.
 		/// </summary>
 		/// <value>The date of birth.</value>
-		[Column("dob")]
+		[Column("dateOfBirth")]
 		public DateTime? DateOfBirth {
 			get;
 			set;
@@ -25,8 +25,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the date of birth precision.
 		/// </summary>
 		/// <value>The date of birth precision.</value>
-		[Column("dob_precision")]
-		public DatePrecision? DateOfBirthPrecision {
+		[Column("dateOfBirthPrecision"), MaxLength(1)]
+		public string DateOfBirthPrecision {
 			get;
 			set;
 		}

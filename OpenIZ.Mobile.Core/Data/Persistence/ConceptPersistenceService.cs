@@ -25,22 +25,30 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;
-            modelInstance.ConceptSets = context.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set = concept_set.uuid) WHERE concept_concept_set.concept = ?", dbInstance.Uuid).Select(
+            modelInstance.ConceptSets = context.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
                 o => m_mapper.MapDomainInstance<DbConceptSet, ConceptSet>(o)
             ).ToList();
 
             // Set the concept names
             //modelInstance.ConceptNames = context.Table<DbConceptName>().Where(o => o.ConceptUuid == dbInstance.Uuid).Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList();
-            
+            //modelInstance.StatusConcept = m_mapper.MapDomainInstance<DbConcept, Concept>(context.Table<DbConcept>().Where(o => o.Uuid == dbInstance.StatusUuid).FirstOrDefault());
+            //modelInstance.Class = m_mapper.MapDomainInstance<DbConceptClass, ConceptClass>(context.Table<DbConceptClass>().Where(o => o.Uuid == dbInstance.ClassUuid).FirstOrDefault());
             return modelInstance;
         }
 
         /// <summary>
         /// Insert concept 
         /// </summary>
-        internal override Concept Insert(SQLiteConnection context, Concept data)
+        public override Concept Insert(SQLiteConnection context, Concept data)
         {
             data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
+            data.ClassKey = data.ClassKey == Guid.Empty ? ConceptClassKeys.Other : data.ClassKey;
+
+            // Ensure exists
+            data.Class?.EnsureExists(context);
+            data.StatusConcept?.EnsureExists(context);
+
+            // Persist
             var retVal = base.Insert(context, data);
 
             // Concept names
@@ -58,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override update to handle associated items
         /// </summary>
-        internal override Concept Update(SQLiteConnection context, Concept data)
+        public override Concept Update(SQLiteConnection context, Concept data)
         {
             var retVal = base.Update(context, data);
 
@@ -77,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        internal override Concept Obsolete(SQLiteConnection context, Concept data)
+        public override Concept Obsolete(SQLiteConnection context, Concept data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);

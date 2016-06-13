@@ -98,7 +98,6 @@ namespace OpenIZ.Mobile.Core.Test
                     };
 
                     // Trace writer
-#if DEBUG
                     DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection()
                     {
                         TraceWriter = new System.Collections.Generic.List<TraceWriterConfiguration>() {
@@ -109,17 +108,7 @@ namespace OpenIZ.Mobile.Core.Test
                     }
                 }
                     };
-#else
-			DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection () {
-				TraceWriter = new List<TraceWriterConfiguration> () {
-					new TraceWriterConfiguration () {
-						Filter = System.Diagnostics.Tracing.EventLevel.Error,
-						InitializationData = "OpenIZ",
-						TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-					}
-				}
-			};
-#endif
+
                     m_configuration.Sections.Add(appletSection);
                     m_configuration.Sections.Add(dataSection);
                     m_configuration.Sections.Add(diagSection);

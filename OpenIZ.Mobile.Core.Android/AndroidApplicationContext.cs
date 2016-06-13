@@ -15,7 +15,6 @@ using Android.Util;
 using Android.Widget;
 using Android.Runtime;
 using System.Runtime.InteropServices;
-using OpenIZ.Mobile.Core.Interop.Util;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Services;
 using System.Security;

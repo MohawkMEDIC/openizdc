@@ -29,9 +29,15 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Data\Persistence\ConceptClassPersistenceService.cs" />
-    <Compile Include="Data\Persistence\ConceptNamePersistenceService.cs" />
+    <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
+    <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
+    <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityAddressPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\PatientPersistenceService.cs" />
+    <Compile Include="Data\Persistence\PersonPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
@@ -129,9 +135,7 @@
     <Compile Include="Interop\Clients\ImsiServiceClient.cs" />
     <Compile Include="Configuration\ServiceClientDescriptionConfigurationSection.cs" />
     <Compile Include="Interop\Clients\ServiceClientBase.cs" />
-    <Compile Include="Interop\Util\HttpQueryExpressionBuilder.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
-    <Compile Include="Data\Persistence\SecurityUserPersistenceService.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
@@ -149,7 +153,9 @@
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Data\Sql\001_init_openiz_core_data.sql" />
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>
@@ -160,7 +166,12 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Map\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Map\ModelMap.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
 </Project>

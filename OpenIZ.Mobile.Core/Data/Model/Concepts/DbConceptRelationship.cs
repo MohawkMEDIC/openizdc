@@ -23,7 +23,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the target concept identifier.
 		/// </summary>
 		/// <value>The target concept identifier.</value>
-		[Column("target_concept"), Indexed, NotNull, MaxLength(16)]
+		[Column("targetConcept"), Indexed, NotNull, MaxLength(16)]
 		public byte[] TargetConceptUuid {
 			get;
 			set;
@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the relationship type identifier.
 		/// </summary>
 		/// <value>The relationship type identifier.</value>
-		[Column("relationship_type"), NotNull, MaxLength(16)]
+		[Column("relationshipType"), NotNull, MaxLength(16)]
 		public byte[] RelationshipTypeUuid {
 			get;
 			set;

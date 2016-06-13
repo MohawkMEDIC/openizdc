@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="library_name">OpenIZ.Mobile.Core.Android</string>
+	<string name="confirm">Ok</string>
+	<string name="cancel">Cancel</string>
+
+	<string name="applet_confirm_close">You have unsaved data on this page. Do you want to close it?</string>
+
+	<string name="err_oauth2_invalid_request">Access control service is not compatible with this client</string>
+	<string name="err_oauth2_invalid_client">This client application is not authorized for this environment</string>
+    <string name="err_oauth2_invalid_grant">Invalid credentials</string>
+    <string name="err_oauth2_unauthorized_client">The client secret is not configured properly</string>
+    <string name="err_oauth2_unsupported_grant_type">Access control service does not support password grants</string>
+    <string name="err_oauth2_invalid_scope">Client is bound to the incorrect realm</string>
+
+    <string name="err_token_TokenExpired">Session expired</string>
+    <string name="err_token_InvalidSignature">Session has been tampered with</string>
+    <string name="err_token_InvalidTokenType">Access control service is not compatible with this app</string>
+    <string name="err_token_KeyNotFound">Unknown access control certificate</string>
+    <string name="err_token_NotYetValid">Token\'s validity time is in the future</string>
+</resources>

@@ -2,6 +2,12 @@
 using Java.Interop;
 using Android.Webkit;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Query;
+using System.Collections.Generic;
+using System.Linq;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -11,20 +17,84 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	public class ConceptServiceBridge : Java.Lang.Object
 	{
 
+        // Local variables
+        private Tracer m_tracer = Tracer.GetTracer(typeof(ConceptServiceBridge));
+        private IDataPersistenceService<ConceptSet> m_setPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+        private IDataPersistenceService<Concept> m_conceptPersister= ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
 
-		/// <summary>
-		/// Gets the concept set.
-		/// </summary>
-		/// <returns>The concept set.</returns>
-		/// <param name="setMnemonic">Set mnemonic.</param>
-		[Export]
+
+        /// <summary>
+        /// Search for a concept set.
+        /// </summary>
+        /// <returns>The concept set.</returns>
+        /// <param name="imsiQueryString">IMSI query to retrieve the concept set</param>
+        [Export]
+        [JavascriptInterface]
+        public String SearchConcept(String imsiQueryString, int offset, int count)
+        {
+            try
+            {
+                // Parse the queyr
+                QueryExpressionParser parser = new QueryExpressionParser();
+                var request = NameValueCollection.ParseQueryString(imsiQueryString);
+                var linqQuery = parser.BuildLinqExpression<Concept>(request);
+
+                // Perform the query
+                int totalResults = 0;
+                var results = this.m_conceptPersister.Query(linqQuery, offset, count, out totalResults);
+
+                // Expand properties
+                if(request.ContainsKey("_expand"))
+                    foreach (var itm in results)
+                        JniUtil.ExpandProperties(itm, request);
+
+                // Return bundle
+                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                return JniUtil.ToJson(retVal);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error executing query {0}: {1}", imsiQueryString, e);
+                return "err_general";
+            }
+        }
+
+        /// <summary>
+        /// Search for a concept set.
+        /// </summary>
+        /// <returns>The concept set.</returns>
+        /// <param name="imsiQueryString">IMSI query to retrieve the concept set</param>
+        [Export]
 		[JavascriptInterface]
-		public String GetConceptSet(String setMnemonic)
+		public String SearchConceptSet(String imsiQueryString, int offset, int count)
 		{
-			var conceptService = ApplicationContext.Current.GetService<IConceptService> ();
-			var retVal = conceptService.GetConceptSet (setMnemonic);
-			return JniUtil.ToJson (retVal);
-		}
+            try
+            {
+                // Parse the queyr
+                QueryExpressionParser parser = new QueryExpressionParser();
+                var request = NameValueCollection.ParseQueryString(imsiQueryString);
+                var linqQuery = parser.BuildLinqExpression<ConceptSet>(request);
+
+                // Perform the query
+                int totalResults = 0;
+                var results = this.m_setPersister.Query(linqQuery, offset, count, out totalResults);
+
+
+                // Expand properties
+                if (request.ContainsKey("_expand"))
+                    foreach (var itm in results)
+                        JniUtil.ExpandProperties(itm, request);
+
+                // Return bundle
+                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                return JniUtil.ToJson(retVal);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error executing query {0}: {1}", imsiQueryString, e);
+                return "err_general";
+            }
+        }
 	}
 }
 

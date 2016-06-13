@@ -14,8 +14,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the use concept.
 		/// </summary>
 		/// <value>The use concept.</value>
-		[Column("use_concept_uuid"), MaxLength(16)]
-		public byte[] UseConcept {
+		[Column("use"), MaxLength(16)]
+		public byte[] UseConceptUuid {
 			get;
 			set;
 		}
@@ -25,34 +25,24 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a component of a name
 	/// </summary>
 	[Table("entity_name_comp")]
-	public class DbEntityNameComponent : DbIdentified
+	public class DbEntityNameComponent : DbGenericNameComponent
 	{
 
 		/// <summary>
 		/// Gets or sets the name identifier.
 		/// </summary>
 		/// <value>The name identifier.</value>
-		[Column("name_id"), MaxLength(16)]
-		public byte[] NameId {
+		[Column("name_uuid"), MaxLength(16), NotNull]
+		public byte[] NameUuid {
 			get;
 			set;
 		}
-
-		/// <summary>
-		/// Gets or sets the value.
-		/// </summary>
-		/// <value>The value.</value>
-		[Column("value"), NotNull, Indexed]
-		public String Value {
-			get;
-			set;
-		}
-
+        
 		/// <summary>
 		/// Gets or sets the phonetic code.
 		/// </summary>
 		/// <value>The phonetic code.</value>
-		[Column("phon_code"), Indexed, NotNull]
+		[Column("phoneticCode"), Indexed]
 		public String PhoneticCode {
 			get;
 			set;
@@ -62,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the phonetic algorithm identifier.
 		/// </summary>
 		/// <value>The phonetic algorithm identifier.</value>
-		[Column("phon_alg_uuid"), NotNull]
+		[Column("phoneticAlgorithm")]
 		public byte[] PhoneticAlgorithmUuid {
 			get;
 			set;

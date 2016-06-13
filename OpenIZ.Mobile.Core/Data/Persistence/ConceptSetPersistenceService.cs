@@ -22,13 +22,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Set the concepts
             var dbInstance = dataInstance as DbConceptSet;
-            modelInstance.Concepts = context.Query<DbConcept>("SELECT concept.* FROM concept_concept_set INNER JOIN concept ON (concept_concept_set.concept = concept.uuid) WHERE concept_concept_set.concept_set = ?", dbInstance.Uuid).Select(
-                o=>m_mapper.MapDomainInstance<DbConcept, Concept>(o)
+            ConceptPersistenceService cps = new ConceptPersistenceService();
+
+            modelInstance.Concepts = context.Query<DbConcept>("SELECT concept.* FROM concept_concept_set INNER JOIN concept ON (concept_concept_set.concept_uuid = concept.uuid) WHERE concept_concept_set.concept_set_uuid = ?", dbInstance.Uuid).Select(
+                o=>cps.ToModelInstance(o, context)
             ).ToList();
 
             return modelInstance;
         }
-
     }
 }
 

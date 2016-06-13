@@ -7,14 +7,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents the entity representation of an object
 	/// </summary>
 	[Table("device")]
-	public class DbDeviceEntity : DbEntityLink
-	{
+	public class DbDeviceEntity : DbIdentified
+    {
 
 		/// <summary>
 		/// Gets or sets the security device identifier.
 		/// </summary>
 		/// <value>The security device identifier.</value>
-		[Column("security_device_uuid"), MaxLength(16)]
+		[Column("securityDevice"), MaxLength(16)]
 		public byte[] SecurityDeviceUuid {
 			get;
 			set;
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the name of the operating system.
 		/// </summary>
 		/// <value>The name of the operating system.</value>
-		[Column("operating_system")]
+		[Column("operatingSystem")]
 		public String OperatingSystemName {
 			get;
 			set;

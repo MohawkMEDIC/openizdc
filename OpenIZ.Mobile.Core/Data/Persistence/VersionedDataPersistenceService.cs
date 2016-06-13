@@ -12,14 +12,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Versioned domain data
     /// </summary>
-    public class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> where TDomain : DbVersionedData, new() 
+    public abstract class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> 
+        where TDomain : DbVersionedData, new() 
         where TModel : VersionedEntityData<TModel>, new()
     {
 
         /// <summary>
         /// Insert the data
         /// </summary>
-        internal override TModel Insert(SQLiteConnection context, TModel data)
+        public override TModel Insert(SQLiteConnection context, TModel data)
         {
             data.VersionKey = data.VersionKey != Guid.Empty ? data.VersionKey : Guid.NewGuid();
             return base.Insert(context, data);
@@ -28,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the data with new version information
         /// </summary>
-        internal override TModel Update(SQLiteConnection context, TModel data)
+        public override TModel Update(SQLiteConnection context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
             data.VersionKey = Guid.NewGuid();

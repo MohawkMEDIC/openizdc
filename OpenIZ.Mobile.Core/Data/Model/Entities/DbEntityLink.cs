@@ -19,6 +19,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			set;
 		}
 
-	}
+
+
+    }
 }
 

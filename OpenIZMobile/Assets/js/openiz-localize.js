@@ -30,8 +30,14 @@ angular.module('localization', [])
                  */
                 getString: function (key) {
                     var entry = localize.dictionary[key];
-                    console.info(key + "=" + entry);
-                    return entry ? entry : OpenIZ.Localization.getString(key);
+                    if (entry != null)
+                        return entry;
+                    else {
+                        var oiz = OpenIZ.Localization.getString(key);
+                        if (oiz == null)
+                            return key;
+                        return oiz;
+                    }
                 }
             };
             return localize;
