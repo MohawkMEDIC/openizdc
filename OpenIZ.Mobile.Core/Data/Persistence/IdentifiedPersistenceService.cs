@@ -88,13 +88,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset = 0, int count = -1)
+        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults)
 		{
 			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
-			var retVal = context.Table<TDomain> ().Where (domainQuery).Skip (offset);
-			if (count >= 0)
+			var retVal = context.Table<TDomain> ().Where (domainQuery);
+            // Total count
+            totalResults = retVal.Count();
+            // Skip
+            retVal = retVal.Skip(offset);
+            if (count >= 0)
 				retVal = retVal.Take (count);
-			return retVal.ToList().Select(o=>this.ToModelInstance(o, context)).ToList();
+            
+			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
 		}
 
         /// <summary>
@@ -104,7 +109,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="query">Query.</param>
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
-        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, string storedQueryName, System.Collections.Generic.IDictionary<string, object> parms, int offset = 0, int count = -1)
+        public override IEnumerable<TModel> Query(SQLiteConnection context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
 		{
 
             // Build a query
@@ -175,7 +180,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 }
                 sb.Remove (sb.Length - 4, 4);
 			}
-            sb.Append(");");
+            sb.Append(") ");
+
+            if (count > 0)
+                sb.AppendFormat("LIMIT {0} ", count);
+            if (offset > 0)
+                sb.AppendFormat("OFFSET {0}", count);
+
+            sb.Append(";");
 
             // Log
 #if DEBUG
@@ -183,12 +195,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var v in vals)
                 this.m_tracer.TraceVerbose(" --> {0}", v);
 #endif
-            
 
-            var retVal = context.Query<TDomain> (sb.ToString (), vals.ToArray ()).Skip (offset);
-			if (count >= 0)
-				retVal = retVal.Take (count);
-			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
+
+            var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray());
+            totalResults = retVal.Count;
+			return retVal.Select(o=>this.ToModelInstance(o, context));
 		}
 
 

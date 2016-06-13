@@ -14,39 +14,71 @@
 var OpenIZModel = new function () {
 
     /**
+     * @summary Takes concept and returns the appropriate key for the concept
+     */
+    this.getObjectKey = function(concept)
+    {
+        if (typeof (concept) == "String")
+            return concept;
+        else
+            return concept.id;
+    }
+
+    /**
+     * @summary Resolves the specified concept from the bundle or database
+     * @param {OpenIZModel.Bundle} bundleContext The context in which the concept may be found
+     */
+    this.resolveConcept = function(bundleContext, conceptId)
+    {
+        var retVal = null;
+        if (bundleContext != null)
+            retVal = bundleContext.getItem(conceptId, function () { return null; });
+        if (retVal == null)
+            retVal = OpenIZ.Concept.getConcept(conceptId);
+        return retVal;
+    }
+
+    /**
      * @summary Represents utilities for dealing with bundles
      * @param {Object} bundleData The IMSI formatted bundle
      * @class
+     * @property {String} Identifier of the entry which is the first object for the bundle
+     * @property {Object} The collection of items contained within the bundle
+     * @property {Numeric} offset The offset of the bundle result set
+     * @property {Numeric} totalResults The total results in the query
+     * @property {Numeric} count The number of results in the current bundle
      */
     this.Bundle = function (bundleData) {
 
         var _self = this;
 
-        /** 
-         * @property {String} Identifier of the entry which is the first object for the bundle
-         */
         this.entry = bundleData.entry;
+        this.offset = bundleData.offset;
+        this.count = bundleData.count;
+        this.totalResults = bundleData.totalResults;
 
-        /**
-         * @property {Object} The collection of items contained within the bundle
-         */
         this.items = [];
         for (var itm in bundleData.item)
         {
             switch(itm["$type"])
             {
                 case "SecurityUser":
-                    this.items.push(new OpenIZModel.SecurityUser(itm));
+                    this.items.push(new OpenIZModel.SecurityUser(itm, this));
                     break;
                 case "Patient":
-                    this.items.push(new OpenIZModel.Patient(itm));
+                    this.items.push(new OpenIZModel.Patient(itm, this));
+                    break;
+                case "Concept":
+                    this.items.push(new OpenIZModel.Concept(itm, this));
+                    break;
+                case "ConceptSet":
+                    this.items.push(new OpenIZModel.ConceptSet(itm, this));
                     break;
             }
         }
         
         /**
          * @summary Gets the item with specified id from the specified bundle
-         * @param {Object} bundle The bundle in which to search for the id
          * @param {String} id The identifier of the entry
          * @param {Function} defaultFn The function to be called if no match is found
          */
@@ -59,7 +91,6 @@ var OpenIZModel = new function () {
 
         /**
          * @summary Gets the entry object in the bundle
-         * @param {Object} bundle The bundle from which to extract the entry object
          */
         this.getEntry = function()
         {
@@ -70,6 +101,28 @@ var OpenIZModel = new function () {
             
             // Throw error
             throw new OpenIZModel.Exception("Entry object not found in bundle", null, null);
+        }
+
+        /**
+         * @summary Returns the first entry of type 
+         * @param {String} type The type of entry to return
+         */
+        this.first = function(type)
+        {
+            return _self.all(type);
+        }
+
+        /**
+         * @summary Returns all of the matching entries of the particular type
+         * @param {String} type The type of object to return
+         */
+        this.all = function(type)
+        {
+            var retVal = [];
+            for (var itm in _self.items)
+                if (itm["$type"] == type)
+                    retVal.push(itm);
+            return retVal;
         }
 
         /**
@@ -141,6 +194,8 @@ var OpenIZModel = new function () {
      * @class Security User model
      * @constructor
      * @param {Object} securityUserData the IMSI formatted security user data
+     * @param {OpenIZModel.Bundle} bundleContext The context from which bundle items should be taken
+
     * @property {String} id The unique identifier of the user
     * @property {String} email The email of the user
     * @property {Bool} emailConfirmed Indicates whether the email is confirmed
@@ -148,12 +203,12 @@ var OpenIZModel = new function () {
     * @property {Date} lockout When set, indicates the earliest time the user can log in again
     * @property {String} userName The user name of the user
     * @property {String} photo The photograph of the user
-    * @property {Object} entity The entity (userEntity) of the user
+    * @property {OpenIZModel.Entity} entity The entity (userEntity) of the user
     * @property {Date} lastLoginTime The last login time
     * @property {String} phoneNumber The phone number of the user
     * @property {Bool} phoneNumberConfirmed Whether the phone number is confirmed
      */
-    this.SecurityUser = function (securityUserData) {
+    this.SecurityUser = function (securityUserData, bundleContext) {
 
         var _self = this;
         this.id = securityUserData.id;
@@ -192,11 +247,140 @@ var OpenIZModel = new function () {
     };
 
     /**
+     * @summary Represents a set of related concepts
+     * @class
+     * @constructor
+     * @param {Object} valueData The IMSI formatted concept set data
+     * @param {OpenIZModel.Bundle} bundleContext The context from which bundle items should be taken
+     * @property {String} id The unique identifier for the concept set
+     * @property {String} name The name of the concept set
+     * @property {String} mnemonic The mnemonic of the concept set
+     * @property {String} oid The OID of the concept set
+     * @property {String} url The url of the concept set
+     * @property {Object} members The members ({Concept} instances of the set)
+     */
+    this.ConceptSet = function(valueData, bundleContext) {
+
+        var _self = this;
+        this.id = valueData.id;
+        this.name = valueData.name;
+        this.mnemonic = valueData.mnemonic;
+        this.oid = valueData.oid;
+        this.url = valueData.url;
+
+        // Map set members
+        this.members = [];
+        for (var mem in valueData.concept)
+            this.members.push(OpenIZModel.resolveConcept(bundleContext, mem));
+
+        /**
+         * @summary Represents the concept set as a simple key/value pair for use in a select drop-down
+         * @param {String} lang The language to fetch display names for
+         */
+        this.toSelectModel = function (lang) {
+            var retVal = [];
+            for (var mem in _self.members)
+                retVal.push(mem.toSelectModel(lang));
+            return retVal;
+        };
+
+        /**
+         * @summary Represent this concept set as a IMSI object
+         */
+        this.toImsi = function () {
+            var retVal = {
+                "$type": "ConceptSet",
+                "id": _self.id,
+                "name": _self.name,
+                "mnemonic": _self.mnemonic,
+                "oid": _self.oid,
+                "url": _self.url,
+                "concept": []
+            };
+
+            for (var mem in _self.members)
+                retVal.concept.push(OpenIZModel.getObjectKey(mem));
+            return retVal;
+
+        };
+
+    }
+
+    /**
+     * @summary This class represents a javascript equivalent to a Concept
+     * @class 
+     * @constructor
+     * @param {Object} valueData The IMSI formatted concept data
+     * @param {Bundle} bundleContext The context from which bundle items should be taken
+     * @property {String} id The identifier of the concept
+     * @property {String} versionId The version of the concept
+     * @property {Boolean} isSystemConcept Indicates whether the concept is a system (readonly) concept
+     * @property {String} mnemonic The mnemonic of the concept
+     * @property {Object} status The status concept
+     * @property {Object} class The classification of the concept
+     * @property {Object} names The names by which the concept is known
+     */
+    this.Concept = function (valueData, bundleContext) {
+
+        var _self = this;
+        this.id = valueData.id;
+        this.versionId = valueData.versionId;
+        this.isSystemConcept = valueData.isReadonly;
+        this.mnemonic = valueData.mnemonic;
+        this.status = OpenIZModel.resolveConcept(bundleContext, valueData.statusConcept);
+        this.class = valueData.class;
+
+        // Map names
+        this.names = [];
+        for (var nam in valueData.name)
+            this.names.push(
+                {
+                    lang: nam.language,
+                    value: nam.value
+                });
+
+        /**
+         * @summary Represents this concept as a select option
+         */
+        this.toSelectModel = function (lang) {
+            for (var nam in _self.names)
+                if (lang == nam.lang)
+                    return { id: _self.id, value: nam.value };
+            return { id: _self.id, value: _self.names[0].value };
+        }
+
+        /**
+         * @summary Represents this concept as an IMSI formatted data object
+         */
+        this.toImsi = function () {
+            var retVal = {
+                "$type": "Concept",
+                "id": _self.id,
+                "versionId": _self.versionId,
+                "isReadonly": _self.isSystemConcept,
+                "mnemonic": _self.mnemonic,
+                "statusConcept": OpenIZModel.getObjectKey(_self.status),
+                "class": _self.class,
+                "name": []
+            };
+
+            if (_self.names != null)
+                for (var nam in _self.names)
+                    retVal.name.push({
+                        "language": nam.lang,
+                        "value": nam.value
+                    });
+
+            return retVal;
+        }
+    };
+
+    /**
      * @summary This class represents data related to a complex name or address
      * @class A complex name with use and multiple parts
      * @constructor
      * @param {Object} valueData The IMSI formatted GenericComponentData wrapper having use, component [{ type / value }] format
-     * @property {Object} use The prescribed use of the componentized value
+     * @property {OpenIZModel.Concept} use The prescribed use of the componentized value
      * @property {Object} components The components with type/value of the component representing the value
      */
     this.ComponentizedValue = function(valueData)
@@ -205,14 +389,14 @@ var OpenIZModel = new function () {
         var _self = this;
 
         // Use
-        this.use = OpenIZ.Concept.getConcept(valueData.use);
+        this.use = OpenIZModel.resolveConcept(bundleContext, valueData.use);
 
         // Components
         this.components = [];
         for (var comp in valueData.component)
             this.components.push(
             {
-                type: OpenIZ.concept.getConcept(comp.type),
+                type: OpenIZModel.resolveConcept(bundleContext, comp.type),
                 value: comp.value
             });
 
@@ -236,6 +420,7 @@ var OpenIZModel = new function () {
      * @class The model patient class
      * @constructor
      * @param {Object} patientData The IMSI formatted patient data
+     * @param {Bundle} bundleContext The context from which bundle items should be taken
     * @property {String} id The unique identifier of the patient
     * @property {String} versionId The version identifier of the patient
     * @property {Date} deceasedDate The date that this patient bacame deceased
@@ -244,8 +429,8 @@ var OpenIZModel = new function () {
     * @property {String} gender The gender of the patient
     * @property {Date} dateOfBirth The date of birth of the patient
     * @property {String} dateOfBirthPrecision The precision of the date of birth if not exact
-    * @property {Object} statusConcept The status of the patient
-    * @property {Object} typeConcept The type concept
+    * @property {OpenIZModel.Concept} status The status of the patient
+    * @property {OpenIZModel.Concept} type The type concept
     * @property {Object} identifiers All identifiers related to the patient
     * @property {Object} relationship All Relationships that the patient holds
     * @property {Object} languages Languages of communication the patient can be contacted in
@@ -256,9 +441,8 @@ var OpenIZModel = new function () {
     * @property {Object} notes Additional textual notes about the patient
     * @property {Object} tags A series of key/value pairs which are used to tag the patient record
     * @property {Object} participations The series of acts that the patient participates in
-
      */
-    this.Patient = function (patientData) {
+    this.Patient = function (patientData, bundleContext) {
 
         // Self reference
         var _self = this;
@@ -267,11 +451,11 @@ var OpenIZModel = new function () {
         this.deceasedDate = patientData.deceasedDate;
         this.deceasedDatePrecision = patientData.deceasedDatePrecision;
         this.multipleBirthOrder = patientData.multipleBirthOrder;
-        this.gender = OpenIZ.Concept.getConcept(patientData.genderConcept);
+        this.gender = OpenIZModel.resolveConcept(bundleContext, patientData.genderConcept);
         this.dateOfBirth = patientData.dateOfBirth;
         this.dateOfBirthPrecision = patientData.dateOfBirthPrecision;
-        this.statusConcept = OpenIZ.Concept.getConcept(patientData.statusConcept);
-        this.typeConcept = OpenIZ.Concept.getConcept(patientData.typeConcept);
+        this.status = OpenIZModel.resolveConcept(bundleContext, patientData.statusConcept);
+        this.type = OpenIZModel.resolveConcept(bundleContext, patientData.typeConcept);
         this.identifiers = patientData.identifier;
 
         // Map relationships
@@ -280,7 +464,7 @@ var OpenIZModel = new function () {
         {
             this.relationships.push(
                 {
-                    relationshipType: OpenIZ.Concept.getConcept(rel.relationshipType),
+                    relationshipType: OpenIZModel.resolveConcept(bundleContext, rel.relationshipType),
                     target : OpenIZ.Entity.get(rel.target)
                 });
         }
@@ -291,7 +475,7 @@ var OpenIZModel = new function () {
         this.telecoms = [];
         for (var tel in patientData.telecom)
             this.telecoms.push({
-                use: OpenIZ.Concept.getConcept(tel.use),
+                use: OpenIZModel.resolveConcept(bundleContext, tel.use),
                 value: tel.value
             });
 
@@ -320,7 +504,7 @@ var OpenIZModel = new function () {
         this.participations = [];
         for (var ptcpt in patientData.participation)
             this.participations.push({
-                role: OpenIZ.Concept.getConcept(ptcpt.participationRole),
+                role: OpenIZModel.resolveConcept(bundleContext, ptcpt.participationRole),
                 act: OpenIZ.Act.get(ptcpt.source)
             });
 
@@ -335,6 +519,7 @@ var OpenIZModel = new function () {
          * @summary Update the patient in the IMS database
          */
         this.save = function () {
+
             return OpenIZ.Patient.update(_self);
         }
 
@@ -350,10 +535,75 @@ var OpenIZModel = new function () {
          */
         this.toImsi = function () {
             var retVal = {
-                "$type": "Patient"
+                "$type": "Patient",
+                "id" : _self.id,
+                "deceasedDate" : _self.deceasedDate,
+                "multipleBirthOrder": _self.multipleBirthOrder,
+                "deceasedDatePrecision": _self.deceasedDatePrecision,
+                "dateOfBirth": _self.dateOfBirth,
+                "identifier": _self.identifiers,
+                "genderConcept": OpenIZModel.getObjectKey(_self.gender),
+                "statusConcept": OpenIZModel.getObjectKey(_self.status),
+                "typeConcept": OpenIZModel.getObjectKey(_self.type),
+                "dateOfBirth": _self.dateOfBirth,
+                "dateOfBirthPrecision": _self.dateOfBirthPrecision,
+                "relationship": [],
+                "language": _self.languages,
+                "telecom": [],
+                "extension": _self.extensions,
+                "name": [],
+                "address": [],
+                "note": [],
+                "tag": _self.tags,
+                "participation" : []
             };
 
-            // TODO: Implement this.
+            // Map relationships
+            if (_self.relationships != null)
+                for (var rel in _self.relationship) {
+                    retVal.relationship.push(
+                        {
+                            relationshipType: OpenIZModel.getObjectKey(rel.relationshipType),
+                            target: OpenIZModel.getObjectKey(rel.target)
+                        });
+                }
+
+            // Map telecoms
+            if(_self.telecoms != null)
+                for (var tel in _self.telecoms)
+                    retVal.telecom.push({
+                        use: OpenIZModel.getObjectKey(tel.use),
+                        value: tel.value
+                    });
+
+            // Map names
+            if(_self.names != null)
+                for (var nam in _self.names) {
+                    retVal.name.push(nam.toImsi());
+                }
+
+            // Map addresses
+            if(_self.addresses != null)
+                for (var add in _self.addresses) {
+                    retVal.address.push(add.toImsi());
+                }
+
+            // Map notes
+            if(_self.notes != null)
+                for (var nt in _self.notes)
+                    retVal.note.push(
+                        {
+                            author: OpenIZModel.getObjectKey(nt.author),
+                            text: nt.text
+                        });
+
+            // Map participations
+            if(_self.participations != null)
+                for (var ptcpt in _self.participations)
+                    retVal.participation.push({
+                        participationRole: OpenIZModel.getObjectKey(ptcpt.role),
+                        source: OpenIZModel.getObjectKey(ptcpt.act)
+                    });
 
             return retVal;
         }

@@ -307,16 +307,21 @@ var OpenIZ = new function () {
      * @summary Represents functions related to the concept dictionary
      * @class
      */
-    this.Concept = new function() {
+    this.Concept = new function () {
+        var _self = this;
+
         /**
-         * @summary Gets the concept by identifier
-         * @param {String} conceptId The identifier of the concept to retrieve
-         * @returns The retrieved concept
+         * @summary Searches the concept source 
+         * @param {String} imsiQuery The IMSI formatted query
+         * @param {Numeric} offset The offset of the search result set
+         * @param {Numeric} count The total requested numer in the result set
+         * @param {Boolean} returnBundle When true, return a bundle
+         * @returns {OpenIZModel.Concept} The retrieved concept
          */
-        this.getConcept = function(conceptId)
+        this.findConcept = function(imsiQuery, offset, count)
         {
             try {
-                var data = OpenIZConceptService.GetConcept(conceptId);
+                var data = OpenIZConceptService.SearchConcept(conceptId, offset, count);
 
                 if (data == null)
                     return null;
@@ -331,31 +336,46 @@ var OpenIZ = new function () {
             }
         };
         /**
-         * @summary Gets the specified values of concepts from the concept set.
-         * @param {String} setName The name of the concept set to retrieve (Ex: AdministrativeGender)
+         * @summary Searches the specified values of concepts from the concept set.
+         * @param {String} setMnemonic The name of the concept set to retrieve (Ex: AdministrativeGender)
          * @returns A list of {OpenIZModel.Cocnept} objects which represent the concepts
+         * @param {Numeric} offset The offset of the search result set
+         * @param {Numeric} count The total requested numer in the result set
          */
-        this.getConceptSet = function (setName) {
+        this.findConceptSet = function (imsiQuery, offset, count) {
             try {
-                var data = OpenIZConceptService.GetConceptSet(setName);
+                var data = OpenIZConceptService.SearchConceptSet(imsiQuery, offset, count);
 
-                if (data == null)
-                    return null;
+                if (data == null || data.lastIndexOf("err") == 0)
+                    throw new OpenIZModel.Exception(data, null, null);
                 else {
                     var results = JSON.parse(data);
-                    var retVal = [];
-                    for (var r in results)
-                        retVal.push(new OpenIZModel.ConceptSet(r));
-                    return results;
+                    return new OpenIZModel.Bundle(results);
                 }
             }
             catch (e) {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"), e.message, e);
-
-
             }
         };
+        /**
+         * @summary Gets the specified concept with the specified identifier
+         * @param {String} conceptId The identifier of the concept to retreive
+         */
+        this.getConcept = function(conceptId) {
+            try {
+                var results = _self.findConcept("id=" + patientId, 0, 1);
+
+                if (results.length == 0)
+                    return null;
+                else
+                    return results.first("Concept");
+            }
+            catch (e) {
+                console.error(e);
+                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"), e.message, e);
+            }
+        }
     };
     
 
@@ -365,23 +385,26 @@ var OpenIZ = new function () {
      * @class
      */
     this.Patient = new function() {
-
+        var _self = this;
         /**
          * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
          * an IMS query format string like name[L].part[FAM].value=Smith&name[L].part[GIV].value=John
          * @param {String} searchString The IMSI search string to be searched
-         * @returns An array of {OpenIZModel.Patient} classes which represent the search results.
+         * @param {Numeric} offset The offset of the search result set
+         * @param {Numeric} count The total requested numer in the result set
+         * @returns {OpenIZModel.Bundle} A bundle of {OpenIZModel.Patient} classes which represent the search results.
          */
-        this.search = function (searchString) {
+        this.find = function (searchString, offset, count) {
             try {
-                var results = JSON.parse(OpenIZPatientService.Find(searchString));
+                var data = OpenIZPatientService.Search(searchString, offset, count);
+                if (data.lastIndexOf("err") == 0)
+                    throw new OpenIZModel.Exception(data, null, null);
+                else {
+                    var results = JSON.parse(OpenIZPatientService.Search(searchString));
 
-                // Convert the IMSI patient data to a nicer javascript format
-                var retVal = [];
-                for (var i = 0; i < results.length; i++)
-                    retVal.push(new OpenIZModel.Patient(result[i]));
-
-                return retVal;
+                    // Convert the IMSI patient data to a nicer javascript format
+                    return OpenIZModel.Bundle(results);
+                }
             }
             catch (e) {
                 console.error(e);
@@ -391,19 +414,16 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Register a patient in the IMS system returning the registered patient data
-         * @param {Object} patient The patient to be insterted
+         * @param {OpenIZModel.Patient} patient The patient to be insterted
          * @throw Exception if the patient is already registered
-         * @returns The registered patient data
+         * @returns {OpenIZModel.Patient} The registered patient data
          */
         this.insert = function (patient) {
             try
             {
-                if (typeof (patient) != "Patient")
+                if (patient["$type"] != "Patient")
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"), typeof(patient), null);
-
                 var imsiJson = JSON.stringify(patient.toImsi());
-                // log the imsi
-                console.info(imsiJson);
                 return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Insert(imsiJson)));
             }
             catch(e)
@@ -415,20 +435,19 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Updates the specified patient instance with the specified data
-         * @param {Object} patient The patient to be updated, including their primary identifier key
+         * @param {OpenIZModel.Patient} patient The patient to be updated, including their primary identifier key
          * @throw Exception if the patient does not exist
-         * @returns The updated patient data
+         * @returns {OpenIZModel.Patient} The updated patient data
          */
         this.update = function (patient) {
             try
             {
-                if (typeof (patient) != "Patient")
+                if (patient["$type"] != "Patient")
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"), typeof(patient), null);
-                else if (patient.key == null)
+                else if (patient.id == null)
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"), typeof(patient), null);
 
                 var imsiJson = JSON.stringify(patient.toImsi());
-                console.info(imsiJson);
                 return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(imsiJson)));
             }
             catch(e)
@@ -458,15 +477,16 @@ var OpenIZ = new function () {
         /** 
          * @summary Retrieves the specified patient instance from the IMS datastore
          * @param {String} patientId The unique identifier of the patient to be retrieved
-         * @returns The retrieved patient instance if exists, null if not found
+         * @returns {OpenIZModel.Patient} The retrieved patient instance if exists, null if not found
          */
         this.get = function (patientId) {
             try {
-                var results = this.search("key=" + patientId);
+                var results = _self.find("id=" + patientId, 0, 1);
+                
                 if (results.length == 0)
                     return null;
                 else
-                    return results[0];
+                    return results.first("Patient");
             }
             catch (e) {
                 console.error(e);
