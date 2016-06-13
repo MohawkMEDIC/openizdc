@@ -253,6 +253,8 @@
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
   </ItemGroup>
 </Project>
