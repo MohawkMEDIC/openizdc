@@ -67,16 +67,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Perform the query
                 int totalResults = 0;
                 var results = this.m_persister.Query(linqQuery, offset, count, out totalResults);
-
                 // Return bundle
-                OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                return JniUtil.ToJson(new OpenIZ.Core.Model.Collection.Bundle()
-                {
-                    Item = new List<OpenIZ.Core.Model.IdentifiedData>(results.OfType<IdentifiedData>()),
-                    Count = results.Count(),
-                    TotalResults = totalResults,
-                    Offset = offset
-                });
+                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                return JniUtil.ToJson(retVal);
             }
             catch(Exception e)
             {

@@ -49,38 +49,41 @@ namespace OpenIZ.Mobile.Core.Android
 			// aapt resource value: 0x7f020001
 			public static int confirm = 2130837505;
 			
-			// aapt resource value: 0x7f020005
-			public static int err_oauth2_invalid_client = 2130837509;
+			// aapt resource value: 0x7f020004
+			public static int err_general = 2130837508;
 			
 			// aapt resource value: 0x7f020006
-			public static int err_oauth2_invalid_grant = 2130837510;
-			
-			// aapt resource value: 0x7f020004
-			public static int err_oauth2_invalid_request = 2130837508;
-			
-			// aapt resource value: 0x7f020009
-			public static int err_oauth2_invalid_scope = 2130837513;
+			public static int err_oauth2_invalid_client = 2130837510;
 			
 			// aapt resource value: 0x7f020007
-			public static int err_oauth2_unauthorized_client = 2130837511;
+			public static int err_oauth2_invalid_grant = 2130837511;
 			
-			// aapt resource value: 0x7f020008
-			public static int err_oauth2_unsupported_grant_type = 2130837512;
-			
-			// aapt resource value: 0x7f02000b
-			public static int err_token_InvalidSignature = 2130837515;
-			
-			// aapt resource value: 0x7f02000c
-			public static int err_token_InvalidTokenType = 2130837516;
-			
-			// aapt resource value: 0x7f02000d
-			public static int err_token_KeyNotFound = 2130837517;
-			
-			// aapt resource value: 0x7f02000e
-			public static int err_token_NotYetValid = 2130837518;
+			// aapt resource value: 0x7f020005
+			public static int err_oauth2_invalid_request = 2130837509;
 			
 			// aapt resource value: 0x7f02000a
-			public static int err_token_TokenExpired = 2130837514;
+			public static int err_oauth2_invalid_scope = 2130837514;
+			
+			// aapt resource value: 0x7f020008
+			public static int err_oauth2_unauthorized_client = 2130837512;
+			
+			// aapt resource value: 0x7f020009
+			public static int err_oauth2_unsupported_grant_type = 2130837513;
+			
+			// aapt resource value: 0x7f02000c
+			public static int err_token_InvalidSignature = 2130837516;
+			
+			// aapt resource value: 0x7f02000d
+			public static int err_token_InvalidTokenType = 2130837517;
+			
+			// aapt resource value: 0x7f02000e
+			public static int err_token_KeyNotFound = 2130837518;
+			
+			// aapt resource value: 0x7f02000f
+			public static int err_token_NotYetValid = 2130837519;
+			
+			// aapt resource value: 0x7f02000b
+			public static int err_token_TokenExpired = 2130837515;
 			
 			// aapt resource value: 0x7f020000
 			public static int library_name = 2130837504;

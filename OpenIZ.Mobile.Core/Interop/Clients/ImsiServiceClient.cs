@@ -1,7 +1,6 @@
 ﻿using System;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Http;
-using OpenIZ.Mobile.Core.Interop.Util;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
@@ -10,6 +9,7 @@ using OpenIZ.Core.Model;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Mobile.Core.Interop.Clients
 {
@@ -35,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Interop.Clients
 		public Bundle Query<TModel>(Expression<Func<TModel, bool>> query) where TModel : IdentifiedData
 		{
 			// Map the query to HTTP parameters
-			var queryParms = HttpQueryExpressionBuilder.BuildQuery(query);
+			var queryParms = QueryExpressionBuilder.BuildQuery(query);
 
 			// Resource name
 			String resourceName = typeof(TModel).GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;

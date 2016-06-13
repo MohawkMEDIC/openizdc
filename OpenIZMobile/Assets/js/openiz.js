@@ -158,7 +158,6 @@ var OpenIZ = new function () {
                 else if (data.lastIndexOf("err", 0) == 0)
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString(data), null, null);
                 else {
-                    alert(data);
                     var pData = JSON.parse(data);
                     if (pData != null && pData.error !== undefined)
                         throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_" + pData.error),
@@ -309,7 +308,32 @@ var OpenIZ = new function () {
      */
     this.Concept = new function () {
         var _self = this;
+        var _searchTimeout;
+        /**
+         * @summary Perform a search asynchronously
+         * @param {Object} searchData An object containing search, offset, count and callback data
+         * @example
+         * OpenIZ.Concept.findConceptAsync({
+         *      query: "mnemonic=Female&_expand=name",
+         *      offset: 0,
+         *      count: 0,
+         *      continueWith: function(result) { // do something with result }
+         *  });
+         */        
+        this.findConceptAsync = function (controlData) {
 
+            // Clear current async operation
+            if (_searchTimeout == null)
+                // Perform async operation
+                _searchTimeout = setTimeout(function () {
+                    var result = {};
+                    if (controlData.query != "") {
+                        result = _self.findConcept(controlData.query, controlData.offset, controlData.count);
+                    }
+                    _searchTimeout = null;
+                    controlData.continueWith(result);
+                }, 0);
+        };
         /**
          * @summary Searches the concept source 
          * @param {String} imsiQuery The IMSI formatted query
@@ -321,12 +345,14 @@ var OpenIZ = new function () {
         this.findConcept = function(imsiQuery, offset, count)
         {
             try {
-                var data = OpenIZConceptService.SearchConcept(conceptId, offset, count);
+                var data = OpenIZConceptService.SearchConcept(imsiQuery, offset, count);
 
                 if (data == null)
                     return null;
-                else
-                    return new OpenIZModel.Concept(JSON.parse(data));
+                else {
+                    var retVal = new OpenIZModel.Bundle(JSON.parse(data));
+                    return retVal;
+                }
             }
             catch(e)
             {
@@ -345,12 +371,13 @@ var OpenIZ = new function () {
         this.findConceptSet = function (imsiQuery, offset, count) {
             try {
                 var data = OpenIZConceptService.SearchConceptSet(imsiQuery, offset, count);
-
                 if (data == null || data.lastIndexOf("err") == 0)
                     throw new OpenIZModel.Exception(data, null, null);
                 else {
                     var results = JSON.parse(data);
-                    return new OpenIZModel.Bundle(results);
+
+                    var retVal = new OpenIZModel.Bundle(results);
+                    return retVal;
                 }
             }
             catch (e) {
@@ -364,7 +391,7 @@ var OpenIZ = new function () {
          */
         this.getConcept = function(conceptId) {
             try {
-                var results = _self.findConcept("id=" + patientId, 0, 1);
+                var results = _self.findConcept("id=" + conceptId, 0, 1);
 
                 if (results.length == 0)
                     return null;
@@ -612,8 +639,6 @@ var OpenIZ = new function () {
 
 
 };
-
-
 
 // Parameters
 (window.onpopstate = function () {

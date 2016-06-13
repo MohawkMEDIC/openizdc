@@ -29,6 +29,7 @@ namespace OpenIZMobile
 			global::OpenIZ.Mobile.Core.Android.Resource.String.applet_confirm_close = global::OpenIZMobile.Resource.String.applet_confirm_close;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.cancel = global::OpenIZMobile.Resource.String.cancel;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.confirm = global::OpenIZMobile.Resource.String.confirm;
+			global::OpenIZ.Mobile.Core.Android.Resource.String.err_general = global::OpenIZMobile.Resource.String.err_general;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.err_oauth2_invalid_client = global::OpenIZMobile.Resource.String.err_oauth2_invalid_client;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.err_oauth2_invalid_grant = global::OpenIZMobile.Resource.String.err_oauth2_invalid_grant;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.err_oauth2_invalid_request = global::OpenIZMobile.Resource.String.err_oauth2_invalid_request;
@@ -348,8 +349,8 @@ namespace OpenIZMobile
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f05000f
-			public const int app_name = 2131034127;
+			// aapt resource value: 0x7f050010
+			public const int app_name = 2131034128;
 			
 			// aapt resource value: 0x7f050003
 			public const int applet_confirm_close = 2131034115;
@@ -366,8 +367,8 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050018
 			public const int err_exception = 2131034136;
 			
-			// aapt resource value: 0x7f050013
-			public const int err_general = 2131034131;
+			// aapt resource value: 0x7f050004
+			public const int err_general = 2131034116;
 			
 			// aapt resource value: 0x7f050016
 			public const int err_login = 2131034134;
@@ -375,53 +376,53 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050017
 			public const int err_login_invalidusername = 2131034135;
 			
-			// aapt resource value: 0x7f050005
-			public const int err_oauth2_invalid_client = 2131034117;
-			
 			// aapt resource value: 0x7f050006
-			public const int err_oauth2_invalid_grant = 2131034118;
-			
-			// aapt resource value: 0x7f050004
-			public const int err_oauth2_invalid_request = 2131034116;
-			
-			// aapt resource value: 0x7f050009
-			public const int err_oauth2_invalid_scope = 2131034121;
+			public const int err_oauth2_invalid_client = 2131034118;
 			
 			// aapt resource value: 0x7f050007
-			public const int err_oauth2_unauthorized_client = 2131034119;
+			public const int err_oauth2_invalid_grant = 2131034119;
+			
+			// aapt resource value: 0x7f050005
+			public const int err_oauth2_invalid_request = 2131034117;
+			
+			// aapt resource value: 0x7f05000a
+			public const int err_oauth2_invalid_scope = 2131034122;
 			
 			// aapt resource value: 0x7f050008
-			public const int err_oauth2_unsupported_grant_type = 2131034120;
+			public const int err_oauth2_unauthorized_client = 2131034120;
+			
+			// aapt resource value: 0x7f050009
+			public const int err_oauth2_unsupported_grant_type = 2131034121;
 			
 			// aapt resource value: 0x7f050015
 			public const int err_startup = 2131034133;
 			
-			// aapt resource value: 0x7f05000b
-			public const int err_token_InvalidSignature = 2131034123;
-			
 			// aapt resource value: 0x7f05000c
-			public const int err_token_InvalidTokenType = 2131034124;
+			public const int err_token_InvalidSignature = 2131034124;
 			
 			// aapt resource value: 0x7f05000d
-			public const int err_token_KeyNotFound = 2131034125;
+			public const int err_token_InvalidTokenType = 2131034125;
 			
 			// aapt resource value: 0x7f05000e
-			public const int err_token_NotYetValid = 2131034126;
+			public const int err_token_KeyNotFound = 2131034126;
 			
-			// aapt resource value: 0x7f05000a
-			public const int err_token_TokenExpired = 2131034122;
+			// aapt resource value: 0x7f05000f
+			public const int err_token_NotYetValid = 2131034127;
 			
-			// aapt resource value: 0x7f050012
-			public const int installing_applets = 2131034130;
+			// aapt resource value: 0x7f05000b
+			public const int err_token_TokenExpired = 2131034123;
+			
+			// aapt resource value: 0x7f050013
+			public const int installing_applets = 2131034131;
 			
 			// aapt resource value: 0x7f050000
 			public const int library_name = 2131034112;
 			
-			// aapt resource value: 0x7f050011
-			public const int needs_setup = 2131034129;
+			// aapt resource value: 0x7f050012
+			public const int needs_setup = 2131034130;
 			
-			// aapt resource value: 0x7f050010
-			public const int startup = 2131034128;
+			// aapt resource value: 0x7f050011
+			public const int startup = 2131034129;
 			
 			static String()
 			{

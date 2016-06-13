@@ -14,8 +14,8 @@ using SQLite;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Exceptions;
-using OpenIZ.Mobile.Core.Interop.Util;
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -286,7 +286,7 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
 
                     // Build dictionary
-                    var httpValues = HttpQueryExpressionBuilder.BuildQuery<TData>(query);
+                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query);
                     var filter = new Dictionary<String, Object>();
 
                     foreach (var f in httpValues)

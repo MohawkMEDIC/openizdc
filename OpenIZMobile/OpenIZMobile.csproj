@@ -226,4 +226,7 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml" />
+  </ItemGroup>
 </Project>

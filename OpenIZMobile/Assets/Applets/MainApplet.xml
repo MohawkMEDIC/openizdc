@@ -37,6 +37,9 @@
               <li>
                 <a href="not-found">Not found test</a>
               </li>
+              <li>
+                <a href="app://openiz.org/applet/org.openiz.applet.test/index">Sample Functions</a>
+              </li>
             </ul>
           </div>
         </body>
@@ -81,4 +84,5 @@
       ]]>
     </contentText>
   </asset>
+
 </AppletManifest>

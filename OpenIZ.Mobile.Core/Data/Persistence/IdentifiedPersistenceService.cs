@@ -96,10 +96,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             totalResults = retVal.Count();
             // Skip
             retVal = retVal.Skip(offset);
-            if (count >= 0)
+            if (count > 0)
 				retVal = retVal.Take (count);
             
-			return retVal.ToList().Select(o=>this.ToModelInstance(o, context));
+			return retVal.ToList().Select(o=>this.ToModelInstance(o, context)).ToList();
 		}
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray());
             totalResults = retVal.Count;
-			return retVal.Select(o=>this.ToModelInstance(o, context));
+			return retVal.Select(o=>this.ToModelInstance(o, context)).ToList();
 		}
 
 

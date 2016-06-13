@@ -135,7 +135,6 @@
     <Compile Include="Interop\Clients\ImsiServiceClient.cs" />
     <Compile Include="Configuration\ServiceClientDescriptionConfigurationSection.cs" />
     <Compile Include="Interop\Clients\ServiceClientBase.cs" />
-    <Compile Include="Interop\Util\HttpQueryExpressionBuilder.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
   </ItemGroup>
@@ -167,7 +166,9 @@
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Map\ModelMap.xml" />
+    <EmbeddedResource Include="Data\Map\ModelMap.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>

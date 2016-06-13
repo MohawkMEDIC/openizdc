@@ -19,7 +19,45 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
         // Local variables
         private Tracer m_tracer = Tracer.GetTracer(typeof(ConceptServiceBridge));
-        private IDataPersistenceService<ConceptSet> m_persister = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+        private IDataPersistenceService<ConceptSet> m_setPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+        private IDataPersistenceService<Concept> m_conceptPersister= ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+
+
+        /// <summary>
+        /// Search for a concept set.
+        /// </summary>
+        /// <returns>The concept set.</returns>
+        /// <param name="imsiQueryString">IMSI query to retrieve the concept set</param>
+        [Export]
+        [JavascriptInterface]
+        public String SearchConcept(String imsiQueryString, int offset, int count)
+        {
+            try
+            {
+                // Parse the queyr
+                QueryExpressionParser parser = new QueryExpressionParser();
+                var request = NameValueCollection.ParseQueryString(imsiQueryString);
+                var linqQuery = parser.BuildLinqExpression<Concept>(request);
+
+                // Perform the query
+                int totalResults = 0;
+                var results = this.m_conceptPersister.Query(linqQuery, offset, count, out totalResults);
+
+                // Expand properties
+                if(request.ContainsKey("_expand"))
+                    foreach (var itm in results)
+                        JniUtil.ExpandProperties(itm, request);
+
+                // Return bundle
+                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                return JniUtil.ToJson(retVal);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error executing query {0}: {1}", imsiQueryString, e);
+                return "err_general";
+            }
+        }
 
         /// <summary>
         /// Search for a concept set.
@@ -34,21 +72,22 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 // Parse the queyr
                 QueryExpressionParser parser = new QueryExpressionParser();
-                var linqQuery = parser.BuildLinqExpression<ConceptSet>(NameValueCollection.ParseQueryString(imsiQueryString));
+                var request = NameValueCollection.ParseQueryString(imsiQueryString);
+                var linqQuery = parser.BuildLinqExpression<ConceptSet>(request);
 
                 // Perform the query
                 int totalResults = 0;
-                var results = this.m_persister.Query(linqQuery, offset, count, out totalResults);
+                var results = this.m_setPersister.Query(linqQuery, offset, count, out totalResults);
+
+
+                // Expand properties
+                if (request.ContainsKey("_expand"))
+                    foreach (var itm in results)
+                        JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
-                OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                return JniUtil.ToJson(new OpenIZ.Core.Model.Collection.Bundle()
-                {
-                    Item = new List<OpenIZ.Core.Model.IdentifiedData>(results.OfType<IdentifiedData>()),
-                    Count = results.Count(),
-                    TotalResults = totalResults,
-                    Offset = offset
-                });
+                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                return JniUtil.ToJson(retVal);
             }
             catch (Exception e)
             {

@@ -30,7 +30,6 @@ angular.module('localization', [])
                  */
                 getString: function (key) {
                     var entry = localize.dictionary[key];
-                    console.info(key + "=" + entry);
                     if (entry != null)
                         return entry;
                     else {
