@@ -9,6 +9,8 @@ using System.Linq;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using System.Collections.Generic;
+using Newtonsoft.Json.Converters;
+using OpenIZ.Core.Model.Serialization;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -32,8 +34,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         public static String ToJson<T>(T obj) 
 		{
 
-			JsonSerializer jsz = new JsonSerializer ();
-			using(StringWriter sw = new StringWriter())
+            JsonSerializer jsz = new JsonSerializer();
+            jsz.Converters.Add(new StringEnumConverter());
+            jsz.NullValueHandling = NullValueHandling.Ignore;
+
+            using (StringWriter sw = new StringWriter())
 			{
 				jsz.Serialize(sw, obj);
 				return sw.ToString();
@@ -46,7 +51,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// </summary>
 		public static T FromJson<T>(String json) 
 		{
-			JsonSerializer jsz = new JsonSerializer ();
+			JsonSerializer jsz = new JsonSerializer()
+            {
+                Binder = new ModelSerializationBinder(),
+                TypeNameAssemblyFormat = 0,
+                TypeNameHandling = TypeNameHandling.All
+            };
+            jsz.Converters.Add(new StringEnumConverter());
 			using (StringReader sr = new StringReader (json)) {
 				return (T)jsz.Deserialize (sr, typeof(T));
 			}
@@ -64,63 +75,79 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     s_loadCache.Clear();
 
             // Expand property?
-            if (!qp.ContainsKey("_expand"))
+            if (!qp.ContainsKey("_expand") && !qp.ContainsKey("_all"))
                 return;
 
-            foreach (var nvs in qp["_expand"])
+            if(qp.ContainsKey("_all"))
             {
-                // Get the property the user wants to expand
-                object scope = returnValue;
-                foreach (var property in nvs.Split('.'))
+                foreach (var pi in returnValue.GetType().GetRuntimeProperties())
                 {
-                    if (scope is IList)
+                    var scope = pi.GetValue(returnValue);
+                    if (scope is IdentifiedData) // Two levels deep
+                        foreach (var pi2 in scope.GetType().GetRuntimeProperties())
+                            pi2.GetValue(scope);
+                    else if(scope is IList)
+                        foreach(var itm in scope as IList)
+                            if(itm is IdentifiedData)
+                                foreach (var pi2 in itm.GetType().GetRuntimeProperties())
+                                    pi2.GetValue(itm);
+                }
+            }
+            else
+                foreach (var nvs in qp["_expand"])
+                {
+                    // Get the property the user wants to expand
+                    object scope = returnValue;
+                    foreach (var property in nvs.Split('.'))
                     {
-                        foreach (var sc in scope as IList)
+                        if (scope is IList)
                         {
-                            PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                            if (keyPi == null)
-                                continue;
-                            // Get the backing property
-                            PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-                            if (expandProp != null)
-                                scope = expandProp.GetValue(sc);
-                            else
-                                scope = keyPi.GetValue(sc);
+                            foreach (var sc in scope as IList)
+                            {
+                                PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                                if (keyPi == null)
+                                    continue;
+                                // Get the backing property
+                                PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+                                if (expandProp != null)
+                                    scope = expandProp.GetValue(sc);
+                                else
+                                    scope = keyPi.GetValue(sc);
 
-                        }
-                    }
-                    else
-                    {
-                        PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                        if (keyPi == null)
-                            continue;
-                        // Get the backing property
-                        PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-
-                        Object existing = null;
-                        Object keyValue = keyPi.GetValue(scope);
-
-                        if (expandProp != null && expandProp.CanWrite && s_loadCache.TryGetValue(keyValue, out existing))
-                        {
-                            expandProp.SetValue(scope, existing);
-                            scope = existing;
+                            }
                         }
                         else
                         {
-                            if (expandProp != null)
+                            PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+                            if (keyPi == null)
+                                continue;
+                            // Get the backing property
+                            PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+
+                            Object existing = null;
+                            Object keyValue = keyPi.GetValue(scope);
+
+                            if (expandProp != null && expandProp.CanWrite && s_loadCache.TryGetValue(keyValue, out existing))
                             {
-                                    if (!s_loadCache.ContainsKey(keyValue))
-                                    {
-                                        scope = expandProp.GetValue(scope);
-                                        s_loadCache.Add(keyValue, scope);
-                                    }
+                                expandProp.SetValue(scope, existing);
+                                scope = existing;
                             }
                             else
-                                scope = keyValue;
+                            {
+                                if (expandProp != null)
+                                {
+                                        if (!s_loadCache.ContainsKey(keyValue))
+                                        {
+                                            scope = expandProp.GetValue(scope);
+                                            s_loadCache.Add(keyValue, scope);
+                                        }
+                                }
+                                else
+                                    scope = keyValue;
+                            }
                         }
                     }
                 }
-            }
         }
     }
 }

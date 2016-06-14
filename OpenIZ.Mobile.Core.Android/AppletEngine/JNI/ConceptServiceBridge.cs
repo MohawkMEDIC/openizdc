@@ -44,9 +44,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 var results = this.m_conceptPersister.Query(linqQuery, offset, count, out totalResults);
 
                 // Expand properties
-                if(request.ContainsKey("_expand"))
-                    foreach (var itm in results)
-                        JniUtil.ExpandProperties(itm, request);
+                foreach (var itm in results)
+                    JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
                 var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
@@ -81,13 +80,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
 
                 // Expand properties
-                if (request.ContainsKey("_expand"))
-                    foreach (var itm in results)
-                        JniUtil.ExpandProperties(itm, request);
+                foreach (var itm in results)
+                    JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
-                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                return JniUtil.ToJson(retVal);
+                var bundle = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                string retVal = JniUtil.ToJson(bundle);
+                return retVal;
             }
             catch (Exception e)
             {
