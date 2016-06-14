@@ -34,6 +34,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <summary>
         /// IMSI Patient Object
         /// </summary>
+        [Export]
+        [JavascriptInterface]
         public string Insert(String imsiPatientObject)
         {
             try
@@ -41,8 +43,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 var patient = JniUtil.FromJson<Patient>(imsiPatientObject);
                 if (patient == null)
                     throw new ArgumentException("Invalid type", nameof(imsiPatientObject));
-                var retVal = this.m_persister.Insert(patient);
-                return JniUtil.ToJson(retVal);
+                patient = this.m_persister.Insert(patient);
+                var retVal = JniUtil.ToJson(patient);
+                return retVal;
             }
             catch(Exception e)
             {
@@ -62,14 +65,19 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 // Parse the queyr
                 QueryExpressionParser parser = new QueryExpressionParser();
-                var linqQuery = parser.BuildLinqExpression<Patient>(NameValueCollection.ParseQueryString(imsiQueryString));
+                var request = NameValueCollection.ParseQueryString(imsiQueryString);
+                var linqQuery = parser.BuildLinqExpression<Patient>(request);
 
                 // Perform the query
                 int totalResults = 0;
                 var results = this.m_persister.Query(linqQuery, offset, count, out totalResults);
+                foreach (var itm in results)
+                    JniUtil.ExpandProperties(itm, request);
+
                 // Return bundle
-                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                return JniUtil.ToJson(retVal);
+                var bundle = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
+                var retVal = JniUtil.ToJson(bundle);
+                return retVal;
             }
             catch(Exception e)
             {

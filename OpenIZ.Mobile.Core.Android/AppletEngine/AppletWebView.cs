@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.AddJavascriptInterface (new ConfigurationServiceBridge(), "OpenIZConfigurationService");
 			this.AddJavascriptInterface (new ConceptServiceBridge (), "OpenIZConceptService");
             this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
-
+            this.AddJavascriptInterface(new PatientFunctionBridge(), "OpenIZPatientService");
             this.SetWebViewClient(new AppletWebViewClient());
             this.SetWebChromeClient(new AppletWebChromeClient(this.Context));
 		}

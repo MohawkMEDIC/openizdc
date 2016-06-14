@@ -38,6 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.DeterminerConcept?.EnsureExists(context);
             data.StatusConcept?.EnsureExists(context);
             data.TypeConcept?.EnsureExists(context);
+            data.StatusConceptKey = data.StatusConceptKey == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Insert(context, data);
 
