@@ -11,6 +11,8 @@
 var OpenIZ = new function () {
     console.info("Initializing OpenIZ Bridge");
 
+    // Language strings
+    var languageStrings = [];
     /** 
      * @summary URL Parameters
      */
@@ -21,6 +23,7 @@ var OpenIZ = new function () {
      * @class
      */
     this.Util = new function () {
+
         /**
          * @summary Changes the specified date string into an appropriate ISO string
          * @memberof OpenIZ#Util
@@ -386,6 +389,16 @@ var OpenIZ = new function () {
             return OpenIZApplicationService.SetLocale(locale);
         };
         /**
+         * @summary Set the strings used for localization
+         * @method
+         * @memberof OpenIZ#Localization
+         * @param {String} locale The ISO639-2 language code of the data
+         * @param {Object} localeData The localization data
+         */
+        this.setStrings = function (locale, localeData) {
+            languageStrings[lang] = localeData;
+        };
+        /**
          * @memberof OpenIZ#Localization
          * @method
          * @summary Gets the complete localization string data
@@ -394,6 +407,12 @@ var OpenIZ = new function () {
         this.getStrings = function (locale) {
             try
             {
+                // Look for local strings
+                var localStrings = languageStrings[locale];
+                if (localStrings != null)
+                    return localStrings;
+
+                // Go to OpenIZ applet infrastructure
                 var data = OpenIZApplicationService.GetStrings(locale);
                 if(data == null)
                     return null;

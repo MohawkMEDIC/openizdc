@@ -32,6 +32,7 @@
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
+    <Compile Include="Data\Model\Entities\DbPersonLanguageCommunication.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityAddressPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
