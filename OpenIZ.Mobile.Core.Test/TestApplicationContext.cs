@@ -13,6 +13,7 @@ using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Diagnostics;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Test
 {
@@ -21,9 +22,10 @@ namespace OpenIZ.Mobile.Core.Test
     /// </summary>
     public class TestApplicationContext : ApplicationContext
     {
-
+        // Configuration
         private OpenIZConfiguration m_configuration;
         private TestContext m_context;
+
         /// <summary>
         /// Gets or sets the unit test context
         /// </summary>
@@ -130,6 +132,7 @@ namespace OpenIZ.Mobile.Core.Test
                         if (EntitySource.Current == null)
                             EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
+                        this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
                     }
                     catch (Exception e)
                     {
@@ -172,5 +175,6 @@ namespace OpenIZ.Mobile.Core.Test
 
             }
         }
+
     }
 }

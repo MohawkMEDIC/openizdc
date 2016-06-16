@@ -15,9 +15,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class PatientPersistenceService : IdentifiedPersistenceService<Patient, DbPatient>
     {
-        // Entity persister
-        private EntityPersistenceService m_entityPersister = new EntityPersistenceService();
+        // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
+        protected EntityPersistenceService m_entityPersister = new EntityPersistenceService();
 
         /// <summary>
         /// From model instance
@@ -64,7 +64,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             var inserted = this.m_personPersister.Insert(context, data);
-            data.Key = inserted.Key;
             return base.Insert(context, data);
         }
 
@@ -87,9 +86,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Patient Obsolete(SQLiteConnection context, Patient data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
-            data.StatusConceptKey = retVal.StatusConceptKey;
-            data.ObsoletedByKey = retVal.ObsoletedByKey;
-            data.ObsoletionTime = retVal.ObsoletionTime;
             return data;
         }
     }

@@ -9,8 +9,28 @@
 		<property modelName="UpdatedByKey" domainName="UpdatedByUuid"/>
 		<property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
 	</class>
+
+  <!-- Security Application -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityApplication, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+    <property modelName="Name" domainName="PublicId"/>
+  </class>
+
+  <!-- Security Device -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityDevice, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityDevice, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+    <property modelName="Name" domainName="PublicId"/>
+  </class>
   
-	<!-- Concepts -->
+  <!-- Concepts -->
 	<class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Mobile.Core.Data.Model.Concepts.DbConceptSet, OpenIZ.Mobile.Core, Version=0.5.0.0">
 		<property modelName="Key" domainName="Uuid"/>
@@ -150,10 +170,54 @@
     <property modelName="Key" domainName="Uuid"/>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Entities.PersonLanguageCommunication, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbPersonLanguageCommunication, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  </class>
+  
   <!-- Patient Maps -->
   <class modelClass="OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Mobile.Core.Data.Model.Roles.DbPatient, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="GenderConceptKey" domainName="GenderConceptUuid"/>
+  </class>
+
+  <!-- Industry Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbOrganization, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="IndustryConceptKey" domainName="IndustryConceptUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.Place, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbPlace, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+  
+  <class modelClass="OpenIZ.Core.Model.Entities.PlaceService, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbPlaceService, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+    <property modelName="ServiceConceptKey" domainName="ServiceConceptUuid"/>
+  </class>
+
+  <!-- Security entities -->
+  <class modelClass="OpenIZ.Core.Model.Entities.ApplicationEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbApplicationEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SecurityApplicationKey" domainName="SecurityApplicationUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.DeviceEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbDeviceEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SecurityDeviceKey" domainName="SecurityDeviceUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.UserEntity, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbUserEntity, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SecurityUserKey" domainName="SecurityUserUuid"/>
   </class>
 </modelMap>

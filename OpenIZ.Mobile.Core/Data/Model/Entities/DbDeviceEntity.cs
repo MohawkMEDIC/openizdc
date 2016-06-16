@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the security device identifier.
 		/// </summary>
 		/// <value>The security device identifier.</value>
-		[Column("securityDevice"), MaxLength(16)]
+		[Column("securityDevice"), MaxLength(16), NotNull]
 		public byte[] SecurityDeviceUuid {
 			get;
 			set;
