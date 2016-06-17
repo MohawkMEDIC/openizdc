@@ -113,7 +113,7 @@ var OpenIZModel = new function () {
         ICD10 : "F7A5CBD8-5425-415E-8308-D14B94F56917", 
         ISO6392 : "089044EA-DD41-4258-A497-E6247DD364F6", 
         SNOMEDCT : "B3030751-D4DB-420B-B765-E837607820CD", 
-        CVX : "eba4f94a-2cad-4bb3-aca7-f4e54eaac4bd"
+        CVX : "EBA4F94A-2CAD-4BB3-ACA7-F4E54EAAC4BD"
     };
 
     /**
@@ -211,8 +211,8 @@ var OpenIZModel = new function () {
      */
     this.getObjectKey = function (object) {
         if(object != null && object.id !== undefined)
-            return object.id;
-        return object;
+            return object.id.toUpperCase();
+        return object.toUpperCase();
     };
     
     /**
@@ -783,7 +783,7 @@ var OpenIZModel = new function () {
             };
 
             // Iterate
-            for (var c in _self.components) {
+            for (var i in _self.components) {
                 var comp = _self.components[i];
 
                 // Get type key
