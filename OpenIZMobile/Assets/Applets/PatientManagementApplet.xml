@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.timr.applet.patientManagement" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/cogs</icon>
+    <name lang="en">Patient Management</name>
+    <groupName lang="en">Administration</groupName>
+    <author>OpenIZ.org Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0" />
+  </info>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <script>patient-manage-controller</script>
+      <content lang="en">
+        <div ng-controller="PatientManagementController"  xmlns="http://www.w3.org/1999/xhtml">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title text-center">New Weight Entry</h3>
+                </div>
+                <div class="panel-body">
+                  <fieldset class="form-horizontal">
+                    <div class ="form-group">
+                      <label class ="col-xs-1 control-label" for="weightInput">{{locale.inputLabels.weight}}</label>
+                      <div class="col-xs-2">
+                        <input name="weight" id="weightInput" class="form-control" aria-describedby="weightInputAddon"></input>
+                      </div>
+                      <label class ="col-xs-1 control-label" for="weightUnitSelect">{{locale.inputLabels.unit}}</label>
+                      <div class="col-xs-2">
+                        <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon">
+                          <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
+                        </select>
+                      </div>
+                      <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                      <div class="col-xs-3 date input-group" id="dobPicker">
+                        <input type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="datetime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions">
+                          <span class="input-group-addon" ng-click="openDate()">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                          </span>
+                        </input>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button class="col-xs-offset-10 btn btn-primary" data-toggle="modal" data-target="#myModal">Save
+                      </button>
+                    </div>
+                    
+                    <div class="modal fade" id="myModal" role="dialog">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Confirm Weight Update</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p>{{"You are about to update the weight of " + patient.FirstName + "," + patient.LastName + " to " + ""}}</p>
+                            <p>Are you sure this is correct?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">Yes</button>
+                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">No</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <table class="table">
+                        <caption class="text-center">Previous Weights</caption>
+
+                        <thead>
+                          <tr>
+                            <th>Date Recorded</th>
+                            <th>Weight</th>
+                            <th>Unit</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          <tr ng-repeat="weights in weightRecords">
+                            <td>{{weights.Date.split("T", 1)[0]}}</td>
+                            <td>{{weights.Weight}}</td>
+                            <td>{{weights.Unit}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="weight-canvas" height="225" width="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patient-manage-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
+		  {
+         $scope.findWeights = function(){
+            //$scope.patient = sessionStorage.getItem("Patient");
+            
+            date = $scope.patient.DateOfBirth.split(" ", 1);
+            dateSplit = date[0].split("/");
+            if(dateSplit[0].length<2){dateSplit[0] = "0"+dateSplit[0]};
+            if(dateSplit[1].length<2){dateSplit[1] = "0"+dateSplit[1]};
+            formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];
+            
+            OpenIZ.Patient.weightByDob(function(data){
+              weightArray = [];
+              for(i=0;i<data[0].WeightDates.length;i++){
+                weightArray[i] = {Date:data[0].WeightDates[i], Unit:data[0].WeightUnits[i], Weight:data[0].Weights[i]}
+              }
+              $scope.weightRecords = weightArray;
+              $scope.$digest();
+              $scope.draw();
+          }, formattedDate);
+         };
+         $scope.findWeights();
+         $scope.openDate = function() {
+          $scope.popup.opened = true;
+         };
+         $scope.popup = {
+            opened: false
+          };
+          $scope.draw = function(){
+              var labelsA = [];
+              var dataA = [];
+          
+              for(var i = 0; i<$scope.weightRecords.length;i++){
+                labelsA[i] = $scope.weightRecords[i].Date.substring(0,4);
+                dataA[i] = parseInt($scope.weightRecords[i].Weight);
+              }
+              
+              var chartData = {
+                labels: labelsA,
+                datasets: [
+                  {
+                label: "My First dataset",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "rgba(51,204,204,0.4)",
+                borderColor: "rgba(51,204,204,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(51,204,204,1)",
+                pointBackgroundColor: "rgb(51,204,204)",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(51,204,204,1)",
+                pointHoverBorderColor: "rgba(51,204,204,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                fillColor: "rgba(51,204,204,0.4)",
+                strokeColor: "rgba(51,204,204,1)",
+                pointColor: "rgba(31, 122, 122,1)",
+                data: dataA,
+                        }
+                ]
+            };
+              
+              var sctx = document.getElementById("weight-canvas").getContext("2d");
+		          window.myLine = new Chart(sctx).Line(chartData, {
+			          responsive: true
+		          });
+              
+              
+	        }
+
+          
+          
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

@@ -5,16 +5,18 @@
     <name lang="en">Patient Administration</name>
     <groupName lang="en">Administration</groupName>
     <author>OpenIZ.org Community</author>
-    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <dependency id="org.openiz.core" version="0.5.0.0" />
   </info>
   <asset name="index" mimeType="text/html">
     <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>patient-admin-controller</script>
       <content lang="en">
-        <div class="row" ng-controller="PatientAdministrationController">
+        <div class="row" ng-controller="PatientAdministrationController"  xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
-            <a class ="btn-lg btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientSearch">Patient Search</a>
-            <a class ="btn-lg btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientRegister">Patient Register</a>
+            <a class ="btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientSearch">{{locale.buttonLabels.patientSearch}}</a>
+            <a class ="btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientRegister">{{locale.buttonLabels.patientRegister}}</a>
           </div>
         </div>
       </content>
@@ -22,34 +24,35 @@
   </asset>
   <asset name="patientSearch" mimeType="text/html">
     <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>patient-search-controller</script>
       <content lang="en">
-        <div class="row" ng-controller="PatientSearchController">
+        <div class="row" ng-controller="PatientSearchController"  xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
             <div class="row">
               <div class="col-xs-12">
-                <form id="registerForm" role="form" novalidate="novalidate">
+                <p>{{locale.login}}</p>
+                <form name="patientSearchForm" role="form" novalidate="novalidate">
                   <div class="panel-group">
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#barcodeCollapse">Barcode Scan</a>
+                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcodeScan}}</a>
                         </h3>
                       </div>
                       <div id="barcodeCollapse" class="panel-collapse collapse in">
                         <div class="panel-body">
-                          <fieldset class="form-group">
-                            <legend class="control-label"></legend>
-
+                          <fieldset class="form-horizontal">
                             <div class="form-group">
-                              <div class="input-group">
-                                <span class="input-group-addon" id="barcodeAddon">Identifier</span>
-                                <input type="text" name="barcode" id="barcodeInput" class="form-control" placeholder="XXXXXXXXXXXX" aria-describedby="barcodeAddon" ng-model="barcode">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="barcodeInput">{{locale.inputLabels.identifier}}</label>
+                              <div class="col-xs-6 input-group">
+                                <input type="number" name="barcode" id="barcodeInput" class="form-control" placeholder="{{locale.placeholders.barcode}}" aria-describedby="barcodeAddon" ng-model="barcode">
                                   <span class="input-group-btn">
-                                  <button type="button" class="btn btn-default" ng-click="scanBarcode()">
-                                    <span class="glyphicon glyphicon-barcode">
-                                    </span>Scan
-                                  </button>
+                                    <button type="button" class="btn btn-default" ng-click="scanBarcodeLink()">
+                                      <span class="glyphicon glyphicon-barcode">
+                                      </span>{{locale.buttonLabels.scan}}
+                                    </button>
                                   </span>
                                 </input>
                               </div>
@@ -61,100 +64,111 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#patientDemographicCollapse">Patient Demographics Criteria</a>
+                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
                         </h3>
                       </div>
                       <div id="patientDemographicCollapse" class="panel-collapse collapse">
                         <div class="panel-body">
-                          <fieldset class="form-group">
-                            <legend class="control-label"></legend>
+                          <fieldset class="form-horizontal">
 
                             <div class="form-group">
-                              <div class="input-group">
-                                <span class="input-group-addon" id="givenNameAddon">Given Name</span>
-                                <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name" aria-describedby="givenNameAddon"/>
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="givenNameInput">{{locale.inputLabels.givenName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="givenName" id="givenNameInput" ng-model="givenNameInput" ng-maxlength="50" class="form-control" placeholder="{{locale.placeholders.givenName}}" aria-describedby="givenNameAddon" />
                               </div>
-
-                              <div class="input-group">
-                                <span class="input-group-addon" id="familyNameAddon">Family Name</span>
-                                <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name" aria-describedby="familyNameAddon"/>
+                              <div ng-messages="patientSearchForm.givenName.$error" role="alert">
+                                <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
                               </div>
+                            </div>
 
-                              <div class="input-group">
-                                <span class="input-group-addon" id="dobFromAddon">Date of Birth(From)</span>
-                                <input type="date" name="dobFrom" id="dobFromInput" class="form-control" aria-describedby="dobAddon"/>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="familyNameInput">{{locale.inputLabels.familyName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="familyName" id="familyNameInput" ng-model="familyNameInput" ng-maxlength="50" class="form-control" placeholder="{{locale.placeholders.familyName}}" aria-describedby="familyNameAddon" />
                               </div>
-
-                              <div class="input-group">
-                                <span class="input-group-addon" id="dobToAddon">Date of Birth(To)</span>
-                                <input type="text" name="dobTo" id="dobToInput" class="form-control" aria-describedby="dobAddon"/>
+                              <div ng-messages="patientSearchForm.familyName.$error" role="alert">
+                                <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
                               </div>
+                            </div>
+                            <div class ="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="dobFromInput">{{locale.inputLabels.dateOfBirthFrom}}</label>
+                              <div class="col-xs-6 date input-group" id="dobFromPicker">
+                                <input type="text" name="dobFrom" id="dobFromInput" class="form-control" aria-describedby="dobAddon" ng-model="datetimeFrom" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupFrom.opened" datepicker-options="dateOptions">
+                                  <span class="input-group-addon" ng-click="openFrom()">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                  </span>
+                                </input>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="dobToInput">{{locale.inputLabels.dateOfBirthTo}}</label>
+                              <div class="date col-xs-6 input-group" id="dobToPicker">
+                                <input type="text" name="dobTo" id="dobToInput" class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                                  <span class="input-group-addon" ng-click="openTo()">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                  </span>
+                                </input>
+                              </div>
+                            </div>
 
-                              <div class="input-group">
-                                <span class="input-group-addon" id="genderAddon">Gender</span>
-                                <select name="gender" id="genderSelect" class="form-control" aria-describedby="accuracyAddon">
-                                  <option ng-repeat="genderSelect in data.genderSelect" value="{{genderSelect.gender}}">{{genderSelect.gender}}</option>
+                            <div class ="form-group">
+                              <label class ="col-xs-2 col-xs-offset-2 control-label" for="genderSelect">{{locale.inputLabels.gender}}</label>
+                              <div class="col-xs-6">
+                                <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon">
+                                  <option ng-repeat="(key, value) in locale.gender" value="{{value}}">{{value}}</option>
                                 </select>
+                              </div>
+                            </div>
+
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="motherGivenNameInput">{{locale.inputLabels.motherGivenName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="motherGivenName" id="motherGivenNameInput" ng-model="motherGivenNameInput" ng-maxlength="50" class="form-control" placeholder="{{locale.placeholders.motherGivenName}}" aria-describedby="motherGivenNameAddon" />
+                              </div>
+                              <div ng-messages="patientSearchForm.motherGivenName.$error" role="alert">
+                                <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class ="col-xs-2 col-xs-offset-2 control-label" for="motherFamilyNameInput">{{locale.inputLabels.motherFamilyName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="motherFamilyName" id="motherFamilyNameInput" ng-model="motherFamilyNameInput" ng-maxlength="50" class="form-control" placeholder="{{locale.placeholders.motherFamilyName}}" aria-describedby="motherFamilyNameAddon" />
+                                <div ng-messages="patientSearchForm.motherFamilyName.$error" role="alert">
+                                  <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
+                                </div>
                               </div>
                             </div>
                           </fieldset>
                         </div>
                       </div>
                     </div>
+
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#nextOfKinCollapse">Next Of Kin</a>
-                        </h3>
-                      </div>
-                      <div id="nextOfKinCollapse" class="panel-collapse collapse">
-                        <div class="panel-body">
-                          <fieldset class="form-group">
-                            <legend class="control-label"></legend>
-
-                            <div class="form-group">
-                              <div class="input-group">
-                                <span class="input-group-addon" id="clientRelationAddon">Relationship to Client</span>
-                                <select name="clientRelation" id="clientRelationSelect" class="form-control" aria-describedby="clientRelationAddon">
-                                  <option ng-repeat="relationSelect in data.relationshipSelect" value="{{relationSelect.relation}}">{{relationSelect.relation}}</option>
-                                </select>
-                              </div>
-
-                              <div class="input-group">
-                                <span class="input-group-addon" id="kinGivenNameAddon">Given Name</span>
-                                <input type="text" name="kinGivenName" id="kinGivenNameInput" class="form-control" placeholder="First/Given Name(s)" aria-describedby="givenNameAddon"/>
-                              </div>
-
-                              <div class="input-group">
-                                <span class="input-group-addon" id="familyNameAddon">Family Name</span>
-                                <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Last/Family Name(s)" aria-describedby="familyNameAddon"/>
-                              </div>
-
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">Additional Search Criteria</a>
+                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">{{locale.panelLabels.additionalSearchCriteria}}</a>
                         </h3>
                       </div>
                       <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
                         <div class="panel-body">
-                          <fieldset class="form-group">
+                          <fieldset class="form-horizontal">
                             <legend class="control-label"></legend>
 
                             <div class="form-group">
-                              <div class="input-group">
-                                <span class="input-group-addon" id="cityAddon">City/Village:</span>
-                                <input type="text" name="city" id="cityInput" class="form-control" placeholder="Village" aria-describedby="cityAddon"/>
+                              <label class="col-xs-2 col-xs-offset-2 control-label" id="cityInput">{{locale.inputLabels.cityVillage}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="city" ng-maxlength="50" id="cityInput" ng-model="cityInput" class="form-control" placeholder="{{locale.placeholders.cityVillage}}" aria-describedby="cityAddon" />
+                                <div ng-messages="patientSearchForm.city.$error" role="alert">
+                                  <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
+                                </div>
                               </div>
-
-                              <div class="input-group">
-                                <span class="input-group-addon" id="telephoneAddon">Telephone:</span>
-                                <input type="text" name="telephone" id="telephoneInput" class="form-control" placeholder="Telephone Number" aria-describedby="telephoneAddon"/>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
+                              <div class ="col-xs-6">
+                                <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" class="form-control" placeholder="{{locale.placeholders.healthFacility}}" aria-describedby="healthFacilityAddon" />
                               </div>
                             </div>
                           </fieldset>
@@ -163,15 +177,71 @@
                     </div>
                   </div>
                   <div class="btn-group pull-right">
-                    <button type="submit" class="btn btn-danger">
+                    <button type="submit" class="btn btn-danger" ng-click="cancel()">
                       <span class="glyphicon glyphicon-remove"></span>
-                      Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                      Search
+                      {{locale.buttonLabels.cancel}}
+                    </button>
+                    <button type="submit" class="btn btn-primary" ng-click="search(patientSearchForm.$invalid)">
+                      {{locale.buttonLabels.search}}
                       <span class="glyphicon glyphicon-search"></span>
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <table class="table table-striped table-bordered">
+              <caption>
+                {{locale.tableHeaders.results}}
+              </caption>
+              <thead>
+                <tr>
+                  <th>{{locale.tableHeaders.names}}</th>
+                  <th>{{locale.tableHeaders.dateOfBirth}}</th>
+                  <th>{{locale.tableHeaders.gender}}</th>
+                  <th>{{locale.tableHeaders.cityVillage}}</th>
+                  <th>{{locale.tableHeaders.healthFacility}}</th>
+                  <th>{{locale.tableHeaders.actions}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="patient in searchResults">
+                  <td>{{patient.FirstName + "," + patient.LastName}}</td>
+                  <td>{{patient.DateOfBirth}}</td>
+                  <td>{{patient.Gender}}</td>
+                  <td>{{patient.Village}}</td>
+                  <td>{{patient.HealthFacility}}</td>
+                  <td>
+                    <span class="btn-group">
+                      <button class="btn btn-primary" ng-click="view(patient)">
+                        {{locale.buttonLabels.view}}<span class="glyphicon glyphicon-eye-open"></span>
+                      </button>
+                      <button type="button" class="btn btn-primary" data-toggle="modal" autocomplete="off" ng-click="setModalPatient(patient, $index)" data-target="#myModal" ng-class="{'btn-success':patient.CheckedIn==true}">
+                        {{locale.buttonLabels.checkIn}}
+                      </button>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="modal fade" id="myModal" role="dialog">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">{{locale.modalHeaders.checkInPatient}}</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{locale.modalText.nextAppointment + modalPatient.Appointment}}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-right" ng-click="modalPatient.CheckedIn = !modalPatient.CheckedIn; setPatient()" data-dismiss="modal">
+                      <span ng-if="!modalPatient.CheckedIn">{{locale.buttonLabels.checkIn}}</span>
+                      <span ng-if="modalPatient.CheckedIn">{{locale.buttonLabels.checkOut}}</span>
+                    </button>
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{locale.buttonLabels.close}}</button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -181,74 +251,128 @@
   </asset>
   <asset name="patientRegister" mimeType="text/html">
     <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>app://openiz.org/asset/js/moment.min.js</script>
+      <script>app://openiz.org/asset/js/bootstrap-datetimepicker.min.js</script>
       <script>patient-register-controller</script>
-      <content lang="en">
-        <div class="row" ng-controller="PatientRegisterController">
+      <content>
+        <div class="row" ng-controller="PatientRegisterController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="container">
             <div class="row">
               <div class="col-xs-12">
-                <form id="registerForm" role="form" novalidate="novalidate">
+                <form name="patientRegisterForm" role="form" novalidate="novalidate">
                   <div class="panel-group">
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#demoInfoCollapse">Demographic Information</a>
+                          <a data-toggle="collapse" href="#demoInfoCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
                         </h3>
                       </div>
                       <div id="demoInfoCollapse" class="panel-collapse collapse in">
                         <div class="panel-body">
-
                           <div class="row">
-                            <div class="col-xs-4">
-                                
-                            </div>
-                            <div class="col-xs-8">
-                              <fieldset class="form-group">
+                            <div class="col-xs-12">
+                              <fieldset class="form-horizontal form-group">
+
+                                <div ng-repeat="firstName in patient.patientNames.givenNames track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['givenName-' + $index].$touched &amp;&amp; patientRegisterForm['givenName-' + $index].$invalid }">
+
+                                    <label class="col-xs-2 control-label" for="givenNameInput">{{locale.inputLabels.givenName}}</label>
+
+                                    <div class="col-xs-9 input-group">
+                                      <input type="text" name="givenName-{{ $index }}" ng-model="patient.patientNames.givenNames[$index]" class="form-control" placeholder="{{locale.placeholders.givenName}}" id="givenNameInput" required="required" />
+
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'givenNames', '')">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'patientNames', 'givenNames')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['givenName-' + $index].$error" ng-if="patientRegisterForm['givenName-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
+                                  </div>
+                                </div>
+
+                                <div ng-repeat="lastName in patient.patientNames.familyNames track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['familyName-' + $index].$touched &amp;&amp; patientRegisterForm['familyName-' + $index].$invalid }">
+
+                                    <label class="col-xs-2 control-label" for="familyNameInput">{{locale.inputLabels.familyName}}</label>
+                                    <div class="col-xs-9 input-group">
+
+                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{locale.placeholders.familyName}}" id="familyNameInput" required="required" />
+
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'familyNames', '')">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'patientNames', 'familyNames')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['familyName-' + $index].$error" ng-if="patientRegisterForm['familyName-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
+                                  </div>
+                                </div>
+
+                                <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['dob'].$touched &amp;&amp; patientRegisterForm['dob'].$invalid }">
+                                  <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                                  <div class="col-xs-9 input-group">
+                                    <div class="input-group date">
+                                      <input type="text" name="dob" id="dobInput" class="form-control" ng-model="patient.dob" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
+                                        <span class="input-group-addon addon-background" ng-click="openDOB()">
+                                          <span class="glyphicon glyphicon-calendar">
+                                          </span>
+                                        </span>
+                                      </input>
+
+                                      <span class="input-group-addon addon-background" id="accuracyAddon">{{locale.inputLabels.accuracy}}</span>
+
+                                      <select name="accuracy" ng-model="patient.accuracy" class="form-control" aria-describedby="accuracyAddon">
+                                        <option ng-repeat="(key, value) in locale.accuracy" value="{{value}}">{{value}}</option>
+                                      </select>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['dob-' + $index].$error" ng-if="patientRegisterForm['dob-' + $index].$touched">
+                                    <p  class="alert alert-danger" ng-message="required">{{locale.errors.dob}}</p>
+                                  </div>
+                                </div>
+
                                 <div class="form-group">
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="givenNameAddon">Given:</span>
-                                    <input type="text" name="givenName" id="givenNameInput" class="form-control" placeholder="Given Name" aria-describedby="givenNameAddon"/>
-                                    <div class="input-group-btn">
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                      </button>
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                      </button>
-                                    </div>
-                                  </div>
-
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="familyNameAddon">Family:</span>
-                                    <input type="text" name="familyName" id="familyNameInput" class="form-control" placeholder="Family Name" aria-describedby="familyNameAddon"/>
-                                    <div class="input-group-btn">
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                      </button>
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                      </button>
-                                    </div>
-                                  </div>
-
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="dobAddon">Date of Birth</span>
-                                    <input type="date" name="dob" id="dobInput" class="form-control" placeholder="mm/dd/yyyy" aria-describedby="dobAddon"/>
-                                    <span class="input-group-addon" id="accuracyAddon">Accuracy</span>
-                                    <select name="accuracy" id="accurracySelect" class="form-control" aria-describedby="accuracyAddon">
-                                      <option value="">Day</option>
-                                      <option value="">Month</option>
-                                      <option value="">Year</option>
+                                  <label class="col-xs-2 control-label" id="genderAddon">{{locale.inputLabels.gender}}</label>
+                                  <div class="col-xs-9 input-group">
+                                    <select ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required">
+                                      <option ng-repeat="(key,value) in locale.gender" value="{{value}}">{{value}}</option>
                                     </select>
                                   </div>
+                                </div>
 
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="genderAddon">Gender</span>
-                                    <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon">
-                                      <option value="">Male</option>
-                                      <option value="">Female</option>
-                                      <option value="">Other</option>
-                                    </select>
+                                <div class="form-group">
+                                  <label class="col-xs-2 control-label">{{locale.panelLabels.additionalInfo}}</label>
+                                  <div class="col-xs-9">
+                                    <div class="checkbox">
+                                      <label for="tetanusCheck">
+                                        <input type="checkbox" name="tetanusOptions" id="tetanusCheck" /> Does the patient have tetanus?
+                                      </label>
+                                    </div>
+                                    <div class="checkbox">
+                                      <label for="breastFeedingCheck">
+                                        <input type="checkbox" name="breastFeedingOptions" id="breastFeedingCheck" /> Does the patient breast-feed?
+                                      </label>
+                                    </div>
+                                    <div class="checkbox">
+                                      <label for="birthCertCheck">
+                                        <input type="checkbox" name="birthCertOptions" id="birthCertCheck" /> Does the patient have a birth certificate?
+                                      </label>
+                                    </div>
                                   </div>
                                 </div>
                               </fieldset>
@@ -258,7 +382,7 @@
                       </div>
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#potentialDupCollapse">Potential Duplicates</a>
+                          <a data-toggle="collapse" href="#potentialDupCollapse">{{locale.panelLabels.potentialDuplicates}}</a>
                         </h3>
                       </div>
                       <div id="potentialDupCollapse" class="panel-collapse collapse in">
@@ -267,11 +391,21 @@
                             <div class="table-responsive">
                               <table class="table table-bordered table-hover">
                                 <tr>
-                                  <th>Name(s)</th>
-                                  <th>Birthdate</th>
-                                  <th>Gender</th>
-                                  <th>City/Village(s)</th>
+                                  <th>{{locale.tableHeaders.names}}</th>
+                                  <th>{{locale.tableHeaders.dateOfBirth}}</th>
+                                  <th>{{locale.tableHeaders.gender}}</th>
+                                  <th>{{locale.tableHeaders.cityVillage}}</th>
+                                  <th>{{locale.tableHeaders.actions}}</th>
                                 </tr>
+                                <tbody>
+                                  <tr ng-repeat="patient in searchResults">
+                                    <td>{{patient.FirstName}}</td>
+                                    <td>{{patient.DateOfBirth}}</td>
+                                    <td>{{patient.Gender}}</td>
+                                    <td>{{patient.Village}}</td>
+                                    <td></td>
+                                  </tr>
+                                </tbody>
                               </table>
                             </div>
                           </div>
@@ -282,38 +416,40 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#identityCollapse">Identification</a>
+                          <a data-toggle="collapse" href="#identityCollapse">{{locale.panelLabels.identification}}</a>
                         </h3>
                       </div>
                       <div id="identityCollapse" class="panel-collapse collapse in">
                         <div class="panel-body">
                           <div class="row">
                             <div class="col-xs-12">
-                              <fieldset class="form-group">
-                                <div class="form-group">
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="idNumAddon">ID:</span>
-                                    <input type="number" name="idNum" id="idNumInput" class="form-control" placeholder="646465786868576" aria-describedby="idNumAddon"/>
-                                    <div class="input-group-btn">
+                              <fieldset class="form-horizontal form-group">
+                                <div ng-repeat="identifier in patient.identifiers track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['identifierNum-' + $index].$touched &amp;&amp; patientRegisterForm['identifierNum-' + $index].$invalid }">
+                                    <label class="col-xs-2 control-label" id="idNumInput">{{locale.inputLabels.id}}</label>
+                                    <div class="col-xs-9 input-group">
+                                      <input type="text" name="identifierNum-{{ $index }}" ng-model=" patient.identifiers[$index].identifierNum" class="form-control" placeholder="646465786868576" id="idNumInput" required="required" />
+                                      <div class="input-group-btn">
                                         <button class="btn btn-default" type="button">
                                           <span class="glyphicon glyphicon-barcode"></span>
-                                          Scan
+                                          {{locale.buttonLabels.scan}}
                                         </button>
+                                      </div>
+                                      <select name="identifierType-{{ $index }}" ng-model="patient.identifiers[$index].identifierType" class="form-control">
+                                        <option ng-repeat="(key, value) in locale.identificationTypes" value="{{value}}">{{value}}</option>
+                                      </select>
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('identifiers', '', {identifierNum: '', identifierType: ''})">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'identifiers', '')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
                                     </div>
-                                    <select name="yellowCardID" id="yellowCardIDSelect" class="form-control">
-                                      <option value="" disabled="disabled" selected="selected">Yellow Card ID</option>
-                                      <option value="">WIP</option>
-                                      <option value="">WIP</option>
-                                      <option value="">WIP</option>
-                                    </select>
-                                    <div class="input-group-btn">
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                      </button>
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                      </button>
-                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['identifierNum-' + $index].$error" ng-if="patientRegisterForm['identifierNum-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.idRequired}}</p>
                                   </div>
                                 </div>
                               </fieldset>
@@ -326,25 +462,25 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#domicileCollapse">Domicile</a>
+                          <a data-toggle="collapse" href="#domicileCollapse">{{locale.panelLabels.domicile}}</a>
                         </h3>
                       </div>
                       <div id="domicileCollapse" class="panel-collapse collapse in">
                         <div class="panel-body">
                           <div class="row">
                             <div class="col-xs-12">
-                              <fieldset class="form-group">
+                              <fieldset class="form-horizontal form-group">
                                 <div class="form-group">
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="cityOrVillageAddon">City/Village:</span>
-                                    <input type="text" name="cityOrVillage" id="cityOrVillageInput" class="form-control" aria-describedby="cityOrVillageAddon"/>
+                                  <label class="col-xs-2 control-label" for="cityOrVillageInput">{{locale.inputLabels.cityVillage}}</label>
+                                  <div class="col-xs-9 input-group">
+                                    <input type="text" name="cityOrVillage" ng-model="cityOrVillage" class="form-control" id="cityOrVillageInput" />
                                   </div>
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="birthPlaceAddon">Birth Place:</span>
-                                    <select name="birthPlace" id="birthPlaceSelect" class="form-control" aria-describedby="birthPlaceAddon">
-                                      <option value="">Hospital 1</option>
-                                      <option value="">Hospital 2</option>
-                                      <option value="">Hospital 3</option>
+                                </div>
+                                <div class="form-group">
+                                  <label class="col-xs-2 control-label" for="birthPlaceSelect">{{locale.inputLabels.birthPlace}}</label>
+                                  <div class="col-xs-9 input-group">
+                                    <select name="{{ 'birthPlace' + $index }}" ng-model="birthPlace" class="form-control" id="birthPlaceSelect">
+                                      <option ng-repeat="(key, value) in locale.hospitals" value="{{value}}">{{value}}</option>
                                     </select>
                                   </div>
                                 </div>
@@ -358,53 +494,122 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#contactCollapse">Contact Information</a>
+                          <a data-toggle="collapse" href="#contactCollapse">{{locale.panelLabels.contactInformation}}</a>
                         </h3>
                       </div>
                       <div id="contactCollapse" class="panel-collapse collapse in">
                         <div class="panel-body">
                           <div class="row">
                             <div class="col-xs-12">
-                              <fieldset class="form-group">
-                                <div class="form-group">
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="phoneNumAddon">Tel:</span>
-                                    <input type="text" name="phoneNum" id="phoneNumInput" class="form-control" placeholder="465432345689976533" aria-describedby="phoneNumAddon"/>
-                                    <span class="input-group-addon" id="phoneTypeAddon">
-                                      <span class="glyphicon glyphicon-earphone"></span>
-                                    </span>
-                                    <select name="phoneType" id="phoneTypeSelect" class="form-control" aria-describedby="phoneTypeAddon">
-                                      <option value="">Mobile</option>
-                                      <option value="">Home</option>
-                                      <option value="">Work</option>
-                                    </select>
-                                    <div class="input-group-btn">
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                      </button>
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                      </button>
+                              <fieldset class="form-horizontal form-group">
+
+                                <div ng-repeat="givenName in patient.contactNames.givenNames track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['contactGivenName-' + $index].$touched &amp;&amp; patientRegisterForm['contactGivenName-' + $index].$invalid }">
+                                    <label class="col-xs-2 control-label" for="contactGivenNameInput">{{locale.inputLabels.givenName}}</label>
+                                    <div class="col-xs-9 input-group">
+
+                                      <input type="text" name="contactGivenName-{{ $index }}" ng-model="patient.contactNames.givenNames[$index]" class="form-control" placeholder="{{locale.placeholders.givenName}}" id="contactGivenNameInput" required="required" />
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('contactNames', 'givenNames', '')">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'contactNames', 'givenNames')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
                                     </div>
                                   </div>
 
-                                  <div class="input-group">
-                                    <span class="input-group-addon" id="emailAddon">E-Mail:</span>
-                                    <input type="email" name="email" id="emailInput" class="form-control" placeholder="someone@somedomain.com" aria-describedby="emailAddon"/>
-                                    <span class="input-group-addon" id="domainAddon">@</span>
-                                    <select name="domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
-                                      <option value="">WIP</option>
-                                      <option value="">WIP</option>
-                                      <option value="">WIP</option>
-                                    </select>
-                                    <div class="input-group-btn">
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                      </button>
-                                      <button class="btn btn-default btn-custom" type="button">
-                                        <span class="glyphicon glyphicon-minus"></span>
-                                      </button>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactGivenName-' + $index].$error" ng-if="patientRegisterForm['contactGivenName-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
+                                  </div>
+                                </div>
+
+                                <div ng-repeat="familyName in patient.contactNames.familyNames track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['contactFamilyName-' + $index].$touched &amp;&amp; patientRegisterForm['contactFamilyName-' + $index].$invalid }">
+                                    <label class="col-xs-2 control-label" id="contactFamilyNameInput">{{locale.inputLabels.familyName}}</label>
+
+                                    <div class="col-xs-9 input-group">
+
+                                      <input type="text" name="contactFamilyName-{{ $index }}" ng-model="patient.contactNames.familyNames[$index]" class="form-control" placeholder="{{locale.placeholders.familyName}}" aria-describedby="contactFamilyNameAddon" required="required" />
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('contactNames', 'familyNames', '')">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'contactNames', 'familyNames')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
                                     </div>
+                                  </div>
+
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactFamilyName-' + $index].$error" ng-if="patientRegisterForm['contactFamilyName-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
+                                  </div>
+                                </div>
+
+                                <div ng-repeat="contactNumber in patient.contactPhones track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['phoneNum-' + $index].$touched &amp;&amp; patientRegisterForm['phoneNum-' + $index].$invalid }">
+                                    <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
+                                    <div class="col-xs-9 input-group">
+
+                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" />
+                                      <span class="input-group-addon addon-background" id="phoneTypeAddon">
+                                        <span class="glyphicon glyphicon-earphone"></span>
+                                      </span>
+                                      <select name="phoneType-{{ $index }}" ng-model="patient.contactPhones[$index].phoneType" class="form-control" aria-describedby="phoneTypeAddon">
+                                        <option ng-repeat="(key, value) in locale.phone" value="{{value}}">{{value}}</option>
+                                      </select>
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('contactPhones', '', {phoneNum: '', phoneType: ''})">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'contactPhones', '')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-xs-offset-2 col-xs-9"  ng-messages="patientRegisterForm['phoneNum-' + $index].$error" ng-if="patientRegisterForm['phoneNum-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
+                                  </div>
+                                </div>
+
+                                <div ng-repeat="contactEmail in patient.contactEmails track by $index">
+                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['email-' + $index].$touched &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
+                                    <label class="col-xs-2 control-label" for="emailInput">{{locale.inputLabels.email}}</label>
+                                    <div class="col-xs-9 input-group">
+                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" />
+
+                                      <span class="input-group-addon addon-background" id="domainAddon">@</span>
+                                      <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
+                                        <option value="">WIP</option>
+                                        <option value="">WIP</option>
+                                        <option value="">WIP</option>
+                                      </select>
+                                      <div class="input-group-btn">
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="add('contactEmails', '', {email: '', domainType: ''})">
+                                          <span class="glyphicon glyphicon-plus"></span>
+                                        </button>
+                                        <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'contactEmails', '')">
+                                          <span class="glyphicon glyphicon-minus"></span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['email-' + $index].$error" ng-if="patientRegisterForm['email-' + $index].$touched">
+                                    <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
+                                  </div>
+                                </div>
+
+                                <div class="form-group">
+                                  <label class="col-xs-2 control-label" for="relationTypeInput">{{locale.inputLabels.relationshipToPatient}}</label>
+                                  <div class="col-xs-9 input-group">
+                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect" required="required">
+                                      <option ng-repeat="(key, value) in locale.relation" value="{{value}}">{{value}}</option>
+                                    </select>
                                   </div>
                                 </div>
                               </fieldset>
@@ -415,7 +620,10 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary pull-right">Register</button>
+                    <button type="submit" ng-click="register(patientRegisterForm.$invalid)" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" ng-click="searchForDuplicates()" class="btn btn-success pull-right">Search</button>
                   </div>
                 </form>
               </div>
@@ -428,55 +636,227 @@
   <asset name="patient-admin-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      var patientAdministrationApp = angular.module('layout', []);
-      
-		  patientAdministrationApp.controller('PatientAdministrationController', ['$scope', function ($scope)
+      layoutApp.controller('PatientAdministrationController', ['$scope', function ($scope)
 		  {
-      
+
       }]);
 
       ]]>
     </contentText>
   </asset>
+  <asset name="patientView" mimeType="text/html">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>patient-view-controller</script>
+      <content lang="en">
+        <div class="row" ng-controller="PatientViewController" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <p>{{locale.login}}</p>
+                <form name="patientSearchForm" role="form" novalidate="novalidate">
+                  <div class="panel-group">
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcode}}</a>
+                        </h3>
+                      </div>
+                      <div id="barcodeCollapse" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                          <fieldset class="form-horizontal">
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="barcodeInput">{{locale.inputLabels.identifier}}</label>
+                              <div class="col-xs-6">
+                                <input type="number" name="barcode" id="barcodeInput" class="form-control" readonly ="true" aria-describedby="barcodeAddon" ng-model="barcode">
+                                </input>
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographics}}</a>
+                        </h3>
+                      </div>
+                      <div id="patientDemographicCollapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <fieldset class="form-horizontal">
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="givenNameInput">{{locale.inputLabels.givenName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="givenName" id="givenNameInput" ng-model="givenNameInput" ng-value="patient.FirstName" readonly ="true" class="form-control" aria-describedby="givenNameAddon" />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="familyNameInput">{{locale.inputLabels.familyName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="familyName" readonly ="true" id="familyNameInput" ng-value="patient.LastName"  ng-model="familyNameInput" class="form-control" aria-describedby="familyNameAddon" />
+                              </div>
+                            </div>
+                            <div class ="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                              <div class="date col-xs-6" id="dobToPicker">
+                                <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="patient.DateOfBirth"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                                </input>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="genderSelect">{{locale.inputLabels.gender}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="gender" id="genderSelect" class="form-control" ng-value="patient.Gender" readonly ="true" aria-describedby="genderAddon"></input>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="motherGivenNameInput">{{locale.inputLabels.motherGivenName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="motherGivenName" id="motherGivenNameInput" ng-model="motherGivenNameInput" readonly ="true" class="form-control" aria-describedby="motherGivenNameAddon" />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="motherFamilyNameInput">{{locale.inputLabels.motherFamilyName}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="motherFamilyName" id="motherFamilyNameInput" ng-model="motherFamilyNameInput" readonly ="true" class="form-control" aria-describedby="motherFamilyNameAddon" />
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                          <a data-toggle="collapse" href="#villageHealthFacilityCollapse">{{locale.panelLabels.villageHealthFacility}}</a>
+                        </h3>
+                      </div>
+                      <div id="villageHealthFacilityCollapse" class="panel-collapse collapse">
+                        <div class="panel-body">
+                          <fieldset class="form-horizontal">
+
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" id="cityInput">{{locale.inputLabels.cityVillage}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="city" readonly ="true" id="cityInput" ng-model="cityInput" class="form-control" ng-value="patient.Village" aria-describedby="cityAddon" />
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="col-xs-2 col-xs-offset-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
+                              <div class="col-xs-6">
+                                <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value ="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
+                              </div>
+                            </div>
+                          </fieldset>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <a class= "btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientManagement/index">Manage</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
   <asset name="patient-search-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      var patientSearchApp = angular.module('layout', []);
-      
-		  patientSearchApp.controller('PatientSearchController', ['$scope', function ($scope)
+		  layoutApp.controller('PatientSearchController', ['$scope', function ($scope)
 		  {
-        $scope.scanBarcode = function()
-        {
-          //$scope.barcode = OpenIZ.App.scanBarcode(); //Once this is implemented
-          $scope.barcode = Math.floor((Math.random() * 899999999999) + 100000000000);
-        }
-        
-        $scope.data = {
-          genderSelect:[
-          {gender:"Female"}, 
-          {gender:"Male"}, 
-          {gender:"Other"}
-          ],
-          relationshipSelect:[
-          {relation:"Father"},
-          {relation:"Mother"},
-          {relation:"Son"},
-          {relation:"Daughter"},
-          {relation:"Husband"},
-          {relation:"Wife"},
-          {relation:"Brother"},
-          {relation:"Sister"},
-          {relation:"Grandfather"},
-          {relation:"Grandmother"},
-          {relation:"Grandson"},
-          {relation:"Granddaughter"},
-          {relation:"Uncle"},
-          {relation:"Aunt"},
-          {relation:"Nephew"},
-          {relation:"Niece"},
-          {relation:"Cousin"}
-          ],
+        $scope.today = function() {
+          $scope.datetimeFrom = new Date();
+          $scope.datetimeTo = new Date();
         };
+        $scope.today();
+        $scope.dictionary = $scope.data;
+        $scope.$watch('locale', function(){
+          $scope.dictionary = $scope.data;
+
+        });
+
+         $scope.openFrom = function() {
+          $scope.popupFrom.opened = true;
+         };
+
+         $scope.popupFrom = {
+            opened: false
+          };
+
+         $scope.openTo = function() {
+          $scope.popupTo.opened = true;
+         };
+
+         $scope.popupTo = {
+            opened: false
+          };
+          $scope.dateOptionsFrom = {
+            formatYear: 'yy',
+            maxDate: new Date(),
+            minDate: new Date(1990, 1, 1),
+            startingDay: 1
+          };
+
+           $scope.dateOptionsTo = {
+            formatYear: 'yy',
+            maxDate: new Date(),
+            minDate: new Date(1990, 1, 1),
+            startingDay: 1
+          };
+
+        $scope.view = function(patient){
+          sessionStorage.setItem("Patient", JSON.stringify(patient));
+          window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
+        }
+        $scope.phoneRegex = '^\\d{3}-\\d{3}-\\d{4}$';
+        $scope.scanBarcodeLink = function()
+        {
+          $scope.barcode = OpenIZ.App.scanBarcode(); //Once this is implemented
+        }
+        $scope.cancel = function()
+        {
+          $scope.searchResults = [];
+        }
+
+        $scope.log = function(patient){
+          console.log(patient);
+
+        }
+        $scope.patientIndex = null;
+        $scope.setModalPatient = function(patient, index){
+          $scope.modalPatient = patient;
+          $scope.patientIndex = index;
+        }
+
+        $scope.setPatient = function(){
+          $scope.searchResults[$scope.patientIndex] = $scope.modalPatient;
+        }
+
+        $scope.search = function(invalid)
+        {
+          if(!invalid){
+            OpenIZ.Patient.searchByDob(function(data){
+              $('#additionalCriteriaCollapse').collapse('hide');
+              $('#patientDemographicCollapse').collapse('hide');
+              $('#barcodeCollapse').collapse('hide');
+              $scope.searchResults = data;
+              $scope.$digest();
+              $('html, body').animate({ scrollTop: 0 }, 'fast');
+            });
+          }
+          else{
+            toastr.options = {"positionClass":"toast-top-center",
+            "timeOut": 5000};
+            toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
+
+          }
+        }
+
       }]);
 
       ]]>
@@ -485,15 +865,164 @@
   <asset name="patient-register-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      var patientRegisterApp = angular.module('layout', []);
-      
-		  patientRegisterApp.controller('PatientRegisterController', ['$scope', function ($scope)
+
+		  layoutApp.controller('PatientRegisterController', ['$scope', function ($scope)
 		  {
-      
+        $scope.patient = {
+          patientNames: {
+            givenNames: [""],
+            familyNames: [""]
+          },
+          dob: new Date(),
+          accuracy: "",
+          gender: "",
+          identifiers: [{
+            identifierNum: "",
+            identifierType: ""
+          }],
+          contactNames: {
+            givenNames: [""],
+            familyNames: [""]
+          },
+          contactPhones: [{
+            phoneNum: "",
+            phoneType: ""
+          }],
+          contactEmails: [{
+            email: "",
+            domainType: ""
+          }]
+        };
+
+        $scope.dictionary = $scope.data;
+
+        $scope.$watch('locale', function(){
+          $scope.dictionary = $scope.data;
+        });
+
+         $scope.openDOB = function() {
+          $scope.popupDOB.opened = true;
+         };
+
+         $scope.popupDOB = {
+            opened: false
+          };
+
+          $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(),
+            minDate: new Date(1990, 1, 1),
+            startingDay: 1
+          };
+
+        $scope.remove = function(index, outerModelAccess, innerModelAccess) {
+          if(index != 0){
+            if(innerModelAccess == "")
+            {
+               $scope.patient[outerModelAccess].splice(index, 1);
+            }
+            else
+            {
+               $scope.patient[outerModelAccess][innerModelAccess].splice(index, 1);
+            }
+          }
+        };
+
+        $scope.add = function(outerModelAccess, innerModelAccess, objToPush) {
+          if(innerModelAccess == ""){
+            $scope.patient[outerModelAccess].push(objToPush);
+          }
+          else {
+            $scope.patient[outerModelAccess][innerModelAccess].push(objToPush);
+          }
+        };
+
+        $scope.searchForDuplicates = function()
+        {
+          OpenIZ.Patient.searchByGender(function(data){
+            $scope.searchResults = data;
+            $scope.$digest();
+          }, $scope.patient.gender);
+        };
+
+        $scope.register = function(invalid)
+        {
+          var patientData = {
+             dateOfBirth : $scope.patient.dob,
+             dateOfBirthPrecision : $scope.patient.accuracy,
+             genderConcept : $scope.patient.gender,
+             name : [{
+               use : OpenIZModel.NameUseKeys.Legal,
+               component : [
+                 {
+                   type : OpenIZModel.NameComponentKeys.Given,
+                   value : $scope.patient.patientNames.givenNames
+                 },
+                 {
+                   type : OpenIZModel.NameComponentKeys.Family,
+                   value : $scope.patient.patientNames.familyNames
+                 }
+               ]
+             }]
+
+           };
+          var patient = {GivenName: "John", FamilyName: "Smith", Gender:$scope.gender};
+          OpenIZ.Patient.register(patient);
+          if(!invalid){
+            var patient = new OpenIZModel.Patient(patientData);
+            OpenIZ.Patient.insertAsync({
+             patient : patient,
+             continueWith : function(result) {
+               alert("Inserted as " + result.id);
+               OpenIZ.Patient.getAsync({
+                 patientId : result.id,
+                 continueWith : function(fullPatient) {
+                   alert(JSON.stringify(fullPatient.toImsi()));
+                   $scope.createdPatient = fullPatient.toImsi();
+                 }
+               });
+             },
+             onException : function(ex) { alert("Error " + ex); }
+           });
+          }
+          else{
+            toastr.options = {"positionClass":"toast-top-center",
+            "timeOut": 5000};
+            toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
+          }
+        };
+
+        $scope.data = {
+          genderSelect:[
+          {gender:"Female"},
+          {gender:"Male"},
+          {gender:"Other"}
+          ],
+          accuracySelect:[
+          {accuracy:"Day"},
+          {accuracy:"Month"},
+          {accuracy:"Year"}
+          ],
+          phoneTypeSelect:[
+          {phoneType:"Mobile"},
+          {phoneType:"Home"},
+          {phoneType:"Work"}
+          ]};
       }]);
 
       ]]>
     </contentText>
   </asset>
+  <asset name="patient-view-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('PatientViewController', ['$scope', function ($scope)
+		  {
+        $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
+        console.log($scope.patient);
 
+      }]);
+      ]]>
+    </contentText>
+  </asset>
 </AppletManifest>
