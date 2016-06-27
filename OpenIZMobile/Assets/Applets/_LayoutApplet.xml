@@ -39,7 +39,18 @@
     <author>Mohawk College of Applied Arts and Technology </author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
   </info>
-
+  <strings lang="en">
+    <string key="login">Login to</string>
+    <string key="btnForgot">Forgot password</string>
+    <string key="password">Password</string>
+    <string key="username">User Name</string>
+  </strings>
+  <strings lang="sw">
+    <string key="login">Login tosw</string>
+    <string key="btnForgot">Forgot passwordsw</string>
+    <string key="password">Passwordsw</string>
+    <string key="username">User Namesw</string>
+  </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
   <asset name="layout" mimeType="text/html">
@@ -53,7 +64,7 @@
       <script>app://openiz.org/asset/js/angular-aria.js</script>
       <script>app://openiz.org/asset/js/angular-messages.js</script>
       <script>app://openiz.org/asset/js/ui-bootstrap.min.js</script>
-      <!--script>app://openiz.org/asset/js/openiz-localize.js</script-->
+      <script>app://openiz.org/asset/js/openiz-localize.js</script>
       <script>strings</script>
       <script>timeout-controller</script>
       <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
@@ -137,66 +148,65 @@
             <div class="container">
               <div class="row">
                 <div class ="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading patient-panel">
-                    <h3 class="panel-title">
-                      <span class="glyphicon glyphicon-user text-left">
-                        {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + " Years:" + patient.age.years  + ", " + "Months:" + patient.age.months}}
-                      </span>
-                      <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
-                    </h3>
-                  </div>
-                  <div id="patientInformationCollapse" class="panel-collapse collapse in">
-                    <div class="panel-body">
-                      <fieldset class="form-horizontal">
+                  <div class="panel panel-default">
+                    <div class="panel-heading patient-panel">
+                      <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-user text-left">
+                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + " Years:" + patient.age.years  + ", " + "Months:" + patient.age.months}}
+                        </span>
+                        <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
+                      </h3>
+                    </div>
+                    <div id="patientInformationCollapse" class="panel-collapse collapse in">
+                      <div class="panel-body">
+                        <fieldset class="form-horizontal">
 
-                        <div class="form-group">
-                          <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
-                          <div class="date col-xs-4" id="dobToPicker">
-                            <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="patient.DateOfBirth"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
-                            </input>
-                          </div>
+                          <div class="form-group">
+                            <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                            <div class="date col-xs-4" id="dobToPicker">
+                              <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="patient.DateOfBirth"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                              </input>
+                            </div>
 
-                          <label class="col-xs-2 control-label" for="motherNameInput">{{locale.inputLabels.motherName}}</label>
-                          <div class ="col-xs-4">
-                            <input type="text" name="motherName" readonly ="true" id="motherNameInput" ng-value="patient.MotherName"  ng-model="motherNameInput" class="form-control" aria-describedby="motherNameAddon" />
-                          </div>
-                        </div>
-
-                        <div class="form-group">
-                          <label class="col-xs-2 control-label" for="villageInput">{{locale.inputLabels.cityVillage}}</label>
-                          <div class="col-xs-4">
-                            <input type="text" name="village" id="villageInput" ng-model="villageInput" ng-value="patient.Village" readonly ="true" class="form-control" aria-describedby="villageAddon" />
+                            <label class="col-xs-2 control-label" for="motherNameInput">{{locale.inputLabels.motherName}}</label>
+                            <div class ="col-xs-4">
+                              <input type="text" name="motherName" readonly ="true" id="motherNameInput" ng-value="patient.MotherName"  ng-model="motherNameInput" class="form-control" aria-describedby="motherNameAddon" />
+                            </div>
                           </div>
 
-                          <label class="col-xs-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
-                          <div class="col-xs-4">
-                            <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
+                          <div class="form-group">
+                            <label class="col-xs-2 control-label" for="villageInput">{{locale.inputLabels.cityVillage}}</label>
+                            <div class="col-xs-4">
+                              <input type="text" name="village" id="villageInput" ng-model="villageInput" ng-value="patient.Village" readonly ="true" class="form-control" aria-describedby="villageAddon" />
+                            </div>
+
+                            <label class="col-xs-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
+                            <div class="col-xs-4">
+                              <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
+                            </div>
                           </div>
-                        </div>
-                        
-                        <div class="form-group">
-                          <div class="col-xs-2 col-xs-offset-8">
-                            <button class="btn btn-primary">
-                              Check-In
-                            </button>
+
+                          <div class="form-group">
+                            <div class="col-xs-2 col-xs-offset-8">
+                              <button class="btn btn-primary">
+                                Check-In
+                              </button>
+                            </div>
+                            <div class="col-xs-2">
+                              <button class="btn btn-primary">
+                                AEFI
+                              </button>
+                            </div>
                           </div>
-                          <div class="col-xs-2">
-                            <button class="btn btn-primary">
-                              AEFI
-                            </button>
-                          </div>
-                        </div>
-                      </fieldset>
+                        </fieldset>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+              <!--#include virtual="content" -->
             </div>
-             <!--#include virtual="content" -->
           </div>
-         </div>
-      
         </div>
       </content>
     </contentHtml>
@@ -227,10 +237,31 @@
   <asset name="timeout-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-            var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap']);
-
-            layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', function($scope, $window, $timeout){
+            var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
             
+            var compareTo = function() {
+                return {
+                    require: "ngModel",
+                    scope: {
+                        otherModelValue: "=compareTo"
+                    },
+                    link: function(scope, element, attributes, ngModel) {
+             
+                        ngModel.$validators.compareTo = function(modelValue) {
+                            return modelValue == scope.otherModelValue;
+                        };
+ 
+                        scope.$watch("otherModelValue", function() {
+                            ngModel.$validate();
+                        });
+                    }
+                };
+            };
+ 
+            layoutApp.directive("compareTo", compareTo);
+            
+            layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
+
             $scope.locale = getStrings();
             $scope.localize = function(lang)
             {
@@ -350,8 +381,10 @@
               errors:{
 				      	fieldLong: "Uwanja Huu Ni Muda Mrefu Sana",
 				      	telephone: "Sahihi Namba Ya Simu",
+                telephoneRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
 				      	email: "Sio Sahihi Barua Pepe",
-				      	dob: "Sio Sahihi Tarehe Ya Kuzaliwa",
+				      	emailRequired: "Tafadhali kuingia Nywila lako",
+                dob: "Sio Sahihi Tarehe Ya Kuzaliwa",
 				      	dobRequired: "Tarehe Ya Ku Zaliwa Inahitajika",
 				      	familyNameRequired: "Jina La Ukoo Inahitajika",
 				      	givenNameRequired: "Kutokana Jina Inahitajika",
@@ -412,9 +445,9 @@
 				      checkLabels:{
 				      	yes: "Ndiyo",
 				      	no: "Hakuna",
-				      	tetanusDiagnosis: "Ina Mgonjwa Amewahi Kuwa/Sasa Ni Kukutwa Na Pepopunda",
-				      	breastfeedingStatus: "Kipekee Hadhi Kunyonyesha",
-				      	birthCertificate: "Je, mgonjwa na cheti cha kuzaliwa"
+				      	tetanusDiagnosis: "Ina Mgonjwa Amewahi Kuwa/Sasa ni Kukutwa na Pepopunda?",
+				      	breastfeedingStatus: "Je, Mgonjwa Kifua-Kulisha?",
+				      	birthCertificate: "Je, Mgonjwa na Cheti cha Kuzaliwa?"
 				      },
 				      placeholders:{
 				      	barcode: "XXXXXXXXXXXX",
@@ -522,14 +555,16 @@
 				      	motherName: "Mother's Name",
 				      	motherGivenName: "Mother's Given Name",
 				      	motherFamilyName: "Mother's Family Name",
-                			weight: "Weight",
-                			unit: "Unit",
-					verificationCode: "Verification Code"
+                weight: "Weight",
+                unit: "Unit",
+					      verificationCode: "Verification Code"
               },
 				      errors:{
 				      	fieldLong: "This Field Is Too Long",
 				      	telephone: "Incorrect Telephone Number",
+                telephoneRequired: "Telephone Number Is Required",
 				      	email: "Incorrect Email",
+                emailRequired: "Email Is Required",
 				      	dob: "Incorrect Date Of Birth",
 				      	dobRequired: "Date Of Birth Is Required",
 				      	familyNameRequired: "Family Name Is Required",
@@ -538,7 +573,8 @@
 				      	usernameRequired: "Please enter your Username",
 				      	passwordRequired: "Please enter your Password",
 				      	passwordInvalid: "Invalid Password",
-				      	noMatch: "Passwords do not match"
+				      	noMatch: "Passwords do not match",
+                verifyCodeRequired: "Please enter the verification code"
 				      },
 				      panelLabels:{
 				      	barcodeScan: "Barcode Scan",
@@ -595,7 +631,7 @@
 				      checkLabels:{
 				      	yes: "Yes",
 				      	tetanusDiagnosis: "Has the patient ever been/currently is diagnosed with Tetanus?",
-				      	breastfeedingStatus: "Exclusive Breastfeeding Status",
+				      	breastfeedingStatus: "Does the patient breast-feed?",
 				      	birthCertificate: "Does the patient have a birth certificate?"
 				      },
 				      placeholders:{

@@ -279,4 +279,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\js\angular-messages.js" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\PatientManagementApplet.xml" />
+  </ItemGroup>
 </Project>

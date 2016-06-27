@@ -150,7 +150,7 @@ var OpenIZModel = new function () {
         Ideographic : "09000479-4672-44F8-BB4A-72FB25F7356A", 
         Pseudonym : "C31564EF-CA8D-4528-85A8-88245FCEF344", 
         MaidenName : "0674C1C8-963A-4658-AFF9-8CDCD308FA68", 
-        Legal: "effe122d-8d30-491d-805d-addcb4466c35",
+        Legal: "EFFE122D-8D30-491D-805D-addcb4466c35",
         OfficialRecord : "1EC9583A-B019-4BAA-B856-B99CAF368656", 
         Syllabic : "B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF", 
         Anonymous : "95E6843A-26FF-4046-B6F4-EB440D4B85F7"
