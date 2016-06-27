@@ -122,6 +122,7 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The device.</value>
 		public abstract SecurityDevice Device { get; }
-	}
+
+    }
 }
 

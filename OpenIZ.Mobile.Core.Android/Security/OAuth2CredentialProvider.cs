@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenIZ.Mobile.Core.Http;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// </summary>
 		/// <returns>The credentials.</returns>
 		/// <param name="context">Context.</param>
-		public OpenIZ.Mobile.Core.Authentication.Credentials GetCredentials (IRestClient context)
+		public Credentials GetCredentials (IRestClient context)
 		{
 			// return this application's credentials
 			return new OAuthTokenServiceCredentials (ApplicationContext.Current.Principal);
@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// Authentication request is required
 		/// </summary>
 		/// <param name="context">Context.</param>
-		public OpenIZ.Mobile.Core.Authentication.Credentials Authenticate (IRestClient context)
+		public Credentials Authenticate (IRestClient context)
 		{
 			// return this application's credentials
 			return new OAuthTokenServiceCredentials (ApplicationContext.Current.Principal);

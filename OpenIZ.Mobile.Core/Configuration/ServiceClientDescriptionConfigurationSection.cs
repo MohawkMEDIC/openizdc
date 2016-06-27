@@ -4,8 +4,10 @@ using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
-using OpenIZ.Mobile.Core.Http;
 using Newtonsoft.Json;
+using OpenIZ.Core.PCL.Http.Description;
+using System.Linq;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -71,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 	/// A service client reprsent a single client to a service 
 	/// </summary>
 	[XmlType (nameof (ServiceClientDescription), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceClientDescription
+	public class ServiceClientDescription : IRestClientDescription
 	{
 
 		/// <summary>
@@ -112,18 +114,39 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets the endpoints
+        /// </summary>
+        List<IRestClientEndpointDescription> IRestClientDescription.Endpoint
+        {
+            get
+            {
+                return this.Endpoint.OfType<IRestClientEndpointDescription>().ToList();
+            }
+        }
+
+        /// <summary>
+        /// Gets the binding
+        /// </summary>
+        IRestClientBindingDescription IRestClientDescription.Binding
+        {
+            get
+            {
+                return this.Binding;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Service client binding
 	/// </summary>
 	[XmlType (nameof (ServiceClientBinding), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceClientBinding
+	public class ServiceClientBinding : IRestClientBindingDescription
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Configuration.ServiceClientBinding"/> class.
-		/// </summary>
-		public ServiceClientBinding ()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ServiceClientBinding"/> class.
+        /// </summary>
+        public ServiceClientBinding ()
 		{
 			this.ContentTypeMapper = new DefaultContentTypeMapper ();
 		}
@@ -168,13 +191,24 @@ namespace OpenIZ.Mobile.Core.Configuration
 		{
 			get;set;
 		}
-	}
+
+        /// <summary>
+        /// Gets the security description
+        /// </summary>
+        IRestClientSecurityDescription IRestClientBindingDescription.Security
+        {
+            get
+            {
+                return this.Security;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Service client security configuration
 	/// </summary>
 	[XmlType (nameof (ServiceClientSecurity), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceClientSecurity
+	public class ServiceClientSecurity : IRestClientSecurityDescription
 	{
 
 		/// <summary>
@@ -249,13 +283,23 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets certificate find
+        /// </summary>
+        IRestClientCertificateDescription IRestClientSecurityDescription.ClientCertificate
+        {
+            get
+            {
+                return this.ClientCertificate;
+            }
+        }
+    }
 
 	/// <summary>
 	/// Service certificate configuration
 	/// </summary>
 	[XmlType(nameof(ServiceCertificateConfiguration), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceCertificateConfiguration
+	public class ServiceCertificateConfiguration : IRestClientCertificateDescription
 	{
 		/// <summary>
 		/// Gets or sets the type of the find.
@@ -298,25 +342,12 @@ namespace OpenIZ.Mobile.Core.Configuration
 		}
 	}
 
-	/// <summary>
-	/// Security scheme
-	/// </summary>
-	[XmlType (nameof (SecurityScheme), Namespace = "http://openiz.org/mobile/configuration")]
-	public enum SecurityScheme
-	{
-		[XmlEnum ("none")]
-		None = 0,
-		[XmlEnum ("basic")]
-		Basic = 1,
-		[XmlEnum ("bearer")]
-		Bearer = 2
-	}
 
 	/// <summary>
 	/// Represnts a single endpoint for use in the service client
 	/// </summary>
 	[XmlType (nameof (ServiceClientEndpoint), Namespace = "http://openiz.org/mobile/configuration")]
-	public class ServiceClientEndpoint
+	public class ServiceClientEndpoint : IRestClientEndpointDescription
 	{
 
 		/// <summary>

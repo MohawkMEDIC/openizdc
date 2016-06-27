@@ -8,9 +8,8 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Http;
-using OpenIZ.Mobile.Core.Http;
-using OpenIZ.Mobile.Core.Authentication;
 using System.Security.Principal;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {

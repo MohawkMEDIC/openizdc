@@ -2,7 +2,6 @@
 using System.Linq;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Mobile.Core.Http;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Security;
@@ -11,6 +10,8 @@ using System.Security;
 using OpenIZ.Mobile.Core.Android.Exceptions;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Serices;
+using OpenIZ.Core.PCL.Http;
+using OpenIZ.Mobile.Core.Interop;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {

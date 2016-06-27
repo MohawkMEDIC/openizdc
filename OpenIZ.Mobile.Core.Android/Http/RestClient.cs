@@ -1,15 +1,14 @@
 ﻿using System;
-using OpenIZ.Mobile.Core.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
-using OpenIZ.Mobile.Core.Authentication;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Security;
 using System.Security;
 using System.IO.Compression;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -88,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
 		/// <param name="query">Query.</param>
 		/// <typeparam name="TBody">The 1st type parameter.</typeparam>
 		/// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-		public override TResult Invoke<TBody, TResult> (string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query)
+		protected override TResult InvokeInternal<TBody, TResult> (string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query)
 		{
 
 			if (String.IsNullOrEmpty (method))
