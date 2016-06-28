@@ -627,7 +627,6 @@ var OpenIZ = new function () {
                     throw new OpenIZModel.Exception(data, null, null);
                 else {
                     var results = JSON.parse(data);
-
                     // Convert the IMSI patient data to a nicer javascript format
                     return new OpenIZModel.Bundle(results);
                 }

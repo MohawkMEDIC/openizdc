@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.applet.test" version="0.5.0.0">
+  <info id="org.timr.applet.test" version="0.5.0.0">
     <name lang="en">Function Tests</name>
     <author>OpenIZ Community</author>
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <!--demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand-->
   </info>
   <strings lang="en">
     <string key="concept_header">Concept Tests</string>
@@ -71,6 +71,7 @@
             </div>
             <div class="btn-group" role="group">
               <button type="button" ng-click="save()" class="btn-lg btn-primary">{{ 'save' | i18n }}</button>
+              <button type="button" ng-click="searchTest()" class="btn-lg btn-primary">{{ 'save' | i18n }}</button>
             </div>
             <div class="row">
               <div class="col-md-12">
@@ -129,7 +130,7 @@
       <![CDATA[
         indexApp.controller('PatientTestController', ['$scope', function($scope) {
           $scope.genderConcepts =  OpenIZ.Concept.findConceptSet("mnemonic=ActStatus").first("ConceptSet").toSelectModel();
-          
+
           $scope.save = function() {
             var patientData = {
               dateOfBirth : $scope.dob,

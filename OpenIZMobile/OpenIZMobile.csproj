@@ -218,10 +218,14 @@
     <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\DashboardApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\DashboardApplet.xml">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\LoginApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\LoginApplet.xml">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\RegisterApplet.xml" />
@@ -257,5 +261,25 @@
     <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml">
       <SubType>Designer</SubType>
     </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\ui-bootstrap.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\_LayoutApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\PatientAdministrationApplet.xml">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\angular-aria.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\js\angular-messages.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Applets\PatientManagementApplet.xml" />
   </ItemGroup>
 </Project>

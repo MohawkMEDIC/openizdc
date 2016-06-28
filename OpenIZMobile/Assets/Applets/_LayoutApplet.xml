@@ -1,0 +1,689 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+ - Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
+ - the License.
+ -
+ - User: Nityan
+ - Date: 2016-6-5
+ -->
+
+<!-- An applet is a collection of HTML pages, Java Script snippets, and other data which represent a sub-unit of
+     functionality in the TImR application (or rather OpenIZ). An applet manifest allows us to package together
+     these assets into a single manifest with a single version.
+-->
+<AppletManifest xmlns="http://openiz.org/applet">
+
+  <!--
+    The first part of an applet manifest is the informational header. This header allows OpenIZ to
+    identify the applet to establish dependencies, etc.
+
+    @id = The unique identifier (think of this as a package name)
+    @version = A semantic version
+  -->
+  <info id="org.timr.applet.layout" version="1.0.0.0">
+    <icon>app://openiz.org/drawable/cog.png</icon>
+    <name lang="en">Layout Applet</name>
+    <groupName lang="en">TImR</groupName>
+    <author>Mohawk College of Applied Arts and Technology </author>
+    <dependency id="org.openiz.core" version="0.5.0.0" />
+  </info>
+  <strings lang="en">
+    <string key="login">Login to</string>
+    <string key="btnForgot">Forgot password</string>
+    <string key="password">Password</string>
+    <string key="username">User Name</string>
+  </strings>
+  <strings lang="sw">
+    <string key="login">Login tosw</string>
+    <string key="btnForgot">Forgot passwordsw</string>
+    <string key="password">Passwordsw</string>
+    <string key="username">User Namesw</string>
+  </strings>
+  <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
+       will inject its own HTML header) -->
+  <asset name="layout" mimeType="text/html">
+    <contentHtml>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>select2</bundle>
+      <bundle>angular</bundle>
+      <bundle>toastr</bundle>
+      <bundle>chart-js</bundle>
+      <script>app://openiz.org/asset/js/angular-aria.js</script>
+      <script>app://openiz.org/asset/js/angular-messages.js</script>
+      <script>app://openiz.org/asset/js/ui-bootstrap.min.js</script>
+      <script>app://openiz.org/asset/js/openiz-localize.js</script>
+      <script>strings</script>
+      <script>timeout-controller</script>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <content>
+        <!--body xmlns="http://www.w3.org/1999/xhtml"-->
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController">
+          <div class="navbar navbar-inverse">
+            <div class="container">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Tanzania Immunization Registry</a>
+              </div>
+              <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                  <li>
+                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">About</a>
+                  </li>
+                  <li>
+                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Contact</a>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li class="dropdown" id="langDropDown">
+                    <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                      Language/Lugha <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li role="presentation">
+                        <a href="#" rel="en" ng-click="localize('en');">
+                          English
+                        </a>
+                      </li>
+                      <li role="presentation">
+                        <a href="#" rel="sw" ng-click="localize('sw');">
+                          Kiswahili/Swahili
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li id="loginRegisterLink">
+                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Login/Register</a>
+                  </li>
+                  <li class="hidden" id="logoutLink">
+                    <button class="btn timr-blue-background" ng-click="logout()">Logout</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <!--#include virtual="content" -->
+          </div>
+          <input type="hidden" id="success" />
+          <input type="hidden" id="error" />
+          <input type="hidden" id="info" />
+          <input type="hidden" id="warning" />
+          <footer class="footer">
+            <hr />
+            <div class="container">
+              <p class="text-muted text-center">
+                &#169;
+                {{locale.footer.layoutFooter}}
+              </p>
+            </div>
+          </footer>
+        </body>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patientLayout" mimeType="text/html">
+    <contentHtml>
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>patient-layout-controller</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" ng-controller="PatientLayoutController">
+          <div class="row">
+            <div class="container">
+              <div class="row">
+                <div class ="col-xs-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading patient-panel">
+                      <h3 class="panel-title">
+                        <span class="glyphicon glyphicon-user text-left">
+                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + " Years:" + patient.age.years  + ", " + "Months:" + patient.age.months}}
+                        </span>
+                        <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
+                      </h3>
+                    </div>
+                    <div id="patientInformationCollapse" class="panel-collapse collapse in">
+                      <div class="panel-body">
+                        <fieldset class="form-horizontal">
+
+                          <div class="form-group">
+                            <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                            <div class="date col-xs-4" id="dobToPicker">
+                              <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                              </input>
+                            </div>
+
+                            <label class="col-xs-2 control-label" for="motherNameInput">{{locale.inputLabels.motherName}}</label>
+                            <div class ="col-xs-4">
+                              <input type="text" name="motherName" readonly ="true" id="motherNameInput" ng-value="patient.MotherName"  ng-model="motherNameInput" class="form-control" aria-describedby="motherNameAddon" />
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <label class="col-xs-2 control-label" for="villageInput">{{locale.inputLabels.cityVillage}}</label>
+                            <div class="col-xs-4">
+                              <input type="text" name="village" id="villageInput" ng-model="villageInput" ng-value="patient.Village" readonly ="true" class="form-control" aria-describedby="villageAddon" />
+                            </div>
+
+                            <label class="col-xs-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
+                            <div class="col-xs-4">
+                              <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
+                            </div>
+                          </div>
+
+                          <div class="form-group">
+                            <div class="col-xs-2 col-xs-offset-8">
+                              <button class="btn btn-primary">
+                                Check-In
+                              </button>
+                            </div>
+                            <div class="col-xs-2">
+                              <button class="btn btn-primary">
+                                AEFI
+                              </button>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--#include virtual="content" -->
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patient-layout-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('PatientLayoutController', ['$scope', function($scope){
+        $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
+        var dateOfBirth = new Date($scope.patient.DateOfBirth);
+        $scope.displayDate = dateOfBirth.getDate() + "/" + dateOfBirth.getMonth() + "/"  + dateOfBirth.getFullYear();
+        var currentDate = new Date();
+        //dateValue = $scope.patient.DateOfBirth.split("/");
+        //dateValue[2] = dateValue[2].split(" ", 1);
+
+        difference = new Date(currentDate-dateOfBirth);
+        $scope.patient.age = {"years": (difference.getFullYear()-1970), "months": (difference.getMonth()+1), "days": difference.getDate()};
+        $('#patientInformationCollapse').on('shown.bs.collapse', function () {
+           $(".menu-arrow-toggleable").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+        });
+
+        $('#patientInformationCollapse').on('hidden.bs.collapse', function () {
+           $(".menu-arrow-toggleable").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+        });
+
+      }]);
+    ]]>
+    </contentText>
+  </asset>
+  <asset name="timeout-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+            var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
+
+            var compareTo = function() {
+                return {
+                    require: "ngModel",
+                    scope: {
+                        otherModelValue: "=compareTo"
+                    },
+                    link: function(scope, element, attributes, ngModel) {
+
+                        ngModel.$validators.compareTo = function(modelValue) {
+                            return modelValue == scope.otherModelValue;
+                        };
+
+                        scope.$watch("otherModelValue", function() {
+                            ngModel.$validate();
+                        });
+                    }
+                };
+            };
+
+            layoutApp.directive("compareTo", compareTo);
+
+            layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
+
+            $scope.locale = getStrings();
+            $scope.localize = function(lang)
+            {
+              OpenIZ.Localization.setLocale(lang);
+              $scope.locale = getStrings();
+              console.log($scope.locale);
+              console.log($scope.locale.gender);
+            }
+            var genders = ["Male", "Female", "Other"];
+            var firstNames = ["Tifany", "Rufina", "Nancy", "Merlin", "Arlinda", "Toni", "Zoraida", "Clark", "Carline", "Terrie",
+            "Marci", "Domenica", "Wilson", "Rich", "Drucilla", "Heike", "Ray", "Neely", "Jaime", "Wallace"];
+            var lastNames = ["Travis", "Carlson", "Humphrey", "Frank", "Figueroa", "Roach", "Strong", "Mercer", "Frey", "Richardson",
+            "Horne", "Gonzales", "Anguilar", "Vance", "Reyes", "Compton", "Maldonado", "Rose", "Ford", "Carey"];
+
+            toastr.options = {"positionClass":"toast-top-center"};
+            const TIMEOUT_TIME = 3000000;
+            var timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
+            $scope.resetTimeout = function(){
+              $timeout.cancel(timer);
+              timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
+              if(toastr.options.timeOut == TIMEOUT_TIME){
+                toastr.clear();
+                toastr.options = {"positionClass":"toast-top-center",
+                "timeOut": "5000"};
+                toastr.success('You\'re back!');
+              }
+              }
+            $scope.randomPatient = function(){
+                var dob = new Date();
+                dob.setFullYear(Math.floor(Math.random()*45)+1970, Math.floor(Math.random()*12+1), Math.floor(Math.random()*28+1));
+                return {DateOfBirth: dob,Village: "Village "+ (Math.floor(Math.random()*500)+1), Address: ""+(Math.floor(Math.random()*10000)+1) +" Main Street", HealthFacility: "Health Facility " + (Math.floor(Math.random()*200)+1), FirstName: firstNames[Math.floor(Math.random() * 20)], LastName: lastNames[Math.floor(Math.random()*20)], Gender: genders[Math.floor(Math.random()*3)]};
+
+            }
+            function timeoutWarning(){
+            $timeout.cancel(timer);
+            var timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
+            toastr.options = {"positionClass":"toast-top-center",
+            "timeOut": TIMEOUT_TIME.toString()};
+            toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
+            }
+
+            $scope.logout = function(){
+            OpenIZ.Authentication.abandonSession();
+            $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
+            }
+
+            }]);
+    		  ]]>
+    </contentText>
+  </asset>
+  <asset name="strings" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+        function getStrings() {
+          if(OpenIZ.Localization.getLocale() == 'sw')
+          {
+            return {
+				      gender: {
+				      	female : "Kike",
+				      	male : "Kiume",
+				      	other : "Mengine"
+				      },
+				      accuracy: {
+				      	day: "Siku",
+				      	month: "Mwezi",
+				      	year: "Mwaka"
+				      },
+				      phone: {
+				      	mobile: "Simu",
+				      	home: "Nyumbani",
+				      	work: "Kazi"
+				      },
+				      hospitals: {
+				      	hospitalOne: "Hospitali 1",
+				      	hospitalTwo: "Hospitali 2",
+				      	hospitalThree: "Hospitali 3"
+				      },
+				      identificationTypes: {
+				      	yellowCardId: "Kadi Ya Njano ID",
+				      	voterCardId: "Wapiga Kura Kitambulisho",
+				      	driversLicenseId: "Leseni Madereva ID"
+				      },
+				      relation:{
+				      	father:"Baba",
+				      	mother:"Mama",
+				      	son:"Mwana",
+				      	daughter:"Binti",
+				      	husband:"Mume",
+				      	wife:"Mke",
+				      	brother:"Kaka",
+				      	sister:"Dada",
+				      	grandfather:"Babu",
+				      	grandmother:"Bibi",
+				      	grandson:"Mjukuu",
+				      	granddaughter:"Mjukuu",
+				      	uncle:"Mjomba",
+				      	aunt:"Shangazi",
+				      	nephew:"Mpwa",
+				      	niece:"Mpwa",
+				      	cousin:"Binamu"
+              },
+				      inputLabels:{
+				      	givenName: "Kutokana Jina",
+				      	familyName: "Jina la Ukoo",
+				      	name: "Jina",
+				      	dateOfBirthFrom: "Tarehe Ya Ku Zaliwa(Kutoka)",
+				      	dateOfBirthTo: "Tarehe Ya Ku Zaliwa(Kwa)",
+				      	dateOfBirth: "Tarehe Ya Ku Zaliwa",
+				      	gender: "Jinsia",
+				      	relationshipToPatient: "Uhusiano Kwa Mgonjwa",
+				      	identifier: "Kitambulisho",
+				      	telephone: "Namba",
+				      	cityVillage:"Mji/Kijiji",
+				      	accuracy: "Usahihi",
+				      	id: "ID",
+				      	birthPlace: "Mahali Pa Kuzaliwa",
+				      	email:"Barua Pepe",
+				      	username: "Jina la Mtumiaji",
+				      	password: "Nywila",
+                confirmPassword: "Kuthibitisha Nywila",
+				      	healthFacility: "Afya Kituo",
+				      	motherName: "Mama Jina",
+				      	motherGivenName: "Mama Jina Aliyopewa",
+				      	motherFamilyName: "Mama Jina La Familia",
+                verificationCode: "Uhakiki Kanuni"
+              },
+              errors:{
+				      	fieldLong: "Uwanja Huu Ni Muda Mrefu Sana",
+				      	telephone: "Sahihi Namba Ya Simu",
+                telephoneRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
+				      	email: "Sio Sahihi Barua Pepe",
+				      	emailRequired: "Tafadhali kuingia Nywila lako",
+                dob: "Sio Sahihi Tarehe Ya Kuzaliwa",
+				      	dobRequired: "Tarehe Ya Ku Zaliwa Inahitajika",
+				      	familyNameRequired: "Jina La Ukoo Inahitajika",
+				      	givenNameRequired: "Kutokana Jina Inahitajika",
+				      	idRequired: "ID Idadi Inahitajika",
+                verifyCodeRequired: "Tafadhali Kuingia Uhakiki Kanuni",
+                verifyCodeInvalid: "Kanuni aliingia ni batili",
+				      	usernameRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
+				      	passwordRequired: "Tafadhali kuingia Nywila lako",
+				      	passwordInvalid: "Nywila Batili",
+				      	noMatch: "Nywila si Mechi"
+              },
+				      panelLabels:{
+				      	barcodeScan: "Barcode Kuchambua",
+                barcode: "Barcode",
+				      	patientDemographicCriteria: "Mgonjwa Vigezo Idadi Ya Watu",
+				      	patientDemographics: "Idadi Ya Watu Mgonjwa",
+                patientInformation: "Habari Mgonjwa",
+				      	nextOfKinOptional: "Pili Ya Jamaa(Hiari)",
+				      	additionalSearchCriteria: "Vigezo Ziada Kupata",
+				      	domicile: "Kikao",
+                villageHealthFacility: "Kijiji/Kituo Cha Afya",
+				      	homeAddress: "Anwani ya Nyumbani",
+				      	contactInformation: "Maelezo ya Kuwasiliana",
+				      	additionalInfo: "Taarifa Za Ziada",
+				      	additionalInfoFooter: "Tafadhali chagua zote zinazohusika",
+				      	potentialDuplicates: "Marudio Uwezo",
+				      	identification: "Kitambulisho",
+                register: "Usajili",
+				      	login: "Ingia",
+                changePassword: "Badilisha neno la siri",
+				      	loginHelper: "Kuingia Jina la Mtumiaji yako na Nywila chini",
+                passwordHelper: "Kuingia Nywila yako mpya",
+                verificationHelper: "Weka Kanuni yako Uhakiki"
+				      },
+				      tableHeaders:{
+				      	names: "Jina(s)",
+				      	gender: "Jinsia",
+				      	dateOfBirth: "Tarehe Ya Ku Zaliwa",
+				      	cityVillage: "Mji/Kijiji",
+				      	actions: "Hatua(s)",
+				      	results: "Matokeo",
+				      	healthFacility: "Afya Kituo"
+				      },
+				      buttonLabels:{
+				      	scan: "Kuchamba",
+				      	cancel: "Kufata",
+				      	search: "Kupata",
+				      	view: "Mtazamo",
+				      	checkIn: "Kuangalia Katika",
+				      	checkOut: "Angalia",
+				      	close: "Karibu",
+				      	register: "Kusajila",
+                alreadyRegistered: "Tayari Usajili? Ingia",
+				      	forgotPassword: "Umesahau Nywila?",
+                resetPassword: "Upya Nywila",
+				      	login: "Ingia",
+				      	patientSearch:"Mgonjwa Daftari",
+				      	patientRegister:"Mgonjwa Tafuta"
+				      },
+				      checkLabels:{
+				      	yes: "Ndiyo",
+				      	no: "Hakuna",
+				      	tetanusDiagnosis: "Ina Mgonjwa Amewahi Kuwa/Sasa ni Kukutwa na Pepopunda?",
+				      	breastfeedingStatus: "Je, Mgonjwa Kifua-Kulisha?",
+				      	birthCertificate: "Je, Mgonjwa na Cheti cha Kuzaliwa?"
+				      },
+				      placeholders:{
+				      	barcode: "XXXXXXXXXXXX",
+				      	givenName: "Kutokana Jina",
+				      	familyName: "Jina La Ukoo",
+				      	cityVillage: "Mji/Kijiji",
+				      	telephone: "Nambari Ya Simi",
+				      	email: "mtu@baadhiyauwanja.com",
+				      	username: "Jina la Mtumiaji",
+				      	password: "Nywila",
+                confirmPassword: "Kuthibitisha Nywila",
+				      	healthFacility: "Afya Kituo",
+				      	motherGivenName: "Mama Jina Aliyopewa",
+				      	motherFamilyName: "Mama Jina La Familia",
+                verificationCode: "Uhakiki Kanuni"
+				      },
+				      modalHeaders:{
+				      	checkInPatient: "Kuangalia Katika Mgonjwa?"
+				      },
+				      modalText:{
+				      	nextAppointment: "Mgonjwa hii ina uteuzi wao ijayo katika "
+				      },
+				      toastrText:{
+				      	invalidForm: "Tafadhali Angalia Kidato Pembejeo Kwa Makosa"
+				      },
+				      toastrHeaders:{
+				      	invalidForm: "Fomu Ya Batili"
+				      },
+				      footer:{
+				      	layoutFooter: "WIZARA YA AFYA, MAENDELEO YA JAMII, JINSIA, WAZEE NA WATOTO MPANGO WA TAIFA WA CHANJO"
+				      }
+			      };
+		      }
+		      else
+		      {
+			      return {
+				      gender: {
+				      	female : "Female",
+				      	male : "Male",
+				      	other : "Other"
+				      },
+              weightUnit:{
+                kilograms: "Kilograms",
+                pounds: "Pounds"
+              },
+				      accuracy: {
+				      	day: "Day",
+				      	month: "Month",
+				      	year: "Year"
+				      },
+				      phone: {
+				      	mobile: "Mobile",
+				      	home: "Home",
+				      	work: "Work"
+				      },
+				      hospitals: {
+				      	hospitalOne: "Hospital 1",
+				      	hospitalTwo: "Hospital 2",
+				      	hospitalThree: "Hospital 3"
+				      },
+				      identificationTypes: {
+				      	yellowCardId: "Yellow Card ID",
+				      	voterCardId: "Voter Card ID",
+				      	driversLicenseId: "Drivers License ID"
+				      },
+				      relation:{
+				      	father:"Father",
+				      	mother:"Mother",
+				      	son:"Son",
+				      	daughter:"Daughter",
+				      	husband:"Husband",
+				      	wife:"Wife",
+				      	brother:"Brother",
+				      	sister:"Sister",
+				      	grandfather:"Grandfather",
+				      	grandmother:"Grandmother",
+				      	grandson:"Grandson",
+				      	granddaughter:"Granddaughter",
+				      	uncle:"Uncle",
+				      	aunt:"Aunt",
+				      	nephew:"Nephew",
+				      	niece:"Niece",
+				      	cousin:"Cousin"
+				      },
+				      inputLabels:{
+				      	givenName: "Given Name",
+				      	familyName: "Family Name",
+				      	name: "Name",
+				      	dateOfBirthFrom: "Date Of Birth(From)",
+				      	dateOfBirthTo: "Date Of Birth(To)",
+				      	dateOfBirth: "Date Of Birth",
+				      	gender: "Gender",
+				      	relationshipToPatient: "Relationship To Patient",
+				      	identifier: "Identifier",
+				      	telephone: "Telephone",
+				      	cityVillage:"City/Village",
+				      	accuracy:"Accuracy",
+				      	id: "ID",
+				      	birthPlace: "Birth Place",
+				      	email: "E-Mail",
+				      	username: "Username",
+				      	password: "Password",
+				      	confirmPassword: "Confirm Password",
+				      	healthFacility: "Health Facility",
+				      	motherName: "Mother's Name",
+				      	motherGivenName: "Mother's Given Name",
+				      	motherFamilyName: "Mother's Family Name",
+                weight: "Weight",
+                unit: "Unit",
+					      verificationCode: "Verification Code"
+              },
+				      errors:{
+				      	fieldLong: "This Field Is Too Long",
+				      	telephone: "Incorrect Telephone Number",
+                telephoneRequired: "Telephone Number Is Required",
+				      	email: "Incorrect Email",
+                emailRequired: "Email Is Required",
+				      	dob: "Incorrect Date Of Birth",
+				      	dobRequired: "Date Of Birth Is Required",
+				      	familyNameRequired: "Family Name Is Required",
+				      	givenNameRequired: "Given Name Is Required",
+				      	idRequired: "ID Number Is Required",
+				      	usernameRequired: "Please enter your Username",
+				      	passwordRequired: "Please enter your Password",
+                confirmPasswordRequired: "Please confirm your Password",
+				      	passwordInvalid: "Invalid Password",
+				      	noMatch: "Passwords do not match",
+                verifyCodeRequired: "Please enter the verification code",
+                verifyCodeInvalid: "Code entered is invalid"
+				      },
+				      panelLabels:{
+				      	barcodeScan: "Barcode Scan",
+                barcode: "Barcode",
+				      	patientDemographicCriteria: "Patient Demographics Criteria",
+				      	patientDemographics: "Patient Demographics",
+                patientInformation: "Patient Information",
+				      	personalInformation: "Personal Information",
+				      	nextOfKinOptional: "Next Of Kin (Optional)",
+				      	additionalSearchCriteria: "Additional Search Criteria",
+				      	potentialDuplicates: "Potential Duplicates",
+				      	identification: "Identification",
+				      	domicile: "Domicile",
+                villageHealthFacility: "Village/Health Facility",
+				      	homeAddress: "Home Address",
+				      	contactInformation: "Contact Information",
+				      	accountInformation: "Account Information",
+				      	additionalInfo: "Additional Information",
+				      	additionalInfoFooter: "Please select all that apply",
+				      	potentialDuplicates: "Potential Duplicates",
+				      	identification: "Identification",
+				      	login: "Login",
+				      	register: "Register",
+                changePassword: "Change Password",
+				      	loginHelper: "Enter your Username and Password below",
+                passwordHelper: "Enter your new password",
+                verificationHelper: "Enter your verification code"
+				      },
+				      tableHeaders:{
+				      	names: "Name(s)",
+				      	gender: "Gender",
+				      	dateOfBirth: "Date Of Birth",
+				      	cityVillage: "City/Village",
+				      	actions: "Action(s)",
+				      	results: "Results",
+				      	healthFacility: "Health Facility"
+				      },
+				      buttonLabels:{
+				      	scan: "Scan",
+				      	cancel: "Cancel",
+				      	search: "Search",
+				      	view: "View",
+				      	checkIn: "Check In",
+				      	checkOut: "Check Out",
+				      	close: "Close",
+				      	register:"Register",
+				      	alreadyRegistered: "Already have an account? Login",
+				      	forgotPassword: "Forgot Password?",
+				      	login: "Login",
+                resetPassword: "Reset Password",
+				      	patientSearch: "Patient Search",
+				      	patientRegister: "Patient Register"
+				      },
+				      checkLabels:{
+				      	yes: "Yes",
+				      	tetanusDiagnosis: "Has the patient ever been/currently is diagnosed with Tetanus?",
+				      	breastfeedingStatus: "Does the patient breast-feed?",
+				      	birthCertificate: "Does the patient have a birth certificate?"
+				      },
+				      placeholders:{
+				      	barcode: "XXXXXXXXXXXX",
+				      	givenName: "Given Name",
+				      	familyName: "Family Name",
+				      	cityVillage: "City/Village",
+				      	telephone: "Telephone Number",
+				      	email: "someone@somedomain.com",
+				      	username: "Username",
+				      	password: "Password",
+                confirmPassword: "Confirm Password",
+                verificationCode: "Verification Code",
+				      	healthFacility: "Health Facility",
+				      	motherGivenName: "Mother's Given Name",
+				      	motherFamilyName: "Mother's Family Name"
+				      },
+				      modalHeaders:{
+				      	checkInPatient: "Check In Patient"
+				      },
+				      modalText:{
+				      	nextAppointment: "This patient has their next appointment at: "
+				      },
+				      toastrText:{
+				      	invalidForm: "Please Check Form Fields For Errors"
+				      },
+				      toastrHeaders:{
+				      	invalidForm: "Invalid Form"
+				      },
+				      footer:{
+				      	layoutFooter: "MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT"
+				      }
+            };
+          }
+        }
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

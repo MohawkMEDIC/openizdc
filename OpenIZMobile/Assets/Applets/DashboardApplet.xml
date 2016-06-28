@@ -1,125 +1,84 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ - Copyright 2016-2016 Mohawk College of Applied Arts and Technology
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: Nityan
+ - Date: 2016-6-4
+ -->
 <AppletManifest xmlns="http://openiz.org/applet">
   <info id="org.timr.applet.dashboard" version="0.5.0.0">
-    <icon>app://openiz.org/drawable/cogs</icon>
+    <icon>@drawable/cogs</icon>
     <name lang="en">Registration</name>
     <name lang="sw">Daftari</name>
     <groupName lang="en">Administration</groupName>
     <groupName lang="sw">Utawala</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+
+    <!-- this is a made up oid for login permission -->
+    <!-->demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand-->
   </info>
-  <menuItem launch="app://openiz.org/applet/org.timr.applet.dashboard/index">
-    <icon>app://openiz.org/drawable/cogs.png</icon>
-    <text lang="en">Register</text>
-    <text lang="sw">Daftari</text>
-  </menuItem>
   <asset name="index" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <bundle>chart-js</bundle>
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>chart-controller</script>
-      <script>app://openiz.org/asset/js/toastr.min.js</script>
-      <style>app://openiz.org/asset/css/toastr.min.css</style>
-      <content lang="en">
-        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController" ng-click="resetTimeout()" ng-touch="resetTimeout()">
-          <nav class="navbar navbar-default">
-            <div class="container-fluid">
-              <!-- Brand and toggle get grouped for better mobile display -->
-              <div class="navbar-header">
-                <a class="navbar-brand" href="#">Dashboard</a>
-              </div>
-              <!-- Collect the nav links, forms, and other content for toggling -->
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span class="glyphicon glyphicon-user"></span>
-                    <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a href="">Manage</a>
-                    </li>
-                    <li role="separator" class="divider"></li>
-                    <li>
-                      <a href="" ng-click="logout()">Log Off</a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <!-- /.container-fluid -->
-          </nav>
-          <div class="container">
-            <h2>Dashboard</h2>
-            
-			<div class="row">
-			  <button class="btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientAdministration/index">Patient Administration</button>
-			</div>
-			
-            <div class="row" ng-controller="ChartController">
-              <button class="btn btn-success" ng-click="draw()">Draw</button>
-              <canvas id="stock-canvas" width="500px" height="500px"></canvas>
-            </div>
+      <content>
+        <div class="container" ng-controller="ChartController" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="row">
+            <h3>Dashboard</h3>
           </div>
-        </body>
+          <div class="row">
+            <a class="btn btn-primary pull-left" href="app://openiz.org/applet/org.timr.applet.patientAdministration/index"> Patient Services</a>
+          </div>
+          <div class="chart-container">
+            <canvas id="stock-canvas" height="450" width="600"></canvas>
+            <canvas id="vaccination-canvas" height="450" width="600"></canvas>
+            <button class="btn btn-primary" ng-click="draw()">Draw</button>
+          </div>
+        </div>
       </content>
     </contentHtml>
   </asset>
   <asset name="chart-controller" mimeType="text/javascript">
     <contentText>
-      <![CDATA[
-        var dashboardApp = angular.module('index', []);
-        
-        dashboardApp.controller('TimeoutController', ['$scope', '$window', '$timeout', function($scope, $window, $timeout){
-          toastr.options = {"positionClass":"toast-top-center"};
-          const TIMEOUT_TIME = 30000;
-          var timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
-        	$scope.resetTimeout = function(){
-              $timeout.cancel(timer);
-              timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
-              if(toastr.options.timeOut == TIMEOUT_TIME){
-              toastr.clear();
-              toastr.options = {"positionClass":"toast-top-center",
-                "timeOut": "5000"};
-              toastr.success('You\'re back!');
-          }
-
-          }
-          function timeoutWarning(){
-            $timeout.cancel(timer);
-            timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
-            toastr.options = {"positionClass":"toast-top-center",
-            "timeOut": TIMEOUT_TIME.toString()};
-            toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
-          }
-          
-          
-          $scope.logout = function(){
-            OpenIZ.Authentication.abandonSession();
-            $window.location.href = "app://openiz.org/applet/org.timr.applet.dashboard/index";
-          }
-         
-        }])
-        
-        .controller('ChartController', ['$scope', '$window', '$document', function ($scope, $window, $document)
+      <![CDATA[  
+		    layoutApp.controller('ChartController', ['$scope', function ($scope)
 		    {
-            $scope.draw = function(){
-              var sctx = document.getElementById("stock-canvas").getContext("2d");
-		          $window.myLine = new Chart(sctx).Bar(stockChartData, {
+        
+          $scope.logout = function()
+          {
+            OpenIZ.Authentication.logout();
+          }
+        
+        	  $scope.draw = function(){
+		          var sctx = document.getElementById("stock-canvas").getContext("2d");
+		          window.myLine = new Chart(sctx).Bar(vaccinationChartData, {
+			          responsive: true
+		          });
+              var vctx = document.getElementById("vaccination-canvas").getContext("2d");
+		          window.myLine = new Chart(vctx).Bar(stockChartData, {
 			          responsive: true
 		          });
 	        }
+        
 		var randomScalingFactor = function(){ return Math.round(Math.random()*10000)};
-		var stockChartData = {
+		var vaccinationChartData = {
 			labels : ["Clinic 1", "Clinic 2", "Clinic 3", "Clinic 4", "Clinic 5", "Clinic 6", "Clinic 7"],
 			datasets : [
 				{
-					label: "Stock Levels",
+					label: "Vaccination Coverage",
 					fillColor : "rgba(220,220,220,0.2)",
 					strokeColor : "rgba(220,220,220,1)",
 					pointColor : "rgba(220,220,220,1)",
@@ -129,8 +88,21 @@
 					data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
 				}
         ]}
+        var stockChartData = {
+        labels : ["Clinic 1", "Clinic 2", "Clinic 3", "Clinic 4", "Clinic 5", "Clinic 6", "Clinic 7"], 
+        datasets : [
+				{
+					label: "Clinic Stock",
+					fillColor : "rgba(151,187,205,0.2)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : [randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor(),randomScalingFactor()]
+				}
+			]}
         }]);
-
 
 		  ]]>
     </contentText>

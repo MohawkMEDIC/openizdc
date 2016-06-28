@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.timr.applet.patientManagement" version="0.5.0.0">
+    <icon>app://openiz.org/drawable/cogs</icon>
+    <name lang="en">Patient Management</name>
+    <groupName lang="en">Administration</groupName>
+    <author>OpenIZ.org Community</author>
+    <dependency id="org.openiz.core" version="0.5.0.0" />
+  </info>
+  <asset name="index" mimeType="text/html">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <script>patient-manage-controller</script>
+      <content lang="en">
+        <div ng-controller="PatientManagementController"  xmlns="http://www.w3.org/1999/xhtml">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title text-center">New Weight Entry</h3>
+                </div>
+                <div class="panel-body">
+                  <fieldset class="form-horizontal">
+                    <form name="weightEntryForm" novalidate="novalidate" ng-submit="checkWeightFields(weightEntryForm.$invalid)">
+                      <div class ="form-group">
+                        <div ng-class="{ 'has-error': weightEntryForm.weight.$invalid &amp;&amp; (weightEntryForm.weight.$touched||weightEntryForm.$submitted) }">
+                          <label class ="col-xs-1 control-label" for="weightInput">{{locale.inputLabels.weight}}</label>
+                          <div class="col-xs-2">
+                            <input type="number" name="weight" id="weightInput" class="form-control" aria-describedby="weightInputAddon" ng-model="patient.newWeight" required="required"></input>
+                          </div>
+                        </div>
+                        <label class ="col-xs-1 control-label" for="weightUnitSelect">{{locale.inputLabels.unit}}</label>
+                        <div class="col-xs-2">
+                          <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon" ng-model="patient.newUnit" required="required">
+                            <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
+                          </select>
+                        </div>
+
+                        <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
+                          <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                          <div class="col-xs-3 date input-group" id="dobPicker">
+                            <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
+                              <span class="input-group-addon" ng-click="openDate()">
+                                <span class="glyphicon glyphicon-calendar">
+                                </span>
+                              </span>
+                            </input>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="col-xs-2 col-xs-offset-1">
+                            <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
+                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                            </div>
+                          </div>
+                          <div class="col-xs-2 col-xs-offset-6">
+                            <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
+                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="col-xs-offset-10 btn btn-primary">
+                          Save
+                        </button>
+                      </div>
+
+                    </form>
+                    <div class="modal fade" id="myModal" role="dialog">
+                      <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h4 class="modal-title">Confirm Weight Update</h4>
+                          </div>
+                          <div class="modal-body">
+                            <p>{{"You are about to update the weight of " + patient.FirstName + "," + patient.LastName + " to " + patient.newWeight + " " + patient.newUnit}}</p>
+                            <p>Are you sure this is correct?</p>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">Yes</button>
+                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">No</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <h4 class="text-center">Previous Weights</h4>
+                    <div class="form-group fixed-panel">
+                      <table class="table table-striped table-bordered">
+
+
+                        <thead>
+                          <tr>
+                            <th>Date Recorded</th>
+                            <th>Weight</th>
+                            <th>Unit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="weights in weightRecords">
+                            <td>{{weights.Date.getDate()+"/"+weights.Date.getMonth()+"/"+weights.Date.getFullYear()}}</td>
+                            <td>{{weights.Weight}}</td>
+                            <td>{{weights.Unit}}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="weight-canvas" height="225" width="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="patient-manage-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
+		  {
+         
+         
+
+         
+         $scope.checkWeightFields = function(invalid) {
+              if (!invalid)
+              {
+                $("#myModal").modal();
+              }
+              else
+              {
+                toastr.error("Fields Invalid", "Please Fill All Fields");
+              }
+          };
+         $scope.findWeights = function(){
+            $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
+            console.log($scope.patient)
+            /*date = $scope.patient.DateOfBirth.split(" ", 1);
+            var dateSplit = date[0].split("/");
+            if(dateSplit[0].length<2){dateSplit[0] = "0"+dateSplit[0]};
+            if(dateSplit[1].length<2){dateSplit[1] = "0"+dateSplit[1]};
+            var formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];*/
+            
+            var today = new Date();
+            var weightArray = [];
+            console.log($scope.patient.DateOfBirth);
+            var dateOfBirth = new Date($scope.patient.DateOfBirth);
+            console.log(today);
+            console.log(dateOfBirth);
+            var age = today.getFullYear()-dateOfBirth.getFullYear();
+            var finalWeight = Math.floor(Math.random(5000) + 3000);
+            var increment = finalWeight/age;
+            console.log(age);
+            for(var i = 0; i<age; i++){
+              var eachDate = new Date($scope.patient.DateOfBirth);
+              eachDate.setFullYear(eachDate.getFullYear()+i);
+              weightArray[i] = {Date: eachDate, Unit: "Kilograms", Weight: Math.floor(Math.random(increment)+increment*i)/100};
+            }
+            
+              $scope.weightRecords = weightArray;
+              $scope.draw();
+            /*OpenIZ.Patient.weightByDob(function(data){
+              var weightArray = [];
+              for(i=0;i<data[0].WeightDates.length;i++){
+                weightArray[i] = {Date:data[0].WeightDates[i], Unit:data[0].WeightUnits[i], Weight:data[0].Weights[i]}
+              }
+              $scope.weightRecords = weightArray;
+              $scope.$digest();
+              $scope.draw();
+          }, formattedDate);*/
+         };
+         
+         $scope.openDate = function() {
+          $scope.popup.opened = true;
+         };
+         $scope.popup = {
+            opened: false
+          };
+          $scope.draw = function(){
+              var labelsA = [];
+              var dataA = [];
+          
+              for(var i = 0; i<$scope.weightRecords.length;i++){
+                labelsA[i] = $scope.weightRecords[i].Date.getFullYear();
+                dataA[i] = parseInt($scope.weightRecords[i].Weight);
+              }
+              
+              var chartData = {
+                labels: labelsA,
+                datasets: [
+                  {
+                label: "My First dataset",
+                fill: false,
+                lineTension: 0.1,
+                backgroundColor: "rgba(51,204,204,0.4)",
+                borderColor: "rgba(51,204,204,1)",
+                borderCapStyle: 'butt',
+                borderDash: [],
+                borderDashOffset: 0.0,
+                borderJoinStyle: 'miter',
+                pointBorderColor: "rgba(51,204,204,1)",
+                pointBackgroundColor: "rgb(51,204,204)",
+                pointBorderWidth: 1,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: "rgba(51,204,204,1)",
+                pointHoverBorderColor: "rgba(51,204,204,1)",
+                pointHoverBorderWidth: 2,
+                pointRadius: 1,
+                pointHitRadius: 10,
+                fillColor: "rgba(51,204,204,0.4)",
+                strokeColor: "rgba(51,204,204,1)",
+                pointColor: "rgba(31, 122, 122,1)",
+                data: dataA,
+                        }
+                ]
+            };
+              
+              var sctx = document.getElementById("weight-canvas").getContext("2d");
+		          window.myLine = new Chart(sctx).Line(chartData, {
+			          responsive: true
+		          });
+              
+              
+	        }
+          $scope.findWeights();
+          $scope.patient.newUnit = $scope.locale.weightUnit.kilograms;
+          $scope.patient.dateTime = new Date();
+           $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(),
+            minDate: new Date(1990, 1, 1)
+         };
+
+          
+          
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+</AppletManifest>

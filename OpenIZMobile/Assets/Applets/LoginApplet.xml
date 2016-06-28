@@ -5,258 +5,372 @@
     <name lang="en">Login Applet</name>
     <groupName lang="en">OpenIZ Core</groupName>
     <author>OpenIZ Community</author>
-    <dependency id="org.openiz.core" version="0.5.0.0"/>
+    <dependency id="org.openiz.core" version="0.5.0.0" />
   </info>
+  <strings lang="en">
+    <string key="pnlLogin">Login</string>
+    <string key="pnlLoginHelper">Enter Your Username and Password Below</string>
+    <string key="inpUsername">Username</string>
+    <string key="inpPassword">Password</string>
+    <string key="plcUserName">Username</string>
+    <string key="plcPassword">Password</string>
+    <string key="errPasswordRequired">Please Enter Your Password</string>
+    <string key="errUsernameRequired">Please Enter Your Username</string>
+    <string key="btnLogin">Login</string>
+    <string key="btnRegister">Register</string>
+    <string key="btnForgotPassword">Forgot Password?</string>
+  </strings>
+  <strings lang="sw">
+    <string key="pnlLogin">Ingia</string>
+    <string key="pnlLoginHelper">Kuingia Jina La Mtumiaji</string>
+    <string key="inpUsername">Jina La Mtumiaji</string>
+    <string key="inpPassword">Nywila</string>
+    <string key="plcUserName">Jina La Mtumiaji</string>
+    <string key="plcPassword">Nywila</string>
+    <string key="errPasswordRequired">Tafadhali Kuingia Nywila Lako</string>
+    <string key="errUsernameRequired">Tafadhali Kuingia Jina La Mtumiaji Lako</string>
+    <string key="btnLogin">Ingia</string>
+    <string key="btnRegister">Kusajila</string>
+    <string key="btnForgotPassword">Umesaha</string>
+  </strings>
   <asset name="index" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
-      <script>index-controller</script>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>login-controller</script>
       <content>
-        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LoginController">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title text-center">Login</h3>
+        <div class="row" ng-controller="LoginController" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">{{locale.panelLabels.login}}</h2>
+              </div>
+              <div class="panel-body">
+                <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania.png" class="img-responsive center-block" />
+                <form novalidate="novalidate" name="loginForm" ng-submit="login(username, password)">
+                  <fieldset class="form-horizontal form-group">
+                    <legend class="text-center">{{locale.panelLabels.loginHelper}}</legend>
+                    <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
+                      <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="username" type="text" ng-required="true" placeholder="{{locale.placeholders.username}}" class="form-control" name="username" id="usernameInput" />
+
+                      </div>
+                      <div ng-messages="loginForm['username'].$error" ng-if="loginForm['username'].$touched||loginForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
+                      </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error': (loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid }">
+                      <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="password" type="password" ng-required="true" placeholder="{{locale.placeholders.password}}" class="form-control" name="password" id="passwordInput" />
+
+                      </div>
+                      <div ng-messages="loginForm['password'].$error" ng-if="loginForm['password'].$touched||loginForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class ="row">
+                    <div class="col-xs-12 text-center">
+                      <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.timr.applet.register/index">{{locale.buttonLabels.register}}</a>
+                      <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.login/resetName">{{locale.buttonLabels.forgotPassword}}</a>
+                      <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.patientAdministration/patientSearch">Search</a>
+                      <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.login}}</button>
+                    </div>
                   </div>
-                  <div class="panel-body">
-                    <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania" class="img-responsive center-block"/>
-                    <form novalidate="novalidate">
-                      <fieldset class="form-group">
-                        <legend class="control-label text-center">Enter your username and password below</legend>
-                        <div class="form-group">
-                            <label for="usernameInput" class="control-label">User Name:</label>
-                            <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="usernameInput"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="passwordInput" class="control-label">Password:</label>
-                            <input ng-model="password" type="password" ng-required="true" placeholder="Password" class="form-control" name="password" id="passwordInput"/>
-                        </div>
-                      </fieldset>
-                        <div class ="row">
-                          <div class="col-xs-12 text-center">
-                            <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.timr.applet.register/index"> Register</a>
-                            <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.login/resetName"> Forgot Password?</a>
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.dashboard/index" ng-click="login(username, password)">Login</a>
-                          </div>
-                        </div>
-                    </form>
-                  </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
-        </body>
+        </div>
       </content>
     </contentHtml>
   </asset>
   <asset name="resetName" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>reset-controller</script>
       <content>
-        <body xmlns="http://www.w3.org/1999/xhtml">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title text-center">Forgot Password</h3>
+        <div class="row" xmlns="http://www.w3.org/1999/xhtml" ng-controller="ResetController">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">Forgot Password</h2>
+              </div>
+              <div class="panel-body">
+                <form novalidate="novalidate" name="resetPasswordForm" ng-submit="checkUsername(username)">
+                  <fieldset class="form-horizontal form-group">
+                    <legend class="text-center">Enter your User Name below</legend>
+                    <br />
+                    <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.username.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.username.$invalid }">
+                      <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="username" type="text" ng-required="true" placeholder="{{locale.inputLabels.username}}" class="form-control" name="username" id="usernameInput" />
+
+                      </div>
+                      <div ng-messages="resetPasswordForm['username'].$error" ng-if="resetPasswordForm['username'].$touched||resetPasswordForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class ="row">
+                    <div class="col-xs-12 text-center">
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">Return to Login</a>
+                      <button type="submit" class="btn btn-primary pull-right" ng-click="checkUsername(username)">Submit</button>
+                    </div>
                   </div>
-                  <div class="panel-body">
-                    <form novalidate="novalidate">
-                      <fieldset class="form-group">
-                        <legend class="control-label">Enter your User Name below</legend>
-                        <div class="form-group">
-                            <label for="usernameInput" class="control-label">User Name:</label>
-                            <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="form-control" name="username" id="usernameInput"/>
-                        </div>
-                      </fieldset>
-                        <div class ="row">
-                          <div class="col-xs-12 text-center">
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/reset">Check User Name</a>
-                          </div>
-                        </div>
-                    </form>
-                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="resetByEmail" mimeType="text/html">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>reset-controller</script>
+      <content>
+        <div class="row" xmlns="http://www.w3.org/1999/xhtml" ng-controller="ResetController">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">Thank you!</h2>
+              </div>
+              <div class="panel-body">
+                <div class="container">
+                  <h3>We have sent you a verification code!</h3>
+
+                  <p>Please check your email and use the code received to reset your password.</p>
                 </div>
               </div>
             </div>
           </div>
-        </body>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="resetByPhone" mimeType="text/html">
+    <contentHtml>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>reset-controller</script>
+      <content>
+        <div class="row" xmlns="http://www.w3.org/1999/xhtml" ng-controller="ResetController">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">Thank you!</h2>
+              </div>
+              <div class="panel-body">
+                <div class="container">
+                  <h3>We have sent you a verification code!</h3>
+
+                  <p>Please check your phone and use the code received to reset your password.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </content>
     </contentHtml>
   </asset>
   <asset name="reset" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>reset-controller</script>
       <content>
-        <body xmlns="http://www.w3.org/1999/xhtml">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title text-center">Password Recovery</h3>
-                  </div>
-                  <div class="panel-body">
-                    <form novalidate="novalidate">
-                      <fieldset class="form-group">
-                        <legend class="control-label">Select your recovery method</legend>
-                        <div class="form-group">
-                          <div class="radio row">
-                            <label for="emailRadio" class="col-xs-4 radio-inline control-label">Email</label>
-                            <input id="emailRadio" class="col-xs-8" type="radio" name="resetMethod" value="Email"></input>  
-                          </div>
-                          <div class="radio row">
-                            <label for="phoneRadio" class="col-xs-4 radio-inline control-label">Phone Number</label>
-                            <input id="phoneRadio" class="col-xs-8" type="radio" name="resetMethod" value="Phone"></input>  
-                        </div>
-                        </div>
-                      </fieldset>
-                        <div class ="row">
-                          <div class="col-xs-12 text-center">
-                            <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/verify">Send Verification Code</a>
-                          </div>
-                        </div>
-                    </form>
-                  </div>
-                </div>
+        <div class="row" xmlns="http://www.w3.org/1999/xhtml" ng-controller="ResetController">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">Password Recovery</h2>
               </div>
-            </div>
-          </div>
-        </body>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="verify" mimeType="text/html">
-    <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
-      <content>
-        <body xmlns="http://www.w3.org/1999/xhtml">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title text-center">Verification Code</h3>
-                  </div>
-                  <div class="panel-body">
-                    <form novalidate="novalidate">
-                      <fieldset class="form-group">
-                        <legend class="control-label">Enter your verification code</legend>
-                        <div class="form-group">
-                          <label for="verifyInput" class="control-label">Verification Code:</label>
-                          <input type="text" ng-required="true" placeholder="Verification Code" class="form-control" name="verifyCode" id="verifyCodeInput"/>
-                        </div>
-                      </fieldset>
-                      <div class ="row">
-                        <div class="col-xs-12 text-center">
-                          <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">Reset Password</a>
-                        </div>
+              <div class="panel-body">
+                <form novalidate="novalidate">
+                  <fieldset class="form-horizontal form-group">
+                    <legend class="control-label">Select your recovery method</legend>
+                    <div class="form-group">
+                      <div class="radio">
+                        <label for="emailRadio" class="col-xs-4 radio-inline control-label">
+                          <input id="emailRadio" class="col-xs-8" type="radio" name="resetMethod" value="Email" /> Email
+                        </label>
                       </div>
-                    </form>
+                      <div class="radio">
+                        <label for="phoneRadio" class="col-xs-4 radio-inline control-label">
+                          <input id="phoneRadio" class="col-xs-8" type="radio" name="resetMethod" value="Phone" /> Phone Number
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class ="form-group">
+                    <div class="col-xs-12 text-center">
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">Return to Login</a>
+                      <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/verify">Send Verification Code</a>
+                    </div>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
-        </body>
+        </div>
       </content>
     </contentHtml>
   </asset>
-
   <asset name="newPassword" mimeType="text/html">
     <contentHtml>
-      <bundle>jquery</bundle>
-      <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
-      <bundle>angular</bundle>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <!-- absolute reference to the layout -->
+      <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
+      <script>reset-controller</script>
       <content>
-        <body xmlns="http://www.w3.org/1999/xhtml">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title text-center">Change Password</h3>
-                  </div>
-                  <div class="panel-body">
-                    <form novalidate="novalidate">
-                      <fieldset class="form-group">
-                        <legend class="control-label">Type and confirm a new password</legend>
-                        <div class="form-group">
-                          <label for="passwordInput" class="control-label">Password</label>
-                          <div class="">
-                            <input type="text" name="password" id="passwordInput" class="form-control" placeholder="Password"/>
-                          </div>
-                          <span id="error-password" class=""></span>
-                        </div>
+        <div class="row" xmlns="http://www.w3.org/1999/xhtml" ng-controller="ResetController">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h2 class="panel-title text-center">{{locale.panelLabels.changePassword}}</h2>
+              </div>
+              <div class="panel-body">
+                <form novalidate="novalidate" name="resetPasswordForm" ng-submit="resetPassword(password, confirmPassword, verificationCode, resetPasswordForm.$invalid)">
+                  <fieldset class="form-horizontal form-group">
+                    <legend class="text-center">{{locale.panelLabels.verificationHelper}}</legend>
+                    <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.verificationCode.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.verificationCode.$invalid }">
+                      <label for="verificationCodeInput" class="col-xs-2 control-label">{{locale.inputLabels.verificationCode}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="verificationCode" type="text" ng-required="true" placeholder="{{locale.placeholders.verificationCode}}" class="form-control" name="verificationCode" id="verificationCodeInput" />
 
-                        <div class="form-group">
-                          <label for="confirmPasswordInput" class="control-label">Confirm Password</label>
-                          <div class="">
-                            <input type="text" name="password" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password"/>
-                          </div>
-                          <span id="error-confirmPassword" class=""></span>
-                        </div>
-                      </fieldset>
-                      <div class="form-group">
-                        <a type="submit" class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/index">Reset Password</a>
                       </div>
-                    </form>
+                      <div ng-messages="resetPasswordForm.verificationCode.$error" ng-if="resetPasswordForm.verificationCode.$touched||resetPasswordForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      </div>
+                    </div>
+
+                    <legend class="text-center">{{locale.panelLabels.passwordHelper}}</legend>
+                    <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.password.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.password.$invalid }">
+                      <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{locale.placeholders.password}}" />
+
+                      </div>
+                      <div ng-messages="resetPasswordForm['password'].$error" ng-if="resetPasswordForm['password'].$touched||resetPasswordForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      </div>
+                    </div>
+
+                    <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.confirmPassword.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.confirmPassword.$invalid }">
+                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{locale.inputLabels.confirmPassword}}</label>
+                      <div class="col-xs-9 input-group">
+                        <input ng-model="confirmPassword" compare-to="password" ng-required="true" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{locale.placeholders.confirmPassword}}" />
+                      </div>
+                      <div ng-messages="resetPasswordForm['confirmPassword'].$error" ng-if="resetPasswordForm['confirmPassword'].$touched||resetPasswordForm.$submitted">
+                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                        <p class="alert alert-danger" ng-message="compareTo">{{locale.errors.noMatch}}</p>
+                      </div>
+                    </div>
+                  </fieldset>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.resetPassword}}</button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
-        </body>
+        </div>
       </content>
     </contentHtml>
   </asset>
-  <asset name="index-controller" mimeType="text/javascript">
+  <asset name="login-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-        var loginApp = angular.module('index', []);
 
-		    loginApp.controller('LoginController', ['$scope', function ($scope)
+		    layoutApp.controller('LoginController', ['$scope', function ($scope)
 		    {
 			    $scope.login = function(username, password) {
             try
             {
               var session = OpenIZ.Authentication.login(username, password);
-              alert(session);
+
+              console.log(session);
               if(session == null)
-                alert(OpenIZ.Localization.getString("invalidCredential"));
+              {
+                toastr.error("Incorrect username or password");
+              }
               else
-                window.location = OpenIZ.urlParams["returnUrl"];
+              {
+                toastr.success("Login successful");
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.openiz.applet.dashboard/index";
+              }
             }
             catch(ex)
             {
-              if(typeof(ex) == "string")
-                alert(ex);
-               else if(ex.description != undefined)
-                alert(ex);
+              toastr.error("Unexpected error, please contact the adminstrator");
             }
           };
 
+	    }]);
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="reset-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+		    layoutApp.controller('ResetController', ['$scope', function ($scope)
+		    {
+			    $scope.checkUsername = function(username) {
+            try
+            {
+              var result = OpenIZ.Authentication.checkUsername(username);
+              if (result === 0)
+              {
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/resetByEmail";
+              }
+              else if (result === 1)
+              {
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/resetByPhone";
+              }
+              else if (result === 2)
+              {
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/reset";
+              }
+              else
+              {
+                toastr.error("Unknown or invalid username");
+              }
+            }
+            catch(ex)
+            {
+              toastr.error("Unexpected error, please contact the adminstrator");
+            }
+          };
+
+          $scope.resetPassword = function(password, confirmPassword, verifyCode, invalid) {
+
+              try
+              {
+                  var result = OpenIZ.Authentication.resetPassword(password, confirmPassword);
+                  if(invalid){
+                    toastr.error("Check Fields, Data entered is invalid");
+                  }
+                  else if (result === 0)
+                  {
+                    window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/index";
+                  }
+                  else
+                  {
+                    toastr.error("Unable to reset password, please contact the administrator");
+                  }
+                }
+                catch(ex)
+                {
+                  toastr.error("Unexpected error, please contact the adminstrator");
+                }
+
+          };
 	    }]);
       ]]>
     </contentText>

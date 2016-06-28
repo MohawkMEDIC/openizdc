@@ -150,7 +150,7 @@ var OpenIZModel = new function () {
         Ideographic : "09000479-4672-44F8-BB4A-72FB25F7356A", 
         Pseudonym : "C31564EF-CA8D-4528-85A8-88245FCEF344", 
         MaidenName : "0674C1C8-963A-4658-AFF9-8CDCD308FA68", 
-        Legal : "EFFE122D-8D30-491D-805D-ADDCB4466C35", 
+        Legal: "EFFE122D-8D30-491D-805D-addcb4466c35",
         OfficialRecord : "1EC9583A-B019-4BAA-B856-B99CAF368656", 
         Syllabic : "B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF", 
         Anonymous : "95E6843A-26FF-4046-B6F4-EB440D4B85F7"
@@ -778,6 +778,7 @@ var OpenIZModel = new function () {
          * //   }
          */
         this.simplify = function () {
+            console.info("simplify");
             var retVal = {
                 use: OpenIZModel.getObjectKey(_self.use)
             };
@@ -787,13 +788,14 @@ var OpenIZModel = new function () {
                 var comp = _self.components[i];
 
                 // Get type key
-                var typeKey = OpenIZModel.getObjectKey(comp.type);
+                var typeKey = OpenIZModel.getObjectKey(comp.type).toUpperCase();
+                
                 var key = OpenIZModel.reverseLookup(typeKey, OpenIZModel.NameComponentKeys);
                 if (key == null)
                     key = OpenIZModel.reverseLookup(typeKey, OpenIZModel.AddressComponentKeys);
 
                 // Does the key exist?
-                if (retVal[key] == undefined)
+                if (retVal[key] === undefined)
                     retVal[key] = [];
                 retVal[key].push(comp.value);
             }
@@ -940,7 +942,7 @@ var OpenIZModel = new function () {
         // Map names
         for (var i in patientData.name) {
             var nam = patientData.name[i];
-            _self.names.push(new OpenIZModel.ComponentizedValue(nam));
+            this.names.push(new OpenIZModel.ComponentizedValue(nam));
         }
 
         // Map addresses
@@ -1143,9 +1145,10 @@ var OpenIZModel = new function () {
          * @returns {OpenIZModel#ComponentizedValue} The name with the matching use
          */
         this.getName = function (useKey) {
+            console.info("Patient.getName");
             for (var i in _self.names) {
                 var nam = _self.names[i];
-                if (OpenIZModel.getObjectKey(nam.use) == useKey)
+                if (OpenIZModel.getObjectKey(nam.use) == useKey.toLowerCase())
                     return nam;
             }
             return null;
