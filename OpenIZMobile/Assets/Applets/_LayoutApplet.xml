@@ -221,7 +221,7 @@
         var currentDate = new Date();
         //dateValue = $scope.patient.DateOfBirth.split("/");
         //dateValue[2] = dateValue[2].split(" ", 1);
-        
+
         difference = new Date(currentDate-dateOfBirth);
         $scope.patient.age = {"years": (difference.getFullYear()-1970), "months": (difference.getMonth()+1), "days": difference.getDate()};
         $('#patientInformationCollapse').on('shown.bs.collapse', function () {
@@ -240,7 +240,7 @@
     <contentText>
       <![CDATA[
             var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
-            
+
             var compareTo = function() {
                 return {
                     require: "ngModel",
@@ -248,20 +248,20 @@
                         otherModelValue: "=compareTo"
                     },
                     link: function(scope, element, attributes, ngModel) {
-             
+
                         ngModel.$validators.compareTo = function(modelValue) {
                             return modelValue == scope.otherModelValue;
                         };
- 
+
                         scope.$watch("otherModelValue", function() {
                             ngModel.$validate();
                         });
                     }
                 };
             };
- 
+
             layoutApp.directive("compareTo", compareTo);
-            
+
             layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
 
             $scope.locale = getStrings();
@@ -277,7 +277,6 @@
             "Marci", "Domenica", "Wilson", "Rich", "Drucilla", "Heike", "Ray", "Neely", "Jaime", "Wallace"];
             var lastNames = ["Travis", "Carlson", "Humphrey", "Frank", "Figueroa", "Roach", "Strong", "Mercer", "Frey", "Richardson",
             "Horne", "Gonzales", "Anguilar", "Vance", "Reyes", "Compton", "Maldonado", "Rose", "Ford", "Carey"];
-
 
             toastr.options = {"positionClass":"toast-top-center"};
             const TIMEOUT_TIME = 3000000;
@@ -296,7 +295,7 @@
                 var dob = new Date();
                 dob.setFullYear(Math.floor(Math.random()*45)+1970, Math.floor(Math.random()*12+1), Math.floor(Math.random()*28+1));
                 return {DateOfBirth: dob,Village: "Village "+ (Math.floor(Math.random()*500)+1), Address: ""+(Math.floor(Math.random()*10000)+1) +" Main Street", HealthFacility: "Health Facility " + (Math.floor(Math.random()*200)+1), FirstName: firstNames[Math.floor(Math.random() * 20)], LastName: lastNames[Math.floor(Math.random()*20)], Gender: genders[Math.floor(Math.random()*3)]};
-            
+
             }
             function timeoutWarning(){
             $timeout.cancel(timer);
@@ -436,7 +435,7 @@
 				      	names: "Jina(s)",
 				      	gender: "Jinsia",
 				      	dateOfBirth: "Tarehe Ya Ku Zaliwa",
-				      	cityVillage: "Mji/Kijiji(s)",
+				      	cityVillage: "Mji/Kijiji",
 				      	actions: "Hatua(s)",
 				      	results: "Matokeo",
 				      	healthFacility: "Afya Kituo"
@@ -558,7 +557,7 @@
 				      	relationshipToPatient: "Relationship To Patient",
 				      	identifier: "Identifier",
 				      	telephone: "Telephone",
-				      	cityVillage:"City/Village(s)",
+				      	cityVillage:"City/Village",
 				      	accuracy:"Accuracy",
 				      	id: "ID",
 				      	birthPlace: "Birth Place",
@@ -624,7 +623,7 @@
 				      	names: "Name(s)",
 				      	gender: "Gender",
 				      	dateOfBirth: "Date Of Birth",
-				      	cityVillage: "City/Village(s)",
+				      	cityVillage: "City/Village",
 				      	actions: "Action(s)",
 				      	results: "Results",
 				      	healthFacility: "Health Facility"

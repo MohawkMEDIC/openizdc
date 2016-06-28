@@ -369,20 +369,31 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label">{{locale.panelLabels.additionalInfo}}</label>
                                   <div class="col-xs-9">
-                                    <div class="checkbox">
-                                      <label for="tetanusCheck">
-                                        <input type="checkbox" name="tetanusOptions" id="tetanusCheck" /> {{locale.checkLabels.tetanusDiagnosis}}
+                                    <div class="form-group">
+                                      <label class="col-xs-10" for="tetanusCheck">
+                                        {{locale.checkLabels.tetanusDiagnosis}}
                                       </label>
+                                      <div class="checkbox col-xs-2">
+                                        <input type="checkbox" name="tetanusOptions" id="tetanusCheck" />
+                                      </div>
                                     </div>
-                                    <div class="checkbox">
-                                      <label for="breastFeedingCheck">
-                                        <input type="checkbox" name="breastFeedingOptions" id="breastFeedingCheck" /> {{locale.checkLabels.breastfeedingStatus}}
+
+                                    <div class="form-group">
+                                      <label class="col-xs-10" for="breastFeedingCheck">
+                                        {{locale.checkLabels.breastfeedingStatus}}
                                       </label>
+                                      <div class="checkbox col-xs-2">
+                                        <input type="checkbox" name="breastFeedingOptions" id="breastFeedingCheck" />
+                                      </div>
                                     </div>
-                                    <div class="checkbox">
-                                      <label for="birthCertCheck">
-                                        <input type="checkbox" name="birthCertOptions" id="birthCertCheck" /> {{locale.checkLabels.birthCertificate}}
+
+                                    <div class="form-group">
+                                      <label class="col-xs-10" for="birthCertCheck">
+                                        {{locale.checkLabels.birthCertificate}}
                                       </label>
+                                      <div class="checkbox col-xs-2">
+                                        <input type="checkbox" name="birthCertOptions" id="birthCertCheck" />
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
