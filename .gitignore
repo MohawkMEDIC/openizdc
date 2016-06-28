@@ -40,3 +40,7 @@ Thumbs.db
 *.dotCover
 .vs/
 *.pdb
+/OpenIZMobile/Resources/Resource.designer_REMOTE_200.cs
+/OpenIZMobile/Resources/Resource.designer_LOCAL_200.cs
+/OpenIZMobile/Resources/Resource.designer_BASE_200.cs
+/OpenIZMobile/Resources/Resource.designer_BACKUP_200.cs

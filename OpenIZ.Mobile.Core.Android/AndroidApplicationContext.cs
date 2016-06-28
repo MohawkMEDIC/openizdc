@@ -33,9 +33,9 @@ namespace OpenIZ.Mobile.Core.Android
 
 		// The application
 		private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication() {
-			ApplicationSecret = "cd1d75b4f3fdda5cfa57bbd37d109ba886c35d15503a5982993526b937245600",
+			ApplicationSecret = "C5B645B7D30A4E7E81A1C3D8B0E28F4C",
 			Key = Guid.Parse("5248ea19-369d-4071-8947-413310872b7e"),
-			Name = "OpenIZ Disconnected Client"
+			Name = "org.openiz.openiz_mobile"
 		};
 
 		// Applets

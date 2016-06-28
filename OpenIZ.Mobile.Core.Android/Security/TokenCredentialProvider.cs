@@ -8,7 +8,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Http;
-using OpenIZ.Mobile.Core.Http;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -23,7 +23,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// </summary>
 		/// <returns>The credentials.</returns>
 		/// <param name="context">Context.</param>
-		public OpenIZ.Mobile.Core.Authentication.Credentials GetCredentials (IRestClient context)
+		public Credentials GetCredentials (IRestClient context)
 		{
 			if (ApplicationContext.Current.Principal is TokenClaimsPrincipal) {
 				return new TokenCredentials (ApplicationContext.Current.Principal);
@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// Authenticate a user - this occurs when reauth is required
 		/// </summary>
 		/// <param name="context">Context.</param>
-		public OpenIZ.Mobile.Core.Authentication.Credentials Authenticate (IRestClient context)
+		public Credentials Authenticate (IRestClient context)
 		{
 
 			// TODO: Determine why we're reauthenticating... if it is an expired token we'll need to get the refresh token

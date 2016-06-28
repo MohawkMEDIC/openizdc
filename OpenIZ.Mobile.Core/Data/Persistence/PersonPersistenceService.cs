@@ -16,7 +16,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <remarks>This is a little different than the other persisters as we have to 
     /// persist half the object in one set of tables ane the other fields in this
     /// table</remarks>
-    public class PersonPersistenceService : IdentifiedPersistenceService<Person, DbPerson>
+    public class PersonPersistenceService : EntityDerivedPersistenceService<Person, DbPerson>
     {
         // Map
         public static readonly Dictionary<DatePrecision, String> PrecisionMap = new Dictionary<DatePrecision, String>()
@@ -28,9 +28,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             { DatePrecision.Second, "s" },
             { DatePrecision.Year, "Y" }
         };
-
-        // Entity persister
-        private EntityPersistenceService m_entityPersister = new EntityPersistenceService();
 
         /// <summary>
         /// From model instance
@@ -62,35 +59,41 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         }
 
         /// <summary>
-        /// Insert the specified person into the database
+        /// Inserts the specified person
         /// </summary>
+        /// <param name="context"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public override Person Insert(SQLiteConnection context, Person data)
         {
-            var inserted = this.m_entityPersister.Insert(context, data);
-            data.Key = inserted.Key;
-            return base.Insert(context, data);
+            var retVal = base.Insert(context, data);
+            byte[] sourceKey = retVal.Key.ToByteArray();
+
+            if (data.LanguageCommunication != null)
+                base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
+                    new List<PersonLanguageCommunication>(),
+                    data.LanguageCommunication,
+                    retVal.Key,
+                    context);
+            return retVal;
         }
 
         /// <summary>
-        /// Update the specified person
+        /// Update the person entity
         /// </summary>
         public override Person Update(SQLiteConnection context, Person data)
         {
-            this.m_entityPersister.Update(context, data);
-            return base.Update(context, data);
-        }
+            var retVal = base.Update(context, data);
+            var sourceKey = retVal.Key.ToByteArray();
 
-        /// <summary>
-        /// Obsolete the object
-        /// </summary>
-        public override Person Obsolete(SQLiteConnection context, Person data)
-        {
-            var retVal = this.m_entityPersister.Obsolete(context, data);
-            data.StatusConceptKey = retVal.StatusConceptKey;
-            data.ObsoletedByKey = retVal.ObsoletedByKey;
-            data.ObsoletionTime = retVal.ObsoletionTime;
-            return data;
+            // Language communication
+            if (data.LanguageCommunication != null)
+                base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
+                    context.Table<DbPersonLanguageCommunication>().Where(o=>o.EntityUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
+                    data.LanguageCommunication,
+                    retVal.Key,
+                    context);
+            return retVal;
         }
-        
     }
 }

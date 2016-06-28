@@ -13,6 +13,7 @@ using SQLite;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Attributes;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -38,8 +39,9 @@ namespace OpenIZ.Mobile.Core.Data
             // Me
             var vMe = me as IVersionedEntity;
             String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
+
             // Does it exist in our cache?
-            Guid? existingGuidVer = Guid.Empty;
+            Guid? existingGuidVer = null;
             if (s_exists.TryGetValue(dkey, out existingGuidVer))
             {
                 if (vMe?.VersionKey == existingGuidVer || vMe == null)

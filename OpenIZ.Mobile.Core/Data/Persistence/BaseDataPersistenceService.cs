@@ -62,9 +62,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override TModel Obsolete (SQLiteConnection context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
-			data.ObsoletedByKey = domainObject.ObsoletedByKey = domainObject.ObsoletedByKey ?? base.CurrentUserUuid (context);
             data.ObsoletedBy?.EnsureExists(context);
-			domainObject.ObsoletionTime = domainObject.ObsoletionTime ?? DateTime.Now;
+            data.ObsoletedByKey = domainObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? domainObject.ObsoletedByKey ?? base.CurrentUserUuid(context);
+            domainObject.ObsoletionTime = domainObject.ObsoletionTime ?? DateTime.Now;
 			data.ObsoletionTime = (DateTimeOffset)domainObject.ObsoletionTime;
 			context.Update (domainObject);
 			return data;

@@ -32,22 +32,25 @@
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
+    <Compile Include="Data\Model\Entities\DbPersonLanguageCommunication.cs" />
+    <Compile Include="Data\Model\Entities\DbPlaceService.cs" />
+    <Compile Include="Data\Model\Entities\DbUserEntity.cs" />
+    <Compile Include="Data\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
+    <Compile Include="Data\Persistence\DeviceEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityAddressPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityDerivedPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\OrganizationPersistenceService.cs" />
     <Compile Include="Data\Persistence\PatientPersistenceService.cs" />
     <Compile Include="Data\Persistence\PersonPersistenceService.cs" />
+    <Compile Include="Data\Persistence\PlacePersistenceService.cs" />
+    <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
+    <Compile Include="Interop\ConfigurationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
-    <Compile Include="Authentication\Credentials.cs" />
-    <Compile Include="Http\IRestClient.cs" />
-    <Compile Include="Http\IBodySerializer.cs" />
-    <Compile Include="Http\XmlBodySerializer.cs" />
-    <Compile Include="Http\JsonBodySerializer.cs" />
-    <Compile Include="Http\RestClientException.cs" />
-    <Compile Include="Http\RestClientBase.cs" />
     <Compile Include="Configuration\Data\IDbMigration.cs" />
     <Compile Include="Configuration\Data\DataMigrationLog.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialCatalog.cs" />
@@ -57,9 +60,6 @@
     <Compile Include="Configuration\AppletConfigurationSection.cs" />
     <Compile Include="Configuration\DataConfigurationSection.cs" />
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
-    <Compile Include="Http\DefaultContentTypeMapper.cs" />
-    <Compile Include="Http\ICredentialProvider.cs" />
-    <Compile Include="Http\ICertificateValidator.cs" />
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
     <Compile Include="Configuration\DiagnosticsConfigurationSection.cs" />
     <Compile Include="Diagnostics\TraceWriter.cs" />
@@ -125,16 +125,12 @@
     <Compile Include="Data\Persistence\BaseDataPersistenceService.cs" />
     <Compile Include="Security\LocalIdentityService.cs" />
     <Compile Include="Services\IPasswordHashingService.cs" />
-    <Compile Include="Http\ConfigurationExtensions.cs" />
-    <Compile Include="Http\FormBodySerializer.cs" />
     <Compile Include="Services\IConceptService.cs" />
     <Compile Include="Services\Impl\LocalConceptService.cs" />
     <Compile Include="Data\Persistence\ConceptSetPersistenceService.cs" />
     <Compile Include="Data\LocalPersistenceServiceBase.cs" />
     <Compile Include="Data\LocalPersistenceService.cs" />
-    <Compile Include="Interop\Clients\ImsiServiceClient.cs" />
     <Compile Include="Configuration\ServiceClientDescriptionConfigurationSection.cs" />
-    <Compile Include="Interop\Clients\ServiceClientBase.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialQueueCatalog.cs" />
     <Compile Include="Data\LocalEntitySource.cs" />
   </ItemGroup>
@@ -145,6 +141,9 @@
     </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL">
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
     </Reference>
     <Reference Include="SQLite-net">
       <HintPath>..\Solution Items\SQLite-net.dll</HintPath>

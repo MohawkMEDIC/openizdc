@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     // Anonymous user
                     db.Insert(new DbSecurityUser()
                     {
-                        Key = Guid.Empty,
+                        Key = Guid.Parse("C96859F0-043C-4480-8DAB-F69D6E86696C"),
                         PasswordHash = "XXX",
                         SecurityHash = "XXX",
                         Lockout = DateTime.MaxValue,
@@ -109,6 +109,9 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbPlace>();
                     db.CreateTable<DbTelecomAddress>();
                     db.CreateTable<DbEntityTag>();
+                    db.CreateTable<DbUserEntity>();
+                    db.CreateTable<DbPlaceService>();
+                    db.CreateTable<DbPersonLanguageCommunication>();
 
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();

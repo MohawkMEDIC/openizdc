@@ -13,7 +13,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the security application.
 		/// </summary>
 		/// <value>The security application.</value>
-		[Column("securityApplication"), MaxLength(16)]
+		[Column("securityApplication"), MaxLength(16), NotNull]
 		public byte[] SecurityApplicationUuid {
 			get;
 			set;

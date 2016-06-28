@@ -11,6 +11,8 @@
 var OpenIZ = new function () {
     console.info("Initializing OpenIZ Bridge");
 
+    // Language strings
+    var languageStrings = [];
     /** 
      * @summary URL Parameters
      */
@@ -21,9 +23,10 @@ var OpenIZ = new function () {
      * @class
      */
     this.Util = new function () {
+
         /**
          * @summary Changes the specified date string into an appropriate ISO string
-         * @memberof OpenIZ#Util
+         * @memberof OpenIZ.Util
          * @method
          * @param {String} date The date to be formatted
          */
@@ -33,7 +36,7 @@ var OpenIZ = new function () {
 
         /**
          * @summary Start a task asynchronously
-         * @memberof OpenIZ#Util
+         * @memberof OpenIZ.Util
          * @method
          * @param {Function} syncFn The synchronous function to be executed
          * @param {Object} control Control data for the async method
@@ -72,11 +75,11 @@ var OpenIZ = new function () {
 
         /**
          * @summary Perform a login operation asynchronously
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @param {Object} controlData Data which controls the task
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          * OpenIZ.Authentication.loginAsync({
          *      userName: "bob",
@@ -92,7 +95,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Performs a login with the authentication service returning the active Session object if applicable
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
         * @param {String} userName the name of the user to authenticate
         * @param {String} password The user's password
@@ -133,10 +136,10 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Set password asynchronously
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
          * @param {Object} controlData The control data for the task
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          *  OpenIZ.Authentication.setPasswordAsync({
          *      userName : "bob",
@@ -152,7 +155,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Sets the password for the specified user to some other password. 
-        * @memberof OpenIZ#Authentication
+        * @memberof OpenIZ.Authentication
         * @method
         * Note: You will need to have the ChangePassword policy or be changing the password of the currently 
         * logged in user or else this function will return an error
@@ -165,7 +168,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Registers the specified user data 
-        * @memberof OpenIZ#Authentication
+        * @memberof OpenIZ.Authentication
         * @method
         * @param {String} userName The desired user name for the user
         * @param {String} password The password the user desires
@@ -177,7 +180,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Gets the current session from the client host
-        * @memberof OpenIZ#Authentication
+        * @memberof OpenIZ.Authentication
         * @method
         * @returns An instance of Session representing the current session
         */
@@ -195,7 +198,7 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Destroys the current session
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
          */
         this.abandonSession = function () {
@@ -210,10 +213,10 @@ var OpenIZ = new function () {
         };
         /** 
          * @summary Refreshes the current session asynchronously
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
          * @param {Object} controlData Task control data
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          * OpenIZ.Authentication.refreshSessionAsync({
          *      continueWith: function(r) { // do something with result },
@@ -227,7 +230,7 @@ var OpenIZ = new function () {
         };
         /** 
          * @summary Refreshes the current session so that the token remains valid
-         * @memberof OpenIZ#Authentication
+         * @memberof OpenIZ.Authentication
          * @method
          * @returns The newly created session
          */
@@ -273,7 +276,7 @@ var OpenIZ = new function () {
     this.App = new function() {
         /**
          * @summary Uses the device camera to scan a barcode from the device
-         * @memberof OpenIZ#App
+         * @memberof OpenIZ.App
          * @method
          * @returns The value of the barcode detected by the scanner
          */
@@ -290,7 +293,7 @@ var OpenIZ = new function () {
         };
         /**
          *@summary  Navigate backward, even if the back functionality crosses applets
-         * @memberof OpenIZ#App
+         * @memberof OpenIZ.App
          * @method
          */
         this.back = function () {
@@ -303,7 +306,7 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Closes the applet and kills the Android view
-         * @memberof OpenIZ#App
+         * @memberof OpenIZ.App
          * @method
          */
         this.close = function () {
@@ -317,7 +320,7 @@ var OpenIZ = new function () {
         /**
          * @summary Displays a TOAST on the user's screen
          * @param {String} text The text of the toast to be shown
-         * @memberof OpenIZ#App
+         * @memberof OpenIZ.App
          * @method
          */
         this.toast = function (text) {
@@ -332,7 +335,7 @@ var OpenIZ = new function () {
          * @summary Navigates to the specified applet passing any context variables to it via "context"
          * @param {String} appletId The ID of the applet to be navigated
          * @param {Object} context Any context variables to be passed to the applet
-          * @memberof OpenIZ#App
+          * @memberof OpenIZ.App
          * @method
         */
         this.navigateApplet = function (appletId, context) {
@@ -352,7 +355,7 @@ var OpenIZ = new function () {
     this.Localization = new function() {
         /**
          * @summary Gets the specified localized string the current display language from the resources file
-         * @memberof OpenIZ#Localization
+         * @memberof OpenIZ.Localization
          * @method
          * @param {String} stringId The identifier of the string
          * @returns The specified string
@@ -368,7 +371,7 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Gets the current user interface locale name
-         * @memberof OpenIZ#Localization
+         * @memberof OpenIZ.Localization
          * @method
          * @returns The ISO language code of the current UI 
          */
@@ -377,7 +380,7 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Sets the current user interface locale
-         * @memberof OpenIZ#Localization
+         * @memberof OpenIZ.Localization
          * @method
          * @param {String} lcoale The locale to set the user interface to
          * @returns The locale the user interface is now operating in
@@ -386,7 +389,17 @@ var OpenIZ = new function () {
             return OpenIZApplicationService.SetLocale(locale);
         };
         /**
-         * @memberof OpenIZ#Localization
+         * @summary Set the strings used for localization
+         * @method
+         * @memberof OpenIZ.Localization
+         * @param {String} locale The ISO639-2 language code of the data
+         * @param {Object} localeData The localization data
+         */
+        this.setStrings = function (locale, localeData) {
+            languageStrings[lang] = localeData;
+        };
+        /**
+         * @memberof OpenIZ.Localization
          * @method
          * @summary Gets the complete localization string data
          * @returns {Object} The string list of strings
@@ -394,6 +407,12 @@ var OpenIZ = new function () {
         this.getStrings = function (locale) {
             try
             {
+                // Look for local strings
+                var localStrings = languageStrings[locale];
+                if (localStrings != null)
+                    return localStrings;
+
+                // Go to OpenIZ applet infrastructure
                 var data = OpenIZApplicationService.GetStrings(locale);
                 if(data == null)
                     return null;
@@ -418,10 +437,10 @@ var OpenIZ = new function () {
         var _searchTimeout;
         /**
          * @summary Perform a search asynchronously
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {Object} searchData An object containing search, offset, count and callback data
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          * OpenIZ.Concept.findConceptAsync({
          *      query: "mnemonic=Female&_expand=name",
@@ -446,13 +465,13 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Searches the concept source 
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {String} imsiQuery The IMSI formatted query
          * @param {Numeric} offset The offset of the search result set
          * @param {Numeric} count The total requested numer in the result set
          * @param {Boolean} returnBundle When true, return a bundle
-         * @returns {OpenIZModel#Bundle} The matching bundle containing the results of the query
+         * @returns {OpenIZModel.Bundle} The matching bundle containing the results of the query
          */
         this.findConcept = function(imsiQuery, offset, count)
         {
@@ -475,10 +494,10 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Finds the specified concept in an asynchronous manner
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {Object} controlData The data to control the function
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          *  OpenIZ.Concept.findConceptSetAsync({
          *      query: "mnemonic=ActClass",
@@ -497,10 +516,10 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Searches the specified values of concepts from the concept set.
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {String} setMnemonic The name of the concept set to retrieve (Ex: AdministrativeGender)
-         * @returns {OpenIZModel#Bundle} The matching bundle containing the results of the query
+         * @returns {OpenIZModel.Bundle} The matching bundle containing the results of the query
          * @param {Numeric} offset The offset of the search result set
          * @param {Numeric} count The total requested numer in the result set
          */
@@ -523,10 +542,10 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Gets the specified concept in an asynchronouns manner
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {Object} controlData The control data for the retrieve
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @example
          * OpenIZ.Concept.getConceptAsync({
          *      id: "<<UUID>>",
@@ -542,10 +561,10 @@ var OpenIZ = new function () {
         }
         /**
          * @summary Gets the specified concept with the specified identifier
-         * @memberof OpenIZ#Concept
+         * @memberof OpenIZ.Concept
          * @method
          * @param {String} conceptId The identifier of the concept to retreive
-         * @returns {OpenIZModel#Concept} The concept which has the specified identifier
+         * @returns {OpenIZModel.Concept} The concept which has the specified identifier
          */
         this.getConcept = function(conceptId) {
             try {
@@ -573,9 +592,9 @@ var OpenIZ = new function () {
         var _self = this;
         /**
          * @summary Perform a patient search asynchronously
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @param {Object} controlData The data to control the query
          * @example
          * OpenIZ.Patient.findAsync({
@@ -594,12 +613,12 @@ var OpenIZ = new function () {
         /**
          * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
          * an IMS query format string like name[L].part[FAM].value=Smith&name[L].part[GIV].value=John
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
          * @param {String} searchString The IMSI search string to be searched
          * @param {Numeric} offset The offset of the search result set
          * @param {Numeric} count The total requested numer in the result set
-         * @returns {OpenIZModel#Bundle} A bundle of {OpenIZModel#Patient} classes which represent the search results.
+         * @returns {OpenIZModel.Bundle} A bundle of {OpenIZModel.Patient} classes which represent the search results.
          */
         this.find = function (searchString, offset, count) {
             try {
@@ -621,9 +640,9 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Performs a patient insert asynchronously
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @param {Object} controlData The data which is used to control the call
          * @example
          * OpenIZ.Patient.insertAsync({
@@ -639,11 +658,11 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Register a patient in the IMS system returning the registered patient data
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @param {OpenIZModel#Patient} patient The patient to be insterted
+         * @param {OpenIZModel.Patient} patient The patient to be insterted
          * @throw Exception if the patient is already registered
-         * @returns {OpenIZModel#Patient} The registered patient data
+         * @returns {OpenIZModel.Patient} The registered patient data
          */
         this.insert = function (patient) {
             try
@@ -666,9 +685,9 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Performs a patient update asynchronously
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @param {Object} controlData The data which is used to control the call
          * @example
          * OpenIZ.Patient.updateAsync({
@@ -684,11 +703,11 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Updates the specified patient instance with the specified data
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @param {OpenIZModel#Patient} patient The patient to be updated, including their primary identifier key
+         * @param {OpenIZModel.Patient} patient The patient to be updated, including their primary identifier key
          * @throw Exception if the patient does not exist
-         * @returns {OpenIZModel#Patient} The updated patient data
+         * @returns {OpenIZModel.Patient} The updated patient data
          */
         this.update = function (patient) {
             try
@@ -710,9 +729,9 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Performs a patient update asynchronously
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @param {Object} controlData The data which is used to control the call
          * @example
          * OpenIZ.Patient.obsoleteAsync({
@@ -728,7 +747,7 @@ var OpenIZ = new function () {
         };
         /**
          * @summary Obsoletes the specified patient instance in the IMS data
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
          * @param {String} patientId The unique identifier of the patient to be obsoleted
          * @throw Exception if the patient does not exist
@@ -748,8 +767,8 @@ var OpenIZ = new function () {
         /**
          * @summary Performs a patient get asynchronously
          * @param {Object} controlData The data which is used to control the call
-         * @memberof OpenIZ#Patient
-         * @see {OpenIZ#Util.this.startTaskAsync}
+         * @memberof OpenIZ.Patient
+         * @see {OpenIZ.Util.this.startTaskAsync}
          * @method
          * @example
          * OpenIZ.Patient.getAsync({
@@ -765,10 +784,10 @@ var OpenIZ = new function () {
         };
         /** 
          * @summary Retrieves the specified patient instance from the IMS datastore
-         * @memberof OpenIZ#Patient
+         * @memberof OpenIZ.Patient
          * @method
          * @param {String} patientId The unique identifier of the patient to be retrieved
-         * @returns {OpenIZModel#Patient} The retrieved patient instance if exists, null if not found
+         * @returns {OpenIZModel.Patient} The retrieved patient instance if exists, null if not found
          */
         this.get = function (patientId) {
             try {
@@ -793,7 +812,7 @@ var OpenIZ = new function () {
     this.Configuration = new function() {
         /**
         * @summary Gets the current realm to which the client is connected
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
        */
         this.getRealm = function () {
@@ -803,7 +822,7 @@ var OpenIZ = new function () {
         * @summary Gets the specified OpenIZ configuration section name. 
         * @returns A JSON object representing the configuration data for the particular section
         * @param {Object} sectionName The name of the section which should be retrieved.
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         */
         this.getSection = function (sectionName) {
@@ -819,7 +838,7 @@ var OpenIZ = new function () {
         * @returns True if the specified realm was joined successfully
         * @param {String} address The address root of the realm. Example: demo.openiz.org
         * @param {String} deviceName A unique name for the device which is being joined
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         */
         this.joinRealm = function (address, deviceName) {
@@ -832,7 +851,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Instructs the current client container to leave the currently configured realm
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @returns True if the realm was successfully left.
         */
@@ -848,7 +867,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Instructs the container to save the specified configuration object to the local configuration file/source.
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @param {Object} configuration The configuration data
         * @param {String} configuration.retention all|local|none - The retention policy of all data in realm, local data only to tablet, or no offline data
@@ -873,7 +892,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Get applet specific key/value pair configuration parameters which are currently set for the application
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @param {String} appletId The identifier of the applet from which the settings should be retrieved
         * @returns A key/value pair representing the applet settings
@@ -883,7 +902,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Saves the applet specific settings in a key/value pair format to the configuration store
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @param {String} appletId The applet identification for which the settings apply
         * @param {Object} settings A key/value pair JSON object of the settings
@@ -894,7 +913,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Get local user preference strings in a key/value pair JSON object
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @returns The user preferences of the current user
         */
@@ -903,7 +922,7 @@ var OpenIZ = new function () {
         };
         /**
         * @summary Save the user preferences in the key/value pair format
-        * @memberof OpenIZ#Configuration
+        * @memberof OpenIZ.Configuration
         * @method
         * @param {Object} preferences The user preferences for the current user which should be saved
         * @returns true if the save was successful
@@ -957,4 +976,3 @@ $(document).ready(function () {
         });
     });
 });
-

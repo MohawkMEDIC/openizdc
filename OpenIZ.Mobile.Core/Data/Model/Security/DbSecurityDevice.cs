@@ -7,7 +7,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Represents a security device. This table should only have one row (the current device)
 	/// </summary>
 	[Table("security_device")]
-	public class DbSecurityDevice : DbIdentified
+	public class DbSecurityDevice : DbBaseData
 	{
 		
 		/// <summary>

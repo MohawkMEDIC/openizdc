@@ -7,14 +7,14 @@ using System.Text;
 using OpenIZ.Mobile.Core.Security;
 using System.Collections.Generic;
 using System.Security.Principal;
-using OpenIZ.Mobile.Core.Http;
+using OpenIZ.Core.PCL.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
 	/// <summary>
 	/// Represents credentials for this android application on all requests going to the OAuth service
 	/// </summary>
-	public class OAuthTokenServiceCredentials : OpenIZ.Mobile.Core.Authentication.Credentials
+	public class OAuthTokenServiceCredentials : Credentials
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Android.Security.OAuthTokenServiceCredentials"/> class.
