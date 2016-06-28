@@ -20,7 +20,7 @@
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>register-controller</script>
       <content>
-        <div class="row" ng-controller="RegisterController">
+        <div class="row" ng-controller="RegisterController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
