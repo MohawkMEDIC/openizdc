@@ -164,7 +164,7 @@
                           <div class="form-group">
                             <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
                             <div class="date col-xs-4" id="dobToPicker">
-                              <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="patient.DateOfBirth"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                              <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
                               </input>
                             </div>
 
@@ -216,11 +216,13 @@
       <![CDATA[
       layoutApp.controller('PatientLayoutController', ['$scope', function($scope){
         $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
-        currentDate = new Date();
-        dateValue = $scope.patient.DateOfBirth.split("/");
-        dateValue[2] = dateValue[2].split(" ", 1);
-        dob = new Date(dateValue[2], dateValue[0], dateValue[1]);
-        difference = new Date(currentDate-dob);
+        var dateOfBirth = new Date($scope.patient.DateOfBirth);
+        $scope.displayDate = dateOfBirth.getDate() + "/" + dateOfBirth.getMonth() + "/"  + dateOfBirth.getFullYear();
+        var currentDate = new Date();
+        //dateValue = $scope.patient.DateOfBirth.split("/");
+        //dateValue[2] = dateValue[2].split(" ", 1);
+        
+        difference = new Date(currentDate-dateOfBirth);
         $scope.patient.age = {"years": (difference.getFullYear()-1970), "months": (difference.getMonth()+1), "days": difference.getDate()};
         $('#patientInformationCollapse').on('shown.bs.collapse', function () {
            $(".menu-arrow-toggleable").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
@@ -270,24 +272,35 @@
               console.log($scope.locale);
               console.log($scope.locale.gender);
             }
+            var genders = ["Male", "Female", "Other"];
+            var firstNames = ["Tifany", "Rufina", "Nancy", "Merlin", "Arlinda", "Toni", "Zoraida", "Clark", "Carline", "Terrie",
+            "Marci", "Domenica", "Wilson", "Rich", "Drucilla", "Heike", "Ray", "Neely", "Jaime", "Wallace"];
+            var lastNames = ["Travis", "Carlson", "Humphrey", "Frank", "Figueroa", "Roach", "Strong", "Mercer", "Frey", "Richardson",
+            "Horne", "Gonzales", "Anguilar", "Vance", "Reyes", "Compton", "Maldonado", "Rose", "Ford", "Carey"];
+
 
             toastr.options = {"positionClass":"toast-top-center"};
             const TIMEOUT_TIME = 3000000;
             var timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
             $scope.resetTimeout = function(){
-            $timeout.cancel(timer);
-            timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
-            if(toastr.options.timeOut == TIMEOUT_TIME){
-            toastr.clear();
-            toastr.options = {"positionClass":"toast-top-center",
-            "timeOut": "5000"};
-            toastr.success('You\'re back!');
-            }
-
+              $timeout.cancel(timer);
+              timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
+              if(toastr.options.timeOut == TIMEOUT_TIME){
+                toastr.clear();
+                toastr.options = {"positionClass":"toast-top-center",
+                "timeOut": "5000"};
+                toastr.success('You\'re back!');
+              }
+              }
+            $scope.randomPatient = function(){
+                var dob = new Date();
+                dob.setFullYear(Math.floor(Math.random()*45)+1970, Math.floor(Math.random()*12+1), Math.floor(Math.random()*28+1));
+                return {DateOfBirth: dob,Village: "Village "+ (Math.floor(Math.random()*500)+1), Address: ""+(Math.floor(Math.random()*10000)+1) +" Main Street", HealthFacility: "Health Facility " + (Math.floor(Math.random()*200)+1), FirstName: firstNames[Math.floor(Math.random() * 20)], LastName: lastNames[Math.floor(Math.random()*20)], Gender: genders[Math.floor(Math.random()*3)]};
+            
             }
             function timeoutWarning(){
             $timeout.cancel(timer);
-            timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
+            var timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
             toastr.options = {"positionClass":"toast-top-center",
             "timeOut": TIMEOUT_TIME.toString()};
             toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
@@ -331,8 +344,8 @@
 				      },
 				      identificationTypes: {
 				      	yellowCardId: "Kadi Ya Njano ID",
-				      	voterCardId: "Kadi Ya Njano ID",
-				      	driversLicenseId: "Kadi Ya Njano ID"
+				      	voterCardId: "Wapiga Kura Kitambulisho",
+				      	driversLicenseId: "Leseni Madereva ID"
 				      },
 				      relation:{
 				      	father:"Baba",
@@ -389,6 +402,8 @@
 				      	familyNameRequired: "Jina La Ukoo Inahitajika",
 				      	givenNameRequired: "Kutokana Jina Inahitajika",
 				      	idRequired: "ID Idadi Inahitajika",
+                verifyCodeRequired: "Tafadhali Kuingia Uhakiki Kanuni",
+                verifyCodeInvalid: "Kanuni aliingia ni batili",
 				      	usernameRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
 				      	passwordRequired: "Tafadhali kuingia Nywila lako",
 				      	passwordInvalid: "Nywila Batili",
@@ -572,9 +587,11 @@
 				      	idRequired: "ID Number Is Required",
 				      	usernameRequired: "Please enter your Username",
 				      	passwordRequired: "Please enter your Password",
+                confirmPasswordRequired: "Please confirm your Password",
 				      	passwordInvalid: "Invalid Password",
 				      	noMatch: "Passwords do not match",
-                verifyCodeRequired: "Please enter the verification code"
+                verifyCodeRequired: "Please enter the verification code",
+                verifyCodeInvalid: "Code entered is invalid"
 				      },
 				      panelLabels:{
 				      	barcodeScan: "Barcode Scan",

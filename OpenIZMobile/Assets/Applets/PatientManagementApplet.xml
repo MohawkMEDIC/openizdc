@@ -38,26 +38,26 @@
                         </div>
 
                         <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
-                        <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
-                        <div class="col-xs-3 date input-group" id="dobPicker">
-                          <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
-                            <span class="input-group-addon" ng-click="openDate()">
-                              <span class="glyphicon glyphicon-calendar">
+                          <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                          <div class="col-xs-3 date input-group" id="dobPicker">
+                            <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
+                              <span class="input-group-addon" ng-click="openDate()">
+                                <span class="glyphicon glyphicon-calendar">
+                                </span>
                               </span>
-                            </span>
-                          </input>
-                        </div>
+                            </input>
+                          </div>
                         </div>
                         <div class="form-group">
                           <div class="col-xs-2 col-xs-offset-1">
-                          <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
-                            <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
-                          </div>
+                            <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
+                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                            </div>
                           </div>
                           <div class="col-xs-2 col-xs-offset-6">
-                          <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
-                            <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
-                          </div>
+                            <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
+                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -99,7 +99,7 @@
                         </thead>
                         <tbody>
                           <tr ng-repeat="weights in weightRecords">
-                            <td>{{weights.Date.split("T", 1)[0]}}</td>
+                            <td>{{weights.Date.getDate()+"/"+weights.Date.getMonth()+"/"+weights.Date.getFullYear()}}</td>
                             <td>{{weights.Weight}}</td>
                             <td>{{weights.Unit}}</td>
                           </tr>
@@ -124,14 +124,9 @@
       <![CDATA[
       layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
 		  {
-         $scope.patient.newUnit = $scope.locale.weightUnit.kilograms;
          
-         $scope.patient.dateTime = new Date();
-           $scope.dateOptions = {
-            formatYear: 'yy',
-            maxDate: new Date(),
-            minDate: new Date(1990, 1, 1)
-         };
+         
+
          
          $scope.checkWeightFields = function(invalid) {
               if (!invalid)
@@ -144,25 +139,43 @@
               }
           };
          $scope.findWeights = function(){
-            //$scope.patient = sessionStorage.getItem("Patient");
-            
-            date = $scope.patient.DateOfBirth.split(" ", 1);
-            dateSplit = date[0].split("/");
+            $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
+            console.log($scope.patient)
+            /*date = $scope.patient.DateOfBirth.split(" ", 1);
+            var dateSplit = date[0].split("/");
             if(dateSplit[0].length<2){dateSplit[0] = "0"+dateSplit[0]};
             if(dateSplit[1].length<2){dateSplit[1] = "0"+dateSplit[1]};
-            formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];
+            var formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];*/
             
-            OpenIZ.Patient.weightByDob(function(data){
-              weightArray = [];
+            var today = new Date();
+            var weightArray = [];
+            console.log($scope.patient.DateOfBirth);
+            var dateOfBirth = new Date($scope.patient.DateOfBirth);
+            console.log(today);
+            console.log(dateOfBirth);
+            var age = today.getFullYear()-dateOfBirth.getFullYear();
+            var finalWeight = Math.floor(Math.random(5000) + 3000);
+            var increment = finalWeight/age;
+            console.log(age);
+            for(var i = 0; i<age; i++){
+              var eachDate = new Date($scope.patient.DateOfBirth);
+              eachDate.setFullYear(eachDate.getFullYear()+i);
+              weightArray[i] = {Date: eachDate, Unit: "Kilograms", Weight: Math.floor(Math.random(increment)+increment*i)/100};
+            }
+            
+              $scope.weightRecords = weightArray;
+              $scope.draw();
+            /*OpenIZ.Patient.weightByDob(function(data){
+              var weightArray = [];
               for(i=0;i<data[0].WeightDates.length;i++){
                 weightArray[i] = {Date:data[0].WeightDates[i], Unit:data[0].WeightUnits[i], Weight:data[0].Weights[i]}
               }
               $scope.weightRecords = weightArray;
               $scope.$digest();
               $scope.draw();
-          }, formattedDate);
+          }, formattedDate);*/
          };
-         $scope.findWeights();
+         
          $scope.openDate = function() {
           $scope.popup.opened = true;
          };
@@ -174,7 +187,7 @@
               var dataA = [];
           
               for(var i = 0; i<$scope.weightRecords.length;i++){
-                labelsA[i] = $scope.weightRecords[i].Date.substring(0,4);
+                labelsA[i] = $scope.weightRecords[i].Date.getFullYear();
                 dataA[i] = parseInt($scope.weightRecords[i].Weight);
               }
               
@@ -215,6 +228,14 @@
               
               
 	        }
+          $scope.findWeights();
+          $scope.patient.newUnit = $scope.locale.weightUnit.kilograms;
+          $scope.patient.dateTime = new Date();
+           $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(),
+            minDate: new Date(1990, 1, 1)
+         };
 
           
           

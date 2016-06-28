@@ -169,7 +169,6 @@
                                 <label class="col-xs-2 col-xs-offset-2 control-label" id="cityInput">{{locale.inputLabels.cityVillage}}</label>
                                 <div class="col-xs-6">
                                   <input type="text" name="city" ng-maxlength="50" id="cityInput" ng-model="cityInput" class="form-control" placeholder="{{locale.placeholders.cityVillage}}" aria-describedby="cityAddon" />
-
                                 </div>
                                 <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.city.$error" role="alert" ng-if="patientSearchForm.city.$touched||patientSearchForm.$submitted">
                                   <div ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</div>
@@ -220,7 +219,7 @@
               <tbody>
                 <tr ng-repeat="patient in searchResults">
                   <td>{{patient.FirstName + "," + patient.LastName}}</td>
-                  <td>{{patient.DateOfBirth}}</td>
+                  <td>{{patient.DateOfBirth.getDate() + "/" + patient.DateOfBirth.getMonth() + "/" + patient.DateOfBirth.getFullYear()}}</td>
                   <td>{{patient.Gender}}</td>
                   <td>{{patient.Village}}</td>
                   <td>{{patient.HealthFacility}}</td>
@@ -273,7 +272,7 @@
           <div class="container">
             <div class="row">
               <div class="col-xs-12">
-                <form name="patientRegisterForm" role="form" novalidate="novalidate">
+                <form name="patientRegisterForm" role="form" novalidate="novalidate" ng-submit="register(patientRegisterForm.$invalid)">
                   <div class="panel-group">
                     <div class="panel panel-default">
                       <div class="panel-heading">
@@ -288,7 +287,7 @@
                               <fieldset class="form-horizontal form-group">
 
                                 <div ng-repeat="firstName in patient.patientNames.givenNames track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['givenName-' + $index].$touched &amp;&amp; patientRegisterForm['givenName-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['givenName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['givenName-' + $index].$invalid }">
 
                                     <label class="col-xs-2 control-label" for="givenNameInput">{{locale.inputLabels.givenName}}</label>
 
@@ -312,7 +311,7 @@
                                 </div>
 
                                 <div ng-repeat="lastName in patient.patientNames.familyNames track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['familyName-' + $index].$touched &amp;&amp; patientRegisterForm['familyName-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['familyName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['familyName-' + $index].$invalid }">
 
                                     <label class="col-xs-2 control-label" for="familyNameInput">{{locale.inputLabels.familyName}}</label>
                                     <div class="col-xs-9 input-group">
@@ -334,11 +333,11 @@
                                   </div>
                                 </div>
 
-                                <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['dob'].$touched &amp;&amp; patientRegisterForm['dob'].$invalid }">
+                                <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['dob'].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['dob'].$invalid }">
                                   <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
                                   <div class="col-xs-9 input-group">
                                     <div class="input-group date">
-                                      <input type="text" name="dob" id="dobInput" class="form-control" ng-model="patient.dob" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
+                                      <input type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dob.date" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
                                         <span class="input-group-addon addon-background" ng-click="openDOB()">
                                           <span class="glyphicon glyphicon-calendar">
                                           </span>
@@ -347,7 +346,7 @@
 
                                       <span class="input-group-addon addon-background" id="accuracyAddon">{{locale.inputLabels.accuracy}}</span>
 
-                                      <select name="accuracy" ng-model="patient.accuracy" class="form-control" aria-describedby="accuracyAddon">
+                                      <select name="accuracy" ng-model="patient.dob.accuracy" class="form-control" aria-describedby="accuracyAddon">
                                         <option ng-repeat="(key, value) in locale.accuracy" value="{{value}}">{{value}}</option>
                                       </select>
                                     </div>
@@ -412,7 +411,7 @@
                                 <tbody>
                                   <tr ng-repeat="patient in searchResults">
                                     <td>{{patient.FirstName}}</td>
-                                    <td>{{patient.DateOfBirth}}</td>
+                                    <td>{{patient.DateOfBirth.getDate()+"/"+patient.DateOfBirth.getMonth()+"/"+patient.DateOfBirth.getFullYear()}}</td>
                                     <td>{{patient.Gender}}</td>
                                     <td>{{patient.Village}}</td>
                                     <td></td>
@@ -437,7 +436,7 @@
                             <div class="col-xs-12">
                               <fieldset class="form-horizontal form-group">
                                 <div ng-repeat="identifier in patient.identifiers track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['identifierNum-' + $index].$touched &amp;&amp; patientRegisterForm['identifierNum-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['identifierNum-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['identifierNum-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" id="idNumInput">{{locale.inputLabels.id}}</label>
                                     <div class="col-xs-9 input-group">
                                       <input type="text" name="identifierNum-{{ $index }}" ng-model=" patient.identifiers[$index].identifierNum" class="form-control" placeholder="646465786868576" id="idNumInput" required="required" />
@@ -516,7 +515,7 @@
                               <fieldset class="form-horizontal form-group">
 
                                 <div ng-repeat="givenName in patient.contactNames.givenNames track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['contactGivenName-' + $index].$touched &amp;&amp; patientRegisterForm['contactGivenName-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['contactGivenName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['contactGivenName-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="contactGivenNameInput">{{locale.inputLabels.givenName}}</label>
                                     <div class="col-xs-9 input-group">
 
@@ -538,7 +537,7 @@
                                 </div>
 
                                 <div ng-repeat="familyName in patient.contactNames.familyNames track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['contactFamilyName-' + $index].$touched &amp;&amp; patientRegisterForm['contactFamilyName-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['contactFamilyName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['contactFamilyName-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" id="contactFamilyNameInput">{{locale.inputLabels.familyName}}</label>
 
                                     <div class="col-xs-9 input-group">
@@ -561,7 +560,7 @@
                                 </div>
 
                                 <div ng-repeat="contactNumber in patient.contactPhones track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['phoneNum-' + $index].$touched &amp;&amp; patientRegisterForm['phoneNum-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['phoneNum-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['phoneNum-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
                                     <div class="col-xs-9 input-group">
 
@@ -590,7 +589,7 @@
                                 </div>
 
                                 <div ng-repeat="contactEmail in patient.contactEmails track by $index">
-                                  <div class="form-group" ng-class="{ 'has-error': patientRegisterForm['email-' + $index].$touched &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
+                                  <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="emailInput">{{locale.inputLabels.email}}</label>
                                     <div class="col-xs-9 input-group">
                                       <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" required="required" />
@@ -634,10 +633,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" ng-click="register(patientRegisterForm.$invalid)" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" ng-click="searchForDuplicates()" class="btn btn-success pull-right">Search</button>
+                    <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
                   </div>
                 </form>
               </div>
@@ -715,7 +711,7 @@
                             <div class ="form-group">
                               <label class="col-xs-2 col-xs-offset-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
                               <div class="date col-xs-6" id="dobToPicker">
-                                <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="patient.DateOfBirth"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
+                                <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
                                 </input>
                               </div>
                             </div>
@@ -787,11 +783,11 @@
           $scope.datetimeFrom = new Date();
           $scope.datetimeTo = new Date();
         };
-        
+
         $scope.today();
-        
+
         $scope.dictionary = $scope.data;
-        
+
         $scope.$watch('locale', function(){
           $scope.dictionary = $scope.data;
 
@@ -837,7 +833,8 @@
         
         $scope.view = function(patient){
           sessionStorage.setItem("Patient", JSON.stringify(patient));
-          window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
+          window.location.href = window.location.protocol + window.location.hostname +  window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
+          
         }
         $scope.phoneRegex = '^\\d{3}-\\d{3}-\\d{4}$';
         $scope.scanBarcodeLink = function()
@@ -866,14 +863,20 @@
         $scope.search = function(invalid)
         {
           if(!invalid){
-            OpenIZ.Patient.searchByDob(function(data){
+            var data = [];
+            for(var i = 0; i< 100; i++){
+              data[i] = $scope.randomPatient();
+            }
+            $scope.searchResults = data;
+            //$scope.$digest();
+            /*OpenIZ.Patient.searchByDob(function(data){
               $('#additionalCriteriaCollapse').collapse('hide');
               $('#patientDemographicCollapse').collapse('hide');
               $('#barcodeCollapse').collapse('hide');
               $scope.searchResults = data;
               $scope.$digest();
               $('html, body').animate({ scrollTop: 0 }, 'fast');
-            });
+            });*/
           }
           else{
             toastr.options = {"positionClass":"toast-top-center",
@@ -899,8 +902,10 @@
             givenNames: [""],
             familyNames: [""]
           },
-          dob: new Date(),
-          accuracy: "",
+          dob: {
+            date: new Date(),
+            accuracy: ""
+          },
           gender: "",
           identifiers: [{
             identifierNum: "",
@@ -953,7 +958,12 @@
             }
           }
         };
-
+        
+          $scope.allPatients = [];
+          for(var i = 0; i<100; i++){
+            $scope.allPatients[i] = $scope.randomPatient();
+          }
+          
         $scope.add = function(outerModelAccess, innerModelAccess, objToPush) {
           if(innerModelAccess == ""){
             $scope.patient[outerModelAccess].push(objToPush);
@@ -962,20 +972,26 @@
             $scope.patient[outerModelAccess][innerModelAccess].push(objToPush);
           }
         };
-
         $scope.searchForDuplicates = function()
         {
-          OpenIZ.Patient.searchByGender(function(data){
+          /*OpenIZ.Patient.searchByGender(function(data){
             $scope.searchResults = data;
             $scope.$digest();
-          }, $scope.patient.gender);
+          }, $scope.patient.gender);*/
+          $scope.searchResults = [];
+          for(var i = 0; i<$scope.allPatients.length; i++){
+            if($scope.allPatients[i].Gender == $scope.patient.gender){
+              $scope.searchResults.push($scope.allPatients[i]);
+            }
+          }
+          console.log($scope.searchResults);
         };
 
         $scope.register = function(invalid)
         {
           var patientData = {
-             dateOfBirth : $scope.patient.dob,
-             dateOfBirthPrecision : $scope.patient.accuracy,
+             dateOfBirth : $scope.patient.dob.date,
+             dateOfBirthPrecision : $scope.patient.dob.accuracy,
              genderConcept : $scope.patient.gender,
              name : [{
                use : OpenIZModel.NameUseKeys.Legal,
@@ -992,8 +1008,8 @@
              }]
 
            };
-          var patient = {GivenName: "John", FamilyName: "Smith", Gender:$scope.gender};
-          OpenIZ.Patient.register(patient);
+          var patient = {GivenName: "John", FamilyName: "Smith", Gender: $scope.patient.gender};
+          console.log(OpenIZ.Patient.register(patient));
           if(!invalid){
             var patient = new OpenIZModel.Patient(patientData);
             OpenIZ.Patient.insertAsync({
@@ -1045,7 +1061,8 @@
       layoutApp.controller('PatientViewController', ['$scope', function ($scope)
 		  {
         $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
-        console.log($scope.patient);
+        var dateOfBirth = new Date($scope.patient.DateOfBirth);
+        $scope.displayDate = dateOfBirth.getDate() + '/' + dateOfBirth.getMonth() + '/' + dateOfBirth.getFullYear();
 
       }]);
       ]]>
