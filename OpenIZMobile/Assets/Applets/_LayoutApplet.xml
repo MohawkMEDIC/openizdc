@@ -70,7 +70,7 @@
       <script>timeout-controller</script>
       <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <style>app://openiz.org/asset/css/toastr.min.css</style>
-      
+
       <content>
         <!--body xmlns="http://www.w3.org/1999/xhtml"-->
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController">
@@ -165,7 +165,7 @@
                         <fieldset class="form-horizontal">
 
                           <div class="form-group">
-                            <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
+                            <label class="col-xs-2 control-label" for="dobToInput">{{locale.inputLabels.dateOfBirth}}</label>
                             <div class="date col-xs-4" id="dobToPicker">
                               <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
                               </input>
@@ -442,7 +442,9 @@
                 years: "Miaka:",
                 months: "Mieza:",
                 newWeightEntry: "Mpya Uzito Kuingia",
-                previousWeights: "Kabla Uzito"
+                previousWeights: "Kabla Uzito",
+                recoveryMethod: "Ahueni Njia",
+                recoveryHelper: "Teua Ahueni Njia Yako"
 				      },
 				      tableHeaders:{
 				      	names: "Jina(s)",
@@ -472,7 +474,9 @@
 				      	patientSearch:"Mgonjwa Daftari",
 				      	patientRegister:"Mgonjwa Tafuta",
                 manage: "Kusimamia",
-                save: "Kuokoa"
+                save: "Kuokoa",
+                submit: "Kuwasilisha",
+                sendCode: "Kutuma Kificho Ukaguzi"
 				      },
 				      checkLabels:{
 				      	yes: "Ndiyo",
@@ -630,8 +634,6 @@
 				      	accountInformation: "Account Information",
 				      	additionalInfo: "Additional Information",
 				      	additionalInfoFooter: "Please select all that apply",
-				      	potentialDuplicates: "Potential Duplicates",
-				      	identification: "Identification",
 				      	login: "Login",
 				      	register: "Register",
                 changePassword: "Change Password",
@@ -641,7 +643,9 @@
                 years: "Years:",
                 months: "Months:",
                 newWeightEntry: "New Weight Entry",
-                previousWeights: "Previous Weights"
+                previousWeights: "Previous Weights",
+                recoveryMethod: "Recovery Method",
+                recoveryHelper: "Select your recovery method"
 				      },
 				      tableHeaders:{
 				      	names: "Name(s)",
@@ -671,7 +675,9 @@
 				      	patientSearch: "Patient Search",
 				      	patientRegister: "Patient Register",
                 manage: "Manage",
-                save: "Save"
+                save: "Save",
+                submit: "Submit",
+                sendCode: "Send Verification Code"
 				      },
 				      checkLabels:{
 				      	yes: "Yes",
