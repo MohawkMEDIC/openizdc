@@ -11,6 +11,7 @@
     <contentHtml>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
       <script>patient-manage-controller</script>
       <content lang="en">
         <div ng-controller="PatientManagementController"  xmlns="http://www.w3.org/1999/xhtml">
@@ -18,9 +19,11 @@
             <div class="col-xs-12">
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title text-center">New Weight Entry</h3>
+                  <h3 class="panel-title text-center">{{locale.panelLabels.newWeightEntry}}
+                  <span class="menu-arrow-toggleable-weight-entry glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#weightEntryCollapse"></span>
+                  </h3>
                 </div>
-                <div class="panel-body">
+                <div class="panel-body panel-collapse collapse-in" id="weightEntryCollapse">
                   <fieldset class="form-horizontal">
                     <form name="weightEntryForm" novalidate="novalidate" ng-submit="checkWeightFields(weightEntryForm.$invalid)">
                       <div class ="form-group">
@@ -31,7 +34,7 @@
                           </div>
                         </div>
                         <label class ="col-xs-1 control-label" for="weightUnitSelect">{{locale.inputLabels.unit}}</label>
-                        <div class="col-xs-2">
+                        <div class="col-xs-3">
                           <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon" ng-model="patient.newUnit" required="required">
                             <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
                           </select>
@@ -48,22 +51,22 @@
                             </input>
                           </div>
                         </div>
+                      </div>
                         <div class="form-group">
-                          <div class="col-xs-2 col-xs-offset-1">
+                          <div class="col-xs-3">
                             <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
-                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                              <div class="text-center alert alert-danger" ng-message="required">Weight is required.</div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xs-offset-6">
+                          <div class="col-xs-offset-4 col-xs-5">
                             <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
-                              <div class="text-center alert alert-danger" ng-message="required">This field is required.</div>
+                              <div class="text-center alert alert-danger" ng-message="required">Date of birth is required.</div>
                             </div>
                           </div>
                         </div>
-                      </div>
                       <div class="form-group">
                         <button type="submit" class="col-xs-offset-10 btn btn-primary">
-                          Save
+                          {{locale.buttonLabels.save}}
                         </button>
                       </div>
 
@@ -85,16 +88,19 @@
                         </div>
                       </div>
                     </div>
-                    <h4 class="text-center">Previous Weights</h4>
-                    <div class="form-group fixed-panel">
+                    <h4 class="text-center">
+                      {{locale.panelLabels.previousWeights}}
+                      <span class="menu-arrow-toggleable-weight-table glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#weightTableCollapse"></span>
+                    </h4>
+                    <div class="form-group collapse" id="weightTableCollapse">
                       <table class="table table-striped table-bordered">
 
 
                         <thead>
                           <tr>
-                            <th>Date Recorded</th>
-                            <th>Weight</th>
-                            <th>Unit</th>
+                            <th>{{locale.tableHeaders.dateRecorded}}</th>
+                            <th>{{locale.tableHeaders.weight}}</th>
+                            <th>{{locale.tableHeaders.unit}}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -125,7 +131,21 @@
       layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
 		  {
          
-         
+          $('#weightTableCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-weight-table").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+
+          $('#weightTableCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-weight-table").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#weightEntryCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-weight-entry").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+
+          $('#weightEntryCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-weight-entry").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
 
          
          $scope.checkWeightFields = function(invalid) {

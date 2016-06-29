@@ -65,9 +65,12 @@
       <script>app://openiz.org/asset/js/angular-messages.js</script>
       <script>app://openiz.org/asset/js/ui-bootstrap.min.js</script>
       <script>app://openiz.org/asset/js/openiz-localize.js</script>
+      <script>app://openiz.org/asset/js/toastr.min.js</script>
       <script>strings</script>
       <script>timeout-controller</script>
       <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
+      <style>app://openiz.org/asset/css/toastr.min.css</style>
+      
       <content>
         <!--body xmlns="http://www.w3.org/1999/xhtml"-->
         <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController">
@@ -152,7 +155,7 @@
                     <div class="panel-heading patient-panel">
                       <h3 class="panel-title">
                         <span class="glyphicon glyphicon-user text-left">
-                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + " Years:" + patient.age.years  + ", " + "Months:" + patient.age.months}}
+                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + locale.panelLabels.years + patient.age.years  + ", " + locale.panelLabels.month + patient.age.months}}
                         </span>
                         <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
                       </h3>
@@ -189,7 +192,7 @@
                           <div class="form-group">
                             <div class="col-xs-2 col-xs-offset-8">
                               <button class="btn btn-primary">
-                                Check-In
+                                {{locale.buttonLabels.checkIn}}
                               </button>
                             </div>
                             <div class="col-xs-2">
@@ -326,6 +329,10 @@
 				      	male : "Kiume",
 				      	other : "Mengine"
 				      },
+              weightUnit:{
+                kilograms: "Kilograms",
+                pounds: "Pounds"
+              },
 				      accuracy: {
 				      	day: "Siku",
 				      	month: "Mwezi",
@@ -388,7 +395,9 @@
 				      	motherName: "Mama Jina",
 				      	motherGivenName: "Mama Jina Aliyopewa",
 				      	motherFamilyName: "Mama Jina La Familia",
-                verificationCode: "Uhakiki Kanuni"
+                verificationCode: "Uhakiki Kanuni",
+                weight: "Uzito",
+                unit: "Kitengo"
               },
               errors:{
 				      	fieldLong: "Uwanja Huu Ni Muda Mrefu Sana",
@@ -429,7 +438,11 @@
                 changePassword: "Badilisha neno la siri",
 				      	loginHelper: "Kuingia Jina la Mtumiaji yako na Nywila chini",
                 passwordHelper: "Kuingia Nywila yako mpya",
-                verificationHelper: "Weka Kanuni yako Uhakiki"
+                verificationHelper: "Weka Kanuni yako Uhakiki",
+                years: "Miaka:",
+                months: "Mieza:",
+                newWeightEntry: "Mpya Uzito Kuingia",
+                previousWeights: "Kabla Uzito"
 				      },
 				      tableHeaders:{
 				      	names: "Jina(s)",
@@ -438,7 +451,10 @@
 				      	cityVillage: "Mji/Kijiji",
 				      	actions: "Hatua(s)",
 				      	results: "Matokeo",
-				      	healthFacility: "Afya Kituo"
+				      	healthFacility: "Afya Kituo",
+                dateRecorded: "Tarehe Kumbukumbu",
+                weight: "Uzito",
+                unit: "Kitengo"
 				      },
 				      buttonLabels:{
 				      	scan: "Kuchamba",
@@ -454,7 +470,9 @@
                 resetPassword: "Upya Nywila",
 				      	login: "Ingia",
 				      	patientSearch:"Mgonjwa Daftari",
-				      	patientRegister:"Mgonjwa Tafuta"
+				      	patientRegister:"Mgonjwa Tafuta",
+                manage: "Kusimamia",
+                save: "Kuokoa"
 				      },
 				      checkLabels:{
 				      	yes: "Ndiyo",
@@ -571,7 +589,9 @@
 				      	motherFamilyName: "Mother's Family Name",
                 weight: "Weight",
                 unit: "Unit",
-					      verificationCode: "Verification Code"
+					      verificationCode: "Verification Code",
+                weight: "Weight",
+                unit: "Unit"
               },
 				      errors:{
 				      	fieldLong: "This Field Is Too Long",
@@ -617,7 +637,11 @@
                 changePassword: "Change Password",
 				      	loginHelper: "Enter your Username and Password below",
                 passwordHelper: "Enter your new password",
-                verificationHelper: "Enter your verification code"
+                verificationHelper: "Enter your verification code",
+                years: "Years:",
+                months: "Months:",
+                newWeightEntry: "New Weight Entry",
+                previousWeights: "Previous Weights"
 				      },
 				      tableHeaders:{
 				      	names: "Name(s)",
@@ -626,7 +650,10 @@
 				      	cityVillage: "City/Village",
 				      	actions: "Action(s)",
 				      	results: "Results",
-				      	healthFacility: "Health Facility"
+				      	healthFacility: "Health Facility",
+                dateRecorded: "Date Recorded",
+                weight: "Weight",
+                unit: "Unit"
 				      },
 				      buttonLabels:{
 				      	scan: "Scan",
@@ -642,7 +669,9 @@
 				      	login: "Login",
                 resetPassword: "Reset Password",
 				      	patientSearch: "Patient Search",
-				      	patientRegister: "Patient Register"
+				      	patientRegister: "Patient Register",
+                manage: "Manage",
+                save: "Save"
 				      },
 				      checkLabels:{
 				      	yes: "Yes",

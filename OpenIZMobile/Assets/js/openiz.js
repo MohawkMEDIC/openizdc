@@ -108,7 +108,6 @@ var OpenIZ = new function () {
             {
                 
                 var data = OpenIZSessionService.Login(userName, password);
-
                 if (data == null)
                     return null;
                 else if (data.lastIndexOf("err", 0) == 0 && data != "err_oauth2_invalid_grant")

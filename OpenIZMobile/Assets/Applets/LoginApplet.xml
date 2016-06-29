@@ -295,7 +295,6 @@
             {
               var session = OpenIZ.Authentication.login(username, password);
 
-              console.log(session);
               if(session == null)
               {
                 toastr.error("Incorrect username or password");

@@ -38,7 +38,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcodeScan}}</a>
+                          <a>{{locale.panelLabels.barcodeScan}}</a>
+                          <span class="menu-arrow-toggleable-barcode glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#barcodeCollapse"></span>
                         </h3>
                       </div>
                       <div id="barcodeCollapse" class="panel-collapse collapse in">
@@ -64,7 +65,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
+                          <a >{{locale.panelLabels.patientDemographicCriteria}}</a>
+                          <span class="menu-arrow-toggleable-patient-demographic glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#patientDemographicCollapse"></span>
                         </h3>
                       </div>
                       <div id="patientDemographicCollapse" class="panel-collapse collapse">
@@ -156,7 +158,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">{{locale.panelLabels.additionalSearchCriteria}}</a>
+                          <a>{{locale.panelLabels.additionalSearchCriteria}}</a>
+                          <span class="menu-arrow-toggleable-additional-criteria glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#additionalCriteriaCollapse"></span>
                         </h3>
                       </div>
                       <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
@@ -203,7 +206,7 @@
           <h4 class="text-center">
             {{locale.tableHeaders.results}}
           </h4>
-          <div class="container fixed-panel">
+          <div class="container">
             <table class="table table-striped table-bordered">
 
               <thead>
@@ -236,6 +239,7 @@
                 </tr>
               </tbody>
             </table>
+          </div>
             <div class="modal fade" id="myModal" role="dialog">
               <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -252,7 +256,6 @@
                     </button>
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{locale.buttonLabels.close}}</button>
                   </div>
-                </div>
               </div>
             </div>
           </div>
@@ -277,7 +280,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#demoInfoCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
+                          <a>{{locale.panelLabels.patientDemographicCriteria}}</a>
+                          <span class="menu-arrow-toggleable-demographic-information glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#demoInfoCollapse"></span>
                         </h3>
                       </div>
                       <div id="demoInfoCollapse" class="panel-collapse collapse in">
@@ -405,6 +409,7 @@
                       <div class="panel-heading">
                         <h3 class="panel-title">
                           <a data-toggle="collapse" href="#potentialDupCollapse">{{locale.panelLabels.potentialDuplicates}}</a>
+                          <span class="menu-arrow-toggleable-potential-duplicates glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#potentialDupCollapse"></span>
                         </h3>
                       </div>
                       <div id="potentialDupCollapse" class="panel-collapse collapse in">
@@ -438,7 +443,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#identityCollapse">{{locale.panelLabels.identification}}</a>
+                          <a>{{locale.panelLabels.identification}}</a>
+                          <span class="menu-arrow-toggleable-identity glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#identityCollapse"></span>
                         </h3>
                       </div>
                       <div id="identityCollapse" class="panel-collapse collapse in">
@@ -484,7 +490,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#domicileCollapse">{{locale.panelLabels.domicile}}</a>
+                          <a>{{locale.panelLabels.domicile}}</a>
+                          <span class="menu-arrow-toggleable-domicile glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#domicileCollapse"></span>
                         </h3>
                       </div>
                       <div id="domicileCollapse" class="panel-collapse collapse in">
@@ -516,7 +523,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a data-toggle="collapse" href="#contactCollapse">{{locale.panelLabels.contactInformation}}</a>
+                          <a>{{locale.panelLabels.contactInformation}}</a>
+                          <span class="menu-arrow-toggleable-contact glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#contactCollapse"></span>
                         </h3>
                       </div>
                       <div id="contactCollapse" class="panel-collapse collapse in">
@@ -681,7 +689,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcode}}</a>
+                          <a>{{locale.panelLabels.barcode}}</a>
+                          <span class="menu-arrow-toggleable-barcode glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#barcodeCollapse"></span>
                         </h3>
                       </div>
                       <div id="barcodeCollapse" class="panel-collapse collapse in">
@@ -701,7 +710,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographics}}</a>
+                          <a>{{locale.panelLabels.patientDemographics}}</a>
+                          <span class="menu-arrow-toggleable-patient-demographic glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#patientDemographicCollapse"></span>
                         </h3>
                       </div>
                       <div id="patientDemographicCollapse" class="panel-collapse collapse">
@@ -752,7 +762,8 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#villageHealthFacilityCollapse">{{locale.panelLabels.villageHealthFacility}}</a>
+                          <a>{{locale.panelLabels.villageHealthFacility}}</a>
+                          <span class="menu-arrow-toggleable-village-facility glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#villageHealthFacilityCollapse"></span>
                         </h3>
                       </div>
                       <div id="villageHealthFacilityCollapse" class="panel-collapse collapse">
@@ -777,7 +788,7 @@
                     </div>
                   </div>
                 </form>
-                <a class= "btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientManagement/index">Manage</a>
+                <a class= "btn btn-primary" href="app://openiz.org/applet/org.timr.applet.patientManagement/index">{{locale.buttonLabels.manage}}</a>
               </div>
             </div>
           </div>
@@ -790,6 +801,33 @@
       <![CDATA[
 		  layoutApp.controller('PatientSearchController', ['$scope', function ($scope)
 		  {
+        
+          $('#barcodeCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#barcodeCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#patientDemographicCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#patientDemographicCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#additionalCriteriaCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-additional-criteria").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#additionalCriteriaCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-additional-criteria").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+        
+        
+        
+        
+        
+        
         $scope.today = function() {
           $scope.datetimeFrom = new Date();
           $scope.datetimeTo = new Date();
@@ -879,6 +917,10 @@
               data[i] = $scope.randomPatient();
             }
             $scope.searchResults = data;
+            $('#additionalCriteriaCollapse').collapse('hide');
+            $('#patientDemographicCollapse').collapse('hide');
+            $('#barcodeCollapse').collapse('hide');
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
             //$scope.$digest();
             /*OpenIZ.Patient.searchByDob(function(data){
               $('#additionalCriteriaCollapse').collapse('hide');
@@ -908,6 +950,45 @@
 
 		  layoutApp.controller('PatientRegisterController', ['$scope', function ($scope)
 		  {
+          $('#demoInfoCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-demographic-information").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#demoInfoCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-demographic-information").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#potentialDupCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-potential-duplicates").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#potentialDupCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-potential-duplicates").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#identityCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-identity").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#identityCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-identity").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+             
+          $('#domicileCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-domicile").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#domicileCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-domicile").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#contactCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-contact").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#contactCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-contact").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+        
+        
+        
+        
+        
         $scope.patient = {
           patientNames: {
             givenNames: [""],
@@ -1071,6 +1152,27 @@
       <![CDATA[
       layoutApp.controller('PatientViewController', ['$scope', function ($scope)
 		  {
+          $('#barcodeCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#barcodeCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#patientDemographicCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#patientDemographicCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
+          $('#villageHealthFacilityCollapse').on('shown.bs.collapse', function () {
+             $(".menu-arrow-toggleable-village-facility").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
+          });
+          $('#villageHealthFacilityCollapse').on('hidden.bs.collapse', function () {
+             $(".menu-arrow-toggleable-village-facility").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
+          });
+          
         $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
         var dateOfBirth = new Date($scope.patient.DateOfBirth);
         $scope.displayDate = dateOfBirth.getDate() + '/' + dateOfBirth.getMonth() + '/' + dateOfBirth.getFullYear();
