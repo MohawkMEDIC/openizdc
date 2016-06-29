@@ -29,6 +29,12 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\Model\Acts\DbAct.cs" />
+    <Compile Include="Data\Model\Acts\DbActParticipation.cs" />
+    <Compile Include="Data\Model\Acts\DbActRelationship.cs" />
+    <Compile Include="Data\Model\Acts\DbObervation.cs" />
+    <Compile Include="Data\Model\Acts\DbPatientEncounter.cs" />
+    <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
@@ -176,7 +182,5 @@
   <ItemGroup>
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Model\Acts\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
