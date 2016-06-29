@@ -120,8 +120,10 @@ namespace OpenIZ.Mobile.Core.Android.Subscribers
             persister.Queried += (o, e) =>
             {
                 new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PolicyIdentifiers.ReadClinicalData).Demand();
+                DataQueryResultEventArgs<TData> dqre = e as DataQueryResultEventArgs<TData>;
                 // Filter dataset
-                e.Results = e.Results.Where(i => ApplicationContext.Current.PolicyDecisionService.GetPolicyDecision(ApplicationContext.Current.Principal, i) == OpenIZ.Core.Model.Security.PolicyGrantType.Grant);
+                if(dqre != null)
+                    dqre.Results = dqre.Results.Where(i => ApplicationContext.Current.PolicyDecisionService.GetPolicyDecision(ApplicationContext.Current.Principal, i) == OpenIZ.Core.Model.Security.PolicyGrantType.Grant);
             };
         }
 

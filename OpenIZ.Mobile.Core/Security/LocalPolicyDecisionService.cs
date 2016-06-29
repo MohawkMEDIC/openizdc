@@ -20,10 +20,40 @@ namespace OpenIZ.Mobile.Core.Security
 		{
 		}
 
-		/// <summary>
-		/// Get a policy decision outcome (i.e. make a policy decision)
-		/// </summary>
-		public PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId)
+        /// <summary>
+        /// Get a policy decision for a particular securable
+        /// </summary>
+        public PolicyGrantType GetPolicyDecision(IPrincipal principal, object securable)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+            else if (securable == null)
+                throw new ArgumentNullException(nameof(securable));
+
+
+            // Get the user object from the principal
+            var pip = ApplicationContext.Current.PolicyInformationService;
+
+            // Policies
+            var securablePolicies = pip.GetActivePolicies(securable);
+            
+            // Most restrictive
+            PolicyGrantType decision = PolicyGrantType.Grant;
+            foreach (var pol in securablePolicies)
+            {
+                var securablePdp = this.GetPolicyOutcome(principal, pol.Policy.Oid);
+
+                if (securablePdp < decision)
+                    decision = securablePdp;
+            }
+            
+            return decision;
+        }
+
+        /// <summary>
+        /// Get a policy decision outcome (i.e. make a policy decision)
+        /// </summary>
+        public PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId)
 		{
 			if (principal == null)
 				throw new ArgumentNullException(nameof(principal));
