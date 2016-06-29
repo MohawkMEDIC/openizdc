@@ -106,6 +106,7 @@ namespace OpenIZ.Mobile.Core.Data
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
 
+            
 			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
 			this.Inserting?.Invoke (this, preArgs);
 			if (preArgs.Cancel) {

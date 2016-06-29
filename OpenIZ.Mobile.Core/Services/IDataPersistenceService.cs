@@ -291,11 +291,11 @@ namespace OpenIZ.Mobile.Core.Services
 		/// <summary>
 		/// Occurs when queried.
 		/// </summary>
-		event EventHandler<DataQueryEventArgsBase<TData>> Queried;
+		event EventHandler<DataQueryResultEventArgs<TData>> Queried;
 		/// <summary>
 		/// Occurs when querying.
 		/// </summary>
-		event EventHandler<DataQueryEventArgsBase<TData>> Querying;
+		event EventHandler<DataQueryPreEventArgs<TData>> Querying;
 
 		/// <summary>
 		/// Insert the specified data.

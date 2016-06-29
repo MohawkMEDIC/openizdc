@@ -90,6 +90,7 @@
     <Compile Include="Security\TokenCredentials.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
+    <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

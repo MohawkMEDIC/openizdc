@@ -16,6 +16,10 @@ namespace OpenIZ.Mobile.Core.Services
 		/// </summary>
 		PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId);
 
+        /// <summary>
+        /// Get a policy decision
+        /// </summary>
+        PolicyGrantType GetPolicyDecision(IPrincipal principal, Object securable);
 	}
 }
 
