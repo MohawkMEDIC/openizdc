@@ -19,11 +19,9 @@
             <div class="col-xs-12">
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h3 class="panel-title text-center">{{locale.panelLabels.newWeightEntry}}
-                  <span class="menu-arrow-toggleable-weight-entry glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#weightEntryCollapse"></span>
-                  </h3>
+                  <h3 class="panel-title text-center">{{locale.panel.newWeightEntry}}</h3>
                 </div>
-                <div class="panel-body panel-collapse collapse-in" id="weightEntryCollapse">
+                <div class="panel-body">
                   <fieldset class="form-horizontal">
                     <form name="weightEntryForm" novalidate="novalidate" ng-submit="checkWeightFields(weightEntryForm.$invalid)">
                       <div class ="form-group">
@@ -39,7 +37,6 @@
                             <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
                           </select>
                         </div>
-
                         <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
                           <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
                           <div class="col-xs-3 date input-group" id="dobPicker">
@@ -52,38 +49,37 @@
                           </div>
                         </div>
                       </div>
-                        <div class="form-group">
-                          <div class="col-xs-3">
-                            <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
-                              <div class="text-center alert alert-danger" ng-message="required">Weight is required.</div>
-                            </div>
-                          </div>
-                          <div class="col-xs-offset-4 col-xs-5">
-                            <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
-                              <div class="text-center alert alert-danger" ng-message="required">Date of birth is required.</div>
-                            </div>
+                      <div class="form-group">
+                        <div class="col-xs-3">
+                          <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
+                            <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.weightRequired}}</div>
                           </div>
                         </div>
+                        <div class="col-xs-5 col-xs-offset-4">
+                          <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
+                            <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.dobRequired}}</div>
+                          </div>
+                        </div>
+                      </div>
                       <div class="form-group">
                         <button type="submit" class="col-xs-offset-10 btn btn-primary">
                           {{locale.buttonLabels.save}}
                         </button>
                       </div>
-
                     </form>
                     <div class="modal fade" id="myModal" role="dialog">
                       <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h4 class="modal-title">Confirm Weight Update</h4>
+                            <h4 class="modal-title">{{locale.modalHeaders.confirmWeight}}</h4>
                           </div>
                           <div class="modal-body">
-                            <p>{{"You are about to update the weight of " + patient.FirstName + "," + patient.LastName + " to " + patient.newWeight + " " + patient.newUnit}}</p>
-                            <p>Are you sure this is correct?</p>
+                            <p>{{locale.modalText.updateWeight + patient.FirstName + "," + patient.LastName + locale.modalText.to + patient.newWeight + " " + patient.newUnit}}</p>
+                            <p>{{locale.modalText.isCorrect}}</p>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">Yes</button>
-                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">No</button>
+                            <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">{{locale.buttonLabels.no}}</button>
+                            <button type="button" class="btn btn-success pull-right" data-dismiss="modal">{{locale.buttonLabels.yes}}</button>
                           </div>
                         </div>
                       </div>
@@ -94,7 +90,6 @@
                     </h4>
                     <div class="form-group collapse" id="weightTableCollapse">
                       <table class="table table-striped table-bordered">
-
 
                         <thead>
                           <tr>
@@ -130,24 +125,7 @@
       <![CDATA[
       layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
 		  {
-         
-          $('#weightTableCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-weight-table").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
 
-          $('#weightTableCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-weight-table").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#weightEntryCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-weight-entry").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-
-          $('#weightEntryCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-weight-entry").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-
-         
          $scope.checkWeightFields = function(invalid) {
               if (!invalid)
               {
@@ -155,7 +133,7 @@
               }
               else
               {
-                toastr.error("Fields Invalid", "Please Fill All Fields");
+                toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
               }
           };
          $scope.findWeights = function(){
@@ -166,7 +144,7 @@
             if(dateSplit[0].length<2){dateSplit[0] = "0"+dateSplit[0]};
             if(dateSplit[1].length<2){dateSplit[1] = "0"+dateSplit[1]};
             var formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];*/
-            
+
             var today = new Date();
             var weightArray = [];
             console.log($scope.patient.DateOfBirth);
@@ -182,7 +160,7 @@
               eachDate.setFullYear(eachDate.getFullYear()+i);
               weightArray[i] = {Date: eachDate, Unit: "Kilograms", Weight: Math.floor(Math.random(increment)+increment*i)/100};
             }
-            
+
               $scope.weightRecords = weightArray;
               $scope.draw();
             /*OpenIZ.Patient.weightByDob(function(data){
@@ -195,7 +173,7 @@
               $scope.draw();
           }, formattedDate);*/
          };
-         
+
          $scope.openDate = function() {
           $scope.popup.opened = true;
          };
@@ -205,12 +183,12 @@
           $scope.draw = function(){
               var labelsA = [];
               var dataA = [];
-          
+
               for(var i = 0; i<$scope.weightRecords.length;i++){
                 labelsA[i] = $scope.weightRecords[i].Date.getFullYear();
                 dataA[i] = parseInt($scope.weightRecords[i].Weight);
               }
-              
+
               var chartData = {
                 labels: labelsA,
                 datasets: [
@@ -240,13 +218,12 @@
                         }
                 ]
             };
-              
+
               var sctx = document.getElementById("weight-canvas").getContext("2d");
 		          window.myLine = new Chart(sctx).Line(chartData, {
 			          responsive: true
 		          });
-              
-              
+
 	        }
           $scope.findWeights();
           $scope.patient.newUnit = $scope.locale.weightUnit.kilograms;
@@ -257,8 +234,6 @@
             minDate: new Date(1990, 1, 1)
          };
 
-          
-          
       }]);
 
       ]]>

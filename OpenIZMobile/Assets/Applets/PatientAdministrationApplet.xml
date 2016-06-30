@@ -38,8 +38,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a>{{locale.panelLabels.barcodeScan}}</a>
-                          <span class="menu-arrow-toggleable-barcode glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#barcodeCollapse"></span>
+                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcodeScan}}</a>
                         </h3>
                       </div>
                       <div id="barcodeCollapse" class="panel-collapse collapse in">
@@ -65,8 +64,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a >{{locale.panelLabels.patientDemographicCriteria}}</a>
-                          <span class="menu-arrow-toggleable-patient-demographic glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#patientDemographicCollapse"></span>
+                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
                         </h3>
                       </div>
                       <div id="patientDemographicCollapse" class="panel-collapse collapse">
@@ -158,14 +156,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a>{{locale.panelLabels.additionalSearchCriteria}}</a>
-                          <span class="menu-arrow-toggleable-additional-criteria glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#additionalCriteriaCollapse"></span>
+                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">{{locale.panelLabels.additionalSearchCriteria}}</a>
                         </h3>
                       </div>
                       <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
                         <div class="panel-body">
                           <fieldset class="form-horizontal">
-                            <legend class="control-label"></legend>
 
                             <div class="form-group">
                               <div ng-class="{ 'has-error': patientSearchForm.city.$invalid &amp;&amp; (patientSearchForm.city.$touched||patientSearchForm.$submitted)}">
@@ -206,7 +202,7 @@
           <h4 class="text-center">
             {{locale.tableHeaders.results}}
           </h4>
-          <div class="container">
+          <div class="container fixed-panel">
             <table class="table table-striped table-bordered">
 
               <thead>
@@ -239,7 +235,6 @@
                 </tr>
               </tbody>
             </table>
-          </div>
             <div class="modal fade" id="myModal" role="dialog">
               <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -256,6 +251,7 @@
                     </button>
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{locale.buttonLabels.close}}</button>
                   </div>
+                </div>
               </div>
             </div>
           </div>
@@ -280,8 +276,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a>{{locale.panelLabels.patientDemographicCriteria}}</a>
-                          <span class="menu-arrow-toggleable-demographic-information glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#demoInfoCollapse"></span>
+                          <a data-toggle="collapse" href="#demoInfoCollapse">{{locale.panelLabels.patientDemographicCriteria}}</a>
                         </h3>
                       </div>
                       <div id="demoInfoCollapse" class="panel-collapse collapse in">
@@ -309,7 +304,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['givenName-' + $index].$error" ng-if="patientRegisterForm['givenName-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['givenName-' + $index].$error" ng-if="patientRegisterForm['givenName-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
                                   </div>
                                 </div>
@@ -332,7 +327,7 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['familyName-' + $index].$error" ng-if="patientRegisterForm['familyName-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['familyName-' + $index].$error" ng-if="patientRegisterForm['familyName-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
                                   </div>
                                 </div>
@@ -341,7 +336,7 @@
                                   <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
                                   <div class="col-xs-9 input-group">
                                     <div class="input-group date">
-                                      <input type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dob.date" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
+                                      <input readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dob.date" uib-datepicker-popup="dd/MMMM/yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
                                         <span class="input-group-addon addon-background" ng-click="openDOB()">
                                           <span class="glyphicon glyphicon-calendar">
                                           </span>
@@ -356,7 +351,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['dob-' + $index].$error" ng-if="patientRegisterForm['dob-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['dob-' + $index].$error" ng-if="patientRegisterForm['dob-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p  class="alert alert-danger" ng-message="required">{{locale.errors.dob}}</p>
                                   </div>
                                 </div>
@@ -409,7 +404,6 @@
                       <div class="panel-heading">
                         <h3 class="panel-title">
                           <a data-toggle="collapse" href="#potentialDupCollapse">{{locale.panelLabels.potentialDuplicates}}</a>
-                          <span class="menu-arrow-toggleable-potential-duplicates glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#potentialDupCollapse"></span>
                         </h3>
                       </div>
                       <div id="potentialDupCollapse" class="panel-collapse collapse in">
@@ -443,8 +437,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a>{{locale.panelLabels.identification}}</a>
-                          <span class="menu-arrow-toggleable-identity glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#identityCollapse"></span>
+                          <a data-toggle="collapse" href="#identityCollapse">{{locale.panelLabels.identification}}</a>
                         </h3>
                       </div>
                       <div id="identityCollapse" class="panel-collapse collapse in">
@@ -476,7 +469,7 @@
                                       </div>
                                     </div>
                                   </div>
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['identifierNum-' + $index].$error" ng-if="patientRegisterForm['identifierNum-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['identifierNum-' + $index].$error" ng-if="patientRegisterForm['identifierNum-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.idRequired}}</p>
                                   </div>
                                 </div>
@@ -490,8 +483,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a>{{locale.panelLabels.domicile}}</a>
-                          <span class="menu-arrow-toggleable-domicile glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#domicileCollapse"></span>
+                          <a data-toggle="collapse" href="#domicileCollapse">{{locale.panelLabels.domicile}}</a>
                         </h3>
                       </div>
                       <div id="domicileCollapse" class="panel-collapse collapse in">
@@ -499,16 +491,20 @@
                           <div class="row">
                             <div class="col-xs-12">
                               <fieldset class="form-horizontal form-group">
-                                <div class="form-group">
+                                <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['cityOrVillage'].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['cityOrVillage'].$invalid }">
                                   <label class="col-xs-2 control-label" for="cityOrVillageInput">{{locale.inputLabels.cityVillage}}</label>
                                   <div class="col-xs-9 input-group">
-                                    <input type="text" name="cityOrVillage" ng-model="cityOrVillage" class="form-control" id="cityOrVillageInput" />
+                                    <input type="text" ng-maxlength="50" name="cityOrVillage" required="required" ng-model="patient.birthPlace.cityOrVillage" class="form-control" id="cityOrVillageInput" placeholder="{{locale.inputLabels.cityVillage}}" />
                                   </div>
                                 </div>
+                                <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['cityOrVillage'].$error" ng-if="patientRegisterForm['cityOrVillage'].$touched||patientRegisterForm.$submitted">
+                                  <p class="alert alert-danger" ng-message="required">{{locale.errors.cityOrVillageRequired}}</p>
+                                  <p ng-message="maxlength" class="alert alert-danger">{{locale.errors.fieldLong}}</p>
+                                </div>
                                 <div class="form-group">
-                                  <label class="col-xs-2 control-label" for="birthPlaceSelect">{{locale.inputLabels.birthPlace}}</label>
+                                  <label class="col-xs-2 control-label" for="hospitalSelect">{{locale.inputLabels.birthPlace}}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select name="{{ 'birthPlace' + $index }}" ng-model="birthPlace" class="form-control" id="birthPlaceSelect">
+                                    <select name="hospital" ng-model="patient.birthPlace.hospital" class="form-control" id="hospitalSelect">
                                       <option ng-repeat="(key, value) in locale.hospitals" value="{{value}}">{{value}}</option>
                                     </select>
                                   </div>
@@ -523,8 +519,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title">
-                          <a>{{locale.panelLabels.contactInformation}}</a>
-                          <span class="menu-arrow-toggleable-contact glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#contactCollapse"></span>
+                          <a data-toggle="collapse" href="#contactCollapse">{{locale.panelLabels.contactInformation}}</a>
                         </h3>
                       </div>
                       <div id="contactCollapse" class="panel-collapse collapse in">
@@ -550,7 +545,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactGivenName-' + $index].$error" ng-if="patientRegisterForm['contactGivenName-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactGivenName-' + $index].$error" ng-if="patientRegisterForm['contactGivenName-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
                                   </div>
                                 </div>
@@ -573,7 +568,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactFamilyName-' + $index].$error" ng-if="patientRegisterForm['contactFamilyName-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['contactFamilyName-' + $index].$error" ng-if="patientRegisterForm['contactFamilyName-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
                                   </div>
                                 </div>
@@ -601,7 +596,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum-' + $index].$error" ng-if="patientRegisterForm['phoneNum-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum-' + $index].$error" ng-if="patientRegisterForm['phoneNum-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.telephoneRequired}}</p>
                                     <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
                                   </div>
@@ -615,9 +610,7 @@
 
                                       <span class="input-group-addon addon-background" id="domainAddon">@</span>
                                       <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
-                                        <option value="">WIP</option>
-                                        <option value="">WIP</option>
-                                        <option value="">WIP</option>
+                                        <option ng-repeat="(key, value) in locale.domainTypes" value="{{value}}">{{value}}</option>
                                       </select>
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('contactEmails', '', {email: '', domainType: ''})">
@@ -630,7 +623,7 @@
                                     </div>
                                   </div>
 
-                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['email-' + $index].$error" ng-if="patientRegisterForm['email-' + $index].$touched">
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['email-' + $index].$error" ng-if="patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted">
                                     <p class="alert alert-danger" ng-message="required">{{locale.errors.emailRequired}}</p>
                                     <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
                                   </div>
@@ -652,7 +645,7 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
+                    <button type="submit" ng-click="printPatient()" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
                   </div>
                 </form>
               </div>
@@ -689,8 +682,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a>{{locale.panelLabels.barcode}}</a>
-                          <span class="menu-arrow-toggleable-barcode glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#barcodeCollapse"></span>
+                          <a data-toggle="collapse" href="#barcodeCollapse">{{locale.panelLabels.barcode}}</a>
                         </h3>
                       </div>
                       <div id="barcodeCollapse" class="panel-collapse collapse in">
@@ -710,8 +702,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a>{{locale.panelLabels.patientDemographics}}</a>
-                          <span class="menu-arrow-toggleable-patient-demographic glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#patientDemographicCollapse"></span>
+                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{locale.panelLabels.patientDemographics}}</a>
                         </h3>
                       </div>
                       <div id="patientDemographicCollapse" class="panel-collapse collapse">
@@ -762,8 +753,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading">
                         <h3 class="panel-title text-center">
-                          <a>{{locale.panelLabels.villageHealthFacility}}</a>
-                          <span class="menu-arrow-toggleable-village-facility glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#villageHealthFacilityCollapse"></span>
+                          <a data-toggle="collapse" href="#villageHealthFacilityCollapse">{{locale.panelLabels.villageHealthFacility}}</a>
                         </h3>
                       </div>
                       <div id="villageHealthFacilityCollapse" class="panel-collapse collapse">
@@ -801,33 +791,6 @@
       <![CDATA[
 		  layoutApp.controller('PatientSearchController', ['$scope', function ($scope)
 		  {
-        
-          $('#barcodeCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#barcodeCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#patientDemographicCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#patientDemographicCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#additionalCriteriaCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-additional-criteria").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#additionalCriteriaCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-additional-criteria").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-        
-        
-        
-        
-        
-        
         $scope.today = function() {
           $scope.datetimeFrom = new Date();
           $scope.datetimeTo = new Date();
@@ -877,13 +840,12 @@
             $scope.dateOptionsTo = {
               minDate: new Date($scope.dateTimeFrom.getFullYear(), $scope.dateTimeFrom.getMonth(),  $scope.dateTimeFrom.getDate())
             };
-    
+
         }
-        
+
         $scope.view = function(patient){
           sessionStorage.setItem("Patient", JSON.stringify(patient));
-          window.location.href = window.location.protocol + window.location.hostname +  window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
-          
+          window.location.href = window.location.protocol + window.location.hostname + window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
         }
         $scope.phoneRegex = '^\\d{3}-\\d{3}-\\d{4}$';
         $scope.scanBarcodeLink = function()
@@ -917,10 +879,6 @@
               data[i] = $scope.randomPatient();
             }
             $scope.searchResults = data;
-            $('#additionalCriteriaCollapse').collapse('hide');
-            $('#patientDemographicCollapse').collapse('hide');
-            $('#barcodeCollapse').collapse('hide');
-            $('html, body').animate({ scrollTop: 0 }, 'fast');
             //$scope.$digest();
             /*OpenIZ.Patient.searchByDob(function(data){
               $('#additionalCriteriaCollapse').collapse('hide');
@@ -950,45 +908,6 @@
 
 		  layoutApp.controller('PatientRegisterController', ['$scope', function ($scope)
 		  {
-          $('#demoInfoCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-demographic-information").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#demoInfoCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-demographic-information").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#potentialDupCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-potential-duplicates").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#potentialDupCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-potential-duplicates").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#identityCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-identity").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#identityCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-identity").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-             
-          $('#domicileCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-domicile").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#domicileCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-domicile").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#contactCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-contact").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#contactCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-contact").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-        
-        
-        
-        
-        
         $scope.patient = {
           patientNames: {
             givenNames: [""],
@@ -1003,6 +922,13 @@
             identifierNum: "",
             identifierType: ""
           }],
+          tetanusStatus: false,
+          breastFeedingStatus: false,
+          birthCertificateStatus: false,
+          birthPlace: {
+            cityOrVillage: "",
+            hospital: ""
+          },
           contactNames: {
             givenNames: [""],
             familyNames: [""]
@@ -1050,12 +976,12 @@
             }
           }
         };
-        
+
           $scope.allPatients = [];
           for(var i = 0; i<100; i++){
             $scope.allPatients[i] = $scope.randomPatient();
           }
-          
+
         $scope.add = function(outerModelAccess, innerModelAccess, objToPush) {
           if(innerModelAccess == ""){
             $scope.patient[outerModelAccess].push(objToPush);
@@ -1064,6 +990,11 @@
             $scope.patient[outerModelAccess][innerModelAccess].push(objToPush);
           }
         };
+
+        $scope.printPatient = function(){
+          console.log($scope.patient);
+        };
+
         $scope.searchForDuplicates = function()
         {
           /*OpenIZ.Patient.searchByGender(function(data){
@@ -1071,8 +1002,19 @@
             $scope.$digest();
           }, $scope.patient.gender);*/
           $scope.searchResults = [];
+          var currentGender = $scope.patient.gender;
+          if(currentGender == 'Kike'){
+            currentGender = 'Female';
+          }
+          else if(currentGender == 'Kiume'){
+            currentGender = 'Male';
+          }
+          else if(currentGender == 'Mengine'){
+            currentGender = 'Other';
+          }
           for(var i = 0; i<$scope.allPatients.length; i++){
-            if($scope.allPatients[i].Gender == $scope.patient.gender){
+
+            if($scope.allPatients[i].Gender == currentGender){
               $scope.searchResults.push($scope.allPatients[i]);
             }
           }
@@ -1100,8 +1042,8 @@
              }]
 
            };
-          var patient = {GivenName: "John", FamilyName: "Smith", Gender: $scope.patient.gender};
-          console.log(OpenIZ.Patient.register(patient));
+          var patient = {GivenName: $scope.patient.patientNames.givenNames, FamilyName: $scope.patient.patientNames.familyNames, Gender: $scope.patient.gender};
+          OpenIZ.Patient.register(patient);
           if(!invalid){
             var patient = new OpenIZModel.Patient(patientData);
             OpenIZ.Patient.insertAsync({
@@ -1126,22 +1068,6 @@
           }
         };
 
-        $scope.data = {
-          genderSelect:[
-          {gender:"Female"},
-          {gender:"Male"},
-          {gender:"Other"}
-          ],
-          accuracySelect:[
-          {accuracy:"Day"},
-          {accuracy:"Month"},
-          {accuracy:"Year"}
-          ],
-          phoneTypeSelect:[
-          {phoneType:"Mobile"},
-          {phoneType:"Home"},
-          {phoneType:"Work"}
-          ]};
       }]);
 
       ]]>
@@ -1152,27 +1078,6 @@
       <![CDATA[
       layoutApp.controller('PatientViewController', ['$scope', function ($scope)
 		  {
-          $('#barcodeCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#barcodeCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-barcode").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#patientDemographicCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#patientDemographicCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-patient-demographic").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
-          $('#villageHealthFacilityCollapse').on('shown.bs.collapse', function () {
-             $(".menu-arrow-toggleable-village-facility").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-          });
-          $('#villageHealthFacilityCollapse').on('hidden.bs.collapse', function () {
-             $(".menu-arrow-toggleable-village-facility").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-          });
-          
         $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
         var dateOfBirth = new Date($scope.patient.DateOfBirth);
         $scope.displayDate = dateOfBirth.getDate() + '/' + dateOfBirth.getMonth() + '/' + dateOfBirth.getFullYear();

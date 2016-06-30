@@ -20,57 +20,69 @@
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>register-controller</script>
       <content>
-        <div class="row" ng-controller="RegisterController" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="row" ng-controller="RegisterController">
           <div class="col-xs-12">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title text-center">{{locale.panelLabels.register}}</h3>
-              </div>
-              <div class="panel-body">
-                <form novalidate="novalidate" name="registerForm" ng-submit="register()">
+            <form novalidate="novalidate" name="registerForm" ng-submit="register()">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a>{{locale.panelLabels.personalInformation}}</a>
+                  </h3>
+                </div>
+                <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.personalInformation}}</legend>
-                    <br />
-                    <div class="form-group" ng-class="{ 'has-error': (registerForm.givenName.$touched||registerForm.$submitted) &amp;&amp; registerForm.givenName.$invalid }">
-                      <label for="givenNameInput" class="col-xs-2 control-label">{{locale.inputLabels.givenName}}</label>
-                      <div class="col-xs-9 input-group" ng-repeat="name in user.fullName.givenNames track by $index" ng-class="{ 'has-error': registerForm['givenName-' + $index].$touched &amp;&amp; patientRegisterForm['givenName-' + $index].$invalid }">
-                        <input ng-model="user.fullName.givenNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.givenName}}" class="form-control" name="givenName-{{ $index }}" id="givenNameInput" required="required" />
-                        <div class="input-group-btn">
-                          <span class="glyphicon glyphicon-plus"></span>
-                          <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'givenNames', '')">
-                          </button>
-                          <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'fullName', 'givenNames')">
-                            <span class="glyphicon glyphicon-minus"></span>
-                          </button>
+                    <div ng-repeat="name in user.fullName.givenNames track by $index">
+                      <div class="form-group" ng-class="{ 'has-error': (registerForm['givenName-' + $index].$touched||registerForm.$submitted) &amp;&amp; registerForm['givenName-' + $index].$invalid }">
+                        <label for="givenNameInput" class="col-xs-2 control-label">{{locale.inputLabels.givenName}}</label>
+                        <div class="col-xs-9 input-group">
+                          <input ng-model="user.fullName.givenNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.givenName}}" class="form-control" name="givenName-{{ $index }}" id="givenNameInput" required="required" />
+                          <div class="input-group-btn">
+
+                            <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'givenNames', '')">
+                              <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'fullName', 'givenNames')">
+                              <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div ng-messages="registerForm['givenName-' + $index].$error" ng-if="registerForm['givenName-' + $index].$touched||registerForm.$submitted">
+                      <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['givenName-' + $index].$error" ng-if="registerForm['givenName-' + $index].$touched||registerForm.$submitted">
                         <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
                       </div>
                     </div>
 
-                    <div class="form-group" ng-class="{ 'has-error': (registerForm['familyName-' + $index].$touched||registerForm.$submitted) &amp;&amp; registerForm['familyName-' + $index].$invalid }">
-                      <label for="familyNameInput" class="col-xs-2 control-label">{{locale.inputLabels.familyName}}</label>
-                      <div class="col-xs-9 input-group" ng-repeat="name in user.fullName.familyNames track by $index">
-                        <input ng-model="user.fullName.familyNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.familyName}}" class="form-control" name="familyName-{{ $index }}" id="familyNameInput" required="required" />
-                        <div class="input-group-btn">
-                          <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'familyNames', '')">
-                            <span class="glyphicon glyphicon-plus"></span>
-                          </button>
-                          <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'fullName', 'familyNames')">
-                            <span class="glyphicon glyphicon-minus"></span>
-                          </button>
+                    <div ng-repeat="name in user.fullName.familyNames track by $index">
+                      <div class="form-group" ng-class="{ 'has-error': (registerForm['familyName-' + $index].$touched||registerForm.$submitted) &amp;&amp; registerForm['familyName-' + $index].$invalid }">
+                        <label for="familyNameInput" class="col-xs-2 control-label">{{locale.inputLabels.familyName}}</label>
+                        <div class="col-xs-9 input-group">
+                          <input ng-model="user.fullName.familyNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.familyName}}" class="form-control" name="familyName-{{ $index }}" id="familyNameInput" required="required" />
+                          <div class="input-group-btn">
+                            <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'familyNames', '')">
+                              <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <button class="btn btn-default btn-custom" type="button" ng-click="remove($index, 'fullName', 'familyNames')">
+                              <span class="glyphicon glyphicon-minus"></span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div ng-messages="registerForm['familyName-' + $index].$error" ng-if="registerForm['familyName-' + $index].$touched||registerForm.$submitted">
+
+                      <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['familyName-' + $index].$error" ng-if="registerForm['familyName-' + $index].$touched||registerForm.$submitted">
                         <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
                       </div>
                     </div>
                   </fieldset>
+                </div>
 
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a>{{locale.panelLabels.contactInformation}}</a>
+                  </h3>
+                </div>
+                <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.contactInformation}}</legend>
-                    <br />
+
                     <div class="form-group" ng-class="{ 'has-error': (registerForm['phoneNum'].$touched||registerForm.$submitted) &amp;&amp; registerForm['phoneNum'].$invalid }">
                       <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
                       <div class="col-xs-9 input-group">
@@ -82,10 +94,9 @@
                           <option ng-repeat="(key, value) in locale.phone" value="{{value}}">{{value}}</option>
                         </select>
                       </div>
-
-                      <div ng-messages="patientRegisterForm['phoneNum'].$error" ng-if="patientRegisterForm['phoneNum'].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
-                      </div>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum'].$error" ng-if="patientRegisterForm['phoneNum'].$touched||registerForm.$submitted">
+                      <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': registerForm['email'].$touched &amp;&amp; registerForm['email'].$invalid }">
@@ -94,60 +105,62 @@
                         <input type="email" name="email" ng-model="user.email.email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" />
                         <span class="input-group-addon" id="domainAddon">@</span>
                         <select name="domainType" ng-model="user.email.domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
-                          <option value="">WIP</option>
-                          <option value="">WIP</option>
-                          <option value="">WIP</option>
+                          <option ng-repeat="(key, value) in locale.domainTypes" value="{{value}}">{{value}}</option>
                         </select>
                       </div>
-
-                      <div ng-messages="registerForm['email'].$error" ng-if="registerForm['email'].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
-                      </div>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['email'].$error" ng-if="registerForm['email'].$touched||registerForm.$submitted">
+                      <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
                     </div>
                   </fieldset>
+                </div>
 
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a>{{locale.panelLabels.accountInformation}}</a>
+                  </h3>
+                </div>
+                <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.accountInformation}}</legend>
-                    <br />
-                    <div class=" form-group" ng-class="{ 'has-error': registerForm.username.$touched &amp;&amp; registerForm.username.$invalid }">
+
+                    <div class=" form-group" ng-class="{ 'has-error': (registerForm.username.$touched || registerForm.$submitted) &amp;&amp; registerForm.username.$invalid }">
                       <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.username" type="text" ng-required="true" name="username" id="usernameInput" class="form-control" placeholder="Username" />
+                        <input ng-model="user.username" type="text" ng-required="true" name="username" id="usernameInput" class="form-control" placeholder="{{locale.inputLabels.username}}" />
                       </div>
-                      <div ng-messages="registerForm['username'].$error" ng-if="registerForm['username'].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
-                      </div>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['username'].$error" ng-if="registerForm['username'].$touched||registerForm.$submitted">
+                      <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (registerForm.password.$touched || registerForm.$submitted) &amp;&amp; registerForm.password.$invalid }">
                       <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="Password" />
+                        <input ng-model="user.password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{locale.inputLabels.password}}" />
                       </div>
-                      <div ng-messages="registerForm['password'].$error" ng-if="registerForm['password'].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
-                      </div>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['password'].$error" ng-if="registerForm['password'].$touched||registerForm.$submitted">
+                      <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (registerForm.confirmPassword.$touched||registerForm.$submitted) &amp;&amp; registerForm.confirmPassword.$invalid }">
-                      <label for="confirmPasswordInput" class="col-xs-2 control-label">Confirm Password</label>
+                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{locale.inputLabels.confirmPassword}}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.confirmPassword" ng-required="true" compare-to="user.password" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="Confirm Password" />
+                        <input ng-model="user.confirmPassword" ng-required="true" compare-to="user.password" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{locale.inputLabels.confirmPassword}}" />
                       </div>
-                      <div ng-messages="registerForm['confirmPassword'].$error"  ng-if="registerForm['confirmPassword'].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
-                        <p class="alert alert-danger" ng-message="compareTo">{{locale.errors.noMatch}}</p>
-                      </div>
+                    </div>
+                    <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['confirmPassword'].$error"  ng-if="registerForm['confirmPassword'].$touched||registerForm.$submitted">
+                      <p class="alert alert-danger" ng-message="required">{{locale.errors.confirmPasswordRequired}}</p>
+                      <p class="alert alert-danger" ng-message="compareTo">{{locale.errors.noMatch}}</p>
                     </div>
                   </fieldset>
                   <div class="form-group">
                     <a class="btn btn-info pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.alreadyRegistered}}</a>
-                    <button type="button" class="btn btn-default" id="setup-demo-data">Demo Data</button>
                     <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
                   </div>
-                </form>
+                </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </content>
@@ -157,20 +170,6 @@
   <asset name="register-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-
-      $(document).ready(function(){
-
-        $("#setup-demo-data").on("click", function(event)
-        {
-          $("#givenNameInput").val("Nityan");
-          $("#familyNameInput").val("Khanna");
-          $("#emailInput").val("nityan.khanna@mohawkcollege.ca");
-          $("#phoneNumberInput").val("+1 (905) 575-1212");
-          $("#usernameInput").val("nityankhanna");
-          $("#passwordInput").val("Mohawk123");
-          $("#confirmPasswordInput").val("Mohawk123");
-        });
-      });
 
 		  layoutApp.controller('RegisterController', ['$scope', function ($scope)
 		  {
@@ -234,17 +233,17 @@
 
               if(userProfile == null)
               {
-                toastr.error("Registration error");
+                toastr.error($scope.locale.toastrText.registrationError);
               }
               else
               {
-                toastr.success("Registration successful");
+                toastr.success($scope.locale.toastrText.success);
                 window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/index";
               }
             }
             catch(ex)
             {
-              toastr.error("Unexpected error, please contact the adminstrator");
+              toastr.error($scope.locale.modalText.unexpected);
             }
           };
       }]);

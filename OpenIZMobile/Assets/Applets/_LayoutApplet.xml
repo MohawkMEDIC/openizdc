@@ -86,12 +86,6 @@
               </div>
               <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                  <li>
-                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">About</a>
-                  </li>
-                  <li>
-                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Contact</a>
-                  </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                   <li class="dropdown" id="langDropDown">
@@ -112,7 +106,7 @@
                     </ul>
                   </li>
                   <li id="loginRegisterLink">
-                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Login/Register</a>
+                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">{{locale.navbar.loginRegister}}</a>
                   </li>
                   <li class="hidden" id="logoutLink">
                     <button class="btn timr-blue-background" ng-click="logout()">Logout</button>
@@ -155,7 +149,7 @@
                     <div class="panel-heading patient-panel">
                       <h3 class="panel-title">
                         <span class="glyphicon glyphicon-user text-left">
-                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + locale.panelLabels.years + patient.age.years  + ", " + locale.panelLabels.month + patient.age.months}}
+                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + locale.panelLabels.years + patient.age.years  + ", " + locale.panelLabels.months + patient.age.months}}
                         </span>
                         <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
                       </h3>
@@ -266,7 +260,6 @@
             layoutApp.directive("compareTo", compareTo);
 
             layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
-
             $scope.locale = getStrings();
             $scope.localize = function(lang)
             {
@@ -312,7 +305,6 @@
             OpenIZ.Authentication.abandonSession();
             $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
             }
-
             }]);
     		  ]]>
     </contentText>
@@ -348,11 +340,20 @@
 				      	hospitalTwo: "Hospitali 2",
 				      	hospitalThree: "Hospitali 3"
 				      },
+              navbar:{
+                loginRegister: "Ingia/Daftari"
+
+              },
 				      identificationTypes: {
 				      	yellowCardId: "Kadi Ya Njano ID",
 				      	voterCardId: "Wapiga Kura Kitambulisho",
 				      	driversLicenseId: "Leseni Madereva ID"
 				      },
+              domainTypes:{
+                personal: "Binafsi",
+                work: "Kazi",
+                shared: "Pamoja"
+              },
 				      relation:{
 				      	father:"Baba",
 				      	mother:"Mama",
@@ -414,8 +415,12 @@
                 verifyCodeInvalid: "Kanuni aliingia ni batili",
 				      	usernameRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
 				      	passwordRequired: "Tafadhali kuingia Nywila lako",
+                confirmPasswordRequired: "Tafadhali Kuthibitisha Nywila Yako",
 				      	passwordInvalid: "Nywila Batili",
-				      	noMatch: "Nywila si Mechi"
+				      	noMatch: "Nywila si Mechi",
+                cityOrVillageRequired: "Tafadhali kuingia mahali pa kuzaliwa yako",
+                verifyCodeRequired: "Tafadhali kuingia kificho ukaguzi",
+                verifyCodeInvalid: "Kificho aliingia ni batili"
               },
 				      panelLabels:{
 				      	barcodeScan: "Barcode Kuchambua",
@@ -423,12 +428,14 @@
 				      	patientDemographicCriteria: "Mgonjwa Vigezo Idadi Ya Watu",
 				      	patientDemographics: "Idadi Ya Watu Mgonjwa",
                 patientInformation: "Habari Mgonjwa",
+                personalInformation: "Habari za Mtu Binafsi",
 				      	nextOfKinOptional: "Pili Ya Jamaa(Hiari)",
 				      	additionalSearchCriteria: "Vigezo Ziada Kupata",
 				      	domicile: "Kikao",
                 villageHealthFacility: "Kijiji/Kituo Cha Afya",
 				      	homeAddress: "Anwani ya Nyumbani",
 				      	contactInformation: "Maelezo ya Kuwasiliana",
+                accountInformation: "Taarifa za Akaunti",
 				      	additionalInfo: "Taarifa Za Ziada",
 				      	additionalInfoFooter: "Tafadhali chagua zote zinazohusika",
 				      	potentialDuplicates: "Marudio Uwezo",
@@ -444,7 +451,11 @@
                 newWeightEntry: "Mpya Uzito Kuingia",
                 previousWeights: "Kabla Uzito",
                 recoveryMethod: "Ahueni Njia",
-                recoveryHelper: "Teua Ahueni Njia Yako"
+                recoveryHelper: "Teua Ahueni Njia Yako",
+                dashboard: "Dashibodi",
+                forgotPassword: "Umesahau Nywila",
+                enterUsername: "Kuingia Jina Lako Hapa Chini"
+
 				      },
 				      tableHeaders:{
 				      	names: "Jina(s)",
@@ -476,8 +487,16 @@
                 manage: "Kusimamia",
                 save: "Kuokoa",
                 submit: "Kuwasilisha",
-                sendCode: "Kutuma Kificho Ukaguzi"
+                sendCode: "Kutuma Kificho Ukaguzi",
+                yes: "Ndiyo",
+                no: "Hakuna",
+                patientServices: "Huduma Mgonjwa",
+                codeReceived: "Kupokea kanuni yako? Weka upya nenosiri lako"
 				      },
+              text:{
+                checkEmail: "Tafadhali angalia barua pepe yako na kutumia kanuni kupokea kuweka upya nenosiri lako.",
+                codeSent: "Sisi tumekutuma nambari ya kuthibitisha!"
+              },
 				      checkLabels:{
 				      	yes: "Ndiyo",
 				      	no: "Hakuna",
@@ -501,15 +520,23 @@
                 verificationCode: "Uhakiki Kanuni"
 				      },
 				      modalHeaders:{
-				      	checkInPatient: "Kuangalia Katika Mgonjwa?"
+				      	checkInPatient: "Kuangalia Katika Mgonjwa?",
+                confirmWeight: "Kuthibitisha Uzito Mwisho"
 				      },
 				      modalText:{
-				      	nextAppointment: "Mgonjwa hii ina uteuzi wao ijayo katika "
+				      	nextAppointment: "Mgonjwa hii ina uteuzi wao ijayo katika ",
+                isCorrect: "Je, una uhakika hii ni sahihi?",
+                updateWeight: "Wewe ni kuhusu kurekebisha uzito wa ",
+                to: " kwa "
 				      },
 				      toastrText:{
-				      	invalidForm: "Tafadhali Angalia Kidato Pembejeo Kwa Makosa"
-				      },
-				      toastrHeaders:{
+				      	success: "Mafanikio!",
+                invalidForm: "Tafadhali Angalia Kidato Pembejeo Kwa Makosa",
+                invalidUsername: "Jamii haijulikani au batili jina la mtumiaji",
+                registrationError: "Kosa usajili",
+                unexpected: "Hitilafu isiyotarajiwa , tafadhali wasiliana na msimamizi"
+              },
+              toastrHeaders:{
 				      	invalidForm: "Fomu Ya Batili"
 				      },
 				      footer:{
@@ -549,7 +576,17 @@
 				      	voterCardId: "Voter Card ID",
 				      	driversLicenseId: "Drivers License ID"
 				      },
-				      relation:{
+              domainTypes:{
+                personal: "Personal",
+                work: "Work",
+                shared: "Shared"
+              },
+              navbar:{
+                loginRegister: "Login/Register"
+
+              },
+
+					relation:{
 				      	father:"Father",
 				      	mother:"Mother",
 				      	son:"Son",
@@ -613,8 +650,10 @@
                 confirmPasswordRequired: "Please confirm your Password",
 				      	passwordInvalid: "Invalid Password",
 				      	noMatch: "Passwords do not match",
+                weightRequired: "Weight Is Required",
                 verifyCodeRequired: "Please enter the verification code",
-                verifyCodeInvalid: "Code entered is invalid"
+                verifyCodeInvalid: "Code entered is invalid",
+                cityOrVillageRequired: "Please enter your birth place"
 				      },
 				      panelLabels:{
 				      	barcodeScan: "Barcode Scan",
@@ -645,7 +684,10 @@
                 newWeightEntry: "New Weight Entry",
                 previousWeights: "Previous Weights",
                 recoveryMethod: "Recovery Method",
-                recoveryHelper: "Select your recovery method"
+                recoveryHelper: "Select your recovery method",
+                dashboard: "Dashboard",
+                forgotPassword : "Forgot Password",
+                enterUsername: "Enter your username below"
 				      },
 				      tableHeaders:{
 				      	names: "Name(s)",
@@ -677,8 +719,16 @@
                 manage: "Manage",
                 save: "Save",
                 submit: "Submit",
-                sendCode: "Send Verification Code"
+                sendCode: "Send Verification Code",
+                yes: "Yes",
+                no: "No",
+                patientServices: "Patient Services" ,
+                codeReceived: "Received your code? Reset your password"
 				      },
+              text:{
+                checkEmail: "Please check your email and use the code received to reset your password.",
+                codeSent: "We have sent you a verification code!"
+              },
 				      checkLabels:{
 				      	yes: "Yes",
 				      	tetanusDiagnosis: "Has the patient ever been/currently is diagnosed with Tetanus?",
@@ -701,14 +751,22 @@
 				      	motherFamilyName: "Mother's Family Name"
 				      },
 				      modalHeaders:{
-				      	checkInPatient: "Check In Patient"
+				      	checkInPatient: "Check In Patient",
+                confirmWeight: "Confirm Weight Update"
 				      },
 				      modalText:{
-				      	nextAppointment: "This patient has their next appointment at: "
-				      },
-				      toastrText:{
-				      	invalidForm: "Please Check Form Fields For Errors"
-				      },
+				      	nextAppointment: "This patient has their next appointment at: ",
+                isCorrect: "Are you sure this is correct?",
+                updateWeight: "You are about to update the weight of ",
+                to: " to "
+              },
+              toastrText:{
+                success: "Success!",
+				      	invalidForm: "Please Check Form Fields For Errors",
+                invalidUsername: "Unknown or invalid username",
+                registrationError: "Registration error",
+                unexpected: "Unexpected error, please contact the adminstrator"
+              },
 				      toastrHeaders:{
 				      	invalidForm: "Invalid Form"
 				      },
