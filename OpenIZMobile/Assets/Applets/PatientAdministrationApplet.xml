@@ -578,7 +578,7 @@
                                     <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" required="required" />
+                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" />
                                       <span class="input-group-addon addon-background" id="phoneTypeAddon">
                                         <span class="glyphicon glyphicon-earphone"></span>
                                       </span>
@@ -597,7 +597,6 @@
                                   </div>
 
                                   <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum-' + $index].$error" ng-if="patientRegisterForm['phoneNum-' + $index].$touched||patientRegisterForm.$submitted">
-                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.telephoneRequired}}</p>
                                     <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
                                   </div>
                                 </div>
@@ -606,7 +605,7 @@
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="emailInput">{{locale.inputLabels.email}}</label>
                                     <div class="col-xs-9 input-group">
-                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" required="required" />
+                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" />
 
                                       <span class="input-group-addon addon-background" id="domainAddon">@</span>
                                       <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
@@ -624,7 +623,6 @@
                                   </div>
 
                                   <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['email-' + $index].$error" ng-if="patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted">
-                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.emailRequired}}</p>
                                     <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
                                   </div>
                                 </div>
