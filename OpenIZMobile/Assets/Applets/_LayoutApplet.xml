@@ -418,7 +418,7 @@
                 confirmPasswordRequired: "Tafadhali Kuthibitisha Nywila Yako",
 				      	passwordInvalid: "Nywila Batili",
 				      	noMatch: "Nywila si Mechi",
-                cityOrVillageRequired: "Tafadhali kuingia mahali pa kuzaliwa yako",
+                cityOrVillageRequired: "Tafadhali kuingia wagonjwa kuzaliwa mji / kijiji",
                 verifyCodeRequired: "Tafadhali kuingia kificho ukaguzi",
                 verifyCodeInvalid: "Kificho aliingia ni batili"
               },
@@ -653,7 +653,7 @@
                 weightRequired: "Weight Is Required",
                 verifyCodeRequired: "Please enter the verification code",
                 verifyCodeInvalid: "Code entered is invalid",
-                cityOrVillageRequired: "Please enter your birth place"
+                cityOrVillageRequired: "Please enter the patients birth city/village"
 				      },
 				      panelLabels:{
 				      	barcodeScan: "Barcode Scan",
