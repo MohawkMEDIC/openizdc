@@ -305,7 +305,7 @@
               else
               {
                 toastr.success($scope.locale.toastrText.success);
-                window.location.href = window.location.protocol +window.location.hostname + window.location.port + "/applet/org.openiz.applet.dashboard/index";
+                window.location.href = window.location.protocol +window.location.hostname + window.location.port + "/applet/org.timr.applet.dashboard/index";
               }
             }
             catch(ex)
