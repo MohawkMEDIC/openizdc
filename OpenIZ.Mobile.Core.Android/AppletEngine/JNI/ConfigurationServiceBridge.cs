@@ -8,7 +8,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Http;
-using OpenIZ.Core.PCL.Http.Description;
+using OpenIZ.Core.Http.Description;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {

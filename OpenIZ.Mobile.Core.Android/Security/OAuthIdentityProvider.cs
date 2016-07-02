@@ -10,7 +10,7 @@ using System.Security;
 using OpenIZ.Mobile.Core.Android.Exceptions;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Serices;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Interop;
 
 namespace OpenIZ.Mobile.Core.Android.Security

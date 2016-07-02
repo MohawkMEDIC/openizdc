@@ -8,7 +8,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Security;
 using System.Security;
 using System.IO.Compression;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {

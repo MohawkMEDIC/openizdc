@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {

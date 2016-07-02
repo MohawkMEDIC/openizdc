@@ -9,7 +9,7 @@ using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Http;
 using System.Security.Principal;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {

@@ -107,7 +107,7 @@
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbEntityIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
-    <property modelName="TypeKey" domainName="TypeUuid"/>
+    <property modelName="IdentifierTypeKey" domainName="TypeUuid"/>
     <property modelName="AuthorityKey" domainName="AuthorityUuid"/>
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
   </class>
