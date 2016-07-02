@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
         /// <summary>
         /// Test the insertion of an anonymous entity
         /// </summary>
-        [TestMethod]
+       // [TestMethod]
         public void TestInsertAnonymousEntity()
         {
             Entity strawberry = new Entity()
