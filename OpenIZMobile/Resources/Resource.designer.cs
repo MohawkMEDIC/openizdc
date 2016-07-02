@@ -361,20 +361,20 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050001
 			public const int confirm = 2131034113;
 			
-			// aapt resource value: 0x7f050014
-			public const int err_applet_not_found = 2131034132;
+			// aapt resource value: 0x7f050015
+			public const int err_applet_not_found = 2131034133;
 			
-			// aapt resource value: 0x7f050018
-			public const int err_exception = 2131034136;
+			// aapt resource value: 0x7f050019
+			public const int err_exception = 2131034137;
 			
 			// aapt resource value: 0x7f050004
 			public const int err_general = 2131034116;
 			
-			// aapt resource value: 0x7f050016
-			public const int err_login = 2131034134;
-			
 			// aapt resource value: 0x7f050017
-			public const int err_login_invalidusername = 2131034135;
+			public const int err_login = 2131034135;
+			
+			// aapt resource value: 0x7f050018
+			public const int err_login_invalidusername = 2131034136;
 			
 			// aapt resource value: 0x7f050006
 			public const int err_oauth2_invalid_client = 2131034118;
@@ -394,8 +394,8 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f050009
 			public const int err_oauth2_unsupported_grant_type = 2131034121;
 			
-			// aapt resource value: 0x7f050015
-			public const int err_startup = 2131034133;
+			// aapt resource value: 0x7f050016
+			public const int err_startup = 2131034134;
 			
 			// aapt resource value: 0x7f05000c
 			public const int err_token_InvalidSignature = 2131034124;
@@ -417,6 +417,9 @@ namespace OpenIZMobile
 			
 			// aapt resource value: 0x7f050000
 			public const int library_name = 2131034112;
+			
+			// aapt resource value: 0x7f050014
+			public const int loading = 2131034132;
 			
 			// aapt resource value: 0x7f050012
 			public const int needs_setup = 2131034130;
