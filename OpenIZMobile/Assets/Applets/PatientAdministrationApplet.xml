@@ -368,31 +368,20 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label">{{locale.panelLabels.additionalInfo}}</label>
                                   <div class="col-xs-9">
-                                    <div class="form-group">
-                                      <label class="col-xs-10" for="tetanusCheck">
-                                        {{locale.checkLabels.tetanusDiagnosis}}
+                                    <div class="checkbox">
+                                      <label for="tetanusCheck">
+                                        <input type="checkbox" ng-model="patient.tetanusStatus" name="tetanusStatus" id="tetanusCheck" /> {{locale.checkLabels.tetanusDiagnosis}}
                                       </label>
-                                      <div class="checkbox col-xs-2">
-                                        <input type="checkbox" name="tetanusOptions" id="tetanusCheck" />
-                                      </div>
                                     </div>
-
-                                    <div class="form-group">
-                                      <label class="col-xs-10" for="breastFeedingCheck">
-                                        {{locale.checkLabels.breastfeedingStatus}}
+                                    <div class="checkbox">
+                                      <label for="breastFeedingCheck">
+                                        <input type="checkbox" ng-model="patient.breastFeedingStatus" name="breastFeedingStatus" id="breastFeedingCheck" /> {{locale.checkLabels.breastfeedingStatus}}
                                       </label>
-                                      <div class="checkbox col-xs-2">
-                                        <input type="checkbox" name="breastFeedingOptions" id="breastFeedingCheck" />
-                                      </div>
                                     </div>
-
-                                    <div class="form-group">
-                                      <label class="col-xs-10" for="birthCertCheck">
-                                        {{locale.checkLabels.birthCertificate}}
+                                    <div class="checkbox">
+                                      <label for="birthCertCheck">
+                                        <input type="checkbox" ng-model="patient.birthCertificateStatus" name="birthCertificateStatus" id="birthCertCheck" /> {{locale.checkLabels.birthCertificate}}
                                       </label>
-                                      <div class="checkbox col-xs-2">
-                                        <input type="checkbox" name="birthCertOptions" id="birthCertCheck" />
-                                      </div>
                                     </div>
                                   </div>
                                 </div>
@@ -578,7 +567,7 @@
                                     <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" />
+                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" required="required" />
                                       <span class="input-group-addon addon-background" id="phoneTypeAddon">
                                         <span class="glyphicon glyphicon-earphone"></span>
                                       </span>
@@ -597,6 +586,7 @@
                                   </div>
 
                                   <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum-' + $index].$error" ng-if="patientRegisterForm['phoneNum-' + $index].$touched||patientRegisterForm.$submitted">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.telephoneRequired}}</p>
                                     <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
                                   </div>
                                 </div>
@@ -605,7 +595,7 @@
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="emailInput">{{locale.inputLabels.email}}</label>
                                     <div class="col-xs-9 input-group">
-                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" />
+                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" required="required" />
 
                                       <span class="input-group-addon addon-background" id="domainAddon">@</span>
                                       <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
@@ -623,6 +613,7 @@
                                   </div>
 
                                   <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['email-' + $index].$error" ng-if="patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted">
+                                    <p class="alert alert-danger" ng-message="required">{{locale.errors.emailRequired}}</p>
                                     <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
                                   </div>
                                 </div>
@@ -843,7 +834,7 @@
 
         $scope.view = function(patient){
           sessionStorage.setItem("Patient", JSON.stringify(patient));
-          window.location.href = window.location.protocol + window.location.hostname + window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
+          window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.patientAdministration/patientView";
         }
         $scope.phoneRegex = '^\\d{3}-\\d{3}-\\d{4}$';
         $scope.scanBarcodeLink = function()
@@ -1011,7 +1002,7 @@
             currentGender = 'Other';
           }
           for(var i = 0; i<$scope.allPatients.length; i++){
-
+            
             if($scope.allPatients[i].Gender == currentGender){
               $scope.searchResults.push($scope.allPatients[i]);
             }

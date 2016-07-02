@@ -209,12 +209,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\AuthenticationApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\MainApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -256,11 +250,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\js\ui-bootstrap.min.js" />

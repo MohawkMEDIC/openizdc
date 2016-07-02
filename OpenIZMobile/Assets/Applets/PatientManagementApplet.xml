@@ -48,16 +48,16 @@
                             </input>
                           </div>
                         </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="col-xs-3">
+                        <div class="form-group">
+                          <div class="col-xs-2 col-xs-offset-1">
                           <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
                             <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.weightRequired}}</div>
                           </div>
-                        </div>
-                        <div class="col-xs-5 col-xs-offset-4">
+                          </div>
+                          <div class="col-xs-2 col-xs-offset-6">
                           <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
                             <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.dobRequired}}</div>
+                          </div>
                           </div>
                         </div>
                       </div>
@@ -78,8 +78,8 @@
                             <p>{{locale.modalText.isCorrect}}</p>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">{{locale.buttonLabels.no}}</button>
-                            <button type="button" class="btn btn-success pull-right" data-dismiss="modal">{{locale.buttonLabels.yes}}</button>
+                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">{{locale.buttonLabels.yes}}</button>
+                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">{{locale.buttonLabels.no}}</button>
                           </div>
                         </div>
                       </div>

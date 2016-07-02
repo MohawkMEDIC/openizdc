@@ -46,7 +46,7 @@
                 <h2 class="panel-title text-center">{{locale.panelLabels.login}}</h2>
               </div>
               <div class="panel-body">
-                <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania" class="img-responsive center-block" />
+                <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania.png" class="img-responsive center-block" />
                 <form novalidate="novalidate" name="loginForm" ng-submit="login(username, password)">
                   <fieldset class="form-horizontal form-group">
                     <legend class="text-center">{{locale.panelLabels.loginHelper}}</legend>
@@ -98,7 +98,7 @@
                 <h2 class="panel-title text-center">{{locale.panelLabels.forgotPassword}}</h2>
               </div>
               <div class="panel-body">
-                <form novalidate="novalidate" name="resetPasswordForm" ng-submit="checkUsername(username, resetPasswordForm.$invalid)">
+                <form novalidate="novalidate" name="resetPasswordForm" ng-submit="checkUsername(username)">
                   <fieldset class="form-horizontal form-group">
                     <legend class="text-center">{{locale.panelLabels.enterUsername}}</legend>
                     <br />
@@ -107,11 +107,10 @@
                       <div class="col-xs-9 input-group">
                         <input ng-model="username" type="text" ng-required="true" placeholder="{{locale.inputLabels.username}}" class="form-control" name="username" id="usernameInput" />
                       </div>
-                      
-                    </div>
-                    <div class="col-xs-offset-2 col-xs-9" ng-messages="resetPasswordForm['username'].$error" ng-if="resetPasswordForm['username'].$touched||resetPasswordForm.$submitted">
+                      <div ng-messages="resetPasswordForm['username'].$error" ng-if="resetPasswordForm['username'].$touched||resetPasswordForm.$submitted">
                         <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
                       </div>
+                    </div>
                   </fieldset>
                   <div class ="row">
                     <div class="col-xs-12 text-center">
@@ -305,7 +304,7 @@
               else
               {
                 toastr.success($scope.locale.toastrText.success);
-                window.location.href = window.location.protocol +window.location.hostname + window.location.port + "/applet/org.openiz.applet.dashboard/index";
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.dashboard/index";
               }
             }
             catch(ex)
@@ -323,22 +322,21 @@
       <![CDATA[
 		    layoutApp.controller('ResetController', ['$scope', function ($scope)
 		    {
-			    $scope.checkUsername = function(username, invalid) {
+			    $scope.checkUsername = function(username) {
             try
             {
-              //var result = OpenIZ.Authentication.checkUsername(username);
-              var result = 0;
-              if (result === 0 && !invalid)
+              var result = OpenIZ.Authentication.checkUsername(username);
+              if (result === 0)
               {
-                window.location.href = window.location.protocol + window.location.hostname + window.location.port + "/applet/org.timr.applet.login/resetByEmail";
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/resetByEmail";
               }
               else if (result === 1)
               {
-                window.location.href = window.location.protocol + window.location.hostname + window.location.port + "/applet/org.timr.applet.login/resetByPhone";
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/resetByPhone";
               }
               else if (result === 2)
               {
-                window.location.href = window.location.protocol + window.location.hostname + window.location.port + "/applet/org.timr.applet.login/reset";
+                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/reset";
               }
               else
               {
@@ -355,14 +353,13 @@
 
               try
               {
-                  //var result = OpenIZ.Authentication.resetPassword(password, confirmPassword);
-                  var result = 0;
+                  var result = OpenIZ.Authentication.resetPassword(password, confirmPassword);
                   if(invalid){
                     toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
                   }
                   else if (result === 0)
                   {
-                    window.location.href = window.location.protocol +  window.location.hostname + window.location.port + "/applet/org.timr.applet.login/index";
+                    window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/index";
                   }
                   else
                   {
