@@ -44,12 +44,154 @@
     <string key="btnForgot">Forgot password</string>
     <string key="password">Password</string>
     <string key="username">User Name</string>
-  </strings>
-  <strings lang="sw">
-    <string key="login">Login tosw</string>
-    <string key="btnForgot">Forgot passwordsw</string>
-    <string key="password">Passwordsw</string>
-    <string key="username">User Namesw</string>
+    <string key="locale.navbar.title">TImR</string>
+    <string key="locale.navbar.logout">Logout</string>
+    <string key="locale.navbar.language">Language</string>
+    <string key="locale.navbar.loginRegister">Login</string>
+    <string key="locale.navbar.preferences">Preferences</string>
+      <string key="locale.inputLabels.givenName">Given Name</string>
+      <string key="locale.inputLabels.familyName">Family Name</string>
+      <string key="locale.inputLabels.name">Name</string>
+      <string key="locale.inputLabels.dateOfBirthFrom">Date Of Birth(From)</string>
+      <string key="locale.inputLabels.dateOfBirthTo">Date Of Birth(To)</string>
+      <string key="locale.inputLabels.dateOfBirth">Date Of Birth</string>
+      <string key="locale.inputLabels.gender">Gender</string>
+      <string key="locale.inputLabels.relationshipToPatient">Relationship To Patient</string>
+      <string key="locale.inputLabels.identifier">Identifier</string>
+      <string key="locale.inputLabels.telephone">Telephone</string>
+      <string key="locale.inputLabels.cityVillage">City/Village</string>
+      <string key="locale.inputLabels.accuracy">Accuracy</string>
+      <string key="locale.inputLabels.id">ID</string>
+      <string key="locale.inputLabels.birthPlace">Birth Place</string>
+      <string key="locale.inputLabels.email">E-Mail</string>
+      <string key="locale.inputLabels.username">Username</string>
+      <string key="locale.inputLabels.password">Password</string>
+      <string key="locale.inputLabels.confirmPassword">Confirm Password</string>
+      <string key="locale.inputLabels.healthFacility">Health Facility</string>
+      <string key="locale.inputLabels.motherName">Mother's Name</string>
+      <string key="locale.inputLabels.motherGivenName">Mother's Given Name</string>
+      <string key="locale.inputLabels.motherFamilyName">Mother's Family Name</string>
+      <string key="locale.inputLabels.weight">Weight</string>
+      <string key="locale.inputLabels.unit">Unit</string>
+      <string key="locale.inputLabels.verificationCode">Verification Code</string>
+      <string key="locale.inputLabels.weight">Weight</string>
+      <string key="locale.inputLabels.unit">Unit</string>
+      <string key="locale.errors.fieldLong">This Field Is Too Long</string>
+      <string key="locale.errors.telephone">Incorrect Telephone Number</string>
+      <string key="locale.errors.telephoneRequired">Telephone Number Is Required</string>
+      <string key="locale.errors.email">Incorrect Email</string>
+      <string key="locale.errors.emailRequired">Email Is Required</string>
+      <string key="locale.errors.dob">Incorrect Date Of Birth</string>
+      <string key="locale.errors.dobRequired">Date Of Birth Is Required</string>
+      <string key="locale.errors.familyNameRequired">Family Name Is Required</string>
+      <string key="locale.errors.givenNameRequired">Given Name Is Required</string>
+      <string key="locale.errors.idRequired">ID Number Is Required</string>
+      <string key="locale.errors.usernameRequired">Please enter your Username</string>
+      <string key="locale.errors.passwordRequired">Please enter your Password</string>
+      <string key="locale.errors.confirmPasswordRequired">Please confirm your Password</string>
+      <string key="locale.errors.passwordInvalid">Invalid Password</string>
+      <string key="locale.errors.noMatch">Passwords do not match</string>
+      <string key="locale.errors.weightRequired">Weight Is Required</string>
+      <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
+      <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
+      <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
+      <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
+      <string key="locale.panelLabels.barcode">Barcode</string>
+      <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics Criteria</string>
+      <string key="locale.panelLabels.patientDemographics">Patient Demographics</string>
+      <string key="locale.panelLabels.patientInformation">Patient Information</string>
+      <string key="locale.panelLabels.personalInformation">Personal Information</string>
+      <string key="locale.panelLabels.nextOfKinOptional">Next Of Kin (Optional)</string>
+      <string key="locale.panelLabels.additionalSearchCriteria">Additional Search Criteria</string>
+      <string key="locale.panelLabels.potentialDuplicates">Potential Duplicates</string>
+      <string key="locale.panelLabels.identification">Identification</string>
+      <string key="locale.panelLabels.domicile">Domicile</string>
+      <string key="locale.panelLabels.villageHealthFacility">Village/Health Facility</string>
+      <string key="locale.panelLabels.homeAddress">Home Address</string>
+      <string key="locale.panelLabels.contactInformation">Contact Information</string>
+      <string key="locale.panelLabels.accountInformation">Account Information</string>
+      <string key="locale.panelLabels.additionalInfo">Additional Information</string>
+      <string key="locale.panelLabels.additionalInfoFooter">Please select all that apply</string>
+      <string key="locale.panelLabels.login">Login</string>
+      <string key="locale.panelLabels.register">Register</string>
+      <string key="locale.panelLabels.changePassword">Change Password</string>
+      <string key="locale.panelLabels.loginHelper">Enter your Username and Password below</string>
+      <string key="locale.panelLabels.passwordHelper">Enter your new password</string>
+      <string key="locale.panelLabels.verificationHelper">Enter your verification code</string>
+      <string key="locale.panelLabels.years">Years</string>
+      <string key="locale.panelLabels.months">Months</string>
+      <string key="locale.panelLabels.newWeightEntry">New Weight Entry</string>
+      <string key="locale.panelLabels.previousWeights">Previous Weights</string>
+      <string key="locale.panelLabels.recoveryMethod">Recovery Method</string>
+      <string key="locale.panelLabels.recoveryHelper">Select your recovery method</string>
+      <string key="locale.panelLabels.dashboard">Dashboard</string>
+      <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
+      <string key="locale.panelLabels.enterUsername">Enter your username below</string>
+      <string key="locale.tableHeaders.names">Name(s)</string>
+      <string key="locale.tableHeaders.gender">Gender</string>
+      <string key="locale.tableHeaders.dateOfBirth">Date Of Birth</string>
+      <string key="locale.tableHeaders.cityVillage">City/Village</string>
+      <string key="locale.tableHeaders.actions">Action(s)</string>
+      <string key="locale.tableHeaders.results">Results</string>
+      <string key="locale.tableHeaders.healthFacility">Health Facility</string>
+      <string key="locale.tableHeaders.dateRecorded">Date Recorded</string>
+      <string key="locale.tableHeaders.weight">Weight</string>
+      <string key="locale.tableHeaders.unit">Unit</string>
+      <string key="locale.buttonLabels.scan">Scan</string>
+      <string key="locale.buttonLabels.cancel">Cancel</string>
+      <string key="locale.buttonLabels.search">Search</string>
+      <string key="locale.buttonLabels.view">View</string>
+      <string key="locale.buttonLabels.checkIn">Check In</string>
+      <string key="locale.buttonLabels.checkOut">Check Out</string>
+      <string key="locale.buttonLabels.close">Close</string>
+      <string key="locale.buttonLabels.register">Register</string>
+      <string key="locale.buttonLabels.alreadyRegistered">Already have an account? Login</string>
+      <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
+      <string key="locale.buttonLabels.login">Login</string>
+      <string key="locale.buttonLabels.resetPassword">Reset Password</string>
+      <string key="locale.buttonLabels.patientSearch">Patient Search</string>
+      <string key="locale.buttonLabels.patientRegister">Patient Register</string>
+      <string key="locale.buttonLabels.manage">Manage</string>
+      <string key="locale.buttonLabels.save">Save</string>
+      <string key="locale.buttonLabels.submit">Submit</string>
+      <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
+      <string key="locale.buttonLabels.yes">Yes</string>
+      <string key="locale.buttonLabels.no">No</string>
+      <string key="locale.buttonLabels.patientServices">Patient Services</string>
+      <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
+      <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
+      <string key="locale.text.codeSent">We have sent you a verification code!</string>
+      <string key="locale.checkLabels.yes">Yes</string>
+      <string key="locale.checkLabels.tetanusDiagnosis">Has the patient ever been/currently is diagnosed with Tetanus?</string>
+      <string key="locale.checkLabels.breastfeedingStatus">Does the patient breast-feed?</string>
+      <string key="locale.checkLabels.birthCertificate">Does the patient have a birth certificate?</string>
+      <string key="locale.placeHolders.barcode">XXXXXXXXXXXX</string>
+      <string key="locale.placeHolders.givenName">Given Name</string>
+      <string key="locale.placeHolders.familyName">Family Name</string>
+      <string key="locale.placeHolders.cityVillage">City/Village</string>
+      <string key="locale.placeHolders.telephone">Telephone Number</string>
+      <string key="locale.placeHolders.email">someone@somedomain.com</string>
+      <string key="locale.placeHolders.username">Username</string>
+      <string key="locale.placeHolders.password">Password</string>
+      <string key="locale.placeHolders.confirmPassword">Confirm Password</string>
+      <string key="locale.placeHolders.verificationCode">Verification Code</string>
+      <string key="locale.placeHolders.healthFacility">Health Facility</string>
+      <string key="locale.placeHolders.motherGivenName">Mother's Given Name</string>
+      <string key="locale.placeHolders.motherFamilyName">Mother's Family Name</string>
+      <string key="locale.modalHeaders.checkInPatient">Check In Patient</string>
+      <string key="locale.modalHeaders.confirmWeight">Confirm Weight Update</string>
+      <string key="locale.modalText.nextAppointment">This patient has their next appointment at</string>
+      <string key="locale.modalText.isCorrect">Are you sure this is correct?</string>
+      <string key="locale.modalText.updateWeight">You are about to update the weight of </string>
+      <string key="locale.modalText.to"> to </string>
+      <string key="locale.toastrText.success">Success!</string>
+      <string key="locale.toastrText.invalidForm">Please Check Form Fields For Errors</string>
+      <string key="locale.toastrText.invalidUsername">Unknown or invalid username</string>
+      <string key="locale.toastrText.registrationError">Registration error</string>
+      <string key="locale.toastrText.unexpected">Unexpected error, please contact the adminstrator</string>
+      <string key="locale.toastrHeaders.invalidForm">Invalid Form</string>
+      <string key="locale.footer.layoutFooter">MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT</string>
+
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
@@ -57,62 +199,83 @@
     <contentHtml>
       <bundle>jquery</bundle>
       <bundle>bootstrap</bundle>
-      <bundle>select2</bundle>
       <bundle>angular</bundle>
       <bundle>toastr</bundle>
-      <bundle>chart-js</bundle>
+      <script>layout-controller</script>
       <script>app://openiz.org/asset/js/angular-aria.js</script>
       <script>app://openiz.org/asset/js/angular-messages.js</script>
       <script>app://openiz.org/asset/js/ui-bootstrap.min.js</script>
-      <script>app://openiz.org/asset/js/openiz-localize.js</script>
-      <script>app://openiz.org/asset/js/toastr.min.js</script>
-      <script>strings</script>
-      <script>timeout-controller</script>
       <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
-      <style>app://openiz.org/asset/css/toastr.min.css</style>
 
       <content>
         <!--body xmlns="http://www.w3.org/1999/xhtml"-->
-        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="TimeoutController">
+        <body xmlns="http://www.w3.org/1999/xhtml" ng-controller="LayoutController">
           <div class="navbar navbar-inverse">
-            <div class="container">
-              <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                </button>
-                <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">Tanzania Immunization Registry</a>
-              </div>
-              <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                  <li class="dropdown" id="langDropDown">
-                    <a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                      Language/Lugha <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li role="presentation">
-                        <a href="#" rel="en" ng-click="localize('en');">
-                          English
-                        </a>
-                      </li>
-                      <li role="presentation">
-                        <a href="#" rel="sw" ng-click="localize('sw');">
-                          Kiswahili/Swahili
-                        </a>
-                      </li>
-                    </ul>
-                  </li>
-                  <li id="loginRegisterLink">
-                    <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">{{locale.navbar.loginRegister}}</a>
-                  </li>
-                  <li class="hidden" id="logoutLink">
-                    <button class="btn timr-blue-background" ng-click="logout()">Logout</button>
-                  </li>
-                </ul>
-              </div>
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">{{ 'locale.navbar.title' | i18n }}</a>
+            </div>
+            <div class="navbar-collapse collapse">
+
+              <ul class="nav navbar-nav navbar-right">
+                <li ng-repeat="m in menuItems">
+                  <a ng-if="m.action" ng-href="{{m.action}}">
+                    <img ng-if="m.icon" class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}"/> {{m.text}}
+                  </a>
+                  <a ng-if="m.menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <img class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}"/> {{m.text}}  <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu" ng-if="m.menu">
+                    <li ng-repeat="c in m.menu">
+                      <a ng-href="{{c.action}}">
+                        <img class="pull-left navbar-icon" ng-if="c.icon" ng-src="{{c.icon}}" ng-alt="{{c.text}}" ng-title="{{c.text}}"/> {{c.text}}
+                      </a>
+                    </li>
+                  </ul>
+
+                </li>
+                <li class="dropdown" id="langDropDown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-globe"></span> {{ 'locale.navbar.language' | i18n }} <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li role="presentation">
+                      <a href="#" rel="en" ng-click="setLocale('en');">
+                        English
+                      </a>
+                    </li>
+                    <li role="presentation">
+                      <a href="#" rel="sw" ng-click="setLocale('sw');">
+                        Kiswahili/Swahili
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li id="loginRegisterLink" ng-hide="session.identity.name">
+                  <a href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.navbar.loginRegister' | i18n }}</a>
+                </li>
+                <li class="dropdown" ng-show="session.identity.name">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-user"></span> {{ session.identity.name }}  <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li role="presentation">
+                      <a href="#">
+                        <span class="glyphicon glyphicon-wrench"></span> {{ 'locale.navbar.preferences' | i18n }}
+                      </a>
+                    </li>
+                    <li role="presentation">
+                      <a href="#" ng-click="logout();">
+                        <span class="glyphicon glyphicon-log-out"></span> {{ 'locale.navbar.logout' | i18n }}
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
             </div>
           </div>
           <div class="container">
@@ -127,10 +290,22 @@
             <div class="container">
               <p class="text-muted text-center">
                 &#169;
-                {{locale.footer.layoutFooter}}
+                {{ 'locale.footer.layoutFooter' | i18n }}
               </p>
             </div>
           </footer>
+          <div class="modal hide" data-backdrop="static" id="waitDialog">
+            <div class="modal-body">
+              <div class="modal-header">
+                <h1>{{ 'locale.waitText' | i18n }}</h1>
+              </div>
+              <div class="modal-body">
+                <div class="progress progress-striped active">
+                  <div class="bar" style="width: 100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </body>
       </content>
     </contentHtml>
@@ -159,25 +334,25 @@
                         <fieldset class="form-horizontal">
 
                           <div class="form-group">
-                            <label class="col-xs-2 control-label" for="dobToInput">{{locale.inputLabels.dateOfBirth}}</label>
+                            <label class="col-xs-2 control-label" for="dobToInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
                             <div class="date col-xs-4" id="dobToPicker">
                               <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
                               </input>
                             </div>
 
-                            <label class="col-xs-2 control-label" for="motherNameInput">{{locale.inputLabels.motherName}}</label>
+                            <label class="col-xs-2 control-label" for="motherNameInput">{{ 'locale.inputLabels.motherName' | i18n }}</label>
                             <div class ="col-xs-4">
                               <input type="text" name="motherName" readonly ="true" id="motherNameInput" ng-value="patient.MotherName"  ng-model="motherNameInput" class="form-control" aria-describedby="motherNameAddon" />
                             </div>
                           </div>
 
                           <div class="form-group">
-                            <label class="col-xs-2 control-label" for="villageInput">{{locale.inputLabels.cityVillage}}</label>
+                            <label class="col-xs-2 control-label" for="villageInput">{{ 'locale.inputLabels.cityVillage' | i18n }}</label>
                             <div class="col-xs-4">
                               <input type="text" name="village" id="villageInput" ng-model="villageInput" ng-value="patient.Village" readonly ="true" class="form-control" aria-describedby="villageAddon" />
                             </div>
 
-                            <label class="col-xs-2 control-label" for="healthFacilityInput">{{locale.inputLabels.healthFacility}}</label>
+                            <label class="col-xs-2 control-label" for="healthFacilityInput">{{ 'locale.inputLabels.healthFacility' | i18n }}</label>
                             <div class="col-xs-4">
                               <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
                             </div>
@@ -186,7 +361,7 @@
                           <div class="form-group">
                             <div class="col-xs-2 col-xs-offset-8">
                               <button class="btn btn-primary">
-                                {{locale.buttonLabels.checkIn}}
+                                {{ 'locale.buttonLabels.checkIn' | i18n }}
                               </button>
                             </div>
                             <div class="col-xs-2">
@@ -211,7 +386,7 @@
   <asset name="patient-layout-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      layoutApp.controller('PatientLayoutController', ['$scope', function($scope){
+      layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize){
         $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
         var dateOfBirth = new Date($scope.patient.DateOfBirth);
         $scope.displayDate = dateOfBirth.getDate() + "/" + dateOfBirth.getMonth() + "/"  + dateOfBirth.getFullYear();
@@ -233,11 +408,17 @@
     ]]>
     </contentText>
   </asset>
-  <asset name="timeout-controller" mimeType="text/javascript">
+  <asset name="layout-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
             var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
-
+            
+            // Configure the safe ng-urls
+            layoutApp.config(['$compileProvider', function($compileProvider) {
+              $compileProvider.aHrefSanitizationWhitelist(/^\s*(app|tel):/);
+              $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
+              
+            }]);
             var compareTo = function() {
                 return {
                     require: "ngModel",
@@ -259,16 +440,18 @@
 
             layoutApp.directive("compareTo", compareTo);
 
-            layoutApp.controller('TimeoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
-
-            $scope.locale = getStrings();
-            $scope.localize = function(lang)
+            layoutApp.controller('LayoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
+$
+            $scope.setLocale = function(lang)
             {
-              OpenIZ.Localization.setLocale(lang);
-              $scope.locale = getStrings();
-              console.log($scope.locale);
-              console.log($scope.locale.gender);
+              localize.setLanguage(lang);
+              $scope.menuItems = OpenIZ.App.getMenus();
             }
+            
+            // Get session information
+            $scope.session = OpenIZ.Authentication.getSession();
+            $scope.menuItems = OpenIZ.App.getMenus();
+            
             var genders = ["Male", "Female", "Other"];
             var firstNames = ["Tifany", "Rufina", "Nancy", "Merlin", "Arlinda", "Toni", "Zoraida", "Clark", "Carline", "Terrie",
             "Marci", "Domenica", "Wilson", "Rich", "Drucilla", "Heike", "Ray", "Neely", "Jaime", "Wallace"];
@@ -276,35 +459,18 @@
             "Horne", "Gonzales", "Anguilar", "Vance", "Reyes", "Compton", "Maldonado", "Rose", "Ford", "Carey"];
 
             toastr.options = {"positionClass":"toast-top-center"};
-            const TIMEOUT_TIME = 3000000;
-            var timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
-            $scope.resetTimeout = function(){
-              $timeout.cancel(timer);
-              timer = $timeout(function(){timeoutWarning()}, TIMEOUT_TIME);
-              if(toastr.options.timeOut == TIMEOUT_TIME){
-                toastr.clear();
-                toastr.options = {"positionClass":"toast-top-center",
-                "timeOut": "5000"};
-                toastr.success('You\'re back!');
-              }
-              }
+            const TIMEOUT_TIME = 30000;
+            
             $scope.randomPatient = function(){
                 var dob = new Date();
                 dob.setFullYear(Math.floor(Math.random()*45)+1970, Math.floor(Math.random()*12+1), Math.floor(Math.random()*28+1));
                 return {DateOfBirth: dob,Village: "Village "+ (Math.floor(Math.random()*500)+1), Address: ""+(Math.floor(Math.random()*10000)+1) +" Main Street", HealthFacility: "Health Facility " + (Math.floor(Math.random()*200)+1), FirstName: firstNames[Math.floor(Math.random() * 20)], LastName: lastNames[Math.floor(Math.random()*20)], Gender: genders[Math.floor(Math.random()*3)]};
 
-            }
-            function timeoutWarning(){
-            $timeout.cancel(timer);
-            var timer = $timeout(function(){$scope.logout()}, TIMEOUT_TIME);
-            toastr.options = {"positionClass":"toast-top-center",
-            "timeOut": TIMEOUT_TIME.toString()};
-            toastr.error('Tap the screen to let us know you\'re there.', 'Timeout Warning');
-            }
+            };
 
             $scope.logout = function(){
-            OpenIZ.Authentication.abandonSession();
-            $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
+              OpenIZ.Authentication.abandonSession();
+              $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
             }
 
             }]);
@@ -344,7 +510,6 @@
 				      },
               navbar:{
                 loginRegister: "Ingia/Daftari"
-
               },
 				      identificationTypes: {
 				      	yellowCardId: "Kadi Ya Njano ID",

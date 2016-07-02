@@ -6,33 +6,8 @@
     <groupName lang="en">OpenIZ Core</groupName>
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
+    <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
   </info>
-  <strings lang="en">
-    <string key="pnlLogin">Login</string>
-    <string key="pnlLoginHelper">Enter Your Username and Password Below</string>
-    <string key="inpUsername">Username</string>
-    <string key="inpPassword">Password</string>
-    <string key="plcUserName">Username</string>
-    <string key="plcPassword">Password</string>
-    <string key="errPasswordRequired">Please Enter Your Password</string>
-    <string key="errUsernameRequired">Please Enter Your Username</string>
-    <string key="btnLogin">Login</string>
-    <string key="btnRegister">Register</string>
-    <string key="btnForgotPassword">Forgot Password?</string>
-  </strings>
-  <strings lang="sw">
-    <string key="pnlLogin">Ingia</string>
-    <string key="pnlLoginHelper">Kuingia Jina La Mtumiaji</string>
-    <string key="inpUsername">Jina La Mtumiaji</string>
-    <string key="inpPassword">Nywila</string>
-    <string key="plcUserName">Jina La Mtumiaji</string>
-    <string key="plcPassword">Nywila</string>
-    <string key="errPasswordRequired">Tafadhali Kuingia Nywila Lako</string>
-    <string key="errUsernameRequired">Tafadhali Kuingia Jina La Mtumiaji Lako</string>
-    <string key="btnLogin">Ingia</string>
-    <string key="btnRegister">Kusajila</string>
-    <string key="btnForgotPassword">Umesaha</string>
-  </strings>
   <asset name="index" mimeType="text/html">
     <contentHtml>
       <!-- absolute reference to the layout -->
@@ -43,38 +18,38 @@
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h2 class="panel-title text-center">{{locale.panelLabels.login}}</h2>
+                <h2 class="panel-title text-center">{{ 'locale.panelLabels.login' | i18n }}</h2>
               </div>
               <div class="panel-body">
-                <img src="app://openiz.org/drawable/coat_of_arms_of_tanzania.png" class="img-responsive center-block" />
+                <img src="app://openiz.org/assets/img/timr_logo_lg.png" class="img-responsive center-block" />
                 <form novalidate="novalidate" name="loginForm" ng-submit="login(username, password)">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.loginHelper}}</legend>
+                    <legend class="text-center">{{ 'locale.panelLabels.loginHelper' | i18n }}</legend>
                     <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
-                      <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
+                      <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.username' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="username" type="text" ng-required="true" placeholder="{{locale.placeholders.username}}" class="form-control" name="username" id="usernameInput" />
+                        <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.placeHolders.username' | i18n }}" class="form-control" name="username" id="usernameInput"/>
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="loginForm['username'].$error" ng-if="loginForm['username'].$touched||loginForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.usernameRequired' | i18n }}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid }">
-                      <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
+                      <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.password' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="password" type="password" ng-required="true" placeholder="{{locale.placeholders.password}}" class="form-control" name="password" id="passwordInput" />
+                        <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.placeHolders.password' | i18n }}" class="form-control" name="password" id="passwordInput" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="loginForm['password'].$error" ng-if="loginForm['password'].$touched||loginForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.passwordRequired' | i18n }}</p>
                     </div>
                   </fieldset>
                   <div class ="row">
                     <div class="col-xs-12 text-center">
-                      <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.timr.applet.register/index">{{locale.buttonLabels.register}}</a>
-                      <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.login/resetName">{{locale.buttonLabels.forgotPassword}}</a>
-                      <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.login}}</button>
+                      <a class="btn btn-success pull-left" href="app://openiz.org/applet/org.timr.applet.register/index">{{ 'locale.buttonLabels.register' | i18n }}</a>
+                      <a class="btn btn-warning" href="app://openiz.org/applet/org.timr.applet.login/resetName">{{ 'locale.buttonLabels.forgotPassword' | i18n }}</a>
+                      <button type="submit" class="btn btn-primary pull-right" >{{ 'locale.buttonLabels.login' | i18n }}</button>
                     </div>
                   </div>
                 </form>
@@ -95,27 +70,27 @@
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h2 class="panel-title text-center">{{locale.panelLabels.forgotPassword}}</h2>
+                <h2 class="panel-title text-center">{{ 'locale.panelLabels.forgotPassword' | i18n }}</h2>
               </div>
               <div class="panel-body">
                 <form novalidate="novalidate" name="resetPasswordForm" ng-submit="checkUsername(username)">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.enterUsername}}</legend>
+                    <legend class="text-center">{{ 'locale.panelLabels.enterUsername' | i18n }}</legend>
                     <br />
                     <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.username.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.username.$invalid }">
-                      <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
+                      <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.username' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="username" type="text" ng-required="true" placeholder="{{locale.inputLabels.username}}" class="form-control" name="username" id="usernameInput" />
+                        <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.inputLabels.username' | i18n }}" class="form-control" name="username" id="usernameInput" />
                       </div>
                       <div ng-messages="resetPasswordForm['username'].$error" ng-if="resetPasswordForm['username'].$touched||resetPasswordForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
+                        <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.usernameRequired' | i18n }}</p>
                       </div>
                     </div>
                   </fieldset>
                   <div class ="row">
                     <div class="col-xs-12 text-center">
-                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.login}}</a>
-                      <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.submit}}</button>
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.buttonLabels.login' | i18n }}</a>
+                      <button type="submit" class="btn btn-primary pull-right">{{ 'locale.buttonLabels.submit' | i18n }}</button>
                     </div>
                   </div>
                 </form>
@@ -136,15 +111,15 @@
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h2 class="panel-title text-center">{{locale.text.codeSent}}</h2>
+                <h2 class="panel-title text-center">{{ 'locale.text.codeSent' | i18n }}</h2>
               </div>
               <div class="panel-body">
                 <div class="container">
-                  <p>{{locale.text.checkEmail}}</p>
+                  <p>{{ 'locale.text.checkEmail' | i18n }}</p>
                   <div class ="form-group">
                     <div class="col-xs-10 text-center">
-                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.login}}</a>
-                      <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">{{locale.buttonLabels.codeReceived}}</a>
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.buttonLabels.login' | i18n }}</a>
+                      <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">{{ 'locale.buttonLabels.codeReceived' | i18n }}</a>
                     </div>
                   </div>
                 </div>
@@ -172,7 +147,7 @@
                   <p>Please check your phone and use the code received to reset your password.</p>
                   <div class ="form-group">
                     <div class="col-xs-12 text-center">
-                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.login}}</a>
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.buttonLabels.login' | i18n }}</a>
                       <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">Received your code? Reset your password</a>
                     </div>
                   </div>
@@ -194,29 +169,29 @@
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h2 class="panel-title text-center">{{locale.panelLabels.recoveryMethod}}</h2>
+                <h2 class="panel-title text-center">{{ 'locale.panelLabels.recoveryMethod' | i18n }}</h2>
               </div>
               <div class="panel-body">
                 <form novalidate="novalidate">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="control-label">{{locale.panelLabels.recoveryHelper}}</legend>
+                    <legend class="control-label">{{ 'locale.panelLabels.recoveryHelper' | i18n }}</legend>
                     <div class="form-group">
                       <div class="radio">
                         <label for="emailRadio" class="col-xs-4 radio-inline control-label">
-                          <input id="emailRadio" class="col-xs-8" type="radio" name="resetMethod" value="Email" /> {{locale.inputLabels.email}}
+                          <input id="emailRadio" class="col-xs-8" type="radio" name="resetMethod" value="Email" /> {{ 'locale.inputLabels.email' | i18n }}
                         </label>
                       </div>
                       <div class="radio">
                         <label for="phoneRadio" class="col-xs-4 radio-inline control-label">
-                          <input id="phoneRadio" class="col-xs-8" type="radio" name="resetMethod" value="Phone" /> {{locale.inputLabels.telephone}}
+                          <input id="phoneRadio" class="col-xs-8" type="radio" name="resetMethod" value="Phone" /> {{ 'locale.inputLabels.telephone' | i18n }}
                         </label>
                       </div>
                     </div>
                   </fieldset>
                   <div class ="form-group">
                     <div class="col-xs-12 text-center">
-                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.login}}</a>
-                      <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">{{locale.buttonLabels.sendCode}}</a>
+                      <a class="btn btn-danger pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.buttonLabels.login' | i18n }}</a>
+                      <a class="btn btn-primary pull-right" href="app://openiz.org/applet/org.timr.applet.login/newPassword">{{ 'locale.buttonLabels.sendCode' | i18n }}</a>
                     </div>
                   </div>
                 </form>
@@ -237,46 +212,46 @@
           <div class="col-xs-12">
             <div class="panel panel-default">
               <div class="panel-heading">
-                <h2 class="panel-title text-center">{{locale.panelLabels.changePassword}}</h2>
+                <h2 class="panel-title text-center">{{ 'locale.panelLabels.changePassword' | i18n }}</h2>
               </div>
               <div class="panel-body">
                 <form novalidate="novalidate" name="resetPasswordForm" ng-submit="resetPassword(password, confirmPassword, verificationCode, resetPasswordForm.$invalid)">
                   <fieldset class="form-horizontal form-group">
-                    <legend class="text-center">{{locale.panelLabels.verificationHelper}}</legend>
+                    <legend class="text-center">{{ 'locale.panelLabels.verificationHelper' | i18n }}</legend>
                     <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.verificationCode.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.verificationCode.$invalid }">
-                      <label for="verificationCodeInput" class="col-xs-2 control-label">{{locale.inputLabels.verificationCode}}</label>
+                      <label for="verificationCodeInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.verificationCode' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="verificationCode" type="text" ng-required="true" placeholder="{{locale.placeholders.verificationCode}}" class="form-control" name="verificationCode" id="verificationCodeInput" />
+                        <input ng-model="verificationCode" type="text" ng-required="true" placeholder="{{ 'locale.placeHolders.verificationCode' | i18n }}" class="form-control" name="verificationCode" id="verificationCodeInput" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="resetPasswordForm.verificationCode.$error" ng-if="resetPasswordForm.verificationCode.$touched||resetPasswordForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.verifyCodeRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.verifyCodeRequired' | i18n }}</p>
                     </div>
 
-                    <legend class="text-center">{{locale.panelLabels.passwordHelper}}</legend>
+                    <legend class="text-center">{{ 'locale.panelLabels.passwordHelper' | i18n }}</legend>
                     <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.password.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.password.$invalid }">
-                      <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
+                      <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.password' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{locale.placeholders.password}}" />
+                        <input ng-model="password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{ 'locale.placeHolders.password' | i18n }}" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="resetPasswordForm['password'].$error" ng-if="resetPasswordForm['password'].$touched||resetPasswordForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.passwordRequired' | i18n }}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (resetPasswordForm.confirmPassword.$touched||resetPasswordForm.$submitted) &amp;&amp; resetPasswordForm.confirmPassword.$invalid }">
-                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{locale.inputLabels.confirmPassword}}</label>
+                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.confirmPassword' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="confirmPassword" compare-to="password" ng-required="true" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{locale.placeholders.confirmPassword}}" />
+                        <input ng-model="confirmPassword" compare-to="password" ng-required="true" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{ 'locale.placeHolders.confirmPassword' | i18n }}" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="resetPasswordForm['confirmPassword'].$error" ng-if="resetPasswordForm['confirmPassword'].$touched||resetPasswordForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.confirmPasswordRequired}}</p>
-                      <p class="alert alert-danger" ng-message="compareTo">{{locale.errors.noMatch}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.confirmPasswordRequired' | i18n }}</p>
+                      <p class="alert alert-danger" ng-message="compareTo">{{ 'locale.errors.noMatch' | i18n }}</p>
                     </div>
                   </fieldset>
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.resetPassword}}</button>
+                    <button type="submit" class="btn btn-primary pull-right">{{ 'locale.buttonLabels.resetPassword' | i18n }}</button>
                   </div>
                 </form>
               </div>
@@ -289,38 +264,44 @@
   <asset name="login-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-
-		    layoutApp.controller('LoginController', ['$scope', function ($scope)
-		    {
+		    layoutApp.controller('LoginController', ['$scope', 'localize', function ($scope, localize)
+		    { 
 			    $scope.login = function(username, password) {
-            try
-            {
-              var session = OpenIZ.Authentication.login(username, password);
-
-              if(session == null)
-              {
-                toastr.error($scope.locale.toastrText.invalidForm);
-              }
-              else
-              {
-                toastr.success($scope.locale.toastrText.success);
-                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.dashboard/index";
-              }
-            }
-            catch(ex)
-            {
-              toastr.error($scope.locale.toastrText.unexpected);
-            }
-          };
-
-	    }]);
+					$('#waitDialog').modal('show');
+          
+					OpenIZ.Authentication.loginAsync({
+						userName: username, 
+						password: password,
+						continueWith: function(r) {
+							if(r == null)
+							{ 
+								toastr.error(localize.getString('locale.toastrText.invalidForm'));
+							}
+							else
+							{
+                if(OpenIZ.urlParams['returnUrl'])
+								  window.location.href = OpenIZ.urlParams['returnUrl']; 
+                 else
+                  window.location.href = "/applet/org.timr.applet.dashboard/index";
+							}
+						},
+						onException : function(ex) {
+							$('#waitDialog').modal('hide');
+							if(ex.message)
+								toastr.error(ex.message + ":" + ex.details);
+							else
+								toastr.error(localize.getString('locale.toastrText.unexpected'));
+						}
+					});
+				};
+			}]);
       ]]>
     </contentText>
   </asset>
   <asset name="reset-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-		    layoutApp.controller('ResetController', ['$scope', function ($scope)
+		    layoutApp.controller('ResetController', ['$scope', 'localize', function ($scope, localize)
 		    {
 			    $scope.checkUsername = function(username) {
             try
@@ -340,7 +321,7 @@
               }
               else
               {
-                toastr.error($scope.locale.toastrText.invalidUsername);
+                toastr.error(localize.getString('locale.toastrText.invalidUsername'));
               }
             }
             catch(ex)
@@ -355,11 +336,11 @@
               {
                   var result = OpenIZ.Authentication.resetPassword(password, confirmPassword);
                   if(invalid){
-                    toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
+                    toastr.error(localize.getString('toastrText.invalidForm'), localize.getString('locale.toastrHeaders.invalidForm'));
                   }
                   else if (result === 0)
                   {
-                    window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/index";
+                    window.location.href = "/applet/org.timr.applet.login/index";
                   }
                   else
                   {

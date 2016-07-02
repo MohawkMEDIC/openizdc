@@ -15,14 +15,30 @@
     border-color: #007FD1;
 }
 
-    .navbar-inverse .navbar-brand {
+@media (max-width: 767px) {
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
         color: #FFFFFF;
     }
+    .dropdown-menu .navbar-icon {
+        filter:invert(100%);
+        -webkit-filter:invert(100%);
+        -moz-filter: invert(100%);
+        -ms-filter: invert(100%);
+    }
+}
+.navbar-inverse .navbar-nav > li > a,  .navbar-inverse .navbar-brand {
+     color: #FFFFFF;
+}
+.navbar-inverse .navbar-nav > li > a > .navbar-icon {
+    filter:invert(100%);
+    -webkit-filter:invert(100%);
+    -moz-filter: invert(100%);
+    -ms-filter: invert(100%);
+}
 
-        .navbar-inverse .navbar-brand > li > a {
-            color: #FFFFFF;
-        }
-
+.navbar-icon {
+    height: 24px;
+}
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/

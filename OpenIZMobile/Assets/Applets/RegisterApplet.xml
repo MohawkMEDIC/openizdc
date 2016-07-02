@@ -8,19 +8,16 @@
     <groupName lang="sw">Utawala</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
+    <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
+
   </info>
-  <menuItem launch="app://openiz.org/applet/org.timr.applet.register/index">
-    <icon>app://openiz.org/drawable/cogs.png</icon>
-    <text lang="en">Register</text>
-    <text lang="sw">Daftari</text>
-  </menuItem>
   <asset name="index" mimeType="text/html">
     <contentHtml>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>register-controller</script>
       <content>
-        <div class="row" ng-controller="RegisterController">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="row" ng-controller="RegisterController">
           <div class="col-xs-12">
             <form novalidate="novalidate" name="registerForm" ng-submit="register()">
               <div class="panel panel-default">
@@ -171,7 +168,7 @@
     <contentText>
       <![CDATA[
 
-		  layoutApp.controller('RegisterController', ['$scope', function ($scope)
+		  layoutApp.controller('RegisterController', ['$scope', 'localize', function ($scope, localize)
 		  {
           $scope.user = {
             fullName: {
@@ -233,17 +230,17 @@
 
               if(userProfile == null)
               {
-                toastr.error($scope.locale.toastrText.registrationError);
+                toastr.error(localize.getString('locale.toastrText.registrationError'));
               }
               else
               {
-                toastr.success($scope.locale.toastrText.success);
-                window.location.href = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/applet/org.timr.applet.login/index";
+                toastr.success(localize.getString('locale.toastrText.success'));
+                window.location.href = "/applet/org.timr.applet.login/index";
               }
             }
             catch(ex)
             {
-              toastr.error($scope.locale.modalText.unexpected);
+              toastr.error(localize.getString('locale.modalText.unexpected'));
             }
           };
       }]);

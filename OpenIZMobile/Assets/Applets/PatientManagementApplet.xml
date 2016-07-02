@@ -6,6 +6,8 @@
     <groupName lang="en">Administration</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
+    <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
+
   </info>
   <asset name="index" mimeType="text/html">
     <contentHtml>
@@ -123,7 +125,7 @@
   <asset name="patient-manage-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      layoutApp.controller('PatientManagementController', ['$scope', function ($scope)
+      layoutApp.controller('PatientManagementController', ['$scope', 'localize' function ($scope, localize)
 		  {
 
          $scope.checkWeightFields = function(invalid) {
@@ -239,4 +241,5 @@
       ]]>
     </contentText>
   </asset>
+  
 </AppletManifest>
