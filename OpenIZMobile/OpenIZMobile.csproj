@@ -255,7 +255,9 @@
     <AndroidAsset Include="Assets\js\ui-bootstrap.min.js" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\_LayoutApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\_LayoutApplet.xml">
+      <SubType>Designer</SubType>
+    </AndroidAsset>
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\PatientAdministrationApplet.xml">
@@ -270,5 +272,8 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\PatientManagementApplet.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\img\timr_logo_lg.png" />
   </ItemGroup>
 </Project>

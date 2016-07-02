@@ -9,6 +9,9 @@ using Android.App;
 using Android.Content.Res;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.IO;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -18,6 +21,39 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	/// </summary>
 	public class AppletFunctionBridge : Java.Lang.Object
 	{
+
+        /// <summary>
+        /// Menu information
+        /// </summary>
+        [JsonObject]
+        private class MenuInformation
+        {
+           
+
+            /// <summary>
+            /// Get or sets the menu
+            /// </summary>
+            [JsonProperty("menu")]
+            public List<MenuInformation> Menu { get; set; }
+
+            /// <summary>
+            /// Icon text
+            /// </summary>
+            [JsonProperty("icon")]
+            public String Icon { get; set; }
+
+            /// <summary>
+            /// Text for the menu item
+            /// </summary>
+            [JsonProperty("text")]
+            public String Text { get; set; }
+
+            /// <summary>
+            /// Action
+            /// </summary>
+            [JsonProperty("action")]
+            public String Action { get; set; }
+        }
 
 		// Context
 		private Context m_context;
@@ -44,6 +80,63 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		{
 			Toast.MakeText (this.m_context, toastText, ToastLength.Short).Show();
 		}
+
+        /// <summary>
+        /// Get the menu items for the current user for specified language
+        /// </summary>
+        [JavascriptInterface]
+        [Export]
+        public String GetMenus()
+        {
+            try
+            {
+
+                // Cannot have menus if not logged in
+                if (ApplicationContext.Current.Principal == null) return null;
+
+                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.Where(
+                    o=>o.Info.Policies?.Any(p=>ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false
+                ).SelectMany(o => o.Menus);
+                List<MenuInformation> retVal = new List<MenuInformation>();
+               
+                // Create menus
+                foreach(var mnu in rootMenus)
+                    this.ProcessMenuItem(mnu, retVal);
+
+                return JniUtil.ToJson(retVal);
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error retrieving menus: {0}", e);
+                return "err_menu";
+            }
+        }
+
+        /// <summary>
+        /// Process menu item
+        /// </summary>
+        private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
+        {
+            // TODO: Demand permission
+            string menuText = menu.GetText(this.GetLocale());
+            var existing = retVal.Find(o => o.Text == menuText);
+            if (existing == null)
+            {
+                existing = new MenuInformation()
+                {
+                    Action = menu.Launcher,
+                    Icon = menu.Icon,
+                    Text = menuText
+                };
+                retVal.Add(existing);
+            }
+            if(menu.Menus.Count > 0)
+            {
+                existing.Menu = new List<MenuInformation>();
+                foreach (var child in menu.Menus)
+                    this.ProcessMenuItem(child, existing.Menu);
+            }
+        }
 
 		/// <summary>
 		/// Navigate the specified appletId and context.
@@ -72,11 +165,20 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 var appletResource = AndroidApplicationContext.Current.LoadedApplets.GetStrings(this.GetLocale()).FirstOrDefault(o => o.Key == stringId).Value;
-                return appletResource ?? this.m_context.Resources.GetString(this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName));
+                if (appletResource != null)
+                    return appletResource;
+                else
+                {
+                    var androidStringId = this.m_context.Resources.GetIdentifier(stringId, "string", this.m_context.PackageName);
+                    if (androidStringId > 0)
+                        return this.m_context.Resources.GetString(androidStringId);
+                    else
+                        return stringId;
+                }
             }
             catch(Exception e)
             {
-                this.m_tracer.TraceWarning("Error retreiving string {0}", stringId);
+                //this.m_tracer.TraceWarning("Error retreiving string {0}", stringId);
                 return stringId;
             }
 		}

@@ -132,7 +132,7 @@ namespace OpenIZ.Mobile.Core.Android
 					// Set master application context
 					ApplicationContext.Current = retVal;
 					retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
-
+                    
 					// Load configured applets
 					var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection> ().Applets;
 
@@ -180,6 +180,9 @@ namespace OpenIZ.Mobile.Core.Android
 					} finally {
 						retVal.ConfigurationManager.Save ();
 					}
+
+                    // Start daemons
+                    retVal.StartDaemons();
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;

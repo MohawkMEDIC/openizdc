@@ -25,7 +25,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// </summary>
 		/// <value>The form concept.</value>
 		[Column("form_concept_uuid"), Indexed, NotNull, MaxLength(16)]
-		public byte[] FormConcept {
+		public byte[] FormConceptUuid {
 			get;
 			set;
 		}

@@ -10,6 +10,7 @@ using OpenIZ.Mobile.Core.Data.Model.Security;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using System.IO;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -116,6 +117,15 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();
                     db.CreateTable<DbProvider>();
+
+                    tracer.TraceInfo("Installing Act Tables...");
+                    db.CreateTable<DbAct>();
+                    db.CreateTable<DbObervation>();
+                    db.CreateTable<DbCodedObservation>();
+                    db.CreateTable<DbQuantityObservation>();
+                    db.CreateTable<DbTextObservation>();
+                    db.CreateTable<DbSubstanceAdministration>();
+                    db.CreateTable<DbPatientEncounter>();
 
                     tracer.TraceInfo("Initializing Data & Views...");
 

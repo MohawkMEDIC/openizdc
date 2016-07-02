@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Core.Diagnostics;
+using System.Linq;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -122,7 +124,22 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The device.</value>
 		public abstract SecurityDevice Device { get; }
-
+        
+        /// <summary>
+        /// Start the daemon services
+        /// </summary>
+        protected void StartDaemons()
+        {
+            ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            var daemons = config.Services.OfType<IDaemonService>();
+            Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
+            foreach (var d in daemons)
+            {
+                tracer.TraceInfo("Starting {0}", d.GetType().Name);
+                if (!d.Start())
+                    tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+            }
+        }
     }
 }
 

@@ -18,7 +18,8 @@
 </style>
 
 <style name="OpenIZ" parent="android:Theme.Holo.Light.DarkActionBar">
-    <item name="android:actionBarStyle">@style/ActionBar</item>
+  <item name="android:windowNoTitle">true</item>
+
 </style>
 <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
 	<item name="android:background">#2c3e50</item>
@@ -27,7 +28,6 @@
 
 <style name="OpenIZ.NoTitle">
     <item name="android:windowNoTitle">true</item>  
-
 </style>
 
     <style name="OpenIZ.Splash" >

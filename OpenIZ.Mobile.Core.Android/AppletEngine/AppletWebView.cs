@@ -75,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 		private void Initialize(Context context)
 		{
 			this.m_tracer.TraceVerbose ("Initializing applet web viewer");
-			this.Settings.CacheMode = CacheModes.Default;
+			this.Settings.CacheMode = CacheModes.CacheElseNetwork;
 			this.Settings.JavaScriptEnabled = true;
 			this.Settings.BlockNetworkLoads = true;
 			this.Settings.BuiltInZoomControls = false;

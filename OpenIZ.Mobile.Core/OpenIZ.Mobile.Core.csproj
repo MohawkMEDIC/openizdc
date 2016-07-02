@@ -29,6 +29,12 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\Model\Acts\DbAct.cs" />
+    <Compile Include="Data\Model\Acts\DbActParticipation.cs" />
+    <Compile Include="Data\Model\Acts\DbActRelationship.cs" />
+    <Compile Include="Data\Model\Acts\DbObervation.cs" />
+    <Compile Include="Data\Model\Acts\DbPatientEncounter.cs" />
+    <Compile Include="Data\Model\Acts\DbSubstanceAdministration.cs" />
     <Compile Include="Data\Model\DataType\DbAssigningAuthority.cs" />
     <Compile Include="Data\Model\Entities\DbEntityRelationship.cs" />
     <Compile Include="Data\Model\Entities\DbGenericNameComponent.cs" />
@@ -42,6 +48,8 @@
     <Compile Include="Data\Persistence\EntityDerivedPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ManufacturedMaterialPersistenceService.cs" />
+    <Compile Include="Data\Persistence\MaterialPersistenceService.cs" />
     <Compile Include="Data\Persistence\OrganizationPersistenceService.cs" />
     <Compile Include="Data\Persistence\PatientPersistenceService.cs" />
     <Compile Include="Data\Persistence\PersonPersistenceService.cs" />
@@ -76,6 +84,7 @@
     <Compile Include="Exceptions\PolicyViolationException.cs" />
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
+    <Compile Include="Services\IDaemonService.cs" />
     <Compile Include="Services\IIdentityProviderService.cs" />
     <Compile Include="Services\IPolicyDecisionService.cs" />
     <Compile Include="Services\IPolicyInformationService.cs" />
@@ -173,4 +182,5 @@
   <ItemGroup>
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

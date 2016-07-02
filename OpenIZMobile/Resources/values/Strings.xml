@@ -8,7 +8,7 @@
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
 	<string name="installing_applets">Starting Applets...</string>
-
+  <string name="loading">Please Wait...</string>
 	<!-- Setup screen -->
 	<string name="setup_title">Welcome to TImR!</string>
 	<string name="setup_subTitle">Before you can use TImR you need to configure it. First, you\'ll need to join this app to an TImR and setup some security controls.</string>
