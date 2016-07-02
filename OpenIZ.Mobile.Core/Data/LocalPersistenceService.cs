@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -252,6 +253,36 @@ namespace OpenIZ.Mobile.Core.Data
             }
         }
 
+        // Mapper
+        protected static ModelMapper m_mapper;
+
+        // Static CTOR
+        public static ModelMapper Mapper
+        {
+            get
+            {
+                if (m_mapper == null)
+                {
+                    var tracer = Tracer.GetTracer(typeof(LocalPersistenceService));
+                    try
+                    {
+                        m_mapper = new ModelMapper(typeof(LocalPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
+                    }
+                    catch (ModelMapValidationException ex)
+                    {
+                        tracer.TraceError("Error validating model map: {0}", ex);
+                        throw ex;
+                    }
+                    catch (Exception ex)
+                    {
+                        tracer.TraceError("Error initializing persistence: {0}", ex);
+                        throw ex;
+                    }
+                }
+                return m_mapper;
+            }
+        }
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(LocalPersistenceService));
 
@@ -261,7 +292,7 @@ namespace OpenIZ.Mobile.Core.Data
 			var appSection = ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection> ();
 
 			// Iterate the persistence services
-			foreach(var t in typeof(LocalPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o=>o.Namespace == "OpenIZ.Mobile.Core.Data.Persistence" && !o.GetTypeInfo().IsAbstract))
+			foreach(var t in typeof(LocalPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o=>o.Namespace == "OpenIZ.Mobile.Core.Data.Persistence" && !o.GetTypeInfo().IsAbstract && !o.GetTypeInfo().IsGenericTypeDefinition))
 			{
 				try
 				{

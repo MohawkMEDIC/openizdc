@@ -56,6 +56,9 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			this.m_token = token;
 
 			String[] tokenObjects = token.Split ('.');
+            // Correct each token to be proper B64 encoding
+            for (int i = 0; i < tokenObjects.Length; i++)
+                tokenObjects[i] = tokenObjects[i].PadRight(tokenObjects[i].Length + (tokenObjects[i].Length % 2), '=');
 			JObject headers = JObject.Parse (Encoding.UTF8.GetString (Convert.FromBase64String (tokenObjects [0]))),
 				body = JObject.Parse (Encoding.UTF8.GetString (Convert.FromBase64String (tokenObjects [1])));
 

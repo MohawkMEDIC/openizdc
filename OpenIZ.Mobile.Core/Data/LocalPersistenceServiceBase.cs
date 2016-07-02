@@ -37,21 +37,7 @@ namespace OpenIZ.Mobile.Core.Data
         // Static CTOR
         static LocalPersistenceServiceBase() {
 
-            var tracer = Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
-            try
-            {
-                m_mapper = new ModelMapper(typeof(LocalPersistenceServiceBase<TData>).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
-            }
-            catch(ModelMapValidationException ex)
-            {
-                tracer.TraceError("Error validating model map: {0}", ex);
-                throw ex;
-            }
-            catch(Exception ex)
-            {
-                tracer.TraceError("Error initializing persistence: {0}", ex);
-                throw ex;
-            }
+            m_mapper = LocalPersistenceService.Mapper;
         }
 
 		#region IDataPersistenceService implementation

@@ -1,4 +1,4 @@
-﻿using OpenIZ.Core.PCL.Http;
+﻿using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Configuration;
 using System;
 using System.Collections.Generic;

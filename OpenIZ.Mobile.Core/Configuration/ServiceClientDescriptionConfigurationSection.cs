@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
 using Newtonsoft.Json;
-using OpenIZ.Core.PCL.Http.Description;
+using OpenIZ.Core.Http.Description;
 using System.Linq;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {

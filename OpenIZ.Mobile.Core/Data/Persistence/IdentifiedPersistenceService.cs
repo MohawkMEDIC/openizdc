@@ -9,6 +9,7 @@ using OpenIZ.Mobile.Core.Data.Model;
 using System.Text;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -207,7 +208,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// Update associated version items
         /// </summary>
         protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, SQLiteConnection dataContext)
-            where TAssociation : Association<TModelEx>, new()
+            where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;

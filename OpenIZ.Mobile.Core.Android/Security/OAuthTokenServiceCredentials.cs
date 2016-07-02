@@ -7,7 +7,7 @@ using System.Text;
 using OpenIZ.Mobile.Core.Security;
 using System.Collections.Generic;
 using System.Security.Principal;
-using OpenIZ.Core.PCL.Http;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		{
 			// App ID credentials
 			String appAuthString = String.Format ("{0}:{1}", 
-				ApplicationContext.Current.Application.Key.ToString(), 
+				ApplicationContext.Current.Application.Name.ToString(), 
 				ApplicationContext.Current.Application.ApplicationSecret);
 
 			// TODO: Add claims
