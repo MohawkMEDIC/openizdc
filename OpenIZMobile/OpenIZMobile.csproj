@@ -230,4 +230,5 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml" />
   </ItemGroup>
+
 </Project>

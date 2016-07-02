@@ -29,6 +29,8 @@ namespace OpenIZMobile
 
         // Home layout
         private AppletWebView m_webView;
+        private ProgressBar m_progressBar;
+        private TextView m_textView;
 
         /// <summary>
 		/// Called when the activity has detected the user's press of the back
@@ -56,12 +58,21 @@ namespace OpenIZMobile
 		{
 			base.OnCreate (savedInstanceState);
 
-            this.RequestWindowFeature(WindowFeatures.Progress);
             
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
+
+            // Progress bar
+            this.m_progressBar = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal);
+            this.m_textView = new TextView(this, null);
+            this.m_textView.SetText(Resource.String.loading);
+            this.m_progressBar.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, 24);
+            this.m_textView.LayoutParameters = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+            var decorView = this.Window.DecorView as FrameLayout;
+            decorView.AddView(this.m_progressBar);
+            decorView.AddView(this.m_textView);
             
-			var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
+            var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
 			// Find the applet
 			AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
                 assetLink, language: this.Resources.Configuration.Locale.Language);
@@ -74,32 +85,29 @@ namespace OpenIZMobile
             // Progress has changed
             this.m_webView.ProgressChanged += (o, e) =>
             {
-                this.SetProgressBarVisibility(this.m_webView.Progress > 0 && this.m_webView.Progress < 100);
-                this.SetProgress((WindowProgress.End - WindowProgress.Start) / 100 * this.m_webView.Progress);
+                this.m_textView.Visibility = this.m_progressBar.Visibility = this.m_webView.Progress == 0 || this.m_webView.Progress == 100 ? ViewStates.Gone : ViewStates.Visible;
+                this.m_progressBar.Progress = (this.m_progressBar.Max) / 100 * this.m_webView.Progress;
             };
 
-			// Applet has changed
-			this.m_webView.AssetChanged += (o, e) => {
+            // Set view 
+            EventHandler observer = null;
+            observer = (o, e) =>
+            {
+                View contentView = decorView.FindViewById(Android.Resource.Id.Content);
+                this.m_progressBar.SetY(contentView.GetY() + contentView.Height - 15);
+                this.m_textView.SetY(contentView.GetY() + contentView.Height - this.m_textView.MeasuredHeight - 15);
 
+                this.m_progressBar.ViewTreeObserver.GlobalLayout -= observer;
 
+            };
+            this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
+            // Applet has changed
+            this.m_webView.AssetChanged += (o, e) => {
+                
 				var view = o as AppletWebView;
 
 				// Set the header and stuff
-				this.ActionBar.SetTitle(Resource.String.app_name);
-                this.ActionBar.Subtitle = (view.Asset.Content as AppletAssetHtml)?.GetTitle(Resources.Configuration.Locale.Language) ?? view.Applet.Info.GetName(Resources.Configuration.Locale.Language);
-
-
-                if (view.Applet.Info.Icon?.StartsWith (AppletCollection.DRAWABLE_SCHEME) == true) {
-					int iconId = this.Resources.GetIdentifier (view.Applet.Info.Icon.Substring (AppletCollection.DRAWABLE_SCHEME.Length), "drawable", "org.openiz.openiz_mobile");
-					if (iconId != 0)
-						this.ActionBar.SetIcon (iconId);
-					else
-						this.ActionBar.SetIcon (Resource.Drawable.cogs);
-				} else if (view.Applet.Info.Icon != null)
-					;
-				else
-					this.ActionBar.SetIcon (Resource.Drawable.app_alt);
-
+				this.SetTitle(Resource.String.app_name);
 			};
             //this.m_webView.Asset = asset;
             this.m_webView.LoadUrl(assetLink);

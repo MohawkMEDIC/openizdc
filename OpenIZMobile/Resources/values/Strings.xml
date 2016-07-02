@@ -3,7 +3,8 @@
 	<string name="app_name">OpenIZ Mobile</string>
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
-	<string name="installing_applets">Starting Applets...</string>
+  <string name="installing_applets">Starting Applets...</string>
+  <string name="loading">Please Wait...</string>
 
   <!-- Errors -->
 	<string name="err_general">Oops! Something went wrong!</string>

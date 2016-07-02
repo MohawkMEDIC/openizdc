@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Security
 			var pip = ApplicationContext.Current.PolicyInformationService;
 
 			// Policies
-			var activePolicies = pip.GetActivePolicies(principal).Where(o => policyId.StartsWith(o.Policy.Oid));
+			var activePolicies = pip.GetActivePolicies(principal).Where(o => policyId == o.Policy.Oid || policyId.StartsWith(String.Format("{0}.",o.Policy.Oid)));
 			// Most restrictive
 			IPolicyInstance policyInstance = null;
 			foreach (var pol in activePolicies)

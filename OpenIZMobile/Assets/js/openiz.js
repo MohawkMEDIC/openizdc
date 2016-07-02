@@ -273,7 +273,28 @@ var OpenIZ = new function () {
     * @summary Represents application specific functions for interoperating with the mobile application itself
     * @class
     */
-    this.App = new function() {
+    this.App = new function () {
+        /**
+         * @summary Get the application menu items that the user has access to
+         * @memberof OpenIZ.App
+         * @method
+         * @returns {Object} Representing the menu items the user has access to
+         */
+        this.getMenus = function () {
+            try {
+                var data = OpenIZApplicationService.GetMenus();
+                if (data == null)
+                    return {};
+                else if (data.lastIndexOf("err", 0) == 0)
+                    throw data;
+                else
+                    return JSON.parse(data)
+            }
+            catch (e) {
+                console.error(e);
+                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"), e.message, e);
+            }
+        };
         /**
          * @summary Uses the device camera to scan a barcode from the device
          * @memberof OpenIZ.App
