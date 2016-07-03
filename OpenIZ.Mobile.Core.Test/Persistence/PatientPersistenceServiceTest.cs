@@ -57,21 +57,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 {
                     new EntityNote(Guid.NewGuid(), "William is a test patient")
                 },
-                GenderConcept = new Concept()
-                {
-                    Key = Guid.NewGuid(),
-                    Mnemonic = "Male",
-                    ClassKey = ConceptClassKeys.Other,
-                    ConceptSets = new List<ConceptSet>()
-                    {
-                        new ConceptSet()
-                        {
-                            Mnemonic = "AdministrativeGender",
-                            Name = "Administrative Gender",
-                            Oid = "1.23.4..5.6.6.57.57.5"
-                        }
-                    }
-                },
+                GenderConceptKey = Guid.Parse("F4E3A6BB-612E-46B2-9F77-FF844D971198"),
                 DateOfBirth = new DateTime(1984, 03, 22),
                 MultipleBirthOrder = 2,
                 DeceasedDate = new DateTime(2016,05,02),

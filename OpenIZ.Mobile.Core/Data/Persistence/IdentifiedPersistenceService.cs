@@ -10,6 +10,7 @@ using System.Text;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -115,72 +116,93 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Build a query
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("SELECT * FROM {0} WHERE uuid IN (SELECT uuid FROM ", context.GetMapping<TDomain>().TableName);
-			sb.AppendFormat (storedQueryName);
+            sb.AppendFormat("SELECT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
 			List<Object> vals = new List<Object> ();
 			if (parms.Count > 0) {
-				sb.Append (" WHERE ");
 				foreach (var s in parms) {
 
-                    object value = s.Value;
+                    sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
+
+                    object rValue = s.Value;
+                    if (!(rValue is IList))
+                        rValue = new List<Object>() { rValue };
+
                     string key = s.Key.Replace(".", "_");
-                    if (value is String)
+                    // Are there guards?
+                    while (key.Contains("["))
                     {
-                        var sValue = value as String;
-                        switch (sValue[0])
-                        {
-                            case '<':
-                                if (sValue[1] == '=')
-                                {
-                                    sb.AppendFormat(" {0} <= ? AND ", key);
-                                    value = sValue.Substring(2);
-                                }
-                                else
-                                {
-                                    sb.AppendFormat(" {0} < ? AND ", key);
-                                    value = sValue.Substring(1);
-                                }
-                                break;
-                            case '>':
-                                if (sValue[1] == '=')
-                                {
-                                    sb.AppendFormat(" {0} >= ? AND ", key);
-                                    value = sValue.Substring(2);
-                                }
-                                else
-                                {
-                                    sb.AppendFormat(" {0} > ? AND ", key);
-                                    value = sValue.Substring(1);
-                                }
-                                break;
-                            case '!':
-                                sb.AppendFormat(" {0} <> ? AND ", key);
-                                value = sValue.Substring(1);
-                                break;
-                            case '~':
-                                sb.AppendFormat(" {0} LIKE '%' || ? || '%' AND ", key);
-                                value = sValue.Substring(1);
-                                break;
-                            default:
-                                sb.AppendFormat(" {0} = ? AND ", key);
-                                break;
-                        }
+                        var guardRoot = key.Substring(0, key.IndexOf("["));
+                        var guardValue = key.Substring(key.IndexOf("[") + 1, key.IndexOf("]") - key.IndexOf("[") - 1);
+                        sb.AppendFormat(" {0}_guard = ? AND ", guardRoot);
+                        vals.Add(guardValue);
+                        key = guardRoot + key.Substring(key.IndexOf("]") + 1);
                     }
-                    else
-                        sb.AppendFormat(" {0} = ? AND ", key);
 
-                    // Value correction
-                    DateTime tdateTime = default(DateTime);
-                    if (value is Guid)
-                        vals.Add(((Guid)value).ToByteArray());
-                    else if (DateTime.TryParse(value.ToString(), out tdateTime))
-                        vals.Add(tdateTime);
-                    else
-                        vals.Add(value);
+                    // Value is string
+                    foreach (var itm in rValue as IList)
+                    {
+                        var value = itm;
+                        
+                        if (value is String)
+                        {
+                            var sValue = itm as String;
+                            switch (sValue[0])
+                            {
+                                case '<':
+                                    if (sValue[1] == '=')
+                                    {
+                                        sb.AppendFormat(" {0} <= ? AND ", key);
+                                        value = sValue.Substring(2);
+                                    }
+                                    else
+                                    {
+                                        sb.AppendFormat(" {0} < ? AND ", key);
+                                        value = sValue.Substring(1);
+                                    }
+                                    break;
+                                case '>':
+                                    if (sValue[1] == '=')
+                                    {
+                                        sb.AppendFormat(" {0} >= ? AND ", key);
+                                        value = sValue.Substring(2);
+                                    }
+                                    else
+                                    {
+                                        sb.AppendFormat(" {0} > ? AND ", key);
+                                        value = sValue.Substring(1);
+                                    }
+                                    break;
+                                case '!':
+                                    sb.AppendFormat(" {0} <> ? AND ", key);
+                                    value = sValue.Substring(1);
+                                    break;
+                                case '~':
+                                    sb.AppendFormat(" {0} LIKE '%' || ? || '%' AND ", key);
+                                    value = sValue.Substring(1);
+                                    break;
+                                default:
+                                    sb.AppendFormat(" {0} = ? AND ", key);
+                                    break;
+                            }
+                        }
+                        else
+                            sb.AppendFormat(" {0} = ? AND ", key);
 
+                        // Value correction
+                        DateTime tdateTime = default(DateTime);
+                        if (value is Guid)
+                            vals.Add(((Guid)value).ToByteArray());
+                        else if (DateTime.TryParse(value.ToString(), out tdateTime))
+                            vals.Add(tdateTime);
+                        else
+                            vals.Add(value);
+                    }
+                    sb.Remove(sb.Length - 4, 4);
+
+                    sb.Append(" INTERSECT ");
                 }
-                sb.Remove (sb.Length - 4, 4);
-			}
+            }
+            sb.Remove(sb.Length - 10, 10);
             sb.Append(") ");
 
             if (count > 0)
