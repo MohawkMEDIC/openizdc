@@ -25,7 +25,7 @@
     <string key="common_btnSave">Save</string>
 
   </strings>
-  <strings lang="en">
+  <strings lang="sw">
     <string key="settings_realmTitle">Mazingira ya Uwanja</string>
     <string key="settings_realmDescription">Uwanja wa usalama ni mkusanyiko wa servrar na ambayo maombi ya simu unaweza kuingiliana. Ili kujiunga uwanja wa usalama unahitaji kuingia taarifa zifuatazo kuhusu uwanja. Kama programu yako tayari kushikamana na uwanja, unaweza kuacha uwanja kwa kutumia jopo hili.</string>
     <string key="settings_deviceName">Jina kifaa</string>

@@ -40,7 +40,7 @@
   <asset name="index" mimeType="text/html">
     <contentHtml>
       <title lang="en">Home</title>
-      <title lang="sw">Ya Dashibodi</titleTe  >
+      <title lang="sw">Ya Dashibodi</title>
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>chart-controller</script>
       <bundle>chart-js</bundle>
