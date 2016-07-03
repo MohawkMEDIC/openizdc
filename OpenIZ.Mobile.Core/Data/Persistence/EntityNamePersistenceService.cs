@@ -14,6 +14,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>
     {
+        /// <summary>
+        /// Represents the name as a model instance
+        /// </summary>
+        public override EntityName ToModelInstance(object dataInstance, SQLiteConnection context)
+        {
+            DbEntityName en = dataInstance as DbEntityName;
+            var retVal = base.ToModelInstance(dataInstance, context);
+            retVal.Component = new List<EntityNameComponent>(context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == en.Uuid).ToArray().Select(o => new EntityNameComponent(new Guid(o.ComponentTypeUuid), o.Value)));
+            return retVal;
+
+        }
 
         /// <summary>
         /// Insert the specified object

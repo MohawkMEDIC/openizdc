@@ -11,6 +11,7 @@ using OpenIZ.Mobile.Core.Data.Model.Entities;
 using System.IO;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -36,6 +37,21 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 try
                 {
                     db.BeginTransaction();
+
+                    // Migration log create and check
+                    db.CreateTable<DbMigrationLog>();
+                    if (db.Table<DbMigrationLog>().Count(o => o.MigrationId == this.Id) > 0)
+                    {
+                        tracer.TraceInfo("Migration already installed");
+                        return true;
+                    }
+                    else
+                        db.Insert(new DbMigrationLog()
+                        {
+                            MigrationId = this.Id,
+                            InstallationDate = DateTime.Now
+                        });
+
                     db.TableChanged += (s, e) => tracer.TraceInfo("Updating {0}", e.Table.TableName);
                     // Create tables
                     tracer.TraceInfo("Installing Concept Tables...");
@@ -70,6 +86,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbEntitySecurityPolicy>(CreateFlags.None);
                     db.CreateTable<DbSecurityRole>(CreateFlags.None);
                     db.CreateTable<DbSecurityUser>(CreateFlags.None);
+                    
                     // Anonymous user
                     db.Insert(new DbSecurityUser()
                     {

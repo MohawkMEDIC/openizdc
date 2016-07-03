@@ -82,6 +82,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		}
 
         /// <summary>
+        /// Gets the current asset title
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public string GetCurrentAssetTitle()
+        {
+            return (this.m_view.Asset.Content as AppletAssetHtml).GetTitle(this.GetLocale());
+        }
+
+        /// <summary>
         /// Get the menu items for the current user for specified language
         /// </summary>
         [JavascriptInterface]

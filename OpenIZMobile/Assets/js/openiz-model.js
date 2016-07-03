@@ -12,10 +12,10 @@
  * @property {String} EmptyGuid An empty GUID
  * @namespace
  */
-var OpenIZModel = new function () {
+var OpenIZModel = OpenIZModel || {
 
     // Empty guid
-    this.EmptyGuid = "00000000-0000-0000-0000-000000000000";
+    EmptyGuid : "00000000-0000-0000-0000-000000000000",
 
     /**
      * @summary Keys for setting the use of an address
@@ -36,7 +36,7 @@ var OpenIZModel = new function () {
     * @property {String} PrimaryHome C4FAAFD8-FC90-4330-8B4B-E4E64C86B87B
     * @property {String} Public EC35EA7C-55D2-4619-A56B-F7A986412F7F
      */
-    this.AddressUseKeys = {
+    AddressUseKeys : {
         Direct : 'D0DB6EDB-6CDC-4671-8BC2-00F1C808E188',
         Ideographic : '09000479-4672-44F8-BB4A-72FB25F7356A',
         WorkPlace : 'EAA6F08E-BB8E-4457-9DC0-3A1555FADF5C',
@@ -52,13 +52,13 @@ var OpenIZModel = new function () {
         HomeAddress : '493C3E9D-4F65-4E4D-9582-C9008F4F2EB4',
         PrimaryHome : 'C4FAAFD8-FC90-4330-8B4B-E4E64C86B87B',
         Public : 'EC35EA7C-55D2-4619-A56B-F7A986412F7F'
-    };
+    },
 
     /**
      * @summary Address use component keys
      * @class
      */
-    this.AddressComponentKeys = 
+    AddressComponentKeys : 
     {
         BuildingNumberSuffix : "B2DBF05C-584D-46DB-8CBF-026A6EA30D81", 
         PostBox : "2047F216-F41E-4CFB-A024-05D4D3DE52F5", 
@@ -88,7 +88,7 @@ var OpenIZModel = new function () {
         AdditionalLocator : "D2312B8E-BDFB-4012-9397-F14336F8D206", 
         DeliveryInstallationQualifier : "78FB6EED-6549-4F22-AB3E-F3696DA050BC", 
         BuildingNumberNumeric : "3258B4D6-E4DC-43E6-9F29-FD8423A2AE12"
-    };
+    },
 
     /**
      * @summary Code system keys
@@ -103,7 +103,7 @@ var OpenIZModel = new function () {
     * @property {String} SNOMEDCT Systemized Nomenclature of Medicine clinical terms
     * @property {String} CVX HL7 / CDC Common Vaccine Codes
     */
-    this.CodeSystemKeys = 
+    CodeSystemKeys : 
     {
         ISO6391 : "EB04FE20-BBBC-4C70-9EEF-045BC4F70982", 
         ICD10CM : "ED9742E5-FA5B-4644-9FB5-2F935ED08B1E", 
@@ -114,7 +114,7 @@ var OpenIZModel = new function () {
         ISO6392 : "089044EA-DD41-4258-A497-E6247DD364F6", 
         SNOMEDCT : "B3030751-D4DB-420B-B765-E837607820CD", 
         CVX : "EBA4F94A-2CAD-4BB3-ACA7-F4E54EAAC4BD"
-    };
+    },
 
     /**
      * @summary Name use keys
@@ -136,7 +136,7 @@ var OpenIZModel = new function () {
     * @property {String} Syllabic B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF
     * @property {String} Anonymous 95E6843A-26FF-4046-B6F4-EB440D4B85F7
      */
-    this.NameUseKeys = 
+    NameUseKeys : 
     {
         License : "48075D19-7B29-4CA5-9C73-0CBD31248446", 
         Alphabetic : "71D1C07C-6EE6-4240-8A95-19F96583512E", 
@@ -150,11 +150,11 @@ var OpenIZModel = new function () {
         Ideographic : "09000479-4672-44F8-BB4A-72FB25F7356A", 
         Pseudonym : "C31564EF-CA8D-4528-85A8-88245FCEF344", 
         MaidenName : "0674C1C8-963A-4658-AFF9-8CDCD308FA68", 
-        Legal : "EFFE122D-8D30-491D-805D-ADDCB4466C35", 
+        Legal: "EFFE122D-8D30-491D-805D-addcb4466c35",
         OfficialRecord : "1EC9583A-B019-4BAA-B856-B99CAF368656", 
         Syllabic : "B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF", 
         Anonymous : "95E6843A-26FF-4046-B6F4-EB440D4B85F7"
-    };
+    },
 
     /**
      * @summary Name component type keys
@@ -166,7 +166,7 @@ var OpenIZModel = new function () {
     * @property {String} Given 2F64BDE2-A696-4B0A-9690-B21EBD7E5092
     * @property {String} Suffix 064523DF-BB03-4932-9323-CDF0CC9590BA
      */
-    this.NameComponentKeys = 
+    NameComponentKeys : 
     {
         Title : "4386D92A-D81B-4033-B968-01E57E20D5E0", 
         Family : "29B98455-ED61-49F8-A161-2D73363E1DF0", 
@@ -174,7 +174,7 @@ var OpenIZModel = new function () {
         Prefix : "A787187B-6BE4-401E-8836-97FC000C5D16", 
         Given : "2F64BDE2-A696-4B0A-9690-B21EBD7E5092", 
         Suffix: "064523DF-BB03-4932-9323-CDF0CC9590BA"
-    };
+    },
 
     /**
      * @summary Status concept keys
@@ -185,37 +185,37 @@ var OpenIZModel = new function () {
      * @property {String} Nullfied Object was created in error
      * @property {String} Active Object is active
      */
-    this.StatusConceptKeys = {
+    StatusConceptKeys : {
         New  : "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
         Obsolete  :"BDEF5F90-5497-4F26-956C-8F818CCE2BD2",
         Nullfied  :"CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5",
         Active  : "C8064CBD-FA06-4530-B430-1A52F1530C27"
-    };
+    },
 
     /**
      * @summary Perform a reverse lookup
      * @param {String} needle The value being looked up
      * @param {Object} haystack The object to lookup the needle in
      */
-    this.reverseLookup = function (needle, haystack) {
+    reverseLookup : function (needle, haystack) {
         for (var k in haystack)
             if (haystack[k] == needle)
                 return k;
         return null;
-    };
+    },
 
     /**
      * @summary Takes concept and returns the appropriate key for the concept
      * @param {Object} The identified object for which to lookup the key
      * @return The UUID of the object whether the object is a string or an identified object
      */
-    this.getObjectKey = function (object) {
+    getObjectKey : function (object) {
         if(object != null && object.id !== undefined)
             return object.id.toUpperCase();
         else if(object != null)
             return object.toUpperCase();
         return object;
-    };
+    },
     
     /**
      * @summary Resolves the specified object from the bundle or database
@@ -223,26 +223,26 @@ var OpenIZModel = new function () {
      * @param {String} objectId The identifier of the object to resolve
      * @param {Function} getFn The function used to retrieve the object if not found in a bundle
      */
-    this.resolveObject = function (bundleContext, objectId, getFn) {
+    resolveObject : function (bundleContext, objectId, getFn) {
         if (objectId == undefined || objectId == null) return null;
 
-        console.info("resolveObject " + bundleContext + ", " + objectId);
+        // console.info("resolveObject " + bundleContext + ", " + objectId);
         var retVal = null;
         if (bundleContext != null)
             retVal = bundleContext.getItem(objectId);
         if (retVal == null && getFn != null)
             retVal = getFn(objectId);
         return retVal;
-    };
+    },
 
     /**
      * @summary Retrieve a concept form the bundle or database
      * @param {OpenIZModel#Bundle} bundleContext The context in which the concept may be found
      * @param {String} conceptId The identifier of the concept to resolve
      */
-    this.resolveConcept = function (bundleContext, conceptId) {
+    resolveConcept : function (bundleContext, conceptId) {
         return OpenIZModel.resolveObject(bundleContext, conceptId, OpenIZ.Concept.getConcept);
-    };
+    },
 
     /**
      * @summary Represents utilities for dealing with bundles
@@ -255,9 +255,9 @@ var OpenIZModel = new function () {
      * @property {Numeric} totalResults The total results in the query
      * @property {Numeric} count The number of results in the current bundle
      */
-    this.Bundle = function (bundleData) {
+    Bundle : function (bundleData) {
 
-        console.info("Bundle.ctor " + bundleData);
+        // console.info("Bundle.ctor " + bundleData);
 
         var _self = this;
         this.$type = "Bundle";
@@ -272,7 +272,7 @@ var OpenIZModel = new function () {
          * @param {String} id The identifier of the entry
          */
         this.getItem = function (id) {
-            console.info("Bundle.getItem " + id);
+            // console.info("Bundle.getItem " + id);
             for (var i in _self.items) {
                 var itm = _self.items[i];
                 if (itm.id == id)
@@ -285,7 +285,7 @@ var OpenIZModel = new function () {
          * @summary Gets the entry object in the bundle
          */
         this.getEntry = function () {
-            console.info("Bundle.getEntry");
+            // console.info("Bundle.getEntry");
             if (_self.entry == null) return null;
             for (var i in _self.items) {
                 var itm = _self.items[i];
@@ -301,7 +301,7 @@ var OpenIZModel = new function () {
          * @param {String} type The type of entry to return
          */
         this.first = function (type) {
-            console.info("Bundle.first " + type);
+            // console.info("Bundle.first " + type);
             for (var i in _self.items) {
                 var itm = _self.items[i];
                 if (itm.$type == type)
@@ -315,7 +315,7 @@ var OpenIZModel = new function () {
          * @param {String} type The type of object to return
          */
         this.all = function (type) {
-            console.info("Bundle.all " + type);
+            // console.info("Bundle.all " + type);
 
             var retVal = new OpenIZModel.Bundle({
                 offset: _self.offset,
@@ -341,24 +341,24 @@ var OpenIZModel = new function () {
                 if (_self.getItem(itm.id) == null)
                     _self.items.push(itm);
             }
-            console.info("Bundle now contains " + _self.items.length + " items");
+            // console.info("Bundle now contains " + _self.items.length + " items");
         };
 
         /**
          * @summary Represents the concept set as a simple key/value pair for use in a select option list
          * @param {String} lang The language to fetch display names for
          * @param {String} type The filter type to apply
-         * @remarks The type specified in {type} should have a toSelectModel() function which outputs id/text.
+         * @remarks The type specified in {type} should have a toDisplayModel() function which outputs id/text.
          * @example
-         * var model = bundle.toSelectModel("Concept", "en");
+         * var model = bundle.toDisplayModel("Concept", "en");
          * var data = JSON.stringify(model);
          * // data :
          * //   [
          * //       { id: "<<GUID>>", text: "Display Name for en" },
          * //   ]
          */
-        this.toSelectModel = function (type, lang) {
-            console.info("Bundle.toSelectModel " + lang);
+        this.toDisplayModel = function (type, lang) {
+            // console.info("Bundle.toDisplayModel " + lang);
 
             // Get locale
             if (lang == undefined || lang == null)
@@ -367,7 +367,7 @@ var OpenIZModel = new function () {
             var retVal = [];
             for (var i in _self.items)
                 if(_self.items[i].$type == type)
-                    retVal.push(_self.items[i].toSelectModel(lang));
+                    retVal.push(_self.items[i].toDisplayModel(lang));
             return retVal;
         };
 
@@ -376,7 +376,7 @@ var OpenIZModel = new function () {
          * @returns {Object} The IMSI formatted bundle
          */
         this.toImsi = function () {
-            console.info("Bundle.toImsi");
+            // console.info("Bundle.toImsi");
 
             var retVal = {
                 "$type": "Bundle",
@@ -395,7 +395,7 @@ var OpenIZModel = new function () {
         for (var i in bundleData.item) {
             var itm = bundleData.item[i];
 
-            console.info("adding " + itm.$type + " [" + itm.id + "]");
+            // console.info("adding " + itm.$type + " [" + itm.id + "]");
             var obj = null;
             switch (itm.$type) {
                 case "SecurityUser":
@@ -422,7 +422,7 @@ var OpenIZModel = new function () {
             if(_self.items[i].expand !== undefined)
                 _self.items[i].expand(_self);
 
-    };
+    },
 
     /**
      * @summary Represents OpenIZ session data, rather, the session that is currently in play.
@@ -436,9 +436,9 @@ var OpenIZModel = new function () {
      * @property {String} refresh_token The token which can be used as a refresh
      * @property {String} jwt Contains the JWT token assets (name, etc.) from the session
      */
-    this.Session = function (sessionData) {
+    Session : function (sessionData) {
 
-        console.info("Session.ctor " + sessionData);
+        // console.info("Session.ctor " + sessionData);
 
         this.$type = "Session";
         this.identity = {
@@ -469,7 +469,7 @@ var OpenIZModel = new function () {
         this.refresh = function () {
             return OpenIZ.Authentication.refreshSession();
         };
-    };
+    },
 
     /**
      * @summary Represents a security user (user information)
@@ -489,9 +489,9 @@ var OpenIZModel = new function () {
     * @property {String} phoneNumber The phone number of the user
     * @property {Bool} phoneNumberConfirmed Whether the phone number is confirmed
      */
-    this.SecurityUser = function (securityUserData) {
+    SecurityUser : function (securityUserData) {
 
-        console.info("SecurityUser.ctor " + securityUserData);
+        // console.info("SecurityUser.ctor " + securityUserData);
 
         var _self = this;
         var _initializeData = securityUserData;
@@ -513,7 +513,7 @@ var OpenIZModel = new function () {
          * @summary Insert security user into the back-end
          */
         this.insert = function () {
-           return OpenIZ.Security.insertUser(_self);
+            return OpenIZ.Security.insertUser(_self);
         }
 
         /**
@@ -531,7 +531,7 @@ var OpenIZModel = new function () {
         };
 
 
-    };
+    },
 
     /**
      * @summary Represents a set of related concepts
@@ -545,9 +545,9 @@ var OpenIZModel = new function () {
      * @property {String} url The url of the concept set
      * @property {Object} members The members ({Concept} instances of the set)
      */
-    this.ConceptSet = function(valueData) {
+    ConceptSet : function(valueData) {
 
-        console.info("ConceptSet.ctor " + valueData);
+        // console.info("ConceptSet.ctor " + valueData);
 
         var _self = this;
         var _initializeData = valueData;
@@ -568,7 +568,7 @@ var OpenIZModel = new function () {
          * @summary Expand all properties as needed
          */
         this.expand = function (bundleContext) {
-            console.info("ConceptSet.expand");
+            // console.info("ConceptSet.expand");
             this.members = [];
             for (var i in _initializeData.concept)
                 _self.members.push(OpenIZModel.resolveConcept(bundleContext, _initializeData.concept[i]));
@@ -579,8 +579,8 @@ var OpenIZModel = new function () {
          * @summary Represents the concept set as a simple key/value pair for use in a select drop-down
          * @param {String} lang The language to fetch display names for
          */
-        this.toSelectModel = function (lang) {
-            console.info("ConceptSet.toSelectModel " + lang);
+        this.toDisplayModel = function (lang) {
+            // console.info("ConceptSet.toDisplayModel " + lang);
 
             // Get locale
             if (lang == undefined || lang == null)
@@ -588,7 +588,7 @@ var OpenIZModel = new function () {
 
             var retVal = [];
             for (var i in _self.members)
-                retVal.push(_self.members[i].toSelectModel(lang));
+                retVal.push(_self.members[i].toDisplayModel(lang));
             return retVal;
         };
 
@@ -612,7 +612,7 @@ var OpenIZModel = new function () {
 
         };
 
-    }
+    },
 
     /**
      * @summary This class represents a javascript equivalent to a Concept
@@ -627,9 +627,9 @@ var OpenIZModel = new function () {
      * @property {Object} class The classification of the concept
      * @property {Object} names The names by which the concept is known
      */
-    this.Concept = function (valueData) {
+    Concept : function (valueData) {
 
-        console.info("Concept.ctor " + valueData);
+        // console.info("Concept.ctor " + valueData);
 
         var _self = this;
         var _initializeData = valueData;
@@ -657,7 +657,7 @@ var OpenIZModel = new function () {
          * @summary Expand property keys
          */
         this.expand = function (bundleContext) {
-            console.info("Concept.expand " + _self.id);
+            // console.info("Concept.expand " + _self.id);
 
             _self.status = OpenIZModel.resolveConcept(bundleContext, _initializeData.statusConcept);
             return _self;
@@ -666,8 +666,8 @@ var OpenIZModel = new function () {
         /**
          * @summary Represents this concept as a select option
          */
-        this.toSelectModel = function (lang) {
-            console.info("Concept.toSelectModel " + lang);
+        this.toDisplayModel = function (lang) {
+            // console.info("Concept.toDisplayModel " + lang);
 
             for (var i in _self.names) {
                 var nam = _self.names[i];
@@ -682,7 +682,7 @@ var OpenIZModel = new function () {
          */
         this.toImsi = function () {
 
-            console.info("Concept.toImsi");
+            // console.info("Concept.toImsi");
 
             var retVal = {
                 "$type": "Concept",
@@ -705,7 +705,7 @@ var OpenIZModel = new function () {
                 }
             return retVal;
         }
-    };
+    },
 
     /**
      * @summary This class represents data related to a complex name or address
@@ -715,7 +715,7 @@ var OpenIZModel = new function () {
      * @property {OpenIZModel#Concept} use The prescribed use of the componentized value
      * @property {Object} components The components with type/value of the component representing the value
      */
-    this.ComponentizedValue = function (valueData) {
+    ComponentizedValue : function (valueData) {
 
         var _self = this;
         var _initializeData = valueData;
@@ -755,7 +755,7 @@ var OpenIZModel = new function () {
          * @summary Represent this as an IMSI component
          */
         this.toImsi = function () {
-            console.info("ComponentizedValue.toImsi");
+            // console.info("ComponentizedValue.toImsi");
 
             var retVal = {
                 use: OpenIZModel.getObjectKey(_self.use),
@@ -774,7 +774,7 @@ var OpenIZModel = new function () {
          * @summary Returns an component value in a simplified format { use: key, Given : [], Family : [], ... }
          * @returns {Object} The simplified address/name
          * @example
-         * var name = patient.getName(OpenIZModel.NameUseKeys.Legal).simplify();
+         * var name = patient.getName(OpenIZModel.NameUseKeys.Legal).toDisplayModel();
          * // name :
          * //   {
          * //        use: "<<GUID>>",
@@ -784,7 +784,7 @@ var OpenIZModel = new function () {
          * //        Suffix: [ 'III' ]
          * //   }
          */
-        this.simplify = function () {
+        this.toDisplayModel = function () {
             var retVal = {
                 use: OpenIZModel.getObjectKey(_self.use)
             };
@@ -794,13 +794,14 @@ var OpenIZModel = new function () {
                 var comp = _self.components[i];
 
                 // Get type key
-                var typeKey = OpenIZModel.getObjectKey(comp.type);
+                var typeKey = OpenIZModel.getObjectKey(comp.type).toUpperCase();
+                
                 var key = OpenIZModel.reverseLookup(typeKey, OpenIZModel.NameComponentKeys);
                 if (key == null)
                     key = OpenIZModel.reverseLookup(typeKey, OpenIZModel.AddressComponentKeys);
 
                 // Does the key exist?
-                if (retVal[key] == undefined)
+                if (retVal[key] === undefined)
                     retVal[key] = [];
                 retVal[key].push(comp.value);
             }
@@ -808,7 +809,7 @@ var OpenIZModel = new function () {
             return retVal;
         }
 
-    };
+    },
 
     /**
      * @summary This class represents data related to a patient
@@ -891,9 +892,9 @@ var OpenIZModel = new function () {
     *   }]
     * }).expand();
      */
-    this.Patient = function (patientData) {
+    Patient : function (patientData) {
 
-        console.info("Patient.ctor " + patientData);
+        // console.info("Patient.ctor " + patientData);
         
         // Self reference
         var _self = this;
@@ -947,7 +948,7 @@ var OpenIZModel = new function () {
         // Map names
         for (var i in patientData.name) {
             var nam = patientData.name[i];
-            _self.names.push(new OpenIZModel.ComponentizedValue(nam));
+            this.names.push(new OpenIZModel.ComponentizedValue(nam));
         }
 
         // Map addresses
@@ -976,7 +977,7 @@ var OpenIZModel = new function () {
          * @summary Expand any properties on the object
          */
         this.expand = function (bundleContext) {
-            console.info("Patient.expand");
+            // console.info("Patient.expand");
 
 
             _self.gender = OpenIZModel.resolveConcept(bundleContext, _initializeData.genderConcept);
@@ -1038,6 +1039,7 @@ var OpenIZModel = new function () {
                 });
             }
             
+            _self.display = _self.toDisplayModel();
             return _self;
         };
 
@@ -1150,9 +1152,10 @@ var OpenIZModel = new function () {
          * @returns {OpenIZModel#ComponentizedValue} The name with the matching use
          */
         this.getName = function (useKey) {
+            // console.info("Patient.getName");
             for (var i in _self.names) {
                 var nam = _self.names[i];
-                if (OpenIZModel.getObjectKey(nam.use) == useKey)
+                if (OpenIZModel.getObjectKey(nam.use) == useKey.toLowerCase())
                     return nam;
             }
             return null;
@@ -1192,7 +1195,7 @@ var OpenIZModel = new function () {
          */
         this.toImsi = function () {
 
-            console.info("Patient.toImsi");
+            // console.info("Patient.toImsi");
 
             var retVal = {
                 "$type": "Patient",
@@ -1280,7 +1283,47 @@ var OpenIZModel = new function () {
 
             return retVal;
         };
-    };
+
+        /**
+         * @method
+         * @summary Creates a simplified object representing this patient
+         */
+        this.toDisplayModel = function () {
+            
+            var retVal = {
+                "id": _self.id,
+                "deceasedDate": _self.deceasedDate,
+                "multipleBirthOrder": _self.multipleBirthOrder,
+                "deceasedDatePrecision": _self.deceasedDatePrecision,
+                "dateOfBirth": _self.dateOfBirth,
+                "gender": _self.gender != null ? _self.gender.toDisplayModel() : null,
+                "status": _self.status != null ? _self.status.toDisplayModel() : null,
+                "dateOfBirth": _self.dateOfBirth,
+                "dateOfBirthPrecision": _self.dateOfBirthPrecision,
+                "name": {},
+                "address": {}
+            };
+
+            // Names
+            if (_self.names != null)
+                for (var i in _self.names) {
+                    var nam = _self.names[i].toDisplayModel();
+                    retVal.name[OpenIZModel.reverseLookup(nam.use, OpenIZModel.NameUseKeys)] = nam;
+                }
+
+            // Addresses
+            if (_self.addresses != null)
+                for (var i in _self.addresses) {
+                    var add= _self.addresses[i].toDisplayModel();
+                    retVal.address[OpenIZModel.reverseLookup(add.use, OpenIZModel.AddressUseKeys)] = add;
+                }
+
+            _self.display = retVal;
+
+            return retVal;
+        };
+
+    },
 
     /**
      * @class
@@ -1293,13 +1336,15 @@ var OpenIZModel = new function () {
      * @param {Object} detail Any detail / diagnostic information
      * @param {OpenIZModel#Exception} cause The cause of the exception
      */
-    this.Exception = function (message, detail, cause) {
+    Exception : function (message, detail, cause) {
         _self = this;
 
         this.message = message;
         this.details = detail;
         this.caused_by = cause;
 
-    };
+    }
+    
 
 };
+
