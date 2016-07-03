@@ -172,7 +172,7 @@
 			// angular stuff
 			var configApp = angular.module('index', ['localization']);
       
-			configApp.controller('ConfigurationController', ['$scope', 'localize' function ($scope, localize)
+			configApp.controller('ConfigurationController', ['$scope', 'localize', function ($scope, localize)
 			{
 
 				$scope.config = {

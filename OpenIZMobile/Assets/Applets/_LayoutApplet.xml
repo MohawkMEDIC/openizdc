@@ -97,7 +97,7 @@
       <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
       <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
       <string key="locale.panelLabels.barcode">Barcode</string>
-      <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics Criteria</string>
+      <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics</string>
       <string key="locale.panelLabels.patientDemographics">Patient Demographics</string>
       <string key="locale.panelLabels.patientInformation">Patient Information</string>
       <string key="locale.panelLabels.personalInformation">Personal Information</string>
@@ -149,22 +149,27 @@
       <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
       <string key="locale.buttonLabels.login">Login</string>
       <string key="locale.buttonLabels.resetPassword">Reset Password</string>
-      <string key="locale.buttonLabels.patientSearch">Patient Search</string>
-      <string key="locale.buttonLabels.patientRegister">Patient Register</string>
+      <string key="locale.buttonLabels.patientSearch">Search</string>
+    <string key="locale.buttonLabels.searchAgain">Edit Query</string>
+
+    <string key="locale.buttonLabels.patientRegister">Register</string>
       <string key="locale.buttonLabels.manage">Manage</string>
       <string key="locale.buttonLabels.save">Save</string>
       <string key="locale.buttonLabels.submit">Submit</string>
       <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
-      <string key="locale.buttonLabels.yes">Yes</string>
+    <string key="locale.accuracy.year">Year</string>
+    <string key="locale.accuracy.month">Month</string>
+    <string key="locale.accuracy.day">Day</string>
+    <string key="locale.buttonLabels.yes">Yes</string>
       <string key="locale.buttonLabels.no">No</string>
       <string key="locale.buttonLabels.patientServices">Patient Services</string>
       <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
       <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
       <string key="locale.text.codeSent">We have sent you a verification code!</string>
       <string key="locale.checkLabels.yes">Yes</string>
-      <string key="locale.checkLabels.tetanusDiagnosis">Has the patient ever been/currently is diagnosed with Tetanus?</string>
-      <string key="locale.checkLabels.breastfeedingStatus">Does the patient breast-feed?</string>
-      <string key="locale.checkLabels.birthCertificate">Does the patient have a birth certificate?</string>
+      <string key="locale.checkLabels.tetanusDiagnosis">TT immunity</string>
+      <string key="locale.checkLabels.breastfeedingStatus">Exclusvely Breast Feeding</string>
+      <string key="locale.checkLabels.birthCertificate">Patient has bith certificate</string>
       <string key="locale.placeHolders.barcode">XXXXXXXXXXXX</string>
       <string key="locale.placeHolders.givenName">Given Name</string>
       <string key="locale.placeHolders.familyName">Family Name</string>
@@ -184,6 +189,7 @@
       <string key="locale.modalText.isCorrect">Are you sure this is correct?</string>
       <string key="locale.modalText.updateWeight">You are about to update the weight of </string>
       <string key="locale.modalText.to"> to </string>
+    
       <string key="locale.toastrText.success">Success!</string>
       <string key="locale.toastrText.invalidForm">Please Check Form Fields For Errors</string>
       <string key="locale.toastrText.invalidUsername">Unknown or invalid username</string>
@@ -191,6 +197,10 @@
       <string key="locale.toastrText.unexpected">Unexpected error, please contact the adminstrator</string>
       <string key="locale.toastrHeaders.invalidForm">Invalid Form</string>
       <string key="locale.footer.layoutFooter">MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT</string>
+    <string key="locale.tabHeaders.patientProfile">Profile</string>
+    <string key="locale.tabHeaders.patientHistory">History</string>
+    <string key="locale.tabHeaders.patientObservation">Weights</string>
+    <string key="locale.tabHeaders.patientAefi">AEFI</string>
 
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
