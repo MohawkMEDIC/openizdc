@@ -278,13 +278,20 @@ namespace OpenIZ.Mobile.Core.Data
 
                     foreach (var f in httpValues)
                     {
-                        if (filter.ContainsKey(f.Key))
-                            throw new NotSupportedException("Local query doesn't support OR semantics");
+                        object existing = null;
+                        if (filter.TryGetValue(f.Key, out existing))
+                        {
+                            if (!(existing is IList))
+                            {
+                                existing = new List<Object>() { existing };
+                                filter[f.Key] = existing;
+                            }
+                            (existing as IList).Add(f.Value);
+                        }
                         else
                             filter.Add(f.Key, f.Value);
                     }
                     // Query
-
                     return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults);
                 }
 				catch(Exception e) {

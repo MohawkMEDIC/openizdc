@@ -212,7 +212,9 @@ var OpenIZModel = new function () {
     this.getObjectKey = function (object) {
         if(object != null && object.id !== undefined)
             return object.id.toUpperCase();
-        return object.toUpperCase();
+        else if(object != null)
+            return object.toUpperCase();
+        return object;
     };
     
     /**
@@ -315,11 +317,16 @@ var OpenIZModel = new function () {
         this.all = function (type) {
             console.info("Bundle.all " + type);
 
-            var retVal = [];
+            var retVal = new OpenIZModel.Bundle({
+                offset: _self.offset,
+                count: _self.count,
+                totalResults : _self.totalResults
+            });
+
             for (var i in _self.items) {
                 var itm = _self.items[i];
                 if (itm.$type == type)
-                    retVal.push(itm);
+                    retVal.items.push(itm);
             }
             return retVal;
         };

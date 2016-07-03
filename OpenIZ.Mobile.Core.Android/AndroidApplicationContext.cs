@@ -186,6 +186,7 @@ namespace OpenIZ.Mobile.Core.Android
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;
+                    throw;
 				}
 				return true;
 			}
