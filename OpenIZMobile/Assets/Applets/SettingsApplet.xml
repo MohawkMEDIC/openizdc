@@ -21,6 +21,19 @@
     <string key="settings_btnLeaveRealm">Leave Realm</string>
     <string key="settings_btnJoinRealm">Join Realm</string>
     <string key="settings_securityDescription">Use this area to configure security settings related to OpenIZ</string>
+    <string key="common_btnCancel">Cancel</string>
+    <string key="common_btnSave">Save</string>
+
+  </strings>
+  <strings lang="en">
+    <string key="settings_realmTitle">Mazingira ya Uwanja</string>
+    <string key="settings_realmDescription">Uwanja wa usalama ni mkusanyiko wa servrar na ambayo maombi ya simu unaweza kuingiliana. Ili kujiunga uwanja wa usalama unahitaji kuingia taarifa zifuatazo kuhusu uwanja. Kama programu yako tayari kushikamana na uwanja, unaweza kuacha uwanja kwa kutumia jopo hili.</string>
+    <string key="settings_deviceName">Jina kifaa</string>
+    <string key="settings_realm">Uwanja</string>
+    <string key="settings_securityTitle">Usalama</string>
+    <string key="settings_btnLeaveRealm">Kuondoka</string>
+    <string key="settings_btnJoinRealm">Kujiunga </string>
+    <string key="settings_securityDescription">Use this area to configure security settings related to OpenIZ</string>
   </strings>
 	<asset name="index" mimeType="text/html">
 		<contentHtml>

@@ -2,6 +2,7 @@
 using OpenIZ.Mobile.Core.Diagnostics;
 using SQLite;
 using OpenIZ.Mobile.Core.Synchronization.Model;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -21,7 +22,21 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 			// Database for the SQL Lite connection
 			using (var db = new SQLiteConnection (ApplicationContext.Current?.Configuration.GetConnectionString (ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection> ().MessageQueueConnectionStringName).Value)) {
 
-				tracer.TraceInfo ("Installing queues...");
+                // Migration log create and check
+                db.CreateTable<DbMigrationLog>();
+                if (db.Table<DbMigrationLog>().Count(o => o.MigrationId == this.Id) > 0)
+                {
+                    tracer.TraceInfo("Migration already installed");
+                    return true;
+                }
+                else
+                    db.Insert(new DbMigrationLog()
+                    {
+                        MigrationId = this.Id,
+                        InstallationDate = DateTime.Now
+                    });
+
+                tracer.TraceInfo ("Installing queues...");
 				db.CreateTable<InboundQueueEntry> ();
 				db.CreateTable<OutboundQueueEntry> ();
 				db.CreateTable<DeadLetterQueueEntry> ();

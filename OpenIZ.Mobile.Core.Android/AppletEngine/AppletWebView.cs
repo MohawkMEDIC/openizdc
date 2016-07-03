@@ -23,6 +23,7 @@ using OpenIZ.Core.Applets;
 using System.Security;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Security;
+using A = Android;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
 {
@@ -80,6 +81,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.Settings.BlockNetworkLoads = true;
 			this.Settings.BuiltInZoomControls = false;
 			this.Settings.DisplayZoomControls = false;
+            this.SetLayerType(A.Views.LayerType.Hardware, null);
 #if DEBUG
             WebView.SetWebContentsDebuggingEnabled(true);
 #endif 
@@ -233,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                     
                     try
                     {
-                        return this.RenderWebResource(url, navigateAsset);
+                        return this.RenderWebResource(url, navigateAsset, language);
                     }
                     catch(SecurityException ex)
                     {
@@ -246,14 +248,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                         }
                         else
                             navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/403", language: language);
-                        return this.RenderWebResource(url, navigateAsset);
+                        return this.RenderWebResource(url, navigateAsset, language);
 
                     }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError(ex.ToString());
                         navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500", language: language);
-                        return this.RenderWebResource(url, navigateAsset);
+                        return this.RenderWebResource(url, navigateAsset, language);
                     }
                     finally
                     {
@@ -334,14 +336,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             /// </summary>
             /// <param name="navigateAsset"></param>
             /// <returns></returns>
-            private WebResourceResponse RenderWebResource(String url, AppletAsset navigateAsset)
+            private WebResourceResponse RenderWebResource(String url, AppletAsset navigateAsset, string language)
             {
                 // Demand policies
                 if(navigateAsset.Manifest.Info.Policies != null)
                     foreach(var policy in navigateAsset.Manifest.Info.Policies)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
 
-                var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset);
+                var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, language);
                 this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
                 var ms = new MemoryStream(data);
                 return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);

@@ -51,6 +51,6 @@ angular.module('localization', [])
         var filterFn = function (key) {
             return localize.getString(key);
         };
-        filterFn.$stateful = true;
+        filterFn.$stateful = false;
         return filterFn;
     }]);
