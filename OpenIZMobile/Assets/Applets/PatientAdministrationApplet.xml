@@ -7,7 +7,6 @@
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
     <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
-  
   </info>
   <menuItem>
     <icon>app://openiz.org/drawable/drk_baby</icon>
@@ -37,11 +36,11 @@
           </thead>
           <tbody>
             <tr ng-repeat="patient in searchResults.items">
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td>{{ patient.display.name.OfficialRecord.Given }} {{ patient.display.name.OfficialRecord.Family }}</td>
+              <td>{{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}</td>
+              <td>{{ patient.display.gender.text }}</td>
+              <td>N.Y.I.</td>
+              <td>N.Y.I.</td>
               <td>
                 <span class="btn-group">
                   <button class="btn btn-primary" ng-click="view(patient)">
@@ -65,222 +64,228 @@
   </asset>
   <asset name="patientSearch" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Search Children</title>
+      <title lang="sw">Tafuto Watoto</title>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>patient-search-controller</script>
       <bundle>select2</bundle>
       <content lang="en">
         <div class="row" ng-controller="PatientSearchController"  xmlns="http://www.w3.org/1999/xhtml">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" href="#searchPanel">{{ 'locale.buttonLabels.patientSearch' | i18n }}</a>
-              </h4>
-            </div>
-            <div class="panel-collapse collapse in" id="searchPanel">
-              <div class="panel-body">
-                <form name="patientSearchForm" role="form" novalidate="novalidate" ng-submit="search(patientSearchForm.$invalid)">
-                  <div class="panel-group">
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#barcodeCollapse">{{ 'locale.panelLabels.barcodeScan' | i18n }}</a>
-                        </h3>
-                      </div>
-                      <div id="barcodeCollapse" class="panel-collapse collapse in">
-                        <div class="panel-body">
-                          <fieldset class="form-horizontal">
-                            <div class="form-group">
-                              <label class="col-xs-2 col-xs-offset-2 control-label" for="barcodeInput">{{ 'locale.inputLabels.identifier' | i18n }}</label>
-                              <div class="col-xs-6 input-group">
-                                <input type="number" name="barcode" id="barcodeInput" class="form-control" placeholder="{{ 'locale.placeholders.barcode' | i18n }}" aria-describedby="barcodeAddon" ng-model="query.identifiers.value">
-                                  <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="scanBarcodeLink()">
-                                      <span class="glyphicon glyphicon-barcode">
-                                      </span>{{ 'locale.buttonLabels.scan' | i18n }}
-                                    </button>
-                                  </span>
-                                </input>
-                              </div>
+          <div class="container">
+            <div class="row">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" href="#searchPanel">{{ 'locale.buttonLabels.patientSearch' | i18n }}</a>
+                  </h4>
+                </div>
+                <div class="panel-collapse collapse in" id="searchPanel">
+                  <div class="panel-body">
+                    <form name="patientSearchForm" role="form" novalidate="novalidate" ng-submit="search(patientSearchForm.$invalid)">
+                      <div class="panel-group">
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title text-center">
+                              <a data-toggle="collapse" href="#barcodeCollapse">{{ 'locale.panelLabels.barcodeScan' | i18n }}</a>
+                            </h3>
+                          </div>
+                          <div id="barcodeCollapse" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                              <fieldset class="form-horizontal">
+                                <div class="form-group">
+                                  <label class="col-xs-2 col-xs-offset-2 control-label" for="barcodeInput">{{ 'locale.inputLabels.identifier' | i18n }}</label>
+                                  <div class="col-xs-6 input-group">
+                                    <input type="number" name="barcode" id="barcodeInput" class="form-control" placeholder="{{ 'locale.placeHolders.barcode' | i18n }}" aria-describedby="barcodeAddon" ng-model="query.identifiers.value">
+                                      <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="scanBarcodeLink()">
+                                          <span class="glyphicon glyphicon-barcode">
+                                          </span>{{ 'locale.buttonLabels.scan' | i18n }}
+                                        </button>
+                                      </span>
+                                    </input>
+                                  </div>
+                                </div>
+                              </fieldset>
                             </div>
-                          </fieldset>
+                          </div>
+                        </div>
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title text-center">
+                              <a data-toggle="collapse" href="#patientDemographicCollapse">{{ 'locale.panelLabels.patientDemographicCriteria' | i18n }}</a>
+                            </h3>
+                          </div>
+                          <div id="patientDemographicCollapse" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <fieldset class="form-horizontal">
+
+                                <div class="form-group">
+                                  <div ng-class="{ 'has-error': patientSearchForm.givenName.$invalid &amp;&amp; (patientSearchForm.givenName.$touched||patientSearchForm.$submitted)}">
+                                    <label class="col-xs-2 col-xs-offset-2 control-label" for="givenNameInput">{{ 'locale.inputLabels.givenName' | i18n }}</label>
+                                    <div class="col-xs-6">
+                                      <input type="text" name="givenName" id="givenNameInput" ng-model="query.names.given" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" aria-describedby="givenNameAddon" />
+                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.givenName.$error" ng-if="patientSearchForm.givenName.$touched||patientSearchForm.$submitted" role="alert">
+                                    <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
+                                  </div>
+                                </div>
+
+                                <div class="form-group">
+                                  <div ng-class="{ 'has-error': patientSearchForm.familyName.$invalid &amp;&amp; (patientSearchForm.familyName.$touched||patientSearchForm.$submitted)}">
+                                    <label class="col-xs-2 col-xs-offset-2 control-label" for="familyNameInput">{{ 'locale.inputLabels.familyName' | i18n }}</label>
+                                    <div class="col-xs-6">
+                                      <input type="text" name="familyName" id="familyNameInput" ng-model="query.names.family" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" aria-describedby="familyNameAddon" />
+                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.familyName.$error" role="alert" ng-if="patientSearchForm.familyName.$touched||patientSearchForm.$submitted">
+                                    <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
+                                  </div>
+                                </div>
+                                <div class ="form-group">
+                                  <label class="col-xs-2 col-xs-offset-2 control-label" for="dobFromInput">{{ 'locale.inputLabels.dateOfBirthFrom' | i18n }}</label>
+                                  <div class="col-xs-6 date input-group" id="dobFromPicker">
+                                    <input readonly="readonly" type="text" name="dobFrom" id="dobFromInput" class="form-control" ng-blur="updateDobFrom()" aria-describedby="dobAddon" ng-model="query.dob.from" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupFrom.opened" datepicker-options="dateOptionsFrom">
+                                      <span class="input-group-addon" ng-click="openFrom()">
+                                        <span class="glyphicon glyphicon-calendar">
+                                        </span>
+                                      </span>
+                                    </input>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="col-xs-2 col-xs-offset-2 control-label" for="dobToInput">{{ 'locale.inputLabels.dateOfBirthTo' | i18n }}</label>
+                                  <div class="date col-xs-6 input-group" id="dobToPicker">
+                                    <input readonly="readonly" type="text" name="dobTo" id="dobToInput" class="form-control" ng-blur="updateDobTo()" aria-describedby="dobAddon" ng-model="query.dob.to" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptionsTo">
+                                      <span class="input-group-addon" ng-click="openTo()">
+                                        <span class="glyphicon glyphicon-calendar">
+                                        </span>
+                                      </span>
+                                    </input>
+                                  </div>
+                                </div>
+
+                                <div class ="form-group">
+                                  <label class ="col-xs-2 col-xs-offset-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
+                                  <div class="col-xs-6">
+                                    <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon" ng-model="query.gender">
+                                      <option ng-repeat="(key, value) in locale.gender" value="{{value}}">{{value}}</option>
+                                    </select>
+                                  </div>
+                                </div>
+
+                                <div class="form-group">
+                                  <div ng-class="{ 'has-error': patientSearchForm.motherGivenName.$invalid &amp;&amp; (patientSearchForm.motherGivenName.$touched||patientSearchForm.$submitted)}">
+                                    <label class="col-xs-2 col-xs-offset-2 control-label" for="motherGivenNameInput">{{ 'locale.inputLabels.motherGivenName' | i18n }}</label>
+                                    <div class="col-xs-6">
+                                      <input type="text" name="motherGivenName" id="motherGivenNameInput" ng-model="query.mother.given" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeHolders.motherGivenName' | i18n }}" aria-describedby="motherGivenNameAddon" />
+                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.motherGivenName.$error" role="alert" ng-if="patientSearchForm.motherGivenName.$touched||patientSearchForm.$submitted">
+                                    <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <div ng-class="{ 'has-error': patientSearchForm.motherFamilyName.$invalid &amp;&amp; (patientSearchForm.motherFamilyName.$touched||patientSearchForm.$submitted)}">
+                                    <label class ="col-xs-2 col-xs-offset-2 control-label" for="motherFamilyNameInput">{{ 'locale.inputLabels.motherFamilyName' | i18n }}</label>
+                                    <div class="col-xs-6">
+                                      <input type="text" name="motherFamilyName" id="motherFamilyNameInput" ng-model="query.mother.family" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeHolders.motherFamilyName' | i18n }}" aria-describedby="motherFamilyNameAddon" />
+                                    </div>
+                                  </div>
+                                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.motherFamilyName.$error" ng-if="patientSearchForm.motherFamilyName.$touched||patientSearchForm.$submitted" role="alert">
+                                    <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title text-center">
+                              <a data-toggle="collapse" href="#additionalCriteriaCollapse">{{ 'locale.panelLabels.additionalSearchCriteria' | i18n }}</a>
+                            </h3>
+                          </div>
+                          <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
+                            <div class="panel-body">
+                              <fieldset class="form-horizontal">
+
+                                <div class="form-group">
+                                  <div ng-class="{ 'has-error': patientSearchForm.city.$invalid &amp;&amp; (patientSearchForm.city.$touched||patientSearchForm.$submitted)}">
+                                    <label class="col-xs-2 col-xs-offset-2 control-label" id="cityInput">{{ 'locale.inputLabels.cityVillage' | i18n }}</label>
+                                    <div class="col-xs-6">
+                                      <input type="text" name="city" ng-maxlength="50" id="cityInput" ng-model="cityInput" class="form-control" placeholder="{{ 'locale.placeHolders.cityVillage' | i18n }}" aria-describedby="cityAddon" />
+                                    </div>
+                                    <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.city.$error" role="alert" ng-if="patientSearchForm.city.$touched||patientSearchForm.$submitted">
+                                      <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="form-group">
+                                  <label class="col-xs-2 col-xs-offset-2 control-label" for="healthFacilityInput">{{ 'locale.inputLabels.healthFacility' | i18n }}</label>
+                                  <div class ="col-xs-6">
+                                    <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" class="form-control" placeholder="{{ 'locale.placeHolders.healthFacility' | i18n }}" aria-describedby="healthFacilityAddon" />
+                                  </div>
+                                </div>
+                              </fieldset>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#patientDemographicCollapse">{{ 'locale.panelLabels.patientDemographicCriteria' | i18n }}</a>
-                        </h3>
+                      <div class="btn-group pull-right">
+                        <button type="submit" class="btn btn-danger" ng-click="cancel()">
+                          <span class="glyphicon glyphicon-remove"></span>
+                          {{ 'locale.buttonLabels.cancel' | i18n }}
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                          <span class="glyphicon glyphicon-search"></span> {{ 'locale.buttonLabels.search' | i18n }}
+
+                        </button>
                       </div>
-                      <div id="patientDemographicCollapse" class="panel-collapse collapse">
-                        <div class="panel-body">
-                          <fieldset class="form-horizontal">
-
-                            <div class="form-group">
-                              <div ng-class="{ 'has-error': patientSearchForm.givenName.$invalid &amp;&amp; (patientSearchForm.givenName.$touched||patientSearchForm.$submitted)}">
-                                <label class="col-xs-2 col-xs-offset-2 control-label" for="givenNameInput">{{ 'locale.inputLabels.givenName' | i18n }}</label>
-                                <div class="col-xs-6">
-                                  <input type="text" name="givenName" id="givenNameInput" ng-model="query.names.given" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeholders.givenName' | i18n }}" aria-describedby="givenNameAddon" />
-                                </div>
-                              </div>
-                              <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.givenName.$error" ng-if="patientSearchForm.givenName.$touched||patientSearchForm.$submitted" role="alert">
-                                <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
-                              </div>
-                            </div>
-
-                            <div class="form-group">
-                              <div ng-class="{ 'has-error': patientSearchForm.familyName.$invalid &amp;&amp; (patientSearchForm.familyName.$touched||patientSearchForm.$submitted)}">
-                                <label class="col-xs-2 col-xs-offset-2 control-label" for="familyNameInput">{{ 'locale.inputLabels.familyName' | i18n }}</label>
-                                <div class="col-xs-6">
-                                  <input type="text" name="familyName" id="familyNameInput" ng-model="query.names.family" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeholders.familyName' | i18n }}" aria-describedby="familyNameAddon" />
-                                </div>
-                              </div>
-                              <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.familyName.$error" role="alert" ng-if="patientSearchForm.familyName.$touched||patientSearchForm.$submitted">
-                                <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
-                              </div>
-                            </div>
-                            <div class ="form-group">
-                              <label class="col-xs-2 col-xs-offset-2 control-label" for="dobFromInput">{{ 'locale.inputLabels.dateOfBirthFrom' | i18n }}</label>
-                              <div class="col-xs-6 date input-group" id="dobFromPicker">
-                                <input readonly="readonly" type="text" name="dobFrom" id="dobFromInput" class="form-control" ng-blur="updateDobFrom()" aria-describedby="dobAddon" ng-model="query.dob.from" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupFrom.opened" datepicker-options="dateOptionsFrom">
-                                  <span class="input-group-addon" ng-click="openFrom()">
-                                    <span class="glyphicon glyphicon-calendar">
-                                    </span>
-                                  </span>
-                                </input>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label class="col-xs-2 col-xs-offset-2 control-label" for="dobToInput">{{ 'locale.inputLabels.dateOfBirthTo' | i18n }}</label>
-                              <div class="date col-xs-6 input-group" id="dobToPicker">
-                                <input readonly="readonly" type="text" name="dobTo" id="dobToInput" class="form-control" ng-blur="updateDobTo()" aria-describedby="dobAddon" ng-model="query.dob.to" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptionsTo">
-                                  <span class="input-group-addon" ng-click="openTo()">
-                                    <span class="glyphicon glyphicon-calendar">
-                                    </span>
-                                  </span>
-                                </input>
-                              </div>
-                            </div>
-
-                            <div class ="form-group">
-                              <label class ="col-xs-2 col-xs-offset-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
-                              <div class="col-xs-6">
-                                <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon" ng-model="query.gender">
-                                  <option ng-repeat="(key, value) in locale.gender" value="{{value}}">{{value}}</option>
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="form-group">
-                              <div ng-class="{ 'has-error': patientSearchForm.motherGivenName.$invalid &amp;&amp; (patientSearchForm.motherGivenName.$touched||patientSearchForm.$submitted)}">
-                                <label class="col-xs-2 col-xs-offset-2 control-label" for="motherGivenNameInput">{{ 'locale.inputLabels.motherGivenName' | i18n }}</label>
-                                <div class="col-xs-6">
-                                  <input type="text" name="motherGivenName" id="motherGivenNameInput" ng-model="query.mother.given" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeholders.motherGivenName' | i18n }}" aria-describedby="motherGivenNameAddon" />
-                                </div>
-                              </div>
-                              <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.motherGivenName.$error" role="alert" ng-if="patientSearchForm.motherGivenName.$touched||patientSearchForm.$submitted">
-                                <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <div ng-class="{ 'has-error': patientSearchForm.motherFamilyName.$invalid &amp;&amp; (patientSearchForm.motherFamilyName.$touched||patientSearchForm.$submitted)}">
-                                <label class ="col-xs-2 col-xs-offset-2 control-label" for="motherFamilyNameInput">{{ 'locale.inputLabels.motherFamilyName' | i18n }}</label>
-                                <div class="col-xs-6">
-                                  <input type="text" name="motherFamilyName" id="motherFamilyNameInput" ng-model="query.mother.family" ng-maxlength="50" class="form-control" placeholder="{{ 'locale.placeholders.motherFamilyName' | i18n }}" aria-describedby="motherFamilyNameAddon" />
-                                </div>
-                              </div>
-                              <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.motherFamilyName.$error" ng-if="patientSearchForm.motherFamilyName.$touched||patientSearchForm.$submitted" role="alert">
-                                <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
-                              </div>
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h3 class="panel-title text-center">
-                          <a data-toggle="collapse" href="#additionalCriteriaCollapse">{{ 'locale.panelLabels.additionalSearchCriteria' | i18n }}</a>
-                        </h3>
-                      </div>
-                      <div id="additionalCriteriaCollapse" class="panel-collapse collapse">
-                        <div class="panel-body">
-                          <fieldset class="form-horizontal">
-
-                            <div class="form-group">
-                              <div ng-class="{ 'has-error': patientSearchForm.city.$invalid &amp;&amp; (patientSearchForm.city.$touched||patientSearchForm.$submitted)}">
-                                <label class="col-xs-2 col-xs-offset-2 control-label" id="cityInput">{{ 'locale.inputLabels.cityVillage' | i18n }}</label>
-                                <div class="col-xs-6">
-                                  <input type="text" name="city" ng-maxlength="50" id="cityInput" ng-model="cityInput" class="form-control" placeholder="{{ 'locale.placeholders.cityVillage' | i18n }}" aria-describedby="cityAddon" />
-                                </div>
-                                <div class="col-xs-offset-2 col-xs-9" ng-messages="patientSearchForm.city.$error" role="alert" ng-if="patientSearchForm.city.$touched||patientSearchForm.$submitted">
-                                  <div ng-message="maxlength" class="alert alert-danger">{{ 'locale.errors.fieldLong' | i18n }}</div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label class="col-xs-2 col-xs-offset-2 control-label" for="healthFacilityInput">{{ 'locale.inputLabels.healthFacility' | i18n }}</label>
-                              <div class ="col-xs-6">
-                                <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" class="form-control" placeholder="{{ 'locale.placeholders.healthFacility' | i18n }}" aria-describedby="healthFacilityAddon" />
-                              </div>
-                            </div>
-                          </fieldset>
-                        </div>
-                      </div>
-                    </div>
+                    </form>
                   </div>
+                </div>
+              </div>
+              <div class="panel panel-default" ng-if="searchResults">
+                <div class="panel-heading">
+                  <h4 class="panel-title">
+                    {{ 'locale.tableHeaders.results' | i18n }}
+                  </h4>
+                </div>
+                <!-- #include virtual="patientSearchResultTable" -->
+                <div class="panel-body" ng-if="searchResults">
                   <div class="btn-group pull-right">
-                    <button type="submit" class="btn btn-danger" ng-click="cancel()">
+                    <button class="btn btn-danger" ng-click="cancel()">
                       <span class="glyphicon glyphicon-remove"></span>
                       {{ 'locale.buttonLabels.cancel' | i18n }}
                     </button>
-                    <button type="submit" class="btn btn-primary">
-                      <span class="glyphicon glyphicon-search"></span> {{ 'locale.buttonLabels.search' | i18n }}
-                      
+                    <button ng-click="searchAgain()" class="btn btn-default">
+                      <span class="glyphicon glyphicon-filter"></span> {{ 'locale.buttonLabels.searchAgain' | i18n }}
                     </button>
+                    <a href="patientRegister" class="btn btn-primary ">
+                      <span class="glyphicon glyphicon-plus-sign"></span> {{ 'locale.buttonLabels.patientRegister' | i18n }}
+                    </a>
                   </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <div class="panel panel-default" ng-if="searchResults">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                {{ 'locale.tableHeaders.results' | i18n }}
-              </h4>
-            </div>
-            <!-- #include virtual="patientSearchResultTable" -->
-            <div class="panel-body" ng-if="searchResults">
-              <div class="btn-group pull-right">
-                <button class="btn btn-danger" ng-click="cancel()">
-                  <span class="glyphicon glyphicon-remove"></span>
-                  {{ 'locale.buttonLabels.cancel' | i18n }}
-                </button>
-                <button ng-click="searchAgain()" class="btn btn-default">
-                  <span class="glyphicon glyphicon-filter"></span> {{ 'locale.buttonLabels.searchAgain' | i18n }}
-                </button>
-                <a href="patientRegister" class="btn btn-primary ">
-                  <span class="glyphicon glyphicon-plus-sign"></span> {{ 'locale.buttonLabels.patientRegister' | i18n }}
-                </a>
-              </div>
-            </div>
-            <div class="modal fade" id="myModal" role="dialog">
-              <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title">{{ 'locale.modalHeaders.checkInPatient' | i18n }}</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>{{ 'locale.modalText.nextAppointment + modalPatient.Appointment' | i18n }}</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default pull-right" ng-click="modalPatient.CheckedIn = !modalPatient.CheckedIn; setPatient()" data-dismiss="modal">
-                      <span ng-if="!modalPatient.CheckedIn">{{ 'locale.buttonLabels.checkIn' | i18n }}</span>
-                      <span ng-if="modalPatient.CheckedIn">{{ 'locale.buttonLabels.checkOut' | i18n }}</span>
-                    </button>
-                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{ 'locale.buttonLabels.close' | i18n }}</button>
+                </div>
+                <div class="modal fade" id="myModal" role="dialog">
+                  <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">{{ 'locale.modalHeaders.checkInPatient' | i18n }}</h4>
+                      </div>
+                      <div class="modal-body">
+                        <p>{{ 'locale.modalText.nextAppointment + modalPatient.Appointment' | i18n }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-right" ng-click="modalPatient.CheckedIn = !modalPatient.CheckedIn; setPatient()" data-dismiss="modal">
+                          <span ng-if="!modalPatient.CheckedIn">{{ 'locale.buttonLabels.checkIn' | i18n }}</span>
+                          <span ng-if="modalPatient.CheckedIn">{{ 'locale.buttonLabels.checkOut' | i18n }}</span>
+                        </button>
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{ 'locale.buttonLabels.close' | i18n }}</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -292,6 +297,8 @@
   </asset>
   <asset name="patientRegister" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Regsiter Child</title>
+      <title lang="sw">Saji Mtoto</title>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>app://openiz.org/asset/js/moment.min.js</script>
@@ -323,7 +330,7 @@
                                     <label class="col-xs-2 control-label" for="givenNameInput">{{ 'locale.inputLabels.givenName' | i18n }}</label>
 
                                     <div class="col-xs-9 input-group">
-                                      <input type="text" name="givenName-{{ $index }}" ng-model="patient.patientNames.givenNames[$index]" class="form-control" placeholder="{{ 'locale.placeholders.givenName' | i18n }}" id="givenNameInput" />
+                                      <input type="text" name="givenName-{{ $index }}" ng-model="patient.patientNames.givenNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" id="givenNameInput" />
 
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'givenNames', '')">
@@ -347,7 +354,7 @@
                                     <label class="col-xs-2 control-label" for="familyNameInput">{{ 'locale.inputLabels.familyName' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeholders.familyName' | i18n }}" id="familyNameInput"  />
+                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" id="familyNameInput"  />
 
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'familyNames', '')">
@@ -393,8 +400,7 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" id="genderAddon">{{ 'locale.inputLabels.gender' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required" ng-options="concept.id as concept.text for concept in administrativeGenderTypes">
-                                      <option ng-repeat="(key, value) in locale.gender" value="{{value}}">{{value}}</option>
+                                    <select id="genderSelect" ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required" >
                                     </select>
                                   </div>
                                 </div>
@@ -512,7 +518,7 @@
                                     <label class="col-xs-2 control-label" for="contactGivenNameInput">{{ 'locale.inputLabels.givenName' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="contactGivenName-{{ $index }}" ng-model="patient.contactNames.givenNames[$index]" class="form-control" placeholder="{{ 'locale.placeholders.givenName' | i18n }}" id="contactGivenNameInput" />
+                                      <input type="text" name="contactGivenName-{{ $index }}" ng-model="patient.contactNames.givenNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" id="contactGivenNameInput" />
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('contactNames', 'givenNames', '')">
                                           <span class="glyphicon glyphicon-plus"></span>
@@ -535,7 +541,7 @@
 
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="contactFamilyName-{{ $index }}" ng-model="patient.contactNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeholders.familyName' | i18n }}" aria-describedby="contactFamilyNameAddon"  />
+                                      <input type="text" name="contactFamilyName-{{ $index }}" ng-model="patient.contactNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" aria-describedby="contactFamilyNameAddon"  />
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('contactNames', 'familyNames', '')">
                                           <span class="glyphicon glyphicon-plus"></span>
@@ -585,7 +591,7 @@
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="emailInput">{{ 'locale.inputLabels.email' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
-                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{ 'locale.placeholders.email' | i18n }}" id="emailInput"  />
+                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{ 'locale.placeHolders.email' | i18n }}" id="emailInput"  />
 
                                       <span class="input-group-addon addon-background" id="domainAddon">@</span>
                                       <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
@@ -611,7 +617,7 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" for="relationTypeInput">{{ 'locale.inputLabels.relationshipToPatient' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect"  ng-options="concept.id as concept.text for concept in relationshipTypes">
+                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect"  >
                                     </select>
                                   </div>
                                 </div>
@@ -785,7 +791,7 @@
           try
           {
             if(!invalid && $scope.query){
-              var searchString = "";
+              var searchString = "_expand=name&_expand=address&_expand=gender";
               if($scope.query.identifiers)
                 searchString += "&identifier.value=" + $scope.query.identifiers.value;
               if($scope.query.dob && $scope.query.dob.from)
@@ -805,7 +811,7 @@
             
                 OpenIZ.Patient.findAsync(
                 {
-                  query: searchString.substring(1, searchString.length),
+                  query: searchString,
                   continueWith: function(result)
                   {
                     $('#searchPanel').collapse('hide');
@@ -888,15 +894,22 @@
           OpenIZ.Concept.findConceptSetAsync({
             query: "mnemonic=ChildFamilyMember",
             continueWith: function(results) {
-              var concepts = results.first("ConceptSet").toSelectModel();
-              $scope.$apply(function() { $scope.relationshipTypes = concepts; });
+              var concepts = results.first("ConceptSet").toDisplayModel();
+              var relationshipTypes = $("#relationshipTypeSelect").prop('options');
+              $.each(concepts, function(id, val) {
+                relationshipTypes[relationshipTypes.length] = new Option(val.text, val.id);
+              });
+              //$scope.$digest(function() { $scope.relationshipTypes = concepts; });
             }
           });
           OpenIZ.Concept.findConceptSetAsync({
             query: "mnemonic=AdministrativeGenderCode",
             continueWith: function(results) {
-              var concepts = results.first("ConceptSet").toSelectModel();
-              $scope.$apply(function() { $scope.administrativeGenderTypes = concepts; });
+              var concepts = results.first("ConceptSet").toDisplayModel();
+              var genderTypes = $("#genderSelect").prop('options');
+              $.each(concepts, function(id, val) {
+                genderTypes[genderTypes.length] = new Option(val.text, val.id);
+              });
             }
           });
         };
@@ -929,11 +942,6 @@
           }
         };
 
-          $scope.allPatients = [];
-          for(var i = 0; i<100; i++){
-            $scope.allPatients[i] = $scope.randomPatient();
-          }
-
         $scope.add = function(outerModelAccess, innerModelAccess, objToPush) {
           if(innerModelAccess == ""){
             $scope.patient[outerModelAccess].push(objToPush);
@@ -949,7 +957,7 @@
 
         $scope.searchForDuplicates = function()
         {
-           var searchString = "";
+              var searchString = "_expand=name&_expand=address&_expand=gender";
               if($scope.patient.dob && $scope.patient.dob.date)
                 searchString += "&dateOfBirth=~" + OpenIZ.Util.toDateInputString($scope.patient.dob.date).substring(0, $scope.patient.dob.accuracy);
               if($scope.patient.patientNames && 
@@ -968,7 +976,7 @@
             
                 OpenIZ.Patient.findAsync(
                 {
-                  query: searchString.substring(1, searchString.length),
+                  query: searchString,
                   count: 5,
                   continueWith: function(result)
                   {

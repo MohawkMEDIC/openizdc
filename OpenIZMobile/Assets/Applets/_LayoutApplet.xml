@@ -40,6 +40,8 @@
     <dependency id="org.openiz.core" version="0.5.0.0" />
   </info>
   <strings lang="en">
+    <string key="locale.home.today">Today is: </string>
+    <string key="locale.home.greeting">Welcome</string>
     <string key="login">Login to</string>
     <string key="btnForgot">Forgot password</string>
     <string key="password">Password</string>
@@ -49,159 +51,175 @@
     <string key="locale.navbar.language">Language</string>
     <string key="locale.navbar.loginRegister">Login</string>
     <string key="locale.navbar.preferences">Preferences</string>
-      <string key="locale.inputLabels.givenName">Given Name</string>
-      <string key="locale.inputLabels.familyName">Family Name</string>
-      <string key="locale.inputLabels.name">Name</string>
-      <string key="locale.inputLabels.dateOfBirthFrom">Date Of Birth(From)</string>
-      <string key="locale.inputLabels.dateOfBirthTo">Date Of Birth(To)</string>
-      <string key="locale.inputLabels.dateOfBirth">Date Of Birth</string>
-      <string key="locale.inputLabels.gender">Gender</string>
-      <string key="locale.inputLabels.relationshipToPatient">Relationship To Patient</string>
-      <string key="locale.inputLabels.identifier">Identifier</string>
-      <string key="locale.inputLabels.telephone">Telephone</string>
-      <string key="locale.inputLabels.cityVillage">City/Village</string>
-      <string key="locale.inputLabels.accuracy">Accuracy</string>
-      <string key="locale.inputLabels.id">ID</string>
-      <string key="locale.inputLabels.birthPlace">Birth Place</string>
-      <string key="locale.inputLabels.email">E-Mail</string>
-      <string key="locale.inputLabels.username">Username</string>
-      <string key="locale.inputLabels.password">Password</string>
-      <string key="locale.inputLabels.confirmPassword">Confirm Password</string>
-      <string key="locale.inputLabels.healthFacility">Health Facility</string>
-      <string key="locale.inputLabels.motherName">Mother's Name</string>
-      <string key="locale.inputLabels.motherGivenName">Mother's Given Name</string>
-      <string key="locale.inputLabels.motherFamilyName">Mother's Family Name</string>
-      <string key="locale.inputLabels.weight">Weight</string>
-      <string key="locale.inputLabels.unit">Unit</string>
-      <string key="locale.inputLabels.verificationCode">Verification Code</string>
-      <string key="locale.inputLabels.weight">Weight</string>
-      <string key="locale.inputLabels.unit">Unit</string>
-      <string key="locale.errors.fieldLong">This Field Is Too Long</string>
-      <string key="locale.errors.telephone">Incorrect Telephone Number</string>
-      <string key="locale.errors.telephoneRequired">Telephone Number Is Required</string>
-      <string key="locale.errors.email">Incorrect Email</string>
-      <string key="locale.errors.emailRequired">Email Is Required</string>
-      <string key="locale.errors.dob">Incorrect Date Of Birth</string>
-      <string key="locale.errors.dobRequired">Date Of Birth Is Required</string>
-      <string key="locale.errors.familyNameRequired">Family Name Is Required</string>
-      <string key="locale.errors.givenNameRequired">Given Name Is Required</string>
-      <string key="locale.errors.idRequired">ID Number Is Required</string>
-      <string key="locale.errors.usernameRequired">Please enter your Username</string>
-      <string key="locale.errors.passwordRequired">Please enter your Password</string>
-      <string key="locale.errors.confirmPasswordRequired">Please confirm your Password</string>
-      <string key="locale.errors.passwordInvalid">Invalid Password</string>
-      <string key="locale.errors.noMatch">Passwords do not match</string>
-      <string key="locale.errors.weightRequired">Weight Is Required</string>
-      <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
-      <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
-      <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
-      <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
-      <string key="locale.panelLabels.barcode">Barcode</string>
-      <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics</string>
-      <string key="locale.panelLabels.patientDemographics">Patient Demographics</string>
-      <string key="locale.panelLabels.patientInformation">Patient Information</string>
-      <string key="locale.panelLabels.personalInformation">Personal Information</string>
-      <string key="locale.panelLabels.nextOfKinOptional">Next Of Kin (Optional)</string>
-      <string key="locale.panelLabels.additionalSearchCriteria">Additional Search Criteria</string>
-      <string key="locale.panelLabels.potentialDuplicates">Potential Duplicates</string>
-      <string key="locale.panelLabels.identification">Identification</string>
-      <string key="locale.panelLabels.domicile">Domicile</string>
-      <string key="locale.panelLabels.villageHealthFacility">Village/Health Facility</string>
-      <string key="locale.panelLabels.homeAddress">Home Address</string>
-      <string key="locale.panelLabels.contactInformation">Contact Information</string>
-      <string key="locale.panelLabels.accountInformation">Account Information</string>
-      <string key="locale.panelLabels.additionalInfo">Additional Information</string>
-      <string key="locale.panelLabels.additionalInfoFooter">Please select all that apply</string>
-      <string key="locale.panelLabels.login">Login</string>
-      <string key="locale.panelLabels.register">Register</string>
-      <string key="locale.panelLabels.changePassword">Change Password</string>
-      <string key="locale.panelLabels.loginHelper">Enter your Username and Password below</string>
-      <string key="locale.panelLabels.passwordHelper">Enter your new password</string>
-      <string key="locale.panelLabels.verificationHelper">Enter your verification code</string>
-      <string key="locale.panelLabels.years">Years</string>
-      <string key="locale.panelLabels.months">Months</string>
-      <string key="locale.panelLabels.newWeightEntry">New Weight Entry</string>
-      <string key="locale.panelLabels.previousWeights">Previous Weights</string>
-      <string key="locale.panelLabels.recoveryMethod">Recovery Method</string>
-      <string key="locale.panelLabels.recoveryHelper">Select your recovery method</string>
-      <string key="locale.panelLabels.dashboard">Dashboard</string>
-      <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
-      <string key="locale.panelLabels.enterUsername">Enter your username below</string>
-      <string key="locale.tableHeaders.names">Name(s)</string>
-      <string key="locale.tableHeaders.gender">Gender</string>
-      <string key="locale.tableHeaders.dateOfBirth">Date Of Birth</string>
-      <string key="locale.tableHeaders.cityVillage">City/Village</string>
-      <string key="locale.tableHeaders.actions">Action(s)</string>
-      <string key="locale.tableHeaders.results">Results</string>
-      <string key="locale.tableHeaders.healthFacility">Health Facility</string>
-      <string key="locale.tableHeaders.dateRecorded">Date Recorded</string>
-      <string key="locale.tableHeaders.weight">Weight</string>
-      <string key="locale.tableHeaders.unit">Unit</string>
-      <string key="locale.buttonLabels.scan">Scan</string>
-      <string key="locale.buttonLabels.cancel">Cancel</string>
-      <string key="locale.buttonLabels.search">Search</string>
-      <string key="locale.buttonLabels.view">View</string>
-      <string key="locale.buttonLabels.checkIn">Check In</string>
-      <string key="locale.buttonLabels.checkOut">Check Out</string>
-      <string key="locale.buttonLabels.close">Close</string>
-      <string key="locale.buttonLabels.register">Register</string>
-      <string key="locale.buttonLabels.alreadyRegistered">Already have an account? Login</string>
-      <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
-      <string key="locale.buttonLabels.login">Login</string>
-      <string key="locale.buttonLabels.resetPassword">Reset Password</string>
-      <string key="locale.buttonLabels.patientSearch">Search</string>
+    <string key="locale.inputLabels.givenName">Given Name</string>
+    <string key="locale.inputLabels.familyName">Family Name</string>
+    <string key="locale.inputLabels.name">Name</string>
+    <string key="locale.inputLabels.dateOfBirthFrom">Date Of Birth(From)</string>
+    <string key="locale.inputLabels.dateOfBirthTo">Date Of Birth(To)</string>
+    <string key="locale.inputLabels.dateOfBirth">Date Of Birth</string>
+    <string key="locale.inputLabels.gender">Gender</string>
+    <string key="locale.inputLabels.relationshipToPatient">Relationship To Patient</string>
+    <string key="locale.inputLabels.identifier">Identifier</string>
+    <string key="locale.inputLabels.telephone">Telephone</string>
+    <string key="locale.inputLabels.cityVillage">City/Village</string>
+    <string key="locale.inputLabels.accuracy">Accuracy</string>
+    <string key="locale.inputLabels.id">ID</string>
+    <string key="locale.inputLabels.birthPlace">Birth Place</string>
+    <string key="locale.inputLabels.email">E-Mail</string>
+    <string key="locale.inputLabels.username">Username</string>
+    <string key="locale.inputLabels.password">Password</string>
+    <string key="locale.inputLabels.confirmPassword">Confirm Password</string>
+    <string key="locale.inputLabels.healthFacility">Health Facility</string>
+    <string key="locale.inputLabels.motherName">Mother's Name</string>
+    <string key="locale.inputLabels.motherGivenName">Mother's Given Name</string>
+    <string key="locale.inputLabels.motherFamilyName">Mother's Family Name</string>
+    <string key="locale.inputLabels.weight">Weight</string>
+    <string key="locale.inputLabels.unit">Unit</string>
+    <string key="locale.inputLabels.verificationCode">Verification Code</string>
+    <string key="locale.inputLabels.weight">Weight</string>
+    <string key="locale.inputLabels.unit">Unit</string>
+    <string key="locale.errors.fieldLong">This Field Is Too Long</string>
+    <string key="locale.errors.telephone">Incorrect Telephone Number</string>
+    <string key="locale.errors.telephoneRequired">Telephone Number Is Required</string>
+    <string key="locale.errors.email">Incorrect Email</string>
+    <string key="locale.errors.emailRequired">Email Is Required</string>
+    <string key="locale.errors.dob">Incorrect Date Of Birth</string>
+    <string key="locale.errors.dobRequired">Date Of Birth Is Required</string>
+    <string key="locale.errors.familyNameRequired">Family Name Is Required</string>
+    <string key="locale.errors.givenNameRequired">Given Name Is Required</string>
+    <string key="locale.errors.idRequired">ID Number Is Required</string>
+    <string key="locale.errors.usernameRequired">Please enter your Username</string>
+    <string key="locale.errors.passwordRequired">Please enter your Password</string>
+    <string key="locale.errors.confirmPasswordRequired">Please confirm your Password</string>
+    <string key="locale.errors.passwordInvalid">Invalid Password</string>
+    <string key="locale.errors.noMatch">Passwords do not match</string>
+    <string key="locale.errors.weightRequired">Weight Is Required</string>
+    <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
+    <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
+    <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
+    <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
+    <string key="locale.panelLabels.barcode">Barcode</string>
+    <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics</string>
+    <string key="locale.panelLabels.patientDemographics">Patient Demographics</string>
+    <string key="locale.panelLabels.patientInformation">Patient Information</string>
+    <string key="locale.panelLabels.personalInformation">Personal Information</string>
+    <string key="locale.panelLabels.nextOfKinOptional">Next Of Kin (Optional)</string>
+    <string key="locale.panelLabels.additionalSearchCriteria">Additional Search Criteria</string>
+    <string key="locale.panelLabels.potentialDuplicates">Potential Duplicates</string>
+    <string key="locale.panelLabels.identification">Identification</string>
+    <string key="locale.panelLabels.domicile">Domicile</string>
+    <string key="locale.panelLabels.villageHealthFacility">Village/Health Facility</string>
+    <string key="locale.panelLabels.homeAddress">Home Address</string>
+    <string key="locale.panelLabels.contactInformation">Contact Information</string>
+    <string key="locale.panelLabels.accountInformation">Account Information</string>
+    <string key="locale.panelLabels.additionalInfo">Additional Information</string>
+    <string key="locale.panelLabels.additionalInfoFooter">Please select all that apply</string>
+    <string key="locale.panelLabels.login">Login</string>
+    <string key="locale.panelLabels.register">Register</string>
+    <string key="locale.panelLabels.changePassword">Change Password</string>
+    <string key="locale.panelLabels.loginHelper">Enter your Username and Password below</string>
+    <string key="locale.panelLabels.passwordHelper">Enter your new password</string>
+    <string key="locale.panelLabels.verificationHelper">Enter your verification code</string>
+    <string key="locale.panelLabels.years">Years</string>
+    <string key="locale.panelLabels.months">Months</string>
+    <string key="locale.panelLabels.newWeightEntry">New Weight Entry</string>
+    <string key="locale.panelLabels.previousWeights">Previous Weights</string>
+    <string key="locale.panelLabels.recoveryMethod">Recovery Method</string>
+    <string key="locale.panelLabels.recoveryHelper">Select your recovery method</string>
+    <string key="locale.panelLabels.dashboard">Dashboard</string>
+    <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
+    <string key="locale.panelLabels.enterUsername">Enter your username below</string>
+    <string key="locale.tableHeaders.names">Name(s)</string>
+    <string key="locale.tableHeaders.gender">Gender</string>
+    <string key="locale.tableHeaders.dateOfBirth">Date Of Birth</string>
+    <string key="locale.tableHeaders.cityVillage">City/Village</string>
+    <string key="locale.tableHeaders.actions">Action(s)</string>
+    <string key="locale.tableHeaders.results">Results</string>
+    <string key="locale.tableHeaders.healthFacility">Health Facility</string>
+    <string key="locale.tableHeaders.dateRecorded">Date Recorded</string>
+    <string key="locale.tableHeaders.weight">Weight</string>
+    <string key="locale.tableHeaders.unit">Unit</string>
+    <string key="locale.buttonLabels.scan">Scan</string>
+    <string key="locale.buttonLabels.cancel">Cancel</string>
+    <string key="locale.buttonLabels.search">Search</string>
+    <string key="locale.buttonLabels.view">View</string>
+    <string key="locale.buttonLabels.checkIn">Check In</string>
+    <string key="locale.buttonLabels.checkOut">Check Out</string>
+    <string key="locale.buttonLabels.close">Close</string>
+    <string key="locale.buttonLabels.register">Register</string>
+    <string key="locale.buttonLabels.alreadyRegistered">Already have an account? Login</string>
+    <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
+    <string key="locale.buttonLabels.login">Login</string>
+    <string key="locale.buttonLabels.resetPassword">Reset Password</string>
+    <string key="locale.buttonLabels.patientSearch">Search</string>
     <string key="locale.buttonLabels.searchAgain">Edit Query</string>
-
     <string key="locale.buttonLabels.patientRegister">Register</string>
-      <string key="locale.buttonLabels.manage">Manage</string>
-      <string key="locale.buttonLabels.save">Save</string>
-      <string key="locale.buttonLabels.submit">Submit</string>
-      <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
+    <string key="locale.buttonLabels.manage">Manage</string>
+    <string key="locale.buttonLabels.save">Save</string>
+    <string key="locale.buttonLabels.submit">Submit</string>
+    <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
     <string key="locale.accuracy.year">Year</string>
     <string key="locale.accuracy.month">Month</string>
     <string key="locale.accuracy.day">Day</string>
     <string key="locale.buttonLabels.yes">Yes</string>
-      <string key="locale.buttonLabels.no">No</string>
-      <string key="locale.buttonLabels.patientServices">Patient Services</string>
-      <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
-      <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
-      <string key="locale.text.codeSent">We have sent you a verification code!</string>
-      <string key="locale.checkLabels.yes">Yes</string>
-      <string key="locale.checkLabels.tetanusDiagnosis">TT immunity</string>
-      <string key="locale.checkLabels.breastfeedingStatus">Exclusvely Breast Feeding</string>
-      <string key="locale.checkLabels.birthCertificate">Patient has bith certificate</string>
-      <string key="locale.placeHolders.barcode">XXXXXXXXXXXX</string>
-      <string key="locale.placeHolders.givenName">Given Name</string>
-      <string key="locale.placeHolders.familyName">Family Name</string>
-      <string key="locale.placeHolders.cityVillage">City/Village</string>
-      <string key="locale.placeHolders.telephone">Telephone Number</string>
-      <string key="locale.placeHolders.email">someone@somedomain.com</string>
-      <string key="locale.placeHolders.username">Username</string>
-      <string key="locale.placeHolders.password">Password</string>
-      <string key="locale.placeHolders.confirmPassword">Confirm Password</string>
-      <string key="locale.placeHolders.verificationCode">Verification Code</string>
-      <string key="locale.placeHolders.healthFacility">Health Facility</string>
-      <string key="locale.placeHolders.motherGivenName">Mother's Given Name</string>
-      <string key="locale.placeHolders.motherFamilyName">Mother's Family Name</string>
-      <string key="locale.modalHeaders.checkInPatient">Check In Patient</string>
-      <string key="locale.modalHeaders.confirmWeight">Confirm Weight Update</string>
-      <string key="locale.modalText.nextAppointment">This patient has their next appointment at</string>
-      <string key="locale.modalText.isCorrect">Are you sure this is correct?</string>
-      <string key="locale.modalText.updateWeight">You are about to update the weight of </string>
-      <string key="locale.modalText.to"> to </string>
-    
-      <string key="locale.toastrText.success">Success!</string>
-      <string key="locale.toastrText.invalidForm">Please Check Form Fields For Errors</string>
-      <string key="locale.toastrText.invalidUsername">Unknown or invalid username</string>
-      <string key="locale.toastrText.registrationError">Registration error</string>
-      <string key="locale.toastrText.unexpected">Unexpected error, please contact the adminstrator</string>
-      <string key="locale.toastrHeaders.invalidForm">Invalid Form</string>
-      <string key="locale.footer.layoutFooter">MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT</string>
+    <string key="locale.buttonLabels.no">No</string>
+    <string key="locale.buttonLabels.patientServices">Patient Services</string>
+    <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
+    <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
+    <string key="locale.text.codeSent">We have sent you a verification code!</string>
+    <string key="locale.checkLabels.yes">Yes</string>
+    <string key="locale.checkLabels.tetanusDiagnosis">TT immunity</string>
+    <string key="locale.checkLabels.breastfeedingStatus">Exclusvely Breast Feeding</string>
+    <string key="locale.checkLabels.birthCertificate">Patient has bith certificate</string>
+    <string key="locale.placeHolders.barcode">XXXXXXXXXXXX</string>
+    <string key="locale.placeHolders.givenName">Given Name</string>
+    <string key="locale.placeHolders.familyName">Family Name</string>
+    <string key="locale.placeHolders.cityVillage">City/Village</string>
+    <string key="locale.placeHolders.telephone">Telephone Number</string>
+    <string key="locale.placeHolders.email">someone@somedomain.com</string>
+    <string key="locale.placeHolders.username">Username</string>
+    <string key="locale.placeHolders.password">Password</string>
+    <string key="locale.placeHolders.confirmPassword">Confirm Password</string>
+    <string key="locale.placeHolders.verificationCode">Verification Code</string>
+    <string key="locale.placeHolders.healthFacility">Health Facility</string>
+    <string key="locale.placeHolders.motherGivenName">Mother's Given Name</string>
+    <string key="locale.placeHolders.motherFamilyName">Mother's Family Name</string>
+    <string key="locale.modalHeaders.checkInPatient">Check In Patient</string>
+    <string key="locale.modalHeaders.confirmWeight">Confirm Weight Update</string>
+    <string key="locale.modalText.nextAppointment">This patient has their next appointment at</string>
+    <string key="locale.modalText.isCorrect">Are you sure this is correct?</string>
+    <string key="locale.modalText.updateWeight">You are about to update the weight of </string>
+    <string key="locale.modalText.to"> to </string>
+    <string key="locale.toastrText.success">Success!</string>
+    <string key="locale.toastrText.invalidForm">Please Check Form Fields For Errors</string>
+    <string key="locale.toastrText.invalidUsername">Unknown or invalid username</string>
+    <string key="locale.toastrText.registrationError">Registration error</string>
+    <string key="locale.toastrText.unexpected">Unexpected error, please contact the adminstrator</string>
+    <string key="locale.toastrHeaders.invalidForm">Invalid Form</string>
+    <string key="locale.footer.layoutFooter">MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT</string>
     <string key="locale.tabHeaders.patientProfile">Profile</string>
     <string key="locale.tabHeaders.patientHistory">History</string>
     <string key="locale.tabHeaders.patientObservation">Weights</string>
     <string key="locale.tabHeaders.patientAefi">AEFI</string>
-
+    <string key="locale.queue.panelHeader">Current Queue</string>
+    <string key="locale.queue.tableHeader.child">Child</string>
+    <string key="locale.queue.tableHeader.due">Due For</string>
+    <string key="locale.queue.tableHeader.action">Actions</string>
+    <string key="locale.queue.action.cancel">Walk-out</string>
+    <string key="locale.queue.action.encounter">View</string>
+    <string key="locale.stock.panelHeader">Stock Snapshot</string>
+    <string key="locale.stock.tableHeader.antigen">Antigen/Lot#</string>
+    <string key="locale.stock.tableHeader.expiry">Expiry</string>
+    <string key="locale.stock.tableHeader.onHand">On Hand</string>
+    <string key="locale.stock.tableHeader.amc">AMC</string>
+    <string key="locale.stock.tableHeader.remain">Remaining</string>
+    <string key="locale.stock.tableHeader.action">Actions</string>
+    <string key="locale.stock.action.adjust">Adjust</string>
+    <string key="locale.stock.action.order">Order More</string>
+  </strings>
+  <strings lang="sw">
+    <string key="locale.home.today">Tarehe: </string>
+    <string key="locale.home.greeting">Karibu sana</string>
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
@@ -227,7 +245,9 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">{{ 'locale.navbar.title' | i18n }}</a>
+              <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">
+                {{ 'locale.navbar.title' | i18n }} <small>&gt; {{ pageTitle }}</small>
+              </a>
             </div>
             <div class="navbar-collapse collapse">
 
@@ -248,7 +268,7 @@
                   </ul>
 
                 </li>
-                <li class="dropdown" id="langDropDown">
+                <li class="dropdown" id="langDropDown" ng-if="!session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                     <span class="glyphicon glyphicon-globe"></span> {{ 'locale.navbar.language' | i18n }} <span class="caret"></span>
                   </a>
@@ -260,7 +280,7 @@
                     </li>
                     <li role="presentation">
                       <a href="#" rel="sw" ng-click="setLocale('sw');">
-                        Kiswahili/Swahili
+                        Kiswahili
                       </a>
                     </li>
                   </ul>
@@ -288,7 +308,7 @@
               </ul>
             </div>
           </div>
-          <div class="container">
+          <div class="container-fluid">
             <!--#include virtual="content" -->
           </div>
           <input type="hidden" id="success" />
@@ -429,6 +449,7 @@
               $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
               
             }]);
+            /*
             var compareTo = function() {
                 return {
                     require: "ngModel",
@@ -449,35 +470,25 @@
             };
 
             layoutApp.directive("compareTo", compareTo);
-
+            */
             layoutApp.controller('LayoutController', ['$scope', '$window', '$timeout', 'localize', function($scope, $window, $timeout, localize){
-$
+
             $scope.setLocale = function(lang)
             {
               localize.setLanguage(lang);
-              $scope.menuItems = OpenIZ.App.getMenus();
+              window.location.reload();
             }
             
             // Get session information
             $scope.session = OpenIZ.Authentication.getSession();
             $scope.menuItems = OpenIZ.App.getMenus();
+            $scope.pageTitle = OpenIZ.App.getCurrentAssetTitle();
             
-            var genders = ["Male", "Female", "Other"];
-            var firstNames = ["Tifany", "Rufina", "Nancy", "Merlin", "Arlinda", "Toni", "Zoraida", "Clark", "Carline", "Terrie",
-            "Marci", "Domenica", "Wilson", "Rich", "Drucilla", "Heike", "Ray", "Neely", "Jaime", "Wallace"];
-            var lastNames = ["Travis", "Carlson", "Humphrey", "Frank", "Figueroa", "Roach", "Strong", "Mercer", "Frey", "Richardson",
-            "Horne", "Gonzales", "Anguilar", "Vance", "Reyes", "Compton", "Maldonado", "Rose", "Ford", "Carey"];
-
+  
             toastr.options = {"positionClass":"toast-top-center"};
             const TIMEOUT_TIME = 30000;
             
-            $scope.randomPatient = function(){
-                var dob = new Date();
-                dob.setFullYear(Math.floor(Math.random()*45)+1970, Math.floor(Math.random()*12+1), Math.floor(Math.random()*28+1));
-                return {DateOfBirth: dob,Village: "Village "+ (Math.floor(Math.random()*500)+1), Address: ""+(Math.floor(Math.random()*10000)+1) +" Main Street", HealthFacility: "Health Facility " + (Math.floor(Math.random()*200)+1), FirstName: firstNames[Math.floor(Math.random() * 20)], LastName: lastNames[Math.floor(Math.random()*20)], Gender: genders[Math.floor(Math.random()*3)]};
-
-            };
-
+           
             $scope.logout = function(){
               OpenIZ.Authentication.abandonSession();
               $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
@@ -485,475 +496,6 @@ $
 
             }]);
     		  ]]>
-    </contentText>
-  </asset>
-  <asset name="strings" mimeType="text/javascript">
-    <contentText>
-      <![CDATA[
-        function getStrings() {
-          if(OpenIZ.Localization.getLocale() == 'sw')
-          {
-            return {
-				      gender: {
-				      	female : "Kike",
-				      	male : "Kiume",
-				      	other : "Mengine"
-				      },
-              weightUnit:{
-                kilograms: "Kilograms",
-                pounds: "Pounds"
-              },
-				      accuracy: {
-				      	day: "Siku",
-				      	month: "Mwezi",
-				      	year: "Mwaka"
-				      },
-				      phone: {
-				      	mobile: "Simu",
-				      	home: "Nyumbani",
-				      	work: "Kazi"
-				      },
-				      hospitals: {
-				      	hospitalOne: "Hospitali 1",
-				      	hospitalTwo: "Hospitali 2",
-				      	hospitalThree: "Hospitali 3"
-				      },
-              navbar:{
-                loginRegister: "Ingia/Daftari"
-              },
-				      identificationTypes: {
-				      	yellowCardId: "Kadi Ya Njano ID",
-				      	voterCardId: "Wapiga Kura Kitambulisho",
-				      	driversLicenseId: "Leseni Madereva ID"
-				      },
-              domainTypes:{
-                personal: "Binafsi",
-                work: "Kazi",
-                shared: "Pamoja"
-              },
-				      relation:{
-				      	father:"Baba",
-				      	mother:"Mama",
-				      	son:"Mwana",
-				      	daughter:"Binti",
-				      	husband:"Mume",
-				      	wife:"Mke",
-				      	brother:"Kaka",
-				      	sister:"Dada",
-				      	grandfather:"Babu",
-				      	grandmother:"Bibi",
-				      	grandson:"Mjukuu",
-				      	granddaughter:"Mjukuu",
-				      	uncle:"Mjomba",
-				      	aunt:"Shangazi",
-				      	nephew:"Mpwa",
-				      	niece:"Mpwa",
-				      	cousin:"Binamu"
-              },
-				      inputLabels:{
-				      	givenName: "Kutokana Jina",
-				      	familyName: "Jina la Ukoo",
-				      	name: "Jina",
-				      	dateOfBirthFrom: "Tarehe Ya Ku Zaliwa(Kutoka)",
-				      	dateOfBirthTo: "Tarehe Ya Ku Zaliwa(Kwa)",
-				      	dateOfBirth: "Tarehe Ya Ku Zaliwa",
-				      	gender: "Jinsia",
-				      	relationshipToPatient: "Uhusiano Kwa Mgonjwa",
-				      	identifier: "Kitambulisho",
-				      	telephone: "Namba",
-				      	cityVillage:"Mji/Kijiji",
-				      	accuracy: "Usahihi",
-				      	id: "ID",
-				      	birthPlace: "Mahali Pa Kuzaliwa",
-				      	email:"Barua Pepe",
-				      	username: "Jina la Mtumiaji",
-				      	password: "Nywila",
-                confirmPassword: "Kuthibitisha Nywila",
-				      	healthFacility: "Afya Kituo",
-				      	motherName: "Mama Jina",
-				      	motherGivenName: "Mama Jina Aliyopewa",
-				      	motherFamilyName: "Mama Jina La Familia",
-                verificationCode: "Uhakiki Kanuni",
-                weight: "Uzito",
-                unit: "Kitengo"
-              },
-              errors:{
-				      	fieldLong: "Uwanja Huu Ni Muda Mrefu Sana",
-				      	telephone: "Sahihi Namba Ya Simu",
-                telephoneRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
-				      	email: "Sio Sahihi Barua Pepe",
-				      	emailRequired: "Tafadhali kuingia Nywila lako",
-                dob: "Sio Sahihi Tarehe Ya Kuzaliwa",
-				      	dobRequired: "Tarehe Ya Ku Zaliwa Inahitajika",
-				      	familyNameRequired: "Jina La Ukoo Inahitajika",
-				      	givenNameRequired: "Kutokana Jina Inahitajika",
-				      	idRequired: "ID Idadi Inahitajika",
-                verifyCodeRequired: "Tafadhali Kuingia Uhakiki Kanuni",
-                verifyCodeInvalid: "Kanuni aliingia ni batili",
-				      	usernameRequired: "Tafadhali kuingia Jina la Mtumiaji lako",
-				      	passwordRequired: "Tafadhali kuingia Nywila lako",
-                confirmPasswordRequired: "Tafadhali Kuthibitisha Nywila Yako",
-				      	passwordInvalid: "Nywila Batili",
-				      	noMatch: "Nywila si Mechi",
-                cityOrVillageRequired: "Tafadhali kuingia mahali pa kuzaliwa yako",
-                verifyCodeRequired: "Tafadhali kuingia kificho ukaguzi",
-                verifyCodeInvalid: "Kificho aliingia ni batili"
-              },
-				      panelLabels:{
-				      	barcodeScan: "Barcode Kuchambua",
-                barcode: "Barcode",
-				      	patientDemographicCriteria: "Mgonjwa Vigezo Idadi Ya Watu",
-				      	patientDemographics: "Idadi Ya Watu Mgonjwa",
-                patientInformation: "Habari Mgonjwa",
-                personalInformation: "Habari za Mtu Binafsi",
-				      	nextOfKinOptional: "Pili Ya Jamaa(Hiari)",
-				      	additionalSearchCriteria: "Vigezo Ziada Kupata",
-				      	domicile: "Kikao",
-                villageHealthFacility: "Kijiji/Kituo Cha Afya",
-				      	homeAddress: "Anwani ya Nyumbani",
-				      	contactInformation: "Maelezo ya Kuwasiliana",
-                accountInformation: "Taarifa za Akaunti",
-				      	additionalInfo: "Taarifa Za Ziada",
-				      	additionalInfoFooter: "Tafadhali chagua zote zinazohusika",
-				      	potentialDuplicates: "Marudio Uwezo",
-				      	identification: "Kitambulisho",
-                register: "Usajili",
-				      	login: "Ingia",
-                changePassword: "Badilisha neno la siri",
-				      	loginHelper: "Kuingia Jina la Mtumiaji yako na Nywila chini",
-                passwordHelper: "Kuingia Nywila yako mpya",
-                verificationHelper: "Weka Kanuni yako Uhakiki",
-                years: "Miaka:",
-                months: "Mieza:",
-                newWeightEntry: "Mpya Uzito Kuingia",
-                previousWeights: "Kabla Uzito",
-                recoveryMethod: "Ahueni Njia",
-                recoveryHelper: "Teua Ahueni Njia Yako",
-                dashboard: "Dashibodi",
-                forgotPassword: "Umesahau Nywila",
-                enterUsername: "Kuingia Jina Lako Hapa Chini"
-
-				      },
-				      tableHeaders:{
-				      	names: "Jina(s)",
-				      	gender: "Jinsia",
-				      	dateOfBirth: "Tarehe Ya Ku Zaliwa",
-				      	cityVillage: "Mji/Kijiji",
-				      	actions: "Hatua(s)",
-				      	results: "Matokeo",
-				      	healthFacility: "Afya Kituo",
-                dateRecorded: "Tarehe Kumbukumbu",
-                weight: "Uzito",
-                unit: "Kitengo"
-				      },
-				      buttonLabels:{
-				      	scan: "Kuchamba",
-				      	cancel: "Kufata",
-				      	search: "Kupata",
-				      	view: "Mtazamo",
-				      	checkIn: "Kuangalia Katika",
-				      	checkOut: "Angalia",
-				      	close: "Karibu",
-				      	register: "Kusajila",
-                alreadyRegistered: "Tayari Usajili? Ingia",
-				      	forgotPassword: "Umesahau Nywila?",
-                resetPassword: "Upya Nywila",
-				      	login: "Ingia",
-				      	patientSearch:"Mgonjwa Daftari",
-				      	patientRegister:"Mgonjwa Tafuta",
-                manage: "Kusimamia",
-                save: "Kuokoa",
-                submit: "Kuwasilisha",
-                sendCode: "Kutuma Kificho Ukaguzi",
-                yes: "Ndiyo",
-                no: "Hakuna",
-                patientServices: "Huduma Mgonjwa",
-                codeReceived: "Kupokea kanuni yako? Weka upya nenosiri lako"
-				      },
-              text:{
-                checkEmail: "Tafadhali angalia barua pepe yako na kutumia kanuni kupokea kuweka upya nenosiri lako.",
-                codeSent: "Sisi tumekutuma nambari ya kuthibitisha!"
-              },
-				      checkLabels:{
-				      	yes: "Ndiyo",
-				      	no: "Hakuna",
-				      	tetanusDiagnosis: "Ina Mgonjwa Amewahi Kuwa/Sasa ni Kukutwa na Pepopunda?",
-				      	breastfeedingStatus: "Je, Mgonjwa Kifua-Kulisha?",
-				      	birthCertificate: "Je, Mgonjwa na Cheti cha Kuzaliwa?"
-				      },
-				      placeholders:{
-				      	barcode: "XXXXXXXXXXXX",
-				      	givenName: "Kutokana Jina",
-				      	familyName: "Jina La Ukoo",
-				      	cityVillage: "Mji/Kijiji",
-				      	telephone: "Nambari Ya Simi",
-				      	email: "mtu@baadhiyauwanja.com",
-				      	username: "Jina la Mtumiaji",
-				      	password: "Nywila",
-                confirmPassword: "Kuthibitisha Nywila",
-				      	healthFacility: "Afya Kituo",
-				      	motherGivenName: "Mama Jina Aliyopewa",
-				      	motherFamilyName: "Mama Jina La Familia",
-                verificationCode: "Uhakiki Kanuni"
-				      },
-				      modalHeaders:{
-				      	checkInPatient: "Kuangalia Katika Mgonjwa?",
-                confirmWeight: "Kuthibitisha Uzito Mwisho"
-				      },
-				      modalText:{
-				      	nextAppointment: "Mgonjwa hii ina uteuzi wao ijayo katika ",
-                isCorrect: "Je, una uhakika hii ni sahihi?",
-                updateWeight: "Wewe ni kuhusu kurekebisha uzito wa ",
-                to: " kwa "
-				      },
-				      toastrText:{
-				      	success: "Mafanikio!",
-                invalidForm: "Tafadhali Angalia Kidato Pembejeo Kwa Makosa",
-                invalidUsername: "Jamii haijulikani au batili jina la mtumiaji",
-                registrationError: "Kosa usajili",
-                unexpected: "Hitilafu isiyotarajiwa , tafadhali wasiliana na msimamizi"
-              },
-              toastrHeaders:{
-				      	invalidForm: "Fomu Ya Batili"
-				      },
-				      footer:{
-				      	layoutFooter: "WIZARA YA AFYA, MAENDELEO YA JAMII, JINSIA, WAZEE NA WATOTO MPANGO WA TAIFA WA CHANJO"
-				      }
-			      };
-		      }
-		      else
-		      {
-			      return {
-				      gender: {
-				      	female : "Female",
-				      	male : "Male",
-				      	other : "Other"
-				      },
-              weightUnit:{
-                kilograms: "Kilograms",
-                pounds: "Pounds"
-              },
-				      accuracy: {
-				      	day: "Day",
-				      	month: "Month",
-				      	year: "Year"
-				      },
-				      phone: {
-				      	mobile: "Mobile",
-				      	home: "Home",
-				      	work: "Work"
-				      },
-				      hospitals: {
-				      	hospitalOne: "Hospital 1",
-				      	hospitalTwo: "Hospital 2",
-				      	hospitalThree: "Hospital 3"
-				      },
-				      identificationTypes: {
-				      	yellowCardId: "Yellow Card ID",
-				      	voterCardId: "Voter Card ID",
-				      	driversLicenseId: "Drivers License ID"
-				      },
-              domainTypes:{
-                personal: "Personal",
-                work: "Work",
-                shared: "Shared"
-              },
-              navbar:{
-                loginRegister: "Login/Register"
-
-              },
-
-					relation:{
-				      	father:"Father",
-				      	mother:"Mother",
-				      	son:"Son",
-				      	daughter:"Daughter",
-				      	husband:"Husband",
-				      	wife:"Wife",
-				      	brother:"Brother",
-				      	sister:"Sister",
-				      	grandfather:"Grandfather",
-				      	grandmother:"Grandmother",
-				      	grandson:"Grandson",
-				      	granddaughter:"Granddaughter",
-				      	uncle:"Uncle",
-				      	aunt:"Aunt",
-				      	nephew:"Nephew",
-				      	niece:"Niece",
-				      	cousin:"Cousin"
-				      },
-				      inputLabels:{
-				      	givenName: "Given Name",
-				      	familyName: "Family Name",
-				      	name: "Name",
-				      	dateOfBirthFrom: "Date Of Birth(From)",
-				      	dateOfBirthTo: "Date Of Birth(To)",
-				      	dateOfBirth: "Date Of Birth",
-				      	gender: "Gender",
-				      	relationshipToPatient: "Relationship To Patient",
-				      	identifier: "Identifier",
-				      	telephone: "Telephone",
-				      	cityVillage:"City/Village",
-				      	accuracy:"Accuracy",
-				      	id: "ID",
-				      	birthPlace: "Birth Place",
-				      	email: "E-Mail",
-				      	username: "Username",
-				      	password: "Password",
-				      	confirmPassword: "Confirm Password",
-				      	healthFacility: "Health Facility",
-				      	motherName: "Mother's Name",
-				      	motherGivenName: "Mother's Given Name",
-				      	motherFamilyName: "Mother's Family Name",
-                weight: "Weight",
-                unit: "Unit",
-					      verificationCode: "Verification Code",
-                weight: "Weight",
-                unit: "Unit"
-              },
-				      errors:{
-				      	fieldLong: "This Field Is Too Long",
-				      	telephone: "Incorrect Telephone Number",
-                telephoneRequired: "Telephone Number Is Required",
-				      	email: "Incorrect Email",
-                emailRequired: "Email Is Required",
-				      	dob: "Incorrect Date Of Birth",
-				      	dobRequired: "Date Of Birth Is Required",
-				      	familyNameRequired: "Family Name Is Required",
-				      	givenNameRequired: "Given Name Is Required",
-				      	idRequired: "ID Number Is Required",
-				      	usernameRequired: "Please enter your Username",
-				      	passwordRequired: "Please enter your Password",
-                confirmPasswordRequired: "Please confirm your Password",
-				      	passwordInvalid: "Invalid Password",
-				      	noMatch: "Passwords do not match",
-                weightRequired: "Weight Is Required",
-                verifyCodeRequired: "Please enter the verification code",
-                verifyCodeInvalid: "Code entered is invalid",
-                cityOrVillageRequired: "Please enter your birth place"
-				      },
-				      panelLabels:{
-				      	barcodeScan: "Barcode Scan",
-                barcode: "Barcode",
-				      	patientDemographicCriteria: "Patient Demographics Criteria",
-				      	patientDemographics: "Patient Demographics",
-                patientInformation: "Patient Information",
-				      	personalInformation: "Personal Information",
-				      	nextOfKinOptional: "Next Of Kin (Optional)",
-				      	additionalSearchCriteria: "Additional Search Criteria",
-				      	potentialDuplicates: "Potential Duplicates",
-				      	identification: "Identification",
-				      	domicile: "Domicile",
-                villageHealthFacility: "Village/Health Facility",
-				      	homeAddress: "Home Address",
-				      	contactInformation: "Contact Information",
-				      	accountInformation: "Account Information",
-				      	additionalInfo: "Additional Information",
-				      	additionalInfoFooter: "Please select all that apply",
-				      	login: "Login",
-				      	register: "Register",
-                changePassword: "Change Password",
-				      	loginHelper: "Enter your Username and Password below",
-                passwordHelper: "Enter your new password",
-                verificationHelper: "Enter your verification code",
-                years: "Years:",
-                months: "Months:",
-                newWeightEntry: "New Weight Entry",
-                previousWeights: "Previous Weights",
-                recoveryMethod: "Recovery Method",
-                recoveryHelper: "Select your recovery method",
-                dashboard: "Dashboard",
-                forgotPassword : "Forgot Password",
-                enterUsername: "Enter your username below"
-				      },
-				      tableHeaders:{
-				      	names: "Name(s)",
-				      	gender: "Gender",
-				      	dateOfBirth: "Date Of Birth",
-				      	cityVillage: "City/Village",
-				      	actions: "Action(s)",
-				      	results: "Results",
-				      	healthFacility: "Health Facility",
-                dateRecorded: "Date Recorded",
-                weight: "Weight",
-                unit: "Unit"
-				      },
-				      buttonLabels:{
-				      	scan: "Scan",
-				      	cancel: "Cancel",
-				      	search: "Search",
-				      	view: "View",
-				      	checkIn: "Check In",
-				      	checkOut: "Check Out",
-				      	close: "Close",
-				      	register:"Register",
-				      	alreadyRegistered: "Already have an account? Login",
-				      	forgotPassword: "Forgot Password?",
-				      	login: "Login",
-                resetPassword: "Reset Password",
-				      	patientSearch: "Patient Search",
-				      	patientRegister: "Patient Register",
-                manage: "Manage",
-                save: "Save",
-                submit: "Submit",
-                sendCode: "Send Verification Code",
-                yes: "Yes",
-                no: "No",
-                patientServices: "Patient Services" ,
-                codeReceived: "Received your code? Reset your password"
-				      },
-              text:{
-                checkEmail: "Please check your email and use the code received to reset your password.",
-                codeSent: "We have sent you a verification code!"
-              },
-				      checkLabels:{
-				      	yes: "Yes",
-				      	tetanusDiagnosis: "Has the patient ever been/currently is diagnosed with Tetanus?",
-				      	breastfeedingStatus: "Does the patient breast-feed?",
-				      	birthCertificate: "Does the patient have a birth certificate?"
-				      },
-				      placeholders:{
-				      	barcode: "XXXXXXXXXXXX",
-				      	givenName: "Given Name",
-				      	familyName: "Family Name",
-				      	cityVillage: "City/Village",
-				      	telephone: "Telephone Number",
-				      	email: "someone@somedomain.com",
-				      	username: "Username",
-				      	password: "Password",
-                confirmPassword: "Confirm Password",
-                verificationCode: "Verification Code",
-				      	healthFacility: "Health Facility",
-				      	motherGivenName: "Mother's Given Name",
-				      	motherFamilyName: "Mother's Family Name"
-				      },
-				      modalHeaders:{
-				      	checkInPatient: "Check In Patient",
-                confirmWeight: "Confirm Weight Update"
-				      },
-				      modalText:{
-				      	nextAppointment: "This patient has their next appointment at: ",
-                isCorrect: "Are you sure this is correct?",
-                updateWeight: "You are about to update the weight of ",
-                to: " to "
-              },
-              toastrText:{
-                success: "Success!",
-				      	invalidForm: "Please Check Form Fields For Errors",
-                invalidUsername: "Unknown or invalid username",
-                registrationError: "Registration error",
-                unexpected: "Unexpected error, please contact the adminstrator"
-              },
-				      toastrHeaders:{
-				      	invalidForm: "Invalid Form"
-				      },
-				      footer:{
-				      	layoutFooter: "MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT"
-				      }
-            };
-          }
-        }
-      ]]>
     </contentText>
   </asset>
 </AppletManifest>

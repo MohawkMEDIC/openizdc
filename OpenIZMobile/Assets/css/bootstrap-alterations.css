@@ -10,6 +10,13 @@
     border-radius: 4px;
 }
 
+.page-header, .page-header h3 { 
+  margin-top:0px; 
+  padding:0px;
+  font-size:1.2em;
+  color: #666;
+}
+
 .navbar-inverse {
     background-color: #007FD1;
     border-color: #007FD1;

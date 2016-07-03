@@ -13,6 +13,9 @@
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>login-controller</script>
+      <title lang="en">Login</title>
+      <title lang="sw">Ingia</title>
+
       <content>
         <div class="row" ng-controller="LoginController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="col-xs-12">
@@ -21,7 +24,7 @@
                 <h2 class="panel-title text-center">{{ 'locale.panelLabels.login' | i18n }}</h2>
               </div>
               <div class="panel-body">
-                <img src="app://openiz.org/assets/img/timr_logo_lg.png" class="img-responsive center-block" />
+                <img src="app://openiz.org/asset/img/timr_logo_lg.png" class="img-responsive center-block" />
                 <form novalidate="novalidate" name="loginForm" ng-submit="login(username, password)">
                   <fieldset class="form-horizontal form-group">
                     <legend class="text-center">{{ 'locale.panelLabels.loginHelper' | i18n }}</legend>
