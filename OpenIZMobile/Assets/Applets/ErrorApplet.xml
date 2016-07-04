@@ -5,6 +5,58 @@
     <author>OpenIZ Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0"/>
   </info>
+
+  <!-- Error reports -->
+  <asset name="logs" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">Send Log Files</title>
+      <bundle>jquery</bundle>
+      <bundle>bootstrap</bundle>
+      <bundle>angular</bundle>
+      <content>
+        <body ng-controller="DebugController" xmlns="http://www.w3.org/1999/xhtml">
+          <h1>
+            <img src="app://openiz.org/drawable/logo" alt="logo"/> Send Log Files</h1>
+          <hr/>
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-4">Log File</div>
+              <div class="col-xs-8">
+                <ul>
+                  <li ng-repeat="f in logs">
+                    <a ng-click="sendLog(f)">{{f}}</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <pre id="logContent" style="max-height:100%; overflow:scroll"></pre>
+                
+              </div>
+            </div>
+          </div>
+          <script type="text/javascript">
+            //<![CDATA[
+            var debugApp = angular.module('logs', []);
+            debugApp.config(['$compileProvider', function($compileProvider) {
+              $compileProvider.aHrefSanitizationWhitelist(/^\s*(app|tel):/);
+              }]);
+              
+            debugApp.controller('DebugController', ['$scope', function($scope){
+              $scope.logs = OpenIZ.App.getLogFiles();
+             $scope.sendLog = function(logId)
+             {
+              OpenIZ.App.sendLog(logId);
+             }
+            }]);
+            //]]>
+          </script>
+        </body>
+      </content>
+    </contentHtml>
+    
+  </asset>
   
   <!-- English Error Pages -->
   <asset name="404" mimeType="text/html" lang="en">
