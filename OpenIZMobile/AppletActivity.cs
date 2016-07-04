@@ -15,6 +15,7 @@ using OpenIZ.Mobile.Core.Android.AppletEngine;
 using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
+using System.Xml;
 
 namespace OpenIZMobile
 {
@@ -71,15 +72,14 @@ namespace OpenIZMobile
             var decorView = this.Window.DecorView as FrameLayout;
             decorView.AddView(this.m_progressBar);
             decorView.AddView(this.m_textView);
-            
+
             var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
 			// Find the applet
 			AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
                 assetLink, language: this.Resources.Configuration.Locale.Language);
 			if (asset == null) {
-				Toast.MakeText (this.ApplicationContext, this.GetString (Resource.String.err_applet_not_found), ToastLength.Short).Show ();
-				this.Finish ();
-				return;
+                UserInterfaceUtils.ShowMessage(this, (o, e) => { this.Finish(); }, String.Format("FATAL: {0} not found (installed: {1})", assetLink, AndroidApplicationContext.Current.LoadedApplets.Count));
+                
 			}
 
             // Progress has changed

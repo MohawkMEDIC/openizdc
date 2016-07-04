@@ -28,6 +28,7 @@ namespace OpenIZMobile
 	[Activity (Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
 	public class SplashActivity : Activity
 	{
+
 		// Tracer
 		private Tracer m_tracer;
 
@@ -83,7 +84,7 @@ namespace OpenIZMobile
 
 			try {
 
-				if(AndroidApplicationContext.Current != null)
+                if (AndroidApplicationContext.Current != null)
 					return true;
 				
 				if (!AndroidApplicationContext.Start ()) {
@@ -97,20 +98,26 @@ namespace OpenIZMobile
 						Task.Delay (2000);
 
 						try {
-							if (AndroidApplicationContext.StartTemporary ()) {
-								this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
+                            if (AndroidApplicationContext.StartTemporary())
+                            {
+                                this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
 
-								try {
-									AppletManifest manifest = AppletManifest.Load (Assets.Open ("Applets/SettingsApplet.xml"));
+                                try
+                                {
+                                    AppletManifest manifest = AppletManifest.Load(Assets.Open("Applets/SettingsApplet.xml"));
                                     // Write data to assets directory
                                     var package = manifest.CreatePackage();
+                                    AndroidApplicationContext.Current.InstallApplet(package, true);
+                                }
+                                catch (Exception e)
+                                {
+                                    this.m_tracer.TraceError(e.ToString());
+                                    throw;
+                                }
 
-                                    AndroidApplicationContext.Current.InstallApplet (package, true);
-								} catch (Exception e) {
-									this.m_tracer.TraceError (e.ToString ());
-								}
-
-							}
+                            }
+                            else
+                                throw new InvalidOperationException("Cannot start temporary authentication pricipal");
 						} catch (Exception e) {
 							this.m_tracer.TraceError (e.ToString ());
 							ctSource.Cancel();
@@ -144,8 +151,11 @@ namespace OpenIZMobile
 					foreach (var itm in Assets.List ("Applets")) {
 						try {
 							AppletManifest manifest = AppletManifest.Load (Assets.Open (String.Format ("Applets/{0}", itm)));
-							// Write data to assets directory
-							AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
+                            // Write data to assets directory
+#if !DEBUG
+                            if(new Version(AndroidApplicationContext.Current.GetApplet(manifest.Info.Id)?.Info.Version ?? "0.0.0.0") < new Version(manifest.Info.Version))
+#endif       
+                            AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
 						} catch (Exception e) {
 							this.m_tracer?.TraceError (e.ToString ());
 						}
