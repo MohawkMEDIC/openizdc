@@ -6,66 +6,426 @@
     <groupName lang="en">Administration</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
-    <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
-
   </info>
   <asset name="index" mimeType="text/html">
     <contentHtml>
-      <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
-      <style>app://openiz.org/asset/css/bootstrap-alterations.css</style>
-      <script>patient-manage-controller</script>
       <content lang="en">
-        <div ng-controller="PatientManagementController"  xmlns="http://www.w3.org/1999/xhtml">
+        <div class="row">
+          <div class="col-md-12">
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="aefi" mimeType="text/html">
+    <contentHtml>
+      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <script>aefi-controller</script>
+      <content lang="en">
+        <div ng-controller="AefiController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="row">
-            <div class="col-xs-12">
+            <div class="col-md-12">
               <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title text-center">{{locale.panel.newWeightEntry}}</h3>
+                <div class="panel panel-heading">
+                  <h3 class="panel-title">
+                    <a data-toggle="collapse" href="#recordAefi">Record AEFI</a>
+                    <a data-toggle="collapse" href="#recordAefi">
+                      <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                    </a>
+                  </h3>
                 </div>
-                <div class="panel-body">
-                  <fieldset class="form-horizontal">
-                    <form name="weightEntryForm" novalidate="novalidate" ng-submit="checkWeightFields(weightEntryForm.$invalid)">
-                      <div class ="form-group">
-                        <div ng-class="{ 'has-error': weightEntryForm.weight.$invalid &amp;&amp; (weightEntryForm.weight.$touched||weightEntryForm.$submitted) }">
-                          <label class ="col-xs-1 control-label" for="weightInput">{{locale.inputLabels.weight}}</label>
-                          <div class="col-xs-2">
-                            <input type="number" name="weight" id="weightInput" class="form-control" aria-describedby="weightInputAddon" ng-model="patient.newWeight" required="required"></input>
-                          </div>
-                        </div>
-                        <label class ="col-xs-1 control-label" for="weightUnitSelect">{{locale.inputLabels.unit}}</label>
-                        <div class="col-xs-3">
-                          <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon" ng-model="patient.newUnit" required="required">
-                            <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
-                          </select>
-                        </div>
-                        <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
-                          <label class="col-xs-2 control-label" for="dobInput">{{locale.inputLabels.dateOfBirth}}</label>
-                          <div class="col-xs-3 date input-group" id="dobPicker">
-                            <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
+                <div class="panel panel-body">
+                  <form novalidate="novalidate" name="aefiForm">
+                    <div class="panel panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+
+                          <div class="form-group">
+                            <div class="col-md-3">
+                              <label class="control-label" for="startDateInput">{{ 'locale.inputLabels.startDate' | i18n }}</label>
+                              <input type="text" name="startDate" id="startDateInput" class="form-control" aria-describedby="startDateAddon" ng-model="startDate" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required" />
                               <span class="input-group-addon" ng-click="openDate()">
                                 <span class="glyphicon glyphicon-calendar">
                                 </span>
                               </span>
-                            </input>
+                              <div ng-messages="aefiForm['startDate'].$error" ng-if="aefiForm['startDate'].$touched || aefiForm.$submitted">
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.startDateRequired' | i18n }}</span>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="control-label" for="stopDateInput">{{ 'locale.inputLabels.stopDate' | i18n }}</label>
+                              <input type="datetime" id="stopDateInput" name="stopDate" class="form-control" ng-model="stopDate" aria-describedby="stopDateAddon" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" />
+                              <span class="input-group-addon" ng-click="openDate()">
+                                <span class="glyphicon glyphicon-calendar">
+                                </span>
+                              </span>
+                            </div>
+                            <div class="col-md-3">
+                              <label class="control-label" for="onsetLatencyInput">{{ 'locale.inputLabels.onsetLatency' | i18n }}</label>
+                              <input type="text" id="onsetLatencyInput" name="onsetLatency" class="form-control" ng-model="onsetLatency" />
+                              <div ng-messages="aefiForm['onsetLatency'].$error" ng-if="aefiForm['onsetLatency'].$touched || aefiForm.$submitted">
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.onsetLatencyRequired' | i18n }}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group" ng-class="{ 'has-error': (aefiForm['adverseReactionDescription'].$touched||aefiForm.$submitted) &amp;&amp; aefiForm['adverseReactionDescription'].$invalid }">
+                            <div class="col-md-12">
+                              <label class="control-label" for="adverseReactionDescriptionInput">{{ 'locale.inputLabels.adverseReactionDescription' | i18n }}</label>
+                              <textarea id="adverseReactionDescriptionInput" name="adverseReactionDescription" class="form-control" rows="5" ng-model="adverseReactionDescription" ng-required="true"></textarea>
+                              <div ng-messages="aefiForm['adverseReactionDescription'].$error" ng-if="aefiForm['adverseReactionDescription'].$touched || aefiForm.$submitted">
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.descriptionRequired' | i18n }}</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div class="form-group">
-                          <div class="col-xs-2 col-xs-offset-1">
-                          <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
-                            <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.weightRequired}}</div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-body">
+                      <div class="form-group">
+                        <label class="control-label" for="reactionSubsidedInput">{{ 'locale.inputLabels.reactionSubsided' | i18n }}</label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionSubsidedRadio" id="reactionSubsidedYes" value="yes" />{{ 'locale.inputLabels.yes' | i18n }}
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionSubsidedRadio" id="reactionSubsidedNo" value="No" />{{ 'locale.inputLabels.no' | i18n }}
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionSubsidedRadio" id="reactionSubsidedUnknown" value="Unknown" />{{ 'locale.inputLabels.unknown' | i18n }}
+                        </label>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label" for="reactionReappearedInput">{{ 'locale.inputLabels.reactionReappeared' | i18n }}</label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionReappearedRadio" id="reactionReappearedYes" value="yes" />{{ 'locale.inputLabels.yes' | i18n }}
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionReappearedRadio" id="reactionReappearedNo" value="No" />{{ 'locale.inputLabels.no' | i18n }}
+                        </label>
+                        <label class="radio-inline">
+                          <input type="radio" name="reactionReappearedRadio" id="reactionReappearedUnknown" value="NotApplicable" />{{ 'locale.inputLabels.notApplicable' | i18n }}
+                        </label>
+                      </div>
+
+                      <div class="form-group">
+
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group pull-left">
+                              <label class="control-label" for="seriousnessOfReactionInput">{{ 'locale.inputLabels.seriousnessOfReaction' | i18n }}</label>
+                            </div>
                           </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <div class="checkbox">
+                                  <input type="checkbox" id="seriousnessOfReactionDiscomfortAbleInput" name="seriousnessOfReactionDiscomfortAble" />{{ 'locale.inputLabels.discomfortAbleToWork' | i18n }}
+                                </div>
+                                <div class="checkbox">
+                                  <input type="checkbox" id="seriousnessOfReactionDiscomfortUnableInput" name="seriousnessOfReactionDiscomfortUnable" />{{ 'locale.inputLabels.discomfortUnableToWork' | i18n }}
+                                </div>
+                                <div class="checkbox">
+                                  <input type="checkbox" id="requiredHospitalizationInput" name="requiredHospitalization" />{{ 'locale.inputLabels.requiredHospitalization' | i18n }}
+                                </div>
+                                <div class="checkbox">
+                                  <input type="checkbox" id="lifeThreateningInput" name="lifeThreatening" />{{ 'locale.inputLabels.lifeThreatening' | i18n }}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <div class="checkbox">
+                                  <input type="checkbox" id="persistentDisabilityInput" name="persistentDisability" />{{ 'locale.inputLabels.persistentDisability' | i18n }}
+                                </div>
+                                <div class="checkbox">
+                                  <input type="checkbox" id="congenitalAnomalyInput" name="congenitalAnomaly" />{{ 'locale.inputLabels.congenitalAnomaly' | i18n }}
+                                </div>
+                                <div class="checkbox">
+                                  <input type="checkbox" id="patientDiedInput" name="patientDied" />{{ 'locale.inputLabels.patientDied' | i18n }}
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div class="col-xs-2 col-xs-offset-6">
-                          <div ng-messages="weightEntryForm.dob.$error" ng-if="weightEntryForm.dob.$touched||weightEntryForm.$submitted">
-                            <div class="text-center alert alert-danger" ng-message="required">{{locale.errors.dobRequired}}</div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.save}}</button>
+                              </div>
+                            </div>
                           </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="vaccinationEncounter" mimeType="text/html">
+    <contentHtml>
+      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <script>vaccination-controller</script>
+      <content lang="en">
+        <div ng-controller="VaccinationController" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                    <a data-toggle="collapse" href="#enterVaccination">{{locale.panelLabels.enterVaccination}}</a>
+                    <a data-toggle="collapse" href="#enterVaccination">
+                      <span class="glyphicon glyphicon-chevron-down pull-right"></span>
+                    </a>
+                  </h3>
+                </div>
+                <div class="panel-body" id="enterVaccination">
+                  <form novalidate="novalidate" name="vaccinationForm">
+                    <fieldset>
+
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="dateOfVaccinationInput">{{ 'locale.inputLabels.dateOfVaccination' | i18n }}</label>
+                                <input type="text" name="dateOfVaccination" id="dateOfVaccinationInput" class="form-control" aria-describedby="dateOfVaccinationAddon" ng-model="dateOfVaccination" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required" />
+                                <span class="input-group-addon" ng-click="openDate()">
+                                  <span class="glyphicon glyphicon-calendar">
+                                  </span>
+                                </span>
+                                <div ng-messages="vaccinationForm['dateOfVaccination'].$error" ng-if="vaccinationForm['dateOfVaccination'].$touched || vaccinationForm.$submitted">
+                                  <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.dateOfVaccinationRequired' | i18n }}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="locationInput">{{ 'locale.inputLabels.location' | i18n }}</label>
+                                <select id="locationInput" name="location" class="form-control" ng-model="location">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="OPV-0">OPV-0</option>
+                                  <option value="OPV-1">OPV-1</option>
+                                  <option value="OPV-2">OPV-2</option>
+                                  <option value="BCG">BCG</option>
+                                </select>
+                              </div>
+                              <div ng-messages="vaccinationForm['location'].$error" ng-if="vaccinationForm['location'].$touched || vaccinationForm.$submitted">
+                                <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.locationRequired' | i18n }}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="vaccineInput">{{ 'locale.inputLabels.vaccine' | i18n }}</label>
+                                <select id="vaccineInput" name="vaccine" class="form-control" ng-model="vaccine">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="OPV-0">OPV-0</option>
+                                  <option value="OPV-1">OPV-1</option>
+                                  <option value="OPV-2">OPV-2</option>
+                                  <option value="BCG">BCG</option>
+                                </select>
+                              </div>
+                              <div ng-messages="vaccinationForm['vaccine'].$error" ng-if="vaccinationForm['vaccine'].$touched || vaccinationForm.$submitted">
+                                <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.vaccinationRequired' | i18n }}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <div ng-class="{ 'has-error': (vaccinationForm.dose.$touched||vaccinationForm.$submitted) &amp;&amp; vaccinationForm.dose.$invalid }">
+                                  <label class="control-label" for="doseInput">{{ 'locale.inputLabels.dose' | i18n }}</label>
+                                  <input id="doseInput" name="dose" type="text" placeholder="{{ 'locale.placeholders.dose' | i18n }}" class="form-control" ng-model="dose" ng-required="true"/>
+                                </div>
+                                <div ng-messages="vaccinationForm['dose'].$error" ng-if="vaccinationForm['dose'].$touched||vaccinationForm.$submitted">
+                                  <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.doseRequired' | i18n }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-12">
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="routeInput">{{ 'locale.inputLabels.route' | i18n }}</label>
+                                <select id="routeInput" name="route" class="form-control">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="Injection">{{ 'locale.inputLabels.injection' | i18n }}</option>
+                                  <option value="Oral">{{ 'locale.inputLabels.oral' | i18n }}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="unitInput">{{ 'locale.inputLabels.unit' | i18n }}</label>
+                                <select id="unitInput" name="unit" class="form-control">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="mL">Millilitres</option>
+                                  <option value="L">Litres</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="lotNoInput">{{ 'locale.inputLabels.lotNo' | i18n }}</label>
+                                <select id="lotNoInput" name="lotNo" class="form-control">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="123048234">123048234</option>
+                                  <option value="213480934">213480934</option>
+                                  <option value="09485650">09485650</option>
+                                  <option value="0956795678">0956795678</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="manufacturerInput">{{ 'locale.inputLabels.manufacturer' | i18n }}</label>
+                                <select id="manufacturerInput" name="manufacturer" class="form-control">
+                                  <option value="">{{ 'locale.inputLabels.select' | i18n }}</option>
+                                  <option value="GSK">GSK</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class="control-label" for="commentsInput">{{ 'locale.inputLabels.comments' | i18n }}</label>
+                                <textarea id="commentsInput" name="comments" type="text" placeholder="{{ 'locale.placeholders.comments' | i18n }}" class="form-control" rows="5"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <div class="col-md-8">
+                              <button type="submit" class="btn btn-primary pull-right">{{ 'locale.buttonLabels.save' | i18n }}</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="weightEncounter" mimeType="text/html">
+    <contentHtml>
+      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <script>weight-controller</script>
+      <content lang="en">
+        <div ng-controller="WeightController"  xmlns="http://www.w3.org/1999/xhtml">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title text-center">{{ 'locale.panelLabels.newWeightEntry' | i18n }}</h3>
+                </div>
+                <div class="panel-body">
+                  <fieldset class="form-horizontal">
+                    <form name="weightEntryForm" novalidate="novalidate" ng-submit="checkWeightFields(weightEntryForm.$invalid)">
+                      <div class="row">
+                        <div class="col-md-12">
+
+                          <div class="col-md-3">
+                            <div class ="form-group">
+                              <div class="col-md-8">
+                                <div ng-class="{ 'has-error': weightEntryForm.weight.$invalid &amp;&amp; (weightEntryForm.weight.$touched||weightEntryForm.$submitted) }">
+                                  <label class ="control-label" for="weightInput">{{ 'locale.inputLabels.weight' | i18n }}</label>
+                                  <input type="number" name="weight" id="weightInput" class="form-control" aria-describedby="weightInputAddon" ng-model="patient.newWeight" required="required" />
+                                  <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
+                                    <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.weightRequired' | i18n }}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <label class ="control-label" for="weightUnitSelect">{{ 'locale.inputLabels.unit' | i18n }}</label>
+                                <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon" ng-model="patient.newUnit" required="required">
+                                  <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-3">
+                            <div class="form-group">
+                              <div class="col-md-8">
+                                <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
+                                  <label class="control-label" for="dobInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
+                                  <div class="date input-group">
+                                    <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
+                                      <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar">
+                                        </span>
+                                      </span>
+                                    </input>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
                           </div>
                         </div>
                       </div>
                       <div class="form-group">
                         <button type="submit" class="col-xs-offset-10 btn btn-primary">
-                          {{locale.buttonLabels.save}}
+                          {{ 'locale.buttonLabels.save' | i18n }}
                         </button>
                       </div>
                     </form>
@@ -73,21 +433,21 @@
                       <div class="modal-dialog modal-sm">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h4 class="modal-title">{{locale.modalHeaders.confirmWeight}}</h4>
+                            <h4 class="modal-title">{{ 'locale.modalHeaders.confirmWeight' | i18n }}</h4>
                           </div>
                           <div class="modal-body">
                             <p>{{locale.modalText.updateWeight + patient.FirstName + "," + patient.LastName + locale.modalText.to + patient.newWeight + " " + patient.newUnit}}</p>
-                            <p>{{locale.modalText.isCorrect}}</p>
+                            <p>{{ 'locale.modalText.isCorrect' | i18n }}</p>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">{{locale.buttonLabels.yes}}</button>
-                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">{{locale.buttonLabels.no}}</button>
+                            <button type="button" class="btn btn-success pull-left" data-dismiss="modal">{{ 'locale.buttonLabels.yes' | i18n }}</button>
+                            <button type="button" class="btn btn-danger pull-right" data-dismiss="modal">{{ 'locale.buttonLabels.no' | i18n }}</button>
                           </div>
                         </div>
                       </div>
                     </div>
                     <h4 class="text-center">
-                      {{locale.panelLabels.previousWeights}}
+                      {{ 'locale.panelLabels.previousWeights' | i18n }}
                       <span class="menu-arrow-toggleable-weight-table glyphicon glyphicon-menu-down pull-right" data-toggle="collapse" href="#weightTableCollapse"></span>
                     </h4>
                     <div class="form-group collapse" id="weightTableCollapse">
@@ -95,16 +455,16 @@
 
                         <thead>
                           <tr>
-                            <th>{{locale.tableHeaders.dateRecorded}}</th>
-                            <th>{{locale.tableHeaders.weight}}</th>
-                            <th>{{locale.tableHeaders.unit}}</th>
+                            <th>{{ 'locale.tableHeaders.dateRecorded' | i18n }}</th>
+                            <th>{{ 'locale.tableHeaders.weight' | i18n }}</th>
+                            <th>{{ 'locale.tableHeaders.unit' | i18n }}</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr ng-repeat="weights in weightRecords">
                             <td>{{weights.Date.getDate()+"/"+weights.Date.getMonth()+"/"+weights.Date.getFullYear()}}</td>
                             <td>{{weights.Weight}}</td>
-                            <td>{{weights.Unit}}</td>
+                            <td>{{weights.unit}}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -122,10 +482,52 @@
       </content>
     </contentHtml>
   </asset>
-  <asset name="patient-manage-controller" mimeType="text/javascript">
+  <asset name="aefi-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      layoutApp.controller('PatientManagementController', ['$scope', 'localize' function ($scope, localize)
+      layoutApp.controller('AefiController', ['$scope', function ($scope)
+		  {
+        $scope.remove = function(index, outerModelAccess, innerModelAccess)
+        {
+          if(index != 0)
+          {
+            if(innerModelAccess == "")
+            {
+              $scope.user[outerModelAccess].splice(index, 1);
+            }
+            else
+            {
+              $scope.user[outerModelAccess][innerModelAccess].splice(index, 1);
+            }
+          }
+        };
+
+          $scope.add = function(outerModelAccess, innerModelAccess, objToPush) {
+            if(innerModelAccess == ""){
+              $scope.user[outerModelAccess].push(objToPush);
+            }
+            else {
+              $scope.user[outerModelAccess][innerModelAccess].push(objToPush);
+            }
+          };
+          
+          
+          $scope.openDate = function() {
+            $scope.popup.opened = true;
+          };
+          
+          $scope.popup = {
+            opened: false
+          };
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
+  <asset name="weight-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('WeightController', ['$scope', function ($scope)
 		  {
 
          $scope.checkWeightFields = function(invalid) {
@@ -241,5 +643,27 @@
       ]]>
     </contentText>
   </asset>
-  
+  <asset name="vaccination-controller" mimeType="text/javascript">
+    <contentText>
+      <![CDATA[
+      layoutApp.controller('VaccinationController', ['$scope', function ($scope)
+		  {
+          $scope.openDate = function() {
+            $scope.popup.opened = true;
+          };
+          
+          $scope.popup = {
+            opened: false
+          };
+          
+          $scope.doseRegex = '/\d+\.?\d*/';
+          
+          $scope.vaccination = new Object();
+          $scope.vaccination.dateOfVaccination = new Date();
+          
+      }]);
+
+      ]]>
+    </contentText>
+  </asset>
 </AppletManifest>

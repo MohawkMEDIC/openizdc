@@ -220,6 +220,76 @@
   <strings lang="sw">
     <string key="locale.home.today">Tarehe: </string>
     <string key="locale.home.greeting">Karibu sana</string>
+
+    <!-- Button Labels -->
+    <string key="locale.buttonLabels.save">Kuokoa</string>
+    <!-- Button Labels End -->
+
+    <!-- Error Labels -->
+    <string key="locale.errors.startDateRequired">Kuanza Tarehe Inahitajika</string>
+    <string key="locale.errors.descriptionRequired">Maelezo Inahitajika</string>
+    <string key="locale.errors.vaccinationRequired">Chanjo Inahitajika</string>
+    <string key="locale.errors.doseRequired">Dozi Inahitajika</string>
+    <string key="locale.errors.onsetLatencyRequired">Mwanzo latency Inahitajika</string>
+    <string key="locale.errors.dateOfVaccinationRequired">Tarehe ya Chanjo Inahitajika</string>
+    <string key="locale.errors.locationRequired">Eneo Inahitajika</string>
+    <string key="locale.errors.routeRequired">Njia Inahitajika</string>
+    <string key="locale.errors.unitRequired">Kitengo Inahitajika</string>
+    <string key="locale.errors.lotNoRequired">Mengi Hakuna Inahitajika</string>
+    <string key="locale.errors.manufacturerRequired">Watengenezaji Inahitajika</string>
+    <string key="locale.errors.weightRequired">Uzito Inahitajika</string>
+    <!-- Error Labels End -->
+
+    <!-- Input Labels -->
+    <string key="locale.inputLabels.dateOfBirth">Tarehe Ya Ku Zaliwa</string>
+    <string key="locale.inputLabels.select">Teua</string>
+    <string key="locale.inputLabels.startDate">Kuanza Tarehe</string>
+    <string key="locale.inputLabels.stopDate">Stop Tarehe</string>
+    <string key="locale.inputLabels.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
+    <string key="locale.inputLabels.vaccine">Chanjo</string>
+    <string key="locale.inputLabels.onsetLatency">Mwanzo Latency</string>
+    <string key="locale.inputLabels.reactionSubsided">Majibu subsides baada ya kuacha watuhumiwa wa madawa ya kulevya / kupunguza dozi?</string>
+    <string key="locale.inputLabels.reactionReappeared">Majibu reappeared baada reintroduction madawa ya kulevya?</string>
+    <string key="locale.inputLabels.yes">Ndiyo</string>
+    <string key="locale.inputLabels.no">Hakuna</string>
+    <string key="locale.inputLabels.unknown">Haijulikani</string>
+    <string key="locale.inputLabels.notApplicable">Haitumiki</string>
+    <string key="locale.inputLabels.seriousnessOfReaction">Uzito wa Reaction (Tafadhali chagua zote zinazotumika)</string>
+    <string key="locale.inputLabels.discomfortAbleToWork">Usumbufu lakini uwezo wa kufanya kazi</string>
+    <string key="locale.inputLabels.discomfortUnableToWork">Usumbufu hawakuweza kufanya kazi</string>
+    <string key="locale.inputLabels.requiredHospitalization">Hospitalization required</string>
+    <string key="locale.inputLabels.lifeThreatening">Maisha Kutishia</string>
+    <string key="locale.inputLabels.persistentDisability">Husababisha kuendelea ulemavu au kukosekana kwa uwezo</string>
+    <string key="locale.inputLabels.congenitalAnomaly">Unasababishwa Makosa ya Kuzaliwa</string>
+    <string key="locale.inputLabels.patientDied">Mgonjwa Alikufa</string>
+    <string key="locale.inputLabels.dateOfVaccination">Tarehe ya Chanjo</string>
+    <string key="locale.inputLabels.location">Eneo</string>
+    <string key="locale.inputLabels.dose">Dozi</string>
+    <string key="locale.inputLabels.route">Njia</string>
+    <string key="locale.inputLabels.unit">Kitengo</string>
+    <string key="locale.inputLabels.lotNo">Mengi Hakuna</string>
+    <string key="locale.inputLabels.manufacturer">Watengenezaji</string>
+    <string key="locale.inputLabels.comments">Maoni</string>
+    <string key="locale.inputLabels.weight">Uzito</string>
+    <string key="locale.inputLabels.previousWeights">Uzito Uliopita</string>
+    <!-- Input Labels End -->
+
+    <!-- Panel Labels -->
+    <string key="locale.panelLabels.newWeightEntry">Mpya ya Kuingia Uzito</string>
+    <string key="locale.panelLabels.previousWeights">Uzito Uliopita</string>
+    <!-- Panel Labels End -->
+
+    <!-- Placeholders -->
+    <string key="locale.placeholders.dose">Dozi</string>
+    <string key="locale.placeholders.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
+    <!-- Placeholders End -->
+
+    <!-- Table Headers -->
+    <string key="locale.tableHeaders.dateRecorded">Tarehe Kumbukumbu</string>
+    <string key="locale.tableHeaders.weight">Uzito</string>
+    <string key="locale.tableHeaders.unit">Kitengo</string>
+    <!-- Table Headers End -->
+    
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
