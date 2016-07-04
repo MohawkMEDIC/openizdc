@@ -46,11 +46,63 @@
     <string key="btnForgot">Forgot password</string>
     <string key="password">Password</string>
     <string key="username">User Name</string>
-    <string key="locale.navbar.title">TImR</string>
-    <string key="locale.navbar.logout">Logout</string>
-    <string key="locale.navbar.language">Language</string>
-    <string key="locale.navbar.loginRegister">Login</string>
-    <string key="locale.navbar.preferences">Preferences</string>
+
+    <!-- Button Labels -->
+    <string key="locale.buttonLabels.scan">Scan</string>
+    <string key="locale.buttonLabels.cancel">Cancel</string>
+    <string key="locale.buttonLabels.search">Search</string>
+    <string key="locale.buttonLabels.view">View</string>
+    <string key="locale.buttonLabels.checkIn">Check In</string>
+    <string key="locale.buttonLabels.checkOut">Check Out</string>
+    <string key="locale.buttonLabels.close">Close</string>
+    <string key="locale.buttonLabels.register">Register</string>
+    <string key="locale.buttonLabels.alreadyRegistered">Already have an account? Login</string>
+    <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
+    <string key="locale.buttonLabels.login">Login</string>
+    <string key="locale.buttonLabels.resetPassword">Reset Password</string>
+    <string key="locale.buttonLabels.patientSearch">Search</string>
+    <string key="locale.buttonLabels.searchAgain">Edit Query</string>
+    <string key="locale.buttonLabels.patientRegister">Register</string>
+    <string key="locale.buttonLabels.manage">Manage</string>
+    <string key="locale.buttonLabels.save">Save</string>
+    <string key="locale.buttonLabels.submit">Submit</string>
+    <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
+    <string key="locale.buttonLabels.yes">Yes</string>
+    <string key="locale.buttonLabels.no">No</string>
+    <string key="locale.buttonLabels.patientServices">Patient Services</string>
+    <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
+    <!-- Button Labels End -->
+
+    <!-- Checkbox Labels -->
+    <string key="locale.checkLabels.yes">Yes</string>
+    <string key="locale.checkLabels.tetanusDiagnosis">TT immunity</string>
+    <string key="locale.checkLabels.breastfeedingStatus">Exclusvely Breast Feeding</string>
+    <string key="locale.checkLabels.birthCertificate">Patient has bith certificate</string>
+    <!-- Checkbox Labels End -->
+
+    <!-- Error Labels -->
+    <string key="locale.errors.fieldLong">This Field Is Too Long</string>
+    <string key="locale.errors.telephone">Incorrect Telephone Number</string>
+    <string key="locale.errors.telephoneRequired">Telephone Number Is Required</string>
+    <string key="locale.errors.email">Incorrect Email</string>
+    <string key="locale.errors.emailRequired">Email Is Required</string>
+    <string key="locale.errors.dob">Incorrect Date Of Birth</string>
+    <string key="locale.errors.dobRequired">Date Of Birth Is Required</string>
+    <string key="locale.errors.familyNameRequired">Family Name Is Required</string>
+    <string key="locale.errors.givenNameRequired">Given Name Is Required</string>
+    <string key="locale.errors.idRequired">ID Number Is Required</string>
+    <string key="locale.errors.usernameRequired">Please enter your Username</string>
+    <string key="locale.errors.passwordRequired">Please enter your Password</string>
+    <string key="locale.errors.confirmPasswordRequired">Please confirm your Password</string>
+    <string key="locale.errors.passwordInvalid">Invalid Password</string>
+    <string key="locale.errors.noMatch">Passwords do not match</string>
+    <string key="locale.errors.weightRequired">Weight Is Required</string>
+    <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
+    <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
+    <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
+    <!-- Error Labels End -->
+    
+    <!-- Input Labels -->
     <string key="locale.inputLabels.givenName">Given Name</string>
     <string key="locale.inputLabels.familyName">Family Name</string>
     <string key="locale.inputLabels.name">Name</string>
@@ -78,25 +130,47 @@
     <string key="locale.inputLabels.verificationCode">Verification Code</string>
     <string key="locale.inputLabels.weight">Weight</string>
     <string key="locale.inputLabels.unit">Unit</string>
-    <string key="locale.errors.fieldLong">This Field Is Too Long</string>
-    <string key="locale.errors.telephone">Incorrect Telephone Number</string>
-    <string key="locale.errors.telephoneRequired">Telephone Number Is Required</string>
-    <string key="locale.errors.email">Incorrect Email</string>
-    <string key="locale.errors.emailRequired">Email Is Required</string>
-    <string key="locale.errors.dob">Incorrect Date Of Birth</string>
-    <string key="locale.errors.dobRequired">Date Of Birth Is Required</string>
-    <string key="locale.errors.familyNameRequired">Family Name Is Required</string>
-    <string key="locale.errors.givenNameRequired">Given Name Is Required</string>
-    <string key="locale.errors.idRequired">ID Number Is Required</string>
-    <string key="locale.errors.usernameRequired">Please enter your Username</string>
-    <string key="locale.errors.passwordRequired">Please enter your Password</string>
-    <string key="locale.errors.confirmPasswordRequired">Please confirm your Password</string>
-    <string key="locale.errors.passwordInvalid">Invalid Password</string>
-    <string key="locale.errors.noMatch">Passwords do not match</string>
-    <string key="locale.errors.weightRequired">Weight Is Required</string>
-    <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
-    <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
-    <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
+    <string key="locale.inputLabels.select">Select</string>
+    <string key="locale.inputLabels.startDate">Start Date</string>
+    <string key="locale.inputLabels.stopDate">Stop Date</string>
+    <string key="locale.inputLabels.adverseReactionDescription">Description of adverse reaction</string>
+    <string key="locale.inputLabels.vaccine">Vaccine</string>
+    <string key="locale.inputLabels.onsetLatency">Onset Latency</string>
+    <string key="locale.inputLabels.reactionSubsided">Reaction Subsided after stopping suspected drug/reducing the dose?</string>
+    <string key="locale.inputLabels.reactionReappeared">Reaction reappeared after reintroduction drug?</string>
+    <string key="locale.inputLabels.yes">Yes</string>
+    <string key="locale.inputLabels.no">No</string>
+    <string key="locale.inputLabels.unknown">Unknown</string>
+    <string key="locale.inputLabels.notApplicable">Not Applicable</string>
+    <string key="locale.inputLabels.seriousnessOfReaction">Seriousness of Reaction (Please select all that apply)</string>
+    <string key="locale.inputLabels.discomfortAbleToWork">Discomfort but able to work</string>
+    <string key="locale.inputLabels.discomfortUnableToWork">Discomfort could not work</string>
+    <string key="locale.inputLabels.requiredHospitalization">Required Hospitalization</string>
+    <string key="locale.inputLabels.lifeThreatening">Life Threatening</string>
+    <string key="locale.inputLabels.persistentDisability">Caused persistent disability or incapacity</string>
+    <string key="locale.inputLabels.congenitalAnomaly">Caused a Congenital Anomaly</string>
+    <string key="locale.inputLabels.patientDied">Patient Died</string>
+    <string key="locale.inputLabels.dateOfVaccination">Date of Vaccination</string>
+    <string key="locale.inputLabels.location">Location</string>
+    <string key="locale.inputLabels.dose">Dose</string>
+    <string key="locale.inputLabels.route">Route</string>
+    <string key="locale.inputLabels.lotNo">Lot No.</string>
+    <string key="locale.inputLabels.manufacturer">Manufacturer</string>
+    <string key="locale.inputLabels.comments">Comments</string>
+    <string key="locale.inputLabels.previousWeights">Previous Weights</string>
+    <string key="locale.inputLabels.injection">Injection</string>
+    <string key="locale.inputLabels.oral">Oral</string>
+    <!-- Input Labels End -->
+
+    <!-- Navbar Labels -->
+    <string key="locale.navbar.title">TImR</string>
+    <string key="locale.navbar.logout">Logout</string>
+    <string key="locale.navbar.language">Language</string>
+    <string key="locale.navbar.loginRegister">Login</string>
+    <string key="locale.navbar.preferences">Preferences</string>
+    <!-- Navbar Labels End -->
+    
+    <!-- Panel Labels -->
     <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
     <string key="locale.panelLabels.barcode">Barcode</string>
     <string key="locale.panelLabels.patientDemographicCriteria">Patient Demographics</string>
@@ -129,48 +203,10 @@
     <string key="locale.panelLabels.dashboard">Dashboard</string>
     <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
     <string key="locale.panelLabels.enterUsername">Enter your username below</string>
-    <string key="locale.tableHeaders.names">Name(s)</string>
-    <string key="locale.tableHeaders.gender">Gender</string>
-    <string key="locale.tableHeaders.dateOfBirth">Date Of Birth</string>
-    <string key="locale.tableHeaders.cityVillage">City/Village</string>
-    <string key="locale.tableHeaders.actions">Action(s)</string>
-    <string key="locale.tableHeaders.results">Results</string>
-    <string key="locale.tableHeaders.healthFacility">Health Facility</string>
-    <string key="locale.tableHeaders.dateRecorded">Date Recorded</string>
-    <string key="locale.tableHeaders.weight">Weight</string>
-    <string key="locale.tableHeaders.unit">Unit</string>
-    <string key="locale.buttonLabels.scan">Scan</string>
-    <string key="locale.buttonLabels.cancel">Cancel</string>
-    <string key="locale.buttonLabels.search">Search</string>
-    <string key="locale.buttonLabels.view">View</string>
-    <string key="locale.buttonLabels.checkIn">Check In</string>
-    <string key="locale.buttonLabels.checkOut">Check Out</string>
-    <string key="locale.buttonLabels.close">Close</string>
-    <string key="locale.buttonLabels.register">Register</string>
-    <string key="locale.buttonLabels.alreadyRegistered">Already have an account? Login</string>
-    <string key="locale.buttonLabels.forgotPassword">Forgot Password?</string>
-    <string key="locale.buttonLabels.login">Login</string>
-    <string key="locale.buttonLabels.resetPassword">Reset Password</string>
-    <string key="locale.buttonLabels.patientSearch">Search</string>
-    <string key="locale.buttonLabels.searchAgain">Edit Query</string>
-    <string key="locale.buttonLabels.patientRegister">Register</string>
-    <string key="locale.buttonLabels.manage">Manage</string>
-    <string key="locale.buttonLabels.save">Save</string>
-    <string key="locale.buttonLabels.submit">Submit</string>
-    <string key="locale.buttonLabels.sendCode">Send Verification Code</string>
-    <string key="locale.accuracy.year">Year</string>
-    <string key="locale.accuracy.month">Month</string>
-    <string key="locale.accuracy.day">Day</string>
-    <string key="locale.buttonLabels.yes">Yes</string>
-    <string key="locale.buttonLabels.no">No</string>
-    <string key="locale.buttonLabels.patientServices">Patient Services</string>
-    <string key="locale.buttonLabels.codeReceived">Received your code? Reset your password</string>
-    <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
-    <string key="locale.text.codeSent">We have sent you a verification code!</string>
-    <string key="locale.checkLabels.yes">Yes</string>
-    <string key="locale.checkLabels.tetanusDiagnosis">TT immunity</string>
-    <string key="locale.checkLabels.breastfeedingStatus">Exclusvely Breast Feeding</string>
-    <string key="locale.checkLabels.birthCertificate">Patient has bith certificate</string>
+    <string key="locale.panelLabels.enterVaccination">Enter Vaccination</string>
+    <!-- Panel Labels End -->
+
+    <!-- Placeholders -->
     <string key="locale.placeHolders.barcode">XXXXXXXXXXXX</string>
     <string key="locale.placeHolders.givenName">Given Name</string>
     <string key="locale.placeHolders.familyName">Family Name</string>
@@ -184,6 +220,40 @@
     <string key="locale.placeHolders.healthFacility">Health Facility</string>
     <string key="locale.placeHolders.motherGivenName">Mother's Given Name</string>
     <string key="locale.placeHolders.motherFamilyName">Mother's Family Name</string>
+    <string key="locale.placeholders.dose">Dose</string>
+    <string key="locale.placeholders.adverseReactionDescription">Description of adverse reaction</string>
+    <!-- Placeholders End -->
+
+    <!-- Stock Labels -->
+    <string key="locale.stock.panelHeader">Stock Snapshot</string>
+    <string key="locale.stock.tableHeader.antigen">Antigen/Lot#</string>
+    <string key="locale.stock.tableHeader.expiry">Expiry</string>
+    <string key="locale.stock.tableHeader.onHand">On Hand</string>
+    <string key="locale.stock.tableHeader.amc">AMC</string>
+    <string key="locale.stock.tableHeader.remain">Remaining</string>
+    <string key="locale.stock.tableHeader.action">Actions</string>
+    <string key="locale.stock.action.adjust">Adjust</string>
+    <string key="locale.stock.action.order">Order More</string>
+    <!-- Stock Labels End -->
+
+    <!-- Table Headers -->
+    <string key="locale.tableHeaders.names">Name(s)</string>
+    <string key="locale.tableHeaders.gender">Gender</string>
+    <string key="locale.tableHeaders.dateOfBirth">Date Of Birth</string>
+    <string key="locale.tableHeaders.cityVillage">City/Village</string>
+    <string key="locale.tableHeaders.actions">Action(s)</string>
+    <string key="locale.tableHeaders.results">Results</string>
+    <string key="locale.tableHeaders.healthFacility">Health Facility</string>
+    <string key="locale.tableHeaders.dateRecorded">Date Recorded</string>
+    <string key="locale.tableHeaders.weight">Weight</string>
+    <string key="locale.tableHeaders.unit">Unit</string>
+    <!-- Table Headers End -->
+    
+    <string key="locale.accuracy.year">Year</string>
+    <string key="locale.accuracy.month">Month</string>
+    <string key="locale.accuracy.day">Day</string>
+    <string key="locale.text.checkEmail">Please check your email and use the code received to reset your password.</string>
+    <string key="locale.text.codeSent">We have sent you a verification code!</string>
     <string key="locale.modalHeaders.checkInPatient">Check In Patient</string>
     <string key="locale.modalHeaders.confirmWeight">Confirm Weight Update</string>
     <string key="locale.modalText.nextAppointment">This patient has their next appointment at</string>
@@ -199,7 +269,8 @@
     <string key="locale.footer.layoutFooter">MINISTRY OF HEALTH, COMMUNITY DEVELOPMENT, GENDER, ELDERLY AND CHILDREN IMMUNIZATION VACCINE DEVELOPMENT</string>
     <string key="locale.tabHeaders.patientProfile">Profile</string>
     <string key="locale.tabHeaders.patientHistory">History</string>
-    <string key="locale.tabHeaders.patientObservation">Weights</string>
+    <string key="locale.tabHeaders.patientWeight">Weights</string>
+    <string key="locale.tabHeaders.patientVaccination">Vaccinations</string>
     <string key="locale.tabHeaders.patientAefi">AEFI</string>
     <string key="locale.queue.panelHeader">Current Queue</string>
     <string key="locale.queue.tableHeader.child">Child</string>
@@ -207,15 +278,7 @@
     <string key="locale.queue.tableHeader.action">Actions</string>
     <string key="locale.queue.action.cancel">Walk-out</string>
     <string key="locale.queue.action.encounter">View</string>
-    <string key="locale.stock.panelHeader">Stock Snapshot</string>
-    <string key="locale.stock.tableHeader.antigen">Antigen/Lot#</string>
-    <string key="locale.stock.tableHeader.expiry">Expiry</string>
-    <string key="locale.stock.tableHeader.onHand">On Hand</string>
-    <string key="locale.stock.tableHeader.amc">AMC</string>
-    <string key="locale.stock.tableHeader.remain">Remaining</string>
-    <string key="locale.stock.tableHeader.action">Actions</string>
-    <string key="locale.stock.action.adjust">Adjust</string>
-    <string key="locale.stock.action.order">Order More</string>
+    
   </strings>
   <strings lang="sw">
     <string key="locale.home.today">Tarehe: </string>
@@ -272,17 +335,28 @@
     <string key="locale.inputLabels.comments">Maoni</string>
     <string key="locale.inputLabels.weight">Uzito</string>
     <string key="locale.inputLabels.previousWeights">Uzito Uliopita</string>
+    <string key="locale.inputLabels.injection">Sindano</string>
+    <string key="locale.inputLabels.oral">Mdomo</string>
     <!-- Input Labels End -->
 
     <!-- Panel Labels -->
     <string key="locale.panelLabels.newWeightEntry">Mpya ya Kuingia Uzito</string>
     <string key="locale.panelLabels.previousWeights">Uzito Uliopita</string>
+    <string key="locale.panelLabels.enterVaccination">Kuingia Chanjo</string>
     <!-- Panel Labels End -->
 
     <!-- Placeholders -->
     <string key="locale.placeholders.dose">Dozi</string>
     <string key="locale.placeholders.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
     <!-- Placeholders End -->
+    
+    <!-- Tab Headers -->
+    <string key="locale.tabHeaders.patientProfile">Profile</string>
+    <string key="locale.tabHeaders.patientHistory">Historia</string>
+    <string key="locale.tabHeaders.patientWeight">Weights</string>
+    <string key="locale.tabHeaders.patientVaccination">Chanjo</string>
+    <string key="locale.tabHeaders.patientAefi">AEFI</string>
+    <!-- Tab Headers End-->
 
     <!-- Table Headers -->
     <string key="locale.tableHeaders.dateRecorded">Tarehe Kumbukumbu</string>

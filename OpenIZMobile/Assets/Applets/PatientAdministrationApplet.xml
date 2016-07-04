@@ -405,7 +405,7 @@
                                   </div>
                                 </div>
 
-                                
+
                               </fieldset>
                             </div>
                           </div>
@@ -692,7 +692,10 @@
               <a href="#history" aria-controls="history" role="tab" data-toggle="tab">{{ 'locale.tabHeaders.patientHistory' | i18n }}</a>
             </li>
             <li role="presentation">
-              <a href="#observations" aria-controls="observations" role="tab" data-toggle="tab">{{ 'locale.tabHeaders.patientObservation' | i18n }}</a>
+              <a href="#weights" aria-controls="weights" role="tab" data-toggle="tab">{{ 'locale.tabHeaders.patientWeight' | i18n }}</a>
+            </li>
+            <li role="presentation">
+              <a href="#vaccinations" aria-controls="vaccinations" role="tab" data-toggle="tab">{{ 'locale.tabHeaders.patientVaccination' | i18n }}</a>
             </li>
             <li role="presentation">
               <a href="#aefi" aria-controls="aefi" role="tab" data-toggle="tab">{{ 'locale.tabHeaders.patientAefi' | i18n }}</a>
@@ -705,11 +708,18 @@
             <div role="tabpanel" class="tab-pane" id="history">
               history tab
             </div>
-            <div role="tabpanel" class="tab-pane" id="observations">
-              observations tab
+            <div role="tabpanel" class="tab-pane" id="vaccinations">
+              <div class="row">
+                <div class="col-md-12">
+                  <!-- #include virtual="vaccinationEncounter" -->
+                </div>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="weights">
+              <!-- #include virtual="weightEncounter" -->
             </div>
             <div role="tabpanel" class="tab-pane" id="aefi">
-              AEFI tab
+              <!-- #include virtual="aefi" -->
             </div>
 
           </div>
@@ -719,7 +729,6 @@
   </asset>
   <asset name="aefi" mimeType="text/html">
     <contentHtml>
-      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>aefi-controller</script>
       <content lang="en">
         <div ng-controller="AefiController" xmlns="http://www.w3.org/1999/xhtml">
@@ -863,7 +872,7 @@
                           <div class="col-md-12">
                             <div class="form-group">
                               <div class="col-md-8">
-                                <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.save}}</button>
+                                <button type="submit" class="btn btn-primary pull-right">{{ 'locale.buttonLabels.save' | i18n }}</button>
                               </div>
                             </div>
                           </div>
@@ -882,7 +891,6 @@
   </asset>
   <asset name="vaccinationEncounter" mimeType="text/html">
     <contentHtml>
-      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>vaccination-controller</script>
       <content lang="en">
         <div ng-controller="VaccinationController" xmlns="http://www.w3.org/1999/xhtml">
@@ -891,7 +899,7 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                    <a data-toggle="collapse" href="#enterVaccination">{{locale.panelLabels.enterVaccination}}</a>
+                    <a data-toggle="collapse" href="#enterVaccination">{{ 'locale.panelLabels.enterVaccination' | i18n }}</a>
                     <a data-toggle="collapse" href="#enterVaccination">
                       <span class="glyphicon glyphicon-chevron-down pull-right"></span>
                     </a>
@@ -1061,7 +1069,6 @@
   </asset>
   <asset name="weightEncounter" mimeType="text/html">
     <contentHtml>
-      <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>weight-controller</script>
       <content lang="en">
         <div ng-controller="WeightController"  xmlns="http://www.w3.org/1999/xhtml">
@@ -1102,24 +1109,6 @@
                             </div>
                           </div>
 
-                          <div class="col-md-3">
-                            <div class="form-group">
-                              <div class="col-md-8">
-                                <div ng-class="{ 'has-error': weightEntryForm.dob.$invalid &amp;&amp; (weightEntryForm.dob.$touched||weightEntryForm.$submitted)}">
-                                  <label class="control-label" for="dobInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
-                                  <div class="date input-group">
-                                    <input readonly="readonly" type="text" name="dob" id="dobInput" class="form-control" aria-describedby="dobAddon" ng-model="patient.dateTime" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required">
-                                      <span class="input-group-addon">
-                                        <span class="glyphicon glyphicon-calendar">
-                                        </span>
-                                      </span>
-                                    </input>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                          </div>
                         </div>
                       </div>
                       <div class="form-group">
@@ -1241,13 +1230,7 @@
           };
          $scope.findWeights = function(){
             $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
-            console.log($scope.patient)
-            /*date = $scope.patient.DateOfBirth.split(" ", 1);
-            var dateSplit = date[0].split("/");
-            if(dateSplit[0].length<2){dateSplit[0] = "0"+dateSplit[0]};
-            if(dateSplit[1].length<2){dateSplit[1] = "0"+dateSplit[1]};
-            var formattedDate = dateSplit[2] + "-" + dateSplit[0] + "-" + dateSplit[1];*/
-
+            
             var today = new Date();
             var weightArray = [];
             console.log($scope.patient.DateOfBirth);
@@ -1266,15 +1249,6 @@
 
               $scope.weightRecords = weightArray;
               $scope.draw();
-            /*OpenIZ.Patient.weightByDob(function(data){
-              var weightArray = [];
-              for(i=0;i<data[0].WeightDates.length;i++){
-                weightArray[i] = {Date:data[0].WeightDates[i], Unit:data[0].WeightUnits[i], Weight:data[0].Weights[i]}
-              }
-              $scope.weightRecords = weightArray;
-              $scope.$digest();
-              $scope.draw();
-          }, formattedDate);*/
          };
 
          $scope.openDate = function() {
