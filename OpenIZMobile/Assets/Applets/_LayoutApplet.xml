@@ -424,7 +424,7 @@
                     <div class="panel-heading patient-panel">
                       <h3 class="panel-title">
                         <span class="glyphicon glyphicon-user text-left">
-                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + locale.panelLabels.years + patient.age.years  + ", " + locale.panelLabels.months + patient.age.months}}
+                          Smith, Mary (F) Years: 25, Months: 7
                         </span>
                         <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
                       </h3>
@@ -457,19 +457,6 @@
                               <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
                             </div>
                           </div>
-
-                          <div class="form-group">
-                            <div class="col-xs-2 col-xs-offset-8">
-                              <button class="btn btn-primary">
-                                {{ 'locale.buttonLabels.checkIn' | i18n }}
-                              </button>
-                            </div>
-                            <div class="col-xs-2">
-                              <button class="btn btn-primary">
-                                AEFI
-                              </button>
-                            </div>
-                          </div>
                         </fieldset>
                       </div>
                     </div>
@@ -486,24 +473,9 @@
   <asset name="patient-layout-controller" mimeType="text/javascript">
     <contentText>
       <![CDATA[
-      layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize){
-        $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
-        var dateOfBirth = new Date($scope.patient.DateOfBirth);
-        $scope.displayDate = dateOfBirth.getDate() + "/" + dateOfBirth.getMonth() + "/"  + dateOfBirth.getFullYear();
-        var currentDate = new Date();
-        //dateValue = $scope.patient.DateOfBirth.split("/");
-        //dateValue[2] = dateValue[2].split(" ", 1);
-
-        difference = new Date(currentDate-dateOfBirth);
-        $scope.patient.age = {"years": (difference.getFullYear()-1970), "months": (difference.getMonth()+1), "days": difference.getDate()};
-        $('#patientInformationCollapse').on('shown.bs.collapse', function () {
-           $(".menu-arrow-toggleable").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
-        });
-
-        $('#patientInformationCollapse').on('hidden.bs.collapse', function () {
-           $(".menu-arrow-toggleable").removeClass("glyphicon-menu-up").addClass("glyphicon-menu-down");
-        });
-
+      layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize)
+      {
+      
       }]);
     ]]>
     </contentText>
