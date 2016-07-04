@@ -45,3 +45,6 @@ Thumbs.db
 /OpenIZMobile/Resources/Resource.designer_BASE_200.cs
 /OpenIZMobile/Resources/Resource.designer_BACKUP_200.cs
 *.apk
+/Solution Items/OpenIZ.Messaging.IMSI.Client.dll.mdb
+/Solution Items/OpenIZ.Core.PCL.dll.mdb
+/Solution Items/OpenIZ.Core.Model.dll.mdb

@@ -230,5 +230,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml" />
   </ItemGroup>
-
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\drk_bug.png" />
+  </ItemGroup>
 </Project>
