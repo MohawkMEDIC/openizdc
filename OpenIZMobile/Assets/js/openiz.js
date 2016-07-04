@@ -267,7 +267,19 @@ var OpenIZ = OpenIZ || {
     * @summary Represents application specific functions for interoperating with the mobile application itself
     * @class
     */
-    App : {
+    App: {
+        /**
+         * @summary Get a list of all log files
+         */
+        getLogFiles : function() {
+            return JSON.parse(OpenIZApplicationService.GetLogFiles());
+        },
+        /**
+         * @summary Get a list of all log files
+         */
+        sendLog : function (logId) {
+            OpenIZApplicationService.SendLog(logId);
+        },
         /**
          * @summary Gets the currebt asset title
          * @memberof OpenIZ.App

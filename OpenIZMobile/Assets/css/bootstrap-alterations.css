@@ -6,6 +6,8 @@
     border-radius: 4px;
 }
 
+.patient-panel small { color: #fff }
+
 .input-group .form-control:first-child {
     border-radius: 4px;
 }

@@ -85,20 +85,27 @@ namespace OpenIZMobile
             // Progress has changed
             this.m_webView.ProgressChanged += (o, e) =>
             {
-                this.m_textView.Visibility = this.m_progressBar.Visibility = this.m_webView.Progress == 0 || this.m_webView.Progress == 100 ? ViewStates.Gone : ViewStates.Visible;
-                this.m_progressBar.Progress = (this.m_progressBar.Max) / 100 * this.m_webView.Progress;
+                try
+                {
+                    this.m_textView.Visibility = this.m_progressBar.Visibility = this.m_webView.Progress == 0 || this.m_webView.Progress == 100 ? ViewStates.Gone : ViewStates.Visible;
+                    this.m_progressBar.Progress = (this.m_progressBar.Max) / 100 * this.m_webView.Progress;
+                }
+                catch { }
             };
 
             // Set view 
             EventHandler observer = null;
             observer = (o, e) =>
             {
-                View contentView = decorView.FindViewById(Android.Resource.Id.Content);
-                this.m_progressBar.SetY(contentView.GetY() + contentView.Height - 15);
-                this.m_textView.SetY(contentView.GetY() + contentView.Height - this.m_textView.MeasuredHeight - 15);
+                try
+                {
+                    View contentView = decorView.FindViewById(Android.Resource.Id.Content);
+                    this.m_progressBar.SetY(contentView.GetY() + contentView.Height - 15);
+                    this.m_textView.SetY(contentView.GetY() + contentView.Height - this.m_textView.MeasuredHeight - 15);
 
-                this.m_progressBar.ViewTreeObserver.GlobalLayout -= observer;
-
+                    this.m_progressBar.ViewTreeObserver.GlobalLayout -= observer;
+                }
+                catch { }
             };
             this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
             // Applet has changed

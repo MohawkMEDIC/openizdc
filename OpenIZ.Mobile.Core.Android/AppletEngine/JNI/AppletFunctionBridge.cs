@@ -12,6 +12,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using OpenIZ.Core.Applets.Model;
+using A = Android;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -71,10 +72,51 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 			this.m_view = view;
 		}
 
-		/// <summary>
-		/// Shows the specified message as a toast
-		/// </summary>
-		[Export]
+        /// <summary>
+        /// Send log file
+        /// </summary>
+        /// <returns></returns>
+        [Export]
+        [JavascriptInterface]
+        public void SendLog(String logId)
+        {
+            try
+            {
+                String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", logId);
+                var email = new Intent(A.Content.Intent.ActionSend);
+                email.PutExtra(A.Content.Intent.ExtraEmail, new string[] { "medic@mohawkcollege.ca" });
+                email.PutExtra(A.Content.Intent.ExtraSubject, "Mobile Application Log File");
+                email.SetType("message/rfc822");
+
+                email.PutExtra(A.Content.Intent.ExtraText, File.ReadAllText(logFileBase));
+
+                this.m_context.StartActivity(email);
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error sending log file: {0}", e);
+            }
+        }
+
+        /// <summary>
+        /// Get log files
+        /// </summary>
+        /// <returns></returns>
+        [Export]
+        [JavascriptInterface]
+        public String GetLogFiles()
+        {
+            String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
+            List<String> files = new List<string>();
+            foreach (var f in Directory.GetFiles(logFileBase))
+                files.Add(Path.GetFileName(f));
+            return JniUtil.ToJson(files);
+        }
+
+        /// <summary>
+        /// Shows the specified message as a toast
+        /// </summary>
+        [Export]
 		[JavascriptInterface]
 		public void ShowToast(String toastText)
 		{

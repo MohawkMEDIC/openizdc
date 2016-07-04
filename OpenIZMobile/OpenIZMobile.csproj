@@ -85,7 +85,6 @@
     <Compile Include="AppletActivity.cs" />
     <Compile Include="SplashActivity.cs" />
     <Compile Include="UserInterfaceUtils.cs" />
-    <Compile Include="XElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\js\README.md" />
@@ -292,9 +291,12 @@
     <AndroidAsset Include="Assets\js\angular-messages.js" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\PatientManagementApplet.xml" />
+    <AndroidAsset Include="Assets\Applets\EncounterManagementApplet.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\img\timr_logo_lg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\drk_bug.png" />
   </ItemGroup>
 </Project>
