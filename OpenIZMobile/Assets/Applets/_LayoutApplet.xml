@@ -32,7 +32,7 @@
     @id = The unique identifier (think of this as a package name)
     @version = A semantic version
   -->
-  <info id="org.timr.applet.layout" version="1.0.0.0">
+  <info id="org.timr.applet.layout" version="0.5.1.0">
     <icon>app://openiz.org/drawable/cog.png</icon>
     <name lang="en">Layout Applet</name>
     <groupName lang="en">TImR</groupName>
@@ -287,6 +287,38 @@
                 </li>
                 <li id="loginRegisterLink" ng-hide="session.identity.name">
                   <a href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.navbar.loginRegister' | i18n }}</a>
+                </li>
+                <li class="dropdown" ng-if="session.identity.name">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                    <span class="badge">3</span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li role="presentation">
+                      <a href="/org.timr.applet.alerts/index?id=203932">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <strong>System is offline</strong>
+                      </a>
+                      <br/>
+                      <small class="text-muted">The mobile applet is currenty offline or no back-end service is available for synchronization</small>
+                    </li>
+                    <li role="presentation">
+                      <a href="/org.timr.applet.alerts/index?id=203932">
+                        <span class="glyphicon glyphicon-comment"></span>
+                        <strong>Stock order ready for pickup</strong>
+                      </a>
+                      <br/>
+                      <small class="text-muted">Hey Lucy, the stock order is ready for pickup</small>
+                    </li>
+                    <li role="presentation">
+                      <a href="/org.timr.applet.alerts/index?id=203932">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                        <strong>You're running low on BCG</strong>
+                      </a>
+                      <br/>
+                      <small class="text-muted">The system has detected that your stock of BCG will run out soon.</small>
+                    </li>
+                  </ul>
                 </li>
                 <li class="dropdown" ng-show="session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

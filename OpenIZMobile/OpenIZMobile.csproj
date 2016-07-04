@@ -39,12 +39,32 @@
     <ConsolePause>false</ConsolePause>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <EnableProguard>true</EnableProguard>
-    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
+    <EnableProguard>False</EnableProguard>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Xamarin</Debugger>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <DebugSymbols>False</DebugSymbols>
+    <AndroidLinkSkip>System.Xml.Linq</AndroidLinkSkip>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Messaging.IMSI.Client">
+      <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -65,6 +85,7 @@
     <Compile Include="AppletActivity.cs" />
     <Compile Include="SplashActivity.cs" />
     <Compile Include="UserInterfaceUtils.cs" />
+    <Compile Include="XElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\js\README.md" />
