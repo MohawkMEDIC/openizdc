@@ -709,11 +709,7 @@
               history tab
             </div>
             <div role="tabpanel" class="tab-pane" id="vaccinations">
-              <div class="row">
-                <div class="col-md-12">
-                  <!-- #include virtual="vaccinationEncounter" -->
-                </div>
-              </div>
+              <!-- #include virtual="vaccinationEncounter" -->
             </div>
             <div role="tabpanel" class="tab-pane" id="weights">
               <!-- #include virtual="weightEncounter" -->
@@ -913,16 +909,14 @@
                         <div class="col-md-12">
                           <div class="col-md-3">
                             <div class="form-group">
-                              <div class="col-md-8">
-                                <label class="control-label" for="dateOfVaccinationInput">{{ 'locale.inputLabels.dateOfVaccination' | i18n }}</label>
-                                <input type="text" name="dateOfVaccination" id="dateOfVaccinationInput" class="form-control" aria-describedby="dateOfVaccinationAddon" ng-model="dateOfVaccination" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required" />
-                                <span class="input-group-addon" ng-click="openDate()">
-                                  <span class="glyphicon glyphicon-calendar">
-                                  </span>
+                              <label class="control-label" for="dateOfVaccinationInput">{{ 'locale.inputLabels.dateOfVaccination' | i18n }}</label>
+                              <input type="text" name="dateOfVaccination" id="dateOfVaccinationInput" class="form-control" aria-describedby="dateOfVaccinationAddon" ng-model="dateOfVaccination" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required" />
+                              <span class="input-group-addon" ng-click="openDate()">
+                                <span class="glyphicon glyphicon-calendar">
                                 </span>
-                                <div ng-messages="vaccinationForm['dateOfVaccination'].$error" ng-if="vaccinationForm['dateOfVaccination'].$touched || vaccinationForm.$submitted">
-                                  <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.dateOfVaccinationRequired' | i18n }}</div>
-                                </div>
+                              </span>
+                              <div ng-messages="vaccinationForm['dateOfVaccination'].$error" ng-if="vaccinationForm['dateOfVaccination'].$touched || vaccinationForm.$submitted">
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.dateOfVaccinationRequired' | i18n }}</span>
                               </div>
                             </div>
                           </div>
@@ -940,7 +934,7 @@
                                 </select>
                               </div>
                               <div ng-messages="vaccinationForm['location'].$error" ng-if="vaccinationForm['location'].$touched || vaccinationForm.$submitted">
-                                <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.locationRequired' | i18n }}</p>
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.locationRequired' | i18n }}</span>
                               </div>
                             </div>
                           </div>
@@ -958,7 +952,7 @@
                                 </select>
                               </div>
                               <div ng-messages="vaccinationForm['vaccine'].$error" ng-if="vaccinationForm['vaccine'].$touched || vaccinationForm.$submitted">
-                                <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.vaccinationRequired' | i18n }}</div>
+                                <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.vaccinationRequired' | i18n }}</span>
                               </div>
                             </div>
                           </div>
@@ -971,7 +965,7 @@
                                   <input id="doseInput" name="dose" type="text" placeholder="{{ 'locale.placeholders.dose' | i18n }}" class="form-control" ng-model="dose" ng-required="true"/>
                                 </div>
                                 <div ng-messages="vaccinationForm['dose'].$error" ng-if="vaccinationForm['dose'].$touched||vaccinationForm.$submitted">
-                                  <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.doseRequired' | i18n }}</p>
+                                  <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.doseRequired' | i18n }}</span>
                                 </div>
                               </div>
                             </div>
