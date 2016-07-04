@@ -31,7 +31,7 @@ angular.module('localization', [])
                 getString: function (key) {
 
                     // make sure we always have the latest locale
-                    localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
+                    //localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
 
                     var entry = localize.dictionary[key];
                     if (entry != null)
