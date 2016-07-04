@@ -100,6 +100,8 @@
     <string key="locale.errors.verifyCodeRequired">Please enter the verification code</string>
     <string key="locale.errors.verifyCodeInvalid">Code entered is invalid</string>
     <string key="locale.errors.cityOrVillageRequired">Please enter your birth place</string>
+    <string key="locale.errors.doseRequired">Dose Required</string>
+    <string key="locale.errors.dateOfVaccinationRequired">Date of Vaccination Required</string>
     <!-- Error Labels End -->
     
     <!-- Input Labels -->
@@ -222,6 +224,7 @@
     <string key="locale.placeHolders.motherFamilyName">Mother's Family Name</string>
     <string key="locale.placeholders.dose">Dose</string>
     <string key="locale.placeholders.adverseReactionDescription">Description of adverse reaction</string>
+    <string key="locale.placeholders.comments">Comments</string>
     <!-- Placeholders End -->
 
     <!-- Stock Labels -->
@@ -304,6 +307,7 @@
     <!-- Error Labels End -->
 
     <!-- Input Labels -->
+    <string key="locale.inputLabels.gender">Jinsia</string>
     <string key="locale.inputLabels.dateOfBirth">Tarehe Ya Ku Zaliwa</string>
     <string key="locale.inputLabels.select">Teua</string>
     <string key="locale.inputLabels.startDate">Kuanza Tarehe</string>
@@ -348,6 +352,7 @@
     <!-- Placeholders -->
     <string key="locale.placeholders.dose">Dozi</string>
     <string key="locale.placeholders.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
+    <string key="locale.placeholders.comments">Comments</string>
     <!-- Placeholders End -->
     
     <!-- Tab Headers -->

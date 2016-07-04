@@ -680,7 +680,11 @@
   <asset name="patientView" mimeType="text/html">
     <contentHtml>
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
+      <bundle>chart-js</bundle>
       <script>patient-view-controller</script>
+      <script>vaccination-controller</script>
+      <script>weight-controller</script>
+      <script>aefi-controller</script>
       <bundle>select2</bundle>
       <content>
         <div class="row" ng-controller="PatientViewController" xmlns="http://www.w3.org/1999/xhtml">
@@ -725,7 +729,6 @@
   </asset>
   <asset name="aefi" mimeType="text/html">
     <contentHtml>
-      <script>aefi-controller</script>
       <content lang="en">
         <div ng-controller="AefiController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="row">
@@ -747,23 +750,27 @@
 
                           <div class="form-group">
                             <div class="col-md-3">
-                              <label class="control-label" for="startDateInput">{{ 'locale.inputLabels.startDate' | i18n }}</label>
-                              <input type="text" name="startDate" id="startDateInput" class="form-control" aria-describedby="startDateAddon" ng-model="startDate" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" required="required" />
-                              <span class="input-group-addon" ng-click="openDate()">
-                                <span class="glyphicon glyphicon-calendar">
+                              <div class="input-group date">
+                                <label class="control-label" for="startDateInput">{{ 'locale.inputLabels.startDate' | i18n }}</label>
+                                <input type="text" name="startDate" id="startDateInput" class="form-control" aria-describedby="startDateAddon" ng-model="startDate" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupFrom.opened" datepicker-options="dateOptions" required="required" />
+                                <span class="input-group-addon" ng-click="openFrom()">
+                                  <span class="glyphicon glyphicon-calendar">
+                                  </span>
                                 </span>
-                              </span>
+                              </div>
                               <div ng-messages="aefiForm['startDate'].$error" ng-if="aefiForm['startDate'].$touched || aefiForm.$submitted">
                                 <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.startDateRequired' | i18n }}</span>
                               </div>
                             </div>
                             <div class="col-md-3">
-                              <label class="control-label" for="stopDateInput">{{ 'locale.inputLabels.stopDate' | i18n }}</label>
-                              <input type="datetime" id="stopDateInput" name="stopDate" class="form-control" ng-model="stopDate" aria-describedby="stopDateAddon" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popup.opened" datepicker-options="dateOptions" />
-                              <span class="input-group-addon" ng-click="openDate()">
-                                <span class="glyphicon glyphicon-calendar">
+                              <div class="input-group date">
+                                <label class="control-label" for="stopDateInput">{{ 'locale.inputLabels.stopDate' | i18n }}</label>
+                                <input type="text" id="stopDateInput" name="stopDate" class="form-control" ng-model="stopDate" aria-describedby="stopDateAddon" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupFromTo.opened" datepicker-options="dateOptions" />
+                                <span class="input-group-addon" ng-click="openTo()">
+                                  <span class="glyphicon glyphicon-calendar">
+                                  </span>
                                 </span>
-                              </span>
+                              </div>
                             </div>
                             <div class="col-md-3">
                               <label class="control-label" for="onsetLatencyInput">{{ 'locale.inputLabels.onsetLatency' | i18n }}</label>
@@ -887,7 +894,6 @@
   </asset>
   <asset name="vaccinationEncounter" mimeType="text/html">
     <contentHtml>
-      <script>vaccination-controller</script>
       <content lang="en">
         <div ng-controller="VaccinationController" xmlns="http://www.w3.org/1999/xhtml">
           <div class="row">
@@ -1063,7 +1069,6 @@
   </asset>
   <asset name="weightEncounter" mimeType="text/html">
     <contentHtml>
-      <script>weight-controller</script>
       <content lang="en">
         <div ng-controller="WeightController"  xmlns="http://www.w3.org/1999/xhtml">
           <div class="row">
@@ -1085,7 +1090,7 @@
                                   <label class ="control-label" for="weightInput">{{ 'locale.inputLabels.weight' | i18n }}</label>
                                   <input type="number" name="weight" id="weightInput" class="form-control" aria-describedby="weightInputAddon" ng-model="patient.newWeight" required="required" />
                                   <div ng-messages="weightEntryForm.weight.$error" ng-if="weightEntryForm.weight.$touched||weightEntryForm.$submitted">
-                                    <div class="text-center alert alert-danger" ng-message="required">{{ 'locale.errors.weightRequired' | i18n }}</div>
+                                    <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.weightRequired' | i18n }}</span>
                                   </div>
                                 </div>
                               </div>
@@ -1097,7 +1102,8 @@
                               <div class="col-md-8">
                                 <label class ="control-label" for="weightUnitSelect">{{ 'locale.inputLabels.unit' | i18n }}</label>
                                 <select name="weightUnit" id="weightUnitSelect" class="form-control" aria-describedby="weightUnitAddon" ng-model="patient.newUnit" required="required">
-                                  <option ng-repeat="(key, value) in locale.weightUnit" value="{{value}}">{{value}}</option>
+                                  <option value="lbs">Pounds</option>
+                                  <option value="Kg">Kilograms</option>
                                 </select>
                               </div>
                             </div>
@@ -1222,8 +1228,10 @@
                 toastr.error($scope.locale.toastrText.invalidForm, $scope.locale.toastrHeaders.invalidForm);
               }
           };
+          $scope.patient = new Object();
          $scope.findWeights = function(){
-            $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
+            
+            $scope.patient.DateOfBirth = new Date(2004, 04, 11)
             
             var today = new Date();
             var weightArray = [];
@@ -1242,7 +1250,6 @@
             }
 
               $scope.weightRecords = weightArray;
-              $scope.draw();
          };
 
          $scope.openDate = function() {
@@ -1252,58 +1259,39 @@
             opened: false
           };
           $scope.draw = function(){
-              var labelsA = [];
-              var dataA = [];
+          var lineChartData = {
+              labels: ["Data 1", "Data 2", "Data 3", "Data 4", "Data 5", "Data 6", "Data 7"],
+              datasets: [{
+                  fillColor: "rgba(220,220,220,0)",
+                  strokeColor: "rgba(220,180,0,1)",
+                  pointColor: "rgba(220,180,0,1)",
+                  data: [20, 30, 80, 20, 40, 10, 60]
+              }, {
+                  fillColor: "rgba(151,187,205,0)",
+                  strokeColor: "rgba(151,187,205,1)",
+                  pointColor: "rgba(151,187,205,1)",
+                  data: [60, 10, 40, 30, 80, 30, 20]
+              }]
+          }
 
-              for(var i = 0; i<$scope.weightRecords.length;i++){
-                labelsA[i] = $scope.weightRecords[i].Date.getFullYear();
-                dataA[i] = parseInt($scope.weightRecords[i].Weight);
-              }
 
-              var chartData = {
-                labels: labelsA,
-                datasets: [
-                  {
-                label: "My First dataset",
-                fill: false,
-                lineTension: 0.1,
-                backgroundColor: "rgba(51,204,204,0.4)",
-                borderColor: "rgba(51,204,204,1)",
-                borderCapStyle: 'butt',
-                borderDash: [],
-                borderDashOffset: 0.0,
-                borderJoinStyle: 'miter',
-                pointBorderColor: "rgba(51,204,204,1)",
-                pointBackgroundColor: "rgb(51,204,204)",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: "rgba(51,204,204,1)",
-                pointHoverBorderColor: "rgba(51,204,204,1)",
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                fillColor: "rgba(51,204,204,0.4)",
-                strokeColor: "rgba(51,204,204,1)",
-                pointColor: "rgba(31, 122, 122,1)",
-                data: dataA,
-                        }
-                ]
-            };
-
-              var sctx = document.getElementById("weight-canvas").getContext("2d");
-		          window.myLine = new Chart(sctx).Line(chartData, {
-			          responsive: true
-		          });
+              /**var sctx = document.getElementById("weight-canvas").getContext("2d");
+              var LineChartDemo = new Chart(sctx).Line(lineChartData, {
+                  pointDotRadius: 10,
+                  bezierCurve: false,
+                  scaleShowVerticalLines: false,
+                  scaleGridLineColor: "black"
+              });**/
 
 	        }
-          $scope.findWeights();
-          $scope.patient.newUnit = $scope.locale.weightUnit.kilograms;
           $scope.patient.dateTime = new Date();
            $scope.dateOptions = {
             formatYear: 'yy',
             maxDate: new Date(),
             minDate: new Date(1990, 1, 1)
          };
+         
+         $scope.draw();
 
       }]);
 
@@ -1315,15 +1303,32 @@
       <![CDATA[
       layoutApp.controller('VaccinationController', ['$scope', function ($scope)
 		  {
-          $scope.openDate = function() {
-            $scope.popup.opened = true;
-          };
-          
-          $scope.popup = {
+                   $scope.openFrom = function() {
+          $scope.popupFrom.opened = true;
+         };
+
+         $scope.popupFrom = {
             opened: false
           };
-          
-          $scope.doseRegex = '/\d+\.?\d*/';
+
+         $scope.openTo = function() {
+          $scope.popupTo.opened = true;
+         };
+
+         $scope.popupTo = {
+            opened: false
+          };
+          $scope.dateOptionsFrom = {
+            formatYear: 'yy',
+            minDate: new Date(1990, 1, 1),
+            maxDate: new Date()
+          };
+
+           $scope.dateOptionsTo = {
+            formatYear: 'yy',
+            minDate: new Date(1990, 1, 1),
+            maxDate: new Date()
+          };
           
           $scope.vaccination = new Object();
           $scope.vaccination.dateOfVaccination = new Date();
