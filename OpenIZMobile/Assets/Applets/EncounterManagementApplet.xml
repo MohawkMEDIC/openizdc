@@ -1,12 +1,32 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.timr.applet.patientManagement" version="0.5.0.0">
+  <info id="org.timr.applet.encounterManagement" version="0.5.0.0">
     <icon>app://openiz.org/drawable/cogs</icon>
     <name lang="en">Patient Management</name>
     <groupName lang="en">Administration</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
   </info>
+  <menuItem>
+    <icon>app://openiz.org/drawable/drk_brick</icon>
+    <text>Experiments</text>
+    <menuItem launch="app://openiz.org/applet/org.timr.applet.encounterManagement/aefi">
+      <icon>app://openiz.org/drawable/drk_aefi</icon>
+      <text>AEFI Entry</text>
+    </menuItem>
+    <menuItem launch="app://openiz.org/applet/org.timr.applet.encounterManagement/vaccinationEncounter">
+      <icon>app://openiz.org/drawable/drk_cogs</icon>
+      <text>Vaccination Entry</text>
+    </menuItem>
+    <menuItem launch="app://openiz.org/applet/org.timr.applet.encounterManagement/weightEncounter">
+      <icon>app://openiz.org/drawable/drk_weigh</icon>
+      <text>Weight Entry</text>
+    </menuItem>
+    <menuItem launch="app://openiz.org/applet/org.openiz.applet.core.error/logs">
+      <icon>app://openiz.org/drawable/drk_bug</icon>
+      <text>Log Files</text>
+    </menuItem>
+  </menuItem>
   <asset name="index" mimeType="text/html">
     <contentHtml>
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
@@ -20,6 +40,8 @@
   </asset>
   <asset name="aefi" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Sample AEFI Entry</title>
+
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>aefi-controller</script>
       <content lang="en">
@@ -164,7 +186,7 @@
                           <div class="col-md-12">
                             <div class="form-group">
                               <div class="col-md-8">
-                                <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.save}}</button>
+                                <button type="submit" class="btn btn-primary pull-right">{{ 'local.buttonLabels.save' | i18n }}</button>
                               </div>
                             </div>
                           </div>
@@ -183,6 +205,8 @@
   </asset>
   <asset name="vaccinationEncounter" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Sample Vaccination Entry</title>
+
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>vaccination-controller</script>
       <content lang="en">
@@ -192,7 +216,7 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                    <a data-toggle="collapse" href="#enterVaccination">{{locale.panelLabels.enterVaccination}}</a>
+                    <a data-toggle="collapse" href="#enterVaccination">{{ 'local.panelLabels.enterVaccination' | i18n }}</a>
                     <a data-toggle="collapse" href="#enterVaccination">
                       <span class="glyphicon glyphicon-chevron-down pull-right"></span>
                     </a>
@@ -362,6 +386,7 @@
   </asset>
   <asset name="weightEncounter" mimeType="text/html">
     <contentHtml>
+      <title lang="en">Sample Weight Entry</title>
       <layout>app://openiz.org/applet/org.timr.applet.layout/patientLayout</layout>
       <script>weight-controller</script>
       <content lang="en">
@@ -436,7 +461,7 @@
                             <h4 class="modal-title">{{ 'locale.modalHeaders.confirmWeight' | i18n }}</h4>
                           </div>
                           <div class="modal-body">
-                            <p>{{locale.modalText.updateWeight + patient.FirstName + "," + patient.LastName + locale.modalText.to + patient.newWeight + " " + patient.newUnit}}</p>
+                            <p>{{ 'local.modalText.updateWeight + patient.FirstName + "," + patient.LastName + locale.modalText.to + patient.newWeight + " " + patient.newUnit' | i18n }}</p>
                             <p>{{ 'locale.modalText.isCorrect' | i18n }}</p>
                           </div>
                           <div class="modal-footer">

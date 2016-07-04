@@ -456,37 +456,35 @@
                     <div class="panel-heading patient-panel">
                       <h3 class="panel-title">
                         <span class="glyphicon glyphicon-user text-left">
-                          {{patient.FirstName + "," + patient.LastName+"("+patient.Gender.substring(0,1)+")" + " " + locale.panelLabels.years + patient.age.years  + ", " + locale.panelLabels.months + patient.age.months}}
+                          LastName, FirstName <small>2016-05-31 - 6 wks - F</small>
                         </span>
                         <span class="menu-arrow-toggleable glyphicon glyphicon-menu-up pull-right" data-toggle="collapse" href="#patientInformationCollapse"></span>
                       </h3>
                     </div>
-                    <div id="patientInformationCollapse" class="panel-collapse collapse in">
+                    <div id="patientInformationCollapse" class="panel-collapse collapse collapsed">
                       <div class="panel-body">
                         <fieldset class="form-horizontal">
-
                           <div class="form-group">
                             <label class="col-xs-2 control-label" for="dobToInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
                             <div class="date col-xs-4" id="dobToPicker">
-                              <input type="text" name="dobTo" id="dobToInput" readonly ="true" ng-value="displayDate"  class="form-control" aria-describedby="dobAddon" ng-model="datetimeTo" uib-datepicker-popup="dd-MMMM-yyyy" is-open="popupTo.opened" datepicker-options="dateOptions">
-                              </input>
+                              <span id="dob">2016-May-31</span>
                             </div>
 
                             <label class="col-xs-2 control-label" for="motherNameInput">{{ 'locale.inputLabels.motherName' | i18n }}</label>
                             <div class ="col-xs-4">
-                              <input type="text" name="motherName" readonly ="true" id="motherNameInput" ng-value="patient.MotherName"  ng-model="motherNameInput" class="form-control" aria-describedby="motherNameAddon" />
+                              <span id="mothersName">Mothers Name Here</span>
                             </div>
                           </div>
 
                           <div class="form-group">
                             <label class="col-xs-2 control-label" for="villageInput">{{ 'locale.inputLabels.cityVillage' | i18n }}</label>
                             <div class="col-xs-4">
-                              <input type="text" name="village" id="villageInput" ng-model="villageInput" ng-value="patient.Village" readonly ="true" class="form-control" aria-describedby="villageAddon" />
+                              <span id="villiage">Villiage</span>
                             </div>
 
                             <label class="col-xs-2 control-label" for="healthFacilityInput">{{ 'locale.inputLabels.healthFacility' | i18n }}</label>
                             <div class="col-xs-4">
-                              <input type="text" name="healthFacility" id="healthFacilityInput" ng-model="healthFacilityInput" ng-value="patient.HealthFacility" readonly ="true" class="form-control" aria-describedby="healthFacilityAddon" />
+                              <span id="facility">Facility</span>
                             </div>
                           </div>
 
@@ -519,15 +517,7 @@
     <contentText>
       <![CDATA[
       layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize){
-        $scope.patient = JSON.parse(sessionStorage.getItem("Patient"));
-        var dateOfBirth = new Date($scope.patient.DateOfBirth);
-        $scope.displayDate = dateOfBirth.getDate() + "/" + dateOfBirth.getMonth() + "/"  + dateOfBirth.getFullYear();
-        var currentDate = new Date();
-        //dateValue = $scope.patient.DateOfBirth.split("/");
-        //dateValue[2] = dateValue[2].split(" ", 1);
 
-        difference = new Date(currentDate-dateOfBirth);
-        $scope.patient.age = {"years": (difference.getFullYear()-1970), "months": (difference.getMonth()+1), "days": difference.getDate()};
         $('#patientInformationCollapse').on('shown.bs.collapse', function () {
            $(".menu-arrow-toggleable").removeClass("glyphicon-menu-down").addClass("glyphicon-menu-up");
         });

@@ -701,12 +701,17 @@
           </ul>
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="profile">
-              
+              TODO:
             </div>
-            <div role="tabpanel" class="tab-pane" id="history"></div>
-            <div role="tabpanel" class="tab-pane" id="observations"></div>
-            <div role="tabpanel" class="tab-pane" id="aefi"></div>
-
+            <div role="tabpanel" class="tab-pane" id="history">
+              TODO:
+            </div>
+            <div role="tabpanel" class="tab-pane" id="observations">
+              TODO:
+            </div>
+            <div role="tabpanel" class="tab-pane" id="aefi">
+              TODO:
+            </div>
           </div>
         </div>
       </content>
