@@ -291,9 +291,6 @@
     <AndroidAsset Include="Assets\js\angular-messages.js" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\EncounterManagementApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidAsset Include="Assets\img\timr_logo_lg.png" />
   </ItemGroup>
   <ItemGroup>
