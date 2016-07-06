@@ -296,8 +296,8 @@
   </asset>
   <asset name="patientRegister" mimeType="text/html">
     <contentHtml>
-      <title lang="en">Regsiter Child</title>
-      <title lang="sw">Saji Mtoto</title>
+      <title lang="en">Register Child</title>
+      <title lang="sw">Daftari Mtoto</title>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>app://openiz.org/asset/js/moment.min.js</script>
