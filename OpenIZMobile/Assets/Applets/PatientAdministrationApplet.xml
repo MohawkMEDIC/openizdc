@@ -6,7 +6,7 @@
     <groupName lang="en">Administration</groupName>
     <author>OpenIZ.org Community</author>
     <dependency id="org.openiz.core" version="0.5.0.0" />
-    <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
+    <dependency id="org.timr.applet.layout" version="0.5.0.0" />
   </info>
   <menuItem>
     <icon>app://openiz.org/drawable/drk_baby</icon>
@@ -241,8 +241,7 @@
                           {{ ::'locale.buttonLabels.cancel' | i18n }}
                         </button>
                         <button type="submit" class="btn btn-primary">
-                          <span class="glyphicon glyphicon-search"></span> {{ ::'locale.buttonLabels.search' | i18n }}
-
+                          <span class="glyphicon glyphicon-search"></span> {{ 'locale.buttonLabels.search' | i18n }}
                         </button>
                       </div>
                     </form>
@@ -252,7 +251,7 @@
               <div class="panel panel-default" ng-if="searchResults">
                 <div class="panel-heading">
                   <h4 class="panel-title">
-                    {{ ::'locale.tableHeaders.results' | i18n }}
+                    {{ 'locale.tableHeaders.results' | i18n }}
                   </h4>
                 </div>
                 <!-- #include virtual="patientSearchResultTable" -->
@@ -280,8 +279,8 @@
   </asset>
   <asset name="patientRegister" mimeType="text/html">
     <contentHtml>
-      <title lang="en">Regsiter Child</title>
-      <title lang="sw">Saji Mtoto</title>
+      <title lang="en">Register Child</title>
+      <title lang="sw">Daftari Mtoto</title>
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>app://openiz.org/asset/js/moment.min.js</script>
@@ -321,7 +320,7 @@
                                     <label class="col-xs-2 control-label" for="familyNameInput">{{ 'locale.inputLabels.familyName' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" id="familyNameInput"  />
+                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" id="familyNameInput" />
 
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'familyNames', '')">
@@ -374,12 +373,10 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" id="genderAddon">{{ 'locale.inputLabels.gender' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select id="genderSelect" ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required" >
+                                    <select id="genderSelect" ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required">
                                     </select>
                                   </div>
                                 </div>
-
-
                               </fieldset>
                             </div>
                           </div>
@@ -408,7 +405,7 @@
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['identifierNum-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['identifierNum-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" id="idNumInput">{{ 'locale.inputLabels.id' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
-                                      <input type="text" name="identifierNum-{{ $index }}" ng-model=" patient.identifiers[$index].identifierNum" class="form-control" placeholder="646465786868576" id="idNumInput"  />
+                                      <input type="number" name="identifierNum-{{ $index }}" ng-model=" patient.identifiers[$index].identifierNum" class="form-control" placeholder="646465786868576" id="idNumInput" />
                                       <div class="input-group-btn">
                                         <button class="btn btn-default" type="button">
                                           <span class="glyphicon glyphicon-barcode"></span>
@@ -515,7 +512,7 @@
 
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="contactFamilyName-{{ $index }}" ng-model="patient.contactNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" aria-describedby="contactFamilyNameAddon"  />
+                                      <input type="text" name="contactFamilyName-{{ $index }}" ng-model="patient.contactNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" aria-describedby="contactFamilyNameAddon" />
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('contactNames', 'familyNames', '')">
                                           <span class="glyphicon glyphicon-plus"></span>
@@ -537,7 +534,7 @@
                                     <label class="col-xs-2 control-label" for="phoneNumInput">{{ 'locale.inputLabels.telephone' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput"  />
+                                      <input type="text" name="phoneNum-{{ $index }}" ng-model="patient.contactPhones[$index].phoneNum" class="form-control" placeholder="465432345689976533" id="phoneNumInput" />
                                       <span class="input-group-addon addon-background" id="phoneTypeAddon">
                                         <span class="glyphicon glyphicon-earphone"></span>
                                       </span>
@@ -565,7 +562,7 @@
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['email-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['email-' + $index].$invalid }">
                                     <label class="col-xs-2 control-label" for="emailInput">{{ 'locale.inputLabels.email' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
-                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{ 'locale.placeHolders.email' | i18n }}" id="emailInput"  />
+                                      <input type="email" name="email-{{ $index }}" ng-model="patient.contactEmails[$index].email" class="form-control" placeholder="{{ 'locale.placeHolders.email' | i18n }}" id="emailInput" />
 
                                       <span class="input-group-addon addon-background" id="domainAddon">@</span>
                                       <select name="domainType" ng-model="patient.contactEmails[$index].domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
@@ -591,7 +588,7 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" for="relationTypeInput">{{ 'locale.inputLabels.relationshipToPatient' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect"  >
+                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect">
                                     </select>
                                   </div>
                                 </div>
@@ -695,7 +692,6 @@
             <div role="tabpanel" class="tab-pane" id="aefi">
               <!-- #include virtual="aefi" -->
             </div>
-
           </div>
         </div>
       </content>
@@ -855,7 +851,6 @@
                           </div>
                         </div>
                       </div>
-
                     </div>
                   </form>
                 </div>
@@ -942,7 +937,7 @@
                               <div class="col-md-8">
                                 <div ng-class="{ 'has-error': (vaccinationForm.dose.$touched||vaccinationForm.$submitted) &amp;&amp; vaccinationForm.dose.$invalid }">
                                   <label class="control-label" for="doseInput">{{ 'locale.inputLabels.dose' | i18n }}</label>
-                                  <input id="doseInput" name="dose" type="text" placeholder="{{ 'locale.placeholders.dose' | i18n }}" class="form-control" ng-model="dose" ng-required="true"/>
+                                  <input id="doseInput" name="dose" type="text" placeholder="{{ 'locale.placeholders.dose' | i18n }}" class="form-control" ng-model="dose" ng-required="true" />
                                 </div>
                                 <div ng-messages="vaccinationForm['dose'].$error" ng-if="vaccinationForm['dose'].$touched||vaccinationForm.$submitted">
                                   <span class="help-block text-danger" ng-message="required">{{ 'locale.errors.doseRequired' | i18n }}</span>
@@ -1111,7 +1106,6 @@
                               </div>
                             </div>
                           </div>
-
                         </div>
                       </div>
                       <div class="form-group">
@@ -1201,12 +1195,11 @@
               $scope.user[outerModelAccess][innerModelAccess].push(objToPush);
             }
           };
-          
-          
+
           $scope.openDate = function() {
             $scope.popup.opened = true;
           };
-          
+
           $scope.popup = {
             opened: false
           };
@@ -1250,9 +1243,9 @@
           };
           $scope.patient = new Object();
          $scope.findWeights = function(){
-            
+
             $scope.patient.DateOfBirth = new Date(2004, 04, 11)
-            
+
             var today = new Date();
             var weightArray = [];
             console.log($scope.patient.DateOfBirth);
@@ -1294,7 +1287,6 @@
               }]
           }
 
-
               /**var sctx = document.getElementById("weight-canvas").getContext("2d");
               var LineChartDemo = new Chart(sctx).Line(lineChartData, {
                   pointDotRadius: 10,
@@ -1310,7 +1302,7 @@
             maxDate: new Date(),
             minDate: new Date(1990, 1, 1)
          };
-         
+
          $scope.draw();
 
       }]);
@@ -1349,10 +1341,10 @@
             minDate: new Date(1990, 1, 1),
             maxDate: new Date()
           };
-          
+
           $scope.vaccination = new Object();
           $scope.vaccination.dateOfVaccination = new Date();
-          
+
       }]);
 
       ]]>
@@ -1383,7 +1375,7 @@
             minDate: new Date(1990, 1, 1),
             maxDate: new Date()
           };
-          
+
           $scope.phoneRegex = '^\\d{3}-\\d{3}-\\d{4}$';
         };
 
@@ -1391,7 +1383,7 @@
           $('#searchPanel').collapse('show');
           $scope.searchResults = null;
         };
-        
+
         $scope.openFrom = function() {
           $scope.popupFrom.opened = true;
         };
@@ -1399,13 +1391,13 @@
          $scope.openTo = function() {
           $scope.popupTo.opened = true;
          };
-                   
+
         $scope.updateDobTo = function(){
             $scope.dateOptionsFrom = {
               maxDate: new Date($scope.query.dob.to.getFullYear(), $scope.query.dob.to.getMonth(),  $scope.query.dob.to.getDate())
             };
         }
-        
+
         $scope.updateDobFrom = function(){
             $scope.dateOptionsTo = {
               minDate: new Date($scope.query.dob.from.getFullYear(), $scope.query.dob.from.getMonth(),  $scope.query.dob.from.getDate())
@@ -1415,12 +1407,12 @@
         $scope.view = function(patient){
           window.location.href = "/applet/org.timr.applet.patientAdministration/patientView?pid=" + patient.id ;
         }
-                
+
         $scope.scanBarcodeLink = function()
         {
           $scope.barcode = OpenIZ.App.scanBarcode(); //Once this is implemented
         }
-        
+
         $scope.cancel = function()
         {
           window.history.back();
@@ -1429,7 +1421,7 @@
         $scope.log = function(patient){
           console.log(patient);
         }
-        
+
         $scope.search = function(invalid)
         {
           //$('#waitDialog').modal('show');
@@ -1482,7 +1474,7 @@
                   {
                     $('#searchPanel').collapse('hide');
                     $('#waitDialog').modal('hide');
-                   
+
                     $scope.$apply(function() { $scope.searchResults = result.all('Patient'); });
                     // TODO: Pagination and results
                   },
@@ -1492,7 +1484,7 @@
                   }
                 }
               );
-              
+
             }
              
             
@@ -1502,22 +1494,23 @@
               toastr.options = {"positionClass":"toast-top-center",
               "timeOut": 5000};
               toastr.error(localize.getString('locale.toastrText.invalidForm'), localize.getString('locale.toastrHeaders.invalidForm'));
+              $('#waitDialog').modal('hide');
             }
           }
           catch(ex)
           {
-            toastr.error(ex); 
+            toastr.error(ex);
             $('#waitDialog').modal('hide');
-            
+
           }
        }
-       
+
        $scope.show = function(tab)
        {
         console.log(tab);
         $(tab).tab('show');
        }
-        
+
         $scope.initialize();
 
       }]);
@@ -1595,7 +1588,7 @@
             }
           });
         };
- 
+
          $scope.openDOB = function() {
           $scope.popupDOB.opened = true;
          };
@@ -1642,20 +1635,20 @@
               var searchString = "_expand=name&_expand=address&_expand=gender";
               if($scope.patient.dob && $scope.patient.dob.date)
                 searchString += "&dateOfBirth=~" + OpenIZ.Util.toDateInputString($scope.patient.dob.date).substring(0, $scope.patient.dob.accuracy);
-              if($scope.patient.patientNames && 
+              if($scope.patient.patientNames &&
                 $scope.patient.patientNames.givenNames &&
                 $scope.patient.patientNames.givenNames[0] != ""
               )
                 searchString += "&name.component[Given].value=~" + $scope.patient.patientNames.givenNames[0];
-              if($scope.patient.patientNames && 
+              if($scope.patient.patientNames &&
                 $scope.patient.patientNames.familyNames &&
                 $scope.patient.patientNames.familyNames[0] != "")
                 searchString += "&name.component[Family].value=~" + $scope.patient.patientNames.familyNames[0];
               if($scope.patient.gender)
                 searchString += "&genderConcept=" + $scope.patient.gender;
-             
+
               // TODO: Update the URL so we can re-populate and run search results
-            
+
                 OpenIZ.Patient.findAsync(
                 {
                   query: searchString,
@@ -1683,7 +1676,7 @@
                genderConcept : $scope.patient.gender,
              };
              var patient = new OpenIZModel.Patient(patientData);
-             patient.addName(OpenIZModel.NameUseKeys.OfficialRecord, { 
+             patient.addName(OpenIZModel.NameUseKeys.OfficialRecord, {
                 Given : $scope.patient.patientNames.givenNames,
                 Family : $scope.patient.patientNames.familyNames
              });
@@ -1713,7 +1706,7 @@
       <![CDATA[
       layoutApp.controller('PatientViewController', ['$scope', 'localize', function ($scope, localize)
 		  {
-        
+
       }]);
       ]]>
     </contentText>

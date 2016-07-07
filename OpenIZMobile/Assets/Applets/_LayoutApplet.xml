@@ -103,7 +103,7 @@
     <string key="locale.errors.doseRequired">Dose Required</string>
     <string key="locale.errors.dateOfVaccinationRequired">Date of Vaccination Required</string>
     <!-- Error Labels End -->
-    
+
     <!-- Input Labels -->
     <string key="locale.inputLabels.givenName">Given Name</string>
     <string key="locale.inputLabels.familyName">Family Name</string>
@@ -171,7 +171,7 @@
     <string key="locale.navbar.loginRegister">Login</string>
     <string key="locale.navbar.preferences">Preferences</string>
     <!-- Navbar Labels End -->
-    
+
     <!-- Panel Labels -->
     <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
     <string key="locale.panelLabels.barcode">Barcode</string>
@@ -203,7 +203,7 @@
     <string key="locale.panelLabels.recoveryMethod">Recovery Method</string>
     <string key="locale.panelLabels.recoveryHelper">Select your recovery method</string>
     <string key="locale.panelLabels.dashboard">Dashboard</string>
-    <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
+    <string key="locale.panelLabels.forgotPassword">Forgot Password</string>
     <string key="locale.panelLabels.enterUsername">Enter your username below</string>
     <string key="locale.panelLabels.enterVaccination">Enter Vaccination</string>
     <!-- Panel Labels End -->
@@ -251,7 +251,7 @@
     <string key="locale.tableHeaders.weight">Weight</string>
     <string key="locale.tableHeaders.unit">Unit</string>
     <!-- Table Headers End -->
-    
+
     <string key="locale.accuracy.year">Year</string>
     <string key="locale.accuracy.month">Month</string>
     <string key="locale.accuracy.day">Day</string>
@@ -281,7 +281,6 @@
     <string key="locale.queue.tableHeader.action">Actions</string>
     <string key="locale.queue.action.cancel">Walk-out</string>
     <string key="locale.queue.action.encounter">View</string>
-    
   </strings>
   <strings lang="sw">
     <string key="locale.home.today">Tarehe: </string>
@@ -354,7 +353,7 @@
     <string key="locale.placeholders.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
     <string key="locale.placeholders.comments">Comments</string>
     <!-- Placeholders End -->
-    
+
     <!-- Tab Headers -->
     <string key="locale.tabHeaders.patientProfile">Profile</string>
     <string key="locale.tabHeaders.patientHistory">Historia</string>
@@ -368,7 +367,6 @@
     <string key="locale.tableHeaders.weight">Uzito</string>
     <string key="locale.tableHeaders.unit">Kitengo</string>
     <!-- Table Headers End -->
-    
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
@@ -402,20 +400,19 @@
 
               <ul class="nav navbar-nav navbar-right">
                 <li ng-repeat="m in menuItems">
-                  <a ng-if="m.action" ng-href="{{::m.action}}">
-                    <img ng-if="m.icon" class="pull-left navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}"/> {{::m.text}}
+                  <a ng-if="m.action" ng-href="{{m.action}}">
+                    <img ng-if="m.icon" class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}" /> {{m.text}}
                   </a>
                   <a ng-if="m.menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img class="pull-left navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}"/> {{::m.text}}  <span class="caret"></span>
+                    <img class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}" /> {{m.text}}  <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu" ng-if="m.menu">
                     <li ng-repeat="c in m.menu">
-                      <a ng-href="{{::c.action}}">
-                        <img class="pull-left navbar-icon" ng-if="c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}"/> {{::c.text}}
+                      <a ng-href="{{c.action}}">
+                        <img class="pull-left navbar-icon" ng-if="c.icon" ng-src="{{c.icon}}" ng-alt="{{c.text}}" ng-title="{{c.text}}" /> {{c.text}}
                       </a>
                     </li>
                   </ul>
-
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="!session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -554,7 +551,7 @@
       <![CDATA[
       layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize)
       {
-      
+
       }]);
     ]]>
     </contentText>
@@ -563,12 +560,12 @@
     <contentText>
       <![CDATA[
             var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
-            
+
             // Configure the safe ng-urls
             layoutApp.config(['$compileProvider', function($compileProvider) {
               $compileProvider.aHrefSanitizationWhitelist(/^\s*(app|tel):/);
               $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
-              
+
             }]);
             /*
             var compareTo = function() {
@@ -599,17 +596,15 @@
               localize.setLanguage(lang);
               window.location.reload();
             }
-            
+
             // Get session information
             $scope.session = OpenIZ.Authentication.getSession();
             $scope.menuItems = OpenIZ.App.getMenus();
             $scope.pageTitle = OpenIZ.App.getCurrentAssetTitle();
-            
-  
+
             toastr.options = {"positionClass":"toast-top-center"};
             const TIMEOUT_TIME = 30000;
-            
-           
+
             $scope.logout = function(){
               OpenIZ.Authentication.abandonSession();
               $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";

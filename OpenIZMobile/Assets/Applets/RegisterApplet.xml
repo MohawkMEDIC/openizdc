@@ -16,6 +16,9 @@
       <!-- absolute reference to the layout -->
       <layout>app://openiz.org/applet/org.timr.applet.layout/layout</layout>
       <script>register-controller</script>
+      <title lang="en">Register</title>
+      <title lang="sw">Daftari</title>
+      
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" class="row" ng-controller="RegisterController">
           <div class="col-xs-12">
@@ -23,16 +26,16 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                    <a>{{locale.panelLabels.personalInformation}}</a>
+                    <a>{{ 'locale.panelLabels.personalInformation' | i18n }}</a>
                   </h3>
                 </div>
                 <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
                     <div ng-repeat="name in user.fullName.givenNames track by $index">
                       <div class="form-group" ng-class="{ 'has-error': (registerForm['givenName-' + $index].$touched||registerForm.$submitted) &amp;&amp; registerForm['givenName-' + $index].$invalid }">
-                        <label for="givenNameInput" class="col-xs-2 control-label">{{locale.inputLabels.givenName}}</label>
+                        <label for="givenNameInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.givenName' | i18n }}</label>
                         <div class="col-xs-9 input-group">
-                          <input ng-model="user.fullName.givenNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.givenName}}" class="form-control" name="givenName-{{ $index }}" id="givenNameInput" required="required" />
+                          <input ng-model="user.fullName.givenNames[$index]" type="text" ng-required="true" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" class="form-control" name="givenName-{{ $index }}" id="givenNameInput" required="required" />
                           <div class="input-group-btn">
 
                             <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'givenNames', '')">
@@ -45,15 +48,15 @@
                         </div>
                       </div>
                       <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['givenName-' + $index].$error" ng-if="registerForm['givenName-' + $index].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.givenNameRequired}}</p>
+                        <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.givenNameRequired' | i18n }}</p>
                       </div>
                     </div>
 
                     <div ng-repeat="name in user.fullName.familyNames track by $index">
                       <div class="form-group" ng-class="{ 'has-error': (registerForm['familyName-' + $index].$touched||registerForm.$submitted) &amp;&amp; registerForm['familyName-' + $index].$invalid }">
-                        <label for="familyNameInput" class="col-xs-2 control-label">{{locale.inputLabels.familyName}}</label>
+                        <label for="familyNameInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.familyName' | i18n }}</label>
                         <div class="col-xs-9 input-group">
-                          <input ng-model="user.fullName.familyNames[$index]" type="text" ng-required="true" placeholder="{{locale.placeholders.familyName}}" class="form-control" name="familyName-{{ $index }}" id="familyNameInput" required="required" />
+                          <input ng-model="user.fullName.familyNames[$index]" type="text" ng-required="true" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" class="form-control" name="familyName-{{ $index }}" id="familyNameInput" required="required" />
                           <div class="input-group-btn">
                             <button class="btn btn-default btn-custom" type="button" ng-click="add('fullName', 'familyNames', '')">
                               <span class="glyphicon glyphicon-plus"></span>
@@ -66,7 +69,7 @@
                       </div>
 
                       <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['familyName-' + $index].$error" ng-if="registerForm['familyName-' + $index].$touched||registerForm.$submitted">
-                        <p class="alert alert-danger" ng-message="required">{{locale.errors.familyNameRequired}}</p>
+                        <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.familyNameRequired' | i18n }}</p>
                       </div>
                     </div>
                   </fieldset>
@@ -74,16 +77,16 @@
 
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                    <a>{{locale.panelLabels.contactInformation}}</a>
+                    <a>{{ 'locale.panelLabels.contactInformation' | i18n }}</a>
                   </h3>
                 </div>
                 <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
 
                     <div class="form-group" ng-class="{ 'has-error': (registerForm['phoneNum'].$touched||registerForm.$submitted) &amp;&amp; registerForm['phoneNum'].$invalid }">
-                      <label class="col-xs-2 control-label" for="phoneNumInput">{{locale.inputLabels.telephone}}</label>
+                      <label class="col-xs-2 control-label" for="phoneNumInput">{{ 'locale.inputLabels.telephone' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input type="text" name="phoneNum" ng-model="user.phoneNumber.phoneNum" class="form-control" placeholder="{{locale.placeholders.telephone}}" id="phoneNumInput" />
+                        <input type="text" name="phoneNum" ng-model="user.phoneNumber.phoneNum" class="form-control" placeholder="{{ 'locale.placeHolders.telephone' | i18n }}" id="phoneNumInput" />
                         <span class="input-group-addon" id="phoneTypeAddon">
                           <span class="glyphicon glyphicon-earphone"></span>
                         </span>
@@ -93,13 +96,13 @@
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm['phoneNum'].$error" ng-if="patientRegisterForm['phoneNum'].$touched||registerForm.$submitted">
-                      <p class="alert alert-danger" ng-message="phone">{{locale.errors.telephone}}</p>
+                      <p class="alert alert-danger" ng-message="phone">{{ 'locale.errors.telephone' | i18n }}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': registerForm['email'].$touched &amp;&amp; registerForm['email'].$invalid }">
-                      <label class="col-xs-2 control-label" for="emailInput">{{locale.inputLabels.email}}</label>
+                      <label class="col-xs-2 control-label" for="emailInput">{{ 'locale.inputLabels.email' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input type="email" name="email" ng-model="user.email.email" class="form-control" placeholder="{{locale.placeholders.email}}" id="emailInput" />
+                        <input type="email" name="email" ng-model="user.email.email" class="form-control" placeholder="{{ 'locale.placeHolders.email' | i18n }}" id="emailInput" />
                         <span class="input-group-addon" id="domainAddon">@</span>
                         <select name="domainType" ng-model="user.email.domainType" id="domainSelect" class="form-control" aria-describedby="domainAddon">
                           <option ng-repeat="(key, value) in locale.domainTypes" value="{{value}}">{{value}}</option>
@@ -107,53 +110,53 @@
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['email'].$error" ng-if="registerForm['email'].$touched||registerForm.$submitted">
-                      <p class="alert alert-danger" ng-message="email">{{locale.errors.email}}</p>
+                      <p class="alert alert-danger" ng-message="email">{{ 'locale.errors.email' | i18n }}</p>
                     </div>
                   </fieldset>
                 </div>
 
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                    <a>{{locale.panelLabels.accountInformation}}</a>
+                    <a>{{ 'locale.panelLabels.accountInformation' | i18n }}</a>
                   </h3>
                 </div>
                 <div class="panel-body">
                   <fieldset class="form-horizontal form-group">
 
                     <div class=" form-group" ng-class="{ 'has-error': (registerForm.username.$touched || registerForm.$submitted) &amp;&amp; registerForm.username.$invalid }">
-                      <label for="usernameInput" class="col-xs-2 control-label">{{locale.inputLabels.username}}</label>
+                      <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.username' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.username" type="text" ng-required="true" name="username" id="usernameInput" class="form-control" placeholder="{{locale.inputLabels.username}}" />
+                        <input ng-model="user.username" type="text" ng-required="true" name="username" id="usernameInput" class="form-control" placeholder="{{ 'locale.inputLabels.username' | i18n}}" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['username'].$error" ng-if="registerForm['username'].$touched||registerForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.usernameRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.usernameRequired' | i18n }}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (registerForm.password.$touched || registerForm.$submitted) &amp;&amp; registerForm.password.$invalid }">
-                      <label for="passwordInput" class="col-xs-2 control-label">{{locale.inputLabels.password}}</label>
+                      <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.password' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{locale.inputLabels.password}}" />
+                        <input ng-model="user.password" ng-required="true" type="password" name="password" id="passwordInput" class="form-control" placeholder="{{ 'locale.inputLabels.password' | i18n }}" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['password'].$error" ng-if="registerForm['password'].$touched||registerForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.passwordRequired}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.passwordRequired' | i18n }}</p>
                     </div>
 
                     <div class="form-group" ng-class="{ 'has-error': (registerForm.confirmPassword.$touched||registerForm.$submitted) &amp;&amp; registerForm.confirmPassword.$invalid }">
-                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{locale.inputLabels.confirmPassword}}</label>
+                      <label for="confirmPasswordInput" class="col-xs-2 control-label">{{ 'locale.inputLabels.confirmPassword' | i18n }}</label>
                       <div class="col-xs-9 input-group">
-                        <input ng-model="user.confirmPassword" ng-required="true" compare-to="user.password" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{locale.inputLabels.confirmPassword}}" />
+                        <input ng-model="user.confirmPassword" ng-required="true" compare-to="user.password" type="password" name="confirmPassword" id="confirmPasswordInput" class="form-control" placeholder="{{ 'locale.inputLabels.confirmPassword' | i18n }}" />
                       </div>
                     </div>
                     <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm['confirmPassword'].$error"  ng-if="registerForm['confirmPassword'].$touched||registerForm.$submitted">
-                      <p class="alert alert-danger" ng-message="required">{{locale.errors.confirmPasswordRequired}}</p>
-                      <p class="alert alert-danger" ng-message="compareTo">{{locale.errors.noMatch}}</p>
+                      <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.confirmPasswordRequired' | i18n }}</p>
+                      <p class="alert alert-danger" ng-message="compareTo">{{ 'locale.errors.noMatch' | i18n }}</p>
                     </div>
                   </fieldset>
                   <div class="form-group">
-                    <a class="btn btn-info pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{locale.buttonLabels.alreadyRegistered}}</a>
-                    <button type="submit" class="btn btn-primary pull-right">{{locale.buttonLabels.register}}</button>
+                    <a class="btn btn-info pull-left" href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.buttonLabels.alreadyRegistered' | i18n }}</a>
+                    <button type="submit" class="btn btn-primary pull-right">{{ 'locale.buttonLabels.register' | i18n }}</button>
                   </div>
                 </div>
               </div>
