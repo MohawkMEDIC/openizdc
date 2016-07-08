@@ -7,7 +7,7 @@
 	<string name="login_title">TImR Login</string>
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
-	<string name="installing_applets">Starting Applets...</string>
+	<string name="installing_applets">Installing Applets...</string>
   <string name="loading">Please Wait...</string>
 	<!-- Setup screen -->
 	<string name="setup_title">Welcome to TImR!</string>
@@ -22,7 +22,9 @@
 	<string name="setting_offline_only_desc">Never connect to the realm to synchronize data.</string>
 	<string name="setting_log">Logging Mode</string>
 	<string name="setting_log_desc">Identifies the amount of logging data to keep. The more verbose, the more storage space used</string>
-		
+  <string name="joinRealm">Realm has been joined successfully!</string>
+  <string name="noRealm">This application requires a realm to be joined.</string>
+  <string name="leaveRealm">Are you sure you want to leave this realm? All local data will be erased!</string>
 	<!-- Activity Titles -->
 	<string name="activity_login">Login</string>
 	<string name="activity_setup">Setup TImR</string>

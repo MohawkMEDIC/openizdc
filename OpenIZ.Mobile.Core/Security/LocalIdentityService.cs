@@ -8,6 +8,7 @@ using OpenIZ.Mobile.Core.Data.Model.Security;
 using System.Security;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Serices;
+using System.Collections.Generic;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -191,7 +192,8 @@ namespace OpenIZ.Mobile.Core.Security
 					dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 3));
 					connection.Update (dbs);
 					throw new SecurityException ("Account is currently locked");
-				} else {
+				} // TODO: Lacks login permission
+                else {
 					dbs.LastLoginTime = DateTime.Now;
 					dbs.InvalidLoginAttempts = 0;
 					connection.Update (dbs);
@@ -219,7 +221,22 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="userName">User name.</param>
 		public System.Security.Principal.IIdentity GetIdentity (string userName)
 		{
-			throw new NotImplementedException ();
+            try
+            {
+                using (SQLiteConnection conn = this.CreateConnection())
+                {
+                    var userData = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == userName);
+                    if (userData == null)
+                        return null;
+                    else
+                        return new SQLiteIdentity(userName, false);
+                }
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error getting identity {0}", e);
+                throw;
+            }
 		}
 
 		/// <summary>
@@ -241,14 +258,67 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="principal">Principal.</param>
 		public void ChangePassword (string userName, string newPassword, System.Security.Principal.IPrincipal principal)
 		{
-			throw new NotImplementedException ();
+            this.ChangePassword(userName, newPassword);
 		}
 
-		#endregion
+        /// <summary>
+        /// Change the user's password
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        public void ChangePassword(string userName, string password)
+        {
+            // We must demand the change password permission
+            try
+            {
+                IPolicyDecisionService pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
+
+                if (userName != ApplicationContext.Current.Principal.Identity.Name ||
+                    pdp.GetPolicyOutcome(ApplicationContext.Current.Principal, PolicyIdentifiers.ChangePassword) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny)
+                    throw new SecurityException("User cannot change specified users password");
+                using (SQLiteConnection conn = this.CreateConnection())
+                {
+                    var dbu = conn.Table<DbSecurityUser>().Where(o => o.UserName == userName).FirstOrDefault();
+                    if (dbu == null)
+                        throw new KeyNotFoundException();
+                    else
+                    {
+                        IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
+                        dbu.PasswordHash = hash.ComputeHash(password);
+                        dbu.SecurityHash = Guid.NewGuid().ToString();
+                        dbu.UpdatedByUuid = conn.Table<DbSecurityUser>().First(u => u.UserName == ApplicationContext.Current.Principal.Identity.Name).Uuid;
+                        dbu.UpdatedTime = DateTime.Now;
+                        conn.Update(dbu);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error changing password for user {0} : {1}", userName, e);
+                throw;
+            }
+        }
+
+        public IIdentity CreateIdentity(string userName, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetLockout(string userName, bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteIdentity(string userName)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
 
 
 
 
-	}
+    }
 }
 

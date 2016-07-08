@@ -16,6 +16,7 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model;
 using Android.Webkit;
 using Java.Interop;
+using OpenIZ.Core.Applets.ViewModel;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -40,11 +41,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
-                var patient = JniUtil.FromJson<Patient>(imsiPatientObject);
+                var patient = ViewModelSerializer.DeSerialize<Patient>(imsiPatientObject);
                 if (patient == null)
                     throw new ArgumentException("Invalid type", nameof(imsiPatientObject));
                 patient = this.m_persister.Insert(patient);
-                var retVal = JniUtil.ToJson(patient);
+                var retVal = ViewModelSerializer.Serialize(patient);
                 return retVal;
             }
             catch(Exception e)
@@ -64,9 +65,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 // Parse the queyr
-                QueryExpressionParser parser = new QueryExpressionParser();
                 var request = NameValueCollection.ParseQueryString(imsiQueryString);
-                var linqQuery = parser.BuildLinqExpression<Patient>(request);
+                var linqQuery = QueryExpressionParser.BuildLinqExpression<Patient>(request);
 
                 // Perform the query
                 int totalResults = 0;
@@ -75,8 +75,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
-                var bundle = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                var retVal = JniUtil.ToJson(bundle);
+                var bundle = new OpenIZ.Core.Model.Collection.Bundle();
+                bundle.Item.AddRange(results);
+                bundle.TotalResults = totalResults;
+                bundle.Count = results.Count();
+                bundle.Offset = offset;
+                var retVal = ViewModelSerializer.Serialize(bundle);
                 return retVal;
             }
             catch(Exception e)

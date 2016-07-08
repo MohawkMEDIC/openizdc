@@ -8,6 +8,9 @@ using OpenIZ.Core.Model.Query;
 using System.Collections.Generic;
 using System.Linq;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Applets.ViewModel;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -17,10 +20,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	public class ConceptServiceBridge : Java.Lang.Object
 	{
 
+        // Concept repository service
+        private IConceptRepositoryService m_conceptService = ApplicationContext.Current.GetService<IConceptRepositoryService>();
+
         // Local variables
         private Tracer m_tracer = Tracer.GetTracer(typeof(ConceptServiceBridge));
-        private IDataPersistenceService<ConceptSet> m_setPersister = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
-        private IDataPersistenceService<Concept> m_conceptPersister= ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
 
 
         /// <summary>
@@ -35,21 +39,24 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 // Parse the queyr
-                QueryExpressionParser parser = new QueryExpressionParser();
                 var request = NameValueCollection.ParseQueryString(imsiQueryString);
-                var linqQuery = parser.BuildLinqExpression<Concept>(request);
+                var linqQuery = QueryExpressionParser.BuildLinqExpression<Concept>(request);
 
                 // Perform the query
                 int totalResults = 0;
-                var results = this.m_conceptPersister.Query(linqQuery, offset, count, out totalResults);
+                var results = this.m_conceptService.FindConcepts(linqQuery, offset, count, out totalResults);
 
                 // Expand properties
                 foreach (var itm in results)
                     JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
-                var retVal = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                return JniUtil.ToJson(retVal);
+                var retVal = new Bundle();
+                retVal.Item.AddRange(results);
+                retVal.TotalResults = totalResults;
+                retVal.Count = retVal.Item.Count;
+                retVal.Offset = offset;
+                return ViewModelSerializer.Serialize(retVal);
             }
             catch (Exception e)
             {
@@ -70,13 +77,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 // Parse the queyr
-                QueryExpressionParser parser = new QueryExpressionParser();
                 var request = NameValueCollection.ParseQueryString(imsiQueryString);
-                var linqQuery = parser.BuildLinqExpression<ConceptSet>(request);
+                var linqQuery = QueryExpressionParser.BuildLinqExpression<ConceptSet>(request);
 
                 // Perform the query
                 int totalResults = 0;
-                var results = this.m_setPersister.Query(linqQuery, offset, count, out totalResults);
+                var results = this.m_conceptService.FindConceptSets(linqQuery, offset, count, out totalResults);
 
 
                 // Expand properties
@@ -84,9 +90,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
-                var bundle = OpenIZ.Core.Model.Collection.Bundle.CreateBundle(results, totalResults, offset);
-                string retVal = JniUtil.ToJson(bundle);
-                return retVal;
+                var retVal = new Bundle();
+                retVal.Item.AddRange(results);
+                retVal.TotalResults = totalResults;
+                retVal.Count = retVal.Item.Count;
+                retVal.Offset = offset;
+                return ViewModelSerializer.Serialize(retVal);
             }
             catch (Exception e)
             {

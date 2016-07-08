@@ -93,7 +93,9 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
 					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
 					typeof(LocalConceptService).AssemblyQualifiedName,
-					typeof(SHA256PasswordHasher).AssemblyQualifiedName,
+                    typeof(LocalPatientService).AssemblyQualifiedName,
+                    typeof(LocalSecurityService).AssemblyQualifiedName,
+                    typeof(SHA256PasswordHasher).AssemblyQualifiedName,
 					typeof(OAuthIdentityProvider).AssemblyQualifiedName,
 					typeof(LocalPersistenceService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName

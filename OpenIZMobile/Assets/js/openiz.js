@@ -693,7 +693,7 @@ var OpenIZ = OpenIZ || {
             {
                 if (patient["$type"] != "Patient")
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"), typeof(patient), null);
-                var imsiJson = JSON.stringify(patient.toImsi());
+                var imsiJson = JSON.stringify(patient);
                 var data = OpenIZPatientService.Insert(imsiJson);
 
                 if (data.lastIndexOf("err", 0) == 0)
@@ -741,7 +741,7 @@ var OpenIZ = OpenIZ || {
                 else if (patient.id == null)
                     throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"), typeof(patient), null);
 
-                var imsiJson = JSON.stringify(patient.toImsi());
+                var imsiJson = JSON.stringify(patient);
                 return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(imsiJson)));
             }
             catch(e)
