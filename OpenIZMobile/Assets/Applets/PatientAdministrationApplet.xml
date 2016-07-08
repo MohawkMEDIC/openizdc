@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<AppletManifest xmlns="http://openiz.org/applet">
+<AppletManifest xmlns="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
   <info id="org.timr.applet.patientAdministration" version="0.5.0.0">
     <icon>app://openiz.org/drawable/cogs</icon>
     <name lang="en">Patient Administration</name>
@@ -8,6 +8,32 @@
     <dependency id="org.openiz.core" version="0.5.0.0" />
     <dependency id="org.timr.applet.layout" version="0.5.0.0"/>
   </info>
+  <data xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <insert>
+      <extensionType xmlns="http://openiz.org/model">
+        <name>http://openiz.org/oiz/timr/tetanusStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
+      </extensionType>
+    </insert>
+    <insert>
+      <extensionType xmlns="http://openiz.org/model">
+        <name>http://openiz.org/oiz/timr/birthPlaceType</name>
+        <handlerClass>OpenIZ.Core.Extensions.StringExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
+      </extensionType>
+    </insert>
+    <insert>
+      <extensionType xmlns="http://openiz.org/model">
+        <name>http://openiz.org/oiz/timr/birthCertificateStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
+      </extensionType>
+    </insert>
+    <insert>
+      <extensionType xmlns="http://openiz.org/model">
+        <name>http://openiz.org/oiz/timr/breastFeedingStatus</name>
+        <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0</handlerClass>
+      </extensionType>
+    </insert>
+  </data>
   <menuItem>
     <icon>app://openiz.org/drawable/drk_baby</icon>
     <text>Children</text>
@@ -36,9 +62,9 @@
           </thead>
           <tbody>
             <tr ng-repeat="patient in searchResults.items">
-              <td>{{ patient.display.name.OfficialRecord.Given }} {{ patient.display.name.OfficialRecord.Family }}</td>
+              <td>{{ patient.name.OfficialRecord.component.Given }} {{ patient.name.OfficialRecord.component.Family }}</td>
               <td>{{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}</td>
-              <td>{{ patient.display.gender.text }}</td>
+              <td>{{ patient.gender.text }}</td>
               <td>N.Y.I.</td>
               <td>N.Y.I.</td>
               <td>
@@ -169,8 +195,7 @@
                                 <div class ="form-group">
                                   <label class ="col-xs-2 col-xs-offset-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
                                   <div class="col-xs-6">
-                                    <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon" ng-model="query.gender">
-                                      <option ng-repeat="(key, value) in locale.gender" value="{{value}}">{{value}}</option>
+                                    <select name="gender" id="genderSelect" class="form-control" aria-describedby="genderAddon" ng-model="query.gender" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[en].value">
                                     </select>
                                   </div>
                                 </div>
@@ -324,13 +349,13 @@
                             <div class="col-xs-12">
                               <fieldset class="form-horizontal form-group">
 
-                                <div ng-repeat="firstName in patient.patientNames.givenNames track by $index">
+                                <div ng-repeat="firstName in patient.name.OfficialRecord[0].component.Given track by $index">
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['givenName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['givenName-' + $index].$invalid }">
 
                                     <label class="col-xs-2 control-label" for="givenNameInput">{{ 'locale.inputLabels.givenName' | i18n }}</label>
 
                                     <div class="col-xs-9 input-group">
-                                      <input type="text" name="givenName-{{ $index }}" ng-model="patient.patientNames.givenNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" id="givenNameInput" />
+                                      <input type="text" name="givenName-{{ $index }}" ng-model="patient.name.OfficialRecord[0].component.Given[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.givenName' | i18n }}" id="givenNameInput" />
 
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'givenNames', '')">
@@ -348,13 +373,13 @@
                                   </div>
                                 </div>
 
-                                <div ng-repeat="lastName in patient.patientNames.familyNames track by $index">
+                                <div ng-repeat="lastName in patient.name.OfficialRecord[0].component.Family track by $index">
                                   <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm['familyName-' + $index].$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm['familyName-' + $index].$invalid }">
 
                                     <label class="col-xs-2 control-label" for="familyNameInput">{{ 'locale.inputLabels.familyName' | i18n }}</label>
                                     <div class="col-xs-9 input-group">
 
-                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.patientNames.familyNames[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" id="familyNameInput"  />
+                                      <input type="text" name="familyName-{{ $index }}" ng-model="patient.name.OfficialRecord[0].component.Family[$index]" class="form-control" placeholder="{{ 'locale.placeHolders.familyName' | i18n }}" id="familyNameInput"  />
 
                                       <div class="input-group-btn">
                                         <button class="btn btn-default btn-custom" type="button" ng-click="add('patientNames', 'familyNames', '')">
@@ -375,7 +400,7 @@
                                   <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
                                     <div class="input-group date">
-                                      <input required="required" readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dob.date" uib-datepicker-popup="dd/MMMM/yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
+                                      <input required="required" readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" uib-datepicker-popup="dd/MMMM/yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions">
                                         <span class="input-group-addon addon-background" ng-click="openDOB()">
                                           <span class="glyphicon glyphicon-calendar">
                                           </span>
@@ -384,10 +409,10 @@
 
                                       <span class="input-group-addon addon-background" id="accuracyAddon">{{ 'locale.inputLabels.accuracy' | i18n }}</span>
 
-                                      <select name="accuracy" ng-model="patient.dob.accuracy" class="form-control" aria-describedby="accuracyAddon">
-                                        <option value="4">{{ 'locale.accuracy.year' | i18n }}</option>
-                                        <option value="7">{{ 'locale.accuracy.month' | i18n }}</option>
-                                        <option value="10">{{ 'locale.accuracy.day' | i18n }}</option>
+                                      <select name="accuracy" ng-model="patient.dateOfBirthPrecision" class="form-control" aria-describedby="accuracyAddon">
+                                        <option value="0">{{ 'locale.accuracy.year' | i18n }}</option>
+                                        <option value="1">{{ 'locale.accuracy.month' | i18n }}</option>
+                                        <option value="2">{{ 'locale.accuracy.day' | i18n }}</option>
                                       </select>
                                     </div>
                                   </div>
@@ -400,8 +425,9 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" id="genderAddon">{{ 'locale.inputLabels.gender' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select id="genderSelect" ng-change="searchForDuplicates()" name="gender" ng-model="patient.gender" class="form-control" aria-describedby="genderAddon" required="required" >
+                                    <select name="gender" ng-change="searchForDuplicates()" ng-model="patient.genderConcept" id="genderSelect" class="form-control" aria-describedby="genderAddon"  bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[en].value">
                                     </select>
+
                                   </div>
                                 </div>
 
@@ -617,7 +643,8 @@
                                 <div class="form-group">
                                   <label class="col-xs-2 control-label" for="relationTypeInput">{{ 'locale.inputLabels.relationshipToPatient' | i18n }}</label>
                                   <div class="col-xs-9 input-group">
-                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect"  >
+                                    
+                                    <select name="relationshipType" ng-model="patient.contactRelationship" class="form-control" id="relationshipTypeSelect"  bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember" bind:value="name[en].value">
                                     </select>
                                   </div>
                                 </div>
@@ -1488,64 +1515,70 @@
 		  layoutApp.controller('PatientRegisterController', ['$scope', 'localize', function ($scope ,localize)
 		  {
         $scope.patient = {
-          patientNames: {
-            givenNames: [""],
-            familyNames: [""]
-          },
-          dob: {
-            date: new Date(),
-            accuracy: 10
-          },
-          gender: "",
-          identifiers: [{
-            identifierNum: "",
-            identifierType: ""
-          }],
-          tetanusStatus: false,
-          breastFeedingStatus: false,
-          birthCertificateStatus: false,
-          birthPlace: {
-            cityOrVillage: "",
-            hospital: ""
-          },
-          contactNames: {
-            givenNames: [""],
-            familyNames: [""]
-          },
-          contactPhones: [{
-            phoneNum: "",
-            phoneType: ""
-          }],
-          contactEmails: [{
-            email: "",
-            domainType: ""
-          }]
+            name: {
+                OfficialRecord: [
+                  {
+                      component: {
+                          Given: [ "" ],
+                          Family: [ "" ]
+                      }
+                  }
+                ]
+            },
+            dateOfBirth: new Date(),
+            dateOfBirthAccuracy: 2,
+            genderConcept: "",
+            identifier: {
+              "" : [ "" ]
+                // Identifiers go here in form : "DOMAIN" : [ "VALUE" ]
+            },
+            extension: {
+                // Any additional fields not in the IMS model go into extensions these have to be arrays of byte with one value indicating true/false
+                "http://openiz.org/oiz/tetanusStatus": [ true ],
+                "http://openiz.org/oiz/breastFeedingStatus": [ true ],
+                "http://openiz.org/oiz/birthCertificateStatus": [ true ],
+                "http://openiz.org/oiz/birthPlaceType": [ "00000000-0000-0000-0000-000000000000" ],
+            },
+            relationship: {
+                "Birthplace": [
+                    // UUID  of the facility where the child was born will go here
+                ],
+                "DedicatedServiceDeliveryLocation": [
+                    // UUID of the facility where the child is to receive services goes here
+                ],
+                "Mother": [
+                    {
+                        // You can assign values like this, or if the mother is aleady registered you can just put her UUID like the other relationships
+                        targetModel: {
+                            name: {
+                                OfficialRecord: [
+                                  {
+                                      component: {
+                                          Given: [],
+                                          Family: []
+                                      }
+                                  }
+                                ]
+                            }
+                        }
+                    }
+                ],
+            },
+            address: {
+                HomeAddress: [
+                  {
+                      City: [],
+                      AdditionalLocator: []
+                  }
+                ]
+            },
+            telecom: {
+                // All telecom information has to be in URI form, where tel: scheme represents telephone and mailto: represents e-mails
+                MobileContact: ["tel:XXXXXXXX"],
+                Public: ["mailto:xxx@xxxx.com"]
+            }
         };
 
-        $scope.initialize = function() {
-          OpenIZ.Concept.findConceptSetAsync({
-            query: "mnemonic=ChildFamilyMember",
-            continueWith: function(results) {
-              var concepts = results.first("ConceptSet").toDisplayModel();
-              var relationshipTypes = $("#relationshipTypeSelect").prop('options');
-              $.each(concepts, function(id, val) {
-                relationshipTypes[relationshipTypes.length] = new Option(val.text, val.id);
-              });
-              //$scope.$digest(function() { $scope.relationshipTypes = concepts; });
-            }
-          });
-          OpenIZ.Concept.findConceptSetAsync({
-            query: "mnemonic=AdministrativeGenderCode",
-            continueWith: function(results) {
-              var concepts = results.first("ConceptSet").toDisplayModel();
-              var genderTypes = $("#genderSelect").prop('options');
-              $.each(concepts, function(id, val) {
-                genderTypes[genderTypes.length] = new Option(val.text, val.id);
-              });
-            }
-          });
-        };
- 
          $scope.openDOB = function() {
           $scope.popupDOB.opened = true;
          };
@@ -1590,19 +1623,22 @@
         $scope.searchForDuplicates = function()
         {
               var searchString = "_expand=name&_expand=address&_expand=gender";
-              if($scope.patient.dob && $scope.patient.dob.date)
-                searchString += "&dateOfBirth=~" + OpenIZ.Util.toDateInputString($scope.patient.dob.date).substring(0, $scope.patient.dob.accuracy);
-              if($scope.patient.patientNames && 
-                $scope.patient.patientNames.givenNames &&
-                $scope.patient.patientNames.givenNames[0] != ""
+              if($scope.patient.dateOfBirth)
+                searchString += "&dateOfBirth=~" + OpenIZ.Util.toDateInputString($scope.patient.dateOfBirth).substring(0, 4 + $scope.patient.dateOfBirthAccuracy * 3);
+              if($scope.patient.name && 
+                $scope.patient.name.OfficialRecord &&
+                $scope.patient.name.OfficialRecord.component &&
+                $scope.patient.name.OfficialRecord.component.Given[0] != ""
               )
-                searchString += "&name.component[Given].value=~" + $scope.patient.patientNames.givenNames[0];
-              if($scope.patient.patientNames && 
-                $scope.patient.patientNames.familyNames &&
-                $scope.patient.patientNames.familyNames[0] != "")
-                searchString += "&name.component[Family].value=~" + $scope.patient.patientNames.familyNames[0];
-              if($scope.patient.gender)
-                searchString += "&genderConcept=" + $scope.patient.gender;
+                searchString += "&name.component[Given].value=~" + $scope.patient.name.OfficialRecord.component.Given[0];
+              if($scope.patient.name && 
+                $scope.patient.name.OfficialRecord &&
+                $scope.patient.name.OfficialRecord.component &&
+                $scope.patient.name.OfficialRecord.component.Family[0] != ""
+              )
+                searchString += "&name.component[Family].value=~" + $scope.patient.name.OfficialRecord.component.Family[0];
+              if($scope.patient.genderConcept)
+                searchString += "&genderConcept=" + $scope.patient.genderConcept;
              
               // TODO: Update the URL so we can re-populate and run search results
             
@@ -1627,22 +1663,12 @@
 
           if(!invalid){
              $('#waitDialog').modal('hide');
-             var patientData = {
-               dateOfBirth : $scope.patient.dob.date,
-               dateOfBirthPrecision : $scope.patient.dob.accuracy == 10 ? 'Day' : $scope.patient.dob.accuracy == 7 ? 'Month' : 'Year',
-               genderConcept : $scope.patient.gender,
-             };
-             var patient = new OpenIZModel.Patient(patientData);
-             patient.addName(OpenIZModel.NameUseKeys.OfficialRecord, { 
-                Given : $scope.patient.patientNames.givenNames,
-                Family : $scope.patient.patientNames.familyNames
-             });
               OpenIZ.Patient.insertAsync({
-               patient : patient,
+               patient : new OpenIZModel.Patient($scope.patient),
                continueWith : function(result) {
                  alert("Inserted as " + result.id);
                },
-               onException : function(ex) { alert("Error " + ex); }
+               onException : function(ex) { alert("Error " + ex.message); }
              });
           }
           else{
@@ -1652,7 +1678,6 @@
           }
         };
 
-        $scope.initialize();
       }]);
 
       ]]>
