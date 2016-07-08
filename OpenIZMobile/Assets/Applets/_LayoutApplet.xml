@@ -103,7 +103,7 @@
     <string key="locale.errors.doseRequired">Dose Required</string>
     <string key="locale.errors.dateOfVaccinationRequired">Date of Vaccination Required</string>
     <!-- Error Labels End -->
-    
+
     <!-- Input Labels -->
     <string key="locale.inputLabels.givenName">Given Name</string>
     <string key="locale.inputLabels.familyName">Family Name</string>
@@ -171,7 +171,7 @@
     <string key="locale.navbar.loginRegister">Login</string>
     <string key="locale.navbar.preferences">Preferences</string>
     <!-- Navbar Labels End -->
-    
+
     <!-- Panel Labels -->
     <string key="locale.panelLabels.barcodeScan">Barcode Scan</string>
     <string key="locale.panelLabels.barcode">Barcode</string>
@@ -203,7 +203,7 @@
     <string key="locale.panelLabels.recoveryMethod">Recovery Method</string>
     <string key="locale.panelLabels.recoveryHelper">Select your recovery method</string>
     <string key="locale.panelLabels.dashboard">Dashboard</string>
-    <string key="locale.panelLabels.forgotPassword ">Forgot Password</string>
+    <string key="locale.panelLabels.forgotPassword">Forgot Password</string>
     <string key="locale.panelLabels.enterUsername">Enter your username below</string>
     <string key="locale.panelLabels.enterVaccination">Enter Vaccination</string>
     <!-- Panel Labels End -->
@@ -251,7 +251,7 @@
     <string key="locale.tableHeaders.weight">Weight</string>
     <string key="locale.tableHeaders.unit">Unit</string>
     <!-- Table Headers End -->
-    
+
     <string key="locale.accuracy.year">Year</string>
     <string key="locale.accuracy.month">Month</string>
     <string key="locale.accuracy.day">Day</string>
@@ -281,7 +281,6 @@
     <string key="locale.queue.tableHeader.action">Actions</string>
     <string key="locale.queue.action.cancel">Walk-out</string>
     <string key="locale.queue.action.encounter">View</string>
-    
   </strings>
   <strings lang="sw">
     <string key="locale.home.today">Tarehe: </string>
@@ -354,7 +353,7 @@
     <string key="locale.placeholders.adverseReactionDescription">Maelezo ya Athari Mbaya</string>
     <string key="locale.placeholders.comments">Comments</string>
     <!-- Placeholders End -->
-    
+
     <!-- Tab Headers -->
     <string key="locale.tabHeaders.patientProfile">Profile</string>
     <string key="locale.tabHeaders.patientHistory">Historia</string>
@@ -368,7 +367,6 @@
     <string key="locale.tableHeaders.weight">Uzito</string>
     <string key="locale.tableHeaders.unit">Kitengo</string>
     <!-- Table Headers End -->
-    
   </strings>
   <!-- The applet contains one or more assets, this is an example of an asset which is just an HTML body (i.e. OpenIZ
        will inject its own HTML header) -->
@@ -395,7 +393,7 @@
                 <span class="icon-bar"></span>
               </button>
               <a href="app://openiz.org/applet/org.timr.applet.login/index" class="navbar-brand">
-                {{ 'locale.navbar.title' | i18n }} <small>&gt; {{ pageTitle }}</small>
+                {{ ::'locale.navbar.title' | i18n }} <small>&gt; {{ ::pageTitle }}</small>
               </a>
             </div>
             <div class="navbar-collapse collapse">
@@ -403,23 +401,22 @@
               <ul class="nav navbar-nav navbar-right">
                 <li ng-repeat="m in menuItems">
                   <a ng-if="m.action" ng-href="{{m.action}}">
-                    <img ng-if="m.icon" class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}"/> {{m.text}}
+                    <img ng-if="m.icon" class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}" /> {{m.text}}
                   </a>
                   <a ng-if="m.menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}"/> {{m.text}}  <span class="caret"></span>
+                    <img class="pull-left navbar-icon" ng-src="{{m.icon}}" ng-alt="{{m.text}}" ng-title="{{m.text}}" /> {{m.text}}  <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu" ng-if="m.menu">
                     <li ng-repeat="c in m.menu">
                       <a ng-href="{{c.action}}">
-                        <img class="pull-left navbar-icon" ng-if="c.icon" ng-src="{{c.icon}}" ng-alt="{{c.text}}" ng-title="{{c.text}}"/> {{c.text}}
+                        <img class="pull-left navbar-icon" ng-if="c.icon" ng-src="{{c.icon}}" ng-alt="{{c.text}}" ng-title="{{c.text}}" /> {{c.text}}
                       </a>
                     </li>
                   </ul>
-
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="!session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span class="glyphicon glyphicon-globe"></span> {{ 'locale.navbar.language' | i18n }} <span class="caret"></span>
+                    <span class="glyphicon glyphicon-globe"></span> {{ ::'locale.navbar.language' | i18n }} <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
                     <li role="presentation">
@@ -435,7 +432,7 @@
                   </ul>
                 </li>
                 <li id="loginRegisterLink" ng-hide="session.identity.name">
-                  <a href="app://openiz.org/applet/org.timr.applet.login/index">{{ 'locale.navbar.loginRegister' | i18n }}</a>
+                  <a href="app://openiz.org/applet/org.timr.applet.login/index">{{ ::'locale.navbar.loginRegister' | i18n }}</a>
                 </li>
                 <li class="dropdown" ng-if="session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -471,17 +468,17 @@
                 </li>
                 <li class="dropdown" ng-show="session.identity.name">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <span class="glyphicon glyphicon-user"></span> {{ session.identity.name }}  <span class="caret"></span>
+                    <span class="glyphicon glyphicon-user"></span> {{ ::session.identity.name }}  <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
                     <li role="presentation">
                       <a href="#">
-                        <span class="glyphicon glyphicon-wrench"></span> {{ 'locale.navbar.preferences' | i18n }}
+                        <span class="glyphicon glyphicon-wrench"></span> {{ ::'locale.navbar.preferences' | i18n }}
                       </a>
                     </li>
                     <li role="presentation">
                       <a href="#" ng-click="logout();">
-                        <span class="glyphicon glyphicon-log-out"></span> {{ 'locale.navbar.logout' | i18n }}
+                        <span class="glyphicon glyphicon-log-out"></span> {{ ::'locale.navbar.logout' | i18n }}
                       </a>
                     </li>
                   </ul>
@@ -501,14 +498,14 @@
             <div class="container">
               <p class="text-muted text-center">
                 &#169;
-                {{ 'locale.footer.layoutFooter' | i18n }}
+                {{ ::'locale.footer.layoutFooter' | i18n }}
               </p>
             </div>
           </footer>
           <div class="modal hide" data-backdrop="static" id="waitDialog">
             <div class="modal-body">
               <div class="modal-header">
-                <h1>{{ 'locale.waitText' | i18n }}</h1>
+                <h1>{{ ::'locale.waitText' | i18n }}</h1>
               </div>
               <div class="modal-body">
                 <div class="progress progress-striped active">
@@ -544,19 +541,19 @@
                       <div class="panel-body">
                         <fieldset class="form-horizontal">
                           <div class="form-group">
-                            <label class="col-xs-2 control-label" for="dobToInput">{{ 'locale.inputLabels.dateOfBirth' | i18n }}</label>
+                            <label class="col-xs-2 control-label" for="dobToInput">{{ ::'locale.inputLabels.dateOfBirth' | i18n }}</label>
                             <div class="date col-xs-4" id="dobToPicker">
                               <span id="dob">2016-May-31</span>
                             </div>
 
-                            <label class="col-xs-2 control-label" for="motherNameInput">{{ 'locale.inputLabels.motherName' | i18n }}</label>
+                            <label class="col-xs-2 control-label" for="motherNameInput">{{ ::'locale.inputLabels.motherName' | i18n }}</label>
                             <div class ="col-xs-4">
                               <span id="mothersName">Mothers Name Here</span>
                             </div>
                           </div>
 
                           <div class="form-group">
-                            <label class="col-xs-2 control-label" for="villageInput">{{ 'locale.inputLabels.cityVillage' | i18n }}</label>
+                            <label class="col-xs-2 control-label" for="villageInput">{{ ::'locale.inputLabels.cityVillage' | i18n }}</label>
                             <div class="col-xs-4">
                               <span id="villiage">Villiage</span>
                             </div>
@@ -584,7 +581,7 @@
       <![CDATA[
       layoutApp.controller('PatientLayoutController', ['$scope', 'localize', function($scope, localize)
       {
-      
+
       }]);
     ]]>
     </contentText>
@@ -593,12 +590,12 @@
     <contentText>
       <![CDATA[
             var layoutApp = angular.module('layout', ['ngMessages', 'ui.bootstrap', 'localization']);
-            
+
             // Configure the safe ng-urls
             layoutApp.config(['$compileProvider', function($compileProvider) {
               $compileProvider.aHrefSanitizationWhitelist(/^\s*(app|tel):/);
               $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
-              
+
             }]);
             /*
             var compareTo = function() {
@@ -629,17 +626,15 @@
               localize.setLanguage(lang);
               window.location.reload();
             }
-            
+
             // Get session information
             $scope.session = OpenIZ.Authentication.getSession();
             $scope.menuItems = OpenIZ.App.getMenus();
             $scope.pageTitle = OpenIZ.App.getCurrentAssetTitle();
-            
-  
+
             toastr.options = {"positionClass":"toast-top-center"};
             const TIMEOUT_TIME = 30000;
-            
-           
+
             $scope.logout = function(){
               OpenIZ.Authentication.abandonSession();
               $window.location.href = "app://openiz.org/applet/org.timr.applet.login/index";
