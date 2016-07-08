@@ -87,6 +87,9 @@
     <Compile Include="Security\PolicyIdentifiers.cs" />
     <Compile Include="Services\IDaemonService.cs" />
     <Compile Include="Services\IIdentityProviderService.cs" />
+    <Compile Include="Services\Impl\LocalConceptService.cs" />
+    <Compile Include="Services\Impl\LocalPatientService.cs" />
+    <Compile Include="Services\Impl\LocalSecurityService.cs" />
     <Compile Include="Services\IPolicyDecisionService.cs" />
     <Compile Include="Services\IPolicyInformationService.cs" />
     <Compile Include="Services\IRoleProviderService.cs" />
@@ -135,8 +138,6 @@
     <Compile Include="Data\Persistence\BaseDataPersistenceService.cs" />
     <Compile Include="Security\LocalIdentityService.cs" />
     <Compile Include="Services\IPasswordHashingService.cs" />
-    <Compile Include="Services\IConceptService.cs" />
-    <Compile Include="Services\Impl\LocalConceptService.cs" />
     <Compile Include="Data\Persistence\ConceptSetPersistenceService.cs" />
     <Compile Include="Data\LocalPersistenceServiceBase.cs" />
     <Compile Include="Data\LocalPersistenceService.cs" />

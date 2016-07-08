@@ -311,6 +311,16 @@ namespace OpenIZ.Mobile.Core.Data
         }
 
         /// <summary>
+        /// Perform a count
+        /// </summary>
+        public virtual int Count(Expression<Func<TData, bool>> query)
+        {
+            var tr = 0;
+            this.Query(query, 0, null, out tr);
+            return tr;
+        }
+
+        /// <summary>
         /// Query this instance.
         /// </summary>
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults)
