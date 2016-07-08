@@ -233,7 +233,4 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\drk_bug.png" />
   </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\EncounterManagementApplet.xml" />
-  </ItemGroup>
 </Project>
