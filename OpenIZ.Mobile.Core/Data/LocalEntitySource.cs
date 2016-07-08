@@ -14,11 +14,13 @@ namespace OpenIZ.Mobile.Core.Data
 	/// </summary>
 	public class LocalEntitySource : IEntitySourceProvider
 	{
-		#region IEntitySourceProvider implementation
-		/// <summary>
-		/// Get the persistence service source
-		/// </summary>
-		public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
+
+
+        #region IEntitySourceProvider implementation
+        /// <summary>
+        /// Get the persistence service source
+        /// </summary>
+        public TObject Get<TObject>(Guid key) where TObject : IdentifiedData
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
 			if(persistenceService != null)
@@ -55,8 +57,9 @@ namespace OpenIZ.Mobile.Core.Data
 				return persistenceService.Query(query);
 			return new List<TObject>();
 		}
-		#endregion
-		
-	}
+
+        #endregion
+
+    }
 }
 

@@ -270,19 +270,56 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });
 			return retVal;
 		}
+        /// <summary>
+        /// Gets the specified identity
+        /// </summary>
 		public System.Security.Principal.IIdentity GetIdentity (string userName)
 		{
 			throw new NotImplementedException ();
 		}
+        /// <summary>
+        /// Authenticates the specified user
+        /// </summary>
 		public System.Security.Principal.IPrincipal Authenticate (string userName, string password, string tfaSecret)
 		{
 			throw new NotImplementedException ();
 		}
+        /// <summary>
+        /// Changes the user's password
+        /// </summary>
 		public void ChangePassword (string userName, string newPassword, System.Security.Principal.IPrincipal principal)
 		{
 			throw new NotImplementedException ();
 		}
-		#endregion
-	}
+        /// <summary>
+        /// Changes the user's password
+        /// </summary>
+        public void ChangePassword(string userName, string password)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// Creates an identity
+        /// </summary>
+        public IIdentity CreateIdentity(string userName, string password)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// Sets the user's lockout status
+        /// </summary>
+        public void SetLockout(string userName, bool v)
+        {
+            throw new NotImplementedException();
+        }
+        /// <summary>
+        /// Deletes the specified identity
+        /// </summary>
+        public void DeleteIdentity(string userName)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+    }
 }
 

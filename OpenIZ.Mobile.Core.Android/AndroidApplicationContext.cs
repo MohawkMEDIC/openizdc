@@ -171,8 +171,7 @@ namespace OpenIZ.Mobile.Core.Android
 						migrator.Ensure ();
 
 						// Set the entity source
-						if(EntitySource.Current == null)
-							EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
+						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());
@@ -237,52 +236,79 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		public void InstallApplet (AppletPackage package, bool isUpgrade = false)
 		{
+            // Desearialize an prep for install
+            var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
+            String appletPath = Path.Combine(appletSection.AppletDirectory, package.Meta.Id);
 
-			this.m_tracer.TraceInfo ("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
+            try
+            {
+                this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
 
-			// TODO: Verify the package
+                // TODO: Verify the package
 
-			// Desearialize an prep for install
-			var appletSection = this.Configuration.GetSection<AppletConfigurationSection> ();
+              
+                // Copy 
+                if (!Directory.Exists(appletSection.AppletDirectory))
+                    Directory.CreateDirectory(appletSection.AppletDirectory);
 
-			// Copy 
-			if (!Directory.Exists (appletSection.AppletDirectory))
-				Directory.CreateDirectory (appletSection.AppletDirectory);
+                if (File.Exists(appletPath))
+                {
 
-			String appletPath = Path.Combine (appletSection.AppletDirectory, package.Meta.Id);
-			if (File.Exists (appletPath)) {
+                    if (!isUpgrade)
+                        throw new InvalidOperationException("Duplicate package name");
 
-				if (!isUpgrade)
-					throw new InvalidOperationException ("Duplicate package name");
+                    // Unload the loaded applet version
+                    var existingApplet = this.m_applets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
+                    if (existingApplet != null)
+                        this.m_applets.Remove(existingApplet);
+                    appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
 
-                // Unload the loaded applet version
-                var existingApplet = this.m_applets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
-                if (existingApplet != null)
-                    this.m_applets.Remove(existingApplet);
-                appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
+                }
 
+                // Save the applet
+                XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
+                // Serialize the data to disk
+                using (FileStream fs = File.Create(appletPath))
+                {
+                    fs.Write(package.Manifest, 0, package.Manifest.Length);
+                    fs.Flush();
+                }
+
+                // Install Database stuff
+                using (MemoryStream ms = new MemoryStream(package.Manifest))
+                {
+                    AppletManifest mfst = xsz.Deserialize(ms) as AppletManifest;
+                    // Migrate data.
+                    if(mfst.DataSetup != null)
+                        foreach(var itm in mfst.DataSetup.Action)
+                        {
+                            Type idpType = typeof(IDataPersistenceService<>);
+                            idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
+                            var svc = ApplicationContext.Current.GetService(idpType);
+                            idpType.GetMethod(itm.ActionName).Invoke(svc, new object[] { itm.Element });
+                        }
+                }
+
+                // TODO: Sign this with my private key
+                // For now sign with SHA256
+                SHA256 sha = SHA256.Create();
+                package.Meta.Hash = sha.ComputeHash(package.Manifest);
+                appletSection.Applets.Add(package.Meta);
+
+                if (this.ConfigurationManager.IsConfigured)
+                    this.ConfigurationManager.Save();
+
+                using (MemoryStream ms = new MemoryStream(package.Manifest))
+                    this.LoadApplet(AppletManifest.Load(ms));
             }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error installing applet {0} : {1}", package.Meta.ToString(), e);
 
-            // Save the applet
-            XmlSerializer xsz = new XmlSerializer (typeof(AppletManifest));
-			// Serialize the data to disk
-			using (FileStream fs = File.Create (appletPath)) {
-				fs.Write (package.Manifest, 0, package.Manifest.Length);
-				fs.Flush ();
-			}
-
-			// TODO: Sign this with my private key
-			// For now sign with SHA256
-			SHA256 sha = SHA256.Create ();
-			package.Meta.Hash = sha.ComputeHash (package.Manifest);
-			appletSection.Applets.Add (package.Meta);
-
-			if (this.ConfigurationManager.IsConfigured)
-				this.ConfigurationManager.Save ();
-
-			using (MemoryStream ms = new MemoryStream (package.Manifest))
-				this.LoadApplet (AppletManifest.Load (ms));
-
+                // Remove
+                if (File.Exists(appletPath))
+                    File.Delete(appletPath);
+            }
 		}
 
 

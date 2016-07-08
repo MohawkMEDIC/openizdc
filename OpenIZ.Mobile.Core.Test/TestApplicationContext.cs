@@ -84,6 +84,9 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
+                    typeof(LocalPatientService).AssemblyQualifiedName,
+                    typeof(LocalSecurityService).AssemblyQualifiedName,
+
                     typeof(SHA256PasswordHasher).AssemblyQualifiedName,
                     typeof(LocalIdentityService).AssemblyQualifiedName,
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
@@ -129,8 +132,7 @@ namespace OpenIZ.Mobile.Core.Test
                         migrator.Ensure();
 
                         // Set the entity source
-                        if (EntitySource.Current == null)
-                            EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
+                        EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
                         this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
                     }

@@ -197,7 +197,7 @@
 				// leave realm
 				$scope.leaveRealm = function(realm)
 				{
-          if(confirm(OpenIZ.Localization.getString("leaveRealm") + realm + "?"))
+          if(confirm(OpenIZ.Localization.getString("leaveRealm") ))
 					  OpenIZ.Configuration.leaveRealm(realm);
 				};
 
@@ -209,7 +209,9 @@
 
 				// Save config
 				$scope.save = function(config) {
-					if(OpenIZ.Configuration.save(config))
+          if(OpenIZ.Configuration.getRealm() == null)
+            alert(OpenIZ.Localization.getString("noRealm"));
+					else if(OpenIZ.Configuration.save(config))
 						OpenIZ.App.close();
 				};
 

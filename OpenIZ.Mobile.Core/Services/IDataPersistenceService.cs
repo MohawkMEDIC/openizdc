@@ -343,6 +343,10 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         IEnumerable<TData> Query(String queryName, IDictionary<String, Object> parameters, int offset, int? count, out int totalResults);
 
+        /// <summary>
+        /// Performs a fast count
+        /// </summary>
+        int Count(Expression<Func<TData, bool>> p);
     }
 }
 
