@@ -22,6 +22,7 @@ using System.Threading;
 using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using System.Xml.Serialization;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZMobile
 {
@@ -160,6 +161,8 @@ namespace OpenIZMobile
 							this.m_tracer?.TraceError (e.ToString ());
 						}
 					}
+
+                    this.StartService(new Intent(this, typeof(MessageQueueService)));
 				}
 				return true;
 			} catch (Exception e) {

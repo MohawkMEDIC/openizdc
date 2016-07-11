@@ -107,8 +107,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			String macAddress = Guid.NewGuid ().ToString ();
 			if (wlan != null)
 				macAddress = wlan.GetPhysicalAddress ().ToString ();
-		//else 
-				
+            //else 
+           
 
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
 				DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ","")

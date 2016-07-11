@@ -9,46 +9,57 @@ using Newtonsoft.Json;
 namespace OpenIZ.Mobile.Core.Configuration
 {
 
-	/// <summary>
-	/// Represents basic application configuration
-	/// </summary>
-	[XmlType(nameof(ApplicationConfigurationSection), Namespace = "http://openiz.org/mobile/configuration"), JsonObject]
-	public class ApplicationConfigurationSection : IConfigurationSection
-	{
+    /// <summary>
+    /// Represents basic application configuration
+    /// </summary>
+    [XmlType(nameof(ApplicationConfigurationSection), Namespace = "http://openiz.org/mobile/configuration"), JsonObject]
+    public class ApplicationConfigurationSection : IConfigurationSection
+    {
 
-		// Services
-		private List<Object> m_services;
-
-		/// <summary>
-		/// The location of the directory where user preferences are stored
-		/// </summary>
-		/// <value>The user preference dir.</value>
-		[XmlElement("userPrefDir"), JsonIgnore]
-		public String UserPrefDir {
-			get;
-			set;
-		}
+        // Services
+        private List<Object> m_services;
 
 
-		/// <summary>
-		/// Gets or sets the style.
-		/// </summary>
-		/// <value>The style.</value>
-		[XmlElement("style"), JsonProperty("style")]
-		public StyleSchemeType Style {
-			get;
-			set;
-		}
+        /// <summary>
+        /// The location of the directory where user preferences are stored
+        /// </summary>
+        /// <value>The user preference dir.</value>
+        [XmlElement("userPrefDir"), JsonIgnore]
+        public String UserPrefDir {
+            get;
+            set;
+        }
 
-		/// <summary>
-		/// Gets or sets the services.
-		/// </summary>
-		/// <value>The services.</value>
-		[XmlElement("service")]
-		public List<String> ServiceTypes {
-			get;
-			set;
-		}
+
+        /// <summary>
+        /// Gets or sets the style.
+        /// </summary>
+        /// <value>The style.</value>
+        [XmlElement("style"), JsonProperty("style")]
+        public StyleSchemeType Style {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the services.
+        /// </summary>
+        /// <value>The services.</value>
+        [XmlElement("service")]
+        public List<String> ServiceTypes {
+            get;
+            set;
+        }
+
+
+        /// <summary>
+        /// General extended application settings
+        /// </summary>
+        [XmlElement("setting")]
+        public List<AppSettingKeyValuePair> AppSettings {
+            get;
+            set;
+        }
 
 		/// <summary>
 		/// Sets the services.
@@ -70,10 +81,31 @@ namespace OpenIZ.Mobile.Core.Configuration
 
 	}
 
-	/// <summary>
-	/// Style scheme type
-	/// </summary>
-	[XmlType(nameof(StyleSchemeType), Namespace = "http://openiz.org/mobile/configuration")]
+    /// <summary>
+    /// Application key/value pair setting
+    /// </summary>
+    [XmlType(nameof(AppSettingKeyValuePair), Namespace = "http://openiz.org/mobile/configuration")]
+    public class AppSettingKeyValuePair
+    {
+
+        /// <summary>
+        /// The key of the setting
+        /// </summary>
+        [XmlAttribute("key")]
+        public String Key { get; set; }
+
+        /// <summary>
+        /// The value of the setting
+        /// </summary>
+        [XmlAttribute("value")]
+        public String Value { get; set; }
+
+    }
+
+    /// <summary>
+    /// Style scheme type
+    /// </summary>
+    [XmlType(nameof(StyleSchemeType), Namespace = "http://openiz.org/mobile/configuration")]
 	public enum StyleSchemeType
 	{
 		Dark,

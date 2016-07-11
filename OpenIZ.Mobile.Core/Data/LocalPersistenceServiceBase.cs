@@ -22,7 +22,7 @@ namespace OpenIZ.Mobile.Core.Data
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData, new()
     {
 
         // Get tracer
@@ -430,6 +430,38 @@ namespace OpenIZ.Mobile.Core.Data
         {
             int totalResults = 0;
             return this.Query(context, o => o.Key == key, 0, -1, out totalResults)?.SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Insert the specified object
+        /// </summary>
+        public object Insert(object data)
+        {
+            return this.Insert(data as TData);
+        }
+
+        /// <summary>
+        /// Update the specified object
+        /// </summary>
+        public object Update(object data)
+        {
+            return this.Update(data as TData);
+        }
+
+        /// <summary>
+        /// Obsoletes the specified data
+        /// </summary>
+        public object Obsolete(object data)
+        {
+            return this.Obsolete(data as TData);
+        }
+
+        /// <summary>
+        /// Gets the specified data
+        /// </summary>
+        object IDataPersistenceService.Get(Guid id)
+        {
+            return this.Get(id);
         }
     }
 }
