@@ -12,6 +12,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Core.Model.Collection;
 using System.Net.NetworkInformation;
 using System.Net;
+using OpenIZ.Mobile.Core.Interop;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -21,17 +22,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
     public class ImsiIntegrationService : IIntegrationService
     {
 
-        /// <summary>
-        /// Creates the specified restful client
-        /// </summary>
-        private IRestClient GetRestClient()
-        {
-            var serviceConfig = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
-            var client = serviceConfig.Client.Where(o => o.Name == "ims");
-            var retVal = Activator.CreateInstance(serviceConfig.RestClientType, client) as IRestClient;
-            return retVal;
-        }
-        
+       
         /// <summary>
         /// Finds the specified model
         /// </summary>
@@ -54,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public TModel Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData
         {
-            ImsiServiceClient client = new ImsiServiceClient(this.GetRestClient());
+            ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
             var retVal = client.Get<TModel>(key, versionKey);
             if (retVal is Bundle)
             {
@@ -70,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public void Insert(IdentifiedData data)
         {
-            ImsiServiceClient client = new ImsiServiceClient(this.GetRestClient());
+            ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
             var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o=>o.Name == "Create" && o.GetParameters().Length == 1);
             method.MakeGenericMethod(new Type[] { data.GetType() });
             method.Invoke(this, new object[] { data });
@@ -81,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public bool IsAvailable()
         {
-            var restClient = this.GetRestClient();
+            var restClient = ApplicationContext.Current.GetRestClient("imsi");
             ImsiServiceClient client = new ImsiServiceClient(restClient);
 
             INetworkInformationService nis = ApplicationContext.Current.GetService<INetworkInformationService>();
@@ -113,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public void Obsolete(IdentifiedData data)
         {
-            ImsiServiceClient client = new ImsiServiceClient(this.GetRestClient());
+            ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
             var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
             method.MakeGenericMethod(new Type[] { data.GetType() });
             method.Invoke(this, new object[] { data });
@@ -124,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public void Update(IdentifiedData data)
         {
-            ImsiServiceClient client = new ImsiServiceClient(this.GetRestClient());
+            ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
             var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
             method.MakeGenericMethod(new Type[] { data.GetType() });
             method.Invoke(this, new object[] { data });

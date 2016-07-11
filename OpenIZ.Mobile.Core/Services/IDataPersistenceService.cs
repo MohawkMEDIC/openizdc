@@ -9,7 +9,7 @@ namespace OpenIZ.Mobile.Core.Services
     /// <summary>
     /// Base class for query event args
     /// </summary>
-    public abstract class DataQueryEventArgsBase<TData> : EventArgs where TData : new()
+    public abstract class DataQueryEventArgsBase<TData> : EventArgs where TData : class
     {
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data Query pre-event args
 	/// </summary>
-	public abstract class DataQueryEventArgs<TData> : DataQueryEventArgsBase<TData> where TData : new()
+	public abstract class DataQueryEventArgs<TData> : DataQueryEventArgsBase<TData> where TData : class
 	{
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data query result event arguments.
 	/// </summary>
-	public class DataQueryResultEventArgs<TData> : DataQueryEventArgs<TData> where TData : new()
+	public class DataQueryResultEventArgs<TData> : DataQueryEventArgs<TData> where TData : class
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataQueryResultEventArgs"/> class.
@@ -94,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data query pre event arguments.
 	/// </summary>
-	public class DataQueryPreEventArgs<TData> : DataQueryEventArgs<TData> where TData : new()
+	public class DataQueryPreEventArgs<TData> : DataQueryEventArgs<TData> where TData : class
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataQueryPreEventArgs"/> class.
@@ -117,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Services
     /// <summary>
     /// Data query result event arguments.
     /// </summary>
-    public abstract class DataStoredQueryEventArgsBase<TData> : DataQueryEventArgsBase<TData> where TData : new()
+    public abstract class DataStoredQueryEventArgsBase<TData> : DataQueryEventArgsBase<TData> where TData : class
     {
         /// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataQueryResultEventArgs"/> class.
@@ -169,7 +169,7 @@ namespace OpenIZ.Mobile.Core.Services
     /// <summary>
     /// Data query result event arguments.
     /// </summary>
-    public class DataStoredQueryResultEventArgs<TData> : DataStoredQueryEventArgsBase<TData> where TData : new()
+    public class DataStoredQueryResultEventArgs<TData> : DataStoredQueryEventArgsBase<TData> where TData : class
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataQueryResultEventArgs"/> class.
@@ -187,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data query pre event arguments.
 	/// </summary>
-	public class DataStoredQueryPreEventArgs<TData> : DataStoredQueryEventArgsBase<TData> where TData : new()
+	public class DataStoredQueryPreEventArgs<TData> : DataStoredQueryEventArgsBase<TData> where TData : class
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataQueryResultEventArgs"/> class.
@@ -211,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data persistence pre event arguments.
 	/// </summary>
-	public class DataPersistencePreEventArgs<TData> : DataPersistenceEventArgs<TData> where TData : new()
+	public class DataPersistencePreEventArgs<TData> : DataPersistenceEventArgs<TData> where TData : class
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Services.DataPersistencePreEventArgs"/> class.
@@ -235,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// <summary>
 	/// Data persistence event arguments.
 	/// </summary>
-	public class DataPersistenceEventArgs<TData> : EventArgs where TData : new()
+	public class DataPersistenceEventArgs<TData> : EventArgs where TData : class
 	{
 
 		/// <summary>
@@ -290,7 +290,7 @@ namespace OpenIZ.Mobile.Core.Services
 	/// Represents a data persistence service which is capable of storing and retrieving data
 	/// to/from a data store
 	/// </summary>
-	public interface IDataPersistenceService<TData> : IDataPersistenceService where TData : IdentifiedData, new()
+	public interface IDataPersistenceService<TData> : IDataPersistenceService where TData : IdentifiedData
 	{
 		/// <summary>
 		/// Occurs when inserted.

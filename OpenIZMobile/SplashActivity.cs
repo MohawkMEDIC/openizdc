@@ -161,8 +161,7 @@ namespace OpenIZMobile
 							this.m_tracer?.TraceError (e.ToString ());
 						}
 					}
-
-                    this.StartService(new Intent(this, typeof(MessageQueueService)));
+                    
 				}
 				return true;
 			} catch (Exception e) {

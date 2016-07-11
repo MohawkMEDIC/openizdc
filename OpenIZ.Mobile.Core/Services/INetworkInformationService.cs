@@ -53,6 +53,6 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Pings the specified host
         /// </summary>
-        float Ping(String hostName);
+        long Ping(String hostName);
     }
 }

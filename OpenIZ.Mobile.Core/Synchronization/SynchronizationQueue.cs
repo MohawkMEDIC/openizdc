@@ -157,7 +157,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 					conn.Commit();
 
                     var postEventArgs = new DataPersistenceEventArgs<TQueueEntry>(entry);
-                    this.Enqueued?.(this, postEventArgs);
+                    this.Enqueued?.Invoke(this, postEventArgs);
                     return postEventArgs.Data;
 
                 }
