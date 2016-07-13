@@ -29,6 +29,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\ImsiPersistenceService.cs" />
     <Compile Include="Data\Model\Acts\DbAct.cs" />
     <Compile Include="Data\Model\Acts\DbActParticipation.cs" />
     <Compile Include="Data\Model\Acts\DbActRelationship.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Services\IRoleProviderService.cs" />
     <Compile Include="Security\LocalPolicyDecisionService.cs" />
     <Compile Include="Security\LocalPolicyInformationService.cs" />
+    <Compile Include="Synchronization\IDataSynchronizationService.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
     <Compile Include="Synchronization\SynchronizationManagerService.cs" />
     <Compile Include="Synchronization\SynchronizationQueue.cs" />

@@ -236,6 +236,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		public void InstallApplet (AppletPackage package, bool isUpgrade = false)
 		{
+
             // Desearialize an prep for install
             var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
             String appletPath = Path.Combine(appletSection.AppletDirectory, package.Meta.Id);
@@ -244,6 +245,7 @@ namespace OpenIZ.Mobile.Core.Android
             {
                 this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
 
+                this.SetProgress(package.Meta.Id, 1.0f);
                 // TODO: Verify the package
 
               

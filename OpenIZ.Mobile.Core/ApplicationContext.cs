@@ -12,6 +12,24 @@ using System.Linq;
 
 namespace OpenIZ.Mobile.Core
 {
+
+    /// <summary>
+    /// Represents event arguments for progress
+    /// </summary>
+    public class ApplicationProgressEventArgs : EventArgs
+    {
+
+        /// <summary>
+        /// The text of the progress
+        /// </summary>
+        public String ProgressText { get; set; }
+
+        /// <summary>
+        /// The numerical progress
+        /// </summary>
+        public float Progress { get; set; }
+    }
+
 	/// <summary>
 	/// Application context.
 	/// </summary>
@@ -29,6 +47,17 @@ namespace OpenIZ.Mobile.Core
 
 		// Lock object
 		private Object m_lockObject = new object();
+
+        // Fired when application wishes to show progress of some sort
+        public event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
+
+        /// <summary>
+        /// Sets the progress
+        /// </summary>
+        public void SetProgress(String text, float progress)
+        {
+            this.ProgressChanged?.Invoke(this, new ApplicationProgressEventArgs() { Progress = progress, ProgressText = text });
+        }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.ApplicationContext"/> class.

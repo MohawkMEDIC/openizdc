@@ -23,6 +23,7 @@ using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Android.Services;
+using OpenIZ.Mobile.Core;
 
 namespace OpenIZMobile
 {
@@ -33,11 +34,19 @@ namespace OpenIZMobile
 		// Tracer
 		private Tracer m_tracer;
 
-		/// <summary>
-		/// Create the activity
-		/// </summary>
-		/// <param name="savedInstanceState">Saved instance state.</param>
-		protected override void OnCreate (Bundle savedInstanceState)
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        private void OnProgressUpdated(Object sender, ApplicationProgressEventArgs e)
+        {
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = e.ProgressText );
+        }
+
+        /// <summary>
+        /// Create the activity
+        /// </summary>
+        /// <param name="savedInstanceState">Saved instance state.</param>
+        protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
 			this.SetContentView (Resource.Layout.Splash);
@@ -73,6 +82,7 @@ namespace OpenIZMobile
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext ());
 
+            
 			startupWork.Start ();
 
 		}
@@ -83,7 +93,10 @@ namespace OpenIZMobile
 		private bool DoConfigure ()
 		{
 
-			try {
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = Resources.GetString(Resource.String.startup));
+
+            try
+            {
 
                 if (AndroidApplicationContext.Current != null)
 					return true;
@@ -94,9 +107,6 @@ namespace OpenIZMobile
 					CancellationToken ct = ctSource.Token;
 
 					Task notifyUserWork = new Task (() => {
-
-						this.RunOnUiThread (() => this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.needs_setup));
-						Task.Delay (2000);
 
 						try {
                             if (AndroidApplicationContext.StartTemporary())
@@ -142,11 +152,9 @@ namespace OpenIZMobile
 					return false;
 				} else {
 
-					this.m_tracer = Tracer.GetTracer(this.GetType());
+                    AndroidApplicationContext.Current.ProgressChanged += this.OnProgressUpdated;
 
-					RunOnUiThread (() => { 
-						this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.installing_applets);
-					});
+					this.m_tracer = Tracer.GetTracer(this.GetType());
 
 					// Upgrade applets from our app manifest
 					foreach (var itm in Assets.List ("Applets")) {
@@ -163,6 +171,9 @@ namespace OpenIZMobile
 					}
                     
 				}
+
+                AndroidApplicationContext.Current.ProgressChanged -= this.OnProgressUpdated;
+
 				return true;
 			} catch (Exception e) {
 
