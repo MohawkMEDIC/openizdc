@@ -198,9 +198,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			/// <returns>To be added.</returns>
 			public override bool ShouldOverrideUrlLoading (WebView view, string url)
 			{
-				if (!url.StartsWith(AppletCollection.APPLET_SCHEME) &&
-					!url.StartsWith(AppletCollection.ASSET_SCHEME) &&
-					!url.StartsWith(AppletCollection.DRAWABLE_SCHEME) &&
+				if (!url.StartsWith(AppletCollection.APPLET_SCHEME) && 
 					url.Contains(":"))
 					return false;
 
@@ -225,13 +223,20 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 
 					this.m_tracer.TraceInfo ("Intercepting request {0}", url);
 
+                    if (url.EndsWith("/js/openiz.js"))
+                        url = "app://org.openiz.core/js/openiz.js";
+                    else if (url.EndsWith("/js/openiz-model.js"))
+                        url = "app://org.openiz.core/js/openiz-model.js";
+                    else if (url.EndsWith("/js/openiz-localize.js"))
+                        url = "app://org.openiz.core/js/openiz-localize.js";
+
                     // Language
                     string language = view.Resources.Configuration.Locale.Language;
                     AppletAsset scope = (view as AppletWebView).Asset;
                     var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
 
                     if (navigateAsset == null)
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/404", language: language);
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/404.html", language: language);
                     
                     try
                     {
@@ -247,14 +252,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                             return new WebResourceResponse("text/html", "UTF-8", new MemoryStream(Encoding.UTF8.GetBytes(redirectUrl)));
                         }
                         else
-                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/403", language: language);
+                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/403.html", language: language);
                         return this.RenderWebResource(url, navigateAsset, language);
 
                     }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError(ex.ToString());
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://openiz.org/applet/org.openiz.applet.core.error/500", language: language);
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/500.html", language: language);
                         return this.RenderWebResource(url, navigateAsset, language);
                     }
                     finally
@@ -263,70 +268,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                         if(navigateAsset.Content is AppletAssetHtml)
                             (view as AppletWebView).Asset = navigateAsset;
                     }
-                } else if (url.StartsWith (AppletCollection.ASSET_SCHEME)) { 
-					String assetPath = url.Substring (AppletCollection.ASSET_SCHEME.Length);
-					try {
-
-						// Determine mime
-						String ext = MimeTypeMap.GetFileExtensionFromUrl (url), mime = "text/plain";
-						switch (ext) {
-						case "css":
-							mime = "text/css";
-							break;
-						case "js":
-							mime = "text/javascript";
-							break;
-						case "png":
-							mime = "image/png";
-							break;
-						case "jpeg":
-							mime = "image/jpeg";
-							break;
-						case "woff":
-							mime= "application/x-font-woff";
-							break;
-						case "otf":
-							mime = "font/opentype";
-							break;
-						case "eot":
-							mime = "application/vnd.ms-fontobject";
-							break;
-						case "woff2":
-							mime= "application/font-woff2";
-							break;
-						}
-
-						// Return
-						this.m_tracer.TraceInfo("Intercept request for {0} with mime {1}", url, mime);
-						return new WebResourceResponse (mime, "UTF-8", view.Context.Assets.Open (assetPath));
-
-					} catch (Exception e) {
-						this.m_tracer.TraceError(e.ToString ());
-						return null;
-					}
-
-				} else if (url.StartsWith (AppletCollection.DRAWABLE_SCHEME)) {
-					String assetPath = url.Substring (AppletCollection.DRAWABLE_SCHEME.Length);
-					try {
-
-						// Return
-						this.m_tracer.TraceInfo ("Intercept request for drawable {0}", url);
-						var identifier = view.Resources.GetIdentifier(assetPath, "drawable", view.Context.PackageName);
-						if(identifier > 0)
-						{
-							BitmapDrawable d = view.Resources.GetDrawable(identifier) as BitmapDrawable;
-							var ms = new MemoryStream();
-							d.Bitmap.Compress(Bitmap.CompressFormat.Png, 100, ms);
-							ms.Seek(0, SeekOrigin.Begin);
-							return new WebResourceResponse ("image/png", "UTF-8", ms);
-						}
-						return null;
-					} catch (Exception e) {
-						this.m_tracer.TraceError (e.ToString ());
-						return null;
-					}
-
-				}
+                }
 				else
 					return base.ShouldInterceptRequest(view, url);
 			}
@@ -339,12 +281,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             private WebResourceResponse RenderWebResource(String url, AppletAsset navigateAsset, string language)
             {
                 // Demand policies
-                if(navigateAsset.Manifest.Info.Policies != null)
-                    foreach(var policy in navigateAsset.Manifest.Info.Policies)
+                if(navigateAsset.Policies != null)
+                    foreach(var policy in navigateAsset.Policies)
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
 
                 var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, language);
-                this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
+                //this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
                 var ms = new MemoryStream(data);
                 return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
             }

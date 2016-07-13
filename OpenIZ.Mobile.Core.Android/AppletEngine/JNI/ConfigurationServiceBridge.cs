@@ -20,12 +20,30 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		// Tracer
 		private Tracer m_tracer = Tracer.GetTracer (typeof(ConfigurationServiceBridge));
 
-		/// <summary>
-		/// Gets the specified section name
-		/// </summary>
-		/// <returns>The section.</returns>
-		/// <param name="sectionName">Section name.</param>
-		[Export]
+        /// <summary>
+        /// Gets the specified value for the specified app setting key
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetApplicationSetting(String key)
+        {
+            try
+            {
+                return ApplicationContext.Current.Configuration.GetAppSetting(key);
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error getting setting {0} : {1}", key, e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the specified section name
+        /// </summary>
+        /// <returns>The section.</returns>
+        /// <param name="sectionName">Section name.</param>
+        [Export]
 		[JavascriptInterface]
 		public String GetSection(String sectionName)
 		{

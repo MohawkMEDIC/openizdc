@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 retVal.TotalResults = totalResults;
                 retVal.Count = retVal.Item.Count;
                 retVal.Offset = offset;
-                return ViewModelSerializer.Serialize(retVal);
+                return JsonViewModelSerializer.Serialize(retVal);
             }
             catch (Exception e)
             {
@@ -95,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 retVal.TotalResults = totalResults;
                 retVal.Count = retVal.Item.Count;
                 retVal.Offset = offset;
-                return ViewModelSerializer.Serialize(retVal);
+                return JsonViewModelSerializer.Serialize(retVal);
             }
             catch (Exception e)
             {

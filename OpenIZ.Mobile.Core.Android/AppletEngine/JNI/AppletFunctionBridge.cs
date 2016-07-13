@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using OpenIZ.Mobile.Core.Interop;
+
 using System;
 using Android.Webkit;
 using Java.Interop;
@@ -13,6 +15,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using OpenIZ.Core.Applets.Model;
 using A = Android;
+using System.Reflection;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -134,6 +138,35 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         }
 
         /// <summary>
+        /// Get version name
+        /// </summary>
+        [JavascriptInterface]
+        [Export]
+        public String GetVersion()
+        {
+            return String.Format("{0} ({1})", typeof(OpenIZConfiguration).Assembly.GetName().Version,
+                typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+        }
+
+        /// <summary>
+        /// Get version name
+        /// </summary>
+        [JavascriptInterface]
+        [Export]
+        public String GetService(String serviceName)
+        {
+
+            Type serviceType = Type.GetType(serviceName);
+            if (serviceType == null)
+                return ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.FirstOrDefault(
+                    o => o.GetType().GetInterfaces().Any(i => i.Name == serviceName) ||
+                    o.GetType().Name == serviceName || o.GetType().BaseType.Name == serviceName
+                )?.GetType().Name;
+            else
+                return ApplicationContext.Current.GetService(serviceType)?.GetType().Name;
+        }
+
+        /// <summary>
         /// Get the menu items for the current user for specified language
         /// </summary>
         [JavascriptInterface]
@@ -146,14 +179,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Cannot have menus if not logged in
                 if (ApplicationContext.Current.Principal == null) return null;
 
-                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.Where(
-                    o=>o.Info.Policies?.Any(p=>ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false
-                ).SelectMany(o => o.Menus);
+                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus);
                 List<MenuInformation> retVal = new List<MenuInformation>();
                
                 // Create menus
                 foreach(var mnu in rootMenus)
-                    this.ProcessMenuItem(mnu, retVal);
+                    if (AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(mnu.Launcher, mnu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+
+                        this.ProcessMenuItem(mnu, retVal);
 
                 return JniUtil.ToJson(retVal);
             }

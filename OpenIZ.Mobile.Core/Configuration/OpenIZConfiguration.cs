@@ -34,11 +34,19 @@ namespace OpenIZ.Mobile.Core.Configuration
 			this.Version = typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version.ToString ();
 		}
 
-		/// <summary>
-		/// Gets or sets the version of the configuration
-		/// </summary>
-		/// <value>The version.</value>
-		[XmlAttribute("version")]
+        /// <summary>
+        /// Get app setting
+        /// </summary>
+        public string GetAppSetting(string key)
+        {
+            return this.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == key)?.Value;
+        }
+
+        /// <summary>
+        /// Gets or sets the version of the configuration
+        /// </summary>
+        /// <value>The version.</value>
+        [XmlAttribute("version")]
 		public String Version {
 			get { return typeof(OpenIZConfiguration).GetTypeInfo ().Assembly.GetName ().Version.ToString (); }
 			set {

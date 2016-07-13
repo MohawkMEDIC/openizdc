@@ -7,6 +7,7 @@ using OpenIZ.Mobile.Core.Configuration.Data;
 using System.IO;
 using System.Diagnostics.Tracing;
 using OpenIZ.Mobile.Core.Diagnostics;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {
@@ -29,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// <summary>
 		/// Trace writers
 		/// </summary>
-		[XmlElement("trace")]
+		[XmlElement("trace"), JsonProperty("trace")]
 		public List<TraceWriterConfiguration> TraceWriter {
 			get;
 			set;
@@ -58,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Gets or sets the initialization data.
 		/// </summary>
 		/// <value>The initialization data.</value>
-		[XmlAttribute("initializationData")]
+		[XmlAttribute("initializationData"), JsonProperty("initializationData")]
 		public String InitializationData {
 			get;
 			set;
@@ -79,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Gets or sets the filter of the trace writer
 		/// </summary>
 		/// <value>The filter.</value>
-		[XmlAttribute("filter")]
+		[XmlAttribute("filter"), JsonProperty("filter")]
 		public EventLevel Filter {
 			get;
 			set;

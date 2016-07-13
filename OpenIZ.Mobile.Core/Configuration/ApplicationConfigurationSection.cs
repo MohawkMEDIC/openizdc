@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// <summary>
         /// General extended application settings
         /// </summary>
-        [XmlElement("setting")]
+        [XmlElement("setting"), JsonProperty("setting")]
         public List<AppSettingKeyValuePair> AppSettings {
             get;
             set;
@@ -91,13 +91,13 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// <summary>
         /// The key of the setting
         /// </summary>
-        [XmlAttribute("key")]
+        [XmlAttribute("key"), JsonProperty("key")]
         public String Key { get; set; }
 
         /// <summary>
         /// The value of the setting
         /// </summary>
-        [XmlAttribute("value")]
+        [XmlAttribute("value"), JsonProperty("value")]
         public String Value { get; set; }
 
     }

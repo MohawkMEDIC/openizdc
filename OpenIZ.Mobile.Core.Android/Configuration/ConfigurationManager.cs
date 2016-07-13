@@ -81,8 +81,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "app://openiz.org/applet/org.openiz.applet.core/index",
-                AuthenticationAsset = "app://openiz.org/applet/org.openiz.applet.core.authentication/login"
+                StartupAsset = "app://org.openiz.core/",
+                AuthenticationAsset = "app://org.openiz.core/views/authenticate/"
             };
 
 			// Initial applet style
@@ -109,7 +109,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 				macAddress = wlan.GetPhysicalAddress ().ToString ();
             //else 
            
-
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
 				DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ","")
 			};

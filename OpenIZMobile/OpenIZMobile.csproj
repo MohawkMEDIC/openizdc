@@ -67,7 +67,7 @@
     <Compile Include="UserInterfaceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\js\README.md" />
+    <AndroidAsset Include="Assets\Applets\openiz.core.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -159,10 +159,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\SettingsApplet.xml" />
-    <AndroidAsset Include="Assets\js\openiz.js" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
@@ -173,30 +169,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\AuthenticationApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\MainApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\openiz-model.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\openiz-localize.js" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values-fr\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\FunctionExamplesApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\drk_bug.png" />
   </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
+copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
+copy "$(TargetDir)\openiz.core.applet.pak.gz" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
+  </PropertyGroup>
 </Project>

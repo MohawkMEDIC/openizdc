@@ -41,11 +41,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
-                var patient = ViewModelSerializer.DeSerialize<Patient>(imsiPatientObject);
+                var patient = JsonViewModelSerializer.DeSerialize<Patient>(imsiPatientObject);
                 if (patient == null)
                     throw new ArgumentException("Invalid type", nameof(imsiPatientObject));
                 patient = this.m_persister.Insert(patient);
-                var retVal = ViewModelSerializer.Serialize(patient);
+                var retVal = JsonViewModelSerializer.Serialize(patient);
                 return retVal;
             }
             catch(Exception e)
@@ -80,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 bundle.TotalResults = totalResults;
                 bundle.Count = results.Count();
                 bundle.Offset = offset;
-                var retVal = ViewModelSerializer.Serialize(bundle);
+                var retVal = JsonViewModelSerializer.Serialize(bundle);
                 return retVal;
             }
             catch(Exception e)

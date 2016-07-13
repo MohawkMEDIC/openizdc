@@ -295,7 +295,7 @@ namespace OpenIZ.Mobile.Core.Android
                 // For now sign with SHA256
                 SHA256 sha = SHA256.Create();
                 package.Meta.Hash = sha.ComputeHash(package.Manifest);
-                appletSection.Applets.Add(package.Meta);
+                appletSection.Applets.Add(package.Meta.AsReference());
 
                 if (this.ConfigurationManager.IsConfigured)
                     this.ConfigurationManager.Save();
