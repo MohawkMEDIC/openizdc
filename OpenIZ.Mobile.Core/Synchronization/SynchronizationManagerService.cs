@@ -53,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
-                if (svc.Get(data.Key) == null)
+                if (svc.Get(data.Key.Value) == null)
                     svc.Insert(data);
                 else
                     svc.Update(data);

@@ -229,12 +229,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, SQLiteConnection dataContext)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid? sourceKey, SQLiteConnection dataContext)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;
-            if (persistenceService == null)
+            if (persistenceService == null || !sourceKey.HasValue)
             {
                 this.m_tracer.TraceInfo("Missing persister for type {0}", typeof(TAssociation).Name);
                 return;

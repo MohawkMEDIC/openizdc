@@ -68,6 +68,13 @@
     <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
     <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
     <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
+    
+    <!-- Login -->
+    <string key="locale.login.header">Log-in to</string>
+    <string key="locale.login.username">Username:</string>
+    <string key="locale.login.password">Password:</string>
+    <string key="locale.login.doLogin">Login</string>
+
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>

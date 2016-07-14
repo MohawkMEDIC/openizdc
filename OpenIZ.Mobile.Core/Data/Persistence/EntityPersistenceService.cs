@@ -123,7 +123,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var retVal = base.Update(context, data);
 
-            byte[] entityUuid = retVal.Key.ToByteArray();
+            byte[] entityUuid = retVal.Key.Value.ToByteArray();
 
             // Identifiers
             if (data.Identifiers != null)

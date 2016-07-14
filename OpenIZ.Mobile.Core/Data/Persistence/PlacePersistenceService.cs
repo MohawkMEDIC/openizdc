@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = base.Update(context, data);
 
-            byte[] sourceKey = data.Key.ToByteArray();
+            byte[] sourceKey = data.Key.Value.ToByteArray();
             if (data.Services != null)
                 base.UpdateAssociatedItems<PlaceService, Entity>(
                     context.Table<DbPlaceService>().Where(o => o.EntityUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),

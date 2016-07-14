@@ -179,14 +179,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Cannot have menus if not logged in
                 if (ApplicationContext.Current.Principal == null) return null;
 
-                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus);
+                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
                
                 // Create menus
                 foreach(var mnu in rootMenus)
-                    if (AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(mnu.Launcher, mnu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
-
-                        this.ProcessMenuItem(mnu, retVal);
+                    this.ProcessMenuItem(mnu, retVal);
+                retVal.RemoveAll(o => o.Action == null && o.Menu?.Count == 0);
 
                 return JniUtil.ToJson(retVal);
             }
@@ -203,6 +202,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
+            if (menu.Launcher != null &&
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher)?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                return;
+
             string menuText = menu.GetText(this.GetLocale());
             var existing = retVal.Find(o => o.Text == menuText);
             if (existing == null)
@@ -219,7 +222,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 existing.Menu = new List<MenuInformation>();
                 foreach (var child in menu.Menus)
-                    this.ProcessMenuItem(child, existing.Menu);
+                        this.ProcessMenuItem(child, existing.Menu);
             }
         }
 

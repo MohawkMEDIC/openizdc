@@ -245,7 +245,7 @@ namespace OpenIZ.Mobile.Core.Android
             {
                 this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
 
-                this.SetProgress(package.Meta.Id, 1.0f);
+                this.SetProgress(package.Meta.GetName("en"), 1.0f);
                 // TODO: Verify the package
 
               
@@ -310,6 +310,8 @@ namespace OpenIZ.Mobile.Core.Android
                 // Remove
                 if (File.Exists(appletPath))
                     File.Delete(appletPath);
+
+                throw;
             }
 		}
 

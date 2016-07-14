@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var retVal = base.Update(context, data);
 
-            var sourceKey = data.Key.ToByteArray();
+            var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
             if (data.Component != null)

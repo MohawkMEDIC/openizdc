@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Data
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			else if (data.Key == Guid.Empty)
+			else if (!data.Key.HasValue || data.Key == Guid.Empty)
 				throw new InvalidOperationException ("Data missing key");
 
 			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
@@ -182,8 +182,8 @@ namespace OpenIZ.Mobile.Core.Data
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			else if (data.Key == Guid.Empty)
-				throw new InvalidOperationException ("Data missing key");
+            else if (!data.Key.HasValue || data.Key == Guid.Empty)
+                throw new InvalidOperationException ("Data missing key");
 
 			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
 			this.Obsoleting?.Invoke (this, preArgs);

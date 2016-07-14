@@ -165,7 +165,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             // Obsolete
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
             var afterObsolete = idp.Obsolete(afterTest);
-            afterObsolete = idp.Get(id);
+            afterObsolete = idp.Get(id.Value);
 
             // Assert
             Assert.IsNotNull(afterObsolete.ObsoletionTime);

@@ -82,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Administration"
 				},
                 StartupAsset = "app://org.openiz.core/",
-                AuthenticationAsset = "app://org.openiz.core/views/authenticate/"
+                AuthenticationAsset = "app://org.openiz.core/views/security/login.html"
             };
 
 			// Initial applet style
