@@ -81,7 +81,7 @@
     <Compile Include="Security\PolicyPermissionAttribute.cs" />
     <Compile Include="AndroidApplicationContext.cs" />
     <Compile Include="AppletEngine\JNI\ConfigurationServiceBridge.cs" />
-    <Compile Include="Security\SHA256PasswordHasher.cs" />
+    <Compile Include="Security\PasswordHashers.cs" />
     <Compile Include="Security\OAuthIdentityProvider.cs" />
     <Compile Include="Security\OAuthTokenServiceCredentials.cs" />
     <Compile Include="AppletEngine\JNI\ConceptServiceBridge.cs" />

@@ -5,6 +5,10 @@
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
+  <menuItem launch="app://org.openiz.core/views/settings/index.html">
+    <icon>app://org.openiz.core/img/appbar.settings.png</icon>
+    <text lang="en">Settings</text>
+  </menuItem>
   <asset name="index.html" mimeType="text/html">
     <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
     <contentHtml>
@@ -57,6 +61,22 @@ layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
 }]);</contentText>
   </asset>
+  <asset name="controllers/common/patients/register/demographics.js" mimeType="text/javascript">
+    <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
+/// &lt;reference path="~/js/openiz-model.js"/&gt;
+/// &lt;reference path="~/lib/jquery.min.js"/&gt;
+/// &lt;reference path="~/lib/angular.min.js"/&gt;
+/// &lt;reference path="~/lib/select2.min.js"/&gt;
+
+$(document).ready(function () {
+
+    $('.select2-tags').select2({
+        tags: true
+    });
+
+
+});</contentText>
+  </asset>
   <asset name="controllers/common/patients/search/search-results.js" mimeType="text/javascript">
     <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/js/openiz-model.js"/&gt;
@@ -66,8 +86,11 @@ layoutApp.config(['$compileProvider', function ($compileProvider) {
 // Document ready, bind search results to their related contexts
 $(document).ready(function () {
     $('table.oiz-patient-results').each(function (e) {
+
+        // Get the current scope that we're in
         var scope = angular.element($(e)).scope();
 
+        // If the current scope does not have required values bind them
         scope.search = scope.search || {};
         scope.search.query = scope.search.query || {};
         scope.search.results = null;
@@ -198,8 +221,12 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
         pollInterval: OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")
     };
-    $scope.config.log.mode = $scope.config.log.trace[0].filter;
-    $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService");
+    $scope.config.log.mode = $scope.config.log.trace[0].filter || "Warning";
+    $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
+
+    $scope.config.security.offline = {
+        enable: false
+    };
     $scope.master = {};
 
     // leave realm
@@ -3759,6 +3786,9 @@ pre.jush a:hover {text-decoration:underline; }
   </asset>
   <asset name="img/appbar.network.home.png" mimeType="image/png">
     <contentBin>iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAYAAADHl1ErAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAG/SURBVHhe7dqxLgRRFIfxpdDoRCM6EY14ANFoRDQ6jdoDeAmRqHQa2WjVCqEXiVY0CtGIRESnEcH/xNzk5iRj9+5OZtbc75d8wdrZ3Tkx15XVAQAAAAAAAAAAwbjaV6dq0m5w5ouPkCl1rr6L7tScCk7U5++nWFQPKgwr9KY2lAm3ZW9Lvat4UHFfajf6OlsT6kjFw7HsJ+3S3RaXpRl1pfwwLtS0ssX/sLjNt6SysqyelB/EgbJBxXbUh4rvZ5fvtspC2QBsHSuzql5VfIx1rOyybiXbU3WVP+lntaJ6se3FrfLHX6tZ1Sp2md2oYU/W79NCL8rWxFbZU/5EB7mcbPj+cc5U69gladuFeLEfVDj+Xtn6F/810CrrakFVNTC7nO2XSOtVNbDajRUf6xZO1j9/2RDK7lf76/ebRPTAwBIxsEQMLBEDS8TAEjW9rRgW2wogb02tYX/x69tIvUbWsEQMLBEDS8TAEjGwRAwsUZMDW1P270y2jYjz/PftDd1NlR17A9cPo98eVSOq3hTayfTDnrff+5ZJeYzKzpM1LBEDS8TA/pFhFn07Njtl24peZbutAAAAAAAAADDSOp0f+c65B2/Q14cAAAAASUVORK5CYII=</contentBin>
+  </asset>
+  <asset name="img/appbar.settings.png" mimeType="image/png">
+    <contentBin>iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAYAAADHl1ErAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAANOSURBVHhe7ZpNyA1RGMdfH/kIkXwkRJQUSTZWyk7YSClKkeyUhUhioSxsbCwkZcECJUkJSwvJRyIJC2RhoST5SCFfv/97Z+rc6bl37tw7M3fuvM+vfp15b3fOPee8Z87HM2fIcRzHcRzHcRzHcRzHcRzHqRFTozSNVbiycTkyWYNX8RtO1wcp3MZ/+AB34XisPWNxGz5CVT72ALZjGYbfl5/wBE7C2nISkxWXH7BdjzmF1n1vsdZYPSV2J1qoB6k3WfccwlIZFaVlcgM3NC6beINbcTnO1AfwHpfi4eG/mvmD81HfqTXr0OotWb2MI4bnaDVCFjdi6YyO0jLRmPS5cdkTO7AWM6QqoeWDxRx8jFaP6Ub11IXYinFRWmmOowbiYxhWZgo+QaviP/AKbsclOA0n4gJcj6fxC1r3PsWwp2kRvB9fospSadSz1FhxZf7iLdyMF6LPkl7HRZjGbDyHVh7XcC3qN9T48ecqS6veXgm2YFiRdqoxD2LWcXQ3/kYrT0uVqbLE+71O3IfdsgetPC1VpkrSbhWf9BL2ivKw8rZU2SqHCqVVvB41q9Cx33Eu9orGNOVl/UaoohursbJoZtTs9BGtCmjgzotWk4Aa8iwOVPxM0YejmKxMnoOwNcnon6VlSSEUudL/ia8bl03cj9I8eBGlIfcwj52ESdFbI0UTkij2lRdWXvOitBD6sZdUz8sLK68JUVoIRTeY1QPiWFcezIrSkHdRWghFNpgGfeuR1BYmL1ZEaYjeLhU26BeBLys6xBeuGfGtURf45jsjHt7JiGZGLSXiwnYSQFSktagAYtoL4krQKkStMPJDDCsaG4ao1XgKZyser8khLUT9DMNlxECFqEXaS5C7aFW8G9VYA/8SJA1V4jxaDZBFbeJnYKn0Yy/5Cy82LntCj60WxyMCvea3ek1WdeygVPpxGEXjmDbIY4b/akYThV7OarCfjF/xFeqY1GJMchP7cmSgTHREyeotOtLU6tW/jkJZ98jKruLzQofgrIrr0Fwrkuu70DNYW1TxI6hHMlnxtJ6iY53h9xX+3osa/GuP1mmbMI5udLLf04JU0Yk7qJ1DP2b4SqCFZ6fjkCYMx3Ecx3Ecx3Ecx3Ecx3EcpwYMDf0H8uUHASuXoMAAAAAASUVORK5CYII=</contentBin>
   </asset>
   <asset name="img/appbar.shield.png" mimeType="image/png">
     <contentBin>iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAYAAADHl1ErAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJ9SURBVHhe7ZpNqE1RGIav/2IiosQQI5kxYSAlMwMlGZAUA2ZKUmbmpiZSpoSMqKsoRAaYEOVnQBEx8p/wvPeuW6fTd497W+uevfY571NP3z3ndG57vXuvdfZea40YY4wxxhhjjDHGGGOMMc0wJ9XaWImL8Qv+1RsmZhM+RoUkX+F2NAHH8A9OhNXpKTSJ2XgGo6A6PY/zcahZgtcwCijyHmp8Gwi24VW8jodRg/Zk6KrahRqjomB6+R6P4AKcDH22Gy/gA9yLRZiVai6r8SnOG3s1znccxfv4HD+jQlyD+3Ad5vAWL+Fd/IQLcTluxh24FCdQ0GvxxdirCjiB3VdCbR7FbNQ1SrAq1ZpZlmoWpQJrAz9TzWKYAiuCA5smpQL7mGrNvEk1i2EKTLch2ZQKrJr7mx4UOamlAtNNa+0UOaml7vTFD+z1uNIkurr0FJBNyV/Jmq+yl6lmUzIwzSTUysNUsykZ2JVUa+RWqlWh8UvjWPTg27RFxi9R8grTs5qmcmrjDn4Y/zOfkoGJy6nWxMVUq2QF/saoWzSljqlqbmB04E14E4tSuksKre7UwrlUq2Yu6jEkOuP9VMegY2kF+zFqRD/VqlFr0Jl9hFFD+qGW1lrHBmzqF3MrtpLTGDVoJj2LrWURPsOoYTPha+y14t4K1uM3jBpY0l+4EQcCbQ2IGllKbZPaiQOF9n9FjS3hIRxIjmPU4BwHfrOduqfGm6jx01H/4yAOBVvwHUZBTEXNb2k/7FChWVDNn0WB9FLfKTaD2kbURbWMH4XTqXYeHkADWg/Qhjd1te6gvuJJ1E2w6ULB7cHb+AT/t1fWGGOMMcYYY4wxxpipMzLyD19XR8bGkZGZAAAAAElFTkSuQmCC</contentBin>
@@ -12729,8 +12759,75 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
   </asset>
   <asset name="views/common/patients/register/demographics.html" mimeType="text/html">
     <contentHtml>
+      <script>app://org.openiz.core/controllers/common/patients/register/demographics.js</script>
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <a data-toggle="collapse" href="#demoInfoCollapse">{{ 'locale.patient.demographics.header' | i18n }}</a>
+              </h3>
+            </div>
+            <div id="demoInfoCollapse" class="panel-collapse collapse in">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <fieldset class="form-horizontal form-group">
+                      <div class="form-group">
+                        <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                        <div class="col-xs-9 input-group">
+                          <select name="givenName" id="givenName" select="0" class="select2-tag form-control" aria-describedby="givenNameAddon" required="required" multiple="multiple">
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-xs-offset-2 col-xs-9">
+                        <p class="alert alert-danger" ng-if="givenNameError">{{ 'locale.errors.required' | i18n }}</p>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                        <div class="col-xs-9 input-group">
+                          <select name="familyName" id="familyName" select="1" class="select2-tag form-control" aria-describedby="familyNameAddon" required="required" multiple="multiple">
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-xs-offset-2 col-xs-9">
+                        <p class="alert alert-danger" ng-if="familyNameError">{{ 'locale.errors.required' | i18n }}</p>
+                      </div>
+                      <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm.date.$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm.date.$invalid }">
+                        <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                        <div class="col-xs-9 input-group">
+                          <div class="input-group date">
+                            <input readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" uib-datepicker-popup="dd/MMMM/yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions" />
+                            <span class="input-group-addon addon-background" ng-click="openDOB()">
+                              <span class="glyphicon glyphicon-calendar">
+                              </span>
+                            </span>
+                            <span class="input-group-addon addon-background" id="accuracyAddon">{{ 'locale.patient.demographics.accuracy' | i18n}}</span>
+                            <select name="accuracy" ng-model="patient.dateOfBirthAccuracy" class="form-control" aria-describedby="accuracyAddon">
+                              <option value="0">{{ 'locale.patient.demographics.accuracy.full' | i18n }}</option>
+                              <option value="1">{{ 'locale.patient.demographics.accuracy.year' | i18n }}</option>
+                              <option value="2">{{ 'locale.patient.demographics.accuracy.month' | i18n }}</option>
+                              <option value="3">{{ 'locale.patient.demographics.accuracy.day' | i18n }}</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm.date.$error" ng-if="patientRegisterForm.date.$touched||patientRegisterForm.$submitted">
+                          <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.dob' | i18n }}</p>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
+                        <div class="col-xs-9 input-group">
+                          <select name="gender" ng-model="patient.genderConcept" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[en].value">
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </content>
     </contentHtml>
@@ -12747,12 +12844,12 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
         -->
           <thead>
             <tr>
-              <th>{{ 'locale.tableHeaders.names' | i18n }}</th>
-              <th>{{ 'locale.tableHeaders.dateOfBirth' | i18n }}</th>
-              <th>{{ 'locale.tableHeaders.gender' | i18n }}</th>
-              <th>{{ 'locale.tableHeaders.cityVillage' | i18n }}</th>
-              <th>{{ 'locale.tableHeaders.healthFacility' | i18n }}</th>
-              <th>{{ 'locale.tableHeaders.actions' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.names' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.gender' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.cityVillage' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.healthFacility' | i18n }}</th>
+              <th>{{ 'locale.patient.search.header.actions' | i18n }}</th>
             </tr>
           </thead>
           <tbody>
@@ -12764,11 +12861,11 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
               <td>N.Y.I.</td>
               <td>
                 <span class="btn-group">
-                  <button class="btn btn-primary" ng-click="view(patient)">
-                        {{ 'locale.buttonLabels.view' | i18n }}<span class="glyphicon glyphicon-eye-open"></span></button>
-                  <button type="button" class="btn btn-primary" data-toggle="modal" autocomplete="off" ng-click="setModalPatient(patient, $index)" data-target="#myModal" ng-class="{'btn-success':patient.CheckedIn==true}">
-                        {{ 'locale.buttonLabels.checkIn' | i18n }}
-                    </button>
+                  <a class="btn btn-primary" ng-click="viewPatient(patient)">
+                        {{ 'locale.patient.action.view' | i18n }}<span class="glyphicon glyphicon-eye-open"></span></a>
+                  <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-class="{'btn-success':patient.CheckedIn==true}">
+                        {{ 'locale.patient.action.startEncounter' | i18n }}
+                    </a>
                 </span>
               </td>
             </tr>
@@ -12837,15 +12934,15 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
             </script>
             <script src="app://org.openiz.core/js/openiz.js" type="text/javascript">
             </script>
-            <script src="app://org.openiz.core/lib/jquery.min.js" type="text/javascript">
+            <script src="/lib/jquery.min.js" type="text/javascript">
             </script>
-            <script src="app://org.openiz.core/lib/bootstrap.js" type="text/javascript">
+            <script src="/lib/bootstrap.js" type="text/javascript">
             </script>
-            <script src="app://org.openiz.core/lib/angular.min.js" type="text/javascript">
+            <script src="/lib/angular.min.js" type="text/javascript">
             </script>
             <script src="app://org.openiz.core/js/openiz-localize.js" type="text/javascript">
             </script>
-            <script src="app://org.openiz.core/controllers/layout.js" type="text/javascript">
+            <script src="/controllers/layout.js" type="text/javascript">
             </script>
             <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
             <script type="text/javascript">
@@ -12912,7 +13009,7 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
         <div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet" openiz:layout="/views/partials/_layout.html">
           <div class="row">
             <div class="col-md-12">
-              <form name="realmForm" novalidate="novalidate">
+              <form name="realmForm" novalidate="novalidate" class="form-horizontal">
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="panel-title">{{ 'locale.settings.realmTitle' | i18n }}</h3>
@@ -12930,21 +13027,17 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
                         </div>
                         <div class="row">
                           <div class="col-md-12">
-                            <div class="input-group">
-                              <span class="input-group-addon" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}:</span>
-                              <input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-control" type="test" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
-                              <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-phone">
-                                </span>
-                              </span>
+                            <div class="form-group">
+                              <label class="col-sm-2 control-label" for="deviceName" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}</label>
+                              <div class="col-sm-10">
+                                <input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+                              </div>
                             </div>
-                            <div class="input-group">
-                              <span class="input-group-addon" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}:</span>
-                              <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
-                              <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-globe">
-                                </span>
-                              </span>
+                            <div class="form-group">
+                              <label class="col-sm-2 control-label" for="realmName" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}</label>
+                              <div class="col-sm-10">
+                                <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+                              </div>
                             </div>
                             <div class="btn-group pull-right">
                               <button class="btn-danger btn" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
@@ -12981,32 +13074,38 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
                         </div>
                       </div>
                     </div>
-                    <div class="input-group">
-                      <span class="input-group-addon">{{ 'locale.settings.dataMode' | i18n }}</span>
-                      <select class="form-control" ng-model="config.data.mode">
-                        <option value="sync">Synchronized</option>
-                        <option value="online">Online Only</option>
-                        <option value="offline">Offline Only</option>
-                      </select>
+                    <div class="form-group">
+                      <span class="control-label col-sm-2">{{ 'locale.settings.dataMode' | i18n }}</span>
+                      <div class="col-sm-10">
+                        <select class="form-control" ng-model="config.data.mode">
+                          <option value="sync">Synchronized</option>
+                          <option value="online">Online Only</option>
+                          <option value="offline">Offline Only</option>
+                        </select>
+                      </div>
                     </div>
-                    <div class="input-group" ng-if="config.data.mode == 'sync'">
-                      <span class="input-group-addon">{{ 'locale.settings.syncEvents' | i18n }}:</span>
-                      <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
-                        <option value="onstart">On Startup</option>
-                        <option value="onclose">On Close</option>
-                        <option value="oncommit">On Commit</option>
-                      </select>
+                    <div class="form-group" ng-if="config.data.mode == 'sync'">
+                      <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}:</label>
+                      <div class="col-sm-10">
+                        <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
+                          <option value="onstart">On Startup</option>
+                          <option value="onclose">On Close</option>
+                          <option value="oncommit">On Commit</option>
+                        </select>
+                      </div>
                     </div>
-                    <div class="input-group" ng-if="config.data.mode == 'sync'">
-                      <span class="input-group-addon">{{ 'locale.settings.pollInterval' | i18n }}:</span>
-                      <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
-                        <option value="1">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
-                        <option value="5">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
-                        <option value="15">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
-                        <option value="30">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
-                        <option value="0">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
-                        <option value="-1">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
-                      </select>
+                    <div class="form-group" ng-if="config.data.mode == 'sync'">
+                      <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}:</label>
+                      <div class="col-sm-10">
+                        <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
+                          <option value="1">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
+                          <option value="5">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
+                          <option value="15">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
+                          <option value="30">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
+                          <option value="0">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
+                          <option value="-1">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -13031,20 +13130,22 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
                         </div>
                       </div>
                     </div>
-                    <div class="input-group">
-                      <span class="input-group-addon">{{ 'locale.settings.logMode' | i18n }}</span>
-                      <select class="form-control" ng-model="config.log.mode">
-                        <optgroup label="Debugging">
-                          <option value="0">{{ 'locale.settings.log.always' | i18n }}</option>
-                          <option value="4">{{ 'locale.settings.log.informational' | i18n }}</option>
-                          <option value="5">{{ 'locale.settings.log.verbose' | i18n }}</option>
-                        </optgroup>
-                        <optgroup label="Production">
-                          <option value="1">{{ 'locale.settings.log.critical' | i18n }}</option>
-                          <option value="2">{{ 'locale.settings.log.error' | i18n }}</option>
-                          <option value="3">{{ 'locale.settings.log.warning' | i18n }}</option>
-                        </optgroup>
-                      </select>
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">{{ 'locale.settings.logMode' | i18n }}</label>
+                      <div class="col-sm-10">
+                        <select class="form-control" ng-model="config.log.mode">
+                          <optgroup label="Debugging">
+                            <option value="LogAlways">{{ 'locale.settings.log.always' | i18n }}</option>
+                            <option value="Information">{{ 'locale.settings.log.informational' | i18n }}</option>
+                            <option value="Verbose">{{ 'locale.settings.log.verbose' | i18n }}</option>
+                          </optgroup>
+                          <optgroup label="Production">
+                            <option value="Critical">{{ 'locale.settings.log.critical' | i18n }}</option>
+                            <option value="Error">{{ 'locale.settings.log.error' | i18n }}</option>
+                            <option value="Warning">{{ 'locale.settings.log.warning' | i18n }}</option>
+                          </optgroup>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -13069,21 +13170,29 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
                         </div>
                       </div>
                     </div>
-                    <div class="input-group">
-                      <span class="input-group-addon">{{ 'locale.settings.passwordFormat' | i18n }}</span>
-                      <select class="form-control" ng-model="config.security.hasher">
-                        <option value="SHA256PasswordHasher">{{ 'locale.settings.security.sha256' | i18n }}</option>
-                        <option value="SHA1PasswordHasher">{{ 'locale.settings.security.sha1' | i18n }}</option>
-                        <option value="PlainTextPasswordHasher">{{ 'locale.settings.security.plain' | i18n }}</option>
-                      </select>
+                    <div class="form-group">
+                      <label class="control-label col-sm-2">{{ 'locale.settings.passwordFormat' | i18n }}</label>
+                      <div class="col-sm-10">
+                        <select class="form-control" ng-model="config.security.hasher">
+                          <option value="SHA256PasswordHasher">{{ 'locale.settings.security.sha256' | i18n }}</option>
+                          <option value="SHA1PasswordHasher">{{ 'locale.settings.security.sha1' | i18n }}</option>
+                          <option value="PlainTextPasswordHasher">{{ 'locale.settings.security.plain' | i18n }}</option>
+                        </select>
+                      </div>
                     </div>
-                    <div class="input-group">
-                      <span class="input-group-addon">{{ 'locale.settings.allowLocalAuth' | i18n }}</span>
-                      <div class="checkbox">
-                        <label>
-                          <input name="offlineAuthenticationInput" type="checkbox" ng-model="config.security.offline.enable" /> Check me out
-                                    {{ 'locale.settings.allowLocalAuthDescription' | i18n}}
-                                </label>
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                      </div>
+                      <div class="col-sm-10">
+                        <div class="checkbox">
+                          <label>
+                            <input name="offlineAuthenticationInput" type="checkbox" ng-model="config.security.offline.enable" /> 
+                                        {{ 'locale.settings.allowLocalAuth' | i18n }} 
+                                        - 
+                                        <em>
+                                        {{ 'locale.settings.allowLocalAuthDescription' | i18n}}
+                                        </em></label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -13169,6 +13278,9 @@ return c[a]||a});return{show:b,hide:d}}n=angular.extend({},b,d,n);var q=a(e),r=j
     <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
     <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
     <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
+    <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
+    <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
+    <string key="locale.settings.localAdminName">Local Admin Username:</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>

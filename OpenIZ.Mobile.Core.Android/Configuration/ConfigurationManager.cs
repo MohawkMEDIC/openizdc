@@ -92,10 +92,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 				ServiceTypes = new List<string>() {
 					typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
 					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
-					typeof(LocalConceptService).AssemblyQualifiedName,
-					typeof(SHA256PasswordHasher).AssemblyQualifiedName,
-					typeof(OAuthIdentityProvider).AssemblyQualifiedName,
-					typeof(LocalPersistenceService).AssemblyQualifiedName,
+                    typeof(LocalPatientService).AssemblyQualifiedName,
+                    typeof(LocalConceptService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName
 				}
 			};

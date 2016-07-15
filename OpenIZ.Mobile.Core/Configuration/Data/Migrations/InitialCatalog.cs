@@ -12,6 +12,8 @@ using System.IO;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Mobile.Core.Serices;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -86,7 +88,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbEntitySecurityPolicy>(CreateFlags.None);
                     db.CreateTable<DbSecurityRole>(CreateFlags.None);
                     db.CreateTable<DbSecurityUser>(CreateFlags.None);
-                    
+                    db.CreateTable<DbSecurityUserRole>(CreateFlags.None);
+
                     // Anonymous user
                     db.Insert(new DbSecurityUser()
                     {
@@ -109,7 +112,29 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                         CreationTime = DateTime.Now,
                         CreatedByKey = Guid.Empty
                     });
-                    db.CreateTable<DbSecurityUserRole>(CreateFlags.None);
+
+                    // Need to create a local admin?
+                    if (ApplicationContext.Current.GetService<LocalIdentityService>() != null)
+                    {
+                        Guid uid = Guid.NewGuid();
+                        // System user
+                        db.Insert(new DbSecurityUser()
+                        {
+                            Key = uid,
+                            PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash("OpenIZ123"),
+                            SecurityHash = Guid.NewGuid().ToString(),
+                            Lockout = DateTime.MaxValue,
+                            UserName = "SYSTEM",
+                            CreationTime = DateTime.Now,
+                            CreatedByKey = Guid.Empty
+                        });
+                        db.Insert(new DbSecurityUserRole()
+                        {
+                            Key = Guid.NewGuid(),
+                            RoleUuid = new byte[] { 0x8D, 0xF6, 0xD7, 0xE8, 0xB5, 0x5B, 0xE3, 0x41, 0xB7, 0xFB, 0x2E, 0xC3, 0x24, 0x18, 0xB2, 0xE1 },
+                            UserUuid = uid.ToByteArray()
+                        });
+                    }
 
                     tracer.TraceInfo("Installing Entity Tables...");
                     db.CreateTable<DbEntity>();

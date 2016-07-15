@@ -4,6 +4,10 @@
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
+  <menuItem launch="app://org.openiz.core/views/settings/index.html">
+    <icon>app://org.openiz.core/img/appbar.settings.png</icon>
+    <text lang="en">Settings</text>
+  </menuItem>
   <strings lang="en">
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
@@ -68,7 +72,10 @@
     <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
     <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
     <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
-    
+    <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
+    <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
+    <string key="locale.settings.localAdminName">Local Admin Username:</string>
+
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>

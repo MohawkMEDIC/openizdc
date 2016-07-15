@@ -18,5 +18,5 @@
   <string name="err_token_InvalidSignature">Session has been tampered with</string>
   <string name="err_token_InvalidTokenType">Access control service is not compatible with this app</string>
   <string name="err_token_KeyNotFound">Unknown access control certificate</string>
-  <string name="err_token_NotYetValid">Token\'s validity time is in the future</string>
+  <string name="err_token_NotYetValid">Token\'s validity time is in the future. Is the date/time on the device correct?</string>
 </resources>

@@ -70,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Data
             public event EventHandler<DataPersistencePreEventArgs<TModel>> Updating;
 
             // Service client
-            private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("ims"));
+            private ImsiServiceClient m_client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
 
             /// <summary>
             /// Count the number of items

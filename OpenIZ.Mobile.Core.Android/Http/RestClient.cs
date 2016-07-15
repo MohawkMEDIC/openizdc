@@ -69,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
 
 			// Compress?
 			if(this.Description.Binding.Optimize)
-				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate gzip");
+				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate,gzip");
 
 			// Proxy?
 			if (!String.IsNullOrEmpty (this.m_configurationSection.ProxyAddress))
@@ -95,96 +95,104 @@ namespace OpenIZ.Mobile.Core.Android.Http
             if (String.IsNullOrEmpty(url))
                 throw new ArgumentNullException(nameof(url));
 
-            var requestObj = this.CreateHttpRequest(url, query);
-            if (!String.IsNullOrEmpty(contentType))
-                requestObj.ContentType = contentType;
-            requestObj.Method = method;
-
-            // Body was provided?
-            try
+            // Three times:
+            // 1. With provided credential
+            // 2. With challenge
+            // 3. With challenge again
+            for (int i = 0; i < 2; i++)
             {
+                // Credentials provided ?
+                var requestObj = this.CreateHttpRequest(url, query);
+                if (!String.IsNullOrEmpty(contentType))
+                    requestObj.ContentType = contentType;
+                requestObj.Method = method;
 
-                // Try assigned credentials
-                IBodySerializer serializer = null;
-                if (body != null)
+                // Body was provided?
+                try
                 {
-                    if (contentType == null)
-                        throw new ArgumentNullException(nameof(contentType));
 
-                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
-                    // Serialize and compress with deflate
-                    if (this.Description.Binding.Optimize)
+                    // Try assigned credentials
+                    IBodySerializer serializer = null;
+                    if (body != null)
                     {
-                        requestObj.Headers.Add(HttpResponseHeader.ContentEncoding, "deflate");
-                        using (var df = new DeflateStream(requestObj.GetRequestStream(), CompressionMode.Compress))
-                            serializer.Serialize(df, body);
-                    }
-                    else
-                        serializer.Serialize(requestObj.GetRequestStream(), body);
-                }
+                        if (contentType == null)
+                            throw new ArgumentNullException(nameof(contentType));
 
-                // Response
-                var response = requestObj.GetResponse();
-                var validationResult = this.ValidateResponse(response);
-                if (validationResult != ServiceClientErrorType.Valid)
-                {
-                    this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
-                    throw new WebException("Response failed validation", null, WebExceptionStatus.Success, response);
-                }
-                // De-serialize
-                serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(response.ContentType, typeof(TResult));
-
-                // Compression?
-                switch (response.Headers[HttpResponseHeader.ContentEncoding])
-                {
-                    case "deflate":
-                        using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
-                            return (TResult)serializer.DeSerialize(df);
-                    case "gzip":
-                        using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
-                            return (TResult)serializer.DeSerialize(df);
-                    default:
-                        return (TResult)serializer.DeSerialize(response.GetResponseStream());
-                }
-            }
-            catch (WebException e)
-            {
-
-                this.m_tracer.TraceError(e.ToString());
-
-                // status
-                switch (e.Status)
-                {
-                    case WebExceptionStatus.ProtocolError:
-
-                        // Deserialize
-                        var errorResponse = (e.Response as HttpWebResponse);
-                        var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(e.Response.ContentType, typeof(TResult));
-                        TResult result = (TResult)serializer.DeSerialize(e.Response.GetResponseStream());
-
-                        switch (errorResponse.StatusCode)
+                        serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
+                        // Serialize and compress with deflate
+                        if (this.Description.Binding.Optimize)
                         {
-                            case HttpStatusCode.Unauthorized: // Validate the response
-                                if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
+                            requestObj.Headers.Add("Content-Encoding", "deflate");
+                            using (var df = new DeflateStream(requestObj.GetRequestStream(), CompressionMode.Compress))
+                                serializer.Serialize(df, body);
+                        }
+                        else
+                            serializer.Serialize(requestObj.GetRequestStream(), body);
+                    }
+
+                    // Response
+                    var response = requestObj.GetResponse();
+                    var validationResult = this.ValidateResponse(response);
+                    if (validationResult != ServiceClientErrorType.Valid)
+                    {
+                        this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
+                        throw new WebException("Response failed validation", null, WebExceptionStatus.Success, response);
+                    }
+                    // De-serialize
+                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(response.ContentType, typeof(TResult));
+
+                    // Compression?
+                    switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                    {
+                        case "deflate":
+                            using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                return (TResult)serializer.DeSerialize(df);
+                        case "gzip":
+                            using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                return (TResult)serializer.DeSerialize(df);
+                        default:
+                            return (TResult)serializer.DeSerialize(response.GetResponseStream());
+                    }
+                }
+                catch (WebException e)
+                {
+
+                    this.m_tracer.TraceError(e.ToString());
+
+                    // status
+                    switch (e.Status)
+                    {
+                        case WebExceptionStatus.ProtocolError:
+
+                            // Deserialize
+                            var errorResponse = (e.Response as HttpWebResponse);
+                            var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(e.Response.ContentType, typeof(TResult));
+                            
+                            switch (errorResponse.StatusCode)
+                            {
+                                case HttpStatusCode.Unauthorized: // Validate the response
+                                    if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
+                                        throw new RestClientException<TResult>(
+                                            default(TResult),
+                                            e,
+                                            e.Status,
+                                            e.Response);
+
+                                    break;
+                                default:
                                     throw new RestClientException<TResult>(
-                                        result,
+                                            default(TResult),
                                         e,
                                         e.Status,
                                         e.Response);
-
-                                break;
-                            default:
-                                throw new RestClientException<TResult>(
-                                    result,
-                                    e,
-                                    e.Status,
-                                    e.Response);
-                        }
-                        break;
-                    default:
-                        throw;
+                            }
+                            break;
+                        default:
+                            throw;
+                    }
                 }
             }
+
             return default(TResult);
         }
 

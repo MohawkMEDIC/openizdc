@@ -247,7 +247,7 @@ namespace OpenIZ.Mobile.Core.Android
 
                 this.SetProgress(package.Meta.GetName("en"), 1.0f);
                 // TODO: Verify the package
-
+                 
               
                 // Copy 
                 if (!Directory.Exists(appletSection.AppletDirectory))

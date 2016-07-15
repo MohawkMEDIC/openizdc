@@ -11,6 +11,7 @@ INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'EE7D022EE4ED3147B7FACB67AE0586BE', '1.3.6.1.4.1.33349.3.1.5.9.2.2.2', 'Delete Clinical Data', 0, 0);
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'BF31B75F594E634880BD51757D58EA3B', '1.3.6.1.4.1.33349.3.1.5.9.2.2.3', 'Read Clinical Data', 0, 0);
 INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'AA91A8DE4D22594881B3C1EB2750067E', '1.3.6.1.4.1.33349.3.1.5.9.2.3', 'Override Disclosure', 0, 0);
+INSERT INTO security_policy (uuid, oid, name, is_public, can_override) VALUES (X'B3D3DE2A7D22594881B3C1EB2750067E', '1.3.6.1.4.1.33349.3.1.5.9.2.10', 'Local Administrator', 0, 0);
 
 -- CREATE USERS ROLE
 INSERT INTO security_role (uuid, name, description) VALUES (X'E88AE5F4BD8B3546A6D48A195B143436', 'USERS', 'Group for users who have login access');
@@ -22,6 +23,13 @@ INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (
 INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'AB965BD16C64004C9F94EA09EEE67D7C', X'AB965BD16C64004C9A58EA09EEE67D7C', X'1DBAD2F6B55BE341B7FB2EC32418B2E1', 2); -- GRANT Login
 INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'360384F6204EC04BB965FB36D7C80BE3', X'360384F6204EC04BB965BAA6D7C80BE3', X'1DBAD2F6B55BE341B7FB2EC32418B2E1', 0); -- DENY Unrestricted Clinical Data
 INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'AA91A8DE4D22594881B3C1EF2320067E', X'AA91A8DE4D22594881B3C1EB2750067E', X'1DBAD2F6B55BE341B7FB2EC32418B2E1', 0);  --DENY Override disclosure
+INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'AB91A8DE4D22594881B3C1EF2320067E', X'B3D3DE2A7D22594881B3C1EB2750067E', X'1DBAD2F6B55BE341B7FB2EC32418B2E1', 2);  --GRANT Local Administrator
+
+-- CREATE LOCAL ADMINS
+INSERT INTO security_role (uuid, name, description) VALUES (X'8DF6D7E8B55BE341B7FB2EC32418B2E1', 'LOCAL ADMINISTRATORS', 'Group for users who have local administrative access');
+INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'5AC073EA23423848FEDB741911D91CD2', X'5AC073EA5931C848BBCB741911D91CD2', X'8DF6D7E8B55BE341B7FB2EC32418B2E1', 0);  --DENY Access Administrative Function
+INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'AB965BD16234242C9F94EA09EEE67D7C', X'AB965BD16C64004C9A58EA09EEE67D7C', X'8DF6D7E8B55BE341B7FB2EC32418B2E1', 2); -- GRANT Login
+INSERT INTO security_role_policy (uuid, policy_id, role_id, grant_type) VALUES (X'AA91F8134234324881B3C1EF2320067E', X'B3D3DE2A7D22594881B3C1EB2750067E', X'8DF6D7E8B55BE341B7FB2EC32418B2E1', 2);  --GRANT Local Administrator
 
 -- CREATE ROLE SYSTEM WHICH IS DENIED LOGIN
 INSERT INTO security_role (uuid, name, description) VALUES (X'D221AEC323FC3341BA42B0E0A3B817D7', 'SYSTEM', 'Group for user SYSTEM. Identifies the functions that internal system functions have access to. EDITING THIS ROLE MAY CAUSE SYSTEM FAILURE');

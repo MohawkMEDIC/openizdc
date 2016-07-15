@@ -215,30 +215,23 @@ namespace OpenIZ.Mobile.Core.Android.Security
 					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
 					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType, response.RefreshToken);
 
-					// Create a security user and ensure they exist!
-					// TODO: Use the business services instead
-					IDataPersistenceService<SecurityUser> persistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-					Guid sidKey = Guid.Parse(retVal.FindClaim(ClaimTypes.Sid).Value);
-					var localUser = persistence.Get(sidKey);
+                    // Create a security user and ensure they exist!
+                    // TODO: Use the business services instead
+                    var localIdentity = new LocalIdentityService();
+                    var localRole = new LocalRoleProviderService();
+                     
+					var localUser = localIdentity.GetIdentity(principal.Identity.Name);
                     if (!String.IsNullOrEmpty(password))
                     {
                         if (localUser == null)
-                        {
-                            persistence.Insert(new SecurityUser()
-                            {
-                                Email = retVal.FindClaim(ClaimTypes.Email)?.Value,
-                                LastLoginTime = DateTime.Now,
-                                PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password),
-                                SecurityHash = Guid.NewGuid().ToString(),
-                                UserName = retVal.Identity.Name,
-                                Key = sidKey
-                            });
-                        }
+                            localIdentity.CreateIdentity(principal.Identity.Name, password);
                         else
-                        {
-                            localUser.PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash(password);
-                            persistence.Update(localUser);
-                        }
+                            localIdentity.ChangePassword(principal.Identity.Name, password, principal);
+
+                        // Add user to roles
+                        // TODO: Implement next line
+                        // localRole.ClearUserRoles(principal.Identity.Name);
+                        localRole.AddUsersToRoles(new String[] { principal.Identity.Name }, retVal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray());
                     }
 				}
 				catch(RestClientException<OAuthTokenResponse> ex)

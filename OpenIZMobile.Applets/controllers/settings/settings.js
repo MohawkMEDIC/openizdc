@@ -19,8 +19,12 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
         pollInterval: OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")
     };
-    $scope.config.log.mode = $scope.config.log.trace[0].filter;
-    $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService");
+    $scope.config.log.mode = $scope.config.log.trace[0].filter || "Warning";
+    $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
+
+    $scope.config.security.offline = {
+        enable: false
+    };
     $scope.master = {};
 
     // leave realm
