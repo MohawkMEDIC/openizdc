@@ -3825,6 +3825,10 @@ angular.module('localization', [])
                  * @summary Gets the specified locale key
                  */
                 getString: function (key) {
+
+                    // make sure we always have the latest locale
+                    //localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
+
                     var entry = localize.dictionary[key];
                     if (entry != null)
                         return entry;
@@ -4482,7 +4486,6 @@ var OpenIZ = OpenIZ || {
             {
                 
                 var data = OpenIZSessionService.Login(userName, password);
-
                 if (data == null)
                     return null;
                 else if (data.lastIndexOf("err", 0) == 0 &amp;&amp; data != "err_oauth2_invalid_grant")
@@ -5046,7 +5049,6 @@ var OpenIZ = OpenIZ || {
                     throw new OpenIZModel.Exception(data, null, null);
                 else {
                     var results = JSON.parse(data);
-
                     // Convert the IMSI patient data to a nicer javascript format
                     return new OpenIZModel.Bundle(results);
                 }

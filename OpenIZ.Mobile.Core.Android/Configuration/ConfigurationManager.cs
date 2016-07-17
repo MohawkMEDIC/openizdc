@@ -82,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "org.openiz.core",
+                StartupAsset = "tz.timr.core",
                 AuthenticationAsset = "/views/security/login.html"
             };
 
