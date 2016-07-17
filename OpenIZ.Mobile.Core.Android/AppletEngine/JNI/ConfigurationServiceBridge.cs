@@ -180,7 +180,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                         {
                             AuthRealm = realmUri,
                             Mode = SecurityScheme.Bearer,
-                            CredentialProvider = new TokenCredentialProvider()
+                            CredentialProvider = new TokenCredentialProvider(),
+                            PreemtiveAuthentication = true
                         },
                         Optimize = true
                     },

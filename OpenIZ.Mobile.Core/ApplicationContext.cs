@@ -9,6 +9,7 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Diagnostics;
 using System.Linq;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -159,6 +160,9 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         protected void StartDaemons()
         {
+            ModelSettings.DeepLoadObject = false;
+            //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
+
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));

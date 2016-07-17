@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -25,8 +26,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override UserEntity ToModelInstance(object dataInstance, SQLiteConnection context)
         {
-            var userEntity = dataInstance as DbUserEntity;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
+            var iddat = dataInstance as DbVersionedData;
+            var userEntity = dataInstance as DbUserEntity ?? context.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
             var dbp = context.Table<DbPerson>().Where(o => o.Uuid == userEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<UserEntity>(dbe, context);
             retVal.SecurityUserKey = new Guid(userEntity.SecurityUserUuid);
@@ -34,6 +36,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Reverse lookup
             if (!String.IsNullOrEmpty(dbp.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
+
+            retVal.LoadAssociations(context);
 
             return retVal;
         }

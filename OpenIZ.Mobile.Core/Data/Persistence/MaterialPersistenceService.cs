@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite;
 using System;
@@ -26,16 +27,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Creates the specified model instance
         /// </summary>
-        internal TModel ToModelInstance<TModel>(DbMaterial dataInstance, SQLiteConnection context)
+        internal TModel ToModelInstance<TModel>(object rawInstance, SQLiteConnection context)
             where TModel : Material, new()
         {
-            var dbe = context.Table<DbEntity>().FirstOrDefault(o => o.Uuid == dataInstance.Uuid);
+            var iddat = rawInstance as DbVersionedData;
+            var dataInstance = rawInstance as DbMaterial ?? context.Table<DbMaterial>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = rawInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == dataInstance.Uuid).First();
             var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context);
             retVal.ExpiryDate = dataInstance.ExpiryDate;
             retVal.IsAdministrative = dataInstance.IsAdministrative;
             retVal.Quantity = dataInstance.Quantity;
             retVal.QuantityConceptKey = new Guid(dataInstance.QuantityConceptUuid);
             retVal.FormConceptKey = new Guid(dataInstance.FormConceptUuid);
+            retVal.LoadAssociations(context);
             return retVal;
 
         }

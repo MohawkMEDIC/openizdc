@@ -183,6 +183,13 @@
     <property modelName="GenderConceptKey" domainName="GenderConceptUuid"/>
   </class>
 
+  <!-- Provider Maps -->
+  <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Roles.DbProvider, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="ProviderSpecialtyKey" domainName="Specialty"/>
+  </class>
+  
   <!-- Industry Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbOrganization, OpenIZ.Mobile.Core, Version=0.5.0.0">

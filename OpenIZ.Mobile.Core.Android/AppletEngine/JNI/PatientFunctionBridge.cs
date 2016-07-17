@@ -71,8 +71,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Perform the query
                 int totalResults = 0;
                 var results = this.m_persister.Query(linqQuery, offset, count, out totalResults);
-                foreach (var itm in results)
-                    JniUtil.ExpandProperties(itm, request);
+                //foreach (var itm in results)
+                //    JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
                 var bundle = new OpenIZ.Core.Model.Collection.Bundle();

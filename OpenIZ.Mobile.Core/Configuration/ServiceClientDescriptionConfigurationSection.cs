@@ -293,6 +293,12 @@ namespace OpenIZ.Mobile.Core.Configuration
                 return this.ClientCertificate;
             }
         }
+
+        /// <summary>
+        /// Preemptive authentication
+        /// </summary>
+        [XmlElement("preAuth")]
+        public bool PreemtiveAuthentication { get; set; }
     }
 
 	/// <summary>

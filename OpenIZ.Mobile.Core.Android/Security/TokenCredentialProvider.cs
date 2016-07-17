@@ -9,6 +9,8 @@ using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Android.Http;
 using OpenIZ.Core.Http;
+using OpenIZ.Mobile.Core.Services;
+using System.Security;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -41,8 +43,26 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		public Credentials Authenticate (IRestClient context)
 		{
 
-			// TODO: Determine why we're reauthenticating... if it is an expired token we'll need to get the refresh token
-			return null;
+            // TODO: Determine why we're reauthenticating... if it is an expired token we'll need to get the refresh token
+            var tokenCredentials = ApplicationContext.Current.Principal as TokenClaimsPrincipal;
+            if (tokenCredentials != null)
+            {
+                var expiryTime = DateTime.MinValue;
+                if (DateTime.TryParse(tokenCredentials.FindClaim(ClaimTypes.Expiration).Value, out expiryTime) &&
+                    expiryTime < DateTime.Now)
+                {
+                    var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
+                    var principal = idp.Authenticate(ApplicationContext.Current.Principal, null);   // Force a re-issue
+                    AndroidApplicationContext.Current.SetPrincipal(principal);
+                }
+                else if (expiryTime > DateTime.Now) // Token is good?
+                    return this.GetCredentials(context);
+                else // I don't know what happened
+                    throw new SecurityException();
+            }
+            else
+                throw new SecurityException();
+                return null;
 		}
 		#endregion
 	}

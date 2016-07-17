@@ -2,6 +2,7 @@
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Mobile.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -320,12 +321,17 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                     new EntityName(NameUseKeys.Legal, "Smith", "John")
                 }
             };
-            person.Notes.Add(new EntityNote(Guid.Empty, "He doesn't even like Peanutbutter!!!!!"));
+            person.Notes.Add(new EntityNote() {
+                Author = new Provider() {
+                    
+                },
+                Text = "He doesn't even like Peanutbutter!!!!!"
+                });
 
             var afterInsert = base.DoTestInsert(person);
             Assert.AreEqual(EntityClassKeys.Person, afterInsert.ClassConceptKey);
             Assert.AreEqual(1, afterInsert.Notes.Count);
-            Assert.AreEqual(Guid.Empty, person.Notes[0].AuthorKey);
+            Assert.AreNotEqual(Guid.Empty, person.Notes[0].AuthorKey);
             Assert.AreEqual("He doesn't even like Peanutbutter!!!!!", person.Notes[0].Text);
         }
 

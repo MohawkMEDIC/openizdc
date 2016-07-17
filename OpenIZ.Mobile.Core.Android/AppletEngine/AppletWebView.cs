@@ -81,7 +81,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 			this.Settings.BlockNetworkLoads = true;
 			this.Settings.BuiltInZoomControls = false;
 			this.Settings.DisplayZoomControls = false;
-            this.SetLayerType(A.Views.LayerType.Hardware, null);
+
+            //this.SetLayerType(A.Views.LayeType., null);
 #if DEBUG
             WebView.SetWebContentsDebuggingEnabled(true);
 #endif 
@@ -256,6 +257,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                         return this.RenderWebResource(url, navigateAsset, language);
 
                     }
+                    catch(FileNotFoundException ex)
+                    {
+                        this.m_tracer.TraceError(ex.ToString());
+                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/404.html", language: language);
+                        return this.RenderWebResource(url, navigateAsset, language);
+                    }
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError(ex.ToString());
@@ -286,9 +293,21 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
                         new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
 
                 var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, language);
-                //this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
-                var ms = new MemoryStream(data);
-                return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
+                if (data != null)
+                {
+                    //this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
+                    var ms = new MemoryStream(data);
+                    return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
+                }
+                else
+                {
+                    String itmPath = System.IO.Path.Combine(
+                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
+                        "assets",
+                        navigateAsset.Manifest.Info.Id,
+                        navigateAsset.Name);
+                    return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", File.OpenRead(itmPath));
+                }
             }
         }
 

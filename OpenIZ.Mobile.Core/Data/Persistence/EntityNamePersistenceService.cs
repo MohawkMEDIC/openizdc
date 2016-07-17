@@ -21,7 +21,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             DbEntityName en = dataInstance as DbEntityName;
             var retVal = base.ToModelInstance(dataInstance, context);
-            retVal.Component = new List<EntityNameComponent>(context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == en.Uuid).ToArray().Select(o => new EntityNameComponent(new Guid(o.ComponentTypeUuid), o.Value)));
+            retVal.Component = new List<EntityNameComponent>(context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == en.Uuid).ToArray().Select(o => new EntityNameComponent() {
+                ComponentTypeKey = o.ComponentTypeUuid == null ? null : (Guid?)new Guid(o.ComponentTypeUuid),
+                Value = o.Value
+                }
+            ));
             return retVal;
 
         }

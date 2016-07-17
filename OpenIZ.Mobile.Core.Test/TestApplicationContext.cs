@@ -86,7 +86,6 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalSecurityService).AssemblyQualifiedName,
-
                     typeof(SHA256PasswordHasher).AssemblyQualifiedName,
                     typeof(LocalIdentityService).AssemblyQualifiedName,
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
@@ -135,6 +134,7 @@ namespace OpenIZ.Mobile.Core.Test
                         EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
                         this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
+                        this.StartDaemons();
                     }
                     catch (Exception e)
                     {

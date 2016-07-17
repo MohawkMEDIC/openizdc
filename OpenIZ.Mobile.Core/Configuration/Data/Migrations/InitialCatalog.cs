@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                             PasswordHash = ApplicationContext.Current.GetService<IPasswordHashingService>().ComputeHash("OpenIZ123"),
                             SecurityHash = Guid.NewGuid().ToString(),
                             Lockout = DateTime.MaxValue,
-                            UserName = "SYSTEM",
+                            UserName = "LocalAdministrator",
                             CreationTime = DateTime.Now,
                             CreatedByKey = Guid.Empty
                         });

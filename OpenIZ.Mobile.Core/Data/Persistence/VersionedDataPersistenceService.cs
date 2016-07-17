@@ -22,7 +22,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override TModel Insert(SQLiteConnection context, TModel data)
         {
-            data.VersionKey = data.VersionKey != Guid.Empty ? data.VersionKey : Guid.NewGuid();
+            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey ;
             return base.Insert(context, data);
         }
 

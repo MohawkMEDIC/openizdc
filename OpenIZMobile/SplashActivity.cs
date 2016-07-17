@@ -40,7 +40,7 @@ namespace OpenIZMobile
         /// </summary>
         private void OnProgressUpdated(Object sender, ApplicationProgressEventArgs e)
         {
-            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = e.ProgressText);
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = String.Format("{0} {1} ({2:0%})", Resources.GetString(Resource.String.installing_applets), e.ProgressText, e.Progress));
         }
 
         /// <summary>

@@ -245,7 +245,7 @@ namespace OpenIZ.Mobile.Core.Android
             {
                 this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
 
-                this.SetProgress(package.Meta.GetName("en"), 1.0f);
+                this.SetProgress(package.Meta.GetName("en"), 0.0f);
                 // TODO: Verify the package
                  
               
@@ -264,24 +264,20 @@ namespace OpenIZ.Mobile.Core.Android
                     if (existingApplet != null)
                         this.m_applets.Remove(existingApplet);
                     appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
-
+                    
                 }
 
                 // Save the applet
                 XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-                // Serialize the data to disk
-                using (FileStream fs = File.Create(appletPath))
-                {
-                    fs.Write(package.Manifest, 0, package.Manifest.Length);
-                    fs.Flush();
-                }
+
+                AppletManifest mfst;
 
                 // Install Database stuff
                 using (MemoryStream ms = new MemoryStream(package.Manifest))
                 {
-                    AppletManifest mfst = xsz.Deserialize(ms) as AppletManifest;
+                    mfst = xsz.Deserialize(ms) as AppletManifest;
                     // Migrate data.
-                    if(mfst.DataSetup != null)
+                    if (mfst.DataSetup != null)
                         foreach(var itm in mfst.DataSetup.Action)
                         {
                             Type idpType = typeof(IDataPersistenceService<>);
@@ -289,19 +285,53 @@ namespace OpenIZ.Mobile.Core.Android
                             var svc = ApplicationContext.Current.GetService(idpType);
                             idpType.GetMethod(itm.ActionName).Invoke(svc, new object[] { itm.Element });
                         }
+
+                    // Now export all the binary files out
+                    var assetDirectory = Path.Combine(appletSection.AppletDirectory, "assets", mfst.Info.Id);
+                    if (!Directory.Exists(assetDirectory))
+                        Directory.CreateDirectory(assetDirectory);
+                    for(int i = 0; i < mfst.Assets.Count; i++)
+                    {
+                        var itm = mfst.Assets[i];
+                        var itmPath = Path.Combine(assetDirectory, itm.Name);
+                        this.SetProgress(package.Meta.GetName("en"), 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
+
+                        // Get dir name and create
+                        if (!Directory.Exists(Path.GetDirectoryName(itmPath)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(itmPath));
+
+                        // Extract content
+                        if (itm.Content is byte[])
+                        {
+                            File.WriteAllBytes(itmPath, itm.Content as byte[]);
+                            itm.Content = null;
+                        }
+                        else if(itm.Content is String)
+                        {
+                            File.WriteAllText(itmPath, itm.Content as String);
+                            itm.Content = null;
+                        }
+                      }
+
+                    // Serialize the data to disk
+                    using (FileStream fs = File.Create(appletPath))
+                        xsz.Serialize(fs, mfst);
                 }
 
                 // TODO: Sign this with my private key
                 // For now sign with SHA256
                 SHA256 sha = SHA256.Create();
-                package.Meta.Hash = sha.ComputeHash(package.Manifest);
+                package.Meta.Hash = sha.ComputeHash(File.ReadAllBytes(appletPath));
                 appletSection.Applets.Add(package.Meta.AsReference());
+
+                this.SetProgress(package.Meta.GetName("en"), 0.98f);
 
                 if (this.ConfigurationManager.IsConfigured)
                     this.ConfigurationManager.Save();
 
-                using (MemoryStream ms = new MemoryStream(package.Manifest))
-                    this.LoadApplet(AppletManifest.Load(ms));
+                mfst.Initialize();
+
+                this.LoadApplet(mfst);
             }
             catch(Exception e)
             {

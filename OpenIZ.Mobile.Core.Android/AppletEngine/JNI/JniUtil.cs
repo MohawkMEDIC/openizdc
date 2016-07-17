@@ -66,89 +66,89 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <summary>
         /// Expand properties
         /// </summary>
-        public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp)
-        {
+        //public static void ExpandProperties(IdentifiedData returnValue, NameValueCollection qp)
+        //{
 
-            // Make sure cache doesn't get too large
-            if (s_loadCache.Count > 500)
-                lock(m_lockObject)
-                    s_loadCache.Clear();
+        //    // Make sure cache doesn't get too large
+        //    if (s_loadCache.Count > 500)
+        //        lock(m_lockObject)
+        //            s_loadCache.Clear();
 
-            // Expand property?
-            if (!qp.ContainsKey("_expand") && !qp.ContainsKey("_all"))
-                return;
+        //    // Expand property?
+        //    if (!qp.ContainsKey("_expand") && !qp.ContainsKey("_all"))
+        //        return;
 
-            if(qp.ContainsKey("_all"))
-            {
-                foreach (var pi in returnValue.GetType().GetRuntimeProperties())
-                {
-                    var scope = pi.GetValue(returnValue);
-                    if (scope is IdentifiedData) // Two levels deep
-                        foreach (var pi2 in scope.GetType().GetRuntimeProperties())
-                            pi2.GetValue(scope);
-                    else if(scope is IList)
-                        foreach(var itm in scope as IList)
-                            if(itm is IdentifiedData)
-                                foreach (var pi2 in itm.GetType().GetRuntimeProperties())
-                                    pi2.GetValue(itm);
-                }
-            }
-            else
-                foreach (var nvs in qp["_expand"])
-                {
-                    // Get the property the user wants to expand
-                    object scope = returnValue;
-                    foreach (var property in nvs.Split('.'))
-                    {
-                        if (scope is IList)
-                        {
-                            foreach (var sc in scope as IList)
-                            {
-                                PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                                if (keyPi == null)
-                                    continue;
-                                // Get the backing property
-                                PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
-                                if (expandProp != null)
-                                    scope = expandProp.GetValue(sc);
-                                else
-                                    scope = keyPi.GetValue(sc);
+        //    if(qp.ContainsKey("_all"))
+        //    {
+        //        foreach (var pi in returnValue.GetType().GetRuntimeProperties())
+        //        {
+        //            var scope = pi.GetValue(returnValue);
+        //            if (scope is IdentifiedData) // Two levels deep
+        //                foreach (var pi2 in scope.GetType().GetRuntimeProperties())
+        //                    pi2.GetValue(scope);
+        //            else if(scope is IList)
+        //                foreach(var itm in scope as IList)
+        //                    if(itm is IdentifiedData)
+        //                        foreach (var pi2 in itm.GetType().GetRuntimeProperties())
+        //                            pi2.GetValue(itm);
+        //        }
+        //    }
+        //    else
+        //        foreach (var nvs in qp["_expand"])
+        //        {
+        //            // Get the property the user wants to expand
+        //            object scope = returnValue;
+        //            foreach (var property in nvs.Split('.'))
+        //            {
+        //                if (scope is IList)
+        //                {
+        //                    foreach (var sc in scope as IList)
+        //                    {
+        //                        PropertyInfo keyPi = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+        //                        if (keyPi == null)
+        //                            continue;
+        //                        // Get the backing property
+        //                        PropertyInfo expandProp = sc.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+        //                        if (expandProp != null)
+        //                            scope = expandProp.GetValue(sc);
+        //                        else
+        //                            scope = keyPi.GetValue(sc);
 
-                            }
-                        }
-                        else
-                        {
-                            PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
-                            if (keyPi == null)
-                                continue;
-                            // Get the backing property
-                            PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    PropertyInfo keyPi = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<XmlElementAttribute>()?.ElementName == property);
+        //                    if (keyPi == null)
+        //                        continue;
+        //                    // Get the backing property
+        //                    PropertyInfo expandProp = scope.GetType().GetProperties().SingleOrDefault(o => o.GetCustomAttribute<DelayLoadAttribute>()?.KeyPropertyName == keyPi.Name);
 
-                            Object existing = null;
-                            Object keyValue = keyPi.GetValue(scope);
+        //                    Object existing = null;
+        //                    Object keyValue = keyPi.GetValue(scope);
 
-                            if (expandProp != null && expandProp.CanWrite && s_loadCache.TryGetValue(keyValue, out existing))
-                            {
-                                expandProp.SetValue(scope, existing);
-                                scope = existing;
-                            }
-                            else
-                            {
-                                if (expandProp != null)
-                                {
-                                        if (!s_loadCache.ContainsKey(keyValue))
-                                        {
-                                            scope = expandProp.GetValue(scope);
-                                            s_loadCache.Add(keyValue, scope);
-                                        }
-                                }
-                                else
-                                    scope = keyValue;
-                            }
-                        }
-                    }
-                }
-        }
+        //                    if (expandProp != null && expandProp.CanWrite && s_loadCache.TryGetValue(keyValue, out existing))
+        //                    {
+        //                        expandProp.SetValue(scope, existing);
+        //                        scope = existing;
+        //                    }
+        //                    else
+        //                    {
+        //                        if (expandProp != null)
+        //                        {
+        //                                if (!s_loadCache.ContainsKey(keyValue))
+        //                                {
+        //                                    scope = expandProp.GetValue(scope);
+        //                                    s_loadCache.Add(keyValue, scope);
+        //                                }
+        //                        }
+        //                        else
+        //                            scope = keyValue;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //}
     }
 }
 

@@ -47,8 +47,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 var results = this.m_conceptService.FindConcepts(linqQuery, offset, count, out totalResults);
 
                 // Expand properties
-                foreach (var itm in results)
-                    JniUtil.ExpandProperties(itm, request);
+                //foreach (var itm in results)
+                //    JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
                 var retVal = new Bundle();
@@ -86,8 +86,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
 
                 // Expand properties
-                foreach (var itm in results)
-                    JniUtil.ExpandProperties(itm, request);
+                //foreach (var itm in results)
+                //    JniUtil.ExpandProperties(itm, request);
 
                 // Return bundle
                 var retVal = new Bundle();

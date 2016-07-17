@@ -16,6 +16,8 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.EntityLoader;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -107,12 +109,10 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("INSERT {0}", data);
 
 					connection.BeginTransaction ();
-
-                    data.SetDelayLoad(false);
+                    
 					data = this.Insert(connection, data);
-                    data.SetDelayLoad(true);
 
-					connection.Commit();
+                    connection.Commit();
 
                     this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
@@ -155,9 +155,7 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("UPDATE {0}", data);
 					connection.BeginTransaction ();
 
-                    data.SetDelayLoad(false);
 					data = this.Update(connection, data);
-                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -199,9 +197,7 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
 					connection.BeginTransaction ();
 
-                    data.SetDelayLoad(false);
 					data = this.Obsolete(connection, data);
-                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -421,6 +417,18 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
         public abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
+
+        /// <summary>
+        /// Query internal without caring about limiting
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> expr)
+        {
+            int t;
+            return this.Query(context, expr, 0, -1, out t);
+        }
 
         /// <summary>
         /// Get the specified key.

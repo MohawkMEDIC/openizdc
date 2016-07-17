@@ -34,7 +34,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			// Scan for migrations 
 			foreach (var dbm in typeof(DataMigrator).GetTypeInfo().Assembly.DefinedTypes) {
 				try {
-					if(dbm.AsType() == typeof(DataMigrator))
+					if(dbm.AsType() == typeof(DataMigrator) ||
+                        !typeof(IDbMigration).GetTypeInfo().IsAssignableFrom(dbm))
 						continue;
 					
 					IDbMigration migration = Activator.CreateInstance (dbm.AsType()) as IDbMigration;

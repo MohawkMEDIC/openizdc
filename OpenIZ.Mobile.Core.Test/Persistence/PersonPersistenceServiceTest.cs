@@ -53,10 +53,6 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 {
                     new EntityTag("hasBirthCertificate", "true")
                 },
-                    Notes = new List<EntityNote>()
-                {
-                    new EntityNote(Guid.NewGuid(), "Johnny is really allergic to eggs!")
-                },
                 DateOfBirth = new DateTime(1984, 03, 22),
                 DateOfBirthPrecision = DatePrecision.Day
             };
@@ -69,7 +65,6 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreEqual(1, p.Identifiers.Count);
             Assert.AreEqual(1, p.Telecoms.Count);
             Assert.AreEqual(1, p.Tags.Count);
-            Assert.AreEqual(1, p.Notes.Count);
             Assert.AreEqual(EntityClassKeys.Person, p.ClassConceptKey);
             Assert.AreEqual(DeterminerKeys.Specific, p.DeterminerConceptKey);
             Assert.AreEqual(StatusKeys.Active, p.StatusConceptKey);

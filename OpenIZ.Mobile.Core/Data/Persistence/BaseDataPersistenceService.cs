@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
-			if (data.Key == Guid.Empty)
+			if (data.Key == Guid.Empty || !data.Key.HasValue)
 				data.Key = domainObject.Key = Guid.NewGuid ();
 
             // Ensure created by exists

@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Model.Roles;
+using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
 using SQLite;
@@ -36,8 +37,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Patient ToModelInstance(object dataInstance, SQLiteConnection context)
         {
-            var patient = dataInstance as DbPatient;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
+
+            var iddat = dataInstance as DbVersionedData;
+            var patient = dataInstance as DbPatient ?? context.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
             var dbp = context.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context);
             retVal.DateOfBirth = dbp.DateOfBirth;
@@ -51,6 +54,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 retVal.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == patient.DeceasedDatePrecision).Select(o => o.Key).First();
             retVal.MultipleBirthOrder = patient.MultipleBirthOrder;
             retVal.GenderConceptKey = new Guid(patient.GenderConceptUuid);
+
+            retVal.LoadAssociations(context);
 
             return retVal;
         }

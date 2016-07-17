@@ -26,6 +26,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.SoftwareName = applicationEntity.SoftwareName;
             retVal.VersionName = applicationEntity.VersionName;
             retVal.VendorName = applicationEntity.VendorName;
+            retVal.LoadAssociations(context);
             return retVal;
         }
 

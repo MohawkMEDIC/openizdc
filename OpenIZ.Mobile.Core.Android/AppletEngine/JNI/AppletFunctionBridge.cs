@@ -110,11 +110,19 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public String GetLogFiles()
         {
-            String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
-            List<String> files = new List<string>();
-            foreach (var f in Directory.GetFiles(logFileBase))
-                files.Add(Path.GetFileName(f));
-            return JniUtil.ToJson(files);
+            try
+            {
+                String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
+                List<String> files = new List<string>();
+                foreach (var f in Directory.GetFiles(logFileBase))
+                    files.Add(Path.GetFileName(f));
+                return JniUtil.ToJson(files);
+            }
+            catch(Exception ex)
+            {
+                this.m_tracer.TraceError("Error getting log files: {0}", ex);
+                return null;
+            }
         }
 
         /// <summary>

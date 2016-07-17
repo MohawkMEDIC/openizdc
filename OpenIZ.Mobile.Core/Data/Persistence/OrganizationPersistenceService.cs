@@ -24,7 +24,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var organization = dataInstance as DbOrganization;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context);
-            retVal.IndustryConceptKey = new Guid(organization.IndustryConceptUuid);
+            retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;
         }
 

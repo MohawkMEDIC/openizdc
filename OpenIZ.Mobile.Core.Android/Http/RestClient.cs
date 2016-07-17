@@ -9,6 +9,8 @@ using OpenIZ.Mobile.Core.Android.Security;
 using System.Security;
 using System.IO.Compression;
 using OpenIZ.Core.Http;
+using System.IO;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -110,7 +112,6 @@ namespace OpenIZ.Mobile.Core.Android.Http
                 // Body was provided?
                 try
                 {
-
                     // Try assigned credentials
                     IBodySerializer serializer = null;
                     if (body != null)
@@ -131,7 +132,19 @@ namespace OpenIZ.Mobile.Core.Android.Http
                     }
 
                     // Response
-                    var response = requestObj.GetResponse();
+                    WebResponse response = null;
+                    Exception responseError = null;
+                    
+                    var responseTask = requestObj.GetResponseAsync().ContinueWith(r => {
+                        if (r.IsFaulted)
+                            responseError = r.Exception.InnerExceptions.First();
+                        else
+                            response = r.Result;
+                    });
+                    var success = responseTask.Wait(4000);
+                    if (!success) throw new TimeoutException();
+                    else if (responseError != null) throw responseError;
+
                     var validationResult = this.ValidateResponse(response);
                     if (validationResult != ServiceClientErrorType.Valid)
                     {
@@ -165,15 +178,37 @@ namespace OpenIZ.Mobile.Core.Android.Http
                         case WebExceptionStatus.ProtocolError:
 
                             // Deserialize
+                            TResult result = default(TResult);
                             var errorResponse = (e.Response as HttpWebResponse);
                             var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(e.Response.ContentType, typeof(TResult));
-                            
+                            try
+                            {
+                                switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])
+                                {
+                                    case "deflate":
+                                        using (DeflateStream df = new DeflateStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                            result = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    case "gzip":
+                                        using (GZipStream df = new GZipStream(errorResponse.GetResponseStream(), CompressionMode.Decompress))
+                                            result = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    default:
+                                        result = (TResult)serializer.DeSerialize(errorResponse.GetResponseStream());
+                                        break;
+                                }
+                            }
+                            catch(Exception dse)
+                            {
+                                this.m_tracer.TraceError("Could not de-serialize error response! {0}", dse);
+                            }
+
                             switch (errorResponse.StatusCode)
                             {
                                 case HttpStatusCode.Unauthorized: // Validate the response
                                     if (this.ValidateResponse(errorResponse) != ServiceClientErrorType.Valid)
                                         throw new RestClientException<TResult>(
-                                            default(TResult),
+                                            result,
                                             e,
                                             e.Status,
                                             e.Response);
@@ -181,7 +216,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
                                     break;
                                 default:
                                     throw new RestClientException<TResult>(
-                                            default(TResult),
+                                        result,
                                         e,
                                         e.Status,
                                         e.Response);
@@ -191,6 +226,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
                             throw;
                     }
                 }
+               
             }
 
             return default(TResult);
