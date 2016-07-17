@@ -92,6 +92,7 @@
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
+    <Compile Include="Services\MiniImsServer.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>

@@ -104,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Android
 				}));
 				ApplicationContext.Current = retVal;
 				retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
-
+                retVal.StartDaemons();
 				return true;
 			}
 			catch(Exception e) {
@@ -218,6 +218,8 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <param name="applet">Applet.</param>
 		public void LoadApplet (AppletManifest applet)
 		{
+            if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
+                this.m_applets.DefaultApplet = applet;
 			this.m_applets.Add (applet);
 		}
 

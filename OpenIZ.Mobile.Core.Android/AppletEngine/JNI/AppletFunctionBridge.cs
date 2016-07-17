@@ -17,6 +17,7 @@ using OpenIZ.Core.Applets.Model;
 using A = Android;
 using System.Reflection;
 using OpenIZ.Mobile.Core.Configuration;
+using System.Globalization;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -142,7 +143,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public string GetCurrentAssetTitle()
         {
-            return (this.m_view.Asset.Content as AppletAssetHtml).GetTitle(this.GetLocale());
+            return this.m_view.Title ;
         }
 
         /// <summary>
@@ -364,6 +365,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 this.m_tracer.TraceVerbose("Setting locale to {0}", locale);
                 this.m_context.Resources.Configuration.SetLocale(new Java.Util.Locale(locale));
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(locale);
             }
             catch(Exception e)
             {

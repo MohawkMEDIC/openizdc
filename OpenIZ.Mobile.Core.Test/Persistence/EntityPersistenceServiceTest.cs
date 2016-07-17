@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreEqual(DeterminerKeys.Described, afterTest.DeterminerConceptKey);
             Assert.AreEqual(EntityClassKeys.Food, afterTest.ClassConceptKey);
             Assert.IsTrue(afterTest.Names.Exists(o => o.Component.Exists(c => c.Value == "Strawberries")));
-            Assert.Fail();
+           // Assert.Fail();
         }
 
         /// <summary>

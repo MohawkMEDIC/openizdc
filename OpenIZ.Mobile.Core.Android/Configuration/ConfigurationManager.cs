@@ -18,6 +18,7 @@ using OpenIZ.Mobile.Core.Data;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using AndroidOS = Android.OS;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -81,8 +82,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "app://org.openiz.core/",
-                AuthenticationAsset = "app://org.openiz.core/views/security/login.html"
+                StartupAsset = "org.openiz.core",
+                AuthenticationAsset = "/views/security/login.html"
             };
 
 			// Initial applet style
@@ -94,7 +95,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
-					typeof(LocalEntitySource).AssemblyQualifiedName
+					typeof(LocalEntitySource).AssemblyQualifiedName,
+                    typeof(MiniImsServer).AssemblyQualifiedName
 				}
 			};
 

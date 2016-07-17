@@ -4,6 +4,6 @@ var layoutApp = angular.module('layout', []);
 
 // Configure the safe ng-urls
 layoutApp.config(['$compileProvider', function ($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(app|tel):/);
-    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(app|tel):/);
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
+    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);

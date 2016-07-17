@@ -27,390 +27,248 @@ using A = Android;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
 {
-	/// <summary>
-	/// Represents a window which can execute javascript
-	/// </summary>
-	public sealed class AppletWebView : WebView
-	{
+    /// <summary>
+    /// Represents a window which can execute javascript
+    /// </summary>
+    public sealed class AppletWebView : WebView
+    {
 
-		// Tracer
-		private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
 
-		/// <summary>
-		/// Occurs when applet changed.
-		/// </summary>
-		public event EventHandler AssetChanged;
+        /// <summary>
+        /// Create a new webview
+        /// </summary>
+        /// <param name="context">Context.</param>
+        public AppletWebView(Context context) : base(context)
+        {
+            this.Initialize(context);
 
-        // Progress has changed
-        public event EventHandler ProgressChanged;
+        }
 
-		// A web-view
-		private AppletAsset m_asset;
+        /// <summary>
+        /// Attaches the applet executor to a web view
+        /// </summary>
+        public AppletWebView(Context context, IAttributeSet attrs) : base(context, attrs)
+        {
+            this.Initialize(context);
 
-		// Queue
-		private Stack<AppletAsset> m_backQueue = new Stack<AppletAsset> ();
+        }
 
-		/// <summary>
-		/// Create a new webview
-		/// </summary>
-		/// <param name="context">Context.</param>
-		public AppletWebView(Context context) : base(context)
-		{
-			this.Initialize (context);
-
-		}
-
-		/// <summary>
-		/// Attaches the applet executor to a web view
-		/// </summary>
-		public AppletWebView (Context context, IAttributeSet attrs) : base(context, attrs)
-		{
-			this.Initialize (context);
-
-		}
-
-
-		/// <summary>
-		/// Initialize
-		/// </summary>
-		private void Initialize(Context context)
-		{
-			this.m_tracer.TraceVerbose ("Initializing applet web viewer");
-			this.Settings.CacheMode = CacheModes.CacheElseNetwork;
-			this.Settings.JavaScriptEnabled = true;
-			this.Settings.BlockNetworkLoads = true;
-			this.Settings.BuiltInZoomControls = false;
-			this.Settings.DisplayZoomControls = false;
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        private void Initialize(Context context)
+        {
+            this.m_tracer.TraceVerbose("Initializing applet web viewer");
+            this.Settings.CacheMode = CacheModes.Default;
+            this.Settings.JavaScriptEnabled = true;
+            this.Settings.BlockNetworkLoads = false;
+            
+            this.Settings.BuiltInZoomControls = false;
+            this.Settings.DisplayZoomControls = false;
 
             //this.SetLayerType(A.Views.LayeType., null);
 #if DEBUG
             WebView.SetWebContentsDebuggingEnabled(true);
 #endif 
-            this.AddJavascriptInterface (new AppletFunctionBridge (context, this), "OpenIZApplicationService");
-			this.AddJavascriptInterface (new ConfigurationServiceBridge(), "OpenIZConfigurationService");
-			this.AddJavascriptInterface (new ConceptServiceBridge (), "OpenIZConceptService");
+            this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
+            this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
+            this.AddJavascriptInterface(new ConceptServiceBridge(), "OpenIZConceptService");
             this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
             this.AddJavascriptInterface(new PatientFunctionBridge(), "OpenIZPatientService");
             this.SetWebViewClient(new AppletWebViewClient());
+
             this.SetWebChromeClient(new AppletWebChromeClient(this.Context));
-		}
-        
-		/// <summary>
-		/// Go back to previous page
-		/// </summary>
-		public override void GoBack ()
-		{
-			this.m_tracer.TraceVerbose ("Applet navigation : back");
-			base.GoBack ();
-
-            if (this.m_backQueue.Count > 0)
-            {
-                this.m_tracer.TraceVerbose("Applet history stack size: {0}", this.m_backQueue.Count);
-                this.Asset = this.m_backQueue.Pop();
-            }
-		}
+        }
 
         /// <summary>
-        /// Set progress
+        /// Load URL
         /// </summary>
-        /// <param name="progress"></param>
-        internal void FireProgressChanged()
+        /// <param name="url"></param>
+        public override void LoadUrl(string url)
         {
-            this.ProgressChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Applet manifest
-        /// </summary>
-        public AppletManifest Applet {
-            get { return this.m_asset?.Manifest; }
-            set
+            Uri uri = null;
+            var unlockDictionary = new Dictionary<String, String>()
             {
-                // Find the "index"
-				string language = this.Resources.Configuration.Locale.DisplayName;
+                {  "X-Authorization", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", AndroidApplicationContext.Current.Application.Name, AndroidApplicationContext.Current.Application.ApplicationSecret))) },
+                { "X-MAGIC", Convert.ToBase64String(AndroidApplicationContext.Current.Device.Key.Value.ToByteArray()) }
+            };
 
-                var indexValue = value.Assets.Find(o => o.Name == "index" && o.Language == language);
-                if (indexValue == null)
-                    indexValue = value.Assets.Find(o => o.Name == "index");
-                this.Asset = indexValue;
-            }
+            if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+                base.LoadUrl("http://127.0.0.1:9200/views/errors/404.html", unlockDictionary);
+            else if (uri.IsAbsoluteUri && uri.Host == "127.0.0.1" &&
+                uri.Port >= 9200)
+                base.LoadUrl(url, unlockDictionary);
+            else if (!uri.IsAbsoluteUri)
+                base.LoadUrl(new Uri(new Uri("http://127.0.0.1:9200/"), uri.PathAndQuery).ToString(), unlockDictionary);
+            else
+                base.LoadUrl("http://127.0.0.1:9200/views/errors/404.html", unlockDictionary);
         }
 
         /// <summary>
-        /// Gets or sets the applet
+        /// Execute the specified javascript
         /// </summary>
-        /// <value>The applet.</value>
-        public AppletAsset Asset {
-			get {
-				return this.m_asset;
-			}
-			set {
-				this.m_tracer.TraceVerbose ("Asset Set {0} > {1}", this.m_asset, value);
-				if (this.m_asset != null)
-					this.m_backQueue.Push (this.m_asset);
-				
-				this.m_asset = value;
-				//var webClient = new AppletWebViewClient();
-				//this.SetWebViewClient (webClient);
-				//this.SetWebChromeClient (new AppletWebChromeClient (this.Context));
-				Application.SynchronizationContext.Post(_=>this.AssetChanged?.Invoke (this, EventArgs.Empty), null); 
-			}
-		}
-
-		/// <summary>
-		/// Execute the specified javascript
-		/// </summary>
-		/// <param name="javascript">Javascript.</param>
-		public string Execute(String javascript)
-		{
-			this.m_tracer.TraceVerbose ("Execute Javascript: {0}", javascript); 
-			if (String.IsNullOrEmpty (javascript))
-				throw new ArgumentNullException (nameof (javascript));
-			this.LoadUrl ("javascript:" + javascript);
-			return "";
-		}
+        /// <param name="javascript">Javascript.</param>
+        public string Execute(String javascript)
+        {
+            this.m_tracer.TraceVerbose("Execute Javascript: {0}", javascript);
+            if (String.IsNullOrEmpty(javascript))
+                throw new ArgumentNullException(nameof(javascript));
+            this.LoadUrl("javascript:" + javascript);
+            return "";
+        }
 
 
         /// <summary>
         /// Applet web view client.
         /// </summary>
         private class AppletWebViewClient : WebViewClient
-		{
+        {
 
-			// Tracer
-			private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
-
-			/// <summary>
-			/// Initializes a new instance of the
-			/// <see cref="OpenIZ.Mobile.Core.Android.AppletEngine.AppletWebView+AppletWebViewClient"/> class.
-			/// </summary>
-			/// <param name="applet">Applet.</param>
-			public AppletWebViewClient ()
-			{
-			}
-
-			
-			/// <param name="view">The WebView that is initiating the callback.</param>
-			/// <param name="url">The url to be loaded.</param>
-			/// <summary>
-			/// Give the host application a chance to take over the control when a new
-			///  url is about to be loaded in the current WebView.
-			/// </summary>
-			/// <returns>To be added.</returns>
-			public override bool ShouldOverrideUrlLoading (WebView view, string url)
-			{
-				if (!url.StartsWith(AppletCollection.APPLET_SCHEME) && 
-					url.Contains(":"))
-					return false;
-
-				this.m_tracer.TraceInfo ("Overridding url {0}", url);
-
-				view.LoadUrl (url);
-				return true;
-			}
-
-            public override void OnLoadResource(WebView view, string url)
-            {
-                base.OnLoadResource(view, url);
-            }
+            // Tracer
+            private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
 
             /// <summary>
-            /// Intercept the request
+            /// Initializes a new instance of the
+            /// <see cref="OpenIZ.Mobile.Core.Android.AppletEngine.AppletWebView+AppletWebViewClient"/> class.
             /// </summary>
-            public override WebResourceResponse ShouldInterceptRequest (WebView view, string url)
-			{
-				// Set scope to applet viewer scope
-				if (url.StartsWith (AppletCollection.APPLET_SCHEME) || !url.Contains(":")) {
-
-					this.m_tracer.TraceInfo ("Intercepting request {0}", url);
-
-                    if (url.EndsWith("/js/openiz.js"))
-                        url = "app://org.openiz.core/js/openiz.js";
-                    else if (url.EndsWith("/js/openiz-model.js"))
-                        url = "app://org.openiz.core/js/openiz-model.js";
-                    else if (url.EndsWith("/js/openiz-localize.js"))
-                        url = "app://org.openiz.core/js/openiz-localize.js";
-
-                    // Language
-                    string language = view.Resources.Configuration.Locale.Language;
-                    AppletAsset scope = (view as AppletWebView).Asset;
-                    var navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(url, scope, language);
-
-                    if (navigateAsset == null)
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/404.html", language: language);
-                    
-                    try
-                    {
-                        return this.RenderWebResource(url, navigateAsset, language);
-                    }
-                    catch(SecurityException ex)
-                    {
-                        this.m_tracer.TraceError(ex.ToString());
-                        if (ApplicationContext.Current.Principal == null)
-                        {
-                            // HACK: Can't return a fake 302
-                            String redirectUrl = String.Format("<html><head><meta http-equiv=\"refresh\" content=\"0; url={0}?returnUrl={1}\"/></head></html>", AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset, url);
-                            return new WebResourceResponse("text/html", "UTF-8", new MemoryStream(Encoding.UTF8.GetBytes(redirectUrl)));
-                        }
-                        else
-                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/403.html", language: language);
-                        return this.RenderWebResource(url, navigateAsset, language);
-
-                    }
-                    catch(FileNotFoundException ex)
-                    {
-                        this.m_tracer.TraceError(ex.ToString());
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/404.html", language: language);
-                        return this.RenderWebResource(url, navigateAsset, language);
-                    }
-                    catch (Exception ex)
-                    {
-                        this.m_tracer.TraceError(ex.ToString());
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("app://org.openiz.core/views/errors/500.html", language: language);
-                        return this.RenderWebResource(url, navigateAsset, language);
-                    }
-                    finally
-                    {
-                        // Switch asset
-                        if(navigateAsset.Content is AppletAssetHtml)
-                            (view as AppletWebView).Asset = navigateAsset;
-                    }
-                }
-				else
-					return base.ShouldInterceptRequest(view, url);
-			}
-
-            /// <summary>
-            /// Render web resource
-            /// </summary>
-            /// <param name="navigateAsset"></param>
-            /// <returns></returns>
-            private WebResourceResponse RenderWebResource(String url, AppletAsset navigateAsset, string language)
+            /// <param name="applet">Applet.</param>
+            public AppletWebViewClient()
             {
-                // Demand policies
-                if(navigateAsset.Policies != null)
-                    foreach(var policy in navigateAsset.Policies)
-                        new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
-
-                var data = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, language);
-                if (data != null)
-                {
-                    //this.m_tracer.TraceVerbose("Intercept request for {0} ({2} bytes) as: {1}", url, Encoding.UTF8.GetString(data), data.Length);
-                    var ms = new MemoryStream(data);
-                    return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", ms);
-                }
-                else
-                {
-                    String itmPath = System.IO.Path.Combine(
-                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
-                        "assets",
-                        navigateAsset.Manifest.Info.Id,
-                        navigateAsset.Name);
-                    return new WebResourceResponse(navigateAsset.MimeType, "UTF-8", File.OpenRead(itmPath));
-                }
             }
+
+
+            /// <param name="view">The WebView that is initiating the callback.</param>
+            /// <param name="url">The url to be loaded.</param>
+            /// <summary>
+            /// Give the host application a chance to take over the control when a new
+            ///  url is about to be loaded in the current WebView.
+            /// </summary>
+            /// <returns>To be added.</returns>
+            public override bool ShouldOverrideUrlLoading(WebView view, string url)
+            {
+            
+                this.m_tracer.TraceInfo("Overridding url {0}", url);
+
+                view.LoadUrl(url);
+                return true;
+            }
+
+            ///// <summary>
+            ///// Page is finished
+            ///// </summary>
+            //public override void OnPageFinished(WebView view, string url)
+            //{
+            //    AndroidApplicationContext.Current.SetProgress(null, 1.0f);
+            //}
         }
 
-		/// <summary>
-		/// Chrome client
-		/// </summary>
-		private class AppletWebChromeClient : WebChromeClient
-		{
+        /// <summary>
+        /// Chrome client
+        /// </summary>
+        private class AppletWebChromeClient : WebChromeClient
+        {
 
-			// Tracer
-			private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebChromeClient));
+            // Tracer
+            private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebChromeClient));
 
-			// Context
-			private Context m_context;
+            // Context
+            private Context m_context;
 
-			/// <summary>
-			/// Initializes a new instance of the
-			/// <see cref="OpenIZ.Mobile.Core.Android.AppletEngine.AppletWebView+AppletWebChromeClient"/> class.
-			/// </summary>
-			/// <param name="context">Context.</param>
-			public AppletWebChromeClient (Context context)
-			{
-				this.m_context = context;
-			}
+            /// <summary>
+            /// Initializes a new instance of the
+            /// <see cref="OpenIZ.Mobile.Core.Android.AppletEngine.AppletWebView+AppletWebChromeClient"/> class.
+            /// </summary>
+            /// <param name="context">Context.</param>
+            public AppletWebChromeClient(Context context)
+            {
+                this.m_context = context;
+            }
 
-			/// <param name="view">The WebView that initiated the callback.</param>
-			/// <param name="url">The url of the page requesting the dialog.</param>
-			/// <param name="message">Message to be displayed in the window.</param>
-			/// <param name="result">A JsResult to confirm that the user hit enter.</param>
-			/// <summary>
-			/// Javascript alert
-			/// </summary>
-			/// <returns>To be added.</returns>
-			public override bool OnJsAlert (WebView view, string url, string message, JsResult result)
-			{
-				var alertDialogBuilder = new AlertDialog.Builder (this.m_context) 
-				 	.SetMessage (message) 
-					.SetCancelable (false) 
-					.SetPositiveButton (this.m_context.Resources.GetString(Resource.String.confirm), (sender, args) => { 
-						result.Confirm (); 
-				}); 
-				
-
-				alertDialogBuilder.Create ().Show (); 
-
-				return true; 
-
-			}
-
-			/// <param name="consoleMessage">Object containing details of the console message.</param>
-			/// <summary>
-			/// Report a JavaScript console message to the host application.
-			/// </summary>
-			/// <returns>To be added.</returns>
-			public override bool OnConsoleMessage (ConsoleMessage consoleMessage)
-			{
-				var retVal = base.OnConsoleMessage (consoleMessage);
-				if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error) {
-
-				}
-
-				// Start off verbose
-				EventLevel eventLevel = EventLevel.Verbose;
-				if (consoleMessage.InvokeMessageLevel () == Webkit.ConsoleMessage.MessageLevel.Error) {
-					Toast.MakeText (this.m_context, "This applet reported an error", ToastLength.Long).Show ();
-					eventLevel = EventLevel.Error;
-				}
-				else if(consoleMessage.InvokeMessageLevel () == Webkit.ConsoleMessage.MessageLevel.Warning)
-					eventLevel = EventLevel.Warning;
-				else if(consoleMessage.InvokeMessageLevel () == Webkit.ConsoleMessage.MessageLevel.Log)
-					eventLevel = EventLevel.Informational;
-
-				this.m_tracer.TraceEvent(eventLevel,"[{0}:{1}] {2}", consoleMessage.SourceId(), consoleMessage.LineNumber(), consoleMessage.Message());
-				return retVal;
-			}
-
-			/// <param name="view">The WebView that initiated the callback.</param>
-			/// <param name="url">The url of the page requesting the dialog.</param>
-			/// <param name="message">Message to be displayed in the window.</param>
-			/// <param name="result">A JsResult used to send the user's response to
-			///  javascript.</param>
-			/// <summary>
-			/// Fired when a javascript confirm should be shown
-			/// </summary>
-			/// <returns>To be added.</returns>
-			public override bool OnJsConfirm (WebView view, string url, string message, JsResult result)
-			{
-				var alertDialogBuilder = new AlertDialog.Builder (this.m_context) 
-					.SetMessage (message) 
-					.SetCancelable (false) 
-					.SetPositiveButton (this.m_context.Resources.GetString(Resource.String.confirm), (sender, args) => { 
-					result.Confirm (); 
-				}) 
-					.SetNegativeButton (this.m_context.Resources.GetString(Resource.String.cancel), (sender, args) => { 
-					result.Cancel (); 
-				}); 
-			
-				alertDialogBuilder.Create ().Show (); 
+            /// <param name="view">The WebView that initiated the callback.</param>
+            /// <param name="url">The url of the page requesting the dialog.</param>
+            /// <param name="message">Message to be displayed in the window.</param>
+            /// <param name="result">A JsResult to confirm that the user hit enter.</param>
+            /// <summary>
+            /// Javascript alert
+            /// </summary>
+            /// <returns>To be added.</returns>
+            public override bool OnJsAlert(WebView view, string url, string message, JsResult result)
+            {
+                var alertDialogBuilder = new AlertDialog.Builder(this.m_context)
+                     .SetMessage(message)
+                    .SetCancelable(false)
+                    .SetPositiveButton(this.m_context.Resources.GetString(Resource.String.confirm), (sender, args) =>
+                    {
+                        result.Confirm();
+                    });
 
 
-				return true; 
+                alertDialogBuilder.Create().Show();
 
-			}
+                return true;
+
+            }
+
+            /// <param name="consoleMessage">Object containing details of the console message.</param>
+            /// <summary>
+            /// Report a JavaScript console message to the host application.
+            /// </summary>
+            /// <returns>To be added.</returns>
+            public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
+            {
+                var retVal = base.OnConsoleMessage(consoleMessage);
+                if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
+                {
+
+                }
+
+                // Start off verbose
+                EventLevel eventLevel = EventLevel.Verbose;
+                if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
+                {
+                    Toast.MakeText(this.m_context, "This applet reported an error", ToastLength.Long).Show();
+                    eventLevel = EventLevel.Error;
+                }
+                else if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Warning)
+                    eventLevel = EventLevel.Warning;
+                else if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Log)
+                    eventLevel = EventLevel.Informational;
+
+                this.m_tracer.TraceEvent(eventLevel, "[{0}:{1}] {2}", consoleMessage.SourceId(), consoleMessage.LineNumber(), consoleMessage.Message());
+                return retVal;
+            }
+
+            /// <param name="view">The WebView that initiated the callback.</param>
+            /// <param name="url">The url of the page requesting the dialog.</param>
+            /// <param name="message">Message to be displayed in the window.</param>
+            /// <param name="result">A JsResult used to send the user's response to
+            ///  javascript.</param>
+            /// <summary>
+            /// Fired when a javascript confirm should be shown
+            /// </summary>
+            /// <returns>To be added.</returns>
+            public override bool OnJsConfirm(WebView view, string url, string message, JsResult result)
+            {
+                var alertDialogBuilder = new AlertDialog.Builder(this.m_context)
+                    .SetMessage(message)
+                    .SetCancelable(false)
+                    .SetPositiveButton(this.m_context.Resources.GetString(Resource.String.confirm), (sender, args) =>
+                    {
+                        result.Confirm();
+                    })
+                    .SetNegativeButton(this.m_context.Resources.GetString(Resource.String.cancel), (sender, args) =>
+                    {
+                        result.Cancel();
+                    });
+
+                alertDialogBuilder.Create().Show();
+
+
+                return true;
+
+            }
 
             /// <summary>
             /// Progress has changed
@@ -418,9 +276,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             public override void OnProgressChanged(WebView view, int newProgress)
             {
                 base.OnProgressChanged(view, newProgress);
-                (view as AppletWebView).FireProgressChanged();
+                AndroidApplicationContext.Current.SetProgress(view.Url, (float)newProgress / 100);
             }
         }
-	}
+    }
 }
 

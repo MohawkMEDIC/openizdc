@@ -186,7 +186,7 @@
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
-copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
-copy "$(TargetDir)\openiz.core.applet.pak.gz" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
+ copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
   </PropertyGroup>
 </Project>
