@@ -6,5 +6,5 @@
     <OpenIZ.Mobile.Core.Android.AppletEngine.AppletWebView
         p1:id="@+id/applet_view"
         p1:layout_width="match_parent"
-        p1:layout_height="match_parent" />
+        p1:layout_height="match_parent"  />
 </ScrollView>

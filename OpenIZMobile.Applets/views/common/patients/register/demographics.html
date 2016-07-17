@@ -1,0 +1,78 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+     xmlns:bind="http://openiz.org/applet/bind">
+    <oiz:script>/controllers/common/patients/register/demographics.js</oiz:script>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <a data-toggle="collapse" href="#demoInfoCollapse">{{ 'locale.patient.demographics.header' | i18n }}</a>
+            </h3>
+        </div>
+        <div id="demoInfoCollapse" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <fieldset class="form-horizontal form-group">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                                <div class="col-xs-9 input-group">
+                                    <select name="givenName" id="givenName" select="0" class="select2-tag form-control" aria-describedby="givenNameAddon"
+                                            required="required" multiple="multiple"></select>
+                                </div>
+                            </div>
+                            <div class="col-xs-offset-2 col-xs-9">
+                                <p class="alert alert-danger" ng-if="givenNameError">{{ 'locale.errors.required' | i18n }}</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                                <div class="col-xs-9 input-group">
+                                    <select name="familyName" id="familyName" select="1" class="select2-tag form-control" aria-describedby="familyNameAddon"
+                                            required="required" multiple="multiple"></select>
+                                </div>
+                            </div>
+                            <div class="col-xs-offset-2 col-xs-9">
+                                <p class="alert alert-danger" ng-if="familyNameError">{{ 'locale.errors.required' | i18n }}</p>
+                            </div>
+
+                            <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm.date.$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm.date.$invalid }">
+                                <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                                <div class="col-xs-9 input-group">
+                                    <div class="input-group date">
+                                        <input readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" uib-datepicker-popup="dd/MMMM/yyyy"
+                                               is-open="popupDOB.opened" datepicker-options="dateOptions" />
+                                        <span class="input-group-addon addon-background" ng-click="openDOB()">
+                                            <span class="glyphicon glyphicon-calendar">
+                                            </span>
+                                        </span>
+                                        <span class="input-group-addon addon-background" id="accuracyAddon">{{ 'locale.patient.demographics.accuracy' | i18n}}</span>
+
+                                        <select name="accuracy" ng-model="patient.dateOfBirthAccuracy" class="form-control" aria-describedby="accuracyAddon">
+                                            <option value="0">{{ 'locale.patient.demographics.accuracy.full' | i18n }}</option>
+                                            <option value="1">{{ 'locale.patient.demographics.accuracy.year' | i18n }}</option>
+                                            <option value="2">{{ 'locale.patient.demographics.accuracy.month' | i18n }}</option>
+                                            <option value="3">{{ 'locale.patient.demographics.accuracy.day' | i18n }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm.date.$error" ng-if="patientRegisterForm.date.$touched||patientRegisterForm.$submitted">
+                                    <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.dob' | i18n }}</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
+                                <div class="col-xs-9 input-group">
+                                    <select name="gender" ng-model="patient.genderConcept" id="genderSelect" class="form-control"
+                                            aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
+                                            bind:value="name[en].value"></select>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

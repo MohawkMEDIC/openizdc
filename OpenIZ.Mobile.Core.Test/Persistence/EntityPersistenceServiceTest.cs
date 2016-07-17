@@ -2,6 +2,7 @@
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Mobile.Core.Services;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreEqual(DeterminerKeys.Described, afterTest.DeterminerConceptKey);
             Assert.AreEqual(EntityClassKeys.Food, afterTest.ClassConceptKey);
             Assert.IsTrue(afterTest.Names.Exists(o => o.Component.Exists(c => c.Value == "Strawberries")));
-            Assert.Fail();
+           // Assert.Fail();
         }
 
         /// <summary>
@@ -165,7 +166,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             // Obsolete
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
             var afterObsolete = idp.Obsolete(afterTest);
-            afterObsolete = idp.Get(id);
+            afterObsolete = idp.Get(id.Value);
 
             // Assert
             Assert.IsNotNull(afterObsolete.ObsoletionTime);
@@ -320,12 +321,17 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                     new EntityName(NameUseKeys.Legal, "Smith", "John")
                 }
             };
-            person.Notes.Add(new EntityNote(Guid.Empty, "He doesn't even like Peanutbutter!!!!!"));
+            person.Notes.Add(new EntityNote() {
+                Author = new Provider() {
+                    
+                },
+                Text = "He doesn't even like Peanutbutter!!!!!"
+                });
 
             var afterInsert = base.DoTestInsert(person);
             Assert.AreEqual(EntityClassKeys.Person, afterInsert.ClassConceptKey);
             Assert.AreEqual(1, afterInsert.Notes.Count);
-            Assert.AreEqual(Guid.Empty, person.Notes[0].AuthorKey);
+            Assert.AreNotEqual(Guid.Empty, person.Notes[0].AuthorKey);
             Assert.AreEqual("He doesn't even like Peanutbutter!!!!!", person.Notes[0].Text);
         }
 

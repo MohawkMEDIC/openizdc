@@ -75,22 +75,25 @@ namespace OpenIZMobile
 
             var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
 			// Find the applet
-			AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
-                assetLink, language: this.Resources.Configuration.Locale.Language);
-			if (asset == null) {
-                UserInterfaceUtils.ShowMessage(this, (o, e) => { this.Finish(); }, String.Format("FATAL: {0} not found (installed: {1})", assetLink, AndroidApplicationContext.Current.LoadedApplets.Count));
+			//AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
+   //             assetLink, language: this.Resources.Configuration.Locale.Language);
+			//if (asset == null) {
+   //             UserInterfaceUtils.ShowMessage(this, (o, e) => { this.Finish(); }, String.Format("FATAL: {0} not found (installed: {1})", assetLink, AndroidApplicationContext.Current.LoadedApplets.Count));
                 
-			}
+			//}
 
             // Progress has changed
-            this.m_webView.ProgressChanged += (o, e) =>
+            AndroidApplicationContext.Current.ProgressChanged += (o, e) =>
             {
-                try
+                RunOnUiThread(() =>
                 {
-                    this.m_textView.Visibility = this.m_progressBar.Visibility = this.m_webView.Progress == 0 || this.m_webView.Progress == 100 ? ViewStates.Gone : ViewStates.Visible;
-                    this.m_progressBar.Progress = (this.m_progressBar.Max) / 100 * this.m_webView.Progress;
-                }
-                catch { }
+                    try
+                    {
+                        this.m_textView.Visibility = this.m_progressBar.Visibility = this.m_webView.Progress == 0 || this.m_webView.Progress == 100 ? ViewStates.Gone : ViewStates.Visible;
+                        this.m_progressBar.Progress = (this.m_progressBar.Max) / 100 * this.m_webView.Progress;
+                    }
+                    catch { }
+                });
             };
 
             // Set view 
@@ -108,16 +111,10 @@ namespace OpenIZMobile
                 catch { }
             };
             this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
-            // Applet has changed
-            this.m_webView.AssetChanged += (o, e) => {
-                
-				var view = o as AppletWebView;
 
-				// Set the header and stuff
-				this.SetTitle(Resource.String.app_name);
-			};
             //this.m_webView.Asset = asset;
             this.m_webView.LoadUrl(assetLink);
+
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
 
 

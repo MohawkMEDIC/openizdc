@@ -36,6 +36,11 @@ namespace OpenIZ.Mobile.Core.Services
 		/// </summary>
 		bool IsUserInRole(string userName, string roleName);
 
+        /// <summary>
+        /// Adds the specified users to the specified roles
+        /// </summary>
+        void AddUsersToRoles(string[] userNames, string[] roleNames);
+
 	}
 }
 

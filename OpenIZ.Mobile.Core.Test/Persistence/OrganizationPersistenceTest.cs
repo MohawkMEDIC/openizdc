@@ -38,12 +38,15 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 {
                     new EntityName(NameUseKeys.Assigned, "Good Health Hospital System")
                 },
-                IndustryConceptKey = UserClassKeys.ApplictionUser
+                IndustryConcept = new Concept()
+                {
+                    Mnemonic = "Healthcare"
+                }
             };
             var afterTest = base.DoTestInsert(org);
             Assert.AreEqual(1, afterTest.Names.Count);
             Assert.AreEqual(1, afterTest.Identifiers.Count);
-            Assert.AreEqual(UserClassKeys.ApplictionUser, org.IndustryConceptKey);
+            Assert.AreEqual("Healthcare", org.IndustryConcept.Mnemonic);
             Assert.AreEqual("Good Health Hospital System", org.Names[0].Component[0].Value);
         }
 

@@ -28,6 +28,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 o=>cps.ToModelInstance(o, context)
             ).ToList();
 
+            modelInstance.LoadAssociations(context);
+
             return modelInstance;
         }
     }

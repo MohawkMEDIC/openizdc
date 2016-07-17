@@ -33,10 +33,10 @@ namespace OpenIZ.Mobile.Core.Android
 
 		// The application
 		private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication() {
-			ApplicationSecret = "1BBF1AC23E1C4CB39168A7E4302A217D",
+			ApplicationSecret = "C5B645B7D30A4E7E81A1C3D8B0E28F4C",
 			Key = Guid.Parse("5248ea19-369d-4071-8947-413310872b7e"),
-			Name = "org.bid.timr.mobile"
-        };
+			Name = "org.openiz.openiz_mobile"
+		};
 
 		// Applets
 		private AppletCollection m_applets = new AppletCollection();
@@ -104,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Android
 				}));
 				ApplicationContext.Current = retVal;
 				retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
-
+                retVal.StartDaemons();
 				return true;
 			}
 			catch(Exception e) {
@@ -218,6 +218,8 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <param name="applet">Applet.</param>
 		public void LoadApplet (AppletManifest applet)
 		{
+            if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
+                this.m_applets.DefaultApplet = applet;
 			this.m_applets.Add (applet);
 		}
 
@@ -236,6 +238,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		public void InstallApplet (AppletPackage package, bool isUpgrade = false)
 		{
+
             // Desearialize an prep for install
             var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
             String appletPath = Path.Combine(appletSection.AppletDirectory, package.Meta.Id);
@@ -244,8 +247,9 @@ namespace OpenIZ.Mobile.Core.Android
             {
                 this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
 
+                this.SetProgress(package.Meta.GetName("en"), 0.0f);
                 // TODO: Verify the package
-
+                 
               
                 // Copy 
                 if (!Directory.Exists(appletSection.AppletDirectory))
@@ -262,24 +266,20 @@ namespace OpenIZ.Mobile.Core.Android
                     if (existingApplet != null)
                         this.m_applets.Remove(existingApplet);
                     appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
-
+                    
                 }
 
                 // Save the applet
                 XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-                // Serialize the data to disk
-                using (FileStream fs = File.Create(appletPath))
-                {
-                    fs.Write(package.Manifest, 0, package.Manifest.Length);
-                    fs.Flush();
-                }
+
+                AppletManifest mfst;
 
                 // Install Database stuff
                 using (MemoryStream ms = new MemoryStream(package.Manifest))
                 {
-                    AppletManifest mfst = xsz.Deserialize(ms) as AppletManifest;
+                    mfst = xsz.Deserialize(ms) as AppletManifest;
                     // Migrate data.
-                    if(mfst.DataSetup != null)
+                    if (mfst.DataSetup != null)
                         foreach(var itm in mfst.DataSetup.Action)
                         {
                             Type idpType = typeof(IDataPersistenceService<>);
@@ -287,19 +287,53 @@ namespace OpenIZ.Mobile.Core.Android
                             var svc = ApplicationContext.Current.GetService(idpType);
                             idpType.GetMethod(itm.ActionName).Invoke(svc, new object[] { itm.Element });
                         }
+
+                    // Now export all the binary files out
+                    var assetDirectory = Path.Combine(appletSection.AppletDirectory, "assets", mfst.Info.Id);
+                    if (!Directory.Exists(assetDirectory))
+                        Directory.CreateDirectory(assetDirectory);
+                    for(int i = 0; i < mfst.Assets.Count; i++)
+                    {
+                        var itm = mfst.Assets[i];
+                        var itmPath = Path.Combine(assetDirectory, itm.Name);
+                        this.SetProgress(package.Meta.GetName("en"), 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
+
+                        // Get dir name and create
+                        if (!Directory.Exists(Path.GetDirectoryName(itmPath)))
+                            Directory.CreateDirectory(Path.GetDirectoryName(itmPath));
+
+                        // Extract content
+                        if (itm.Content is byte[])
+                        {
+                            File.WriteAllBytes(itmPath, itm.Content as byte[]);
+                            itm.Content = null;
+                        }
+                        else if(itm.Content is String)
+                        {
+                            File.WriteAllText(itmPath, itm.Content as String);
+                            itm.Content = null;
+                        }
+                      }
+
+                    // Serialize the data to disk
+                    using (FileStream fs = File.Create(appletPath))
+                        xsz.Serialize(fs, mfst);
                 }
 
                 // TODO: Sign this with my private key
                 // For now sign with SHA256
                 SHA256 sha = SHA256.Create();
-                package.Meta.Hash = sha.ComputeHash(package.Manifest);
-                appletSection.Applets.Add(package.Meta);
+                package.Meta.Hash = sha.ComputeHash(File.ReadAllBytes(appletPath));
+                appletSection.Applets.Add(package.Meta.AsReference());
+
+                this.SetProgress(package.Meta.GetName("en"), 0.98f);
 
                 if (this.ConfigurationManager.IsConfigured)
                     this.ConfigurationManager.Save();
 
-                using (MemoryStream ms = new MemoryStream(package.Manifest))
-                    this.LoadApplet(AppletManifest.Load(ms));
+                mfst.Initialize();
+
+                this.LoadApplet(mfst);
             }
             catch(Exception e)
             {
@@ -308,6 +342,8 @@ namespace OpenIZ.Mobile.Core.Android
                 // Remove
                 if (File.Exists(appletPath))
                     File.Delete(appletPath);
+
+                throw;
             }
 		}
 

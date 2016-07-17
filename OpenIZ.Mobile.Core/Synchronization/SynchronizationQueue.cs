@@ -9,6 +9,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using System.IO;
 using System.Xml.Serialization;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -64,6 +65,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		// The queue instance
 		private static SynchronizationQueue<TQueueEntry> s_instance;
 
+        /// <summary>
+        /// Fired when the data is about to be enqueued
+        /// </summary>
+        public event EventHandler<DataPersistencePreEventArgs<TQueueEntry>> Enqueuing;
+        /// <summary>
+        /// Fired after the data has been enqueued
+        /// </summary>
+        public event EventHandler<DataPersistenceEventArgs<TQueueEntry>> Enqueued;
+
 		/// <summary>
 		/// Singleton
 		/// </summary>
@@ -102,6 +112,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// </summary>
 		public TQueueEntry Enqueue(IdentifiedData data, DataOperationType operation)
 		{
+
 			// Serialize object
 			XmlSerializer xsz = new XmlSerializer (data.GetType ());
 			using (MemoryStream ms = new MemoryStream ()) {
@@ -117,9 +128,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				};
 
 				// Enqueue the object
-				this.EnqueueRaw (queueEntry);
-
-				return queueEntry;
+				return this.EnqueueRaw (queueEntry);
 			}
 		}
 
@@ -127,9 +136,18 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// Enqueue the specified entry
 		/// </summary>
 		/// <param name="entry">Entry.</param>
-		public void EnqueueRaw(TQueueEntry entry)
+		public TQueueEntry EnqueueRaw(TQueueEntry entry)
 		{
-			using (SQLiteConnection conn = this.CreateConnection()) {
+            // Fire pre-event args
+            var preEventArgs = new DataPersistencePreEventArgs<TQueueEntry>(entry);
+            this.Enqueuing?.Invoke(this, preEventArgs);
+            if (preEventArgs.Cancel)
+            {
+                this.m_tracer.TraceInfo("Pre-event handler has cancelled the action");
+                return preEventArgs.Data;
+            }
+
+            using (SQLiteConnection conn = this.CreateConnection()) {
 				try
 				{
 					conn.BeginTransaction ();
@@ -138,8 +156,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
 					this.m_tracer.TraceInfo("Enqueue {0} successful. Queue item {1}", entry, conn.Insert(entry));
 					conn.Commit();
 
-				}
-				catch(Exception e) {
+                    var postEventArgs = new DataPersistenceEventArgs<TQueueEntry>(entry);
+                    this.Enqueued?.Invoke(this, postEventArgs);
+                    return postEventArgs.Data;
+
+                }
+                catch (Exception e) {
 					this.m_tracer.TraceError ("Error enqueueing object {0} : {1}", entry, e);
 					conn.Rollback ();
 					throw;
@@ -151,7 +173,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// <summary>
 		/// Deserialize the object
 		/// </summary>
-		private IdentifiedData DeserializeObject(TQueueEntry entry)
+		public IdentifiedData DeserializeObject(TQueueEntry entry)
 		{
 			using(MemoryStream ms = new MemoryStream(entry.Data))
 			{
@@ -172,14 +194,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// <summary>
 		/// Pop an item from the queue.
 		/// </summary>
-		public IdentifiedData Pop() {
-			return this.DeserializeObject (this.PopRaw ());
+		public IdentifiedData Dequeue() {
+			return this.DeserializeObject (this.DequeueRaw());
 		}
 
 		/// <summary>
 		/// Pops the item off the stack
 		/// </summary>
-		public TQueueEntry PopRaw()
+		public TQueueEntry DequeueRaw()
 		{
 			using (SQLiteConnection conn = this.CreateConnection ()) {
 				try
@@ -203,11 +225,28 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			}
 		}
 
-		/// <summary>
-		/// Peeks a raw row entry from the database.
-		/// </summary>
-		/// <returns>The raw.</returns>
-		public TQueueEntry PeekRaw(){
+        /// <summary>
+        /// Provides a mechanism for a queue entry to be udpated
+        /// </summary>
+        internal void UpdateRaw(TQueueEntry entry)
+        {
+            using(SQLiteConnection conn = this.CreateConnection()) {
+                try
+                {
+                    conn.Update(entry);
+                }
+                catch(Exception e)
+                {
+                    this.m_tracer.TraceError("Error updating object: {0}", e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Peeks a raw row entry from the database.
+        /// </summary>
+        /// <returns>The raw.</returns>
+        public TQueueEntry PeekRaw(){
 			using (SQLiteConnection conn = this.CreateConnection ()) {
 				try
 				{
@@ -220,6 +259,24 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			}
 		}
 
+        /// <summary>
+        /// Counts the number of objects in the current queue
+        /// </summary>
+        public int Count()
+        {
+            using (SQLiteConnection conn = this.CreateConnection())
+            {
+                try
+                {
+                    return conn.Table<TQueueEntry>().Count();
+                }
+                catch(Exception e)
+                {
+                    this.m_tracer.TraceError("Error counting queue: {0}", e);
+                    throw;
+                }
+            }
+        }
 	}
 }
 

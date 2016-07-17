@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var dbm = context.Table<DbMaterial>().FirstOrDefault(o => o.Uuid == domainMat.Uuid);
             var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(dbm, context);
             retVal.LotNumber = domainMmat.LotNumber;
-            return base.ToModelInstance(dataInstance, context);
+            return retVal;
 
         }
 

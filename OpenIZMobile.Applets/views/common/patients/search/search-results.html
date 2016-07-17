@@ -1,0 +1,42 @@
+﻿<table xmlns="http://www.w3.org/1999/xhtml" ng-if="search.results" class="table table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet">
+    <oiz:script>/controllers/common/patients/search/search-results.js</oiz:script>
+    <!--
+        Partial responsible for showing patient search results 
+        
+        Binds to: {OpenIZModel.Bundle} $scope.search.results
+        -->
+    <thead>
+        <tr>
+            <th>{{ 'locale.patient.search.header.names' | i18n }}</th>
+            <th>{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</th>
+            <th>{{ 'locale.patient.search.header.gender' | i18n }}</th>
+            <th>{{ 'locale.patient.search.header.cityVillage' | i18n }}</th>
+            <th>{{ 'locale.patient.search.header.healthFacility' | i18n }}</th>
+            <th>{{ 'locale.patient.search.header.actions' | i18n }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="patient in search.results.items">
+            <td>{{ patient.name.OfficialRecord.component.Given }} {{ patient.name.OfficialRecord.component.Family }}</td>
+            <td>{{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}</td>
+            <td>{{ patient.genderConcept.name }}</td>
+            <td>N.Y.I.</td>
+            <td>N.Y.I.</td>
+            <td>
+                <span class="btn-group">
+                    <a class="btn btn-primary" ng-click="viewPatient(patient)">
+                        {{ 'locale.patient.action.view' | i18n }}<span class="glyphicon glyphicon-eye-open"></span>
+                    </a>
+                    <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-class="{'btn-success':patient.CheckedIn==true}">
+                        {{ 'locale.patient.action.startEncounter' | i18n }}
+                    </a>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">{{ search.results.offset }} .. {{ search.results.offset + searchResults.count }} of {{ searchResults.totalResults }} </td>
+        </tr>
+    </tfoot>
+</table>

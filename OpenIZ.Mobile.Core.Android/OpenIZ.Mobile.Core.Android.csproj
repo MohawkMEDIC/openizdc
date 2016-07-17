@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="AppletEngine\JNI\PatientFunctionBridge.cs" />
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
+    <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Http\RestClient.cs" />
@@ -80,7 +81,7 @@
     <Compile Include="Security\PolicyPermissionAttribute.cs" />
     <Compile Include="AndroidApplicationContext.cs" />
     <Compile Include="AppletEngine\JNI\ConfigurationServiceBridge.cs" />
-    <Compile Include="Security\SHA256PasswordHasher.cs" />
+    <Compile Include="Security\PasswordHashers.cs" />
     <Compile Include="Security\OAuthIdentityProvider.cs" />
     <Compile Include="Security\OAuthTokenServiceCredentials.cs" />
     <Compile Include="AppletEngine\JNI\ConceptServiceBridge.cs" />
@@ -90,7 +91,10 @@
     <Compile Include="Security\TokenCredentials.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
+    <Compile Include="Services\MessageQueueService.cs" />
+    <Compile Include="Services\MiniImsServer.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
+    <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />

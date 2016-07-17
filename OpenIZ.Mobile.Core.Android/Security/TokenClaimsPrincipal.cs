@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			String[] tokenObjects = token.Split ('.');
             // Correct each token to be proper B64 encoding
             for (int i = 0; i < tokenObjects.Length; i++)
-                tokenObjects[i] = tokenObjects[i].PadRight(tokenObjects[i].Length + (tokenObjects[i].Length % 2), '=');
+                tokenObjects[i] = tokenObjects[i].PadRight(tokenObjects[i].Length + (tokenObjects[i].Length % 4), '=').Replace("===","=");
 			JObject headers = JObject.Parse (Encoding.UTF8.GetString (Convert.FromBase64String (tokenObjects [0]))),
 				body = JObject.Parse (Encoding.UTF8.GetString (Convert.FromBase64String (tokenObjects [1])));
 
@@ -74,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				//	throw new SecurityTokenException(SecurityTokenExceptionType.KeyNotFound, String.Format ("Cannot find certificate {0}", headers ["x5t"]));
 				// TODO: Verify signature
 			} else if (((String)headers ["alg"]).StartsWith ("HS")) {
-				int keyId = Int32.Parse ((String)headers ["keyid"]);
+				var keyId = headers ["keyid"].Value<Int32>();
 				if (keyId > this.m_configuration.TokenSymmetricSecrets.Count)
 					throw new SecurityTokenException (SecurityTokenExceptionType.KeyNotFound, "Symmetric key not found");
 				// TODO: Verfiy signature

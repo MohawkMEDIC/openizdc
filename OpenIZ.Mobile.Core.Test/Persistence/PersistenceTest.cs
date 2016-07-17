@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             Assert.AreNotEqual(Guid.Empty, objectAfterTest.Key);
 
             // Verify
-            objectAfterTest = persistenceService.Get(objectAfterTest.Key);
+            objectAfterTest = persistenceService.Get(objectAfterTest.Key.Value);
             if (objectAfterTest is BaseEntityData)
                 Assert.AreNotEqual(default(DateTimeOffset), (objectAfterTest as BaseEntityData).CreationTime);
 
@@ -70,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
 
             var objectAfterUpdate = persistenceService.Update(objectAfterInsert);
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
-            objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Key);
+            objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Key.Value);
             // Update attributes should be set
             Assert.AreNotEqual(oldValue, propertyInfo.GetValue(objectAfterUpdate));
             Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
@@ -81,7 +81,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
         /// <summary>
         /// Perform a query
         /// </summary>
-        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid knownResultKey)
+        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid? knownResultKey)
         {
 
             IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();

@@ -29,16 +29,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// <param name="dataInstance">Data instance.</param>
 		public override TModel ToModelInstance (object dataInstance, SQLiteConnection context)
 		{
-			return m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
-		}
+			var retVal = m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
+            retVal.LoadAssociations(context);
+            return retVal;
+        }
 
-		/// <summary>
-		/// Froms the model instance.
-		/// </summary>
-		/// <returns>The model instance.</returns>
-		/// <param name="modelInstance">Model instance.</param>
-		/// <param name="context">Context.</param>
-		public override object FromModelInstance (TModel modelInstance, SQLiteConnection context)
+        /// <summary>
+        /// Froms the model instance.
+        /// </summary>
+        /// <returns>The model instance.</returns>
+        /// <param name="modelInstance">Model instance.</param>
+        /// <param name="context">Context.</param>
+        public override object FromModelInstance (TModel modelInstance, SQLiteConnection context)
 		{
 			return m_mapper.MapModelInstance<TModel, TDomain> (modelInstance);
 
@@ -229,19 +231,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid sourceKey, SQLiteConnection dataContext)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid? sourceKey, SQLiteConnection dataContext)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;
-            if (persistenceService == null)
+            if (persistenceService == null || !sourceKey.HasValue)
             {
                 this.m_tracer.TraceInfo("Missing persister for type {0}", typeof(TAssociation).Name);
                 return;
             }
             // Ensure the source key is set
             foreach (var itm in storage)
-                if (itm.SourceEntityKey == Guid.Empty)
+                if (itm.SourceEntityKey == Guid.Empty || !itm.SourceEntityKey.HasValue)
                     itm.SourceEntityKey = sourceKey;
 
             // Remove old

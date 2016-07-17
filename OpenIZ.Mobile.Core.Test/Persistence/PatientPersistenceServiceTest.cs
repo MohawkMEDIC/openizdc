@@ -55,12 +55,17 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 },
                 Notes = new List<EntityNote>()
                 {
-                    new EntityNote(Guid.NewGuid(), "William is a test patient")
+                    new EntityNote() {
+                        Author = new Provider() {
+
+                        },
+                        Text = "He doesn't even like Peanutbutter!!!!!"
+                    }
                 },
                 GenderConceptKey = Guid.Parse("F4E3A6BB-612E-46B2-9F77-FF844D971198"),
                 DateOfBirth = new DateTime(1984, 03, 22),
                 MultipleBirthOrder = 2,
-                DeceasedDate = new DateTime(2016,05,02),
+                DeceasedDate = new DateTime(2016, 05, 02),
                 DeceasedDatePrecision = DatePrecision.Hour,
                 DateOfBirthPrecision = DatePrecision.Day
             };

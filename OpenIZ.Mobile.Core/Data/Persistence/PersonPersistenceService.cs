@@ -55,6 +55,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (!String.IsNullOrEmpty(person.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
+            retVal.LoadAssociations(context);
+
             return retVal;
         }
 
@@ -67,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Person Insert(SQLiteConnection context, Person data)
         {
             var retVal = base.Insert(context, data);
-            byte[] sourceKey = retVal.Key.ToByteArray();
+            byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             if (data.LanguageCommunication != null)
                 base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
@@ -84,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Person Update(SQLiteConnection context, Person data)
         {
             var retVal = base.Update(context, data);
-            var sourceKey = retVal.Key.ToByteArray();
+            var sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)

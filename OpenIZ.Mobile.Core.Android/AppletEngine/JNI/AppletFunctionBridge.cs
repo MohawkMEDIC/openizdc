@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using OpenIZ.Mobile.Core.Interop;
+
 using System;
 using Android.Webkit;
 using Java.Interop;
@@ -13,6 +15,9 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using OpenIZ.Core.Applets.Model;
 using A = Android;
+using System.Reflection;
+using OpenIZ.Mobile.Core.Configuration;
+using System.Globalization;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -106,11 +111,19 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public String GetLogFiles()
         {
-            String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
-            List<String> files = new List<string>();
-            foreach (var f in Directory.GetFiles(logFileBase))
-                files.Add(Path.GetFileName(f));
-            return JniUtil.ToJson(files);
+            try
+            {
+                String logFileBase = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
+                List<String> files = new List<string>();
+                foreach (var f in Directory.GetFiles(logFileBase))
+                    files.Add(Path.GetFileName(f));
+                return JniUtil.ToJson(files);
+            }
+            catch(Exception ex)
+            {
+                this.m_tracer.TraceError("Error getting log files: {0}", ex);
+                return null;
+            }
         }
 
         /// <summary>
@@ -130,7 +143,36 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public string GetCurrentAssetTitle()
         {
-            return (this.m_view.Asset.Content as AppletAssetHtml).GetTitle(this.GetLocale());
+            return this.m_view.Title ;
+        }
+
+        /// <summary>
+        /// Get version name
+        /// </summary>
+        [JavascriptInterface]
+        [Export]
+        public String GetVersion()
+        {
+            return String.Format("{0} ({1})", typeof(OpenIZConfiguration).Assembly.GetName().Version,
+                typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+        }
+
+        /// <summary>
+        /// Get version name
+        /// </summary>
+        [JavascriptInterface]
+        [Export]
+        public String GetService(String serviceName)
+        {
+
+            Type serviceType = Type.GetType(serviceName);
+            if (serviceType == null)
+                return ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.FirstOrDefault(
+                    o => o.GetType().GetInterfaces().Any(i => i.Name == serviceName) ||
+                    o.GetType().Name == serviceName || o.GetType().BaseType.Name == serviceName
+                )?.GetType().Name;
+            else
+                return ApplicationContext.Current.GetService(serviceType)?.GetType().Name;
         }
 
         /// <summary>
@@ -146,14 +188,13 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Cannot have menus if not logged in
                 if (ApplicationContext.Current.Principal == null) return null;
 
-                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.Where(
-                    o=>o.Info.Policies?.Any(p=>ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false
-                ).SelectMany(o => o.Menus);
+                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
                
                 // Create menus
                 foreach(var mnu in rootMenus)
                     this.ProcessMenuItem(mnu, retVal);
+                retVal.RemoveAll(o => o.Action == null && o.Menu?.Count == 0);
 
                 return JniUtil.ToJson(retVal);
             }
@@ -170,6 +211,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
+            if (menu.Launcher != null &&
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher)?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                return;
+
             string menuText = menu.GetText(this.GetLocale());
             var existing = retVal.Find(o => o.Text == menuText);
             if (existing == null)
@@ -186,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 existing.Menu = new List<MenuInformation>();
                 foreach (var child in menu.Menus)
-                    this.ProcessMenuItem(child, existing.Menu);
+                        this.ProcessMenuItem(child, existing.Menu);
             }
         }
 
@@ -320,6 +365,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 this.m_tracer.TraceVerbose("Setting locale to {0}", locale);
                 this.m_context.Resources.Configuration.SetLocale(new Java.Util.Locale(locale));
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(locale);
             }
             catch(Exception e)
             {

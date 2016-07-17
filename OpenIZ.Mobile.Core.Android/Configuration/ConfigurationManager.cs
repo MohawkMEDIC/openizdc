@@ -18,6 +18,7 @@ using OpenIZ.Mobile.Core.Data;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using AndroidOS = Android.OS;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -81,8 +82,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "app://openiz.org/applet/org.timr.applet.dashboard/index",
-                AuthenticationAsset = "app://openiz.org/applet/org.timr.applet.login/index"
+                StartupAsset = "org.openiz.core",
+                AuthenticationAsset = "/views/security/login.html"
             };
 
 			// Initial applet style
@@ -92,13 +93,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 				ServiceTypes = new List<string>() {
 					typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
 					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
-					typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
-                    typeof(LocalSecurityService).AssemblyQualifiedName,
-                    typeof(SHA256PasswordHasher).AssemblyQualifiedName,
-					typeof(OAuthIdentityProvider).AssemblyQualifiedName,
-					typeof(LocalPersistenceService).AssemblyQualifiedName,
-					typeof(LocalEntitySource).AssemblyQualifiedName
+                    typeof(LocalConceptService).AssemblyQualifiedName,
+					typeof(LocalEntitySource).AssemblyQualifiedName,
+                    typeof(MiniImsServer).AssemblyQualifiedName
 				}
 			};
 
@@ -109,9 +107,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			String macAddress = Guid.NewGuid ().ToString ();
 			if (wlan != null)
 				macAddress = wlan.GetPhysicalAddress ().ToString ();
-		//else 
-				
-
+            //else 
+           
 			SecurityConfigurationSection secSection = new SecurityConfigurationSection () {
 				DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ","")
 			};

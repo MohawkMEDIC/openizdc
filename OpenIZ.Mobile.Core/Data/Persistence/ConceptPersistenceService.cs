@@ -33,6 +33,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             //modelInstance.ConceptNames = context.Table<DbConceptName>().Where(o => o.ConceptUuid == dbInstance.Uuid).Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList();
             //modelInstance.StatusConcept = m_mapper.MapDomainInstance<DbConcept, Concept>(context.Table<DbConcept>().Where(o => o.Uuid == dbInstance.StatusUuid).FirstOrDefault());
             //modelInstance.Class = m_mapper.MapDomainInstance<DbConceptClass, ConceptClass>(context.Table<DbConceptClass>().Where(o => o.Uuid == dbInstance.ClassUuid).FirstOrDefault());
+            modelInstance.LoadAssociations(context);
+
             return modelInstance;
         }
 
@@ -41,12 +43,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Concept Insert(SQLiteConnection context, Concept data)
         {
-            data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
-            data.ClassKey = data.ClassKey == Guid.Empty ? ConceptClassKeys.Other : data.ClassKey;
-
             // Ensure exists
             data.Class?.EnsureExists(context);
             data.StatusConcept?.EnsureExists(context);
+            data.ClassKey = data.Class?.Key ?? data.ClassKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+
+            data.StatusConceptKey = data.StatusConceptKey ?? StatusKeys.Active;
+            data.ClassKey = data.ClassKey ?? ConceptClassKeys.Other;
+
 
             // Persist
             var retVal = base.Insert(context, data);
@@ -56,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 base.UpdateAssociatedItems<ConceptName, Concept>(
                     new List<ConceptName>(),
                     retVal.ConceptNames,
-                    data.Key,
+                    data.Key.Value,
                     context
                 );
 
@@ -68,9 +73,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Concept Update(SQLiteConnection context, Concept data)
         {
+            data.Class?.EnsureExists(context);
+            data.StatusConcept?.EnsureExists(context);
+            data.ClassKey = data.Class?.Key ?? data.ClassKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+
             var retVal = base.Update(context, data);
 
-            var sourceKey = data.Key.ToByteArray();
+            var sourceKey = data.Key.Value.ToByteArray();
             if (retVal.ConceptNames != null)
                 base.UpdateAssociatedItems<ConceptName, Concept>(
                     context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),

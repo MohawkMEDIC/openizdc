@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -19,12 +20,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Place ToModelInstance(object dataInstance, SQLiteConnection context)
         {
-            var place = dataInstance as DbPlace;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
+            var iddat = dataInstance as DbVersionedData;
+            var place = dataInstance as DbPlace?? context.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
+
             var retVal = m_entityPersister.ToModelInstance<Place>(dbe, context);
             retVal.IsMobile = place.IsMobile;
             retVal.Lat = place.Lat;
             retVal.Lng = place.Lng;
+            retVal.LoadAssociations(context);
+
             return retVal;
         }
 
@@ -52,7 +57,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = base.Update(context, data);
 
-            byte[] sourceKey = data.Key.ToByteArray();
+            byte[] sourceKey = data.Key.Value.ToByteArray();
             if (data.Services != null)
                 base.UpdateAssociatedItems<PlaceService, Entity>(
                     context.Table<DbPlaceService>().Where(o => o.EntityUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),

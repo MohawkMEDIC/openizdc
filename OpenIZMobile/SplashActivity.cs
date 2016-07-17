@@ -22,6 +22,9 @@ using System.Threading;
 using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using System.Xml.Serialization;
+using OpenIZ.Mobile.Core.Android.Services;
+using OpenIZ.Mobile.Core;
+using System.IO.Compression;
 
 namespace OpenIZMobile
 {
@@ -32,82 +35,98 @@ namespace OpenIZMobile
 		// Tracer
 		private Tracer m_tracer;
 
-		/// <summary>
-		/// Create the activity
-		/// </summary>
-		/// <param name="savedInstanceState">Saved instance state.</param>
-		protected override void OnCreate (Bundle savedInstanceState)
-		{
-			base.OnCreate (savedInstanceState);
-			this.SetContentView (Resource.Layout.Splash);
-		}
+        /// <summary>
+        /// Progress has changed
+        /// </summary>
+        private void OnProgressUpdated(Object sender, ApplicationProgressEventArgs e)
+        {
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = String.Format("{0} {1} ({2:0%})", Resources.GetString(Resource.String.installing_applets), e.ProgressText, e.Progress));
+        }
 
-		protected override void OnResume ()
-		{
-			base.OnResume ();
-			OpenIZ.Mobile.Core.ApplicationContext.Current = null;
+        /// <summary>
+        /// Create the activity
+        /// </summary>
+        /// <param name="savedInstanceState">Saved instance state.</param>
+        protected override void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            this.SetContentView(Resource.Layout.Splash);
+        }
 
-			this.FindViewById<TextView> (Resource.Id.txt_splash_version).Text = String.Format ("V {0} ({1})",
-				typeof(SplashActivity).Assembly.GetName ().Version,
-				typeof(SplashActivity).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute> ().InformationalVersion
-			);
+        protected override void OnResume()
+        {
+            base.OnResume();
+            OpenIZ.Mobile.Core.ApplicationContext.Current = null;
 
-			CancellationTokenSource ctSource = new CancellationTokenSource ();
-			CancellationToken ct = ctSource.Token;
+            this.FindViewById<TextView>(Resource.Id.txt_splash_version).Text = String.Format("V {0} ({1})",
+                typeof(OpenIZConfiguration).Assembly.GetName().Version,
+                typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
+            );
 
-			Task startupWork = new Task (() => {
-				Task.Delay (1000);
-				if (!this.DoConfigure ())
-					ctSource.Cancel ();
-			}, ct);
+            CancellationTokenSource ctSource = new CancellationTokenSource();
+            CancellationToken ct = ctSource.Token;
 
-			startupWork.ContinueWith (t => {
-				if (!ct.IsCancellationRequested)
+            Task startupWork = new Task(() =>
+            {
+                Task.Delay(1000);
+                if (!this.DoConfigure())
+                    ctSource.Cancel();
+            }, ct);
+
+            startupWork.ContinueWith(t =>
+            {
+                if (!ct.IsCancellationRequested)
                 {
                     Intent viewIntent = new Intent(this, typeof(AppletActivity));
                     var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                    viewIntent.PutExtra("assetLink", appletConfig.StartupAsset);
+                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/index.html");
                     this.StartActivity(viewIntent);
 
                 }
-            }, TaskScheduler.FromCurrentSynchronizationContext ());
+            }, TaskScheduler.FromCurrentSynchronizationContext());
 
-			startupWork.Start ();
 
-		}
+            startupWork.Start();
 
-		/// <summary>
-		/// Startup is complete
-		/// </summary>
-		private bool DoConfigure ()
-		{
+        }
 
-			try {
+        /// <summary>
+        /// Startup is complete
+        /// </summary>
+        private bool DoConfigure()
+        {
+
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = Resources.GetString(Resource.String.startup));
+
+            try
+            {
 
                 if (AndroidApplicationContext.Current != null)
-					return true;
-				
-				if (!AndroidApplicationContext.Start ()) {
+                    return true;
 
-					CancellationTokenSource ctSource = new CancellationTokenSource();
-					CancellationToken ct = ctSource.Token;
+                if (!AndroidApplicationContext.Start())
+                {
 
-					Task notifyUserWork = new Task (() => {
+                    CancellationTokenSource ctSource = new CancellationTokenSource();
+                    CancellationToken ct = ctSource.Token;
 
-						this.RunOnUiThread (() => this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.needs_setup));
-						Task.Delay (2000);
+                    Task notifyUserWork = new Task(() =>
+                    {
 
-						try {
+                        try
+                        {
                             if (AndroidApplicationContext.StartTemporary())
                             {
                                 this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
 
                                 try
                                 {
-                                    AppletManifest manifest = AppletManifest.Load(Assets.Open("Applets/SettingsApplet.xml"));
-                                    // Write data to assets directory
-                                    var package = manifest.CreatePackage();
-                                    AndroidApplicationContext.Current.InstallApplet(package, true);
+                                    using (var gzs = new GZipStream(Assets.Open("Applets/openiz.core.applet.pak"), CompressionMode.Decompress))
+                                    {
+                                        // Write data to assets directory
+                                        var package = AppletPackage.Load(gzs);
+                                        AndroidApplicationContext.Current.InstallApplet(package, true);
+                                    }
                                 }
                                 catch (Exception e)
                                 {
@@ -118,74 +137,101 @@ namespace OpenIZMobile
                             }
                             else
                                 throw new InvalidOperationException("Cannot start temporary authentication pricipal");
-						} catch (Exception e) {
-							this.m_tracer.TraceError (e.ToString ());
-							ctSource.Cancel();
-							this.ShowException (e);
-						}
-					}, ct);
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer.TraceError(e.ToString());
+                            ctSource.Cancel();
+                            this.ShowException(e);
+                        }
+                    }, ct);
 
-					// Now show the configuration screen.
-					notifyUserWork.ContinueWith (t => {
-						if(!ct.IsCancellationRequested)
-						{
-							Intent viewIntent = new Intent (this, typeof(AppletActivity));
-							viewIntent.PutExtra ("assetLink", "app://openiz.org/applet/org.openiz.applet.core.settings");
-							viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
-							this.StartActivity (viewIntent);
+                    // Now show the configuration screen.
+                    notifyUserWork.ContinueWith(t =>
+                    {
+                        if (!ct.IsCancellationRequested)
+                        {
+                            Intent viewIntent = new Intent(this, typeof(AppletActivity));
+                            viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/views/settings/index.html");
+                            viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
+                            this.StartActivity(viewIntent);
 
-						}
-					}, TaskScheduler.Current);
+                        }
+                    }, TaskScheduler.Current);
 
-					notifyUserWork.Start ();
-					return false;
-				} else {
+                    notifyUserWork.Start();
+                    return false;
+                }
+                else
+                {
 
-					this.m_tracer = Tracer.GetTracer(this.GetType());
+                    AndroidApplicationContext.Current.ProgressChanged += this.OnProgressUpdated;
 
-					RunOnUiThread (() => { 
-						this.FindViewById<TextView> (Resource.Id.txt_splash_info).Text = GetString (Resource.String.installing_applets);
-					});
+                    this.m_tracer = Tracer.GetTracer(this.GetType());
 
-					// Upgrade applets from our app manifest
-					foreach (var itm in Assets.List ("Applets")) {
-						try {
-							AppletManifest manifest = AppletManifest.Load (Assets.Open (String.Format ("Applets/{0}", itm)));
+                    // Upgrade applets from our app manifest
+                    foreach (var itm in Assets.List("Applets"))
+                    {
+                        try
+                        {
+                            this.m_tracer.TraceVerbose("Loading {0}", itm);
+                            AppletPackage pkg = null;
+                            if (Path.GetExtension(itm) == ".pak")
+                            {
+                                using (var gzs = new GZipStream(Assets.Open(String.Format("Applets/{0}", itm)), CompressionMode.Decompress))
+                                    pkg = AppletPackage.Load(gzs);
+
+                            }
+                            else
+                            {
+                                AppletManifest manifest = AppletManifest.Load(Assets.Open(String.Format("Applets/{0}", itm)));
+                                pkg = manifest.CreatePackage();
+                            }
+
                             // Write data to assets directory
 #if !DEBUG
                             if(new Version(AndroidApplicationContext.Current.GetApplet(manifest.Info.Id)?.Info.Version ?? "0.0.0.0") < new Version(manifest.Info.Version))
 #endif       
-                            AndroidApplicationContext.Current.InstallApplet (manifest.CreatePackage (), true);
-						} catch (Exception e) {
-							this.m_tracer?.TraceError (e.ToString ());
-						}
-					}
-				}
-				return true;
-			} catch (Exception e) {
+                            AndroidApplicationContext.Current.InstallApplet(pkg, true);
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer?.TraceError(e.ToString());
+                        }
+                    }
 
-				this.ShowException (e);
-				return false;
-			}
-		}
+                }
+
+                AndroidApplicationContext.Current.ProgressChanged -= this.OnProgressUpdated;
+
+                return true;
+            }
+            catch (Exception e)
+            {
+
+                this.ShowException(e);
+                return false;
+            }
+        }
 
 
-		/// <summary>
-		/// Shows an exception message box
-		/// </summary>
-		/// <param name="e">E.</param>
-		private void ShowException (Exception e)
-		{
-			this.m_tracer?.TraceError ("Error during startup: {0}", e);
-			Log.Error ("FATAL", e.ToString ());
-			while (e is TargetInvocationException)
-				e = e.InnerException;
-			UserInterfaceUtils.ShowMessage (this,
-				(s, a) => {
-					this.Finish ();
-				},
-				"{0} : {1}", Resources.GetString (Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
-		}
-	}
+        /// <summary>
+        /// Shows an exception message box
+        /// </summary>
+        /// <param name="e">E.</param>
+        private void ShowException(Exception e)
+        {
+            this.m_tracer?.TraceError("Error during startup: {0}", e);
+            Log.Error("FATAL", e.ToString());
+            while (e is TargetInvocationException)
+                e = e.InnerException;
+            UserInterfaceUtils.ShowMessage(this,
+                (s, a) =>
+                {
+                    this.Finish();
+                },
+                "{0} : {1}", Resources.GetString(Resource.String.err_startup), e is TargetInvocationException ? e.InnerException.Message : e.Message);
+        }
+    }
 }
 

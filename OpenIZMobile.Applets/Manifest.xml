@@ -1,0 +1,103 @@
+<AppletManifest xmlns="http://openiz.org/applet">
+  <info id="org.openiz.core" version="0.5.4.*">
+    <icon>/img/cog.png</icon>
+    <name lang="en">OpenIZ Disconnected Client Core</name>
+    <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
+  </info>
+  <startup>/index.html</startup>
+  <menuItem launch="/views/settings/index.html">
+    <icon>/img/appbar.settings.png</icon>
+    <text lang="en">Settings</text>
+  </menuItem>
+  <strings lang="en">
+    <string key="locale.error.404.title">Not Found</string>
+    <string key="locale.error.404.description">The requested resource was not found: </string>
+    <string key="locale.error.500.title">Internal Server Error</string>
+    <string key="locale.error.500.description">There was an internal error rendering the page. Please check the mobile log files.</string>
+    <string key="locale.error.403.title">Forbidden</string>
+    <string key="locale.error.403.description">The requested action is forbidden</string>
+    <string key="locale.error.bug.title">Submit Bug</string>
+    <string key="locale.error.bug.description">Use this form to submit a bug or feedback on this page.</string>
+    <string key="locale.error.bug.input.title">Summary:</string>
+    <string key="locale.error.bug.input.severity">Severity:</string>
+    <string key="locale.error.bug.input.blocker">I cannot perform my assigned tasks because of this bug</string>
+    <string key="locale.error.bug.input.severe">This bug is severe and I cannot work around it</string>
+    <string key="locale.error.bug.input.minimal">I can work around this bug but it interrupts my workflow</string>
+    <string key="locale.error.bug.input.trivial">I am able to work around this bug</string>
+    <string key="locale.error.bug.input.description">Describe this bug:</string>
+    <string key="locale.error.bug.input.logFile">Attach Log File:</string>
+    
+    <!-- Settings -->
+    <string key="locale.settings.realmTitle">Join Realm</string>
+    <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
+    <string key="locale.settings.deviceName">Device Name:</string>
+    <string key="locale.settings.realmName">Realm ID:</string>
+    <string key="locale.settings.dataTitle">Data Settings</string>
+    <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
+    <string key="locale.settings.dataMode">Data Mode:</string>
+    <string key="locale.settings.logTitle">Log Settings</string>
+    <string key="locale.settings.logDescription">OpenIZ Disconnected Client keeps application log files which can be sent to a centralized diagnosis server in the case of application crash. Use this panel to configure the verbosity of those logs</string>
+    <string key="locale.settings.logMode">Log Detail:</string>
+    <string key="locale.settings.log.critical">Critical Alerts (crashes) only</string>
+    <string key="locale.settings.log.always">Log Everything (results in large log files)</string>
+    <string key="locale.settings.log.informational">Verbose</string>
+    <string key="locale.settings.log.verbose">Very Verbose</string>
+    <string key="locale.settings.log.error">Errors Only</string>
+    <string key="locale.settings.log.warning">Errors and Warnings Only</string>
+    <string key="locale.settings.securityTitle">Security Settings</string>
+    <string key="locale.settings.securityDescription">Use this panel to configure the manner in which security policies are enforced on this device.</string>
+    <string key="locale.settings.passwordFormat">Password Store:</string>
+    <string key="locale.settings.allowLocalAuth">Authorization:</string>
+    <string key="locale.settings.allowLocalAuthDescription">Allow local authorization, this will allow clients to log into the app even if the internet is down</string>
+    <string key="locale.settings.security.sha256">SHA256 Hashing - Very Strong</string>
+    <string key="locale.settings.security.sha1">SHA1 Hashing - Compatibility mode</string>
+    <string key="locale.settings.security.plain">Plaintext (not-recommended)</string>
+    <string key="locale.settings.save">Save Settings</string>
+    <string key="locale.settings.cancel">Cancel</string>
+    <string key="locale.settings.syncEvents">Synchronize On:</string>
+    <string key="locale.settings.syncEvents.start">When the application starts</string>
+    <string key="locale.settings.syncEvents.stop">When the application closes</string>
+    <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
+    <string key="locale.settings.syncEvents.ip">When the internet status changes</string>
+    <string key="locale.settings.pollInterval">Enable Polling:</string>
+    <string key="locale.settings.pollInterval.0">Never</string>
+    <string key="locale.settings.pollInterval.1">Every 1 minute</string>
+    <string key="locale.settings.pollInterval.5">Every 5 minutes</string>
+    <string key="locale.settings.pollInterval.15">Every 15 minutes</string>
+    <string key="locale.settings.pollInterval.30">Every 30 minutes</string>
+    <string key="locale.settings.pollInterval.push">When new data is available</string>
+    <string key="locale.settings.leaveRealm">Leave</string>
+    <string key="locale.settings.joinRealm">Join</string>
+    <string key="locale.settings.apply">Apply</string>
+    <string key="locale.settings.cancel">Cancel</string>
+    <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
+    <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
+    <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
+    <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
+    <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
+    <string key="locale.settings.localAdminName">Local Admin Username:</string>
+
+    <!-- Login -->
+    <string key="locale.login.header">Log-in to</string>
+    <string key="locale.login.username">Username:</string>
+    <string key="locale.login.password">Password:</string>
+    <string key="locale.login.doLogin">Login</string>
+
+  </strings>
+  <strings lang="fr">
+    <string key="locale.error.404.title">Non trouvee</string>
+    <string key="locale.error.404.description">Le ressource demandee n'a pas pu etra trouve. </string>
+    <string key="locale.error.500.title">Erreru du Serveur</string>
+    <string key="locale.error.500.description">Il y avait une erreru rendu cette page. S'il vous plait verifier les fishiers journaux.</string>
+    <string key="locale.error.403.title">Interdit</string>
+    <string key="locale.error.403.description">Vous ne possedez pas de privileges suffisants pour voir la page.</string>
+  </strings>
+  <strings lang="sw">
+    <string key="locale.error.404.title">Haipatikani</string>
+    <string key="locale.error.404.description">Rasilimali aliomba hakuweza kupatikana.</string>
+    <string key="locale.error.500.title">Kosa server</string>
+    <string key="locale.error.500.description">Kulikuwa na hitilafu utoaji ukurasa ombi. Tafadhali wasiliana na magogo maombi ya simu.</string>
+    <string key="locale.error.403.title">Haramu</string>
+    <string key="locale.error.403.description">Hawana marupurupu ya kutosha na kuona</string>
+  </strings>
+  </AppletManifest>

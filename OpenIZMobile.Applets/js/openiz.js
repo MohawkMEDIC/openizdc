@@ -269,6 +269,20 @@ var OpenIZ = OpenIZ || {
     */
     App: {
         /**
+         * @summary Gets the specified service implementation in memory
+         * @param {String} serviceName The name of the service 
+         * @return {String} The service class which implements the specified contract
+         */
+        getService : function(serviceName) {
+            return OpenIZApplicationService.GetService(serviceName);
+        },
+        /** 
+         * @summary Gets the current version of the OpenIZ host
+         */
+        getVersion : function() {
+            return OpenIZApplicationService.GetVersion();
+        },
+        /**
          * @summary Get a list of all log files
          */
         getLogFiles : function() {
@@ -833,7 +847,36 @@ var OpenIZ = OpenIZ || {
     * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ system including realm, updating configuration, etc.
     * @class
     */
-    Configuration :  {
+    Configuration: {
+        /**
+         * @summary Gets the specified appplication setting
+         * @method
+         * @param {String} key The key of the application setting to retrieve
+         * @return {String} The setting value
+         */
+        getApplicationSetting : function(key) {
+            try {
+                return OpenIZConfigurationService.GetApplicationSetting(key);
+                
+            }
+            catch (e) {
+                throw new OpenIZModel.Exception(e.message, e.detail, e);
+            }
+        },
+        /**
+         * @summary Gets the specified appplication setting
+         * @method
+         * @param {String} key The key of the application setting to retrieve
+         * @return {String} The setting value
+         */
+        setApplicationSetting : function(key, value) {
+            try {
+                OpenIZConfigurationService.SetApplicationSetting(key, value);
+            }
+            catch (e) {
+                throw new OpenIZModel.Exception(e.message, e.detail, e);
+            }
+        },
         /**
         * @summary Gets the current realm to which the client is connected
         * @memberof OpenIZ.Configuration

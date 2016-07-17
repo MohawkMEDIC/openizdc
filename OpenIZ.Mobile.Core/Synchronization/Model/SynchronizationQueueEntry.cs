@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 	/// <summary>
 	/// The message queue represents outbound or inbound data requests found by the sync service
 	/// </summary>
-	public abstract class SynchronizationQueueEntry 
+	public abstract class SynchronizationQueueEntry  
 	{
 
 		/// <summary>
@@ -93,7 +93,12 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 	[Table("outbound_queue")]
 	public class OutboundQueueEntry : SynchronizationQueueEntry
 	{
-	}
+
+        /// <summary>
+        /// Indicates the fail count
+        /// </summary>
+        public int RetryCount { get; set; }
+    }
 
 	/// <summary>
 	/// Dead letter queue entry - Dead letters are queue items that could not be synchronized for some reason.

@@ -15,6 +15,9 @@ using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Exceptions;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.Reflection;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -32,9 +35,122 @@ namespace OpenIZ.Mobile.Core.Data
         private static Object s_lock = new object();
 
         /// <summary>
+        /// Load specified associations
+        /// </summary>
+        public static void LoadAssociations<TModel>(this TModel me, SQLiteConnection context) where TModel : IIdentifiedEntity
+        {
+            if (me == null)
+                throw new ArgumentNullException(nameof(me));
+            else if (context.IsInTransaction)
+                return;
+            // Load associations
+            foreach(var pi in typeof(TModel).GetRuntimeProperties())
+            {
+                if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
+                    pi.GetCustomAttribute<AutoLoadAttribute>() == null)
+                    continue;
+
+                var value = pi.GetValue(me);
+                if (value == null) continue;
+                else if (value is IdentifiedData && (value as IdentifiedData).IsLogicalNull)
+                    pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));
+                else if(value is IList)
+                {
+                    if ((value as IList).Count > 0) continue;
+
+                    Type entryType = pi.PropertyType.GetTypeInfo().GenericTypeArguments[0],
+                        predicateType = typeof(Func<,>).MakeGenericType(entryType, typeof(bool));
+
+                    if (!typeof(ISimpleAssociation).GetTypeInfo().IsAssignableFrom(entryType.GetTypeInfo()))
+                        continue;
+
+                    ParameterExpression parameterExpr = Expression.Parameter(entryType, "o");
+                    var memberExpr = Expression.MakeMemberAccess(parameterExpr, entryType.GetRuntimeProperty("SourceEntityKey"));
+                    var lambda = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, memberExpr, Expression.Convert(Expression.Constant(me.Key), typeof(Guid?))), parameterExpr);
+
+                    // Get the query method
+                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(entryType);
+                    var idpInstance = ApplicationContext.Current.GetService(idpType);
+                    if (idpInstance == null) continue;
+                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+
+                    // Execute query
+                    if (queryMethod == null) continue;
+                    else
+                    {
+                        var results = queryMethod.Invoke(idpInstance, new object[] { context, lambda }) as IEnumerable;
+                        var lValue = Activator.CreateInstance(pi.PropertyType) as IList;
+                        pi.SetValue(me, lValue);
+                        foreach(var itm in results)
+                        {
+                            lValue.Add(itm);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Try get by classifier
+        /// </summary>
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, SQLiteConnection context)
+        {
+            // Is there a classifier?
+            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+            var idpInstance = ApplicationContext.Current.GetService(idpType);
+            if (idpInstance == null) return null;
+
+            IIdentifiedEntity existing = null;
+
+            // Is the key not null?
+            if (me.Key != Guid.Empty && me.Key != null)
+            {
+                // We have to find it
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+                if (getMethod == null) return null;
+                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
+            }
+
+            var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
+            if (classAtt != null && existing == null)
+            {
+
+                object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
+                                            // Follow the classifier
+                Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
+                ParameterExpression parameterExpr = Expression.Parameter(me.GetType(), "o");
+                Expression accessExpr = parameterExpr;
+                while (classAtt != null)
+                {
+                    var property = accessExpr.Type.GetRuntimeProperty(classAtt.UniqueProperty);
+                    accessExpr = Expression.MakeMemberAccess(accessExpr, property);
+                    classifierValue = property.GetValue(classifierValue);
+
+                    classAtt = accessExpr.Type.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
+
+                }
+
+                // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+                var expression = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr });
+
+                if (queryMethod == null) return null;
+                var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression }) as IEnumerable;
+                foreach (var i in iq)
+                {
+                    existing = i as IIdentifiedEntity;
+                    me.Key = existing.Key;
+                    if (me is IVersionedEntity)
+                        (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
+                }
+            }
+            return existing;
+
+        }
+        /// <summary>
         /// Ensure the specified object exists, insert it if it doesnt
         /// </summary>
-        public static void EnsureExists(this IIdentifiedEntity me, SQLiteConnection context) 
+        public static void EnsureExists(this IIdentifiedEntity me, SQLiteConnection context)
         {
 
             // Me
@@ -43,7 +159,7 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Does it exist in our cache?
             Guid? existingGuidVer = null;
-            if (s_exists.TryGetValue(dkey, out existingGuidVer))
+            if ( s_exists.TryGetValue(dkey, out existingGuidVer))
             {
                 if (vMe?.VersionKey == existingGuidVer || vMe == null)
                     return; // Exists already we know about it
@@ -52,15 +168,14 @@ namespace OpenIZ.Mobile.Core.Data
             // We have to find it
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
             var idpInstance = ApplicationContext.Current.GetService(idpType);
-            var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o=>o.Name == "Get" && o.GetParameters().Length == 2);
-            if (getMethod == null) return;
-            var existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
+            
+            var existing = me.TryGetExisting(context);
 
             // Existing exists?
             if (existing != null)
             {
                 // Exists but is an old version
-                if ((existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
+                if (vMe?.VersionKey != null && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
                 {
                     // Update method
                     var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 2);
@@ -77,10 +192,10 @@ namespace OpenIZ.Mobile.Core.Data
                 dkey = String.Format("{0}.{1}", me.GetType().FullName, existing.Key);
 
                 lock (s_lock)
-                    if (existingGuidVer.HasValue)
-                        s_exists[dkey] = vMe?.VersionKey;
+                    if (s_exists.ContainsKey(dkey))
+                        s_exists[dkey] = vMe?.VersionKey ?? (existing as IVersionedEntity)?.VersionKey;
                     else
-                        s_exists.Add(dkey, vMe?.VersionKey);
+                        s_exists.Add(dkey, vMe?.VersionKey ?? (existing as IVersionedEntity)?.VersionKey);
             }
             else // Insert
             {
@@ -90,40 +205,40 @@ namespace OpenIZ.Mobile.Core.Data
                     IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me }) as IIdentifiedEntity;
                     me.Key = inserted.Key;
 
-                    if(vMe != null)
+                    if (vMe != null)
                         vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 }
                 dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
 
                 lock (s_lock)
-                    if(me.Key != Guid.Empty)
+                    if (me.Key != Guid.Empty)
                         s_exists.Add(dkey, null);
 
             }
         }
 
-        /// <summary>
-        /// Updates a keyed delay load field if needed
-        /// </summary>
-        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
-        {
-            var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
-            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
-                return;
-            var value = field.GetValue(instance) as IIdentifiedEntity;
-            if (value == null)
-                return;
-            // Get the delay load key property!
-            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
-            keyField.SetValue(instance, value.Key);
-        }
+        ///// <summary>
+        ///// Updates a keyed delay load field if needed
+        ///// </summary>
+        //public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
+        //{
+        //    var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
+        //    if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
+        //        return;
+        //    var value = field.GetValue(instance) as IIdentifiedEntity;
+        //    if (value == null)
+        //        return;
+        //    // Get the delay load key property!
+        //    var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
+        //    keyField.SetValue(instance, value.Key);
+        //}
     }
 
-	/// <summary>
-	/// Represents a dummy service which just adds the persistence services to the context
-	/// </summary>
-	public class LocalPersistenceService
-	{
+    /// <summary>
+    /// Represents a dummy service which just adds the persistence services to the context
+    /// </summary>
+    public class LocalPersistenceService
+    {
 
         /// <summary>
         /// Generic versioned persister service for any non-customized persister
@@ -140,55 +255,11 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
-                }
-                    return base.Insert(context, data);
-            }
-
-            /// <summary>
-            /// Update the specified object
-            /// </summary>
-            public override TModel Update(SQLiteConnection context, TModel data)
-            {
-                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
-                {
-                    var instance = rp.GetValue(data);
-                    if (instance != null)
-                    {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
-                }
-                return base.Update(context, data);
-            }
-        }
-
-        /// <summary>
-        /// Generic versioned persister service for any non-customized persister
-        /// </summary>
-        internal class GenericBasePersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain>
-            where TDomain : DbBaseData, new()
-            where TModel : BaseEntityData , new()
-        {
-
-            /// <summary>
-            /// Ensure exists
-            /// </summary>
-            public override TModel Insert(SQLiteConnection context, TModel data)
-            {
-                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
-                {
-                    var instance = rp.GetValue(data);
-                    if (instance != null)
-                    {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data);
             }
@@ -200,14 +271,54 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
-                    }
-                    return base.Update(context, data);
+                }
+                return base.Update(context, data);
+            }
+        }
+
+        /// <summary>
+        /// Generic versioned persister service for any non-customized persister
+        /// </summary>
+        internal class GenericBasePersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain>
+            where TDomain : DbBaseData, new()
+            where TModel : BaseEntityData, new()
+        {
+
+            /// <summary>
+            /// Ensure exists
+            /// </summary>
+            public override TModel Insert(SQLiteConnection context, TModel data)
+            {
+                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
+                {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
+                    var instance = rp.GetValue(data);
+                    if (instance != null)
+                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                }
+                return base.Insert(context, data);
+            }
+
+            /// <summary>
+            /// Update the specified object
+            /// </summary>
+            public override TModel Update(SQLiteConnection context, TModel data)
+            {
+                foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
+                {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
+                    var instance = rp.GetValue(data);
+                    if (instance != null)
+                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                }
+                return base.Update(context, data);
             }
         }
 
@@ -225,12 +336,11 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Insert(context, data);
             }
@@ -242,12 +352,11 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
+                    if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
+
                     var instance = rp.GetValue(data);
                     if (instance != null)
-                    { 
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        data.UpdateParentKeys(rp);
-                    }
                 }
                 return base.Update(context, data);
             }
@@ -287,30 +396,31 @@ namespace OpenIZ.Mobile.Core.Data
         private Tracer m_tracer = Tracer.GetTracer(typeof(LocalPersistenceService));
 
         // Constructor
-		public LocalPersistenceService ()
-		{
-			var appSection = ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection> ();
+        public LocalPersistenceService()
+        {
+            var appSection = ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>();
 
-			// Iterate the persistence services
-			foreach(var t in typeof(LocalPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o=>o.Namespace == "OpenIZ.Mobile.Core.Data.Persistence" && !o.GetTypeInfo().IsAbstract && !o.GetTypeInfo().IsGenericTypeDefinition))
-			{
-				try
-				{
-					this.m_tracer.TraceVerbose ("Loading {0}...", t.AssemblyQualifiedName);
-					appSection.Services.Add (Activator.CreateInstance (t));
-				}
-				catch(Exception e) {
-					this.m_tracer.TraceError ("Error adding service {0} : {1}", t.AssemblyQualifiedName, e); 
-				}
-			}
+            // Iterate the persistence services
+            foreach (var t in typeof(LocalPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Mobile.Core.Data.Persistence" && !o.GetTypeInfo().IsAbstract && !o.GetTypeInfo().IsGenericTypeDefinition))
+            {
+                try
+                {
+                    this.m_tracer.TraceVerbose("Loading {0}...", t.AssemblyQualifiedName);
+                    appSection.Services.Add(Activator.CreateInstance(t));
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error adding service {0} : {1}", t.AssemblyQualifiedName, e);
+                }
+            }
 
             // Now iterate through the map file and ensure we have all the mappings, if a class does not exist create it
             try
             {
                 this.m_tracer.TraceVerbose("Creating secondary model maps...");
-                
+
                 var map = ModelMap.Load(typeof(LocalPersistenceService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Map.ModelMap.xml"));
-                foreach(var itm in map.Class)
+                foreach (var itm in map.Class)
                 {
                     // Is there a persistence service?
                     var idpType = typeof(IDataPersistenceService<>);
@@ -326,7 +436,7 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_tracer.TraceVerbose("Creating map {0} > {1}", modelClassType, domainClassType);
 
                     // Is the model class a Versioned entity?
-                    if (modelClassType.GetRuntimeProperty("VersionKey") != null && 
+                    if (modelClassType.GetRuntimeProperty("VersionKey") != null &&
                         typeof(DbVersionedData).GetTypeInfo().IsAssignableFrom(domainClassType.GetTypeInfo()))
                     {
                         // Construct a type
@@ -352,7 +462,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error initializing local persistence: {0}", e);
                 throw e;

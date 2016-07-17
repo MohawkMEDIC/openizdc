@@ -19,7 +19,7 @@
     <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
@@ -28,7 +28,14 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <AndroidSupportedAbis>armeabi-v7a;x86</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
+    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>Xamarin</Debugger>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -39,32 +46,12 @@
     <ConsolePause>false</ConsolePause>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <EnableProguard>False</EnableProguard>
-    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
-    <BundleAssemblies>False</BundleAssemblies>
-    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <Debugger>Xamarin</Debugger>
-    <AotAssemblies>False</AotAssemblies>
-    <EnableLLVM>False</EnableLLVM>
-    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
-    <DebugSymbols>False</DebugSymbols>
-    <AndroidLinkSkip>System.Xml.Linq</AndroidLinkSkip>
+    <EnableProguard>true</EnableProguard>
+    <AndroidSupportedAbis>armeabi-v7a</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIZ.Messaging.IMSI.Client">
-      <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -87,7 +74,7 @@
     <Compile Include="UserInterfaceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\js\README.md" />
+    <AndroidAsset Include="Assets\Applets\openiz.core.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml" />
     <None Include="Assets\AboutAssets.txt" />
@@ -105,9 +92,7 @@
     <AndroidResource Include="Resources\drawable\logo_lg.png" />
     <AndroidResource Include="Resources\drawable\circle_bg.xml" />
     <AndroidResource Include="Resources\values\Styles.xml" />
-    <AndroidResource Include="Resources\layout\Splash.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Splash.axml" />
     <AndroidResource Include="Resources\drawable\splash_gradient.xml" />
     <AndroidResource Include="Resources\drawable\aefi.png" />
     <AndroidResource Include="Resources\drawable\announce.png" />
@@ -181,44 +166,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
-    <AndroidAsset Include="Assets\css\bootstrap.css" />
-    <AndroidAsset Include="Assets\css\bootstrap-theme.css" />
-    <AndroidAsset Include="Assets\js\angular.min.js" />
-    <AndroidAsset Include="Assets\js\bootstrap.js" />
-    <AndroidAsset Include="Assets\Applets\SettingsApplet.xml" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.eot" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.ttf" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff" />
-    <AndroidAsset Include="Assets\fonts\glyphicons-halflings-regular.woff2" />
-    <AndroidAsset Include="Assets\js\jquery.min.js" />
-    <AndroidAsset Include="Assets\js\jqBootstrapValidation.js" />
-    <AndroidAsset Include="Assets\js\jquery.easing.min.js" />
-    <AndroidAsset Include="Assets\js\jquery-ui.js" />
-    <AndroidAsset Include="Assets\css\jquery-ui.custom.css" />
-    <AndroidAsset Include="Assets\css\jquery-ui.theme.css" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_222222_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_454545_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_888888_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_flat_0_aaaaaa_40x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_flat_75_ffffff_40x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_55_fbf9ee_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_65_ffffff_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_dadada_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_75_e6e6e6_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_glass_95_fef1ec_1x400.png" />
-    <AndroidAsset Include="Assets\css\img\ui-bg_highlight-soft_75_cccccc_1x100.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_2e83ff_256x240.png" />
-    <AndroidAsset Include="Assets\css\img\ui-icons_cd0a0a_256x240.png" />
-    <AndroidAsset Include="Assets\js\openiz.js" />
-    <AndroidAsset Include="Assets\css\img\circle_loader.gif" />
-    <AndroidAsset Include="Assets\js\select2.min.js" />
-    <AndroidAsset Include="Assets\css\select2.min.css" />
-    <AndroidAsset Include="Assets\js\jquery.metro.js" />
-    <AndroidAsset Include="Assets\css\jquery.metro.css" />
-    <AndroidAsset Include="Assets\js\jquery.mobile.min.js" />
-    <AndroidAsset Include="Assets\js\chart.js" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
@@ -229,74 +176,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\ErrorApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\DashboardApplet.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\LoginApplet.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\RegisterApplet.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\coat_of_arms_of_tanzania.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\tanzaniaflagmap.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\openiz-model.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\toastr.min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\css\toastr.min.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\css\bootstrap-alterations.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\openiz-localize.js" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values-fr\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\js\ui-bootstrap.min.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\_LayoutApplet.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\PatientAdministrationApplet.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\angular-aria.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\js\angular-messages.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\img\timr_logo_lg.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\drk_bug.png" />
   </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Applets\EncounterManagementApplet.xml" />
-  </ItemGroup>
+  <PropertyGroup>
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
+ copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
+  </PropertyGroup>
 </Project>

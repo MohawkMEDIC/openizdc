@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Test.Persistence
 {
@@ -34,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 },
                  Identifiers = new System.Collections.Generic.List<OpenIZ.Core.Model.DataTypes.EntityIdentifier>()
                  {
-                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(Guid.Empty, "12039232-2302")
+                     new OpenIZ.Core.Model.DataTypes.EntityIdentifier(new AssigningAuthority() { DomainName = "MyDomain", Oid = "1.2.3.4.5.6", Name ="Test Domain" }, "12039232-2302")
                  },
                  Names = new System.Collections.Generic.List<EntityName>()
                  {

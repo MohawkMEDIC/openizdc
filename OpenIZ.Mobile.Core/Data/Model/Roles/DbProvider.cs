@@ -8,15 +8,15 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 	/// Represents a health care provider in the database
 	/// </summary>
 	[Table("provider")]
-	public class DbProvider
-	{
+	public class DbProvider : DbIdentified
+    {
 
 		/// <summary>
 		/// Gets or sets the specialty.
 		/// </summary>
 		/// <value>The specialty.</value>
-		[Column("specialty")]
-		public int? Specialty {
+		[Column("specialty"), MaxLength(16)]
+		public byte[] Specialty {
 			get;
 			set;
 		}

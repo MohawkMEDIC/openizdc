@@ -16,13 +16,15 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.EntityLoader;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Data
 {
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData
+    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData, new()
     {
 
         // Get tracer
@@ -107,12 +109,10 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("INSERT {0}", data);
 
 					connection.BeginTransaction ();
-
-                    data.SetDelayLoad(false);
+                    
 					data = this.Insert(connection, data);
-                    data.SetDelayLoad(true);
 
-					connection.Commit();
+                    connection.Commit();
 
                     this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Data
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			else if (data.Key == Guid.Empty)
+			else if (!data.Key.HasValue || data.Key == Guid.Empty)
 				throw new InvalidOperationException ("Data missing key");
 
 			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
@@ -155,9 +155,7 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("UPDATE {0}", data);
 					connection.BeginTransaction ();
 
-                    data.SetDelayLoad(false);
 					data = this.Update(connection, data);
-                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -182,8 +180,8 @@ namespace OpenIZ.Mobile.Core.Data
 		{
 			if (data == null)
 				throw new ArgumentNullException (nameof (data));
-			else if (data.Key == Guid.Empty)
-				throw new InvalidOperationException ("Data missing key");
+            else if (!data.Key.HasValue || data.Key == Guid.Empty)
+                throw new InvalidOperationException ("Data missing key");
 
 			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
 			this.Obsoleting?.Invoke (this, preArgs);
@@ -199,9 +197,7 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
 					connection.BeginTransaction ();
 
-                    data.SetDelayLoad(false);
 					data = this.Obsolete(connection, data);
-                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -423,6 +419,18 @@ namespace OpenIZ.Mobile.Core.Data
         public abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
 
         /// <summary>
+        /// Query internal without caring about limiting
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        public IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> expr)
+        {
+            int t;
+            return this.Query(context, expr, 0, -1, out t);
+        }
+
+        /// <summary>
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
@@ -430,6 +438,38 @@ namespace OpenIZ.Mobile.Core.Data
         {
             int totalResults = 0;
             return this.Query(context, o => o.Key == key, 0, -1, out totalResults)?.SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Insert the specified object
+        /// </summary>
+        public object Insert(object data)
+        {
+            return this.Insert(data as TData);
+        }
+
+        /// <summary>
+        /// Update the specified object
+        /// </summary>
+        public object Update(object data)
+        {
+            return this.Update(data as TData);
+        }
+
+        /// <summary>
+        /// Obsoletes the specified data
+        /// </summary>
+        public object Obsolete(object data)
+        {
+            return this.Obsolete(data as TData);
+        }
+
+        /// <summary>
+        /// Gets the specified data
+        /// </summary>
+        object IDataPersistenceService.Get(Guid id)
+        {
+            return this.Get(id);
         }
     }
 }
