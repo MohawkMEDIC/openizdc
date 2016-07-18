@@ -11,6 +11,7 @@ using System.IO.Compression;
 using OpenIZ.Core.Http;
 using System.IO;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -73,9 +74,9 @@ namespace OpenIZ.Mobile.Core.Android.Http
 			if(this.Description.Binding.Optimize)
 				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate,gzip");
 
-			// Proxy?
-			if (!String.IsNullOrEmpty (this.m_configurationSection.ProxyAddress))
-				retVal.Proxy = new WebProxy (this.m_configurationSection.ProxyAddress);
+            // Proxy?
+            if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
+                retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
 			return retVal;
 		}
 
@@ -112,6 +113,10 @@ namespace OpenIZ.Mobile.Core.Android.Http
                 // Body was provided?
                 try
                 {
+
+                    // Model settings
+                    ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
+
                     // Try assigned credentials
                     IBodySerializer serializer = null;
                     if (body != null)
@@ -226,8 +231,12 @@ namespace OpenIZ.Mobile.Core.Android.Http
                             throw;
                     }
                 }
-               
+                finally
+                {
+                    ModelSettings.SourceProvider = EntitySource.Current.Provider;
+                }
             }
+
 
             return default(TResult);
         }

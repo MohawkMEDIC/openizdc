@@ -19,6 +19,7 @@ using System.Linq.Expressions;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.EntityLoader;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -145,10 +146,13 @@ namespace OpenIZ.Mobile.Core.Data
             public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults)
             {
                 var data = this.m_client.Query(query, offset, count);
+                ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
                 (data as Bundle)?.Reconstitute();
                 offset = (data as Bundle)?.Offset ?? offset;
                 count = (data as Bundle)?.Count ?? count;
                 totalResults = (data as Bundle)?.TotalResults ?? 1;
+                ModelSettings.SourceProvider = EntitySource.Current.Provider;
+
                 return (data as Bundle)?.Item.OfType<TModel>() ?? new List<TModel>() { data as TModel };
             }
 

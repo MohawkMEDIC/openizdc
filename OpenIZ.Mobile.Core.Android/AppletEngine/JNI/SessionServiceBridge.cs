@@ -197,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 this.m_tracer.TraceError("Security Exception: {0}", e);
                 if (e.Data.Contains("detail"))
                     return JniUtil.ToJson(e.Data["detail"]);
-                return e.Message;
+                return "err_invalid_" + e.Message;
             }
             catch(Exception e)
             {

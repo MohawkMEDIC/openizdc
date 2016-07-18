@@ -88,6 +88,18 @@ namespace OpenIZ.Mobile.Core.Android
 			// aapt resource value: 0x7f020000
 			public static int library_name = 2130837504;
 			
+			// aapt resource value: 0x7f020010
+			public static int startup_configuration = 2130837520;
+			
+			// aapt resource value: 0x7f020011
+			public static int startup_data = 2130837521;
+			
+			// aapt resource value: 0x7f020013
+			public static int startup_setup = 2130837523;
+			
+			// aapt resource value: 0x7f020012
+			public static int startup_update = 2130837522;
+			
 			static String()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

@@ -19,4 +19,10 @@
   <string name="err_token_InvalidTokenType">Access control service is not compatible with this app</string>
   <string name="err_token_KeyNotFound">Unknown access control certificate</string>
   <string name="err_token_NotYetValid">Token\'s validity time is in the future. Is the date/time on the device correct?</string>
+
+  <string name="startup_configuration">Loading Configuration</string>
+  <string name="startup_data">Applying Database Changes</string>
+  <string name="startup_update">Applying Updates</string>
+  <string name="startup_setup">Preparing initial configuration</string>
+
 </resources>

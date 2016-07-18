@@ -47,6 +47,7 @@
     <property modelName="CreatedByKey" domainName="UpdatedByUuid"/>
     <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
   </class>
+  
   <class modelClass="OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.Concepts.DbConceptClass, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>

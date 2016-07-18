@@ -14,19 +14,20 @@ using System.Net;
 using OpenIZ.Mobile.Core.Android.Threading;
 using System.Threading;
 using System.Net.Sockets;
-using OpenIZ.Core.Diagnostics;
 using System.Globalization;
 using OpenIZ.Mobile.Core.Configuration;
 using System.IO;
 using OpenIZ.Mobile.Core.Android.Security;
 using System.Security;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Services
 {
     /// <summary>
     /// Represents a mini IMS server that the web-view can access
     /// </summary>
+    [Service(Enabled = true)]
     public class MiniImsServer : IDaemonService
     {
 
@@ -58,14 +59,13 @@ namespace OpenIZ.Mobile.Core.Android.Services
         {
             try
             {
+                this.Starting?.Invoke(this, EventArgs.Empty);
+
+                this.m_tracer.TraceInfo("Starting internal IMS services...");
+                AndroidApplicationContext.Current.SetProgress("IMS Service Bus", 0);
                 this.m_listener = new HttpListener();
 
                 var loopback = GetLocalIpAddress();
-
-                this.m_scanApplets.Add(AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
-                this.m_scanApplets.AddRange(
-                    AndroidApplicationContext.Current.LoadedApplets.Where(o => o != AndroidApplicationContext.Current.LoadedApplets.DefaultApplet)
-                    .Select(o => o.Assets[0]));
 
                 // Core always on 9200
                 this.m_listener.Prefixes.Add(String.Format("http://{0}:9200/", loopback));
@@ -79,8 +79,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
                             var iAsyncResult = this.m_listener.BeginGetContext(null, null);
                             iAsyncResult.AsyncWaitHandle.WaitOne();
                             var context = this.m_listener.EndGetContext(iAsyncResult);
-                            new Thread(this.HandleRequest).Start(context);
-                            
+                            //new Thread(this.HandleRequest).Start(context);
+                            OpenIZThreadPool.Current.QueueUserWorkItem(this.HandleRequest, context);
                         }
                         catch (Exception e)
                         {
@@ -92,6 +92,9 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 this.m_listener.Start();
                 this.m_acceptThread.IsBackground = true;
                 this.m_acceptThread.Start();
+                this.m_tracer.TraceInfo("Started internal IMS services...");
+                this.Started?.Invoke(this, EventArgs.Empty);
+
                 return true;
             }
             catch (Exception ex)
@@ -125,6 +128,18 @@ namespace OpenIZ.Mobile.Core.Android.Services
         /// </summary>
         private void HandleRequest(Object state)
         {
+
+            // Scan
+            if(this.m_scanApplets.Count == 0)
+                lock(this.m_lockObject)
+                {
+                    if(AndroidApplicationContext.Current.LoadedApplets.DefaultApplet != null)
+                        this.m_scanApplets.Add(AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
+                    this.m_scanApplets.AddRange(
+                        AndroidApplicationContext.Current.LoadedApplets.Where(o => o != AndroidApplicationContext.Current.LoadedApplets.DefaultApplet)
+                        .Select(o => o.Assets[0]));
+                }
+
             HttpListenerContext context = state as HttpListenerContext;
 
             // classify request
@@ -159,25 +174,16 @@ namespace OpenIZ.Mobile.Core.Android.Services
             // Try to demand policy 
             try
             {
+
                 // Navigate asset
                 AppletAsset navigateAsset = null;
 
                 if (!this.m_cacheApplets.TryGetValue(request.Url.AbsolutePath, out navigateAsset))
                 {
+                    
+                    navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(request.Url.AbsolutePath);
 
-                    if (request.Url.AbsolutePath == "/js/openiz.js" ||
-                        request.Url.AbsolutePath == "/js/openiz-model.js")
-                        navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
-                            request.Url.AbsolutePath,
-                            AndroidApplicationContext.Current.LoadedApplets.FirstOrDefault(o => o.Info.Id == "org.openiz.core").Assets[0]);
-                    else
-                    {
-                        int i = 0;
-                        while (navigateAsset == null && i < AndroidApplicationContext.Current.LoadedApplets.Count)
-                            navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(request.Url.AbsolutePath, this.m_scanApplets[i++]);
-                    }
-
-                    if (navigateAsset == null)
+                   if (navigateAsset == null)
                         throw new FileNotFoundException();
 
                     lock (m_lockObject)
@@ -195,8 +201,11 @@ namespace OpenIZ.Mobile.Core.Android.Services
                     if (expectedAuth != auth &&
                         expectedMagic != magic)
                         throw new UnauthorizedAccessException();
-                    response.AddHeader("Cache-Control", "no-cache");
                 }
+
+#if DEBUG
+                response.AddHeader("Cache-Control", "no-cache");
+#endif
 
                 // Navigate policy?
                 if (navigateAsset.Policies != null)
@@ -211,7 +220,6 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                 "assets",
                                 navigateAsset.Manifest.Info.Id,
                                 navigateAsset.Name);
-                    response.Headers.Add("Last-Modified", new FileInfo(itmPath).LastWriteTime.ToString("ddd, dd MMM yyyy HH:mm:ss 'UTC'"));
                     using (var fs = File.OpenRead(itmPath))
                     {
                         int br = 1024;
@@ -234,7 +242,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             catch (UnauthorizedAccessException ex)
             {
                 this.m_tracer.TraceError(ex.ToString());
-                string redirectLocation = String.Format("/views/errors/403.html?returnUrl={0}",
+                string redirectLocation = String.Format("/org.openiz.core/views/errors/403.html?returnUrl={0}",
                         request.RawUrl);
                 response.Redirect(redirectLocation);
             }
@@ -252,8 +260,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 {
                     response.StatusCode = 403;
 
-                    var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/views/errors/403.html",
-                        AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
+                    var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html",
+                        this.m_scanApplets[0]);
                     var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                     response.OutputStream.Write(buffer, 0, buffer.Length);
                 }
@@ -263,8 +271,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 404;
-                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/views/errors/404.html",
-                    AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
+                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html",
+                    this.m_scanApplets[0]);
                 var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
@@ -273,14 +281,18 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 500;
-                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/views/errors/500.html",
-                    AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
+                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html",
+                    this.m_scanApplets[0]);
                 var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
             finally
             {
-                response.Close();
+                try
+                {
+                    response.Close();
+                }
+                catch { }
             }
         }
 
@@ -289,8 +301,11 @@ namespace OpenIZ.Mobile.Core.Android.Services
         /// </summary>
         public bool Stop()
         {
+            this.Stopping?.Invoke(this, EventArgs.Empty);
+            this.m_tracer.TraceInfo("Stopping IMS services...");
             this.m_listener.Stop();
             this.m_listener = null;
+            this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
         }
     }

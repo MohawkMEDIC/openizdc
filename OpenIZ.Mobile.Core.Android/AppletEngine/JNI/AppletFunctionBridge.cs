@@ -212,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             // TODO: Demand permission
             if (menu.Launcher != null &&
-                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher)?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             string menuText = menu.GetText(this.GetLocale());
