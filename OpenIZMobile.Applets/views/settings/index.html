@@ -1,10 +1,10 @@
 ﻿<div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
-     openiz:layout="/views/partials/_layout.html">
+     openiz:layout="~/views/partials/_layout.html">
     <openiz:title lang="en">Initial Settings</openiz:title>
     <openiz:title lang="fr"></openiz:title>
     <openiz:title lang="sw"></openiz:title>
-    <openiz:script>/lib/ui-bootstrap.min.js</openiz:script>
-    <openiz:script>/controllers/settings/settings.js</openiz:script>
+    <openiz:script>~/lib/ui-bootstrap.min.js</openiz:script>
+    <openiz:script>~/controllers/settings/settings.js</openiz:script>
     <openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</openiz:demand>
 
     <div class="row">
@@ -20,7 +20,7 @@
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-md-2 col-xs-2">
-                                        <img src="/img/appbar.network.home.png" alt="network" class="left" />
+                                        <img src="~/img/appbar.network.home.png" alt="network" class="left" />
                                     </div>
                                     <div class="col-md-10 col-xs-10" style="vertical-align:middle">
                                         <em>{{ 'locale.settings.realmDescription' | i18n }}</em>
@@ -71,7 +71,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-2 col-xs-2">
-                                    <img src="/img/appbar.database.png" alt="database" class="left" />
+                                    <img src="~/img/appbar.database.png" alt="database" class="left" />
                                 </div>
                                 <div class="col-md-10 col-xs-10" style="vertical-align:middle">
                                     <em>{{ 'locale.settings.dataDescription' | i18n }}</em>
@@ -128,7 +128,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-2 col-xs-2">
-                                    <img src="/img/appbar.book.list.png" alt="log" class="left" />
+                                    <img src="~/img/appbar.book.list.png" alt="log" class="left" />
                                 </div>
                                 <div class="col-md-10 col-xs-10" style="vertical-align:middle">
                                     <em>{{ 'locale.settings.logDescription' | i18n }}</em>
@@ -171,7 +171,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-2 col-xs-2">
-                                    <img src="/img/appbar.shield.png" alt="log" class="left" />
+                                    <img src="~/img/appbar.shield.png" alt="log" class="left" />
                                 </div>
                                 <div class="col-md-10 col-xs-10" style="vertical-align:middle">
                                     <em>{{ 'locale.settings.securityDescription' | i18n }}</em>

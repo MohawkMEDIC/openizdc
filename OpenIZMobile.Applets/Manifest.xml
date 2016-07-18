@@ -1,12 +1,12 @@
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.5.4.*">
-    <icon>/img/cog.png</icon>
+  <info id="org.openiz.core" version="0.6.4.*">
+    <icon>~/img/cog.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
-  <startup>/index.html</startup>
-  <menuItem launch="/views/settings/index.html">
-    <icon>/img/appbar.settings.png</icon>
+  <startup>~/index.html</startup>
+  <menuItem launch="/org/openiz/core/views/settings/index.html">
+    <icon>~/img/appbar.settings.png</icon>
     <text lang="en">Settings</text>
   </menuItem>
   <strings lang="en">

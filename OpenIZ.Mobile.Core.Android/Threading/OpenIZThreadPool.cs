@@ -22,7 +22,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
     {
 
         // Number of threads to keep alive
-        private int m_concurrencyLevel = Int32.Parse(ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().AppSettings.Find(o => o.Key == "queue_process_concurrency")?.Value ?? "2");
+        private int m_concurrencyLevel = 2;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         // Active threads
@@ -39,6 +39,9 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         /// </summary>
         private OpenIZThreadPool() 
         {
+            if (ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency") != null)
+                this.m_concurrencyLevel = Int32.Parse(ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency").Value);
+            this.m_queue = new Queue<WorkItem>(this.m_concurrencyLevel);
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
                 ExecutionContext = ExecutionContext.Capture()
             };
             lock (this.m_threadDoneResetEvent) this.m_remainingWorkItems++;
-            EnsureStarted(); // Ensure thread pool threads are started
+            this.EnsureStarted(); // Ensure thread pool threads are started
             lock (m_queue)
             {
                 m_queue.Enqueue(wd);

@@ -22,7 +22,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Core.Applets;
 using OpenIZ.Core.Applets.Model;
 using System.Security.Principal;
-
+using A = Android;
 namespace OpenIZ.Mobile.Core.Android
 {
 	/// <summary>
@@ -93,12 +93,15 @@ namespace OpenIZ.Mobile.Core.Android
 		/// configuring the software
 		/// </summary>
 		/// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
-		public static bool StartTemporary()
+		public static bool StartTemporary(A.Content.Context context)
 		{
 			try
 			{
 				var retVal = new AndroidApplicationContext();
-				retVal.m_configurationManager = new ConfigurationManager (ConfigurationManager.GetDefaultConfiguration());
+                retVal.Context = context;
+                retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
+
+                retVal.m_configurationManager = new ConfigurationManager (ConfigurationManager.GetDefaultConfiguration());
 				retVal.Principal = new ClaimsPrincipal (new ClaimsIdentity ("SYSTEM", true, new Claim[] {
 					new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
 				}));
@@ -116,10 +119,11 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <summary>
 		/// Start the application context
 		/// </summary>
-		public static bool Start ()
+		public static bool Start (A.Content.Context context)
 		{
 
 			var retVal = new AndroidApplicationContext ();
+            retVal.Context = context;
 			retVal.m_configurationManager = new ConfigurationManager ();
 
 			// Not configured
@@ -135,7 +139,8 @@ namespace OpenIZ.Mobile.Core.Android
                     
 					// Load configured applets
 					var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection> ().Applets;
-
+                    
+                    retVal.SetProgress(context.GetString(Resource.String.startup_configuration  ), 0.2f);
 					// Load all user-downloaded applets in the data directory
 					foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
 					try {
@@ -166,8 +171,10 @@ namespace OpenIZ.Mobile.Core.Android
 							retVal.m_tracer.TraceWarning ("Can't find the OpenIZ database, will re-install all migrations");
 							retVal.Configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Clear ();
 						}
+                        retVal.SetProgress(context.GetString(Resource.String.startup_data), 0.6f);
 
-						DataMigrator migrator = new DataMigrator ();
+
+                        DataMigrator migrator = new DataMigrator ();
 						migrator.Ensure ();
 
 						// Set the entity source
@@ -401,12 +408,17 @@ namespace OpenIZ.Mobile.Core.Android
 				return c_application;
 			}
 		}
+        
+        /// <summary>
+        /// Gets the current context
+        /// </summary>
+        public A.Content.Context Context { get; set;  }
 
-		/// <summary>
-		/// Gets the device information for the currently running device
-		/// </summary>
-		/// <value>The device.</value>
-		public override OpenIZ.Core.Model.Security.SecurityDevice Device {
+        /// <summary>
+        /// Gets the device information for the currently running device
+        /// </summary>
+        /// <value>The device.</value>
+        public override OpenIZ.Core.Model.Security.SecurityDevice Device {
 			get {
 				// TODO: Load this from configuration
 				return new OpenIZ.Core.Model.Security.SecurityDevice () {

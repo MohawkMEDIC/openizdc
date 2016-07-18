@@ -6,8 +6,9 @@
 
 $(document).ready(function () {
 
-    $('.select2-tags').select2({
-        tags: true
+    $('.select2-tag').select2({
+        tags: true,
+        tokenSeparators: [' ',',',';']
     });
 
 

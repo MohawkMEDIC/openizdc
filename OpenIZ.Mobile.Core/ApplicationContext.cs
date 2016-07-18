@@ -50,14 +50,14 @@ namespace OpenIZ.Mobile.Core
 		private Object m_lockObject = new object();
 
         // Fired when application wishes to show progress of some sort
-        public event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
+        public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
 
         /// <summary>
         /// Sets the progress
         /// </summary>
         public void SetProgress(String text, float progress)
         {
-            this.ProgressChanged?.Invoke(this, new ApplicationProgressEventArgs() { Progress = progress, ProgressText = text });
+            ProgressChanged?.Invoke(this, new ApplicationProgressEventArgs() { Progress = progress, ProgressText = text });
         }
 
 		/// <summary>

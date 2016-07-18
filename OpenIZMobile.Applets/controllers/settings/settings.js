@@ -12,8 +12,8 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         log: OpenIZ.Configuration.getSection("DiagnosticsConfigurationSection")
     };
 
-    $scope.config.data.mode = OpenIZ.App.getService("SynchronizationManagerService") == null ?
-        OpenIZ.App.getService("LocalPersistenceService") == null ? "online" : "offline" : "sync";
+    $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?
+        //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
     $scope.config.data.sync = {
         event: [],
         enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
