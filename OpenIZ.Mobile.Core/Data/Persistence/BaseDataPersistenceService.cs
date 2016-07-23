@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
             data.CreatedBy?.EnsureExists(context);
-			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
+			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;
 			context.Update(domainObject);
 

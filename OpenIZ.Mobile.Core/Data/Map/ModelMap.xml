@@ -149,6 +149,14 @@
     <property modelName="ComponentTypeKey" domainName="ComponentTypeUuid"/>
   </class>
 
+  <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+    <property modelName="TargetEntityKey" domainName="TargetUuid"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeUuid"/>
+  </class>
+  
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbEntityIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
@@ -168,13 +176,6 @@
     <property modelName="Key" domainName="Uuid"/>
   </class>
 
-  <class modelClass="OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
-       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbEntityRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
-    <property modelName="Key" domainName="Uuid"/>
-    <property modelName="SourceEntityKey" domainName="EntityUuid"/>
-    <property modelName="TargetEntityKey" domainName="TargetUuid"/>
-    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeUuid"/>
-  </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0"
      domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbTelecomAddress, OpenIZ.Mobile.Core, Version=0.5.0.0">
@@ -191,11 +192,6 @@
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
   </class>
 
-  <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
-   domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbExtensionType, OpenIZ.Mobile.Core, Version=0.5.0.0">
-    <property modelName="Key" domainName="Uuid"/>
-  </class>
-
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
  domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbEntityNote, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
@@ -208,6 +204,12 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
   </class>
+  
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0"
+   domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbExtensionType, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+
 
   <!-- Person Maps -->
   <class modelClass="OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -272,4 +274,67 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="SecurityUserKey" domainName="SecurityUserUuid"/>
   </class>
+
+  <!-- Represents Act Model -->
+  <class modelClass="OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbAct, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="VersionKey" domainName="VersionUuid"/>
+    <property modelName="PreviousVersionKey" domainName="PreviousVersionUuid"/>
+    <property modelName="StatusConceptKey" domainName="StatusConceptUuid"/>
+    <property modelName="ClassConceptKey" domainName="ClassConceptUuid"/>
+    <property modelName="MoodConceptKey" domainName="MoodConceptUuid"/>
+    <property modelName="ReasonConceptKey" domainName="ReasonConceptUuid"/>
+    <property modelName="TypeConceptKey" domainName="TypeConceptUuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbActExtension, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="ExtensionTypeKey" domainName="ExtensionTypeUuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActNote, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbActNote, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+    <property modelName="AuthorKey" domainName="AuthorUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActTag, OpenIZ.Core.Model, Version=1.0.0.0"
+ domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbActTag, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+  </class>
+
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActRelationship, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbActRelationship, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+    <property modelName="TargetActKey" domainName="TargetUuid"/>
+    <property modelName="RelationshipTypeKey" domainName="RelationshipTypeUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.ActIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbActIdentifier, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="IdentifierTypeKey" domainName="TypeUuid"/>
+    <property modelName="AuthorityKey" domainName="AuthorityUuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbActParticipation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="PlayerEntityKey" domainName="EntityUuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+    <property modelName="ParticipationRoleKey" domainName="ParticipationRoleUuid"/>
+  </class>
+  
+  
 </modelMap>

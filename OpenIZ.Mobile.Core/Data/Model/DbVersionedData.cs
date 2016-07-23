@@ -69,6 +69,13 @@ namespace OpenIZ.Mobile.Core.Data.Model
             get { return this.PreviousVersionUuid == null ? Guid.Empty : new Guid(this.PreviousVersionUuid); }
             set { this.PreviousVersionUuid = value.ToByteArray(); }
         }
+
+        /// <summary>
+        /// The last known version sequence
+        /// </summary>
+        [Column("last_version_sequence")]
+        public int VersionSequenceId { get; set; }
+
     }
 }
 

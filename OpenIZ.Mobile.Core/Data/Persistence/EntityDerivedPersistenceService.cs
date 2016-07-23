@@ -34,7 +34,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         // Entity persister
         protected EntityPersistenceService m_entityPersister = new EntityPersistenceService();
 
-
         /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>

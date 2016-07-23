@@ -80,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
 
             // Store user
             IIdentityProviderService identityService = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var userAfterUpdate = base.DoTestUpdate(userUnderTest, "PhoneNumber");
+            var userAfterUpdate = base.DoTestInsertUpdate(userUnderTest, "PhoneNumber");
 
             // Update
             Assert.IsNotNull(userAfterUpdate.UpdatedTime);
