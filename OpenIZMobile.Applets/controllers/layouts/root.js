@@ -1,4 +1,5 @@
 ﻿/// <reference path="~/js/openiz-model.js"/>
+
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', []).run(function ($rootScope) {

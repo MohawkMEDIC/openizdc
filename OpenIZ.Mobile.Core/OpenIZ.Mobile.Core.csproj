@@ -222,5 +222,9 @@
   <ItemGroup>
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
+  </ItemGroup>
 </Project>
