@@ -88,7 +88,6 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Security\Local\LocalPolicyInformationService.cs" />
-    <Compile Include="Security\Remote\AmiPolicyInformationService.cs" />
     <Compile Include="Security\Local\LocalRoleProviderService.cs" />
     <Compile Include="Security\GenericPolicy.cs" />
     <Compile Include="Security\GenericPolicyInstance.cs" />
@@ -101,6 +100,7 @@
     <Compile Include="Exceptions\PolicyViolationException.cs" />
     <Compile Include="ApplicationContext.cs" />
     <Compile Include="Security\PolicyIdentifiers.cs" />
+    <Compile Include="Security\Remote\AmiPolicyInformationService.cs" />
     <Compile Include="Services\IDaemonService.cs" />
     <Compile Include="Services\IIdentityProviderService.cs" />
     <Compile Include="Services\IIntegrationService.cs" />
@@ -227,4 +227,5 @@
       <Link>OpenIZDC.licenseheader</Link>
     </None>
   </ItemGroup>
+  <ItemGroup />
 </Project>

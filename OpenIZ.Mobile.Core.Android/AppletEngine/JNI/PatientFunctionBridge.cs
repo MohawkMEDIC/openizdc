@@ -36,7 +36,7 @@ using OpenIZ.Core.Model;
 using Android.Webkit;
 using Java.Interop;
 using OpenIZ.Core.Applets.ViewModel;
-using static Java.Interop.JniEnvironment;
+using OpenIZ.Mobile.Core.Android.Resources;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {

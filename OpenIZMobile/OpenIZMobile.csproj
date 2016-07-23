@@ -110,71 +110,9 @@
     <AndroidResource Include="Resources\values\Styles.xml" />
     <AndroidResource Include="Resources\layout\Splash.axml" />
     <AndroidResource Include="Resources\drawable\splash_gradient.xml" />
-    <AndroidResource Include="Resources\drawable\aefi.png" />
-    <AndroidResource Include="Resources\drawable\announce.png" />
-    <AndroidResource Include="Resources\drawable\app.png" />
-    <AndroidResource Include="Resources\drawable\app_alt.png" />
-    <AndroidResource Include="Resources\drawable\appbar.user.png" />
-    <AndroidResource Include="Resources\drawable\baby.png" />
-    <AndroidResource Include="Resources\drawable\bed.png" />
-    <AndroidResource Include="Resources\drawable\brick.png" />
-    <AndroidResource Include="Resources\drawable\calendar.png" />
-    <AndroidResource Include="Resources\drawable\check.png" />
-    <AndroidResource Include="Resources\drawable\checkin.png" />
-    <AndroidResource Include="Resources\drawable\cogs.png" />
-    <AndroidResource Include="Resources\drawable\drk_aefi.png" />
-    <AndroidResource Include="Resources\drawable\drk_announce.png" />
-    <AndroidResource Include="Resources\drawable\drk_applet.png" />
-    <AndroidResource Include="Resources\drawable\drk_applet_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_baby.png" />
-    <AndroidResource Include="Resources\drawable\drk_barcode.png" />
-    <AndroidResource Include="Resources\drawable\drk_bed.png" />
-    <AndroidResource Include="Resources\drawable\drk_brick.png" />
-    <AndroidResource Include="Resources\drawable\drk_calendar.png" />
-    <AndroidResource Include="Resources\drawable\drk_check.png" />
-    <AndroidResource Include="Resources\drawable\drk_checkin.png" />
-    <AndroidResource Include="Resources\drawable\drk_cogs.png" />
-    <AndroidResource Include="Resources\drawable\drk_delete.png" />
-    <AndroidResource Include="Resources\drawable\drk_foot.png" />
-    <AndroidResource Include="Resources\drawable\drk_group.png" />
-    <AndroidResource Include="Resources\drawable\drk_help.png" />
-    <AndroidResource Include="Resources\drawable\drk_home.png" />
-    <AndroidResource Include="Resources\drawable\drk_logout.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_search.png" />
-    <AndroidResource Include="Resources\drawable\drk_patient_search_alt.png" />
-    <AndroidResource Include="Resources\drawable\drk_queue.png" />
-    <AndroidResource Include="Resources\drawable\drk_register_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_shield.png" />
-    <AndroidResource Include="Resources\drawable\drk_stock.png" />
-    <AndroidResource Include="Resources\drawable\drk_temp.png" />
-    <AndroidResource Include="Resources\drawable\drk_user.png" />
-    <AndroidResource Include="Resources\drawable\drk_weigh.png" />
-    <AndroidResource Include="Resources\drawable\foot.png" />
-    <AndroidResource Include="Resources\drawable\group.png" />
-    <AndroidResource Include="Resources\drawable\help.png" />
-    <AndroidResource Include="Resources\drawable\home.png" />
-    <AndroidResource Include="Resources\drawable\logout.png" />
-    <AndroidResource Include="Resources\drawable\patient.png" />
-    <AndroidResource Include="Resources\drawable\patient_alt.png" />
-    <AndroidResource Include="Resources\drawable\patient_search.png" />
-    <AndroidResource Include="Resources\drawable\patient_search_alt.png" />
-    <AndroidResource Include="Resources\drawable\queue.png" />
-    <AndroidResource Include="Resources\drawable\shield.png" />
-    <AndroidResource Include="Resources\drawable\stock.png" />
-    <AndroidResource Include="Resources\drawable\temp.png" />
-    <AndroidResource Include="Resources\drawable\weigh.png" />
-    <AndroidResource Include="Resources\drawable\register_patient.png" />
-    <AndroidResource Include="Resources\drawable\drk_encounters.png" />
-    <AndroidResource Include="Resources\drawable\encounters.png" />
     <AndroidResource Include="Resources\drawable\orange_gradient.xml" />
     <AndroidResource Include="Resources\drawable\blue_gradient.xml" />
     <AndroidResource Include="Resources\drawable\gray_gradient.xml" />
-    <AndroidResource Include="Resources\drawable\drk_grid.png" />
-    <AndroidResource Include="Resources\drawable\grid.png" />
-    <AndroidResource Include="Resources\drawable\drk_facility.png" />
-    <AndroidResource Include="Resources\drawable\facility.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Fragment\" />
@@ -196,9 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\drk_bug.png" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
