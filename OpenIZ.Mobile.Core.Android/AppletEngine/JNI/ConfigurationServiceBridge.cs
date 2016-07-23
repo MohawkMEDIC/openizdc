@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using OpenIZ.Mobile.Core.Data;
 using System.Diagnostics.Tracing;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
+using OpenIZ.Mobile.Core.Synchronization;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -77,8 +78,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             switch (optionObject["data"]["mode"].Value<String>())
             {
                 case "online":
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(LocalPolicyInformationService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiPolicyInformationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiPersistenceService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(SynchronizationManagerService).AssemblyQualifiedName);
                     break;
                 case "offline":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
@@ -105,6 +109,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     break;
             }
 
+            // Proxy
+            if(optionObject["network"]["useProxy"].Value<Boolean>())
+                ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>().ProxyAddress = optionObject["network"]["proxyAddress"].Value<String>();
+            
             // Log settings
             var logSettings = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>();
             logSettings.TraceWriter = new System.Collections.Generic.List<TraceWriterConfiguration>()
@@ -171,7 +179,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
 
                 String imsiUri = String.Format("http://{0}:8080/imsi", realmUri),
-                    oauthUri = String.Format("http://{0}:8080/auth", realmUri);
+                    oauthUri = String.Format("http://{0}:8080/auth", realmUri),
+                    amiUri = String.Format("http://{0}:8080/ami", realmUri);
 
                 // Parse IMSI URI
                 serviceClientSection.Client.Add(new ServiceClientDescription()
@@ -203,9 +212,32 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                         Security = new ServiceClientSecurity()
                         {
                             AuthRealm = realmUri,
+                            Mode = SecurityScheme.Bearer,
+                            CredentialProvider = new TokenCredentialProvider(),
+                            PreemtiveAuthentication = true
+                        },
+                        Optimize = true
+                    },
+                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
+                        new ServiceClientEndpoint() {
+                            Address = amiUri
+                        }
+                    },
+                    Name = "ami"
+                });
+
+                // Parse ACS URI
+                serviceClientSection.Client.Add(new ServiceClientDescription()
+                {
+                    Binding = new ServiceClientBinding()
+                    {
+                        Security = new ServiceClientSecurity()
+                        {
+                            AuthRealm = realmUri,
                             Mode = SecurityScheme.Basic,
                             CredentialProvider = new OAuth2CredentialProvider()
-                        }
+                        },
+                        Optimize = false
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {

@@ -9,7 +9,15 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         data: OpenIZ.Configuration.getSection("DataConfigurationSection"),
         applet: OpenIZ.Configuration.getSection("AppletConfigurationSection"),
         application: OpenIZ.Configuration.getSection("ApplicationConfigurationSection"),
-        log: OpenIZ.Configuration.getSection("DiagnosticsConfigurationSection")
+        log: OpenIZ.Configuration.getSection("DiagnosticsConfigurationSection"),
+        network: OpenIZ.Configuration.getSection("ServiceClientConfigurationSection") || {}
+    };
+
+    $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
+    $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
+    $scope.ui = {
+        dataCollapsed: true,
+        securityCollapsed: true
     };
 
     $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?

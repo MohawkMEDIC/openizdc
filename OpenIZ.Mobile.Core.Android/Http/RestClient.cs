@@ -12,6 +12,7 @@ using OpenIZ.Core.Http;
 using System.IO;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.EntityLoader;
+using OpenIZ.Mobile.Core.Android.Resources;
 
 namespace OpenIZ.Mobile.Core.Android.Http
 {
@@ -114,26 +115,38 @@ namespace OpenIZ.Mobile.Core.Android.Http
                 try
                 {
 
-                    // Model settings
-                    ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
-
                     // Try assigned credentials
                     IBodySerializer serializer = null;
                     if (body != null)
                     {
+                        // GET Stream, 
+                        Stream requestStream = null;
+                        Exception requestException = null;
+                        var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
+                        {
+                            if (r.IsFaulted)
+                                requestException = r.Exception.InnerExceptions.First();
+                            else
+                                requestStream = r.Result;
+                        });
+                        if (!requestTask.Wait(4000)) throw new TimeoutException();
+                        else if (requestException != null) throw requestException;
+
                         if (contentType == null)
                             throw new ArgumentNullException(nameof(contentType));
 
                         serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
+                        (body as IdentifiedData)?.SetDelayLoad(false);
                         // Serialize and compress with deflate
                         if (this.Description.Binding.Optimize)
                         {
                             requestObj.Headers.Add("Content-Encoding", "deflate");
-                            using (var df = new DeflateStream(requestObj.GetRequestStream(), CompressionMode.Compress))
+                            using (var df = new DeflateStream(requestStream, CompressionMode.Compress))
                                 serializer.Serialize(df, body);
                         }
                         else
-                            serializer.Serialize(requestObj.GetRequestStream(), body);
+                            serializer.Serialize(requestStream, body);
+
                     }
 
                     // Response
@@ -146,31 +159,45 @@ namespace OpenIZ.Mobile.Core.Android.Http
                         else
                             response = r.Result;
                     });
-                    var success = responseTask.Wait(4000);
-                    if (!success) throw new TimeoutException();
+                    if (!responseTask.Wait(4000)) throw new TimeoutException();
                     else if (responseError != null) throw responseError;
 
                     var validationResult = this.ValidateResponse(response);
                     if (validationResult != ServiceClientErrorType.Valid)
                     {
                         this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
-                        throw new WebException("Response failed validation", null, WebExceptionStatus.Success, response);
+                        throw new WebException(Strings.err_response_failed_validation, null, WebExceptionStatus.Success, response);
                     }
                     // De-serialize
-                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(response.ContentType, typeof(TResult));
+                    var responseContentType = response.ContentType;
+                    if (responseContentType.Contains(";"))
+                        responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 
+                    TResult retVal = default(TResult);
                     // Compression?
                     switch (response.Headers[HttpResponseHeader.ContentEncoding])
                     {
                         case "deflate":
                             using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                return (TResult)serializer.DeSerialize(df);
+                                retVal = (TResult)serializer.DeSerialize(df);
+                            break;
                         case "gzip":
                             using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                return (TResult)serializer.DeSerialize(df);
+                                retVal = (TResult)serializer.DeSerialize(df);
+                            break;
                         default:
-                            return (TResult)serializer.DeSerialize(response.GetResponseStream());
+                            retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
+                            break;
                     }
+
+                    (retVal as IdentifiedData)?.SetDelayLoad(true);
+                    return retVal;
+                }
+                catch(TimeoutException e)
+                {
+                    this.m_tracer.TraceError("Request timed out:{0}", e);
+                    throw;
                 }
                 catch (WebException e)
                 {
@@ -231,10 +258,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
                             throw;
                     }
                 }
-                finally
-                {
-                    ModelSettings.SourceProvider = EntitySource.Current.Provider;
-                }
+               
             }
 
 

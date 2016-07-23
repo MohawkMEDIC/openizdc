@@ -23,6 +23,8 @@ using OpenIZ.Core.Applets;
 using OpenIZ.Core.Applets.Model;
 using System.Security.Principal;
 using A = Android;
+using OpenIZ.Mobile.Core.Android.Resources;
+
 namespace OpenIZ.Mobile.Core.Android
 {
 	/// <summary>
@@ -204,7 +206,7 @@ namespace OpenIZ.Mobile.Core.Android
         internal void SetPrincipal(IPrincipal p)
         {
             if (p != null && !p.Identity.IsAuthenticated)
-                throw new InvalidOperationException("Cannot set principal to unauthenticated identity");
+                throw new InvalidOperationException(Strings.err_unauthenticated_principal);
             else
                 this.Principal = p;
         }
@@ -266,7 +268,7 @@ namespace OpenIZ.Mobile.Core.Android
                 {
 
                     if (!isUpgrade)
-                        throw new InvalidOperationException("Duplicate package name");
+                        throw new InvalidOperationException(Strings.err_duplicate_package_name);
 
                     // Unload the loaded applet version
                     var existingApplet = this.m_applets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
@@ -383,7 +385,7 @@ namespace OpenIZ.Mobile.Core.Android
 			var identityService = this.GetService<IIdentityProviderService>();
 			this.Principal = identityService.Authenticate(userName, password);
 			if(this.Principal == null)
-				throw new SecurityException("err_login_invalidusername");
+				throw new SecurityException(Strings.err_login_invalidusername);
 		}
 
 		#region implemented abstract members of ApplicationContext

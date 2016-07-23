@@ -37,6 +37,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
         private Tracer m_tracer = Tracer.GetTracer(typeof(AppletWebView));
 
         /// <summary>
+        /// Thread safe title
+        /// </summary>
+        public string ThreadSafeTitle { get; internal set; }
+
+        /// <summary>
         /// Create a new webview
         /// </summary>
         /// <param name="context">Context.</param>
@@ -91,8 +96,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             Uri uri = null;
             var unlockDictionary = new Dictionary<String, String>()
             {
-                {  "X-Authorization", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", AndroidApplicationContext.Current.Application.Name, AndroidApplicationContext.Current.Application.ApplicationSecret))) },
-                { "X-MAGIC", Convert.ToBase64String(AndroidApplicationContext.Current.Device.Key.Value.ToByteArray()) }
+                {  "Authorization", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", AndroidApplicationContext.Current.Application.Name, AndroidApplicationContext.Current.Application.ApplicationSecret))) },
             };
 
             if (!Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
@@ -105,7 +109,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             else
                 base.LoadUrl("http://127.0.0.1:9200/views/errors/404.html", unlockDictionary);
         }
-
+         
         /// <summary>
         /// Execute the specified javascript
         /// </summary>
@@ -138,6 +142,14 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             {
             }
 
+            /// <summary>
+            /// On page is finished
+            /// </summary>
+            public override void OnLoadResource(WebView view, string url)
+            {
+                (view as AppletWebView).ThreadSafeTitle = view.Title;
+                base.OnLoadResource(view, url);
+            }
 
             /// <param name="view">The WebView that is initiating the callback.</param>
             /// <param name="url">The url to be loaded.</param>

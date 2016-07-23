@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data
 {
@@ -57,6 +58,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data
 			this.m_tracer.TraceInfo ("Ensuring database is up to date");
 			// Migration order
 			foreach (var m in this.GetProposal()) {
+                ApplicationContext.Current.SetProgress(Strings.locale_setting_migration, 0);
 				this.m_tracer.TraceVerbose ("Will Install {0}", m.Id);
 				if (!m.Install ())
 					throw new DataMigrationException (m);

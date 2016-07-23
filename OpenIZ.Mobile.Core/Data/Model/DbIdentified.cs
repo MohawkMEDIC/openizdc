@@ -18,7 +18,6 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// </summary>
 		public DbIdentified ()
 		{
-			this.Uuid = Guid.NewGuid ().ToByteArray ();
 		}
 
 		/// <summary>

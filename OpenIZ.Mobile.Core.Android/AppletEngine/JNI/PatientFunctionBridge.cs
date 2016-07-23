@@ -17,6 +17,7 @@ using OpenIZ.Core.Model;
 using Android.Webkit;
 using Java.Interop;
 using OpenIZ.Core.Applets.ViewModel;
+using static Java.Interop.JniEnvironment;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -43,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 var patient = JsonViewModelSerializer.DeSerialize<Patient>(imsiPatientObject);
                 if (patient == null)
-                    throw new ArgumentException("Invalid type", nameof(imsiPatientObject));
+                    throw new ArgumentException(Strings.err_invalid_argumentType, nameof(imsiPatientObject));
                 patient = this.m_persister.Insert(patient);
                 var retVal = JsonViewModelSerializer.Serialize(patient);
                 return retVal;

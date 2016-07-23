@@ -38,11 +38,23 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			}
 		}
 
-		/// <summary>
-		/// Gets the current deadletter queue
-		/// </summary>
-		/// <value>The inbound.</value>
-		public static SynchronizationQueue<DeadLetterQueueEntry> DeadLetter {
+        /// <summary>
+        /// Gets the current admin outbound queue
+        /// </summary>
+        /// <value>The inbound.</value>
+        public static SynchronizationQueue<OutboundAdminQueueEntry> Admin
+        {
+            get
+            {
+                return SynchronizationQueue<OutboundAdminQueueEntry>.Current;
+            }
+        }
+
+        /// <summary>
+        /// Gets the current deadletter queue
+        /// </summary>
+        /// <value>The inbound.</value>
+        public static SynchronizationQueue<DeadLetterQueueEntry> DeadLetter {
 			get {
 				return SynchronizationQueue<DeadLetterQueueEntry>.Current;
 			}

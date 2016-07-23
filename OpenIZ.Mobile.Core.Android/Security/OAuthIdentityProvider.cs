@@ -12,197 +12,74 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Serices;
 using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Interop;
+using System.Net;
+using OpenIZ.Mobile.Core.Android.Resources;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
-	/// <summary>
-	/// Represents an OAuthIdentity provider
-	/// </summary>
-	public class OAuthIdentityProvider: IIdentityProviderService
-	{
+    /// <summary>
+    /// Represents an OAuthIdentity provider
+    /// </summary>
+    public class OAuthIdentityProvider : IIdentityProviderService
+    {
 
-		/// <summary>
-		/// OAuth token response.
-		/// </summary>
-		[JsonObject]
-		private class OAuthTokenResponse
-		{
 
-			/// <summary>
-			/// Gets or sets the error
-			/// </summary>
-			[JsonProperty("error")]
-			public String Error { get; set; }
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(OAuthIdentityProvider));
 
-			/// <summary>
-			/// Description of the error
-			/// </summary>
-			[JsonProperty("error_description")]
-			public String ErrorDescription { get; set; }
+        #region IIdentityProviderService implementation
+        /// <summary>
+        /// Occurs when authenticating.
+        /// </summary>
+        public event EventHandler<AuthenticatingEventArgs> Authenticating;
+        /// <summary>
+        /// Occurs when authenticated.
+        /// </summary>
+        public event EventHandler<AuthenticatedEventArgs> Authenticated;
+        /// <summary>
+        /// Authenticate the user
+        /// </summary>
+        /// <param name="userName">User name.</param>
+        /// <param name="password">Password.</param>
+        public System.Security.Principal.IPrincipal Authenticate(string userName, string password)
+        {
+            return this.Authenticate(new GenericPrincipal(new GenericIdentity(userName), null), password);
+        }
 
-			/// <summary>
-			/// Access token
-			/// </summary>
-			[JsonProperty("access_token")]
-			public String AccessToken { get; set; }
+        /// <summary>
+        /// Authenticate the user
+        /// </summary>
+        /// <param name="principal">Principal.</param>
+        /// <param name="password">Password.</param>
+        public System.Security.Principal.IPrincipal Authenticate(System.Security.Principal.IPrincipal principal, string password)
+        {
 
-			/// <summary>
-			/// Token type
-			/// </summary>
-			[JsonProperty("token_type")]
-			public String TokenType { get; set; }
-
-			/// <summary>
-			/// Expires in
-			/// </summary>
-			[JsonProperty("expires_in")]
-			public int ExpiresIn { get; set; }
-
-			/// <summary>
-			/// Refresh token
-			/// </summary>
-			[JsonProperty("refresh_token")]
-			public String RefreshToken { get; set; }
-
-			/// <summary>
-			/// Represent the object as a string
-			/// </summary>
-			public override string ToString ()
-			{
-				return string.Format ("[OAuthTokenResponse: Error={0}, ErrorDescription={1}, AccessToken={2}, TokenType={3}, ExpiresIn={4}, RefreshToken={5}]", Error, ErrorDescription, AccessToken, TokenType, ExpiresIn, RefreshToken);
-			}
-		}
-
-		/// <summary>
-		/// OAuth token request.
-		/// </summary>
-		private class OAuthTokenRequest
-		{
-
-			/// <summary>
-			/// Initializes a new instance of the
-			/// <see cref="OpenIZ.Mobile.Core.Android.Security.OAuthTokenServiceCredentials+OAuthTokenRequest"/> class.
-			/// </summary>
-			/// <param name="username">Username.</param>
-			/// <param name="password">Password.</param>
-			/// <param name="scope">Scope.</param>
-			public OAuthTokenRequest (String username, String password, String scope)
-			{
-				this.Username = username;
-				this.Password = password;
-				this.Scope = scope;
-                this.GrantType = "password";
-			}
-
-            /// <summary>
-            /// Token request for refresh
-            /// </summary>
-            public OAuthTokenRequest(TokenClaimsPrincipal current)
+            AuthenticatingEventArgs e = new AuthenticatingEventArgs(principal.Identity.Name, password) { Principal = principal };
+            this.Authenticating?.Invoke(this, e);
+            if (e.Cancel)
             {
-                this.GrantType = "refresh_token";
-                this.RefreshToken = current.RefreshToken;
+                this.m_tracer.TraceWarning("Pre-Event ordered cancel of auth {0}", principal);
+                return e.Principal;
             }
 
-			/// <summary>
-			/// Gets the type of the grant.
-			/// </summary>
-			/// <value>The type of the grant.</value>
-			[FormElement("grant_type")]
-			public String GrantType {
-                get;set;
-			}
+            // Get the scope being requested
+            String scope = "*";
+            if (principal is ClaimsPrincipal)
+                scope = (principal as ClaimsPrincipal).Claims.FirstOrDefault(o => o.Type == ClaimTypes.OpenIzScopeClaim)?.Value ?? scope;
+            else
+                scope = ApplicationContext.Current.GetRestClient("imsi").Description.Endpoint[0].Address;
 
-            /// <summary>
-            /// Gets the refresh token
-            /// </summary>
-            [FormElement("refresh_token")]
-            public String RefreshToken { get; private set; }
+            // Authenticate
+            IPrincipal retVal = null;
+            var localIdp = new LocalIdentityService();
 
-            /// <summary>
-            /// Gets the username.
-            /// </summary>
-            /// <value>The username.</value>
-            [FormElement("username")]
-			public String Username {
-				get;
-				private set;
-			}
+            using (IRestClient restClient = ApplicationContext.Current.GetRestClient("acs"))
+            {
 
-			/// <summary>
-			/// Gets the password.
-			/// </summary>
-			/// <value>The password.</value>
-			[FormElement("password")]
-			public String Password {
-				get;
-				private set;
-			}
-
-			/// <summary>
-			/// Gets the scope.
-			/// </summary>
-			/// <value>The scope.</value>
-			[FormElement("scope")]
-			public String Scope {
-				get;
-				private set;
-			}
-
-		}
-
-
-		// Tracer
-		private Tracer m_tracer = Tracer.GetTracer(typeof(OAuthIdentityProvider));
-
-		#region IIdentityProviderService implementation
-		/// <summary>
-		/// Occurs when authenticating.
-		/// </summary>
-		public event EventHandler<AuthenticatingEventArgs> Authenticating;
-		/// <summary>
-		/// Occurs when authenticated.
-		/// </summary>
-		public event EventHandler<AuthenticatedEventArgs> Authenticated;
-		/// <summary>
-		/// Authenticate the user
-		/// </summary>
-		/// <param name="userName">User name.</param>
-		/// <param name="password">Password.</param>
-		public System.Security.Principal.IPrincipal Authenticate (string userName, string password)
-		{
-			return this.Authenticate (new GenericPrincipal (new GenericIdentity (userName), null), password);
-		}
-
-		/// <summary>
-		/// Authenticate the user
-		/// </summary>
-		/// <param name="principal">Principal.</param>
-		/// <param name="password">Password.</param>
-		public System.Security.Principal.IPrincipal Authenticate (System.Security.Principal.IPrincipal principal, string password)
-		{
-
-			AuthenticatingEventArgs e = new AuthenticatingEventArgs (principal.Identity.Name, password) { Principal = principal };
-			this.Authenticating?.Invoke (this, e);
-			if (e.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event ordered cancel of auth {0}", principal);
-				return e.Principal;
-			}
-
-			// Get the scope being requested
-			String scope = "*";
-			if (principal is ClaimsPrincipal)
-				scope = (principal as ClaimsPrincipal).Claims.FirstOrDefault (o => o.Type == ClaimTypes.OpenIzScopeClaim)?.Value ?? scope;
-			else
-				scope = ApplicationContext.Current.GetRestClient ("imsi").Description.Endpoint [0].Address;
-			
-			// Authenticate
-			ClaimsPrincipal retVal = null;
-			using (IRestClient restClient = ApplicationContext.Current.GetRestClient ("acs")) {
-
-				try
-				{
-					// Set credentials
-					restClient.Credentials = new OAuthTokenServiceCredentials(principal);
+                try
+                {
+                    // Set credentials
+                    restClient.Credentials = new OAuthTokenServiceCredentials(principal);
 
                     // Create grant information
                     OAuthTokenRequest request = null;
@@ -211,79 +88,141 @@ namespace OpenIZ.Mobile.Core.Android.Security
                     else if (principal is TokenClaimsPrincipal)
                         request = new OAuthTokenRequest(principal as TokenClaimsPrincipal);
 
-					// Invoke
-					OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
-					retVal = new TokenClaimsPrincipal (response.AccessToken, response.TokenType, response.RefreshToken);
+                    try
+                    {
+                        // Invoke
+                        OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
+                        retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
+                    }
+                    catch (WebException ex) // Raw level web exception
+                    {
+                        this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                        try
+                        {
+                            retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                        }
+                        catch
+                        {
+                            throw new SecurityException(Strings.err_offline_use_cache_creds);
+                        }
+                    }
+                    catch (Exception ex) // fallback to local
+                    {
+                        try
+                        {
+                            this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                            retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                        }
+                        catch
+                        {
+                            throw new SecurityException(Strings.err_offline_use_cache_creds);
+                        }
+                    }
 
                     // Create a security user and ensure they exist!
-                    // TODO: Use the business services instead
-                    var localIdentity = new LocalIdentityService();
-                    var localRole = new LocalRoleProviderService();
-                     
-					var localUser = localIdentity.GetIdentity(principal.Identity.Name);
-                    if (!String.IsNullOrEmpty(password))
-                    {
-                        if (localUser == null)
-                            localIdentity.CreateIdentity(principal.Identity.Name, password);
-                        else
-                            localIdentity.ChangePassword(principal.Identity.Name, password, principal);
+                    var localRp = new LocalRoleProviderService();
+                    var amiPip = new AmiPolicyInformationService();
+                    var localPip = new LocalPolicyInformationService();
+                    var localUser = localIdp.GetIdentity(principal.Identity.Name);
 
+                    // We have a match! Lets make sure we cache this data
+                    // TODO: Clean this up
+                    if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal)
+                    {
+                        ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
+
+                        // We want to impersonate SYSTEM
+                        AndroidApplicationContext.Current.SetPrincipal(cprincipal);
+
+                        // Ensure policies exist from the claim
+                        foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))
+                        {
+                            if (localPip.GetPolicy(itm.Value) == null)
+                            {
+                                var policy = amiPip.GetPolicy(itm.Value);
+                                localPip.CreatePolicy(policy, new SystemPrincipal());
+                            }
+                        }
+
+                        // Ensure roles exist from the claim
+                        var localRoles = localRp.GetAllRoles();
+                        foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
+                        {
+                            // Local role doesn't exist
+                            if (!localRoles.Contains(itm.Value))
+                            {
+                                localRp.CreateRole(itm.Value, new SystemPrincipal());
+                                localRp.AddPoliciesToRoles(amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray(), new String[] { itm.Value }, new SystemPrincipal());
+                            }
+
+                        }
+
+                        if (localUser == null)
+                            localIdp.CreateIdentity(principal.Identity.Name, password);
+                        else
+                            localIdp.ChangePassword(principal.Identity.Name, password, principal);
                         // Add user to roles
-                        // TODO: Implement next line
-                        // localRole.ClearUserRoles(principal.Identity.Name);
-                        localRole.AddUsersToRoles(new String[] { principal.Identity.Name }, retVal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray());
+                        // TODO: Remove users from specified roles?
+                        localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
+
                     }
-				}
-				catch(RestClientException<OAuthTokenResponse> ex)
-				{
-					this.m_tracer.TraceError("REST client exception: {0}", ex);
+                }
+                catch (RestClientException<OAuthTokenResponse> ex)
+                {
+                    this.m_tracer.TraceError("REST client exception: {0}", ex);
                     var se = new SecurityException(
                         String.Format("err_oauth2_{0}", ex.Result.Error),
                         ex
                     );
                     se.Data.Add("detail", ex.Result);
                     throw se;
-				}
-				catch(SecurityTokenException ex) {
-					this.m_tracer.TraceError ("TOKEN exception: {0}", ex);
-					throw new SecurityException (
-						String.Format ("err_token_{0}", ex.Type),
-						ex
-					);
-				}
-				catch(Exception ex)
-				{
-					this.m_tracer.TraceError("Generic exception: {0}", ex);
-					throw new SecurityException(
-						"err_exception",
-						ex);
-				}
-			}
+                }
+                catch (SecurityTokenException ex)
+                {
+                    this.m_tracer.TraceError("TOKEN exception: {0}", ex);
+                    throw new SecurityException(
+                        String.Format("err_token_{0}", ex.Type),
+                        ex
+                    );
+                }
+                catch(SecurityException ex)
+                {
+                    this.m_tracer.TraceError("Security exception: {0}", ex);
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceError("Generic exception: {0}", ex);
+                    throw new SecurityException(
+                        Strings.err_authentication_exception,
+                        ex);
+                }
+            }
 
-			this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });
-			return retVal;
-		}
+            this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });
+            return retVal;
+        }
         /// <summary>
         /// Gets the specified identity
         /// </summary>
-		public System.Security.Principal.IIdentity GetIdentity (string userName)
-		{
-			throw new NotImplementedException ();
-		}
+		public System.Security.Principal.IIdentity GetIdentity(string userName)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Authenticates the specified user
         /// </summary>
-		public System.Security.Principal.IPrincipal Authenticate (string userName, string password, string tfaSecret)
-		{
-			throw new NotImplementedException ();
-		}
+		public System.Security.Principal.IPrincipal Authenticate(string userName, string password, string tfaSecret)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Changes the user's password
         /// </summary>
-		public void ChangePassword (string userName, string newPassword, System.Security.Principal.IPrincipal principal)
-		{
-			throw new NotImplementedException ();
-		}
+		public void ChangePassword(string userName, string newPassword, System.Security.Principal.IPrincipal principal)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// Changes the user's password
         /// </summary>
