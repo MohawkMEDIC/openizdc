@@ -88,7 +88,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
     <Compile Include="Security\Local\LocalPolicyInformationService.cs" />
-    <Compile Include="Security\Remoate\AmiPolicyInformationService.cs" />
+    <Compile Include="Security\Remote\AmiPolicyInformationService.cs" />
     <Compile Include="Security\Local\LocalRoleProviderService.cs" />
     <Compile Include="Security\GenericPolicy.cs" />
     <Compile Include="Security\GenericPolicyInstance.cs" />
