@@ -67,6 +67,22 @@ INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'32BC9CDCEAB84441BEF1D
 INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'39346B0DBEC98044AF39EEB457C052D0', 'Other Classification', 'Other');
 INSERT INTO concept_class (uuid, Name, Mnemonic) VALUES (X'4A30D8FFEC43BC4E95FCFB4A4F2338F0', 'Stock control codes', 'Stock');
 
+-- SUPPORTING VIEWS
+CREATE VIEW act_participation_view AS 
+	SELECT act_participation.*, concept.mnemonic as participationRole_mnemonic 
+	FROM act_participation INNER JOIN concept ON (act_participation.participationRole = concept.uuid);
+
+CREATE VIEW act_identifier_view AS
+	SELECT act_identifier.*, assigning_authority.domainName AS identifier_domainName, assigning_authority.oid AS identifier_oid, assigning_authority.url AS identifier_url, concept.mnemonic as identifier_type_mnemonic
+	FROM act_identifier INNER JOIN assigning_authority ON (act_identifier.authority = assigning_authority.uuid)
+	LEFT JOIN identifier_type ON (act_identifier.type = identifier_type.uuid)
+	LEFT JOIN concept ON (concept.uuid = identifier_type.typeConcept);
+
+CREATE VIEW act_relationship_view AS
+	SELECT act_relationship.*, concept.mnemonic as relationshipType_mnemonic 
+	FROM act_relationship INNER JOIN concept ON (act_relationship.relationshipType = concept.uuid);
+
+
 -- QUERY HELPERS
 
 -- QUERY FOR CONCEPTS
@@ -503,3 +519,40 @@ select application.*,
 	from application inner join sqp_Entity as entity on (application.uuid = entity.uuid)
 	inner join security_application on (application.securityApplication = security_application.uuid)
 		where entity.classConcept = X'ADCF9FE21DEC604CA055039A494248AE';
+
+
+-- ACT SUPPORTING VIEW
+
+CREATE VIEW sqp_act AS
+SELECT act.*,
+	class_concept.mnemonic AS classConcept_mnemonic,
+	mood_concept.mnemonic AS moodConcept_mnemonic,
+	status_concept.mnemonic AS statusConcept_mnemonic,
+	type_concept.mnemonic AS typeConcept_mnemonic,
+	reason_concept.mnemonic AS reasonConcept_mnemonic,
+	act_identifier_view.value AS identifier_value,
+	act_identifier_view.authority AS identifier_authority,
+	act_identifier_view.identifier_domainName AS identifier_authority_domainName,
+	act_identifier_view.identifier_domainName AS identifier_guard,
+	act_identifier_view.identifier_oid AS identifier_authority_oid,
+	act_identifier_view.identifier_url AS identifier_authority_url,
+	act_identifier_view.type AS identifier_identifierType,
+	act_identifier_view.identifier_type_mnemonic AS identifier_identifierType_mnemonic,
+	act_participation_view.entity_uuid AS participation_player,
+	act_participation_view.participationRole AS participation_participationRole,
+	act_participation_view.participationRole_mnemonic AS participation_participationRole_mnemonic,
+	act_participation_view.participationRole_mnemonic AS participation_guard,
+	act_relationship_view.target AS relationship_target,
+	act_relationship_view.relationshipType AS relationship_relationshipType,
+	act_relationship_view.relationshipType_mnemonic AS relationship_relationshipType_mnemonic,
+	act_relationship_view.relationshipType_mnemonic AS relationship_guard
+	FROM 
+	act INNER JOIN concept class_concept ON (act.classConcept = class_concept.uuid)
+	INNER JOIN concept mood_concept ON (act.moodConcept = mood_concept.uuid)
+	INNER JOIN concept status_concept ON (act.statusConcept = status_concept.uuid)
+	LEFT JOIN concept type_concept ON (act.typeConcept = type_concept.uuid)
+	LEFT JOIN concept reason_concept ON (act.reasonConcept = reason_concept.uuid)
+	LEFT JOIN act_identifier_view ON (act.uuid = act_identifier_view.act_uuid)
+	LEFT JOIN act_participation_view ON (act.uuid = act_participation_view.act_uuid)
+	LEFT JOIN act_relationship_view ON (act.uuid = act_relationship_view.act_uuid);
+	
