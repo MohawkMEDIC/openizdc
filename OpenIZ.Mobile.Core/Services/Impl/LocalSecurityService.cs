@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -24,6 +25,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var securityUser = this.GetUser(userId);
             var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
             iids.ChangePassword(securityUser.UserName, password);
+
+            // Create an admin queue entry that will change the password
+            SynchronizationQueue.Admin.Enqueue(new SecurityUser() { Key = userId, PasswordHash = password }, Synchronization.Model.DataOperationType.Update);
+
             return securityUser;
         }
 
@@ -35,6 +40,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
             if (pers == null)
                 throw new InvalidOperationException("Misisng role provider service");
+
             return pers.Insert(roleInfo);
         }
 
@@ -71,7 +77,31 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 retVal.UserPhoto = userInfo.UserPhoto;
                 pers.Update(retVal);
             }
+
+            // Communicate the retVal to the AMI
+            var commAdmin = retVal.Clone() as SecurityUser;
+            commAdmin.PasswordHash = password;
+            SynchronizationQueue.Admin.Enqueue(commAdmin, Synchronization.Model.DataOperationType.Insert);
+
+            // Return value
             return retVal;
+        }
+
+        /// <summary>
+        /// Find policies that match the specified data
+        /// </summary>
+        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Find policies that match the specified data
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter, int offset, int? count, out int totalResults)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -207,11 +237,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public SecurityUser SaveUser(SecurityUser user)
         {
+            // Save user
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
+            
+            var retVal = pers.Update(user);
 
-            return pers.Update(user);
+            // Notify admin queue
+            var commUser = retVal.Clone() as SecurityUser;
+            commUser.PasswordHash = null; // Don't set password
+            SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
+
+            return retVal;
         }
 
         /// <summary>

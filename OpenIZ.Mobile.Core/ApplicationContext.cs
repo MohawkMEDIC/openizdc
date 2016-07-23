@@ -160,7 +160,6 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         protected void StartDaemons()
         {
-            ModelSettings.DeepLoadObject = false;
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
 
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();

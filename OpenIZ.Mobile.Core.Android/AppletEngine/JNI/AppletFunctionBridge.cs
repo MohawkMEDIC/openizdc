@@ -65,6 +65,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		private Context m_context;
 		private AppletWebView m_view;
         private Tracer m_tracer = Tracer.GetTracer(typeof(AppletFunctionBridge));
+        private Assembly m_appAssembly;
 
 		/// <summary>
 		/// Gets the context of the function
@@ -143,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public string GetCurrentAssetTitle()
         {
-            return this.m_view.Title ;
+            return (this.m_view as AppletWebView).ThreadSafeTitle ;
         }
 
         /// <summary>
@@ -153,8 +154,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [Export]
         public String GetVersion()
         {
-            return String.Format("{0} ({1})", typeof(OpenIZConfiguration).Assembly.GetName().Version,
-                typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+            if(this.m_appAssembly == null)
+                this.m_appAssembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(o => o.DefinedTypes.Any(t => t.Name == "SplashActivity")) ?? typeof(OpenIZConfiguration).Assembly;
+            
+            return String.Format("{0} ({1})", this.m_appAssembly.GetName().Version,
+                this.m_appAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
         }
 
         /// <summary>
@@ -188,7 +192,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Cannot have menus if not logged in
                 if (ApplicationContext.Current.Principal == null) return null;
 
-                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).ToArray();
+                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o=>o.Order).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
                
                 // Create menus
@@ -215,8 +219,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
+            // Get text for menu item
             string menuText = menu.GetText(this.GetLocale());
-            var existing = retVal.Find(o => o.Text == menuText);
+            var existing = retVal.Find(o => o.Text == menuText && o.Icon == menu.Icon);
             if (existing == null)
             {
                 existing = new MenuInformation()

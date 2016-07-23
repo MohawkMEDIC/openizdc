@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Security;
+using OpenIZ.Mobile.Core.Security;
 
 namespace OpenIZ.Mobile.Core.Services
 {
@@ -39,8 +42,8 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Adds the specified users to the specified roles
         /// </summary>
-        void AddUsersToRoles(string[] userNames, string[] roleNames);
+        void AddUsersToRoles(string[] userNames, string[] roleNames, IPrincipal principal = null);
 
-	}
+    }
 }
 

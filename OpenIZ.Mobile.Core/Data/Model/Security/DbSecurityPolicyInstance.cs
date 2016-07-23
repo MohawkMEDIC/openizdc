@@ -92,8 +92,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("role_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull]
-        public int RoleId
+        [Column("role_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] RoleId
         {
             get;
             set;
@@ -103,8 +103,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull]
-        public int PolicyId
+        [Column("policy_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] PolicyId
         {
             get;
             set;
@@ -121,8 +121,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("application_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull]
-        public int ApplicationId
+        [Column("application_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] ApplicationId
         {
             get;
             set;
@@ -132,8 +132,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull]
-        public int PolicyId
+        [Column("policy_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] PolicyId
         {
             get;
             set;
@@ -150,8 +150,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("device_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull]
-        public int DeviceId
+        [Column("device_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] DeviceId
         {
             get;
             set;
@@ -161,8 +161,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull]
-        public int PolicyId
+        [Column("policy_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        public byte[] PolicyId
         {
             get;
             set;

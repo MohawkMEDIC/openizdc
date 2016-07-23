@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyInformationalVersion("Sprint 4")]
+[assembly: AssemblyInformationalVersion("Chippewa")]
 [assembly: AssemblyVersion ("0.6.4.*")]
 
 // The following attributes are used to specify the signing key for the assembly,

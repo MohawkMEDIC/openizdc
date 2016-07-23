@@ -1,0 +1,24 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
+    <h1>{{ 'locale.login.header' | i18n }} OpenIZ ({{config.realmName}})</h1>
+    <hr />
+    <button class="btnprimary btn" ng-click="setLocale('en')">EN</button>
+    <button class="btndefault btn" ng-click="setLocale('fr')">FR</button>
+    <hr />
+    <form novalidate="novalidate">
+        <div class="container">
+            <div class="inputgroup">
+                <span class="inputgroupaddon">{{ 'locale.login.username' | i18n }}:</span>
+                <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="formcontrol" name="username" id="username" />
+            </div>
+            <div class="inputgroup">
+                <span class="inputgroupaddon">{{ 'locale.login.password' | i18n }}:</span>
+                <input ng-model="password" type="password" ng-required="true" class="formcontrol" name="password" id="password" />
+            </div>
+            <div class="btngroup pullright">
+                <button class="btnprimary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
+                    {{ 'locale.login.doLogin' | i18n }} <span class="glyphicon glyphicon-login"></span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

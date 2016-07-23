@@ -8,6 +8,9 @@ namespace OpenIZ.Mobile.Core.Security
 	/// </summary>
 	public interface IPolicyInstance
 	{
+        /// <summary>
+        /// Security policy instance
+        /// </summary>
 		IPolicy Policy { get; }
 		PolicyGrantType Rule { get; }
 		object Securable { get; }

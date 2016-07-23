@@ -30,6 +30,31 @@
     <property modelName="Name" domainName="PublicId"/>
   </class>
   
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityRole, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="Name" domainName="Name"/>
+
+  </class>
+
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityRolePolicy, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="SourceEntityKey" domainName="RoleId"/>
+    <property modelName="PolicyKey" domainName="PolicyId"/>
+  </class>
+  
+  <!-- Security Role -->
+  <class modelClass="OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Data.Model.Security.DbSecurityPolicy, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="Name" domainName="Name"/>
+    <property modelName="CanOverride" domainName="CanOverride"/>
+    <property modelName="Oid" domainName="Oid"/>
+  </class>
+  
   <!-- Concepts -->
 	<class modelClass="OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0"
 		domainClass="OpenIZ.Mobile.Core.Data.Model.Concepts.DbConceptSet, OpenIZ.Mobile.Core, Version=0.5.0.0">

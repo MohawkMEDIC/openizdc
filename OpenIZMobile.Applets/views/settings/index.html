@@ -1,10 +1,9 @@
 ﻿<div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
-     openiz:layout="~/views/partials/_layout.html">
+     openiz:layout="/org.openiz.core/layouts/minimal.html">
     <openiz:title lang="en">Initial Settings</openiz:title>
     <openiz:title lang="fr"></openiz:title>
     <openiz:title lang="sw"></openiz:title>
-    <openiz:script>~/lib/ui-bootstrap.min.js</openiz:script>
-    <openiz:script>~/controllers/settings/settings.js</openiz:script>
+    <openiz:script>/org.openiz.core/controllers/settings/settings.js</openiz:script>
     <openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</openiz:demand>
 
     <div class="row">
@@ -61,11 +60,11 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a href="#dataBody" data-toggle="collapse">
-                            {{ 'locale.settings.dataTitle' | i18n }}
+                            <span class="glyphicon glyphicon-chevron-right" id="dataBodyIndicator"></span>{{ 'locale.settings.dataTitle' | i18n }}
                         </a>
                     </h3>
                 </div>
-                <div class="panel-collapse collapse" id="dataBody">
+                <div class="panel-collapse collapse" id="dataBody" oiz-collapseIndicator="#dataBodyIndicator">
 
                     <div class="panel-body">
                         <div class="container-fluid">
@@ -118,11 +117,11 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a href="#logBody" data-toggle="collapse">
-                            {{ 'locale.settings.logTitle' | i18n }}
+                           <span class="glyphicon glyphicon-chevron-right" id="logBodyIndicator"></span> {{ 'locale.settings.logTitle' | i18n }}
                         </a>
                     </h3>
                 </div>
-                <div class="panel-collapse collapse" id="logBody">
+                <div class="panel-collapse collapse" id="logBody" oiz-collapseIndicator="#logBodyIndicator">
 
                     <div class="panel-body">
                         <div class="container-fluid">
@@ -156,16 +155,15 @@
                     </div>
                 </div>
             </div>
-
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         <a href="#securityBody" data-toggle="collapse">
-                            {{ 'locale.settings.securityTitle' | i18n }}
+                            <span class="glyphicon glyphicon-chevron-right" id="securityBodyIndicator"></span> {{ 'locale.settings.securityTitle' | i18n }}
                         </a>
                     </h3>
                 </div>
-                <div class="panel-collapse collapse" id="securityBody">
+                <div class="panel-collapse collapse" id="securityBody" oiz-collapseIndicator="#securityBodyIndicator">
 
                     <div class="panel-body">
                         <div class="container-fluid">
@@ -201,6 +199,52 @@
                                         </em>
                                     </label>
                                 </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a href="#networkBody" data-toggle="collapse">
+                            <span class="glyphicon glyphicon-chevron-right" id="networkBodyIndicator"></span> {{ 'locale.settings.networkTitle' | i18n }}
+                        </a>
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse" id="networkBody" oiz-collapseIndicator="#networkBodyIndicator">
+
+                    <div class="panel-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-2 col-xs-2">
+                                    <img src="~/img/appbar.network.png" alt="log" class="left" />
+                                </div>
+                                <div class="col-md-10 col-xs-10" style="vertical-align:middle">
+                                    <em>{{ 'locale.settings.networkDescription' | i18n }}</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="useProxy" type="checkbox" ng-model="config.network.useProxy" />
+                                        {{ 'locale.settings.useProxy' | i18n }}
+                                        -
+                                        <em>
+                                            {{ 'locale.settings.useProxyDescription' | i18n}}
+                                        </em>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-if="config.network.useProxy" class="form-group">
+                            <label class="control-label col-sm-2">{{ 'locale.settings.proxyAddress' | i18n }}</label>
+                            <div class="col-sm-10">
+                                <input type="url" class="form-control" ng-model="config.network.proxyAddress" placeholder="{{ 'locale.settings.proxyAddressPlaceHolder' | i18n }}"/>
                             </div>
                         </div>
 

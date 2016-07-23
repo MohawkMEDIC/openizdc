@@ -57,6 +57,7 @@
     <Compile Include="Data\Persistence\PersonPersistenceService.cs" />
     <Compile Include="Data\Persistence\PlacePersistenceService.cs" />
     <Compile Include="Data\Persistence\ProviderPersistenceService.cs" />
+    <Compile Include="Data\Persistence\SecurityPersistenceService.cs" />
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
@@ -76,9 +77,21 @@
     <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
-    <Compile Include="Security\LocalRoleProviderService.cs" />
-    <Compile Include="Security\Policy.cs" />
-    <Compile Include="Security\PolicyInstance.cs" />
+    <Compile Include="Resources\Strings.fr.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.fr.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Local\LocalPolicyInformationService.cs" />
+    <Compile Include="Security\Remoate\AmiPolicyInformationService.cs" />
+    <Compile Include="Security\Local\LocalRoleProviderService.cs" />
+    <Compile Include="Security\GenericPolicy.cs" />
+    <Compile Include="Security\GenericPolicyInstance.cs" />
     <Compile Include="Security\IPolicyInstance.cs" />
     <Compile Include="Security\IPolicy.cs" />
     <Compile Include="Security\ClaimsPrincipal.cs" />
@@ -99,8 +112,8 @@
     <Compile Include="Services\IPolicyDecisionService.cs" />
     <Compile Include="Services\IPolicyInformationService.cs" />
     <Compile Include="Services\IRoleProviderService.cs" />
-    <Compile Include="Security\LocalPolicyDecisionService.cs" />
-    <Compile Include="Security\LocalPolicyInformationService.cs" />
+    <Compile Include="Security\Local\LocalPolicyDecisionService.cs" />
+    <Compile Include="Services\IThreadPoolService.cs" />
     <Compile Include="Synchronization\IDataSynchronizationService.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
     <Compile Include="Synchronization\SynchronizationManagerService.cs" />
@@ -144,7 +157,7 @@
     <Compile Include="Exceptions\LocalPersistenceException.cs" />
     <Compile Include="Data\Persistence\IdentifiedPersistenceService.cs" />
     <Compile Include="Data\Persistence\BaseDataPersistenceService.cs" />
-    <Compile Include="Security\LocalIdentityService.cs" />
+    <Compile Include="Security\Local\LocalIdentityService.cs" />
     <Compile Include="Services\IPasswordHashingService.cs" />
     <Compile Include="Data\Persistence\ConceptSetPersistenceService.cs" />
     <Compile Include="Data\LocalPersistenceServiceBase.cs" />
@@ -161,8 +174,14 @@
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Messaging.AMI.Client">
+      <HintPath>..\Solution Items\OpenIZ.Messaging.AMI.Client.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Messaging.IMSI.Client">
       <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
@@ -176,6 +195,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\001_init_openiz_core_data.sql" />
+    <EmbeddedResource Include="Resources\Strings.fr.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.fr.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

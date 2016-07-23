@@ -2,6 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Android.Resources;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -71,9 +72,9 @@ namespace OpenIZ.Mobile.Core.Android.Security
 				store.Open(OpenFlags.ReadOnly);
 				var matches = store.Certificates.Find(findType, findValue, true);
 				if(matches.Count == 0)
-					throw new InvalidOperationException("Certificate not found");
+					throw new InvalidOperationException(Strings.err_certificate_not_found);
 				else if(matches.Count > 1)
-					throw new InvalidOperationException("Too many candidate certificates found");
+					throw new InvalidOperationException(Strings.err_too_many_certificate_matches);
 				else
 					return matches[0];
 			} catch (Exception ex) {

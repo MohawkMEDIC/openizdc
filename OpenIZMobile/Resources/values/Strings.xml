@@ -38,4 +38,9 @@
 	<string name="err_login">Login error: </string>
 	<string name="err_login_invalidusername">Invalid username/password</string>
 	<string name="err_exception">An unexpected error occurred</string>
+
+  <string name="startup_configuration">Loading Configuration</string>
+  <string name="startup_data">Applying Database Changes</string>
+  <string name="startup_update">Applying Updates</string>
+  <string name="startup_setup">Preparing initial configuration</string>
 </resources>

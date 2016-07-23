@@ -1,5 +1,5 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-     oiz:layout="~/views/partials/_layout.html" ng-controller="IndexController">
+     oiz:layout="/org.openiz.core/layouts/minimal.html" ng-controller="IndexController">
     <oiz:title lang="en">Welcome to OpenIZ DC!</oiz:title>
     <oiz:title lang="fr">Bienvennue a OpenIZ DC!</oiz:title>
     <oiz:title lang="sw">Karibu a OpenIZ DC!</oiz:title>
@@ -9,7 +9,7 @@
     <p>The disconnected client is installed on your device. Unfortunately it is a whitelabel application so out of the box it is pretty boring!</p>
     <h2>Installed Menu Items</h2>
     <ul>
-        <li ng-repeat="m in ::sys.menuItems">
+        <li ng-repeat="m in ::system.menuItems">
             <a ng-if="::m.action" ng-href="{{::m.action}}">
                 <img ng-if="m.icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" />							{{::m.text}}
             </a>

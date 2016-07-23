@@ -109,9 +109,9 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("INSERT {0}", data);
 
 					connection.BeginTransaction ();
-                    
+                    data.SetDelayLoad(false);
 					data = this.Insert(connection, data);
-
+                    data.SetDelayLoad(true);
                     connection.Commit();
 
                     this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
@@ -155,7 +155,9 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("UPDATE {0}", data);
 					connection.BeginTransaction ();
 
+                    data.SetDelayLoad(false);
 					data = this.Update(connection, data);
+                    data.SetDelayLoad(true);
 
 					connection.Commit();
 
@@ -197,9 +199,11 @@ namespace OpenIZ.Mobile.Core.Data
 					this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
 					connection.BeginTransaction ();
 
-					data = this.Obsolete(connection, data);
+                    data.SetDelayLoad(false);
+                    data = this.Obsolete(connection, data);
+                    data.SetDelayLoad(true);
 
-					connection.Commit();
+                    connection.Commit();
 
                     this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
@@ -261,6 +265,11 @@ namespace OpenIZ.Mobile.Core.Data
                     this.Queried?.Invoke (this, postData);
 
                     totalResults = postData.TotalResults;
+
+                    // Set delay load
+                    foreach (var i in postData.Results)
+                        i.SetDelayLoad(true);
+
 					return postData.Results;
 
 				}

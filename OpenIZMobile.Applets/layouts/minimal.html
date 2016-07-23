@@ -1,0 +1,17 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
+        openiz:layout="/org.openiz.core/layouts/root.html">
+
+
+    <!-- #include virtual="content" -->
+
+    <footer>
+        <small class="text-muted">
+            OpenIZ Core - <span id="versionInfo"></span>
+        </small>
+        <script type="text/javascript">
+            angular.element(document).ready(function () {
+                document.getElementById("versionInfo").innerText = OpenIZ.App.getVersion();
+            });</script>
+    </footer>
+
+</div>

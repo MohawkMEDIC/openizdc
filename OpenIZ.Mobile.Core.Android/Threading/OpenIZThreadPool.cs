@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using System.Threading;
 using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Threading
 {
@@ -18,11 +19,11 @@ namespace OpenIZ.Mobile.Core.Android.Threading
     /// Represents a thread pool which is implemented separately from the default .net
     /// threadpool, this is to reduce the load on the .net framework thread pool
     /// </summary>
-    public class OpenIZThreadPool : IDisposable
+    public class OpenIZThreadPool : IThreadPoolService, IDisposable
     {
 
         // Number of threads to keep alive
-        private int m_concurrencyLevel = 2;
+        private int m_concurrencyLevel = 4;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         // Active threads
@@ -31,13 +32,11 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         private int m_threadWait = 0;
         // True when the thread pool is being disposed
         private bool m_disposing = false;
-        // Current default wait thread pool
-        public static readonly OpenIZThreadPool Current = new OpenIZThreadPool();
 
         /// <summary>
         /// Creates a new instance of the wait thread pool
         /// </summary>
-        private OpenIZThreadPool() 
+        public OpenIZThreadPool() 
         {
             if (ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency") != null)
                 this.m_concurrencyLevel = Int32.Parse(ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency").Value);
@@ -52,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
             /// <summary>
             /// The callback to execute on the worker
             /// </summary>
-            public WaitCallback Callback { get; set; }
+            public Action<Object> Callback { get; set; }
             /// <summary>
             /// The state or parameter to the worker
             /// </summary>
@@ -71,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         /// <summary>
         /// Queue a work item to be completed
         /// </summary>
-        public void QueueUserWorkItem(WaitCallback callback)
+        public void QueueUserWorkItem(Action<Object> callback)
         {
             QueueUserWorkItem(callback, null);
         }
@@ -79,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         /// <summary>
         /// Queue a user work item with the specified parameters
         /// </summary>
-        public void QueueUserWorkItem(WaitCallback callback, object state)
+        public void QueueUserWorkItem(Action<Object> callback, object state)
         {
             ThrowIfDisposed();
             WorkItem wd = new WorkItem()

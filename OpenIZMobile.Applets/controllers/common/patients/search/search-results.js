@@ -1,14 +1,13 @@
 ﻿/// <refernece path="~/js/openiz.js"/>
 /// <reference path="~/js/openiz-model.js"/>
-/// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
 // Document ready, bind search results to their related contexts
-$(document).ready(function () {
-    $('table.oiz-patient-results').each(function (e) {
+angular.element(document).ready(function () {
+    angular.forEach('table.oiz-patient-results', function (e) {
 
         // Get the current scope that we're in
-        var scope = angular.element($(e)).scope();
+        var scope = angular.element(e).scope();
 
         // If the current scope does not have required values bind them
         scope.search = scope.search || {};

@@ -22,6 +22,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         private Tracer m_tracer = Tracer.GetTracer(typeof(SynchronizationManagerService));
         private Object m_inboundLock = new object();
         private Object m_outboundLock = new object();
+        private IThreadPoolService m_threadPool = null;
 
         /// <summary>
         /// Events surrounding the daemon
@@ -166,24 +167,27 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+            this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
+
             // Bind to the inbound queue
             SynchronizationQueue.Inbound.Enqueued += (o, e) =>
             {
-                AsyncCallback async = (itm) =>
+                Action<Object> async = (itm) =>
                 {
                     this.ExhaustInboundQueue();
                 };
-                async.BeginInvoke(null, null, null);
+                this.m_threadPool.QueueUserWorkItem(async);
             };
 
             // Bind to outbound queue
             SynchronizationQueue.Outbound.Enqueued += (o, e) =>
             {
-                AsyncCallback async = (itm) =>
+                Action<Object> async = (itm) =>
                 {
                     this.ExhaustOutboundQueue();
                 };
-                async.BeginInvoke(null, null, null);
+                this.m_threadPool.QueueUserWorkItem(async);
+
             };
 
             // startup

@@ -28,19 +28,19 @@ using System.IO.Compression;
 
 namespace OpenIZMobile
 {
-	[Activity (Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]			
-	public class SplashActivity : Activity
-	{
+    [Activity(Label = "@string/app_name", Theme = "@style/OpenIZ.Splash", MainLauncher = true, Icon = "@mipmap/icon", NoHistory = true)]
+    public class SplashActivity : Activity
+    {
 
-		// Tracer
-		private Tracer m_tracer;
+        // Tracer
+        private Tracer m_tracer;
 
         /// <summary>
         /// Progress has changed
         /// </summary>
         private void OnProgressUpdated(Object sender, ApplicationProgressEventArgs e)
         {
-            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = String.Format("{0} {1} ({2:0%})", Resources.GetString(Resource.String.installing_applets), e.ProgressText, e.Progress));
+            this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = String.Format("{0} {1}", e.ProgressText, e.Progress > 0 ? String.Format("({0:0%})", e.Progress) : null));
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace OpenIZMobile
                 {
                     Intent viewIntent = new Intent(this, typeof(AppletActivity));
                     var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/index.html");
+                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html");
                     this.StartActivity(viewIntent);
 
                 }
@@ -97,6 +97,7 @@ namespace OpenIZMobile
         {
 
             this.RunOnUiThread(() => this.FindViewById<TextView>(Resource.Id.txt_splash_info).Text = Resources.GetString(Resource.String.startup));
+            AndroidApplicationContext.ProgressChanged += this.OnProgressUpdated;
 
             try
             {
@@ -104,7 +105,7 @@ namespace OpenIZMobile
                 if (AndroidApplicationContext.Current != null)
                     return true;
 
-                if (!AndroidApplicationContext.Start())
+                if (!AndroidApplicationContext.Start(this.ApplicationContext))
                 {
 
                     CancellationTokenSource ctSource = new CancellationTokenSource();
@@ -115,7 +116,8 @@ namespace OpenIZMobile
 
                         try
                         {
-                            if (AndroidApplicationContext.StartTemporary())
+
+                            if (AndroidApplicationContext.StartTemporary(this.ApplicationContext))
                             {
                                 this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
 
@@ -144,6 +146,10 @@ namespace OpenIZMobile
                             ctSource.Cancel();
                             this.ShowException(e);
                         }
+                        finally
+                        {
+                            AndroidApplicationContext.ProgressChanged -= this.OnProgressUpdated;
+                        }
                     }, ct);
 
                     // Now show the configuration screen.
@@ -152,7 +158,7 @@ namespace OpenIZMobile
                         if (!ct.IsCancellationRequested)
                         {
                             Intent viewIntent = new Intent(this, typeof(AppletActivity));
-                            viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/views/settings/index.html");
+                            viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
                             viewIntent.PutExtra("continueTo", typeof(SplashActivity).AssemblyQualifiedName);
                             this.StartActivity(viewIntent);
 
@@ -165,7 +171,6 @@ namespace OpenIZMobile
                 else
                 {
 
-                    AndroidApplicationContext.Current.ProgressChanged += this.OnProgressUpdated;
 
                     this.m_tracer = Tracer.GetTracer(this.GetType());
 
@@ -190,7 +195,8 @@ namespace OpenIZMobile
 
                             // Write data to assets directory
 #if !DEBUG
-                            if(new Version(AndroidApplicationContext.Current.GetApplet(manifest.Info.Id)?.Info.Version ?? "0.0.0.0") < new Version(manifest.Info.Version))
+                            if(AndroidApplicationContext.Current.GetApplet(pkg.Meta.Id) == null ||
+                                new Version(AndroidApplicationContext.Current.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
 #endif       
                             AndroidApplicationContext.Current.InstallApplet(pkg, true);
                         }
@@ -199,10 +205,9 @@ namespace OpenIZMobile
                             this.m_tracer?.TraceError(e.ToString());
                         }
                     }
-
+                    AndroidApplicationContext.ProgressChanged -= this.OnProgressUpdated;
                 }
 
-                AndroidApplicationContext.Current.ProgressChanged -= this.OnProgressUpdated;
 
                 return true;
             }
@@ -212,6 +217,7 @@ namespace OpenIZMobile
                 this.ShowException(e);
                 return false;
             }
+
         }
 
 

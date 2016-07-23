@@ -19,6 +19,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using AndroidOS = Android.OS;
 using OpenIZ.Mobile.Core.Android.Services;
+using OpenIZ.Mobile.Core.Android.Threading;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -82,8 +83,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 					"Stock Management",
 					"Administration"
 				},
-                StartupAsset = "tz.timr.core",
-                AuthenticationAsset = "/views/security/login.html"
+                StartupAsset = "tz.timr.applet",
+                AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
             };
 
 			// Initial applet style
@@ -96,7 +97,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName,
-                    typeof(MiniImsServer).AssemblyQualifiedName
+                    typeof(MiniImsServer).AssemblyQualifiedName,
+                    typeof(OpenIZThreadPool).AssemblyQualifiedName
 				}
 			};
 
@@ -142,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection () {
 				TraceWriter = new List<TraceWriterConfiguration> () {
 					new TraceWriterConfiguration () {
-						Filter = System.Diagnostics.Tracing.EventLevel.Error,
+						Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
 						InitializationData = "OpenIZ",
 						TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
 					}
@@ -205,7 +207,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 		public void Save(OpenIZConfiguration config)
 		{
 			try {
-				this.m_tracer?.TraceInfo ("Saving configuration to {0}", this.m_configPath);
+				this.m_tracer?.TraceInfo ("Saving configuration to {0}...", this.m_configPath);
 				if (!Directory.Exists (Path.GetDirectoryName (this.m_configPath)))
 					Directory.CreateDirectory (Path.GetDirectoryName (this.m_configPath));
 				

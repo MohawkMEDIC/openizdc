@@ -62,7 +62,7 @@ namespace OpenIZMobile
             
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
-
+            
             // Progress bar
             this.m_progressBar = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal);
             this.m_textView = new TextView(this, null);
@@ -83,7 +83,7 @@ namespace OpenIZMobile
 			//}
 
             // Progress has changed
-            AndroidApplicationContext.Current.ProgressChanged += (o, e) =>
+            AndroidApplicationContext.ProgressChanged += (o, e) =>
             {
                 RunOnUiThread(() =>
                 {

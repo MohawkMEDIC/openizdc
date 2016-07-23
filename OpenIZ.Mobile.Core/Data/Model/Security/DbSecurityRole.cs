@@ -7,7 +7,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Represents a security role
 	/// </summary>
 	[Table("security_role")]
-	public class DbSecurityRole :DbIdentified
+	public class DbSecurityRole : DbIdentified
 	{
 		/// <summary>
 		/// Gets or sets the name.

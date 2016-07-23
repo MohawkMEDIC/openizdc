@@ -14,6 +14,7 @@ using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Serices;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -54,6 +55,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                             InstallationDate = DateTime.Now
                         });
 
+                    ApplicationContext.Current.SetProgress(Strings.locale_setting_table, 0);
                     db.TableChanged += (s, e) => tracer.TraceInfo("Updating {0}", e.Table.TableName);
                     // Create tables
                     tracer.TraceInfo("Installing Concept Tables...");
@@ -181,10 +183,16 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     foreach (var sql in resourceSql)
                     {
                         tracer.TraceInfo("Deploying {0}", sql);
+                        ApplicationContext.Current.SetProgress(sql, 0);
+
                         using (StreamReader sr = new StreamReader(typeof(InitialCatalog).GetTypeInfo().Assembly.GetManifestResourceStream(sql)))
                         {
-                            foreach (var stmt in sr.ReadToEnd().Split(';').Select(o => o.Trim()))
+                            var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
+                            for(int i = 0; i < stmts.Length; i++)
                             {
+                                var stmt = stmts[i];
+                                if(i % 10 == 0)
+                                    ApplicationContext.Current.SetProgress(Strings.locale_setting_deploy, (float)i / stmts.Length);
                                 if (String.IsNullOrEmpty(stmt)) continue;
                                 tracer.TraceVerbose("EXECUTE: {0}", stmt);
                                 db.Execute(stmt);

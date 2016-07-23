@@ -41,10 +41,9 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
-            else if (context.IsInTransaction)
-                return;
+
             // Load associations
-            foreach(var pi in typeof(TModel).GetRuntimeProperties())
+            foreach (var pi in typeof(TModel).GetRuntimeProperties())
             {
                 if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
                     pi.GetCustomAttribute<AutoLoadAttribute>() == null)
@@ -52,9 +51,9 @@ namespace OpenIZ.Mobile.Core.Data
 
                 var value = pi.GetValue(me);
                 if (value == null) continue;
-                else if (value is IdentifiedData && (value as IdentifiedData).IsLogicalNull)
+                else if (value is IdentifiedData)
                     pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));
-                else if(value is IList)
+                else if (value is IList)
                 {
                     if ((value as IList).Count > 0) continue;
 
@@ -81,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Data
                         var results = queryMethod.Invoke(idpInstance, new object[] { context, lambda }) as IEnumerable;
                         var lValue = Activator.CreateInstance(pi.PropertyType) as IList;
                         pi.SetValue(me, lValue);
-                        foreach(var itm in results)
+                        foreach (var itm in results)
                         {
                             lValue.Add(itm);
                         }
@@ -159,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Does it exist in our cache?
             Guid? existingGuidVer = null;
-            if ( s_exists.TryGetValue(dkey, out existingGuidVer))
+            if (s_exists.TryGetValue(dkey, out existingGuidVer))
             {
                 if (vMe?.VersionKey == existingGuidVer || vMe == null)
                     return; // Exists already we know about it
@@ -168,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Data
             // We have to find it
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
             var idpInstance = ApplicationContext.Current.GetService(idpType);
-            
+
             var existing = me.TryGetExisting(context);
 
             // Existing exists?
@@ -220,18 +219,18 @@ namespace OpenIZ.Mobile.Core.Data
         ///// <summary>
         ///// Updates a keyed delay load field if needed
         ///// </summary>
-        //public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
-        //{
-        //    var delayLoadProperty = field.GetCustomAttribute<DelayLoadAttribute>();
-        //    if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.KeyPropertyName))
-        //        return;
-        //    var value = field.GetValue(instance) as IIdentifiedEntity;
-        //    if (value == null)
-        //        return;
-        //    // Get the delay load key property!
-        //    var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.KeyPropertyName);
-        //    keyField.SetValue(instance, value.Key);
-        //}
+        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
+        {
+            var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
+            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
+                return;
+            var value = field.GetValue(instance) as IIdentifiedEntity;
+            if (value == null)
+                return;
+            // Get the delay load key property!
+            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
+            keyField.SetValue(instance, value.Key);
+        }
     }
 
     /// <summary>
@@ -259,7 +258,10 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
                 }
                 return base.Insert(context, data);
             }
@@ -275,7 +277,11 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
+
                 }
                 return base.Update(context, data);
             }
@@ -300,7 +306,11 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
+
                 }
                 return base.Insert(context, data);
             }
@@ -316,7 +326,11 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
+
                 }
                 return base.Update(context, data);
             }
@@ -340,7 +354,11 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
+
                 }
                 return base.Insert(context, data);
             }
@@ -356,7 +374,11 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var instance = rp.GetValue(data);
                     if (instance != null)
+                    {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        ModelExtensions.UpdateParentKeys(data, rp);
+                    }
+
                 }
                 return base.Update(context, data);
             }

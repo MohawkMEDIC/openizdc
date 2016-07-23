@@ -75,6 +75,14 @@
     <Compile Include="AppletEngine\AuthenticationProvider.cs" />
     <Compile Include="AppletEngine\AppletWebView.cs" />
     <Compile Include="AppletEngine\JNI\AppletFunctionBridge.cs" />
+    <Compile Include="Resources\Strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\OauthTokenRequest.cs" />
+    <Compile Include="Security\SessionInformation.cs" />
+    <Compile Include="Security\SystemPrincipal.cs" />
     <Compile Include="Security\X509CertificateUtils.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Diagnostics\FileTraceWriter.cs" />
@@ -91,8 +99,12 @@
     <Compile Include="Security\TokenCredentials.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
+    <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
+    <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
+    <Compile Include="Services\Attributes\RestServiceAttribute.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\MiniImsServer.cs" />
+    <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>
@@ -114,5 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Strings.sw.resx" />
   </ItemGroup>
 </Project>

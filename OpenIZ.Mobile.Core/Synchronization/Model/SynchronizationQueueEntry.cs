@@ -149,6 +149,12 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 	{
 	}
 
-
+    /// <summary>
+    /// Queue which is used to store administrative events on the user
+    /// </summary>
+    [Table("admin_queue")]
+    public class OutboundAdminQueueEntry : SynchronizationQueueEntry
+    {
+    }
 }
 
