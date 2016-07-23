@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\Applets\openiz.core.applet.pak" />
-    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
