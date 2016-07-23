@@ -1,4 +1,5 @@
 ﻿/// <reference path="../../js/openiz-model.js"/>
+
 /// <reference path="../../js/openiz.js"/>
 
 layoutApp.controller('SettingsController', ['$scope', function ($scope) {

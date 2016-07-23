@@ -109,6 +109,9 @@
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
     <None Include="Resources\AboutResources.txt" />
   </ItemGroup>
   <ItemGroup>

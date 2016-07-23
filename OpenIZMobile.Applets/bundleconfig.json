@@ -1,0 +1,26 @@
+[
+  {
+    "outputFileName": "js/openiz-localize.min.js",
+    "inputFiles": [
+      "js/openiz-localize.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-model.min.js",
+    "inputFiles": [
+      "js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz.min.js",
+    "inputFiles": [
+      "js/openiz.js"
+    ]
+  },
+  {
+    "outputFileName": "css/theme.min.css",
+    "inputFiles": [
+      "css/theme.css"
+    ]
+  }
+]
