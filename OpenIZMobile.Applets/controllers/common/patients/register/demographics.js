@@ -8,8 +8,17 @@ $(document).ready(function () {
 
     $('.select2-tag').select2({
         tags: true,
-        tokenSeparators: [' ',',',';']
+        tokenSeparators: [' ', ',', ';'],
+        //templateResult : function(data) { return null; },
+        language: {
+            noResults: null //function (term) { return 'No'; }
+        }
     });
-
+    //$('.select2-tag').each(function (e, d) {
+    //    $(d).on('select2:open', function (s) {
+    //        s.preventDefault();
+    //        return true;
+    //    });
+    //});
 
 });

@@ -956,7 +956,14 @@ var OpenIZ = OpenIZ || {
         * @method
        */
         getRealm: function () {
-            return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+            try
+            {
+                return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+            }
+            catch(e)
+            {
+                console.error(e);
+            }
         },
         /**
         * @summary Gets the specified OpenIZ configuration section name. 
@@ -1096,15 +1103,15 @@ $(document).ready(function () {
 
     //OpenIZModel = new __OpenIZModel();
     $('input[type="date"]').each(function (k, v) {
-        if ($(v).attr('data-max-date')) {
+        if ($(v).attr('oiz-max-date')) {
             var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('data-max-date')));
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-max-date')));
             var maxDate = OpenIZ.Util.toDateInputString(date);
             $(v).attr('max', maxDate);
         }
-        if ($(v).attr('data-min-date')) {
+        if ($(v).attr('oiz-min-date')) {
             var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('data-min-date')));
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-min-date')));
             var minDate = OpenIZ.Util.toDateInputString(date)
             $(v).attr('min', minDate);
         }

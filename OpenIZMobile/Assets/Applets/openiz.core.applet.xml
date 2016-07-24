@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.4.2950">
+  <info id="org.openiz.core" version="0.6.4.988.">
     <icon>~/img/cog.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -79,9 +79,18 @@ $(document).ready(function () {
 
     $('.select2-tag').select2({
         tags: true,
-        tokenSeparators: [' ',',',';']
+        tokenSeparators: [' ', ',', ';'],
+        //templateResult : function(data) { return null; },
+        language: {
+            noResults: null //function (term) { return 'No'; }
+        }
     });
-
+    //$('.select2-tag').each(function (e, d) {
+    //    $(d).on('select2:open', function (s) {
+    //        s.preventDefault();
+    //        return true;
+    //    });
+    //});
 
 });</contentText>
   </asset>
@@ -2731,7 +2740,14 @@ var OpenIZ = OpenIZ || {
         * @method
        */
         getRealm: function () {
-            return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+            try
+            {
+                return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+            }
+            catch(e)
+            {
+                console.error(e);
+            }
         },
         /**
         * @summary Gets the specified OpenIZ configuration section name. 
@@ -2871,15 +2887,15 @@ $(document).ready(function () {
 
     //OpenIZModel = new __OpenIZModel();
     $('input[type="date"]').each(function (k, v) {
-        if ($(v).attr('data-max-date')) {
+        if ($(v).attr('oiz-max-date')) {
             var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('data-max-date')));
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-max-date')));
             var maxDate = OpenIZ.Util.toDateInputString(date);
             $(v).attr('max', maxDate);
         }
-        if ($(v).attr('data-min-date')) {
+        if ($(v).attr('oiz-min-date')) {
             var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('data-min-date')));
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-min-date')));
             var minDate = OpenIZ.Util.toDateInputString(date)
             $(v).attr('min', minDate);
         }
@@ -2903,7 +2919,7 @@ $(document).ready(function () {
 });</contentText>
   </asset>
   <asset name="js/openiz.min.js" mimeType="text/javascript">
-    <contentText>var OpenIZ=OpenIZ||{urlParams:{},Util:{toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(new OpenIZModel.Session(i));else n.onException(new OpenIZModel.Exception("err_general",i,null))},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},login:function(n,t){var i,r;try{if(i=OpenIZSessionService.Login(n,t),i==null)return null;if(i.lastIndexOf("err",0)==0&amp;&amp;i!="err_oauth2_invalid_grant")throw new OpenIZModel.Exception(OpenIZ.Localization.getString(i),null,null);else if(r=JSON.parse(i),r!=null&amp;&amp;r.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_"+r.error),r.error_description,null);else return i!=null?new OpenIZModel.Session(i):null}catch(u){console.warn(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString(u.message),u.details,u);}},setPasswordAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.setPassword(n.userName,n.password)},n)},setPassword:function(){},register:function(){},getSessionAsync:function(n){$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(new OpenIZModel.Session(t));else n.onException(new OpenIZModel.Exception("err_general",t,null))})},getSession:function(){try{var n=OpenIZSessionService.GetSession();return n!=null&amp;&amp;OpenIZModel!==undefined?new OpenIZModel.Session(JSON.parse(n)):null}catch(t){return console.error(t),null}},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.refreshSession()},n)},refreshSession:function(){var n,t;try{if(OpenIZ.Authentication.getSession()==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_no_session"),OpenIZ.Localization.getString("err_no_session_detail"),null);if(n=OpenIZSessionService.Refresh(),n==null)return null;if(n.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(n),null,null);else if(t=JSON.parse(n),t!=null&amp;&amp;t.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_"+t.error),t.error_description,null);else return n!=null?new OpenIZModel.Session(n):null}catch(i){console.warn(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"),i.message,i);}}},App:{getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"),t.message,t);}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_string"),t.message,t);}},getLocale:function(){return OpenIZApplicationService.GetLocale()},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},setStrings:function(n,t){languageStrings[lang]=t},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Patient:{findAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.find(n.query,n.offset,n.count)},n)},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.insert(n.patient)},n)},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.get(n.patientId)},n)},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}}};$.ajaxSetup({cache:!1});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();$(document).ready(function(){$('input[type="date"]').each(function(n,t){var r,i,u;$(t).attr("data-max-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("data-max-date"))),r=OpenIZ.Util.toDateInputString(i),$(t).attr("max",r));$(t).attr("data-min-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("data-min-date"))),u=OpenIZ.Util.toDateInputString(i),$(t).attr("min",u))});$("div.collapse[oiz-collapseIndicator]").each(function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})})});</contentText>
+    <contentText>var OpenIZ=OpenIZ||{urlParams:{},Util:{toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(new OpenIZModel.Session(i));else n.onException(new OpenIZModel.Exception("err_general",i,null))},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},login:function(n,t){var i,r;try{if(i=OpenIZSessionService.Login(n,t),i==null)return null;if(i.lastIndexOf("err",0)==0&amp;&amp;i!="err_oauth2_invalid_grant")throw new OpenIZModel.Exception(OpenIZ.Localization.getString(i),null,null);else if(r=JSON.parse(i),r!=null&amp;&amp;r.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_"+r.error),r.error_description,null);else return i!=null?new OpenIZModel.Session(i):null}catch(u){console.warn(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString(u.message),u.details,u);}},setPasswordAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.setPassword(n.userName,n.password)},n)},setPassword:function(){},register:function(){},getSessionAsync:function(n){$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(new OpenIZModel.Session(t));else n.onException(new OpenIZModel.Exception("err_general",t,null))})},getSession:function(){try{var n=OpenIZSessionService.GetSession();return n!=null&amp;&amp;OpenIZModel!==undefined?new OpenIZModel.Session(JSON.parse(n)):null}catch(t){return console.error(t),null}},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.refreshSession()},n)},refreshSession:function(){var n,t;try{if(OpenIZ.Authentication.getSession()==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_no_session"),OpenIZ.Localization.getString("err_no_session_detail"),null);if(n=OpenIZSessionService.Refresh(),n==null)return null;if(n.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(n),null,null);else if(t=JSON.parse(n),t!=null&amp;&amp;t.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_"+t.error),t.error_description,null);else return n!=null?new OpenIZModel.Session(n):null}catch(i){console.warn(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"),i.message,i);}}},App:{getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"),t.message,t);}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_string"),t.message,t);}},getLocale:function(){return OpenIZApplicationService.GetLocale()},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},setStrings:function(n,t){languageStrings[lang]=t},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Patient:{findAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.find(n.query,n.offset,n.count)},n)},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.insert(n.patient)},n)},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.get(n.patientId)},n)},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain}catch(n){console.error(n)}},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}}};$.ajaxSetup({cache:!1});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();$(document).ready(function(){$('input[type="date"]').each(function(n,t){var r,i,u;$(t).attr("oiz-max-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-max-date"))),r=OpenIZ.Util.toDateInputString(i),$(t).attr("max",r));$(t).attr("oiz-min-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-min-date"))),u=OpenIZ.Util.toDateInputString(i),$(t).attr("min",u))});$("div.collapse[oiz-collapseIndicator]").each(function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})})});</contentText>
   </asset>
   <asset name="layouts/minimal.html" mimeType="text/html">
     <contentHtml>
@@ -3407,67 +3423,136 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
       </content>
     </contentHtml>
   </asset>
-  <asset name="views/common/patients/register/demographics.html" mimeType="text/html">
+  <asset name="views/common/patients/register/demographics-adult.html" mimeType="text/html">
     <contentHtml>
+      <script>/org.openiz.core/lib/select2.min.js</script>
+      <script>/org.openiz.core/css/select2.min.css</script>
       <script>/org.openiz.core/controllers/common/patients/register/demographics.js</script>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="panel-body">
-          <div class="row">
-            <div class="col-xs-12">
-              <fieldset class="form-horizontal form-group">
-                <div class="form-group">
-                  <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
-                  <div class="col-xs-9 input-group">
-                    <select name="givenName" id="givenName" select="0" class="select2-tag form-control" aria-describedby="givenNameAddon" required="required" multiple="multiple">
-                    </select>
-                  </div>
-                </div>
-                <div class="col-xs-offset-2 col-xs-9">
-                  <p class="alert alert-danger" ng-if="givenNameError">{{ 'locale.errors.required' | i18n }}</p>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
-                  <div class="col-xs-9 input-group">
-                    <select name="familyName" id="familyName" select="1" class="select2-tag form-control" aria-describedby="familyNameAddon" required="required" multiple="multiple">
-                    </select>
-                  </div>
-                </div>
-                <div class="col-xs-offset-2 col-xs-9">
-                  <p class="alert alert-danger" ng-if="familyNameError">{{ 'locale.errors.required' | i18n }}</p>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error': (patientRegisterForm.date.$touched||patientRegisterForm.$submitted) &amp;&amp; patientRegisterForm.date.$invalid }">
-                  <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-                  <div class="col-xs-9 input-group">
-                    <div class="input-group date">
-                      <input readonly="readonly" type="text" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" uib-datepicker-popup="dd/MMMM/yyyy" is-open="popupDOB.opened" datepicker-options="dateOptions" />
-                      <span class="input-group-addon addon-background" ng-click="openDOB()">
-                        <span class="glyphicon glyphicon-calendar">
-                        </span>
-                      </span>
-                      <span class="input-group-addon addon-background" id="accuracyAddon">{{ 'locale.patient.demographics.accuracy' | i18n}}</span>
-                      <select name="accuracy" ng-model="patient.dateOfBirthAccuracy" class="form-control" aria-describedby="accuracyAddon">
-                        <option value="0">{{ 'locale.patient.demographics.accuracy.full' | i18n }}</option>
-                        <option value="1">{{ 'locale.patient.demographics.accuracy.year' | i18n }}</option>
-                        <option value="2">{{ 'locale.patient.demographics.accuracy.month' | i18n }}</option>
-                        <option value="3">{{ 'locale.patient.demographics.accuracy.day' | i18n }}</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-xs-offset-2 col-xs-9" ng-messages="patientRegisterForm.date.$error" ng-if="patientRegisterForm.date.$touched||patientRegisterForm.$submitted">
-                    <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.dob' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.inputLabels.gender' | i18n }}</label>
-                  <div class="col-xs-9 input-group">
-                    <select name="gender" ng-model="patient.genderConcept" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[en].value">
-                    </select>
-                  </div>
-                </div>
-              </fieldset>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+          <!--#include virtual="/org.openiz.core/views/common/patients/register/demographics.html"-->
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="phoneNumber">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+            <div class="col-xs-6">
+              <input type="tel" name="phoneNumber" ng-model="patient.telecom[Direct]" class="form-control" />
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/register/demographics-pediatric.html" mimeType="text/html">
+    <contentHtml>
+      <script>/org.openiz.core/lib/select2.min.js</script>
+      <script>/org.openiz.core/css/select2.min.css</script>
+      <script>/org.openiz.core/controllers/common/patients/register/demographics.js</script>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+          <!--#include virtual="/org.openiz.core/views/common/patients/register/demographics.html"-->
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
+            <div class="col-xs-4">
+              <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control">
+                <option>{{ 'locale.patient.demographics.multipleBirth.none' | i18n }}</option>
+                <option value="0">{{ 'locale.patient.demographics.multipleBirth.unknown' | i18n }}</option>
+                <option value="1">{{ 'locale.patient.demographics.multipleBirth.first' | i18n }}</option>
+                <option value="2">{{ 'locale.patient.demographics.multipleBirth.second' | i18n }}</option>
+                <option value="3">{{ 'locale.patient.demographics.multipleBirth.third' | i18n }}</option>
+              </select>
+            </div>
+            <div class="col-xs-6">
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/register/demographics.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind">
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+            <div class="col-xs-10">
+              <select name="givenName" id="givenName" class="select2-tag form-control" aria-describedby="givenNameAddon" multiple="multiple">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+            <div class="col-xs-10">
+              <select name="familyName" id="familyName" class="select2-tag form-control" aria-describedby="familyNameAddon" multiple="multiple">
+              </select>
+            </div>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error': (registerForm.date.$touched||registerForm.$submitted) &amp;&amp; registerForm.date.$invalid }">
+            <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+            <div class="col-xs-4">
+              <input type="date" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" oiz-max-date="0" />
+            </div>
+            <div class="col-xs-6">
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" ng-model="patient.dateOfBirthAccuracy" value="1" />
+                        {{ 'locale.patient.demographics.fuzzy' | i18n}}
+                </label>
+              </div>
+            </div>
+            <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm.date.$error" ng-if="registerForm.date.$touched||registerForm.$submitted">
+              <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.dob' | i18n }}</p>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+            <div class="col-xs-10">
+              <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[en].value">
+              </select>
+            </div>
+            <div class="col-xs-offset-2 col-xs-9" ng-messages="gender.$error" ng-if="registerForm.gender.$touched||registerForm.$submitted">
+              <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.gender' | i18n }}</p>
             </div>
           </div>
         </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/register/mothersinfo.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group" ng-controller="MothersNameSearch">
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
+            <div class="col-xs-10">
+              <select name="mothersGiven" id="mothersGiven" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Given]">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
+            <div class="col-xs-10">
+              <select name="mothersFamily" id="mothersFamily" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Family]">
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+            <div class="col-xs-4">
+              <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship[Mother].targetModel.identifier[0].authority" bind:source="AssigningAuthority" bind:value="Name" bind:filter="assigningDevice=null">
+              </select>
+            </div>
+            <div class="col-xs-6">
+              <span class="input-group">
+                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship[Mother].targetModel.identifier[0].value" class="form-control" />
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship[Mother].targetModel.identifier[0])">
+                    <span class="glyphicon glyphicon-barcode">
+                    </span> {{ 'locale.action.scan' | i18n }}
+                    </button>
+                </span>
+              </span>
+            </div>
+          </div>
+        </fieldset>
       </content>
     </contentHtml>
   </asset>
