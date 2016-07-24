@@ -1,0 +1,13 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+    <oiz:script>/org.openiz.core/lib/select2.min.js</oiz:script>
+    <oiz:script>/org.openiz.core/css/select2.min.css</oiz:script>
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/demographics.js</oiz:script>
+    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="phoneNumber">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+        <div class="col-xs-6">
+            <input type="tel" name="phoneNumber" ng-model="patient.telecom[Direct]" class="form-control"/>
+        </div>
+    </div>
+</fieldset>

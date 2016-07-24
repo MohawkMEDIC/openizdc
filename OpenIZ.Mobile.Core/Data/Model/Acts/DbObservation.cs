@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
     /// Stores data related to an observation act
     /// </summary>
     [Table("observation")]
-    public class DbObervation : DbIdentified
+    public class DbObservation : DbIdentified
     {
 
         /// <summary>

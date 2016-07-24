@@ -22,5 +22,35 @@
     "inputFiles": [
       "css/theme.css"
     ]
+  },
+  {
+    "outputFileName": "controllers/common/patients/search/search-results.min.js",
+    "inputFiles": [
+      "controllers/common/patients/search/search-results.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/common/security/login.min.js",
+    "inputFiles": [
+      "controllers/common/security/login.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/settings/settings.min.js",
+    "inputFiles": [
+      "controllers/settings/settings.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/layouts/root.min.js",
+    "inputFiles": [
+      "controllers/layouts/root.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/layouts/navbar.min.js",
+    "inputFiles": [
+      "controllers/layouts/navbar.js"
+    ]
   }
 ]

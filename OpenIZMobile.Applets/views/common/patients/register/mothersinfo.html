@@ -1,0 +1,33 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group" ng-controller="MothersNameSearch">
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
+        <div class="col-xs-10">
+            <select name="mothersGiven" id="mothersGiven" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Given]"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
+        <div class="col-xs-10">
+            <select name="mothersFamily" id="mothersFamily" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Family]"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+        <div class="col-xs-4">
+            <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship[Mother].targetModel.identifier[0].authority"
+                    bind:source="AssigningAuthority" bind:value="Name" bind:filter="assigningDevice=null"></select>
+        </div>
+        <div class="col-xs-6">
+            <span class="input-group">
+                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship[Mother].targetModel.identifier[0].value" class="form-control" />
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship[Mother].targetModel.identifier[0])">
+                        <span class="glyphicon glyphicon-barcode" ></span> {{ 'locale.action.scan' | i18n }}
+                    </button>
+                </span>
+            </span>
+            
+        </div>
+    </div>
+</fieldset>

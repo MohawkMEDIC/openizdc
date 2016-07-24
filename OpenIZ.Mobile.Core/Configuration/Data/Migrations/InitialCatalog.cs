@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbConceptSet>(CreateFlags.None);
                     db.CreateTable<DbConceptSetConceptAssociation>(CreateFlags.None);
 
-                    tracer.TraceInfo("Installing Identiifers Tables...");
+                    tracer.TraceInfo("Installing Identifiers Tables...");
                     db.CreateTable<DbEntityIdentifier>(CreateFlags.None);
                     db.CreateTable<DbActIdentifier>(CreateFlags.None);
                     db.CreateTable<DbIdentifierType>(CreateFlags.None);
@@ -110,7 +110,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbSecurityRole>(CreateFlags.None);
                     db.CreateTable<DbSecurityUser>(CreateFlags.None);
                     db.CreateTable<DbSecurityUserRole>(CreateFlags.None);
-
+                    db.CreateTable<DbSecurityApplicationPolicy>();
+                    db.CreateTable<DbSecurityDevicePolicy>();
                     // Anonymous user
                     db.Insert(new DbSecurityUser()
                     {
@@ -183,12 +184,16 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 
                     tracer.TraceInfo("Installing Act Tables...");
                     db.CreateTable<DbAct>();
-                    db.CreateTable<DbObervation>();
+                    db.CreateTable<DbObservation>();
                     db.CreateTable<DbCodedObservation>();
                     db.CreateTable<DbQuantityObservation>();
                     db.CreateTable<DbTextObservation>();
                     db.CreateTable<DbSubstanceAdministration>();
                     db.CreateTable<DbPatientEncounter>();
+                    db.CreateTable<DbControlAct>();
+                    db.CreateTable<DbActRelationship>();
+                    db.CreateTable<DbActTag>();
+                    db.CreateTable<DbActParticipation>();
 
                     tracer.TraceInfo("Initializing Data & Views...");
 

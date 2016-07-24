@@ -64,6 +64,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MobileTest.cs" />
+    <Compile Include="Persistence\ActPersistenceServiceTest.cs" />
     <Compile Include="Persistence\ConceptPersistenceServiceTest.cs" />
     <Compile Include="Persistence\EntityPersistenceServiceTest.cs" />
     <Compile Include="Persistence\OrganizationPersistenceTest.cs" />

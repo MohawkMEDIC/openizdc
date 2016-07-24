@@ -64,7 +64,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnection context) where TEntityType : Entity, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
+
+            // Has this been updated? If so, minimal information about the previous version is available
+            if (dbInstance.UpdatedTime != null)
+            {
+                retVal.CreationTime = (DateTimeOffset)dbInstance.UpdatedTime;
+                retVal.CreatedByKey = dbInstance.UpdatedByKey;
+                retVal.PreviousVersion = new Entity()
+                {
+                    ClassConcept = retVal.ClassConcept,
+                    DeterminerConcept = retVal.DeterminerConcept,
+                    Key = dbInstance.Key,
+                    VersionKey = dbInstance.PreviousVersionKey,
+                    CreationTime = (DateTimeOffset)dbInstance.CreationTime,
+                    CreatedByKey = dbInstance.CreatedByKey
+                };
+            }
+
             retVal.LoadAssociations(context);
+
             return retVal;
         }
 
@@ -101,7 +119,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 case ManufacturedMaterial:
                     return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context);
                 default:
-                    return base.ToModelInstance(dataInstance, context);
+                    return this.ToModelInstance<Entity>(dbEntity, context);
 
             }
         }

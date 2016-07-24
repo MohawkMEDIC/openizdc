@@ -62,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
         /// <summary>
         /// Do a test step for an update
         /// </summary>
-        public TModel DoTestUpdate(TModel objectUnderTest, String propertyToChange)
+        public TModel DoTestInsertUpdate(TModel objectUnderTest, String propertyToChange)
         {
 
             // Auth context
@@ -75,24 +75,39 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             var objectAfterInsert = persistenceService.Insert(objectUnderTest);
 
             // Update
+            return this.DoTestUpdate(objectAfterInsert, propertyToChange);
+        }
+
+        /// <summary>
+        /// Test update only
+        /// </summary>
+        /// <param name="objectUnderTest"></param>
+        /// <param name="propertyToChange"></param>
+        /// <returns></returns>
+        public TModel DoTestUpdate(TModel objectUnderTest, String propertyToChange)
+        {
+
+            IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
+            Assert.IsNotNull(persistenceService);
+
             var propertyInfo = typeof(TModel).GetProperty(propertyToChange);
             Object oldValue = propertyInfo.GetValue(objectUnderTest);
 
             if (propertyInfo.PropertyType == typeof(String))
-                propertyInfo.SetValue(objectAfterInsert, "NEW_VALUE");
+                propertyInfo.SetValue(objectUnderTest, "NEW_VALUE");
             else if (propertyInfo.PropertyType == typeof(Nullable<DateTimeOffset>) ||
                 propertyInfo.PropertyType == typeof(DateTimeOffset))
-                propertyInfo.SetValue(objectAfterInsert, DateTimeOffset.MaxValue);
+                propertyInfo.SetValue(objectUnderTest, DateTimeOffset.MaxValue);
             else if (propertyInfo.PropertyType == typeof(Boolean) ||
                 propertyInfo.PropertyType == typeof(Nullable<Boolean>))
-                propertyInfo.SetValue(objectAfterInsert, true);
+                propertyInfo.SetValue(objectUnderTest, !(bool)propertyInfo.GetValue(objectUnderTest));
 
-            var objectAfterUpdate = persistenceService.Update(objectAfterInsert);
-            Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
+            var objectAfterUpdate = persistenceService.Update(objectUnderTest);
+            Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
             objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Key.Value);
             // Update attributes should be set
             Assert.AreNotEqual(oldValue, propertyInfo.GetValue(objectAfterUpdate));
-            Assert.AreEqual(objectAfterInsert.Key, objectAfterUpdate.Key);
+            Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
 
             return objectAfterUpdate;
         }

@@ -54,5 +54,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.VersionKey = Guid.NewGuid();
             return base.Update(context, data);
         }
+
+        /// <summary>
+        /// Obsolete the specified data
+        /// </summary>
+        public override TModel Obsolete(SQLiteConnection context, TModel data)
+        {
+            data.PreviousVersionKey = data.VersionKey;
+            data.VersionKey = Guid.NewGuid();
+            return base.Obsolete(context, data);
+        }
     }
 }
