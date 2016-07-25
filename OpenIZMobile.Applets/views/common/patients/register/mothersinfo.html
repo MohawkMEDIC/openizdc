@@ -1,33 +1,49 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group" ng-controller="MothersNameSearch">
+          xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+
     <div class="form-group">
         <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
         <div class="col-xs-10">
-            <select name="mothersGiven" id="mothersGiven" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Given]"></select>
+            <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
         <div class="col-xs-10">
-            <select name="mothersFamily" id="mothersFamily" select="0" class="select2-tag form-control" multiple="multiple" ng-model="patient.relationship[Mother].targetModel.name[OfficialRecord].component[Family]"></select>
+            <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-4">
-            <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship[Mother].targetModel.identifier[0].authority"
-                    bind:source="AssigningAuthority" bind:value="Name" bind:filter="assigningDevice=null"></select>
+            <div class="input-group">
+                <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
+                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null"></select>
+            </div>
         </div>
         <div class="col-xs-6">
-            <span class="input-group">
-                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship[Mother].targetModel.identifier[0].value" class="form-control" />
+            <div class="input-group">
+                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship[Mother].targetModel.identifier[0])">
-                        <span class="glyphicon glyphicon-barcode" ></span> {{ 'locale.action.scan' | i18n }}
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
+                        <span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}
                     </button>
                 </span>
-            </span>
-            
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
+        <div class="col-xs-2">
+            <div class="input-group">
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
+                        bind:source="Concept" bind:value="name[sw].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <div class="input-group">
+                <input type="text" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
+            </div>
         </div>
     </div>
 </fieldset>

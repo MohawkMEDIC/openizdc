@@ -52,5 +52,11 @@
     "inputFiles": [
       "controllers/layouts/navbar.js"
     ]
+  },
+  {
+    "outputFileName": "lib/bootstrap-tokenfield.min.js",
+    "inputFiles": [
+      "lib/bootstrap-tokenfield.js"
+    ]
   }
 ]

@@ -18,7 +18,7 @@
  - User: justi
  - Date: 2016-6-14
  -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="org.openiz.openiz_mobile" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="5" android:versionName="SPR5" package="tz.timr.mobile" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 	<uses-permission android:name="android.permission.STATUS_BAR" />
 	<uses-permission android:name="android.permission.REBOOT" />
