@@ -2,7 +2,7 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', []).run(function ($rootScope) {
+var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
 
     $rootScope.system = {};
     $rootScope.system.config = {};
@@ -24,3 +24,4 @@ layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);
+

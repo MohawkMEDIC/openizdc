@@ -6,14 +6,10 @@
 
 $(document).ready(function () {
 
-    $('.select2-tag').select2({
-        tags: true,
-        tokenSeparators: [' ', ',', ';'],
-        //templateResult : function(data) { return null; },
-        language: {
-            noResults: null //function (term) { return 'No'; }
-        }
-    });
+    $('input[type=text].tagEntry').tokenfield({
+        delimiter: ' ,',
+        createTokensOnBlur: true
+    })
     //$('.select2-tag').each(function (e, d) {
     //    $(d).on('select2:open', function (s) {
     //        s.preventDefault();

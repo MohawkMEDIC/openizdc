@@ -1,20 +1,23 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
-    <oiz:script>/org.openiz.core/lib/select2.min.js</oiz:script>
-    <oiz:script>/org.openiz.core/css/select2.min.css</oiz:script>
+    <oiz:script>/org.openiz.core/lib/bootstrap-tokenfield.min.js</oiz:script>
+    <oiz:style>/org.openiz.core/css/bootstrap-tokenfield.min.css</oiz:style> 
     <oiz:script>/org.openiz.core/controllers/common/patients/register/demographics.js</oiz:script>
 
    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
     <div class="form-group">
         <label class="col-xs-2 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
         <div class="col-xs-4">
-            <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control">
-                <option>{{ 'locale.patient.demographics.multipleBirth.none' | i18n }}</option>
-                <option value="0">{{ 'locale.patient.demographics.multipleBirth.unknown' | i18n }}</option>
-                <option value="1">{{ 'locale.patient.demographics.multipleBirth.first' | i18n }}</option>
-                <option value="2">{{ 'locale.patient.demographics.multipleBirth.second' | i18n }}</option>
-                <option value="3">{{ 'locale.patient.demographics.multipleBirth.third' | i18n }}</option>
-            </select>
+            <div class="input-group">
+
+                <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control">
+                    <option>{{ 'locale.patient.demographics.multipleBirth.none' | i18n }}</option>
+                    <option value="0">{{ 'locale.patient.demographics.multipleBirth.unknown' | i18n }}</option>
+                    <option value="1">{{ 'locale.patient.demographics.multipleBirth.first' | i18n }}</option>
+                    <option value="2">{{ 'locale.patient.demographics.multipleBirth.second' | i18n }}</option>
+                    <option value="3">{{ 'locale.patient.demographics.multipleBirth.third' | i18n }}</option>
+                </select>
+            </div>
         </div>  
         <div class="col-xs-6"></div>
     </div>

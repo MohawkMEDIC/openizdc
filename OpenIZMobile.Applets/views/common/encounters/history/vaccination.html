@@ -1,0 +1,38 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-vaccination-history form-horizontal form-group">
+    <oiz:script>/org.openiz.core/controllers/common/encounters/history/vaccination.js</oiz:script>
+
+    <!-- TODO: Call the forecaster for this -->
+    <div class="table-responsive">
+        <table class="table table-striped oiz-vaccination-history-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th style="text-align:center">0</th>
+                    <th style="text-align:center">1</th>
+                    <th style="text-align:center">2</th>
+                    <th style="text-align:center">3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
+                    <td>{{ antigenName }}</td>
+                    <td ng-repeat="sequence in event">
+                        <div ng-if="sequence != null" class="input-group">
+                            <span class="input-group-addon">
+                                <input type="checkbox"
+                                       ng-model="sequence._enabled"
+                                       ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept == 'EC74541F-87C4-4327-A4B9-97F325501747' ? 'disabled' : null"
+                                       value="1"/>
+                            </span>
+                            <input
+                                   ng-disabled="!sequence._enabled" type="date" class="form-control"
+                                   max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"
+                                   ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</fieldset>

@@ -63,6 +63,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         [Column("url")]
         public String Url { get; set; }
 
+        /// <summary>
+        /// Assigning device identifier
+        /// </summary>
+        [Column("assigningDevice")]
+        public byte[] AssigningDeviceUuid { get; set; }
 
     }
 }

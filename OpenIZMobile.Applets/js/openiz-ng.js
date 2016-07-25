@@ -26,7 +26,7 @@
  * Open IZ Localization for angular
  */
 
-angular.module('localization', [])
+angular.module('openiz', [])
     // Localization service
     .provider('localize', function localizeProvider() {
 
@@ -74,4 +74,16 @@ angular.module('localization', [])
         };
         filterFn.$stateful = false;
         return filterFn;
-    }]);
+    }])
+    .directive('oizTag', function () {
+        return {
+            require: 'ngModel',
+            link: function (scope, element, attrs, ctrl) {
+                ctrl.$parsers.unshift(tagParser);
+                function tagParser(viewValue) {
+                    return String(viewValue).split(',');
+                }
+
+            }
+        }
+    });

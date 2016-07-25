@@ -1,0 +1,40 @@
+﻿/// <refernece path="~/js/openiz.js"/>
+/// <reference path="~/js/openiz-model.js"/>
+/// <reference path="~/lib/angular.min.js"/>
+
+$(document).ready(function () {
+    $('.oiz-patient-identifiers').each(function (i, e) {
+        // Get the current scope that we're in
+        var scope = angular.element(e).scope();
+
+
+        // Init data
+        scope.patient = scope.patient || new OpenIZModel.Patient({});
+        scope.patient.identifier = scope.patient.identifier || { "NEW" : {authority: "NEW", value: null } };
+        
+        // Scan the specified barcode
+        scope.scanBarcode = scope.scanBarcode || function(identifier)
+        {
+            identifier.value = OpenIZ.App.scanBarcode();
+        }
+
+        // Add identifier
+        scope.addIdentifier = scope.addIdentifier || function ()
+        {
+            if (scope.patient.identifier["NEW"] != null &&
+                scope.patient.identifier["NEW"].authority != "NEW") {
+                scope.patient.identifier[scope.patient.identifier["NEW"].authority] = scope.patient.identifier["NEW"].authority;
+                scope.patient.identifier["NEW"] = { authority: "NEW", value: null };
+            }
+            else if (scope.patient.identifier["NEW"] == null)
+                scope.patient.identifier["NEW"] = { authority: "NEW", value: null };
+        }
+
+        // Remove identifier
+        scope.removeIdentifier = scope.removeIdentifier || function (id) {
+            delete scope.patient.identifier[id];
+            if (Object.keys(scope.patient.identifier) == 0)
+                scope.addIdentifier();
+        }
+    })
+});

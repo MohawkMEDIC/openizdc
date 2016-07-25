@@ -3,8 +3,8 @@
 /// <reference path="~/lib/angular.min.js"/>
 
 // Document ready, bind search results to their related contexts
-angular.element(document).ready(function () {
-    angular.forEach('table.oiz-patient-results', function (e) {
+$(document).ready(function () {
+    $('table.oiz-patient-results').each(function (i,e) {
 
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
@@ -15,6 +15,24 @@ angular.element(document).ready(function () {
         scope.search.results = null;
         scope.search.pageSize = scope.search.pageSize || 10;
 
+        /** 
+         * @summary Advances to the next set of results
+         */
+        scope.search.search = scope.search.search || function () {
+            OpenIZ.Patient.findAsync({
+                query: scope.search.query,
+                offset: 0,
+                count: scope.search.pageSize,
+                continueWith: function (r) {
+                    scope.search.results = r.all('Patient');
+                    scope.$apply();
+                },
+                onException: function (e) {
+                    OpenIZ.App.toast(e.message);
+                }
+            });
+
+        };
         /** 
          * @summary Advances to the next set of results
          */

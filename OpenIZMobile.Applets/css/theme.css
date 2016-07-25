@@ -19,6 +19,9 @@
   color: #666;
 }
 
+.input-group { width:100%; }
+
+
 
 @media (max-width: 767px) {
     .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
@@ -31,12 +34,24 @@
         -ms-filter: invert(100%);
     }
 }
+.input-group label { margin-bottom: 0px; }
+
 .navbar-inverse .navbar-nav > li > a {
      color: #FFFFFF;
      padding-top:7px;
      padding-bottom:6px;
 
 }
+
+/** Select 2 for group-lg */
+/*.form-control {
+    height: 46px;
+    padding: 10px 16px;
+    font-size: 18px;
+    line-height: 1.3333;
+    border-radius: 6px;
+}*/
+
 .navbar-inverse .navbar-brand { 
   color:#ffffff;
 }

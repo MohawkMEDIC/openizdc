@@ -31,6 +31,7 @@ using Android.Widget;
 using System.Threading;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Threading
 {
@@ -40,7 +41,8 @@ namespace OpenIZ.Mobile.Core.Android.Threading
     /// </summary>
     public class OpenIZThreadPool : IThreadPoolService, IDisposable
     {
-
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
         private int m_concurrencyLevel = 4;
         // Queue of work items
@@ -204,6 +206,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         {
             var worker = (WorkItem)state;
             try { worker.Callback(worker.State); }
+            catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }
             finally { DoneWorkItem(); }
         }
 

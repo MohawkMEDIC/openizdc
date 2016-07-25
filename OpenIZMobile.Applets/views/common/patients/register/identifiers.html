@@ -1,0 +1,30 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
+
+    <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
+        <div class="col-xs-3">
+            <div class="input-group">
+                <select ng-model="identifier.authority" class="form-control"
+                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null"></select>
+            </div>
+        </div>
+        <div class="col-xs-9">
+            <div class="input-group">
+                <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control"/>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(authority, identifier)">
+                        <span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}
+                    </button>
+                    <button class="btn btn-default" type="button" style="padding:9px" ng-click="addIdentifier()">
+                        <span class="glyphicon glyphicon-plus"></span> 
+                    </button>
+                    <button class="btn btn-default" type="button" style="padding:9px" ng-click="removeIdentifier(authority, identifier)">
+                        <span class="glyphicon glyphicon-remove"></span> 
+                    </button>
+                </span>
+
+            </div>
+        </div>
+    </div>
+</fieldset>

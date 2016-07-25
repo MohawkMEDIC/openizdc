@@ -1,4 +1,5 @@
-﻿/// <reference path="openiz-model.js"/>
+/// <reference path="openiz-model.js"/>
+/// <reference path="~/lib/select2.min.js"/>
 
 /*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
@@ -51,9 +52,8 @@ var OpenIZ = OpenIZ || {
          * @param {String} date The date to be formatted
          */
         toDateInputString: function (date) {
-            return date.toISOString().substring(0, 10)
+            return date.toISOString().substring(0, 10);
         },
-
         /**
          * @summary Start a task asynchronously
          * @memberof OpenIZ.Util
@@ -394,6 +394,7 @@ var OpenIZ = OpenIZ || {
          */
         getMenus: function () {
             try {
+
                 var data = OpenIZApplicationService.GetMenus();
                 if (data == null)
                     return {};
@@ -404,7 +405,7 @@ var OpenIZ = OpenIZ || {
             }
             catch (e) {
                 console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"), e.message, e);
+                //throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"), e.message, e);
             }
         },
         /**
@@ -499,7 +500,7 @@ var OpenIZ = OpenIZ || {
             }
             catch (e) {
                 console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_string"), e.message, e);
+                return stringId;
             }
         },
         /**
@@ -916,6 +917,56 @@ var OpenIZ = OpenIZ || {
         }
     },
 
+
+    /**
+     * @summary Place functions
+     */
+    Place: {
+        /**
+         * @summary Bind a place filter to a select box
+         * @param {Element} target The element to be bound to
+         * @param {String} filter The filter to show (to be added to the current name filter)
+         */
+        bindSelect : function(target, filter)
+        {
+            $(target).select2({
+                ajax: {
+                    url: "/__ims/Place",
+                    dataType: 'json',
+                    delay: 250,
+                    method: "GET",
+                    data: function (params) {
+                        filter["component.name.value"] = "~" + params.data;
+                        filter["_count"] = 5;
+                        filter["_offset"] = params.page * 5;
+                        return filter;
+                    },
+                    processResults: function (data, params) {
+
+                        var bundleResult = new Bundle(data);
+                        params.page = params.page || 0;
+
+                        return {
+                            results: data.item.all('ServiceDeliveryLocation'),
+                            pagination: {
+                                more: data.offset + data.count < data.total
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                escapeMarkup: function (markup) { return markup; }, // Format normally
+                minimumInputLength: 2,
+                templateResult: function(place)
+                {
+                    if (place.text != null)
+                        return place.text;
+                    return "<div class='label label-default'>" +
+                        place.classConcept.mnemonic + "</div> " + place.name.OfficialRecord.component[0];
+                }
+            });
+        }
+    },
     /**
     * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ system including realm, updating configuration, etc.
     * @class
@@ -956,12 +1007,10 @@ var OpenIZ = OpenIZ || {
         * @method
        */
         getRealm: function () {
-            try
-            {
+            try{
                 return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
             }
-            catch(e)
-            {
+            catch (e) {
                 console.error(e);
             }
         },
@@ -1131,5 +1180,4 @@ $(document).ready(function () {
             $(indicator).removeClass('glyphicon-chevron-right');
         });
     });
-
 });

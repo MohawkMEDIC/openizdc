@@ -1,47 +1,46 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/bind">
+     xmlns:bind="http://openiz.org/applet/binding">
     <div class="form-group">
         <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
         <div class="col-xs-10">
-            <select name="givenName" id="givenName" class="select2-tag form-control" aria-describedby="givenNameAddon"
-                    multiple="multiple"></select>
+                <input type="text" name="givenName" id="givenName" class="tagEntry form-control" aria-describedby="givenNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Given"   />
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
         <div class="col-xs-10">
-            <select name="familyName" id="familyName" class="select2-tag form-control" aria-describedby="familyNameAddon"
-                    multiple="multiple"></select>
+                <input type="text" name="familyName" id="familyName" class="tagEntry form-control" aria-describedby="familyNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Family" />
         </div>
     </div>
 
-    <div class="form-group" ng-class="{ 'has-error': (registerForm.date.$touched||registerForm.$submitted) &amp;&amp; registerForm.date.$invalid }">
+    <div class="form-group" ng-class="{ 'has-error': (patientRegistrationForm.date.$touched||patientRegistrationForm.$submitted) &amp;&amp; patientRegistrationForm.date.$invalid }">
         <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
         <div class="col-xs-4">
-            <input type="date" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" oiz-max-date="0" />
-        </div>
-        <div class="col-xs-6">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" ng-model="patient.dateOfBirthAccuracy" value="1" />
-                        {{ 'locale.patient.demographics.fuzzy' | i18n}}
-                </label>
+            <div class="input-group">
+                <input type="date" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" oiz-max-date="0" />
+                <span class="input-group-addon">
+                        <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
+                    <label for="approximateDob">
+                        {{ 'locale.patient.demographic.dob.fuzzy' | i18n }}
+                    </label>
+                </span>            
             </div>
         </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-messages="registerForm.date.$error" ng-if="registerForm.date.$touched||registerForm.$submitted">
+        <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+        <div class="col-xs-4">
+            <div class="input-group">
+
+                <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
+                        aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
+                        bind:value="name[en].value"></select>
+                </div>
+            </div>
+        <div class="col-xs-offset-2 col-xs-9" ng-if="(patientRegistrationForm.gender.$touched||patientRegistrationForm.$submitted)&amp;&amp;patientRegistrationForm.gender.$error">
+            <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.gender' | i18n }}</p>
+        </div>
+        <div class="col-xs-offset-2 col-xs-9" ng-if="(patientRegistrationForm.date.$touched||patientRegistrationForm.$submitted)&amp;&amp;patientRegistrationForm.date.$error">
             <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.dob' | i18n }}</p>
         </div>
     </div>
 
-    <div class="form-group">
-        <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-        <div class="col-xs-10">
-            <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
-                    aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
-                    bind:value="name[en].value"></select>
-        </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-messages="gender.$error" ng-if="registerForm.gender.$touched||registerForm.$submitted">
-            <p class="alert alert-danger" ng-message="required">{{ 'locale.errors.gender' | i18n }}</p>
-        </div>
-    </div>
 </div>
