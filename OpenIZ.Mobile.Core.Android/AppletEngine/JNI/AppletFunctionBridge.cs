@@ -37,6 +37,7 @@ using A = Android;
 using System.Reflection;
 using OpenIZ.Mobile.Core.Configuration;
 using System.Globalization;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -46,6 +47,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 	/// </summary>
 	public class AppletFunctionBridge : Java.Lang.Object
 	{
+
+        // Cached menus
+        private Dictionary<IPrincipal, String> m_cachedMenus = new Dictionary<IPrincipal, String>();
 
         /// <summary>
         /// Menu information
@@ -211,6 +215,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 // Cannot have menus if not logged in
                 if (ApplicationContext.Current.Principal == null) return null;
 
+                string cached = null;
+                if (this.m_cachedMenus.TryGetValue(ApplicationContext.Current.Principal, out cached))
+                    return cached;
+
                 var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o=>o.Order).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
                
@@ -219,7 +227,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     this.ProcessMenuItem(mnu, retVal);
                 retVal.RemoveAll(o => o.Action == null && o.Menu?.Count == 0);
 
-                return JniUtil.ToJson(retVal);
+
+                cached = JniUtil.ToJson(retVal);
+                lock (this.m_cachedMenus)
+                    this.m_cachedMenus.Add(ApplicationContext.Current.Principal, cached);
+                return cached;
             }
             catch(Exception e)
             {
@@ -325,6 +337,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		[JavascriptInterface]
 		public void Close() {
 			Application.SynchronizationContext.Post (_ => {
+                ApplicationContext.Current.Stop();
 				(this.m_context as Activity).Finish ();
 			}, null);
 		}
@@ -353,7 +366,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public String GetLocale()
         {
-            return this.m_context.Resources.Configuration.Locale.Language;
+            return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;//this.m_context.Resources.Configuration.Locale.Language;
         }
 
         /// <summary>

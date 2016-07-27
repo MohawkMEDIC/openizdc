@@ -6,34 +6,50 @@
         <div class="col-xs-10">
             <div class="input-group">
                 <select ng-model="patient.relationship.Other.typeConcept" class="form-control"
-                        bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember" bind:value="name[en].value">
-                </select>
+                        bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!mother" bind:value="name[en].value"></select>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                </span>
             </div>
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="relationGivenName">{{ 'locale.patient.realtive.givenName' | i18n }}</label>
         <div class="col-xs-10">
+            <div class="input-group">
                 <input type="text" name="relationGivenName" id="relationGivenName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Given" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.givenName' | i18n }}" data-content="{{ 'locale.patient.relative.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                </span>
+            </div>
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="relationFamilyName">{{ 'locale.patient.relative.familyName' | i18n }}</label>
         <div class="col-xs-10">
+            <div class="input-group">
                 <input type="text" name="relationFamilyName" id="relationFamilyName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Family" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.familyName' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                </span>
+            </div>
         </div>
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
         <div class="col-xs-2">
             <div class="input-group">
-                <select name="mothersPhoneType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.$other.targetModel.telecom.$other.use"
-                        bind:source="Concept" bind:value="name[sw].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.$other.targetModel.telecom.$other.use"
+                        bind:source="Concept" bind:value="name[en].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
             </div>
         </div>
         <div class="col-xs-8">
             <div class="input-group">
                 <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.$other.targetModel.telecom.$other.value" class="form-control" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                </span>
+
             </div>
         </div>
     </div>

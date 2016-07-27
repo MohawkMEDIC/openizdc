@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.Entities;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
 
@@ -51,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// From model instance
         /// </summary>
-        public override object FromModelInstance(Person modelInstance, SQLiteConnection context)
+        public override object FromModelInstance(Person modelInstance, SQLiteConnectionWithLock context)
         {
             var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Person ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Person ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var person = dataInstance as DbPerson;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
@@ -85,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public override Person Insert(SQLiteConnection context, Person data)
+        public override Person Insert(SQLiteConnectionWithLock context, Person data)
         {
             var retVal = base.Insert(context, data);
             byte[] sourceKey = retVal.Key.Value.ToByteArray();
@@ -102,7 +102,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the person entity
         /// </summary>
-        public override Person Update(SQLiteConnection context, Person data)
+        public override Person Update(SQLiteConnectionWithLock context, Person data)
         {
             var retVal = base.Update(context, data);
             var sourceKey = retVal.Key.Value.ToByteArray();

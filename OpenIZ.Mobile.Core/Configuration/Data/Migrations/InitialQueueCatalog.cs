@@ -19,9 +19,13 @@
  */
 using System;
 using OpenIZ.Mobile.Core.Diagnostics;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -37,9 +41,10 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 		public bool Install ()
 		{
 			var tracer = Tracer.GetTracer (this.GetType ());
-
-			// Database for the SQL Lite connection
-			using (var db = new SQLiteConnection (ApplicationContext.Current?.Configuration.GetConnectionString (ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection> ().MessageQueueConnectionStringName).Value)) {
+            // Database for the SQL Lite connection
+            var db = SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current?.Configuration.GetConnectionString(ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value);
+                using(db.Lock())
+            {
 
                 // Migration log create and check
                 db.CreateTable<DbMigrationLog>();
@@ -55,13 +60,24 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                         InstallationDate = DateTime.Now
                     });
 
-                tracer.TraceInfo ("Installing queues...");
-				db.CreateTable<InboundQueueEntry> ();
-				db.CreateTable<OutboundQueueEntry> ();
-				db.CreateTable<DeadLetterQueueEntry> ();
-			}
+                tracer.TraceInfo("Installing queues...");
+                db.CreateTable<InboundQueueEntry>();
+                db.CreateTable<OutboundQueueEntry>();
+                db.CreateTable<DeadLetterQueueEntry>();
+                db.CreateTable<SynchronizationLogEntry>();
+                db.CreateTable<AlertMessage>();
+                new LocalAlertService()?.SaveAlert(new AlertMessage()
+                {
+                    Body = Strings.locale_welcomeMessageBody,
+                    CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name,
+                    From = "OpenIZ Team",
+                    Flags = AlertMessageFlags.None,
+                    Subject = Strings.locale_welcomeMessageSubject,
+                    TimeStamp = DateTime.Now
+                });
+            }
 
-			return true;
+            return true;
 		}
 		/// <summary>
 		/// Gets the identifier of the migration

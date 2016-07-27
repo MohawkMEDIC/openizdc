@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="locale_import" xml:space="preserve">
+    <value>Importing IMS Data...</value>
+  </data>
+  <data name="locale_importDoneBody" xml:space="preserve">
+    <value>The import of remote data is complete</value>
+  </data>
+  <data name="locale_importDoneSubject" xml:space="preserve">
+    <value>Remote Data Imported</value>
+  </data>
   <data name="locale_setting_deploy" xml:space="preserve">
     <value>Deploying Data</value>
   </data>
@@ -125,5 +134,17 @@
   </data>
   <data name="locale_setting_table" xml:space="preserve">
     <value>Installing Tables</value>
+  </data>
+  <data name="locale_sync" xml:space="preserve">
+    <value>Synchronizing {0}s...</value>
+  </data>
+  <data name="locale_welcomeMessageBody" xml:space="preserve">
+    <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the sycnrhonization is complete. We'll let you know when the synchronization operation is done!
+
+Sincerely,
+- OpenIZ Community</value>
+  </data>
+  <data name="locale_welcomeMessageSubject" xml:space="preserve">
+    <value>Welcome to OpenIZ Disconnected Client Core!</value>
   </data>
 </root>

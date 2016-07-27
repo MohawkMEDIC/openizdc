@@ -1,7 +1,7 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
-
+.input-group { width:100%; }
 .input-group .form-control:last-child {
     border-radius: 4px;
 }
@@ -19,11 +19,16 @@
   color: #666;
 }
 
-.input-group { width:100%; }
 
-
+.btn > .glyphicon {
+    font-size: 1.4em;
+}
 
 @media (max-width: 767px) {
+    .message-summary-panel h5, .message-summary-subject, .message-summary-subject-sender {
+        color:#FFFFF
+    }
+
     .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
         color: #FFFFFF;
     }
@@ -33,7 +38,17 @@
         -moz-filter: invert(100%);
         -ms-filter: invert(100%);
     }
+    .oiz-menu-text {
+        display: inline
+    }
 }
+
+@media (min-width: 768px) {
+    .oiz-menu-text {
+        display:none;
+    }
+}
+
 .input-group label { margin-bottom: 0px; }
 
 .navbar-inverse .navbar-nav > li > a {
@@ -42,6 +57,7 @@
      padding-bottom:6px;
 
 }
+
 
 /** Select 2 for group-lg */
 /*.form-control {
@@ -73,17 +89,6 @@
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
 
-.timr-blue {
-    color: #007FD1;
-}
-
-.timr-blue-background {
-    background-color: #007FD1;
-}
-
-.timr-blue-border {
-    border-color: #007FD1;
-}
 
 .panel-default > .patient-panel {
     background-color: #007FD1;

@@ -24,12 +24,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Principal;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Diagnostics;
+
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -48,9 +50,9 @@ namespace OpenIZ.Mobile.Core.Security
         /// Creates a connection to the local database
         /// </summary>
         /// <returns>The connection.</returns>
-        private SQLiteConnection CreateConnection()
+        private SQLiteConnectionWithLock CreateConnection()
         {
-            return new SQLiteConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
+            return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
         }
 
         /// <summary>
@@ -60,7 +62,8 @@ namespace OpenIZ.Mobile.Core.Security
         {
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+            using(conn.Lock())
                 return conn.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_Id) INNER JOIN security_role ON (security_user_role.role_Id = security_role.uuid) WHERE security_role.name = ?", role)
                             .Select(o => o.UserName)
                             .ToArray();
@@ -71,7 +74,8 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         public string[] GetAllRoles()
         {
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+            using(conn.Lock())
                 return conn.Table<DbSecurityRole>().ToList().Select(o => o.Name).ToArray();
         }
 
@@ -83,7 +87,8 @@ namespace OpenIZ.Mobile.Core.Security
             if (userName == null)
                 throw new ArgumentNullException(nameof(userName));
 
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
                 return conn.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user.username = ?", userName)
                     .Select(p => p.Name)
                     .ToArray();
@@ -120,7 +125,8 @@ namespace OpenIZ.Mobile.Core.Security
             if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
                 foreach (var un in userNames)
                 {
                     var dbu = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == un);
@@ -153,7 +159,8 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
 
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
                 foreach (var rn in roles)
                 {
                     try
@@ -193,7 +200,8 @@ namespace OpenIZ.Mobile.Core.Security
             if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
                 conn.Insert(new DbSecurityRole() { Name = value, Key = Guid.NewGuid() });
 
         }

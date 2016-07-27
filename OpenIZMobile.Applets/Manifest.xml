@@ -26,6 +26,7 @@
   <startup>~/index.html</startup>
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
+    <text>Development Tools</text>
     <menuItem launch="/org.openiz.core/views/debug/report.html">
       <icon>/org.openiz.core/img/appbar.bug.png</icon>
       <text>Bug Report</text>

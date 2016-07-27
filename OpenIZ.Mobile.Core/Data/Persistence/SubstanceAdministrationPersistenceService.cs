@@ -1,7 +1,7 @@
 ﻿using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
-using SQLite;
+using SQLite.Net;
 using System;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
@@ -14,7 +14,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert databased model to model
         /// </summary>
-        public override SubstanceAdministration ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override SubstanceAdministration ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbIdentified;
             var dbSbadm = dataInstance as DbSubstanceAdministration ?? context.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override SubstanceAdministration Insert(SQLiteConnection context, SubstanceAdministration data)
+        public override SubstanceAdministration Insert(SQLiteConnectionWithLock context, SubstanceAdministration data)
         {
             data.DoseUnit?.EnsureExists(context);
             data.Route?.EnsureExists(context);
@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override SubstanceAdministration Update(SQLiteConnection context, SubstanceAdministration data)
+        public override SubstanceAdministration Update(SQLiteConnectionWithLock context, SubstanceAdministration data)
         {
             data.DoseUnit?.EnsureExists(context);
             data.Route?.EnsureExists(context);

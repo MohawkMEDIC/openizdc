@@ -18,11 +18,13 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Configuration;
+using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Data.Model
 {
@@ -53,72 +55,10 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// </summary>
 		/// <value>The key.</value>
 		[Ignore]
-		public Guid Key
-		{
-			get { return this.Uuid.ToGuid() ?? Guid.Empty; }
-			set { this.Uuid = value.ToByteArray (); }
-		}
-
-        /// <summary>
-		/// Creates the connection.
-		/// </summary>
-		/// <returns>The connection.</returns>
-		protected SQLiteConnection CreateConnection()
+        public Guid Key
         {
-            var config = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
-            return new SQLiteConnection(ApplicationContext.Current.Configuration.GetConnectionString(config.MainDataSourceConnectionStringName).Value);
-        }
-
-        /// <summary>
-        /// Delay load a collection
-        /// </summary>
-        protected List<T> DelayLoadCollection<T>(List<T> current, Expression<Func<T, bool>> query) where T : new()
-        {
-            using (var conn = this.CreateConnection())
-            {
-                if (current != null)
-                    return current;
-                return new List<T>(conn.Table<T>().Where(query));
-            }
-        }
-
-        /// <summary>
-        /// Delay load a collection
-        /// </summary>
-        protected List<T> DelayLoadCollection<T>(List<T> current, String sqlQuery, params Object[] args) where T : new()
-        {
-            using (var conn = this.CreateConnection())
-            {
-                if (current != null)
-                    return current;
-                return conn.Query<T>(sqlQuery, args);
-            }
-        }
-
-        /// <summary>
-        /// Delay load a collection
-        /// </summary>
-        protected T DelayLoad<T>(T current, Expression<Func<T, bool>> query) where T : new()
-        {
-            using (var conn = this.CreateConnection())
-            {
-                if (current != null)
-                    return current;
-                return conn.Table<T>().Where(query).FirstOrDefault();
-            }
-        }
-
-        /// <summary>
-        /// Delay load a collection
-        /// </summary>
-        protected T DelayLoad<T>(T current, String sqlQuery, params Object[] args) where T : new()
-        {
-            using (var conn = this.CreateConnection())
-            {
-                if (current != null)
-                    return current;
-                return conn.Query<T>(sqlQuery, args)[0];
-            }
+            get { return this.Uuid.ToGuid() ?? Guid.Empty; }
+            set { this.Uuid = value.ToByteArray(); }
         }
 
 

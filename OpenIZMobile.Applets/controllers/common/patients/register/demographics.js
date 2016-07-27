@@ -4,7 +4,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/select2.min.js"/>
 
-$(document).ready(function () {
+angular.element(document).ready(function () {
 
     $('input[type=text].tagEntry').tokenfield({
         delimiter: ' ,',

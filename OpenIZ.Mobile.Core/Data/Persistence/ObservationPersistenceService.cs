@@ -2,7 +2,7 @@
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -17,7 +17,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert a data act and observation instance to an observation
         /// </summary>
-        public virtual TObservation ToModelInstance(TDbObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnection context)
+        public virtual TObservation ToModelInstance(TDbObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnectionWithLock context)
         {
             var retVal = m_actPersister.ToModelInstance<TObservation>(actInstance, context);
 
@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified observation into the database
         /// </summary>
-        public override TObservation Insert(SQLiteConnection context, TObservation data)
+        public override TObservation Insert(SQLiteConnectionWithLock context, TObservation data)
         {
             data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Updates the specified observation
         /// </summary>
-        public override TObservation Update(SQLiteConnection context, TObservation data)
+        public override TObservation Update(SQLiteConnectionWithLock context, TObservation data)
         {
             data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override TextObservation ToModelInstance(DbTextObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnection context)
+        public override TextObservation ToModelInstance(DbTextObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             retVal.Value = dataInstance.Value;
@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override TextObservation ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override TextObservation ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var textObs = dataInstance as DbTextObservation ?? context.Table<DbTextObservation>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override CodedObservation ToModelInstance(DbCodedObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnection context)
+        public override CodedObservation ToModelInstance(DbCodedObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             if(dataInstance.Value != null)
@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override CodedObservation ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override CodedObservation ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var codeObs = dataInstance as DbCodedObservation ?? context.Table<DbCodedObservation>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -109,7 +109,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the observation
         /// </summary>
-        public override CodedObservation Insert(SQLiteConnection context, CodedObservation data)
+        public override CodedObservation Insert(SQLiteConnectionWithLock context, CodedObservation data)
         {
             data.Value?.EnsureExists(context);
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
@@ -119,7 +119,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified observation
         /// </summary>
-        public override CodedObservation Update(SQLiteConnection context, CodedObservation data)
+        public override CodedObservation Update(SQLiteConnectionWithLock context, CodedObservation data)
         {
             data.Value?.EnsureExists(context);
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
@@ -135,7 +135,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override QuantityObservation ToModelInstance(DbQuantityObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnection context)
+        public override QuantityObservation ToModelInstance(DbQuantityObservation dataInstance, DbAct actInstance, DbObservation obsInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             if (dataInstance.UnitOfMeasureUuid != null)
@@ -147,7 +147,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override QuantityObservation ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override QuantityObservation ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var qObs = dataInstance as DbQuantityObservation ?? context.Table<DbQuantityObservation>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -159,7 +159,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the observation
         /// </summary>
-        public override QuantityObservation Insert(SQLiteConnection context, QuantityObservation data)
+        public override QuantityObservation Insert(SQLiteConnectionWithLock context, QuantityObservation data)
         {
             data.UnitOfMeasure?.EnsureExists(context);
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
@@ -169,7 +169,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified observation
         /// </summary>
-        public override QuantityObservation Update(SQLiteConnection context, QuantityObservation data)
+        public override QuantityObservation Update(SQLiteConnectionWithLock context, QuantityObservation data)
         {
             data.UnitOfMeasure?.EnsureExists(context);
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;

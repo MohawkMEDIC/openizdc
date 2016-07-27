@@ -19,7 +19,7 @@
  */
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override EntityAddress Insert(SQLiteConnection context, EntityAddress data)
+        public override EntityAddress Insert(SQLiteConnectionWithLock context, EntityAddress data)
         {
 
             // Ensure exists
@@ -59,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the entity name
         /// </summary>
-        public override EntityAddress Update(SQLiteConnection context, EntityAddress data)
+        public override EntityAddress Update(SQLiteConnectionWithLock context, EntityAddress data)
         {
 
             // Ensure exists

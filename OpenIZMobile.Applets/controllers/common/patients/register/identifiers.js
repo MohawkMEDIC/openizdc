@@ -2,7 +2,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-$(document).ready(function () {
+angular.element(document).ready(function () {
     $('.oiz-patient-identifiers').each(function (i, e) {
         // Get the current scope that we're in
         var scope = angular.element(e).scope();

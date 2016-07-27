@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Load to a model instance
         /// </summary>
-        public override Place ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Place ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var place = dataInstance as DbPlace?? context.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert 
         /// </summary>
-        public override Place Insert(SQLiteConnection context, Place data)
+        public override Place Insert(SQLiteConnectionWithLock context, Place data)
         {
             var retVal = base.Insert(context, data);
 
@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the place
         /// </summary>
-        public override Place Update(SQLiteConnection context, Place data)
+        public override Place Update(SQLiteConnectionWithLock context, Place data)
         {
             var retVal = base.Update(context, data);
 

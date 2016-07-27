@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Android.Diagnostics
 		private String m_logFile;
 
 		// Sync object
-		private Object m_syncObject = new object();
+		private static Object s_syncObject = new object();
 
 		// Number of logs to keep
 		private int m_keepLogs = 4;
@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Android.Diagnostics
 		/// <param name="args">Arguments.</param>
 		protected override void WriteTrace (System.Diagnostics.Tracing.EventLevel level, string source, string format, params object[] args)
 		{
-			lock (this.m_syncObject)
+			lock (s_syncObject)
 				using (TextWriter tw = File.AppendText (this.m_logFile)) {
 					tw.Write ("{0} [{1}] [{2:o}]:", source, level, DateTime.Now);
 					tw.WriteLine (format, args);

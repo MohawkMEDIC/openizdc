@@ -21,7 +21,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// From model instance
         /// </summary>
-        public override object FromModelInstance(Patient modelInstance, SQLiteConnection context)
+        public override object FromModelInstance(Patient modelInstance, SQLiteConnectionWithLock context)
         {
             var dbPatient = base.FromModelInstance(modelInstance, context) as DbPatient;
 
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Patient ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Patient ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
 
             var iddat = dataInstance as DbVersionedData;
@@ -82,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified person into the database
         /// </summary>
-        public override Patient Insert(SQLiteConnection context, Patient data)
+        public override Patient Insert(SQLiteConnectionWithLock context, Patient data)
         {
             data.GenderConcept?.EnsureExists(context);
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
@@ -94,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified person
         /// </summary>
-        public override Patient Update(SQLiteConnection context, Patient data)
+        public override Patient Update(SQLiteConnectionWithLock context, Patient data)
         {
             // Ensure exists
             data.GenderConcept?.EnsureExists(context);
@@ -107,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Patient Obsolete(SQLiteConnection context, Patient data)
+        public override Patient Obsolete(SQLiteConnectionWithLock context, Patient data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

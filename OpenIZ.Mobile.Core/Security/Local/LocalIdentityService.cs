@@ -21,13 +21,14 @@ using System;
 using System.Linq;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using System.Security;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Serices;
 using System.Collections.Generic;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -153,9 +154,9 @@ namespace OpenIZ.Mobile.Core.Security
         /// Creates a connection to the local database
         /// </summary>
         /// <returns>The connection.</returns>
-        private SQLiteConnection CreateConnection()
+        private SQLiteConnectionWithLock CreateConnection()
         {
-            return new SQLiteConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
+            return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
         }
 
 
@@ -198,7 +199,8 @@ namespace OpenIZ.Mobile.Core.Security
             IPrincipal retVal = null;
 
             // Connect to the db
-            using (SQLiteConnection connection = this.CreateConnection())
+            var connection = this.CreateConnection();
+            using(connection.Lock())
             {
 
                 // Password service
@@ -230,7 +232,7 @@ namespace OpenIZ.Mobile.Core.Security
 
                     // Create the principal
                     retVal = new SQLitePrincipal(new SQLiteIdentity(dbs.UserName, true),
-                        connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?", 
+                        connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?",
                         dbs.Uuid).Select(o => o.Name).ToArray());
                 }
             }
@@ -249,7 +251,8 @@ namespace OpenIZ.Mobile.Core.Security
         {
             try
             {
-                using (SQLiteConnection conn = this.CreateConnection())
+                var conn = this.CreateConnection();
+                using (conn.Lock())
                 {
                     var userData = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == userName);
                     if (userData == null)
@@ -292,7 +295,8 @@ namespace OpenIZ.Mobile.Core.Security
                 if (userName != principal.Identity.Name &&
                     pdp.GetPolicyOutcome(principal, PolicyIdentifiers.ChangePassword) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny)
                     throw new SecurityException("User cannot change specified users password");
-                using (SQLiteConnection conn = this.CreateConnection())
+                var conn = this.CreateConnection();
+                using(conn.Lock())
                 {
                     var dbu = conn.Table<DbSecurityUser>().Where(o => o.UserName == userName).FirstOrDefault();
                     if (dbu == null)
@@ -330,21 +334,22 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         public IIdentity CreateIdentity(string userName, string password)
         {
-            using (SQLiteConnection conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+            IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
+            DbSecurityUser dbu = new DbSecurityUser()
             {
-                IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
-                DbSecurityUser dbu = new DbSecurityUser()
-                {
-                    PasswordHash = hash.ComputeHash(password),
-                    SecurityHash = Guid.NewGuid().ToString(),
-                    CreationTime = DateTime.Now,
-                    CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == ApplicationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
-                    UserName = userName,
-                    Key = Guid.NewGuid()
-                };
+                PasswordHash = hash.ComputeHash(password),
+                SecurityHash = Guid.NewGuid().ToString(),
+                CreationTime = DateTime.Now,
+                CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == ApplicationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
+                UserName = userName,
+                Key = Guid.NewGuid()
+            };
+            using (conn.Lock())
+            {
                 conn.Insert(dbu);
-                return new SQLiteIdentity(userName, false);
             }
+            return new SQLiteIdentity(userName, false);
         }
 
         public void SetLockout(string userName, bool v)

@@ -19,7 +19,7 @@
  */
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="principal"></param>
         /// <returns></returns>
-        public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
 
             var domainMmat = dataInstance as DbManufacturedMaterial;
@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified manufactured material
         /// </summary>
-        public override ManufacturedMaterial Insert(SQLiteConnection context, ManufacturedMaterial data)
+        public override ManufacturedMaterial Insert(SQLiteConnectionWithLock context, ManufacturedMaterial data)
         {
             var retVal = this.m_materialPersister.Insert(context, data);
             return base.Insert(context, data);
@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Updates the manufactured material
         /// </summary>
-        public override ManufacturedMaterial Update(SQLiteConnection context, ManufacturedMaterial data)
+        public override ManufacturedMaterial Update(SQLiteConnectionWithLock context, ManufacturedMaterial data)
         {
             var updated = this.m_materialPersister.Update(context, data);
             return base.Update(context, data);
@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the specified manufactured material
         /// </summary>
-        public override ManufacturedMaterial Obsolete(SQLiteConnection context, ManufacturedMaterial data)
+        public override ManufacturedMaterial Obsolete(SQLiteConnectionWithLock context, ManufacturedMaterial data)
         {
             var obsoleted = this.m_materialPersister.Obsolete(context, data);
             return data;

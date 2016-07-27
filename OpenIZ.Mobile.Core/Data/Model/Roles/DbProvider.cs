@@ -19,7 +19,8 @@
  */
 using System;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-using SQLite;
+using SQLite.Net;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Roles
 {

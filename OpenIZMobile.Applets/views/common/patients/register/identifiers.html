@@ -14,14 +14,15 @@
                 <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control"/>
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button" ng-click="scanBarcode(authority, identifier)">
-                        <span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}
+                        <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
-                    <button class="btn btn-default" type="button" style="padding:9px" ng-click="addIdentifier()">
+                    <button class="btn btn-default" type="button" ng-click="addIdentifier()">
                         <span class="glyphicon glyphicon-plus"></span> 
                     </button>
-                    <button class="btn btn-default" type="button" style="padding:9px" ng-click="removeIdentifier(authority, identifier)">
+                    <button class="btn btn-default" type="button" ng-click="removeIdentifier(authority, identifier)">
                         <span class="glyphicon glyphicon-remove"></span> 
                     </button>
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.identifier' | i18n }}" data-content="{{ 'locale.patient.demographics.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
 
             </div>

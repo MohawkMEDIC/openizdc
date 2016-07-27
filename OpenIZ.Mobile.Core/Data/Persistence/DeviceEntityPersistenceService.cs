@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the database representation to a model instance
         /// </summary>
-        public override DeviceEntity ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override DeviceEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var deviceEntity = dataInstance as DbDeviceEntity;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == deviceEntity.Uuid).First();
@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified device entity
         /// </summary>
-        public override DeviceEntity Insert(SQLiteConnection context, DeviceEntity data)
+        public override DeviceEntity Insert(SQLiteConnectionWithLock context, DeviceEntity data)
         {
             data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Updates the specified user
         /// </summary>
-        public override DeviceEntity Update(SQLiteConnection context, DeviceEntity data)
+        public override DeviceEntity Update(SQLiteConnectionWithLock context, DeviceEntity data)
         {
             data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;

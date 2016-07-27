@@ -17,7 +17,10 @@
  * User: justi
  * Date: 2016-7-13
  */
+using OpenIZ.Core.Http;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +31,27 @@ using System.Threading.Tasks;
 namespace OpenIZ.Mobile.Core.Services
 {
     /// <summary>
+    /// Query options to control data coming back from the server
+    /// </summary>
+    public class IntegrationQueryOptions
+    {
+        /// <summary>
+        /// Gets or sets the credentials
+        /// </summary>
+        public Credentials Credentials { get; set; }
+
+        /// <summary>
+        /// Gets or sets the If-Modified-Since header
+        /// </summary>
+        public DateTime? IfModifiedSince { get; set; }
+
+        /// <summary>
+        /// Gets or sets the If-None-Match
+        /// </summary>
+        public String IfNoneMatch { get; set; }
+    }
+
+    /// <summary>
     /// Represents an integration service which is responsible for sending and
     /// pulling data to/from remote sources
     /// </summary>
@@ -35,14 +59,24 @@ namespace OpenIZ.Mobile.Core.Services
     {
 
         /// <summary>
+        /// Find the specified filtered object
+        /// </summary>
+        Bundle Find(Type modelType, NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null);
+
+        /// <summary>
+        /// Find the specified filtered object
+        /// </summary>
+        Bundle Find<TModel>(NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
+
+        /// <summary>
         /// Instructs the integration service to retrieve the specified object
         /// </summary>
-        IdentifiedData Get(Type modelType, Guid key, Guid? versionKey);
+        IdentifiedData Get(Type modelType, Guid key, Guid? versionKey, IntegrationQueryOptions options = null);
 
         /// <summary>
         /// Gets the specified object
         /// </summary>
-        TModel Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData;
+        TModel Get<TModel>(Guid key, Guid? versionKey, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
 
         /// <summary>
         /// Instructs the integration service to save the specified object
@@ -62,7 +96,7 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Instructs the integration service to locate a specified object(s)
         /// </summary>
-        IdentifiedData Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count) where TModel : IdentifiedData;
+        Bundle Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
 
         /// <summary>
         /// Determines if the integration target is available

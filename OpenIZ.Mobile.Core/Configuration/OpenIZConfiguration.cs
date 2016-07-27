@@ -19,7 +19,7 @@
  */
 using System;
 using System.Reflection;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
@@ -41,7 +41,8 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlInclude(typeof(ServiceClientConfigurationSection))]
 	[XmlInclude(typeof(ApplicationConfigurationSection))]
 	[XmlInclude(typeof(DiagnosticsConfigurationSection))]
-	public class OpenIZConfiguration
+    [XmlInclude(typeof(SynchronizationConfigurationSection))]
+    public class OpenIZConfiguration
 	{
 
 		/// <summary>

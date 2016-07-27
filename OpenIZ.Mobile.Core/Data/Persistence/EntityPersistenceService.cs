@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
@@ -61,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnection context) where TEntityType : Entity, new()
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context) where TEntityType : Entity, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
 
@@ -89,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Entity ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
@@ -127,7 +127,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
-        public override Entity Insert(SQLiteConnection context, Entity data)
+        public override Entity Insert(SQLiteConnectionWithLock context, Entity data)
         {
 
             // Ensure FK exists
@@ -152,7 +152,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships,
+                    data.Relationships.Where(o=>!o.InversionIndicator).ToList(),
                     retVal.Key,
                     context);
 
@@ -210,7 +210,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified entity
         /// </summary>
-        public override Entity Update(SQLiteConnection context, Entity data)
+        public override Entity Update(SQLiteConnectionWithLock context, Entity data)
         {
             // Esnure exists
             data.ClassConcept?.EnsureExists(context);
@@ -234,7 +234,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     context.Table<DbEntityRelationship>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
-                    data.Relationships,
+                    data.Relationships.Where(o => !o.InversionIndicator).ToList(),
                     retVal.Key,
                     context);
 
@@ -292,7 +292,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsoleted status key
         /// </summary>
-        public override Entity Obsolete(SQLiteConnection context, Entity data)
+        public override Entity Obsolete(SQLiteConnectionWithLock context, Entity data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);

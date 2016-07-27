@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -39,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the data
         /// </summary>
-        public override TModel Insert(SQLiteConnection context, TModel data)
+        public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
         {
             data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey ;
             return base.Insert(context, data);
@@ -48,17 +48,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the data with new version information
         /// </summary>
-        public override TModel Update(SQLiteConnection context, TModel data)
+        public override TModel Update(SQLiteConnectionWithLock context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
-            data.VersionKey = Guid.NewGuid();
+            if(!data.VersionKey.HasValue)
+                data.VersionKey = Guid.NewGuid();
             return base.Update(context, data);
         }
 
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
-        public override TModel Obsolete(SQLiteConnection context, TModel data)
+        public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
             data.VersionKey = Guid.NewGuid();

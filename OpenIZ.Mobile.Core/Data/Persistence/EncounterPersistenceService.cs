@@ -1,7 +1,7 @@
 ﻿using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
-using SQLite;
+using SQLite.Net;
 using System;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
@@ -15,7 +15,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert database instance to patient encounter
         /// </summary>
-        public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbIdentified;
             var dbEnc = dataInstance as DbPatientEncounter ?? context.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the patient encounter
         /// </summary>
-        public override PatientEncounter Insert(SQLiteConnection context, PatientEncounter data)
+        public override PatientEncounter Insert(SQLiteConnectionWithLock context, PatientEncounter data)
         {
             data.DischargeDisposition?.EnsureExists(context);
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Updates the specified data
         /// </summary>
-        public override PatientEncounter Update(SQLiteConnection context, PatientEncounter data)
+        public override PatientEncounter Update(SQLiteConnectionWithLock context, PatientEncounter data)
         {
             data.DischargeDisposition?.EnsureExists(context);
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;

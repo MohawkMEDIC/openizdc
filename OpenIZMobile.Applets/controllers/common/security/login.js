@@ -5,14 +5,14 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/bootstrap.min.js"/>
 
-$(document).ready(function () {
+angular.element(document).ready(function () {
     $('form.form-login').each(function (k, e) {
         
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
 
         scope.login = scope.login || function (username, password) {
-            $('#waitModal').modal('show');
+            OpenIZ.App.showWait();
             OpenIZ.Authentication.loginAsync({
                 userName: username,
                 password: password,
@@ -24,7 +24,8 @@ $(document).ready(function () {
                         window.location = OpenIZ.urlParams["returnUrl"];
                 },
                 onException: function (ex) {
-                    $('#waitModal').modal('hide');
+                    OpenIZ.App.hideWait();
+
 
                     if (typeof (ex) == "string")
                         alert(ex);

@@ -28,7 +28,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Persistence;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model;
-using SQLite;
+using SQLite.Net;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Attributes;
@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Load specified associations
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, SQLiteConnection context) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
         {
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(entryType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
                     if (idpInstance == null) continue;
-                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
 
                     // Execute query
                     if (queryMethod == null) continue;
@@ -111,7 +111,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, SQLiteConnection context)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, SQLiteConnectionWithLock context)
         {
             // Is there a classifier?
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Data
             if (me.Key != Guid.Empty && me.Key != null)
             {
                 // We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
                 if (getMethod == null) return null;
                 existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
             }
@@ -149,7 +149,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
 
                 // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
-                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnection));
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
                 var expression = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr });
 
                 if (queryMethod == null) return null;
@@ -168,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Ensure the specified object exists, insert it if it doesnt
         /// </summary>
-        public static void EnsureExists(this IIdentifiedEntity me, SQLiteConnection context)
+        public static void EnsureExists(this IIdentifiedEntity me, SQLiteConnectionWithLock context)
         {
 
             // Me
@@ -177,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Does it exist in our cache?
             Guid? existingGuidVer = null;
-            if (s_exists.TryGetValue(dkey, out existingGuidVer))
+            if (me.Key != null && s_exists.TryGetValue(dkey, out existingGuidVer))
             {
                 if (vMe?.VersionKey == existingGuidVer || vMe == null)
                     return; // Exists already we know about it
@@ -218,6 +218,7 @@ namespace OpenIZ.Mobile.Core.Data
             else // Insert
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
+                dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
                 if (insertMethod != null)
                 {
                     IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me }) as IIdentifiedEntity;
@@ -226,10 +227,9 @@ namespace OpenIZ.Mobile.Core.Data
                     if (vMe != null)
                         vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 }
-                dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
 
                 lock (s_lock)
-                    if (me.Key != Guid.Empty)
+                    if (me.Key != Guid.Empty && !s_exists.ContainsKey(dkey))
                         s_exists.Add(dkey, null);
 
             }
@@ -269,7 +269,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnection context, TModel data)
+            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -288,7 +288,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnection context, TModel data)
+            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -317,7 +317,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnection context, TModel data)
+            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -337,7 +337,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnection context, TModel data)
+            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -365,7 +365,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnection context, TModel data)
+            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -385,7 +385,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnection context, TModel data)
+            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {

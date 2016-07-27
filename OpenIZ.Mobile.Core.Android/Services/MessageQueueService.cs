@@ -28,7 +28,6 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using OpenIZ.Core.Diagnostics;
 using System.Threading;
 using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Android.Threading;
@@ -36,6 +35,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System.Net;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Services
 {
@@ -61,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
         /// </summary>
         protected override void OnHandleIntent(Intent intent)
         {
-            OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<SynchronizationManagerService>().ExhaustInboundQueue();
+            OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<QueueManagerService>().ExhaustInboundQueue();
         }
         
     }
@@ -100,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
         /// </summary>
         protected override void OnHandleIntent(Intent intent)
         {
-            OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<SynchronizationManagerService>().ExhaustOutboundQueue();
+            OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
         }
         
         /// <summary>

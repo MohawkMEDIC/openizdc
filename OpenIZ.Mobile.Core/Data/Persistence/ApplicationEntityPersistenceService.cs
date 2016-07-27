@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override ApplicationEntity ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override ApplicationEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var applicationEntity = dataInstance as DbApplicationEntity;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == applicationEntity.Uuid).First();
@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the application entity
         /// </summary>
-        public override ApplicationEntity Insert(SQLiteConnection context, ApplicationEntity data)
+        public override ApplicationEntity Insert(SQLiteConnectionWithLock context, ApplicationEntity data)
         {
             data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
@@ -62,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the application entity
         /// </summary>
-        public override ApplicationEntity Update(SQLiteConnection context, ApplicationEntity data)
+        public override ApplicationEntity Update(SQLiteConnectionWithLock context, ApplicationEntity data)
         {
             data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;

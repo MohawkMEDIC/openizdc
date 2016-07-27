@@ -18,10 +18,11 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model;
 using System.Collections.Generic;
 using System.Reflection;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Synchronization.Model
 {
@@ -138,7 +139,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Synchronization.Model.DeadLetterQueueEntry"/> class.
 		/// </summary>
 		/// <param name="fromEntry">From entry.</param>
-		public DeadLetterQueueEntry (SynchronizationQueueEntry fromEntry)
+		public DeadLetterQueueEntry (SynchronizationQueueEntry fromEntry, byte[] tagData)
 		{
 			if (fromEntry == null)
 				throw new ArgumentNullException (nameof (fromEntry));
@@ -147,6 +148,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 			this.Data = fromEntry.Data;
 			this.CreationTime = DateTime.Now;
 			this.Type = fromEntry.Type;
+            this.TagData = tagData;
 		}
 
 		/// <summary>
@@ -158,6 +160,12 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Gets or sets data related to why the data is in the dead-letter queue
+        /// </summary>
+        [Column("tag")]
+        public byte[] TagData { get; set; }
 	}
 
 	/// <summary>

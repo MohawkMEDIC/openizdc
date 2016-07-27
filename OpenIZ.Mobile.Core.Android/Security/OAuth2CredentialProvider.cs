@@ -18,6 +18,7 @@
  * Date: 2016-6-14
  */
 using System;
+using System.Security.Principal;
 using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core.Android.Security
@@ -48,7 +49,16 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			// return this application's credentials
 			return new OAuthTokenServiceCredentials (ApplicationContext.Current.Principal);
 		}
-		#endregion
-	}
+
+        /// <summary>
+        /// Get oauth credentials
+        /// </summary>
+        public Credentials GetCredentials(IPrincipal principal)
+        {
+            // return this application's credentials
+            return new OAuthTokenServiceCredentials(ApplicationContext.Current.Principal);
+        }
+        #endregion
+    }
 }
 

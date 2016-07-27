@@ -98,27 +98,35 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 this.m_listener = new HttpListener();
 
                 // Scan for services
-                foreach (var t in AppDomain.CurrentDomain.GetAssemblies().SelectMany(t => t.DefinedTypes).Where(o => o.GetCustomAttribute<RestServiceAttribute>() != null))
-                {
-                    var serviceAtt = t.GetCustomAttribute<RestServiceAttribute>();
-                    object instance = Activator.CreateInstance(t);
-                    foreach (var mi in t.GetRuntimeMethods().Where(o => o.GetCustomAttribute<RestOperationAttribute>() != null))
+                foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
+                    try
                     {
-                        var operationAtt = mi.GetCustomAttribute<RestOperationAttribute>();
-                        var faultMethod = operationAtt.FaultProvider != null ? t.GetRuntimeMethod(operationAtt.FaultProvider, new Type[] { typeof(Exception) }) : null;
-                        String pathMatch = String.Format("{0}:{1}{2}", operationAtt.Method, serviceAtt.BaseAddress, operationAtt.UriPath);
-                        if (!this.m_services.ContainsKey(pathMatch))
-                            lock (this.m_lockObject)
-                                this.m_services.Add(pathMatch, new InvokationInformation()
-                                {
-                                    BindObject = instance,
-                                    Method = mi,
-                                    FaultProvider = faultMethod
-                                });
+                        foreach (var t in a.DefinedTypes.Where(o => o.GetCustomAttribute<RestServiceAttribute>() != null))
+                        {
+                            var serviceAtt = t.GetCustomAttribute<RestServiceAttribute>();
+                            object instance = Activator.CreateInstance(t);
+                            foreach (var mi in t.GetRuntimeMethods().Where(o => o.GetCustomAttribute<RestOperationAttribute>() != null))
+                            {
+                                var operationAtt = mi.GetCustomAttribute<RestOperationAttribute>();
+                                var faultMethod = operationAtt.FaultProvider != null ? t.GetRuntimeMethod(operationAtt.FaultProvider, new Type[] { typeof(Exception) }) : null;
+                                String pathMatch = String.Format("{0}:{1}{2}", operationAtt.Method, serviceAtt.BaseAddress, operationAtt.UriPath);
+                                if (!this.m_services.ContainsKey(pathMatch))
+                                    lock (this.m_lockObject)
+                                        this.m_services.Add(pathMatch, new InvokationInformation()
+                                        {
+                                            BindObject = instance,
+                                            Method = mi,
+                                            FaultProvider = faultMethod
+                                        });
 
+                            }
+
+                        }
                     }
-
-                }
+                    catch(Exception e)
+                    {
+                        this.m_tracer.TraceWarning("Could not load assembly {0} : {1}", a, e);
+                    }
 
                 // Get loopback
                 var loopback = GetLocalIpAddress();
@@ -149,6 +157,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 this.m_listener.Start();
                 this.m_acceptThread.IsBackground = true;
                 this.m_acceptThread.Start();
+                this.m_acceptThread.Name = "MiniIMS";
                 this.m_tracer.TraceInfo("Started internal IMS services...");
                 this.Started?.Invoke(this, EventArgs.Empty);
 
@@ -239,7 +248,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                     }
 
                     // Serialize the response
-                    if (request.Headers["Accept"] != null)
+                    if (request.Headers["Accept"] != null && invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.Raw)
                     {
                         var serializer = this.m_contentTypeHandler.GetSerializer(request.Headers["Accept"].Split(',')[0], result.GetType());
                         if (serializer != null)
@@ -253,6 +262,15 @@ namespace OpenIZ.Mobile.Core.Android.Services
                     else // Use the contract values
                         switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
                         {
+                            case RestMessageFormat.Raw:
+                                byte[] buffer = new byte[2048];
+                                int br = 2048;
+                                while (br == 2048)
+                                {
+                                    br = (result as Stream).Read(buffer, 0, 2048);
+                                    response.OutputStream.Write(buffer, 0, br);
+                                }
+                                break;
                             case RestMessageFormat.Json:
                                 response.ContentType = "application/json";
                                 this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(response.OutputStream, result.GetType());
@@ -337,7 +355,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
         private void HandleAssetRenderRequest(HttpListenerRequest request, HttpListenerResponse response)
         {
 
-            this.m_tracer.TraceInfo("Intercept request for {0}...", request.Url);
+            //this.m_tracer.TraceInfo("Intercept request for {0}...", request.Url);
 
             // Try to demand policy 
 

@@ -28,7 +28,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Persistence;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model;
-using SQLite;
+using SQLite.Net;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Attributes;

@@ -18,7 +18,7 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
@@ -98,7 +98,41 @@ namespace OpenIZ.Mobile.Core.Configuration
 			}
 		}
 
-	}
+        /// <summary>
+        /// Gets or sets the cache configuration
+        /// </summary>
+        [XmlElement("caching")]
+        public CacheConfiguration Cache { get; set; }
+    }
+
+    /// <summary>
+    /// Cache configuration
+    /// </summary>
+    [XmlType(nameof(CacheConfiguration), Namespace = "http://openiz.org/mobile/configuration"), JsonObject]
+    public class CacheConfiguration
+    {
+        /// <summary>
+        /// Maximum size
+        /// </summary>
+        [XmlAttribute("maxSize")]
+        public int MaxSize { get; set; }
+
+        /// <summary>
+        /// Max age
+        /// </summary>
+        [XmlAttribute("maxAge")]
+        public long MaxAge { get; set; }
+        /// <summary>
+        /// Maximum time that can pass without cleaning
+        /// </summary>
+        [XmlAttribute("maxDirty")]
+        public long MaxDirtyAge { get; set; }
+        /// <summary>
+        /// Maximum time that can pass withut reducing pressure
+        /// </summary>
+        [XmlAttribute("maxPressure")]
+        public long MaxPressureAge { get; set; }
+    }
 
     /// <summary>
     /// Application key/value pair setting

@@ -17,28 +17,52 @@
  * User: justi
  * Date: 2016-7-13
  */
-using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
+
+    /// <summary>
+    /// Represents conflict event args
+    /// </summary>
+    public class SynchronizationConflictEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Represents the remote resource
+        /// </summary>
+        public IdentifiedData RemoteResource { get; set; }
+
+        /// <summary>
+        /// Represents the local resource
+        /// </summary>
+        public IdentifiedData LocalResource { get; set; }
+    }
+
     /// <summary>
     /// Queue manager daemon
     /// </summary>
-    public class SynchronizationManagerService : IDaemonService
+    public class QueueManagerService : IDaemonService
     {
 
         // Queue manager 
-        private Tracer m_tracer = Tracer.GetTracer(typeof(SynchronizationManagerService));
+        private Tracer m_tracer = Tracer.GetTracer(typeof(QueueManagerService));
         private Object m_inboundLock = new object();
         private Object m_outboundLock = new object();
         private IThreadPoolService m_threadPool = null;
@@ -71,17 +95,50 @@ namespace OpenIZ.Mobile.Core.Synchronization
             var svc = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
             try
             {
+                var existing = svc.Get(data.Key.Value) as IdentifiedData;
+                (existing as IdentifiedData)?.SetDelayLoad(false);
+                data?.SetDelayLoad(false);
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
-                if (svc.Get(data.Key.Value) == null)
-                    svc.Insert(data);
+                if (existing == null)
+                    try {
+                        svc.Insert(data);
+                    } catch(Exception e)
+                    {
+                        this.m_tracer.TraceWarning("Batch insert fails, performing individual inserts");
+                        if (data is Bundle)
+                            foreach (var d in (data as Bundle).Item)
+                                this.ImportElement(d as IdentifiedData, queueEntry);
+                                //SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
+                        else
+                            throw;
+                    }
                 else
-                    svc.Update(data);
+                {
+                    IVersionedEntity ver = data as IVersionedEntity;
+                    if (ver?.VersionKey == (existing as IVersionedEntity)?.VersionKey) // no need to update
+                        this.m_tracer.TraceVerbose("Object {0} is already up to date", existing);
+                    if (ver?.PreviousVersionKey != null && ver?.PreviousVersionKey != (existing as IVersionedEntity)?.VersionKey ||
+                        data.GetType() != existing.GetType()) // Conflict, ask the meatbag to resolve it
+                    {
+                        XmlSerializer xsz = new XmlSerializer(existing.GetType());
+                        using (var ms = new MemoryStream())
+                        {
+                            xsz.Serialize(ms, existing);
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
+                        }
+                    }
+                    else
+                    {
+                        svc.Update(data);
+                    }
+                }
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error inserting object data: {0}", e);
-                SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry));
+                // SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
+                throw;
             }
         }
 
@@ -90,25 +147,33 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public void ExhaustInboundQueue()
         {
-            if (!Monitor.TryEnter(this.m_inboundLock)) return;
 
+            if (Monitor.IsEntered(this.m_inboundLock)) return;
             lock (this.m_inboundLock)
             {
                 // Exhaust the queue
-                while (SynchronizationQueue.Inbound.Count() > 0)
+                int remain = SynchronizationQueue.Inbound.Count();
+                while (remain > 0)
                 {
-                    var queueEntry = SynchronizationQueue.Inbound.DequeueRaw();
-                    var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
-                    (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
-                    dpe = (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Entry ?? dpe;
-
-                    if (dpe is OpenIZ.Core.Model.Collection.Bundle) // We'll have to iterate and insert
+                    try
                     {
-                        foreach (var dat in (dpe as OpenIZ.Core.Model.Collection.Bundle).Item)
-                            this.ImportElement(dat, queueEntry);
-                    }
-                    else
+                        ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (float)1 / (float)remain);
+
+                        this.m_tracer.TraceInfo("{0} remaining inbound queue items", SynchronizationQueue.Inbound.Count());
+                        var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
+                        var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
+                        (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
+                        dpe = (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Entry ?? dpe;
+
                         this.ImportElement(dpe, queueEntry);
+                        SynchronizationQueue.Inbound.DequeueRaw();
+                    }
+                    catch(Exception e)
+                    {
+                        this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
+                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(SynchronizationQueue.Inbound.DequeueRaw(), Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "In" });
+                    }
+                    remain = SynchronizationQueue.Inbound.Count();
                 }
             }
         }
@@ -118,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public void ExhaustOutboundQueue()
         {
-            if (!Monitor.TryEnter(this.m_outboundLock)) return;
+            if (!Monitor.IsEntered(this.m_outboundLock)) return;
 
             lock (this.m_outboundLock)
             {
@@ -156,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     catch (WebException ex)
                     {
                         this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
-                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm));
+                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                         SynchronizationQueue.Outbound.DequeueRaw();
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
@@ -167,7 +232,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         // Re-queue
                         if (syncItm.RetryCount > 3) // TODO: Make this configurable
                         {
-                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm));
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
                         }
                         else
@@ -191,6 +256,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Bind to the inbound queue
             SynchronizationQueue.Inbound.Enqueued += (o, e) =>
             {
+                // Someone already got this!
+                if (Monitor.IsEntered(this.m_inboundLock)) return;
                 Action<Object> async = (itm) =>
                 {
                     this.ExhaustInboundQueue();
@@ -201,12 +268,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Bind to outbound queue
             SynchronizationQueue.Outbound.Enqueued += (o, e) =>
             {
-                Action<Object> async = (itm) =>
-                {
-                    this.ExhaustOutboundQueue();
-                };
-                this.m_threadPool.QueueUserWorkItem(async);
+                // Another thread worker is doing this
+                if (Monitor.IsEntered(this.m_outboundLock)) return;
 
+                // Trigger sync?
+                if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
+                    Exists(r=>r.ResourceType == Type.GetType(e.Data.Type) && 
+                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) !=  0))
+                {
+                    Action<Object> async = (itm) =>
+                    {
+                        this.ExhaustOutboundQueue();
+                    };
+                    this.m_threadPool.QueueUserWorkItem(async);
+                }
             };
 
             // startup

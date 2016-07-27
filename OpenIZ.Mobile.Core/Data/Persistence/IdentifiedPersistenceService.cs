@@ -20,7 +20,7 @@
 using System;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Data.Model.Security;
-using SQLite;
+using SQLite.Net;
 using System.Linq.Expressions;
 using System.Linq;
 using OpenIZ.Core.Model;
@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// </summary>
 		/// <returns>The model instance.</returns>
 		/// <param name="dataInstance">Data instance.</param>
-		public override TModel ToModelInstance (object dataInstance, SQLiteConnection context)
+		public override TModel ToModelInstance (object dataInstance, SQLiteConnectionWithLock context)
 		{
 			var retVal = m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
             retVal.LoadAssociations(context);
@@ -59,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <returns>The model instance.</returns>
         /// <param name="modelInstance">Model instance.</param>
         /// <param name="context">Context.</param>
-        public override object FromModelInstance (TModel modelInstance, SQLiteConnection context)
+        public override object FromModelInstance (TModel modelInstance, SQLiteConnectionWithLock context)
 		{
 			return m_mapper.MapModelInstance<TModel, TDomain> (modelInstance);
 
@@ -70,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// </summary>
 		/// <param name="context">Context.</param>
 		/// <param name="data">Data.</param>
-		public override TModel Insert (SQLiteConnection context, TModel data)
+		public override TModel Insert (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
@@ -87,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update (SQLiteConnection context, TModel data)
+        public override TModel Update (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			context.Update (domainObject);
@@ -99,7 +99,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete (SQLiteConnection context, TModel data)
+        public override TModel Obsolete (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 			context.Delete (domainObject);
@@ -111,7 +111,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnection context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults)
+        public override System.Collections.Generic.IEnumerable<TModel> Query (SQLiteConnectionWithLock context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults)
 		{
 			var domainQuery = m_mapper.MapModelExpression<TModel, TDomain> (query);
 			var retVal = context.Table<TDomain> ().Where (domainQuery);
@@ -121,8 +121,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal = retVal.Skip(offset);
             if (count > 0)
 				retVal = retVal.Take (count);
+
+            var domainList = retVal.ToList();
             
-			return retVal.ToList().Select(o=>this.ToModelInstance(o, context)).ToList();
+            return domainList.Select(o=>this.ToModelInstance(o, context)).ToList();
 		}
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="query">Query.</param>
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
-        public override IEnumerable<TModel> Query(SQLiteConnection context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
+        public override IEnumerable<TModel> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
 		{
 
             // Build a query
@@ -250,7 +252,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid? sourceKey, SQLiteConnection dataContext)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {

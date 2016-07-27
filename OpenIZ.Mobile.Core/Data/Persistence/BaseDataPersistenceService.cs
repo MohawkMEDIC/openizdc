@@ -21,9 +21,10 @@ using System;
 using System.Linq;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model;
-using SQLite;
+using SQLite.Net;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -39,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Insert (SQLiteConnection context, TModel data)
+        public override TModel Insert (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
@@ -61,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update (SQLiteConnection context, TModel data)
+        public override TModel Update (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
@@ -78,7 +79,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete (SQLiteConnection context, TModel data)
+        public override TModel Obsolete (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
             data.ObsoletedBy?.EnsureExists(context);
@@ -89,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			return data;
 		}
 
-       
+
     }
 }
 

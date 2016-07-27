@@ -39,6 +39,8 @@ using System.Security.Cryptography.X509Certificates;
 using AndroidOS = Android.OS;
 using OpenIZ.Mobile.Core.Android.Services;
 using OpenIZ.Mobile.Core.Android.Threading;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Alerting;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -105,20 +107,31 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 StartupAsset = "org.openiz.core",
                 AuthenticationAsset = "/views/security/login.html"
             };
-
-			// Initial applet style
-			ApplicationConfigurationSection appSection = new ApplicationConfigurationSection () {
+            
+            // Initial applet style
+            ApplicationConfigurationSection appSection = new ApplicationConfigurationSection () {
 				Style = StyleSchemeType.Dark,
 				UserPrefDir = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "userpref"),
 				ServiceTypes = new List<string>() {
 					typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
 					typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
+                    typeof(LocalPlaceService).AssemblyQualifiedName,
+                    typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
-                    typeof(OpenIZThreadPool).AssemblyQualifiedName
-				}
+                    typeof(MemoryCacheService).AssemblyQualifiedName,
+                    typeof(OpenIZThreadPool).AssemblyQualifiedName,
+                    typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName
+				},
+                Cache = new CacheConfiguration()
+                {
+                    MaxAge = new TimeSpan(0, 5, 0).Ticks,
+                    MaxSize = 1000,
+                    MaxDirtyAge = new TimeSpan(0, 20, 0).Ticks,
+                    MaxPressureAge = new TimeSpan(0, 2, 0).Ticks
+                }
 			};
 
 

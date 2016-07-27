@@ -44,6 +44,12 @@
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
     </Reference>
+    <Reference Include="SQLite.Net">
+      <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLite.Net.Platform.XamarinAndroid">
+      <HintPath>..\Solution Items\Android\SQLite.Net.Platform.XamarinAndroid.dll</HintPath>
+    </Reference>
     <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
@@ -54,9 +60,6 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Mono.Android.Export" />
-    <Reference Include="SQLite-net">
-      <HintPath>..\Solution Items\SQLite-net.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -104,7 +107,9 @@
     <Compile Include="Services\Attributes\RestServiceAttribute.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\MiniImsServer.cs" />
+    <Compile Include="Services\ServiceHandlers\ApplicationService.cs" />
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
+    <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>

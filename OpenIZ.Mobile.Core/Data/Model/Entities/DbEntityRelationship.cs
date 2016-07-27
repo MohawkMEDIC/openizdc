@@ -17,7 +17,8 @@
  * User: justi
  * Date: 2016-6-14
  */
-using SQLite;
+using SQLite.Net;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,8 +31,19 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
     /// Represents a relationship between two entities
     /// </summary>
     [Table("entity_relationship")] 
-    public class DbEntityRelationship : DbEntityLink
+    public class DbEntityRelationship : DbIdentified
     {
+
+        /// <summary>
+        /// Gets or sets the entity identifier.
+        /// </summary>
+        /// <value>The entity identifier.</value>
+        [Column("entity_uuid"), MaxLength(16), NotNull, Indexed(Name = "entity_relationship_target_type", Unique = true)]
+        public byte[] EntityUuid
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Gets or sets the target entity

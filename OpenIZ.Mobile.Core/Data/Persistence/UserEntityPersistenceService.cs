@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override UserEntity ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override UserEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var userEntity = dataInstance as DbUserEntity ?? context.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Inserts the user entity
         /// </summary>
-        public override UserEntity Insert(SQLiteConnection context, UserEntity data)
+        public override UserEntity Insert(SQLiteConnectionWithLock context, UserEntity data)
         {
             data.SecurityUser?.EnsureExists(context);
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified user entity
         /// </summary>
-        public override UserEntity Update(SQLiteConnection context, UserEntity data)
+        public override UserEntity Update(SQLiteConnectionWithLock context, UserEntity data)
         {
             data.SecurityUser?.EnsureExists(context);
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
@@ -87,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the specified user instance
         /// </summary>
-        public override UserEntity Obsolete(SQLiteConnection context, UserEntity data)
+        public override UserEntity Obsolete(SQLiteConnectionWithLock context, UserEntity data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

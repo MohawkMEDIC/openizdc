@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represents the name as a model instance
         /// </summary>
-        public override EntityName ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override EntityName ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             DbEntityName en = dataInstance as DbEntityName;
             var retVal = base.ToModelInstance(dataInstance, context);
@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override EntityName Insert(SQLiteConnection context, EntityName data)
+        public override EntityName Insert(SQLiteConnectionWithLock context, EntityName data)
         {
 
             // Ensure exists
@@ -74,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the entity name
         /// </summary>
-        public override EntityName Update(SQLiteConnection context, EntityName data)
+        public override EntityName Update(SQLiteConnectionWithLock context, EntityName data)
         {
             // Ensure exists
             data.NameUse?.EnsureExists(context);
