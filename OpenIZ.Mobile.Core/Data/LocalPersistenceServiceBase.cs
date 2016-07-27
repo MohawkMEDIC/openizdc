@@ -29,7 +29,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using System.Collections;
 using System.Collections.Generic;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Exceptions;
@@ -37,6 +37,8 @@ using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Threading;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -56,80 +58,83 @@ namespace OpenIZ.Mobile.Core.Data
         protected static ModelMapper m_mapper;
 
         // Static CTOR
-        static LocalPersistenceServiceBase() {
+        static LocalPersistenceServiceBase()
+        {
 
             m_mapper = LocalPersistenceService.Mapper;
         }
 
-		#region IDataPersistenceService implementation
-		/// <summary>
-		/// Occurs when inserted.
-		/// </summary>
-		public event EventHandler<DataPersistenceEventArgs<TData>> Inserted;
-		/// <summary>
-		/// Occurs when inserting.
-		/// </summary>
-		public event EventHandler<DataPersistencePreEventArgs<TData>> Inserting;
-		/// <summary>
-		/// Occurs when updated.
-		/// </summary>
-		public event EventHandler<DataPersistenceEventArgs<TData>> Updated;
-		/// <summary>
-		/// Occurs when updating.
-		/// </summary>
-		public event EventHandler<DataPersistencePreEventArgs<TData>> Updating;
-		/// <summary>
-		/// Occurs when obsoleted.
-		/// </summary>
-		public event EventHandler<DataPersistenceEventArgs<TData>> Obsoleted;
-		/// <summary>
-		/// Occurs when obsoleting.
-		/// </summary>
-		public event EventHandler<DataPersistencePreEventArgs<TData>> Obsoleting;
-		/// <summary>
-		/// Occurs when queried.
-		/// </summary>
-		public event EventHandler<DataQueryEventArgsBase<TData>> Queried;
-		/// <summary>
-		/// Occurs when querying.
-		/// </summary>
-		public event EventHandler<DataQueryEventArgsBase<TData>> Querying;
+        #region IDataPersistenceService implementation
+        /// <summary>
+        /// Occurs when inserted.
+        /// </summary>
+        public event EventHandler<DataPersistenceEventArgs<TData>> Inserted;
+        /// <summary>
+        /// Occurs when inserting.
+        /// </summary>
+        public event EventHandler<DataPersistencePreEventArgs<TData>> Inserting;
+        /// <summary>
+        /// Occurs when updated.
+        /// </summary>
+        public event EventHandler<DataPersistenceEventArgs<TData>> Updated;
+        /// <summary>
+        /// Occurs when updating.
+        /// </summary>
+        public event EventHandler<DataPersistencePreEventArgs<TData>> Updating;
+        /// <summary>
+        /// Occurs when obsoleted.
+        /// </summary>
+        public event EventHandler<DataPersistenceEventArgs<TData>> Obsoleted;
+        /// <summary>
+        /// Occurs when obsoleting.
+        /// </summary>
+        public event EventHandler<DataPersistencePreEventArgs<TData>> Obsoleting;
+        /// <summary>
+        /// Occurs when queried.
+        /// </summary>
+        public event EventHandler<DataQueryEventArgsBase<TData>> Queried;
+        /// <summary>
+        /// Occurs when querying.
+        /// </summary>
+        public event EventHandler<DataQueryEventArgsBase<TData>> Querying;
 
-		/// <summary>
-		/// Creates the connection.
-		/// </summary>
-		/// <returns>The connection.</returns>
-		private SQLiteConnection CreateConnection()
-		{
-			return new SQLiteConnection (ApplicationContext.Current.Configuration.GetConnectionString (m_configuration.MainDataSourceConnectionStringName).Value);
-		}
+        /// <summary>
+        /// Creates the connection.
+        /// </summary>
+        /// <returns>The connection.</returns>
+        private SQLiteConnectionWithLock CreateConnection()
+        {
+            return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(m_configuration.MainDataSourceConnectionStringName).Value);
+        }
 
-		/// <summary>
-		/// Insert the specified data.
-		/// </summary>
-		/// <param name="data">Data.</param>
-		public TData Insert (TData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException (nameof (data));
+        /// <summary>
+        /// Insert the specified data.
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public TData Insert(TData data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
 
-            
-			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
-			this.Inserting?.Invoke (this, preArgs);
-			if (preArgs.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort insert for {0}", data);
-				return data;
-			}
 
-			// Persist object
-			using (var connection = this.CreateConnection ()) 
-				try
-				{
-					this.m_tracer.TraceVerbose("INSERT {0}", data);
+            DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
+            this.Inserting?.Invoke(this, preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceWarning("Pre-Event handler indicates abort insert for {0}", data);
+                return data;
+            }
 
-					connection.BeginTransaction ();
+            // Persist object
+            var connection = this.CreateConnection();
+            using (connection.Lock())
+                try
+                {
+                    this.m_tracer.TraceVerbose("INSERT {0}", data);
+
+                    connection.BeginTransaction();
                     data.SetDelayLoad(false);
-					data = this.Insert(connection, data);
+                    data = this.Insert(connection, data);
                     data.SetDelayLoad(true);
                     connection.Commit();
 
@@ -138,85 +143,92 @@ namespace OpenIZ.Mobile.Core.Data
                     return data;
 
                 }
-                
-                catch (Exception e) {
-					this.m_tracer.TraceError("Error : {0}", e);
-					connection.Rollback ();
-					throw new LocalPersistenceException(DataOperationType.Insert, data, e);
-					
-				}
+
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    connection.Rollback();
+                    throw new LocalPersistenceException(DataOperationType.Insert, data, e);
+
+                }
 
 
 
-		}
-		/// <summary>
-		/// Update the specified data
-		/// </summary>
-		/// <param name="data">Data.</param>
-		public TData Update (TData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException (nameof (data));
-			else if (!data.Key.HasValue || data.Key == Guid.Empty)
-				throw new InvalidOperationException ("Data missing key");
+        }
+        /// <summary>
+        /// Update the specified data
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public TData Update(TData data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+            else if (!data.Key.HasValue || data.Key == Guid.Empty)
+                throw new InvalidOperationException("Data missing key");
 
-			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
-			this.Updating?.Invoke (this, preArgs);
-			if (preArgs.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort update for {0}", data);
-				return data;
-			}
+            DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
+            this.Updating?.Invoke(this, preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceWarning("Pre-Event handler indicates abort update for {0}", data);
+                return data;
+            }
 
-			// Persist object
-			using (var connection = this.CreateConnection ()) 
-				try
-				{
-					this.m_tracer.TraceVerbose("UPDATE {0}", data);
-					connection.BeginTransaction ();
+            // Persist object
+            var connection = this.CreateConnection();
+            using (connection.Lock())
+
+                try
+                {
+                    this.m_tracer.TraceVerbose("UPDATE {0}", data);
+                    connection.BeginTransaction();
 
                     data.SetDelayLoad(false);
-					data = this.Update(connection, data);
+                    data = this.Update(connection, data);
                     data.SetDelayLoad(true);
 
-					connection.Commit();
+                    connection.Commit();
 
                     this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
                     return data;
                 }
-                catch (Exception e) {
-					this.m_tracer.TraceError("Error : {0}", e);
-					connection.Rollback ();
-					throw new LocalPersistenceException(DataOperationType.Update, data, e);
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    connection.Rollback();
+                    throw new LocalPersistenceException(DataOperationType.Update, data, e);
 
-				}
+                }
 
-		}
+        }
 
-		/// <summary>
-		/// Obsolete the specified identified data
-		/// </summary>
-		/// <param name="data">Data.</param>
-		public TData Obsolete (TData data)
-		{
-			if (data == null)
-				throw new ArgumentNullException (nameof (data));
+        /// <summary>
+        /// Obsolete the specified identified data
+        /// </summary>
+        /// <param name="data">Data.</param>
+        public TData Obsolete(TData data)
+        {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
             else if (!data.Key.HasValue || data.Key == Guid.Empty)
-                throw new InvalidOperationException ("Data missing key");
+                throw new InvalidOperationException("Data missing key");
 
-			DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData> (data);
-			this.Obsoleting?.Invoke (this, preArgs);
-			if (preArgs.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort for {0}", data);
-				return data;
-			}
+            DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
+            this.Obsoleting?.Invoke(this, preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceWarning("Pre-Event handler indicates abort for {0}", data);
+                return data;
+            }
 
-			// Obsolete object
-			using (var connection = this.CreateConnection ()) 
-				try
-				{
-					this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
-					connection.BeginTransaction ();
+            // Obsolete object
+            var connection = this.CreateConnection();
+            using (connection.Lock())
+                try
+                {
+                    this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
+                    connection.BeginTransaction();
 
                     data.SetDelayLoad(false);
                     data = this.Obsolete(connection, data);
@@ -228,22 +240,27 @@ namespace OpenIZ.Mobile.Core.Data
 
                     return data;
                 }
-                catch (Exception e) {
-					this.m_tracer.TraceError("Error : {0}", e);
-					connection.Rollback ();
-					throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
-				}
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    connection.Rollback();
+                    throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
+                }
 
-		}
+        }
 
-		/// <summary>
-		/// Get the specified key.
-		/// </summary>
-		/// <param name="key">Key.</param>
-		public TData Get(Guid key)
-		{
-			return this.Query (o => o.Key == key)?.SingleOrDefault ();
-		}
+        /// <summary>
+        /// Get the specified key.
+        /// </summary>
+        /// <param name="key">Key.</param>
+        public TData Get(Guid key)
+        {
+            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            if (existing != null)
+                return existing as TData;
+            int toss = 0;
+            return this.Query(o => o.Key == key, 0, 1, out toss)?.SingleOrDefault();
+        }
 
         /// <summary>
         /// Query the specified data
@@ -254,7 +271,7 @@ namespace OpenIZ.Mobile.Core.Data
             int totalResults = 0;
             return this.Query(query, 0, null, out totalResults);
         }
-        
+
         /// <summary>
         /// Query the specified data
         /// </summary>
@@ -262,26 +279,28 @@ namespace OpenIZ.Mobile.Core.Data
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults)
         {
             if (query == null)
-				throw new ArgumentNullException (nameof (query));
+                throw new ArgumentNullException(nameof(query));
 
-			DataQueryPreEventArgs<TData> preArgs = new DataQueryPreEventArgs<TData> (query, offset, count);
-			this.Querying?.Invoke (this, preArgs);
-			if (preArgs.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort query {0}", query);
+            DataQueryPreEventArgs<TData> preArgs = new DataQueryPreEventArgs<TData>(query, offset, count);
+            this.Querying?.Invoke(this, preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceWarning("Pre-Event handler indicates abort query {0}", query);
                 totalResults = preArgs.TotalResults;
-				return preArgs.Results;
-			}
+                return preArgs.Results;
+            }
 
-			// Query object
-			using (var connection = this.CreateConnection ()) 
-				try
-				{
-					this.m_tracer.TraceVerbose("QUERY {0}", query);
+            // Query object
+            var connection = this.CreateConnection();
+            using (connection.Lock())
+                try
+                {
+                    this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-					var results = this.Query(connection, query, offset, count ?? -1, out totalResults);
+                    var results = this.Query(connection, query, offset, count ?? -1, out totalResults);
 
                     var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, results.Count());
-                    this.Queried?.Invoke (this, postData);
+                    this.Queried?.Invoke(this, postData);
 
                     totalResults = postData.TotalResults;
 
@@ -289,10 +308,10 @@ namespace OpenIZ.Mobile.Core.Data
                     foreach (var i in postData.Results)
                         i.SetDelayLoad(true);
 
-					return postData.Results;
+                    return postData.Results;
 
-				}
-                catch(NotSupportedException e)
+                }
+                catch (NotSupportedException e)
                 {
                     this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
 
@@ -318,12 +337,13 @@ namespace OpenIZ.Mobile.Core.Data
                     // Query
                     return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults);
                 }
-				catch(Exception e) {
-					this.m_tracer.TraceError("Error : {0}", e);
-					throw;
-				}
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    throw;
+                }
 
-		}
+        }
 
         /// <summary>
         /// Query this instance.
@@ -350,101 +370,106 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults)
         {
 
-            if (String.IsNullOrEmpty (storedQueryName))
-				throw new ArgumentNullException (nameof (storedQueryName));
-			else if (parms == null)
-				throw new ArgumentNullException (nameof (parms));
-			
-			DataStoredQueryPreEventArgs<TData> preArgs = new DataStoredQueryPreEventArgs<TData> (storedQueryName, parms, offset, count);
-			this.Querying?.Invoke (this, preArgs);
-			if (preArgs.Cancel) {
-				this.m_tracer.TraceWarning ("Pre-Event handler indicates abort query {0}", storedQueryName);
+            if (String.IsNullOrEmpty(storedQueryName))
+                throw new ArgumentNullException(nameof(storedQueryName));
+            else if (parms == null)
+                throw new ArgumentNullException(nameof(parms));
+
+            DataStoredQueryPreEventArgs<TData> preArgs = new DataStoredQueryPreEventArgs<TData>(storedQueryName, parms, offset, count);
+            this.Querying?.Invoke(this, preArgs);
+            if (preArgs.Cancel)
+            {
+                this.m_tracer.TraceWarning("Pre-Event handler indicates abort query {0}", storedQueryName);
                 totalResults = preArgs.TotalResults;
-				return preArgs.Results;
-			}
+                return preArgs.Results;
+            }
 
-			// Query object
-			using (var connection = this.CreateConnection ()) 
-				try
-			{
-				this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
+            // Query object
+            var connection = this.CreateConnection();
+            using (connection.Lock())
+                try
+                {
+                    this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-				var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
+                    var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
 
-                var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
-                this.Queried?.Invoke (this, postArgs);
+                    var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
+                    this.Queried?.Invoke(this, postArgs);
 
-                totalResults = postArgs.TotalResults;
-				return postArgs.Results;
+                    totalResults = postArgs.TotalResults;
+                    foreach (var i in postArgs.Results)
+                        i.SetDelayLoad(true);
+                    return postArgs.Results;
 
-			}
-			catch(Exception e) {
-				this.m_tracer.TraceError("Error : {0}", e);
-				throw;
-			}
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error : {0}", e);
+                    throw;
+                }
 
-		}
+        }
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Get the current user UUID.
-		/// </summary>
-		/// <returns>The user UUID.</returns>
-		protected Guid CurrentUserUuid(SQLiteConnection context)
-		{
-			if (ApplicationContext.Current.Principal == null)
-				return Guid.Empty;
-			var securityUser = context.Table<DbSecurityUser>().SingleOrDefault(o=>o.UserName == ApplicationContext.Current.Principal.Identity.Name);
-			if (securityUser == null)
-				throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
-			return securityUser.Key;
-		}
+        /// <summary>
+        /// Get the current user UUID.
+        /// </summary>
+        /// <returns>The user UUID.</returns>
+        protected Guid CurrentUserUuid(SQLiteConnectionWithLock context)
+        {
+            if (ApplicationContext.Current.Principal == null)
+                return Guid.Empty;
+            var securityUser = context.Table<DbSecurityUser>().SingleOrDefault(o => o.UserName == ApplicationContext.Current.Principal.Identity.Name);
+            if (securityUser == null)
+                throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
+            return securityUser.Key;
+        }
 
-		/// <summary>
-		/// Maps the data to a model instance
-		/// </summary>
-		/// <returns>The model instance.</returns>
-		/// <param name="dataInstance">Data instance.</param>
-		public abstract TData ToModelInstance(Object dataInstance, SQLiteConnection context);
+        /// <summary>
+        /// Maps the data to a model instance
+        /// </summary>
+        /// <returns>The model instance.</returns>
+        /// <param name="dataInstance">Data instance.</param>
+        public abstract TData ToModelInstance(Object dataInstance, SQLiteConnectionWithLock context);
 
-		/// <summary>
-		/// Froms the model instance.
-		/// </summary>
-		/// <returns>The model instance.</returns>
-		/// <param name="modelInstance">Model instance.</param>
-		public abstract Object FromModelInstance (TData modelInstance, SQLiteConnection context);
+        /// <summary>
+        /// Froms the model instance.
+        /// </summary>
+        /// <returns>The model instance.</returns>
+        /// <param name="modelInstance">Model instance.</param>
+        public abstract Object FromModelInstance(TData modelInstance, SQLiteConnectionWithLock context);
 
-		/// <summary>
-		/// Performthe actual insert.
-		/// </summary>
-		/// <param name="context">Context.</param>
-		/// <param name="data">Data.</param>
-		public abstract TData Insert(SQLiteConnection context, TData data);
+        /// <summary>
+        /// Performthe actual insert.
+        /// </summary>
+        /// <param name="context">Context.</param>
+        /// <param name="data">Data.</param>
+        public abstract TData Insert(SQLiteConnectionWithLock context, TData data);
         /// <summary>
         /// Perform the actual update.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Update(SQLiteConnection context, TData data);
+        public abstract TData Update(SQLiteConnectionWithLock context, TData data);
         /// <summary>
         /// Performs the actual obsoletion
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public abstract TData Obsolete(SQLiteConnection context, TData data);
+        public abstract TData Obsolete(SQLiteConnectionWithLock context, TData data);
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults);
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnection context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
 
         /// <summary>
         /// Query internal without caring about limiting
@@ -452,7 +477,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="context"></param>
         /// <param name="expr"></param>
         /// <returns></returns>
-        public IEnumerable<TData> Query(SQLiteConnection context, Expression<Func<TData, bool>> expr)
+        public IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> expr)
         {
             int t;
             return this.Query(context, expr, 0, -1, out t);
@@ -462,10 +487,13 @@ namespace OpenIZ.Mobile.Core.Data
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        internal TData Get(SQLiteConnection context, Guid key)
+        internal TData Get(SQLiteConnectionWithLock context, Guid key)
         {
             int totalResults = 0;
-            return this.Query(context, o => o.Key == key, 0, -1, out totalResults)?.SingleOrDefault();
+            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            if (existing != null)
+                return existing as TData;
+            return this.Query(context, o => o.Key == key, 0, 1, out totalResults)?.SingleOrDefault();
         }
 
         /// <summary>

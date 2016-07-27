@@ -26,10 +26,11 @@ using System.Security.Principal;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Services;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -48,9 +49,9 @@ namespace OpenIZ.Mobile.Core.Security
         /// Creates a connection to the local database
         /// </summary>
         /// <returns>The connection.</returns>
-        private SQLiteConnection CreateConnection()
+        private SQLiteConnectionWithLock CreateConnection()
         {
-            return new SQLiteConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
+            return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(this.m_configuration.MainDataSourceConnectionStringName).Value);
         }
         
         /// <summary>
@@ -74,12 +75,14 @@ namespace OpenIZ.Mobile.Core.Security
                         o=> new GenericPolicyInstance(new GenericPolicy(o.Value, "ClaimPolicy", false), PolicyGrantType.Grant)
                         );
 
-                IDataPersistenceService<SecurityUser> userPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
-                var user = userPersistence.Query(u => u.UserName == identity.Name).SingleOrDefault();
-                if (user == null)
-                    throw new KeyNotFoundException("Identity not found");
+                var conn = this.CreateConnection();
+                using (conn.Lock())
+                {
+                    var policyRaw = conn.Query<DbSecurityPolicy>("SELECT security_policy.* FROM security_user_role INNER JOIN security_role_policy ON (security_role_policy.role_id = security_user_role.role_id) INNER JOIN security_policy ON (security_policy.uuid = security_role_policy.policy_id) INNER JOIN security_user ON (security_user_role.user_id = security_user.uuid) WHERE security_user.username = ? and grant_type = 2",
+                        identity.Name).ToList();
+                    return policyRaw.Select(o => new GenericPolicyInstance(new GenericPolicy(o.Oid, o.Name, o.CanOverride), PolicyGrantType.Grant));
 
-                return user.Policies.Select(o=>new GenericPolicyInstance(new GenericPolicy(o.Policy.Oid, o.Policy.Name, o.Policy.CanOverride), o.GrantType));
+                }
             } else if (securable is Act) {
 				var pAct = securable as Act;
 				throw new NotImplementedException ();
@@ -103,7 +106,8 @@ namespace OpenIZ.Mobile.Core.Security
 		/// </summary>
 		public IPolicy GetPolicy(string policyOid)
 		{
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
             {
                 var dbp = conn.Table<DbSecurityPolicy>().Where(o => o.Oid == policyOid).FirstOrDefault();
                 if (dbp == null) return null;
@@ -121,7 +125,8 @@ namespace OpenIZ.Mobile.Core.Security
             if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
-            using (var conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+                using(conn.Lock())
                 try
                 {
                     var polId = conn.Table<DbSecurityPolicy>().Where(o => o.Oid == policy.Oid).FirstOrDefault();

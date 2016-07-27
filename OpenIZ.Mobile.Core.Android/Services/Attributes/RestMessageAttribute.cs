@@ -39,7 +39,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.Attributes
     {
         Json,
         Xml,
-        FormData
+        FormData,
+        Raw
     }
 
     /// <summary>

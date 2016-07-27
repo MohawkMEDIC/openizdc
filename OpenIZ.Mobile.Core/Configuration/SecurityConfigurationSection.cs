@@ -18,7 +18,7 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;

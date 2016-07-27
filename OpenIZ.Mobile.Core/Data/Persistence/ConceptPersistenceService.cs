@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override Concept ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var modelInstance = base.ToModelInstance(dataInstance, context);
 
@@ -60,11 +60,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert concept 
         /// </summary>
-        public override Concept Insert(SQLiteConnection context, Concept data)
+        public override Concept Insert(SQLiteConnectionWithLock context, Concept data)
         {
             // Ensure exists
             data.Class?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
+            //data.StatusConcept?.EnsureExists(context);
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
@@ -90,10 +90,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override update to handle associated items
         /// </summary>
-        public override Concept Update(SQLiteConnection context, Concept data)
+        public override Concept Update(SQLiteConnectionWithLock context, Concept data)
         {
             data.Class?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
+            //data.StatusConcept?.EnsureExists(context);
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
@@ -114,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Concept Obsolete(SQLiteConnection context, Concept data)
+        public override Concept Obsolete(SQLiteConnectionWithLock context, Concept data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);

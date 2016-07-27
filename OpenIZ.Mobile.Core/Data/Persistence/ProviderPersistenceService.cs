@@ -21,7 +21,7 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Provider ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Provider ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbVersionedData;
             var provider = dataInstance as DbProvider ?? context.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified person into the database
         /// </summary>
-        public override Provider Insert(SQLiteConnection context, Provider data)
+        public override Provider Insert(SQLiteConnectionWithLock context, Provider data)
         {
             data.ProviderSpecialty?.EnsureExists(context);
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
@@ -77,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified person
         /// </summary>
-        public override Provider Update(SQLiteConnection context, Provider data)
+        public override Provider Update(SQLiteConnectionWithLock context, Provider data)
         {
             // Ensure exists
             data.ProviderSpecialty?.EnsureExists(context);
@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Provider Obsolete(SQLiteConnection context, Provider data)
+        public override Provider Obsolete(SQLiteConnectionWithLock context, Provider data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

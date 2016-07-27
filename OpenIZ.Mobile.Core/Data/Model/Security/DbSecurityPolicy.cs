@@ -18,7 +18,8 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {

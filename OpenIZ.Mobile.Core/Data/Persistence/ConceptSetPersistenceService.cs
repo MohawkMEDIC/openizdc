@@ -21,7 +21,7 @@ using System;
 using System.Linq;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the concept set to model
         /// </summary>
-        public override ConceptSet ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override ConceptSet ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             
             var modelInstance = base.ToModelInstance(dataInstance, context);
@@ -50,6 +50,55 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             modelInstance.LoadAssociations(context);
 
             return modelInstance;
+        }
+
+        /// <summary>
+        /// Insert the specified concept
+        /// </summary>
+        public override ConceptSet Insert(SQLiteConnectionWithLock context, ConceptSet data)
+        {
+            // Concept set insertion
+            var retVal = base.Insert(context, data);
+
+            // Concept members (nb: this is only a UUID if from the wire)
+            if (retVal.ConceptsXml != null)
+                foreach (var r in retVal.ConceptsXml)
+                {
+                    context.Insert(new DbConceptSetConceptAssociation()
+                    {
+                        Uuid = Guid.NewGuid().ToByteArray(),
+                        ConceptSetUuid = retVal.Key.Value.ToByteArray(),
+                        ConceptUuid = r.ToByteArray()
+                    });
+                }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Update the specified data elements
+        /// </summary>
+        public override ConceptSet Update(SQLiteConnectionWithLock context, ConceptSet data)
+        {
+            var retVal = base.Update(context, data);
+            var keyuuid = retVal.Key.Value.ToByteArray();
+
+            // Wipe and re-associate
+            if (retVal.ConceptsXml != null)
+            {
+                context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptSetUuid == keyuuid);
+                foreach (var r in retVal.ConceptsXml)
+                {
+                    context.Insert(new DbConceptSetConceptAssociation()
+                    {
+                        Uuid = Guid.NewGuid().ToByteArray(),
+                        ConceptSetUuid = retVal.Key.Value.ToByteArray(),
+                        ConceptUuid = r.ToByteArray()
+                    });
+                }
+            }
+
+            return retVal;
         }
     }
 }

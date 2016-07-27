@@ -19,7 +19,7 @@
  */
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Data.Model.Security;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class SecurityUserPersistenceService : BaseDataPersistenceService<SecurityUser, DbSecurityUser>
     {
-        public override SecurityUser ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override SecurityUser ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var dbUser = dataInstance as DbSecurityUser;
             var retVal = base.ToModelInstance(dataInstance, context);
@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityUser Insert(SQLiteConnection context, SecurityUser data)
+        public override SecurityUser Insert(SQLiteConnectionWithLock context, SecurityUser data)
         {
             var retVal = base.Insert(context, data);
 
@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityUser Update(SQLiteConnection context, SecurityUser data)
+        public override SecurityUser Update(SQLiteConnectionWithLock context, SecurityUser data)
         {
             var retVal = base.Update(context, data);
             byte[] keyuuid = retVal.Key.Value.ToByteArray();
@@ -106,11 +106,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityRole ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override SecurityRole ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, context);
             var dbRole = dataInstance as DbSecurityRole;
             retVal.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o, null)).ToList();
+
             retVal.Users = context.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user_role.role_id = ?", dbRole.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityUser, SecurityUser>(o)).ToList();
             return retVal;
         }
@@ -118,7 +119,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityRole Insert(SQLiteConnection context, SecurityRole data)
+        public override SecurityRole Insert(SQLiteConnectionWithLock context, SecurityRole data)
         {
             var retVal = base.Insert(context, data);
 
@@ -136,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityRole Update(SQLiteConnection context, SecurityRole data)
+        public override SecurityRole Update(SQLiteConnectionWithLock context, SecurityRole data)
         {
             var retVal = base.Update(context, data);
             var entityUuid = retVal.Key.Value.ToByteArray();
@@ -162,7 +163,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityDevice ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override SecurityDevice ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, context);
             var dbDevice = dataInstance as DbSecurityDevice;
@@ -173,7 +174,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityDevice Insert(SQLiteConnection context, SecurityDevice data)
+        public override SecurityDevice Insert(SQLiteConnectionWithLock context, SecurityDevice data)
         {
             var retVal = base.Insert(context, data);
 
@@ -192,7 +193,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityDevice Update(SQLiteConnection context, SecurityDevice data)
+        public override SecurityDevice Update(SQLiteConnectionWithLock context, SecurityDevice data)
         {
             var retVal = base.Update(context, data);
             var entityUuid = retVal.Key.Value.ToByteArray();
@@ -219,7 +220,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityApplication ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override SecurityApplication ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var retVal = base.ToModelInstance(dataInstance, context);
             var dbApplication = dataInstance as DbSecurityApplication;
@@ -230,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityApplication Insert(SQLiteConnection context, SecurityApplication data)
+        public override SecurityApplication Insert(SQLiteConnectionWithLock context, SecurityApplication data)
         {
             var retVal = base.Insert(context, data);
 
@@ -249,7 +250,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityApplication Update(SQLiteConnection context, SecurityApplication data)
+        public override SecurityApplication Update(SQLiteConnectionWithLock context, SecurityApplication data)
         {
             var retVal = base.Update(context, data);
 

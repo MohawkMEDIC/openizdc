@@ -1,4 +1,5 @@
-﻿using SQLite;
+﻿using SQLite.Net;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

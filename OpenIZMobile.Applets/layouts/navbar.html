@@ -15,10 +15,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li ng-repeat="m in menuItems">
                     <a ng-if="!m.menu" ng-href="{{::m.action}}">
-                        <img ng-if="m.icon" class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> {{::m.text}}
+                        <img ng-if="m.icon" class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> <span class="oiz-menu-text">{{::m.text}}</span>
                     </a>
                     <a ng-if="m.menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> {{::m.text}}  <span class="caret"></span>
+                        <img class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> <span class="oiz-menu-text">{{::m.text}}</span> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" ng-if="m.menu">
                         <li ng-repeat="c in ::m.menu">
@@ -33,7 +33,7 @@
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="$root.session.identity.name === undefined">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.globe.png" class="navbar-icon" /> {{ 'locale.layout.navbar.language' | i18n }} <span class="caret"></span>
+                        <img src="/org.openiz.core/img/appbar.globe.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.layout.navbar.language' | i18n }}</span> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
@@ -50,13 +50,26 @@
                 </li>
                 <li class="dropdown" ng-show="$root.session.identity.name">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" />
+                        <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | i18n }}</span>
+                        <span ng-if="messages" class="badge">
+                            {{messages.length}}
+                        </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li role="presentation" ng-if="true">
-                            <a href="/org.openiz.core/views/alerts/index.html">
-                                {{ 'locale.alerts.noalerts' | i18n }}
+                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="min-width:350px">
+                            <a href="/org.openiz.core/views/alerts/view.html?alertId={{msg.id}}">
+                                <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
+                                <span>
+                                    <span class="subject">{{msg.subject}}</span><br/>
+                                    <span class="sender">{{msg.from}}</span><span class="text-muted">{{msg.time | date: 'yyyy-MM-dd HH:mm'}}</span>
+                                </span>
                             </a>
+
+                            
+
+                        </li>
+                        <li role="presentation" ng-if="!messages">
+                            {{ 'locale.alerts.noalerts' | i18n }}
                         </li>
                     </ul>
                 </li>

@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnection context) where TActType : Act, new()
+        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
 
@@ -81,7 +81,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Act ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Act ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance as DbAct;
@@ -128,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the act into the database
         /// </summary>
-        public override Act Insert(SQLiteConnection context, Act data)
+        public override Act Insert(SQLiteConnectionWithLock context, Act data)
         {
             data.ClassConcept?.EnsureExists(context);
             data.MoodConcept?.EnsureExists(context);
@@ -193,7 +193,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public override Act Update(SQLiteConnection context, Act data)
+        public override Act Update(SQLiteConnectionWithLock context, Act data)
         {
             data.ClassConcept?.EnsureExists(context);
             data.MoodConcept?.EnsureExists(context);
@@ -260,7 +260,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// Obsolete the act
         /// </summary>
         /// <param name="context"></param>
-        public override Act Obsolete(SQLiteConnection context, Act data)
+        public override Act Obsolete(SQLiteConnectionWithLock context, Act data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);

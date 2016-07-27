@@ -1,7 +1,7 @@
 ﻿using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
-using SQLite;
+using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -13,7 +13,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override ControlAct ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override ControlAct ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var iddat = dataInstance as DbIdentified;
             var controlAct = dataInstance as DbControlAct ?? context.Table<DbControlAct>().Where(o => o.Uuid == iddat.Uuid).First();

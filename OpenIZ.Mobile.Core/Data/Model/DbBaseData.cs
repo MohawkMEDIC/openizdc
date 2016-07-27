@@ -18,9 +18,10 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Data.Model.Security;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model
 {

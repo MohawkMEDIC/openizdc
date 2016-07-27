@@ -62,6 +62,33 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Importing IMS Data....
+        /// </summary>
+        internal static string locale_import {
+            get {
+                return ResourceManager.GetString("locale_import", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The import of remote data is complete.
+        /// </summary>
+        internal static string locale_importDoneBody {
+            get {
+                return ResourceManager.GetString("locale_importDoneBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote Data Imported.
+        /// </summary>
+        internal static string locale_importDoneSubject {
+            get {
+                return ResourceManager.GetString("locale_importDoneSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deploying Data.
         /// </summary>
         internal static string locale_setting_deploy {
@@ -85,6 +112,36 @@ namespace OpenIZ.Mobile.Core.Resources {
         internal static string locale_setting_table {
             get {
                 return ResourceManager.GetString("locale_setting_table", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronizing {0}s....
+        /// </summary>
+        internal static string locale_sync {
+            get {
+                return ResourceManager.GetString("locale_sync", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don&apos;t have data. That is normal until the sycnrhonization is complete. We&apos;ll let you know when the synchronization operation is done!
+        ///
+        ///Sincerely,
+        ///- OpenIZ Community.
+        /// </summary>
+        internal static string locale_welcomeMessageBody {
+            get {
+                return ResourceManager.GetString("locale_welcomeMessageBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to OpenIZ Disconnected Client Core!.
+        /// </summary>
+        internal static string locale_welcomeMessageSubject {
+            get {
+                return ResourceManager.GetString("locale_welcomeMessageSubject", resourceCulture);
             }
         }
     }

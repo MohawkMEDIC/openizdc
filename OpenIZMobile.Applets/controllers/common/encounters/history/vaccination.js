@@ -3,14 +3,8 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-enableVaccineInput = function (checkBox) {
-    if(checkBox.currentTarget.checked)
-        $(checkBox.currentTarget).parent().siblings('input').removeAttr('disabled');
-    else
-        $(checkBox.currentTarget).parent().siblings('input').attr('disabled', 'disabled');
-};
 
-$(document).ready(function () {
+angular.element(document).ready(function () {
     $('.oiz-vaccination-history').each(function (i, e) {
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
@@ -20,8 +14,6 @@ $(document).ready(function () {
         scope.patient = scope.patient || new OpenIZModel.Patient({});
         scope.patient.participation = scope.patient.participation || {};
         scope.display = scope.display || {};
-
-
 
         // Iterate through vaccinations and organize them by antigen
         // TODO: Change this to be an AJAX call

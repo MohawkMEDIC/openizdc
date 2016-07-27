@@ -18,7 +18,7 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;
@@ -317,7 +317,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Preemptive authentication
         /// </summary>
         [XmlElement("preAuth")]
-        public bool PreemtiveAuthentication { get; set; }
+        public bool PreemptiveAuthentication { get; set; }
     }
 
 	/// <summary>

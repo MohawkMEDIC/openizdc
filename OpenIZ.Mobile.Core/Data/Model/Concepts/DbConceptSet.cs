@@ -18,7 +18,8 @@
  * Date: 2016-6-14
  */
 using System;
-using SQLite;
+using SQLite.Net;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
@@ -84,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// </summary>
 		/// <value>The concept set identifier.</value>
 		[Column("concept_set_uuid"), Indexed(Name = "concept_concept_set_concept_set", Unique = true), MaxLength(16)]
-		public int ConceptSetUuid {
+		public byte[] ConceptSetUuid {
 			get;
 			set;
 		}

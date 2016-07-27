@@ -38,15 +38,14 @@
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
-    <Reference Include="SQLite-net, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\SQLite-net.dll</HintPath>
+    <Reference Include="SQLite.Net">
+      <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Net45\SQLitePCL.raw.dll</HintPath>
+    <Reference Include="SQLite.Net.Platform.Generic">
+      <HintPath>..\Solution Items\Net45\SQLite.Net.Platform.Generic.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -87,6 +86,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="IMSI\TroublesomePlaceBundle.xml" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

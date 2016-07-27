@@ -33,9 +33,9 @@ using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Android.Security;
 using OpenIZ.Mobile.Core.Security;
-using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Subscribers
 {

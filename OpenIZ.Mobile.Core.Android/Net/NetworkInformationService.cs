@@ -46,6 +46,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
                 o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up
             ));
+
         }
 
         /// <summary>

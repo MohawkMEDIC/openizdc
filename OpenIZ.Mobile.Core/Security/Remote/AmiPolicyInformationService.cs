@@ -41,6 +41,22 @@ namespace OpenIZ.Mobile.Core.Security
         private AmiServiceClient m_client = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
 
         /// <summary>
+        /// Remote policies only
+        /// </summary>
+        public AmiPolicyInformationService()
+        {
+
+        }
+
+        /// <summary>
+        /// Policy as a specific principal
+        /// </summary>
+        public AmiPolicyInformationService(ClaimsPrincipal cprincipal)
+        {
+            this.m_client.Client.Credentials = this.m_client.Client?.Description?.Binding?.Security?.CredentialProvider?.GetCredentials(cprincipal);
+        }
+
+        /// <summary>
         /// Get active policies for the specified securable
         /// </summary>
         public IEnumerable<IPolicyInstance> GetActivePolicies(object securable)

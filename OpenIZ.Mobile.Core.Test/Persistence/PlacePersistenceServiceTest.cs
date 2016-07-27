@@ -18,14 +18,17 @@
  * Date: 2016-6-28
  */
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Mobile.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Test.Persistence
 {
@@ -42,6 +45,23 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             (ApplicationContext.Current as TestApplicationContext).UnitTestContext = context;
         }
 
+        /// <summary>
+        /// Insert troublesome place
+        /// </summary>
+        [TestMethod]
+        public void InsertTroublesomePlace()
+        {
+            IDataPersistenceService<Place> idp = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
+            XmlSerializer xsz = new XmlSerializer(typeof(Bundle));
+            using (var s = typeof(PlacePersistenceServiceTest).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Test.IMSI.TroublesomePlaceBundle.xml"))
+            {
+                var bundle = xsz.Deserialize(s) as Bundle;
+                bundle.Reconstitute();
+
+                foreach (var i in bundle.Item)
+                    idp.Insert(i);
+            }
+        }
 
         /// <summary>
         /// Test insertion of a place

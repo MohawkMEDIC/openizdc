@@ -19,7 +19,7 @@
  */
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Organization ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Organization ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             var organization = dataInstance as DbOrganization;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the organization
         /// </summary>
-        public override Organization Insert(SQLiteConnection context, Organization data)
+        public override Organization Insert(SQLiteConnectionWithLock context, Organization data)
         {
             // ensure industry concept exists
             data.IndustryConcept?.EnsureExists(context);
@@ -62,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the organization
         /// </summary>
-        public override Organization Update(SQLiteConnection context, Organization data)
+        public override Organization Update(SQLiteConnectionWithLock context, Organization data)
         {
             data.IndustryConcept?.EnsureExists(context);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;

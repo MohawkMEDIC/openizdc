@@ -26,9 +26,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model.EntityLoader;
-using OpenIZ.Core.Diagnostics;
 using System.Linq;
 using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -177,7 +177,7 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Start the daemon services
         /// </summary>
-        protected void StartDaemons()
+        protected void Start()
         {
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
 
@@ -188,6 +188,22 @@ namespace OpenIZ.Mobile.Core
             {
                 tracer.TraceInfo("Starting {0}", d.GetType().Name);
                 if (!d.Start())
+                    tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+            }
+        }
+        
+        /// <summary>
+        /// Force stop
+        /// </summary>
+        public void Stop()
+        {
+            ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            var daemons = config.Services.OfType<IDaemonService>();
+            Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
+            foreach (var d in daemons)
+            {
+                tracer.TraceInfo("Stopping {0}", d.GetType().Name);
+                if (!d.Stop())
                     tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
             }
         }

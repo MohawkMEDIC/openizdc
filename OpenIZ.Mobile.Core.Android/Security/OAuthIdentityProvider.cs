@@ -115,6 +115,10 @@ namespace OpenIZ.Mobile.Core.Android.Security
                     }
                     catch (WebException ex) // Raw level web exception
                     {
+                        // Not network related, but a protocol level error
+                        if (ex.Status == WebExceptionStatus.ProtocolError)
+                            throw;
+
                         this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
                         try
                         {
@@ -140,7 +144,6 @@ namespace OpenIZ.Mobile.Core.Android.Security
 
                     // Create a security user and ensure they exist!
                     var localRp = new LocalRoleProviderService();
-                    var amiPip = new AmiPolicyInformationService();
                     var localPip = new LocalPolicyInformationService();
                     var localUser = localIdp.GetIdentity(principal.Identity.Name);
 
@@ -149,9 +152,10 @@ namespace OpenIZ.Mobile.Core.Android.Security
                     if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal)
                     {
                         ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
+                        var amiPip = new AmiPolicyInformationService(cprincipal);
 
                         // We want to impersonate SYSTEM
-                        AndroidApplicationContext.Current.SetPrincipal(cprincipal);
+                        //AndroidApplicationContext.Current.SetPrincipal(cprincipal);
 
                         // Ensure policies exist from the claim
                         foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))

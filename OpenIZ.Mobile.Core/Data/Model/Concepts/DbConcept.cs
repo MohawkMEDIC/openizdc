@@ -19,8 +19,9 @@
  */
 using System;
 using System.Linq;
-using SQLite;
+using SQLite.Net;
 using System.Collections.Generic;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {

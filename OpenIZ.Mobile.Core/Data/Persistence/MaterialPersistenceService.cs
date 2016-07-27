@@ -20,7 +20,7 @@
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
-using SQLite;
+using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert persistence model to business objects
         /// </summary>
-        public override Material ToModelInstance(object dataInstance, SQLiteConnection context)
+        public override Material ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
         {
             return this.ToModelInstance<Material>(dataInstance as DbMaterial, context);
         }
@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Creates the specified model instance
         /// </summary>
-        internal TModel ToModelInstance<TModel>(object rawInstance, SQLiteConnection context)
+        internal TModel ToModelInstance<TModel>(object rawInstance, SQLiteConnectionWithLock context)
             where TModel : Material, new()
         {
             var iddat = rawInstance as DbVersionedData;
@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the material
         /// </summary>
-        public override Material Insert(SQLiteConnection context, Material data)
+        public override Material Insert(SQLiteConnectionWithLock context, Material data)
         {
             data.FormConcept?.EnsureExists(context);
             data.QuantityConcept?.EnsureExists(context);
@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified material
         /// </summary>
-        public override Material Update(SQLiteConnection context, Material data)
+        public override Material Update(SQLiteConnectionWithLock context, Material data)
         {
             data.FormConcept?.EnsureExists(context);
             data.QuantityConcept?.EnsureExists(context);

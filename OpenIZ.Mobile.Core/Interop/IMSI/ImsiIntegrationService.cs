@@ -32,8 +32,10 @@ using OpenIZ.Core.Model.Collection;
 using System.Net.NetworkInformation;
 using System.Net;
 using OpenIZ.Mobile.Core.Interop;
+using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Core.Model.Query;
 
-namespace OpenIZ.Mobile.Core.Services.Impl
+namespace OpenIZ.Mobile.Core.Interop.IMSI
 {
     /// <summary>
     /// Represents an integration service which 
@@ -41,31 +43,74 @@ namespace OpenIZ.Mobile.Core.Services.Impl
     public class ImsiIntegrationService : IIntegrationService
     {
 
-       
-        /// <summary>
-        /// Finds the specified model
-        /// </summary>
-        public IdentifiedData Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count) where TModel : IdentifiedData
-        {
-            throw new NotImplementedException();
-        }
-        
         /// <summary>
         /// Gets the specified model object
         /// </summary>
-        public IdentifiedData Get(Type modelType, Guid key, Guid? version)
+        public Bundle Find(Type modelType, NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null)
         {
-            var method = this.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid), typeof(Guid?) }).MakeGenericMethod(new Type[] { modelType });
-            return method.Invoke(this, new object[] { key, version }) as IdentifiedData;
+            var method = this.GetType().GetRuntimeMethod("Find", new Type[] { typeof(NameValueCollection), typeof(int), typeof(int?), typeof(IntegrationQueryOptions) }).MakeGenericMethod(new Type[] { modelType });
+            return method.Invoke(this, new object[] { filter, offset, count, options }) as Bundle;
+        }
+
+        /// <summary>
+        /// Finds the specified model
+        /// </summary>
+        public Bundle Find<TModel>(NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData
+        {
+            var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(filter);
+            return this.Find<TModel>(predicate, offset, count, options);
+        }
+
+        /// <summary>
+        /// Finds the specified model
+        /// </summary>
+        public Bundle Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData
+        {
+            ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+            client.Client.Requesting += (o, e) =>
+            {
+                if (options == null) return;
+                else if (options.IfModifiedSince.HasValue)
+                    e.AdditionalHeaders.Add(HttpRequestHeader.IfModifiedSince, options.IfModifiedSince.Value.ToString());
+                else if (!String.IsNullOrEmpty(options.IfNoneMatch))
+                    e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
+            };
+            if (options.Credentials != null)
+                client.Client.Credentials = options.Credentials;
+
+            var retVal = client.Query<TModel>(predicate, offset, count);
+            //retVal?.Reconstitute();
+            return retVal;
+        }
+
+        /// <summary>
+        /// Gets the specified model object
+        /// </summary>
+        public IdentifiedData Get(Type modelType, Guid key, Guid? version, IntegrationQueryOptions options = null)
+        {
+            var method = this.GetType().GetRuntimeMethod("Get", new Type[] { typeof(Guid), typeof(Guid?), typeof(IntegrationQueryOptions) }).MakeGenericMethod(new Type[] { modelType });
+            return method.Invoke(this, new object[] { key, version, options }) as IdentifiedData;
         }
 
         /// <summary>
         /// Gets the specified object
         /// </summary>
-        public TModel Get<TModel>(Guid key, Guid? versionKey) where TModel : IdentifiedData
+        public TModel Get<TModel>(Guid key, Guid? versionKey, IntegrationQueryOptions options = null) where TModel : IdentifiedData
         {
             ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+            client.Client.Requesting += (o, e) =>
+            {
+                if (options == null) return;
+                else if (options.IfModifiedSince.HasValue)
+                    e.AdditionalHeaders.Add(HttpRequestHeader.IfModifiedSince, options.IfModifiedSince.Value.ToString());
+                else if (!String.IsNullOrEmpty(options.IfNoneMatch))
+                    e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
+            };
+            if (options.Credentials != null)
+                client.Client.Credentials = options.Credentials;
+
             var retVal = client.Get<TModel>(key, versionKey);
+            
             if (retVal is Bundle)
             {
                 (retVal as Bundle)?.Reconstitute();

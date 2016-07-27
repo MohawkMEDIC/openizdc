@@ -3,7 +3,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
-layoutApp.controller('LayoutController', ['$scope', function ($scope) {
+layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', function ($scope, $interval, $rootScope) {
 
     // Add menu items
     $scope.menuItems = OpenIZ.App.getMenus();
@@ -21,4 +21,23 @@ layoutApp.controller('LayoutController', ['$scope', function ($scope) {
         OpenIZ.Localization.setLocale(locale);
         window.location.reload();
     };
+
+    $scope.checkMessages = function () {
+        OpenIZ.App.getAlertsAsync({
+            query: {
+                flags: "!2",
+                _count: 5
+            },
+            continueWith: function (d) {
+                if ($scope.messages == null || d.length != $scope.messages.length) {
+                    $scope.messages = d;
+                    $scope.$apply();
+                }
+
+                setTimeout($scope.checkMessages, 30000);
+            }
+        });
+    };
+    setTimeout($scope.checkMessages, 30000);
+    $scope.checkMessages();
 }]);

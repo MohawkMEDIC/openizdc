@@ -30,6 +30,7 @@ using OpenIZ.Mobile.Core.Android.Http;
 using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Services;
 using System.Security;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -46,13 +47,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// <param name="context">Context.</param>
 		public Credentials GetCredentials (IRestClient context)
 		{
-			if (ApplicationContext.Current.Principal is TokenClaimsPrincipal) {
-				return new TokenCredentials (ApplicationContext.Current.Principal);
-			} else {
-				// We need a token claims principal
-				// TODO: Re-authenticate this user against the ACS
-				return new TokenCredentials(ApplicationContext.Current.Principal);
-			}
+            return this.GetCredentials(ApplicationContext.Current.Principal);
 		}
 
 		/// <summary>
@@ -83,8 +78,25 @@ namespace OpenIZ.Mobile.Core.Android.Security
                 throw new SecurityException();
                 return null;
 		}
-		#endregion
-	}
+
+        /// <summary>
+        /// Get credentials from the specified principal
+        /// </summary>
+        public Credentials GetCredentials(IPrincipal principal)
+        {
+            if (principal is TokenClaimsPrincipal)
+            {
+                return new TokenCredentials(principal);
+            }
+            else
+            {
+                // We need a token claims principal
+                // TODO: Re-authenticate this user against the ACS
+                return new TokenCredentials(ApplicationContext.Current.Principal);
+            }
+        }
+        #endregion
+    }
 
 }
 

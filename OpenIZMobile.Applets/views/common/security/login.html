@@ -5,9 +5,11 @@
         <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
         <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
             <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
-            <div class="col-xs-9 input-group">
-                <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control"
-                       name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+            <div class="col-xs-9">
+                <div class="input-group">
+                    <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control"
+                           name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                </div>
             </div>
         </div>
         <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid">
@@ -15,9 +17,11 @@
         </div>
         <div class="form-group">
             <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
-            <div class="col-xs-9 input-group">
-                <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control"
-                       name="password" id="passwordInput" />
+            <div class="col-xs-9">
+                <div class="input-group">
+                    <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control"
+                           name="password" id="passwordInput" />
+                </div>
             </div>
         </div>
         <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid ">
@@ -25,10 +29,12 @@
         </div>
     </fieldset>
     <div class="row">
-        <div class="col-xs-12 text-center">
-            <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
-            <a class="btn btn-warning" href="~/views/security/resetName.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
-            <button type="submit" class="btn btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
+        <div class="col-xs-12">
+            <div class="btn-group pull-right">
+                <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
+                <a class="btn btn-lg btn-warning" href="~/views/security/resetName.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
+                <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
+            </div>
         </div>
     </div>
 </form>

@@ -1,10 +1,21 @@
-﻿<div id="waitModal" class="modal hide" data-keyboard="false" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
-    <div class="modal-dialog">
+﻿<div id="waitModal" style="display:block" class="modal fade in" tabindex="-1" data-keyboard="false" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
+    <div class="modal-dialog in">
         <div class="modal-content">
             <div class="text-center modal-body">
-                <img src="/org.openiz.core/img/spinner.gif" />
                 {{ 'locale.dialog.wait.text' | i18n }}
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-info active" style="width:100%"></div>
+                </div>
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        // <![CDATA[
+
+        window.onbeforeunload = function () {
+            OpenIZ.App.showWait();
+        };
+
+        //]]>
+    </script>
 </div>

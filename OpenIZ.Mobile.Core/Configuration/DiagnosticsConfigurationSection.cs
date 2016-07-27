@@ -19,7 +19,7 @@
  */
 using System;
 using System.Reflection;
-using SQLite;
+using SQLite.Net;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Configuration.Data;

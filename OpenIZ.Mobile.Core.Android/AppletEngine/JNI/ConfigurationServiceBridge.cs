@@ -34,6 +34,9 @@ using OpenIZ.Mobile.Core.Data;
 using System.Diagnostics.Tracing;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Interop.IMSI;
+using OpenIZ.Mobile.Core.Android.Resources;
+using OpenIZ.Mobile.Core.Alerting;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -101,7 +104,6 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiPolicyInformationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiPersistenceService).AssemblyQualifiedName);
-                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(SynchronizationManagerService).AssemblyQualifiedName);
                     break;
                 case "offline":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
@@ -110,10 +112,25 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 case "sync":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(QueueManagerService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(RemoteSynchronizationService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiIntegrationService).AssemblyQualifiedName);
+
+                    // Sync settings
+                    var syncConfig = new SynchronizationConfigurationSection();
+                    // TODO: Customize this
+                    foreach(var res in new String[] { "ConceptSet", "Concept", "Place", "AssigningAuthority", "IdentifierType", "ConceptClass", "Organization", "SecurityRole", "UserEntity", "Provider", "Material", "ManufacturedMaterial"  })
+                    {
+                        syncConfig.SynchronizationResources.Add(new SynchronizationResource()
+                        {
+                            ResourceAqn = res,
+                            Triggers = SynchronizationPullTriggerType.OnStart
+                        });
+                    }
+                    ApplicationContext.Current.Configuration.Sections.Add(syncConfig);
                     break;
             }
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalRoleProviderService).AssemblyQualifiedName);
-
             // Password hashing
             switch (optionObject["security"]["hasher"].Value<String>())
             {
@@ -155,6 +172,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
             this.m_tracer.TraceInfo("Saving configuration options {0}", options);
             AndroidApplicationContext.Current.ConfigurationManager.Save();
+
+           
             return true;
         }
 
@@ -211,7 +230,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                             AuthRealm = realmUri,
                             Mode = SecurityScheme.Bearer,
                             CredentialProvider = new TokenCredentialProvider(),
-                            PreemtiveAuthentication = true
+                            PreemptiveAuthentication = true
                         },
                         Optimize = true
                     },
@@ -233,7 +252,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                             AuthRealm = realmUri,
                             Mode = SecurityScheme.Bearer,
                             CredentialProvider = new TokenCredentialProvider(),
-                            PreemtiveAuthentication = true
+                            PreemptiveAuthentication = true
                         },
                         Optimize = true
                     },

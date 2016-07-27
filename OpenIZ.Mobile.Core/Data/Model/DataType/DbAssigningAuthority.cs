@@ -17,7 +17,8 @@
  * User: justi
  * Date: 2016-6-14
  */
-using SQLite;
+using SQLite.Net;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

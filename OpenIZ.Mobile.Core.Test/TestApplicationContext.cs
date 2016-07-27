@@ -108,7 +108,8 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(SHA256PasswordHasher).AssemblyQualifiedName,
                     typeof(LocalIdentityService).AssemblyQualifiedName,
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
-                    typeof(LocalEntitySource).AssemblyQualifiedName
+                    typeof(LocalEntitySource).AssemblyQualifiedName,
+                    typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName
                 }
                     };
 
@@ -153,7 +154,7 @@ namespace OpenIZ.Mobile.Core.Test
                         EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
                         this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
-                        this.StartDaemons();
+                        this.Start();
                     }
                     catch (Exception e)
                     {

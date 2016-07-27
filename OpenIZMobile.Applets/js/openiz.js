@@ -253,7 +253,7 @@ var OpenIZ = OpenIZ || {
                         null
                     ));
             });
-               
+
         },
         /**
         * @summary Gets the current session from the client host
@@ -351,6 +351,21 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     App: {
+        /**
+         * @summary Show the alert panel
+         * @param {String} textStr The text on the alert panel to show
+         */
+        showWait: function (textStr) {
+            if (textStr != null)
+                $("#waitModalText").val(textStr);
+            $('#waitModal').modal({ show: true, backdrop: 'static' });
+        },
+        /**
+         * @summary Hide the waiting panel
+         */
+        hideWait: function () {
+            $('#waitModal').modal('hide');
+        },
         /**
          * @summary Gets the specified service implementation in memory
          * @param {String} serviceName The name of the service 
@@ -479,6 +494,47 @@ var OpenIZ = OpenIZ || {
             catch (e) {
                 console.error(e);
             }
+        },
+        /**
+         * @summary Queries for the specified alert
+         * @param {Object} queryData The alert query to pass
+         */
+        getAlertsAsync: function (controlData) {
+            // Perform auth request
+            $.getJSON('/__app/alerts', controlData.query, function (e) { controlData.continueWith(e); }).
+                fail(function (data) {
+                    var error = data.responseJSON;
+                    if (error.error !== undefined) // structured error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+                });
+        },
+        /**
+         * @summary Send an asynchronous alert
+         * @param {Object} alertData The alert data
+         */
+        sendAlertAsync: function (controlData) {
+            $.post('/__app/alerts', controlData.alert, function (e) { controlData.continueWith(e); }, "json")
+            .fail(function (data) {
+                var error = data.responseJSON;
+                if (error.error !== undefined) // structured error
+                    controlData.onException(new OpenIZModel.Exception(error.error,
+                            error.error_description,
+                            null
+                        ));
+                else // unknown error
+                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                            data,
+                            null
+                        ));
+            });
         }
     },
 
@@ -510,7 +566,9 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            return OpenIZApplicationService.GetLocale();
+            if(OpenIZ.Localization.locale == null)
+                OpenIZ.Localization.locale = OpenIZApplicationService.GetLocale();
+            return OpenIZ.Localization.locale;
         },
         /**
          * @summary Sets the current user interface locale
@@ -927,27 +985,25 @@ var OpenIZ = OpenIZ || {
          * @param {Element} target The element to be bound to
          * @param {String} filter The filter to show (to be added to the current name filter)
          */
-        bindSelect : function(target, filter)
-        {
+        bindSelect: function (target, filter) {
             $(target).select2({
                 ajax: {
                     url: "/__ims/Place",
                     dataType: 'json',
-                    delay: 250,
+                    delay: 500,
                     method: "GET",
                     data: function (params) {
-                        filter["component.name.value"] = "~" + params.data;
+                        filter["name.component.value"] = "~" + params.term;
                         filter["_count"] = 5;
-                        filter["_offset"] = params.page * 5;
+                        filter["_offset"] = 0;
                         return filter;
                     },
                     processResults: function (data, params) {
 
-                        var bundleResult = new Bundle(data);
                         params.page = params.page || 0;
 
                         return {
-                            results: data.item.all('ServiceDeliveryLocation'),
+                            results: data.item,
                             pagination: {
                                 more: data.offset + data.count < data.total
                             }
@@ -956,13 +1012,16 @@ var OpenIZ = OpenIZ || {
                     cache: true
                 },
                 escapeMarkup: function (markup) { return markup; }, // Format normally
-                minimumInputLength: 2,
-                templateResult: function(place)
-                {
+                minimumInputLength: 4,
+                templateSelection: function (place) {
+                    return "<span class='glyphicon glyphicon-map-marker'></span>" + place.name.OfficialRecord[0].component.$other[0];
+                },
+
+                templateResult: function (place) {
                     if (place.text != null)
                         return place.text;
                     return "<div class='label label-default'>" +
-                        place.classConcept.mnemonic + "</div> " + place.name.OfficialRecord.component[0];
+                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()][0] + "</div> " + place.name.OfficialRecord[0].component.$other[0];
                 }
             });
         }
@@ -1007,7 +1066,7 @@ var OpenIZ = OpenIZ || {
         * @method
        */
         getRealm: function () {
-            try{
+            try {
                 return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
             }
             catch (e) {
@@ -1130,7 +1189,10 @@ var OpenIZ = OpenIZ || {
 
 
 };
-
+/**
+ * @summary Current Locale
+ */
+//OpenIZ.locale = OpenIZ.Localization.getLocale();
 // No caching
 $.ajaxSetup({ cache: false });
 

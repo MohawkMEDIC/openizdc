@@ -20,7 +20,7 @@
 using System;
 using System.Reflection;
 using System.Linq;
-using SQLite;
+using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
@@ -34,6 +34,7 @@ using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Serices;
 using OpenIZ.Mobile.Core.Resources;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -53,9 +54,9 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 
 			var tracer = Tracer.GetTracer (this.GetType ());
 
-			// Database for the SQL Lite connection
-			using (var db = new SQLiteConnection (ApplicationContext.Current?.Configuration.GetConnectionString(ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value)) {
-
+            // Database for the SQL Lite connection
+            var db = SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current?.Configuration.GetConnectionString(ApplicationContext.Current?.Configuration.GetSection<DataConfigurationSection>().MainDataSourceConnectionStringName).Value);
+            using (db.Lock()) { 
                 try
                 {
                     db.BeginTransaction();
@@ -75,41 +76,40 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                         });
 
                     ApplicationContext.Current.SetProgress(Strings.locale_setting_table, 0);
-                    db.TableChanged += (s, e) => tracer.TraceInfo("Updating {0}", e.Table.TableName);
                     // Create tables
                     tracer.TraceInfo("Installing Concept Tables...");
-                    db.CreateTable<DbConcept>(CreateFlags.None);
-                    db.CreateTable<DbConceptName>(CreateFlags.None);
-                    db.CreateTable<DbConceptClass>(CreateFlags.None);
-                    db.CreateTable<DbConceptRelationship>(CreateFlags.None);
-                    db.CreateTable<DbConceptRelationshipType>(CreateFlags.None);
-                    db.CreateTable<DbConceptSet>(CreateFlags.None);
-                    db.CreateTable<DbConceptSetConceptAssociation>(CreateFlags.None);
+                    db.CreateTable<DbConcept>();
+                    db.CreateTable<DbConceptName>();
+                    db.CreateTable<DbConceptClass>();
+                    db.CreateTable<DbConceptRelationship>();
+                    db.CreateTable<DbConceptRelationshipType>();
+                    db.CreateTable<DbConceptSet>();
+                    db.CreateTable<DbConceptSetConceptAssociation>();
 
                     tracer.TraceInfo("Installing Identifiers Tables...");
-                    db.CreateTable<DbEntityIdentifier>(CreateFlags.None);
-                    db.CreateTable<DbActIdentifier>(CreateFlags.None);
-                    db.CreateTable<DbIdentifierType>(CreateFlags.None);
-                    db.CreateTable<DbAssigningAuthority>(CreateFlags.None);
+                    db.CreateTable<DbEntityIdentifier>();
+                    db.CreateTable<DbActIdentifier>();
+                    db.CreateTable<DbIdentifierType>();
+                    db.CreateTable<DbAssigningAuthority>();
 
                     tracer.TraceInfo("Installing Extensibility Tables...");
-                    db.CreateTable<DbActExtension>(CreateFlags.None);
-                    db.CreateTable<DbActNote>(CreateFlags.None);
-                    db.CreateTable<DbEntityExtension>(CreateFlags.None);
-                    db.CreateTable<DbEntityNote>(CreateFlags.None);
-                    db.CreateTable<DbExtensionType>(CreateFlags.None);
+                    db.CreateTable<DbActExtension>();
+                    db.CreateTable<DbActNote>();
+                    db.CreateTable<DbEntityExtension>();
+                    db.CreateTable<DbEntityNote>();
+                    db.CreateTable<DbExtensionType>();
 
                     tracer.TraceInfo("Installing Security Tables...");
-                    db.CreateTable<DbSecurityApplication>(CreateFlags.None);
-                    db.CreateTable<DbSecurityDevice>(CreateFlags.None);
-                    db.CreateTable<DbSecurityPolicy>(CreateFlags.None);
-                    db.CreateTable<DbSecurityDevicePolicy>(CreateFlags.None);
-                    db.CreateTable<DbSecurityRolePolicy>(CreateFlags.None);
-                    db.CreateTable<DbActSecurityPolicy>(CreateFlags.None);
-                    db.CreateTable<DbEntitySecurityPolicy>(CreateFlags.None);
-                    db.CreateTable<DbSecurityRole>(CreateFlags.None);
-                    db.CreateTable<DbSecurityUser>(CreateFlags.None);
-                    db.CreateTable<DbSecurityUserRole>(CreateFlags.None);
+                    db.CreateTable<DbSecurityApplication>();
+                    db.CreateTable<DbSecurityDevice>();
+                    db.CreateTable<DbSecurityPolicy>();
+                    db.CreateTable<DbSecurityDevicePolicy>();
+                    db.CreateTable<DbSecurityRolePolicy>();
+                    db.CreateTable<DbActSecurityPolicy>();
+                    db.CreateTable<DbEntitySecurityPolicy>();
+                    db.CreateTable<DbSecurityRole>();
+                    db.CreateTable<DbSecurityUser>();
+                    db.CreateTable<DbSecurityUserRole>();
                     db.CreateTable<DbSecurityApplicationPolicy>();
                     db.CreateTable<DbSecurityDevicePolicy>();
                     // Anonymous user

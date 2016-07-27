@@ -21,7 +21,7 @@ using System;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System.Collections.Generic;
 using System.Reflection;
-using SQLite;
+using SQLite.Net;
 using System.Threading.Tasks;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -29,6 +29,7 @@ using OpenIZ.Core.Model;
 using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -129,9 +130,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// Create a connection
 		/// </summary>
 		/// <returns>The connection.</returns>
-		private SQLiteConnection CreateConnection()
+		private SQLiteConnectionWithLock CreateConnection()
 		{
-			return new SQLiteConnection (ApplicationContext.Current.Configuration.GetConnectionString (
+            return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString (
 				ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection> ().MessageQueueConnectionStringName
 			).Value);
 		}
@@ -155,7 +156,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 					Data = ms.ToArray (),
 					CreationTime = DateTime.Now,
 					Operation = operation,
-					Type = data.GetType ().FullName
+					Type = data.GetType ().AssemblyQualifiedName
 				};
 
 				// Enqueue the object
@@ -178,27 +179,32 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 return preEventArgs.Data;
             }
 
-            using (SQLiteConnection conn = this.CreateConnection()) {
-				try
-				{
-					conn.BeginTransaction ();
-
-					// Persist the queue entry
-					this.m_tracer.TraceInfo("Enqueue {0} successful. Queue item {1}", entry, conn.Insert(entry));
-					conn.Commit();
+            var conn = this.CreateConnection();
+            lock(this.m_syncObject)
+            {
+                try
+                {
+                    using (conn.Lock())
+                    {
+                        conn.BeginTransaction();
+                        // Persist the queue entry
+                        this.m_tracer.TraceInfo("Enqueue {0} successful. Queue item {1}", entry, conn.Insert(entry));
+                        conn.Commit();
+                    }
 
                     var postEventArgs = new DataPersistenceEventArgs<TQueueEntry>(entry);
                     this.Enqueued?.Invoke(this, postEventArgs);
                     return postEventArgs.Data;
 
                 }
-                catch (Exception e) {
-					this.m_tracer.TraceError ("Error enqueueing object {0} : {1}", entry, e);
-					conn.Rollback ();
-					throw;
-				}
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error enqueueing object {0} : {1}", entry, e);
+                    conn.Rollback();
+                    throw;
+                }
 
-			}
+            }
 		}
 
 		/// <summary>
@@ -234,26 +240,26 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// </summary>
 		public TQueueEntry DequeueRaw()
 		{
-			using (SQLiteConnection conn = this.CreateConnection ()) {
-				try
-				{
-					conn.BeginTransaction();
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
+                try
+                {
+                    // Fetch the object
+                    var queueItem = conn.Table<TQueueEntry>().OrderBy(i => i.Id).First();
 
-					// Fetch the object
-					var queueItem = conn.Table<TQueueEntry>().OrderBy(i=>i.Id).First();
+                    // Delete the object
+                    using (conn.Lock())
+                        conn.Delete(queueItem);
 
-					// Delete the object
-					conn.Delete(queueItem);
-
-					conn.Commit();
-					return queueItem;
-				}
-				catch(Exception e) {
-					this.m_tracer.TraceError ("Error popping object off queue : {0}", e);
-					conn.Rollback ();
-					throw;
-				}
-			}
+                    return queueItem;
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error popping object off queue : {0}", e);
+                    throw;
+                }
+            }
 		}
 
         /// <summary>
@@ -261,12 +267,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         internal void UpdateRaw(TQueueEntry entry)
         {
-            using(SQLiteConnection conn = this.CreateConnection()) {
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
                 try
                 {
-                    conn.Update(entry);
+                    using (conn.Lock())
+                        conn.Update(entry);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_tracer.TraceError("Error updating object: {0}", e);
                 }
@@ -278,16 +287,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         /// <returns>The raw.</returns>
         public TQueueEntry PeekRaw(){
-			using (SQLiteConnection conn = this.CreateConnection ()) {
-				try
-				{
-					return conn.Table<TQueueEntry> ().OrderBy (i => i.Id).FirstOrDefault ();
-				}
-				catch(Exception e) {
-					this.m_tracer.TraceError ("Error peeking object: {0}", e);
-					throw;
-				}
-			}
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
+                try
+                {
+                    using (conn.Lock())
+                        return conn.Table<TQueueEntry>().OrderBy(i => i.Id).FirstOrDefault();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error peeking object: {0}", e);
+                    throw;
+                }
+            }
 		}
 
         /// <summary>
@@ -295,13 +308,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Count()
         {
-            using (SQLiteConnection conn = this.CreateConnection())
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
             {
                 try
                 {
-                    return conn.Table<TQueueEntry>().Count();
+                    using(conn.Lock())
+                        return conn.Table<TQueueEntry>().Count();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_tracer.TraceError("Error counting queue: {0}", e);
                     throw;

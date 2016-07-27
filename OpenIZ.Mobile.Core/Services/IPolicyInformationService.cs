@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Security;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Services
 {

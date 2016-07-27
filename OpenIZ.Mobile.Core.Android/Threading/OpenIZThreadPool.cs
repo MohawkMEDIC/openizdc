@@ -31,7 +31,7 @@ using Android.Widget;
 using System.Threading;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Services;
-using OpenIZ.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Threading
 {
@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
-        private int m_concurrencyLevel = 4;
+        private int m_concurrencyLevel = 6;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         // Active threads
@@ -102,19 +102,27 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         public void QueueUserWorkItem(Action<Object> callback, object state)
         {
             ThrowIfDisposed();
-            WorkItem wd = new WorkItem()
+
+            try
             {
-                Callback = callback,
-                State = state,
-                ExecutionContext = ExecutionContext.Capture()
-            };
-            lock (this.m_threadDoneResetEvent) this.m_remainingWorkItems++;
-            this.EnsureStarted(); // Ensure thread pool threads are started
-            lock (m_queue)
+                WorkItem wd = new WorkItem()
+                {
+                    Callback = callback,
+                    State = state,
+                    ExecutionContext = ExecutionContext.Capture()
+                };
+                lock (this.m_threadDoneResetEvent) this.m_remainingWorkItems++;
+                this.EnsureStarted(); // Ensure thread pool threads are started
+                lock (m_queue)
+                {
+                    m_queue.Enqueue(wd);
+                    if (m_threadWait > 0)
+                        Monitor.Pulse(m_queue);
+                }
+            }
+            catch(Exception e)
             {
-                m_queue.Enqueue(wd);
-                if (m_threadWait > 0)
-                    Monitor.Pulse(m_queue);
+                this.m_tracer.TraceError("Error queueing work item: {0}", e);
             }
         }
 
@@ -132,6 +140,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
                         for (int i = 0; i < m_threadPool.Length; i++)
                         {
                             m_threadPool[i] = new Thread(DispatchLoop);
+                            m_threadPool[i].Name = String.Format("OIZ-ThreadPoolThread-{0}", i);
                             m_threadPool[i].IsBackground = true;
                             m_threadPool[i].Start();
                         }
@@ -149,16 +158,23 @@ namespace OpenIZ.Mobile.Core.Android.Threading
                 WorkItem wi = default(WorkItem);
                 lock (m_queue)
                 {
-                    if (m_disposing) return; // Shutdown requested
-                    while (m_queue.Count == 0)
+                    try
                     {
-                        m_threadWait++;
-                        try { Monitor.Wait(m_queue); }
-                        finally { m_threadWait--; }
-                        if (m_disposing)
-                            return;
+                        if (m_disposing) return; // Shutdown requested
+                        while (m_queue.Count == 0)
+                        {
+                            m_threadWait++;
+                            try { Monitor.Wait(m_queue); }
+                            finally { m_threadWait--; }
+                            if (m_disposing)
+                                return;
+                        }
+                        wi = m_queue.Dequeue();
                     }
-                    wi = m_queue.Dequeue();
+                    catch(Exception e)
+                    {
+                        this.m_tracer.TraceError("Error in dispatchloop {0}", e);
+                    }
                 }
                 DoWorkItem(wi);
             }

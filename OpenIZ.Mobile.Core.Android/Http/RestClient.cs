@@ -110,7 +110,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, Dictionary<HttpRequestHeader, String> additionalHeaders, TBody body, params KeyValuePair<string, object>[] query)
         {
 
             if (String.IsNullOrEmpty(method))
@@ -125,10 +125,20 @@ namespace OpenIZ.Mobile.Core.Android.Http
             for (int i = 0; i < 2; i++)
             {
                 // Credentials provided ?
-                var requestObj = this.CreateHttpRequest(url, query);
+                HttpWebRequest requestObj = this.CreateHttpRequest(url, query) as HttpWebRequest;
                 if (!String.IsNullOrEmpty(contentType))
                     requestObj.ContentType = contentType;
                 requestObj.Method = method;
+
+                // Additional headers
+                if (additionalHeaders != null)
+                    foreach (var hdr in additionalHeaders)
+                    {
+                        if (hdr.Key == HttpRequestHeader.IfModifiedSince)
+                            requestObj.IfModifiedSince = DateTime.Parse(hdr.Value);
+                        else
+                            requestObj.Headers.Add(hdr.Key, hdr.Value);
+                    }
 
                 // Body was provided?
                 try
@@ -169,17 +179,23 @@ namespace OpenIZ.Mobile.Core.Android.Http
                     }
 
                     // Response
-                    WebResponse response = null;
+                    HttpWebResponse response = null;
                     Exception responseError = null;
-                    
+
                     var responseTask = requestObj.GetResponseAsync().ContinueWith(r => {
                         if (r.IsFaulted)
                             responseError = r.Exception.InnerExceptions.First();
                         else
-                            response = r.Result;
+                            response = r.Result as HttpWebResponse;
                     });
                     if (!responseTask.Wait(4000)) throw new TimeoutException();
-                    else if (responseError != null) throw responseError;
+                    else if (responseError != null)
+                    {
+                        if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+                            return default(TResult);
+                        else
+                            throw responseError;
+                    }
 
                     var validationResult = this.ValidateResponse(response);
                     if (validationResult != ServiceClientErrorType.Valid)
@@ -191,6 +207,9 @@ namespace OpenIZ.Mobile.Core.Android.Http
                     var responseContentType = response.ContentType;
                     if (responseContentType.Contains(";"))
                         responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+
+                    if (response.StatusCode == HttpStatusCode.NotModified)
+                        return default(TResult);
                     serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 
                     TResult retVal = default(TResult);
@@ -231,7 +250,10 @@ namespace OpenIZ.Mobile.Core.Android.Http
                             // Deserialize
                             TResult result = default(TResult);
                             var errorResponse = (e.Response as HttpWebResponse);
-                            var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(e.Response.ContentType, typeof(TResult));
+                            var responseContentType = errorResponse.ContentType;
+                            if (responseContentType.Contains(";"))
+                                responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+                            var serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
                             try
                             {
                                 switch (errorResponse.Headers[HttpResponseHeader.ContentEncoding])

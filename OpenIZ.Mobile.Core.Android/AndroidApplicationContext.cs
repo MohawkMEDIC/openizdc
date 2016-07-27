@@ -128,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Android
 				}));
 				ApplicationContext.Current = retVal;
 				retVal.m_tracer = Tracer.GetTracer (typeof(AndroidApplicationContext));
-                retVal.StartDaemons();
+                retVal.Start();
 				return true;
 			}
 			catch(Exception e) {
@@ -209,7 +209,7 @@ namespace OpenIZ.Mobile.Core.Android
 					}
 
                     // Start daemons
-                    retVal.StartDaemons();
+                    retVal.Start();
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;
