@@ -60,12 +60,25 @@
     <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionEvaluator">
+      <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -136,6 +149,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\logo_lg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\WHO-OralPolioVaccine.xml" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
