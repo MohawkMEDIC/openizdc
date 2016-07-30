@@ -52,6 +52,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return securityUser;
         }
 
+        public SecurityDevice CreateDevice(SecurityDevice device)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates the provided role
         /// </summary>
@@ -118,6 +123,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return persistence.Insert(userEntity);
         }
 
+        public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Find policies that match the specified data
         /// </summary>
@@ -168,6 +183,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return persistence.Query(expression);
         }
 
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Find the specified user entity with constraints
         /// </summary>
@@ -197,6 +217,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
             return pers.Query(query, offset, count, out total);
+        }
+
+        public SecurityDevice GetDevice(Guid deviceId)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -257,6 +282,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             
         }
 
+        public SecurityDevice ObsoleteDevice(Guid deviceId)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Obsoletes the specified role
         /// </summary>
@@ -296,6 +326,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             if (persistence == null)
                 throw new InvalidOperationException("Persistence service not found");
             return persistence.Obsolete(new UserEntity() { Key = id });
+        }
+
+        public SecurityDevice SaveDevice(SecurityDevice device)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
