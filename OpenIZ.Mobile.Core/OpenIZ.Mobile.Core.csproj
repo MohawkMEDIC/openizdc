@@ -35,6 +35,7 @@
     <Compile Include="Caching\CacheEntry.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Caching\MemoryCacheService.cs" />
+    <Compile Include="Configuration\ForecastingConfigurationSection.cs" />
     <Compile Include="Configuration\SynchronizationConfigurationSection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionManager.cs" />
     <Compile Include="Data\ImsiPersistenceService.cs" />
@@ -209,9 +210,6 @@
     <Reference Include="OpenIZ.Messaging.IMSI.Client">
       <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
     </Reference>
-    <Reference Include="SQLite-net">
-      <HintPath>..\Solution Items\SQLite-net.dll</HintPath>
-    </Reference>
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
@@ -253,5 +251,7 @@
       <Link>OpenIZDC.licenseheader</Link>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
 </Project>

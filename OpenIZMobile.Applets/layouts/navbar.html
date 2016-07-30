@@ -56,13 +56,19 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="min-width:350px">
-                            <a href="/org.openiz.core/views/alerts/view.html?alertId={{msg.id}}">
-                                <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
-                                <span>
-                                    <span class="subject">{{msg.subject}}</span><br/>
-                                    <span class="sender">{{msg.from}}</span><span class="text-muted">{{msg.time | date: 'yyyy-MM-dd HH:mm'}}</span>
-                                </span>
+                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px">
+                            <a style="padding-left:0px" href="/org.openiz.core/views/alerts/view.html?alertId={{msg.id}}">
+                                <div style="padding-left:0px" class="container-fluid">
+                                    <div class="col-xs-2">
+                                        <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
+                                    </div>
+                                    <div class="col-xs-10">
+                                        <span>
+                                            <span class="subject">{{msg.subject}}</span><br />
+                                            <span class="sender">{{msg.from}}</span><span class="text-muted">{{msg.time | date: 'yyyy-MM-dd HH:mm'}}</span>
+                                        </span>
+                                    </div>
+                                </div>
                             </a>
 
                             

@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Alerting
         public AlertMessage GetAlert(Guid id)
         {
             var idKey = id.ToByteArray();
-            using (var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString))
+            var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
             using (conn.Lock())
                 return conn.Table<AlertMessage>().Where(o => o.Key == idKey).FirstOrDefault();
         }
@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Alerting
         {
             try
             {
-                using (var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString))
+                var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
                 using (conn.Lock())
                     return conn.Table<AlertMessage>().Where(predicate).Skip(offset).Take(count ?? 100).OrderByDescending(o=>o.TimeStamp).ToList();
             }

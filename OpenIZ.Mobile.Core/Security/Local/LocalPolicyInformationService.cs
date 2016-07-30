@@ -126,7 +126,8 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
+            {
                 try
                 {
                     var polId = conn.Table<DbSecurityPolicy>().Where(o => o.Oid == policy.Oid).FirstOrDefault();
@@ -147,6 +148,7 @@ namespace OpenIZ.Mobile.Core.Security
                 {
                     this.m_tracer.TraceError("Could create policy {0}", e);
                 }
+            }
         }
     }
 }

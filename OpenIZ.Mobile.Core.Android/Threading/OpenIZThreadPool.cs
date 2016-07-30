@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
-        private int m_concurrencyLevel = 6;
+        private int m_concurrencyLevel = 4;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         // Active threads
@@ -220,6 +220,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         /// </summary>
         private void DoWorkItem(WorkItem state)
         {
+            this.m_tracer.TraceVerbose("Starting task on {0} ---> {1}", Thread.CurrentThread.Name, state.Callback.Target.ToString());
             var worker = (WorkItem)state;
             try { worker.Callback(worker.State); }
             catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }

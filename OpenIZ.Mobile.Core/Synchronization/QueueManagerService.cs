@@ -147,10 +147,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public void ExhaustInboundQueue()
         {
-
-            if (Monitor.IsEntered(this.m_inboundLock)) return;
-            lock (this.m_inboundLock)
+            bool locked = false;
+            try
             {
+                locked = Monitor.TryEnter(this.m_inboundLock, 100);
+                if (!locked) return;
+
                 // Exhaust the queue
                 int remain = SynchronizationQueue.Inbound.Count();
                 while (remain > 0)
@@ -168,13 +170,21 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.ImportElement(dpe, queueEntry);
                         SynchronizationQueue.Inbound.DequeueRaw();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(SynchronizationQueue.Inbound.DequeueRaw(), Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "In" });
                     }
                     remain = SynchronizationQueue.Inbound.Count();
                 }
+            }
+            catch (TimeoutException e)
+            {
+
+            }
+            finally
+            {
+                if (locked) Monitor.Exit(this.m_inboundLock);
             }
         }
 

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="locale_import" xml:space="preserve">
-    <value>Importing IMS Data...</value>
+    <value>Importing Data...</value>
   </data>
   <data name="locale_importDoneBody" xml:space="preserve">
     <value>The import of remote data is complete</value>
@@ -136,7 +136,7 @@
     <value>Installing Tables</value>
   </data>
   <data name="locale_sync" xml:space="preserve">
-    <value>Synchronizing {0}s...</value>
+    <value>Downloading {0}s...</value>
   </data>
   <data name="locale_welcomeMessageBody" xml:space="preserve">
     <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the sycnrhonization is complete. We'll let you know when the synchronization operation is done!

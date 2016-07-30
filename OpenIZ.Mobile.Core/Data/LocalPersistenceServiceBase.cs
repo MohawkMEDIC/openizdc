@@ -128,6 +128,7 @@ namespace OpenIZ.Mobile.Core.Data
             // Persist object
             var connection = this.CreateConnection();
             using (connection.Lock())
+            {
                 try
                 {
                     this.m_tracer.TraceVerbose("INSERT {0}", data);
@@ -151,7 +152,7 @@ namespace OpenIZ.Mobile.Core.Data
                     throw new LocalPersistenceException(DataOperationType.Insert, data, e);
 
                 }
-
+            }
 
 
         }
@@ -177,7 +178,7 @@ namespace OpenIZ.Mobile.Core.Data
             // Persist object
             var connection = this.CreateConnection();
             using (connection.Lock())
-
+            {
                 try
                 {
                     this.m_tracer.TraceVerbose("UPDATE {0}", data);
@@ -200,7 +201,7 @@ namespace OpenIZ.Mobile.Core.Data
                     throw new LocalPersistenceException(DataOperationType.Update, data, e);
 
                 }
-
+            }
         }
 
         /// <summary>
@@ -225,6 +226,7 @@ namespace OpenIZ.Mobile.Core.Data
             // Obsolete object
             var connection = this.CreateConnection();
             using (connection.Lock())
+            {
                 try
                 {
                     this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
@@ -246,7 +248,7 @@ namespace OpenIZ.Mobile.Core.Data
                     connection.Rollback();
                     throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
                 }
-
+            }
         }
 
         /// <summary>
@@ -293,6 +295,7 @@ namespace OpenIZ.Mobile.Core.Data
             // Query object
             var connection = this.CreateConnection();
             using (connection.Lock())
+            {
                 try
                 {
                     this.m_tracer.TraceVerbose("QUERY {0}", query);
@@ -343,6 +346,7 @@ namespace OpenIZ.Mobile.Core.Data
                     throw;
                 }
 
+            }
         }
 
         /// <summary>
@@ -387,6 +391,7 @@ namespace OpenIZ.Mobile.Core.Data
             // Query object
             var connection = this.CreateConnection();
             using (connection.Lock())
+            {
                 try
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
@@ -408,6 +413,7 @@ namespace OpenIZ.Mobile.Core.Data
                     throw;
                 }
 
+            }
         }
 
         #endregion

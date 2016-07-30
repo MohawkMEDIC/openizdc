@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
@@ -107,6 +108,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
+        /// Creates the specified user entity
+        /// </summary>
+        public UserEntity CreateUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Insert(userEntity);
+        }
+
+        /// <summary>
         /// Find policies that match the specified data
         /// </summary>
         public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
@@ -141,6 +153,30 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Missing role persistence service");
             return pers.Query(query, offset, count, out total);
+        }
+
+        /// <summary>
+        /// Find the specified user entity data
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression);
+        }
+
+        /// <summary>
+        /// Find the specified user entity with constraints
+        /// </summary>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int count, out int totalCount)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Query(expression, offset, offset, out totalCount);
         }
 
         /// <summary>
@@ -197,6 +233,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public UserEntity GetUserEntity(Guid id, Guid versionId)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service missing");
+            return persistence.Get(id);
+        }
+
+        /// <summary>
         /// Lock the specified user
         /// </summary>
         public void LockUser(Guid userId)
@@ -241,6 +288,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
+        /// Obsoletes the specified user entity
+        /// </summary>
+        public UserEntity ObsoleteUserEntity(Guid id)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            return persistence.Obsolete(new UserEntity() { Key = id });
+        }
+
+        /// <summary>
         /// Saves the specified role
         /// </summary>
         public SecurityRole SaveRole(SecurityRole role)
@@ -269,6 +327,25 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
 
             return retVal;
+        }
+
+        /// <summary>
+        /// Saves the specified user entity
+        /// </summary>
+        public UserEntity SaveUserEntity(UserEntity userEntity)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Persistence service not found");
+            try
+            {
+                return persistence.Update(userEntity);
+            }
+            catch
+            {
+                return persistence.Insert(userEntity);
+
+            }
         }
 
         /// <summary>

@@ -40,6 +40,90 @@ var OpenIZ = OpenIZ || {
     urlParams: {},
 
     /**
+     * @summary Interoperation with the IMS
+     * @class
+     */
+    Ims: {
+        /**
+         * @summary Post data to the IMS
+         * @param {Object} control Control data for the async method
+         * @param {String} control.resource The resource to post
+         * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
+         * @param {Function} control.onException A callback method to be called when the operation throws an exception
+         * @param {Object} data The post data (IMSI resource) to be posted
+         */
+        post: function (controlData) {
+            $.ajax({
+                method: 'POST',
+                url: "/__ims/" + controlData.resource,
+                // || WARNING: JAVASCRIPT RANT AHEAD              ||
+                // ||                                             ||
+                // || Why!? Why!? Why is this even a line of code?||
+                // || I specified JSON and application/json yet   ||
+                // || the 1337 haxors at jQ decide not to encode  ||
+                // || the JSON data I send as JSON!? Why!?        ||
+                // \/ Stuff like this is why I dislike JavaScript \/
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+                    controlData.continueWith(xhr);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+                }
+            });
+        },
+        /**
+         * @summary Get data from the IMS
+         * @param {Object} control Control data for the async method
+         * @param {String} control.resource The resource to post
+         * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
+         * @param {Function} control.onException A callback method to be called when the operation throws an exception
+         * @param {Object} query The query data (IMSI resource) to be posted
+         */
+        get: function (controlData) {
+            $.ajax({
+                method: 'GET',
+                url: "/__ims/" + controlData.resource,
+                data: controlData.data,
+                dataType: "json",
+                accept: 'application/json',
+                contentType: 'application/json',
+                success: function (xhr, data) {
+                    controlData.continueWith(xhr);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined)
+                        console.error(error);
+                    if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+                }
+            });
+        }
+    },
+    /**
      * @summary Utility functions
      * @class
      */
@@ -345,12 +429,68 @@ var OpenIZ = OpenIZ || {
             }
         },
     },
+    /** 
+     * @summary Represents functions for interacting with the protocol service
+     * @class
+     */
+    CarePlan : {
+        /**
+         * @summary Generate a care plan for the specified patient
+         */
+        getCarePlanAsync: function (controlData) {
+            $.ajax({
+                method: 'POST',
+                url: "/__plan/patient",
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+                    console.info(JSON.stringify(xhr));
+                    controlData.continueWith(xhr);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (error.error !== undefined) // error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
 
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+                }
+            });
+        }
+    },
     /**
     * @summary Represents application specific functions for interoperating with the mobile application itself
     * @class
     */
     App: {
+        statusShown : false,
+        /**
+         * @summary Update the status of the 
+         */
+        updateStatus: function () {
+
+            var p = JSON.parse(OpenIZApplicationService.GetStatus());
+
+            if (p[1] > 0 && p[1] < 1) {
+                $("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background") + ":" + p[0]);
+                $("#waitProgressBar").attr('style', 'width:' + (p[1] * 100) + "%");
+            }
+            else {
+                $("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text") + ":" + p[0]);
+                $("#waitProgressBar").attr('style', 'width:100%');
+            }
+
+            if (OpenIZ.App.statusShown)
+                setTimeout(OpenIZ.App.updateStatus, 1000);
+
+        },
         /**
          * @summary Show the alert panel
          * @param {String} textStr The text on the alert panel to show
@@ -359,11 +499,14 @@ var OpenIZ = OpenIZ || {
             if (textStr != null)
                 $("#waitModalText").val(textStr);
             $('#waitModal').modal({ show: true, backdrop: 'static' });
+            OpenIZ.App.statusShown = true;
+            setTimeout(OpenIZ.App.updateStatus, 6000);
         },
         /**
          * @summary Hide the waiting panel
          */
         hideWait: function () {
+            OpenIZ.App.statusShown = false;
             $('#waitModal').modal('hide');
         },
         /**
@@ -566,7 +709,7 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            if(OpenIZ.Localization.locale == null)
+            if (OpenIZ.Localization.locale == null)
                 OpenIZ.Localization.locale = OpenIZApplicationService.GetLocale();
             return OpenIZ.Localization.locale;
         },
@@ -782,9 +925,12 @@ var OpenIZ = OpenIZ || {
          * });
          */
         findAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Patient.find(controlData.query, controlData.offset, controlData.count);
-            }, controlData);
+            OpenIZ.Ims.get({
+                resource: "Patient",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                query: controlData.query
+            });
         },
         /**
          * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
@@ -828,9 +974,12 @@ var OpenIZ = OpenIZ || {
          * });
          */
         insertAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Patient.insert(controlData.patient);
-            }, controlData);
+            OpenIZ.Ims.post({
+                resource: "Patient",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
         },
         /**
          * @summary Register a patient in the IMS system returning the registered patient data
@@ -948,9 +1097,14 @@ var OpenIZ = OpenIZ || {
          * });
          */
         getAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Patient.get(controlData.patientId);
-            }, controlData);
+            OpenIZ.Ims.get({
+                resource: "Patient",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                query: {
+                    id: controlData.patientId
+                }
+            });
         },
         /** 
          * @summary Retrieves the specified patient instance from the IMS datastore
@@ -972,6 +1126,16 @@ var OpenIZ = OpenIZ || {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"), e.message, e);
             }
+        },
+        /**
+         * @summary Get an empty patient asynchronously
+         */
+        getEmptyAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Empty/Patient",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException
+            });
         }
     },
 
@@ -1194,7 +1358,11 @@ var OpenIZ = OpenIZ || {
  */
 //OpenIZ.locale = OpenIZ.Localization.getLocale();
 // No caching
-$.ajaxSetup({ cache: false });
+$.ajaxSetup({
+    cache: false, converters: {
+        'text json': $.parseJSON
+    }
+});
 
 // Parameters
 (window.onpopstate = function () {

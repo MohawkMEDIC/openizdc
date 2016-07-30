@@ -298,6 +298,7 @@ namespace OpenIZ.Mobile.Core.Security
                 var conn = this.CreateConnection();
                 using(conn.Lock())
                 {
+                    
                     var dbu = conn.Table<DbSecurityUser>().Where(o => o.UserName == userName).FirstOrDefault();
                     if (dbu == null)
                         throw new KeyNotFoundException();

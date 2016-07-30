@@ -63,10 +63,12 @@ namespace OpenIZ.Mobile.Core.Security
             if (role == null)
                 throw new ArgumentNullException(nameof(role));
             var conn = this.CreateConnection();
-            using(conn.Lock())
+            using (conn.Lock())
+            {
                 return conn.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_Id) INNER JOIN security_role ON (security_user_role.role_Id = security_role.uuid) WHERE security_role.name = ?", role)
                             .Select(o => o.UserName)
                             .ToArray();
+            }
         }
 
         /// <summary>
@@ -75,8 +77,10 @@ namespace OpenIZ.Mobile.Core.Security
         public string[] GetAllRoles()
         {
             var conn = this.CreateConnection();
-            using(conn.Lock())
+            using (conn.Lock())
+            {
                 return conn.Table<DbSecurityRole>().ToList().Select(o => o.Name).ToArray();
+            }
         }
 
         /// <summary>
@@ -88,10 +92,12 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new ArgumentNullException(nameof(userName));
 
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
+            {
                 return conn.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user.username = ?", userName)
                     .Select(p => p.Name)
                     .ToArray();
+            }
         }
 
         /// <summary>
@@ -126,7 +132,8 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
+            {
                 foreach (var un in userNames)
                 {
                     var dbu = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == un);
@@ -146,6 +153,7 @@ namespace OpenIZ.Mobile.Core.Security
                             });
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -160,7 +168,8 @@ namespace OpenIZ.Mobile.Core.Security
 
 
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
+            {
                 foreach (var rn in roles)
                 {
                     try
@@ -188,6 +197,7 @@ namespace OpenIZ.Mobile.Core.Security
                         throw;
                     }
                 }
+            }
         }
 
         /// <summary>
@@ -201,8 +211,10 @@ namespace OpenIZ.Mobile.Core.Security
                 throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
+            {
                 conn.Insert(new DbSecurityRole() { Name = value, Key = Guid.NewGuid() });
+            }
 
         }
     }
