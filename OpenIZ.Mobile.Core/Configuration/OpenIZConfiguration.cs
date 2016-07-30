@@ -39,6 +39,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlInclude(typeof(DataConfigurationSection))]
 	[XmlInclude(typeof(AppletConfigurationSection))]
 	[XmlInclude(typeof(ServiceClientConfigurationSection))]
+	[XmlInclude(typeof(ForecastingConfigurationSection))]
 	[XmlInclude(typeof(ApplicationConfigurationSection))]
 	[XmlInclude(typeof(DiagnosticsConfigurationSection))]
     [XmlInclude(typeof(SynchronizationConfigurationSection))]

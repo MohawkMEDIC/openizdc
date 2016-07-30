@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Gets or sets the services.
         /// </summary>
         /// <value>The services.</value>
-        [XmlElement("service")]
+        [XmlElement("service"), JsonProperty("service")]
         public List<String> ServiceTypes {
             get;
             set;
@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Sets the services.
 		/// </summary>
 		/// <value>The services.</value>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public List<Object> Services {
 			get {
 				if (this.m_services == null) {

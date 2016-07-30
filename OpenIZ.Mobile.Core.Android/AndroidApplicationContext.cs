@@ -43,6 +43,9 @@ using OpenIZ.Core.Applets.Model;
 using System.Security.Principal;
 using A = Android;
 using OpenIZ.Mobile.Core.Android.Resources;
+using OpenIZ.Core.Services;
+using OpenIZ.Protocol.Xml.Model;
+using OpenIZ.Core.Protocol;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -193,13 +196,15 @@ namespace OpenIZ.Mobile.Core.Android
 							retVal.Configuration.GetSection<DataConfigurationSection> ().MigrationLog.Entry.Clear ();
 						}
                         retVal.SetProgress(context.GetString(Resource.String.startup_data), 0.6f);
-
-
+                        
                         DataMigrator migrator = new DataMigrator ();
 						migrator.Ensure ();
 
 						// Set the entity source
 						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
+
+                        // Prepare clinical protocols
+                        retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
 
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());
@@ -210,6 +215,9 @@ namespace OpenIZ.Mobile.Core.Android
 
                     // Start daemons
                     retVal.Start();
+
+                    // Load protocols
+                    var protocols = retVal.GetService<ICarePlanService>().Protocols;
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;
@@ -218,6 +226,22 @@ namespace OpenIZ.Mobile.Core.Android
 				return true;
 			}
 		}
+
+        /// <summary>
+        /// Install protocol
+        /// </summary>
+        public void InstallProtocol(IClinicalProtocol pdf)
+        {
+            try
+            {
+                this.GetService<IClinicalProtocolRepositoryService>().InsertProtocol(pdf.GetProtcolData());
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error installing protocol {0}: {1}", pdf.Id, e);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Sets the current principal

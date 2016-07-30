@@ -27,6 +27,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
 
+      
+
         /// <summary>
         /// Get the alerts from the service
         /// </summary>

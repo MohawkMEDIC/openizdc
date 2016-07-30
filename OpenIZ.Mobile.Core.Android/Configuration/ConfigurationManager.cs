@@ -41,6 +41,8 @@ using OpenIZ.Mobile.Core.Android.Services;
 using OpenIZ.Mobile.Core.Android.Threading;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Core.Services.Impl;
+using OpenIZ.Core.Protocol;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -107,7 +109,13 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 StartupAsset = "tz.timr.applet",
                 AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
             };
-            
+
+            // Protocol 
+            ForecastingConfigurationSection forecastingSection = new ForecastingConfigurationSection()
+            {
+                ProtocolSourceDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "protocols"),
+            };
+
             // Initial applet style
             ApplicationConfigurationSection appSection = new ApplicationConfigurationSection () {
 				Style = StyleSchemeType.Dark,
@@ -123,6 +131,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
+                    typeof(SimpleCarePlanService).AssemblyQualifiedName,
+                    typeof(AndroidClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName
 				},
                 Cache = new CacheConfiguration()
@@ -189,7 +199,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 			retVal.Sections.Add (appSection);
 			retVal.Sections.Add (secSection);
 			retVal.Sections.Add (serviceSection);
-
+            retVal.Sections.Add(forecastingSection);
 			return retVal;
 		}
 

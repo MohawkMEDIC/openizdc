@@ -51,6 +51,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         // Cached menus
         private Dictionary<IPrincipal, String> m_cachedMenus = new Dictionary<IPrincipal, String>();
 
+        private KeyValuePair<String, float> m_applicationStatus;
+
         /// <summary>
         /// Menu information
         /// </summary>
@@ -96,10 +98,21 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		/// <param name="context">Context.</param>
 		public AppletFunctionBridge (Context context, AppletWebView view)
 		{
-			
-			this.m_context = context;
+            ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
+            this.m_context = context;
 			this.m_view = view;
 		}
+
+        /// <summary>
+        /// Send log file
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetStatus()
+        {
+            return String.Format("[\"{0}\",{1}]", this.m_applicationStatus.Key, this.m_applicationStatus.Value);
+        }
+
 
         /// <summary>
         /// Send log file

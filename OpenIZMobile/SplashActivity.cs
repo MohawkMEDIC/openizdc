@@ -44,6 +44,8 @@ using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Android.Services;
 using OpenIZ.Mobile.Core;
 using System.IO.Compression;
+using OpenIZ.Protocol.Xml.Model;
+using OpenIZ.Protocol.Xml;
 
 namespace OpenIZMobile
 {
@@ -192,6 +194,25 @@ namespace OpenIZMobile
 
 
                     this.m_tracer = Tracer.GetTracer(this.GetType());
+
+                    // Copy protocols from our app manifest (TODO: Clean this up)
+                    foreach (var itm in Assets.List("Protocols"))
+                    {
+                        try
+                        {
+                            this.m_tracer.TraceVerbose("Loading {0}", itm);
+                            using (Stream s = Assets.Open(String.Format("Protocols/{0}", itm)))
+                            {
+                                ProtocolDefinition pdf = ProtocolDefinition.Load(s);
+                                XmlClinicalProtocol xproto = new XmlClinicalProtocol(pdf);
+                                AndroidApplicationContext.Current.InstallProtocol(xproto);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            this.m_tracer?.TraceError(e.ToString());
+                        }
+                    }
 
                     // Upgrade applets from our app manifest
                     foreach (var itm in Assets.List("Applets"))

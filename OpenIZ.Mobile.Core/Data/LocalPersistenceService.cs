@@ -53,6 +53,7 @@ namespace OpenIZ.Mobile.Core.Data
         // Lock 
         private static Object s_lock = new object();
 
+
         /// <summary>
         /// Load specified associations
         /// </summary>

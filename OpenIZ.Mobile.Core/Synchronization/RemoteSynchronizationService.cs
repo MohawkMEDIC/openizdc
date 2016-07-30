@@ -90,6 +90,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 try
                 {
                     lock (this.m_lock)
+                    {
                         foreach (var syncResource in this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & SynchronizationPullTriggerType.OnStart) != 0))
                         {
 
@@ -99,6 +100,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 this.Pull(syncResource.ResourceType);
 
                         }
+                    }
+
                     var alertService = ApplicationContext.Current.GetService<IAlertService>();
                     alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, null, Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                 }

@@ -79,8 +79,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (retVal.Roles != null)
             {
-                context.Table<DbSecurityUserRole>().Delete(o => o.UserUuid == keyuuid);
-                foreach (var r in retVal.Roles)
+                var existingRoles = context.Table<DbSecurityUserRole>().Where(o => o.UserUuid == keyuuid).Select(o=>o.RoleUuid);
+                foreach (var r in retVal.Roles.Where(r=>!existingRoles.Any(o=>new Guid(o) == r.Key)))
                 {
                     r.EnsureExists(context);
                     context.Insert(new DbSecurityUserRole()

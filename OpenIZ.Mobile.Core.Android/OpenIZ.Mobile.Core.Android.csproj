@@ -38,11 +38,21 @@
     <LangVersion>6</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime">
+      <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="ExpressionEvaluator">
+      <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.CSharp" />
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
@@ -105,10 +115,12 @@
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
     <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
     <Compile Include="Services\Attributes\RestServiceAttribute.cs" />
+    <Compile Include="Services\AndroidClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\MiniImsServer.cs" />
     <Compile Include="Services\ServiceHandlers\ApplicationService.cs" />
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
+    <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />

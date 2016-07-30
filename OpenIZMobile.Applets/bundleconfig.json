@@ -58,5 +58,11 @@
     "inputFiles": [
       "lib/bootstrap-tokenfield.js"
     ]
+  },
+  {
+    "outputFileName": "lib/jquery.datefix.min.js",
+    "inputFiles": [
+      "lib/jquery.datefix.js"
+    ]
   }
 ]

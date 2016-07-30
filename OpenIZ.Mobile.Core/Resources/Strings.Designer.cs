@@ -62,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing IMS Data....
+        ///   Looks up a localized string similar to Importing Data....
         /// </summary>
         internal static string locale_import {
             get {
@@ -116,7 +116,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Synchronizing {0}s....
+        ///   Looks up a localized string similar to Downloading {0}s....
         /// </summary>
         internal static string locale_sync {
             get {

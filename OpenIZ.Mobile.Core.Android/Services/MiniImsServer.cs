@@ -44,6 +44,8 @@ using System.Reflection;
 using OpenIZ.Mobile.Core.Android.Services.Attributes;
 using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Android.Resources;
+using OpenIZ.Core.Applets.ViewModel;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Android.Services
 {
@@ -62,7 +64,6 @@ namespace OpenIZ.Mobile.Core.Android.Services
         private HttpListener m_listener;
         private Thread m_acceptThread;
         private Tracer m_tracer = Tracer.GetTracer(typeof(MiniImsServer));
-        private List<AppletAsset> m_scanApplets = new List<AppletAsset>();
         private Dictionary<String, AppletAsset> m_cacheApplets = new Dictionary<string, AppletAsset>();
         private object m_lockObject = new object();
         private Dictionary<String, InvokationInformation> m_services = new Dictionary<string, InvokationInformation>();
@@ -141,9 +142,9 @@ namespace OpenIZ.Mobile.Core.Android.Services
                     {
                         try
                         {
-                            var iAsyncResult = this.m_listener.BeginGetContext(null, null);
-                            iAsyncResult.AsyncWaitHandle.WaitOne();
-                            var context = this.m_listener.EndGetContext(iAsyncResult);
+                            //var iAsyncResult = this.m_listener.BeginGetContext(null, null);
+                            //iAsyncResult.AsyncWaitHandle.WaitOne();
+                            var context = this.m_listener.GetContext(); //this.m_listener.EndGetContext(iAsyncResult);
                             //new Thread(this.HandleRequest).Start(context);
                             this.m_threadPool.QueueUserWorkItem(this.HandleRequest, context);
                         }
@@ -202,16 +203,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 MiniImsServer.CurrentContext = context;
 
-                // Scan
-                if (this.m_scanApplets.Count == 0)
-                    lock (this.m_lockObject)
-                    {
-                        if (AndroidApplicationContext.Current.LoadedApplets.DefaultApplet != null)
-                            this.m_scanApplets.Add(AndroidApplicationContext.Current.LoadedApplets.DefaultApplet.Assets[0]);
-                        this.m_scanApplets.AddRange(
-                            AndroidApplicationContext.Current.LoadedApplets.Where(o => o != AndroidApplicationContext.Current.LoadedApplets.DefaultApplet)
-                            .Select(o => o.Assets[0]));
-                    }
+               
 
                 // Attempt to find a service which implements the path
                 var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
@@ -230,9 +222,21 @@ namespace OpenIZ.Mobile.Core.Android.Services
                             result = invoke.Method.Invoke(invoke.BindObject, new object[] { });
                         else
                         {
-                            var serializer = this.m_contentTypeHandler.GetSerializer(request.ContentType, parmInfo[0].ParameterType);
-                            var pValue = serializer.DeSerialize(request.InputStream);
-                            result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
+                            if (parmInfo[0].GetCustomAttribute<RestMessageAttribute>()?.MessageFormat == RestMessageFormat.SimpleJson)
+                            {
+                                using (StreamReader sr = new StreamReader(request.InputStream))
+                                {
+                                    var dserMethod = typeof(JsonViewModelSerializer).GetMethod("DeSerialize").MakeGenericMethod(new Type[] { parmInfo[0].ParameterType });
+                                    var pValue = dserMethod.Invoke(null, new object[] { sr.ReadToEnd() });
+                                    result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
+                                }
+                            }
+                            else
+                            {
+                                var serializer = this.m_contentTypeHandler.GetSerializer(request.ContentType, parmInfo[0].ParameterType);
+                                var pValue = serializer.DeSerialize(request.InputStream);
+                                result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
+                            }
                         }
                         response.StatusCode = 200;
                     }
@@ -248,7 +252,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
                     }
 
                     // Serialize the response
-                    if (request.Headers["Accept"] != null && invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.Raw)
+                    if (request.Headers["Accept"] != null && invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.Raw &&
+                        invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>()?.MessageFormat != RestMessageFormat.SimpleJson)
                     {
                         var serializer = this.m_contentTypeHandler.GetSerializer(request.Headers["Accept"].Split(',')[0], result.GetType());
                         if (serializer != null)
@@ -271,6 +276,11 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                     response.OutputStream.Write(buffer, 0, br);
                                 }
                                 break;
+                            case RestMessageFormat.SimpleJson:
+                                response.ContentType = "application/json";
+                                using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                                    sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData));
+                                break;
                             case RestMessageFormat.Json:
                                 response.ContentType = "application/json";
                                 this.m_contentTypeHandler.GetSerializer("application/json", invoke.Method.ReturnType).Serialize(response.OutputStream, result.GetType());
@@ -289,8 +299,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 403;
-                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html",
-                        this.m_scanApplets[0]);
+                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
                 var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
@@ -309,8 +318,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 {
                     response.StatusCode = 403;
 
-                    var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html",
-                        this.m_scanApplets[0]);
+                    var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
                     var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                     response.OutputStream.Write(buffer, 0, buffer.Length);
                 }
@@ -320,8 +328,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 404;
-                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html",
-                    this.m_scanApplets[0]);
+                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html");
                 var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
@@ -330,8 +337,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 500;
-                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html",
-                    this.m_scanApplets[0]);
+                var errAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
                 var buffer = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
@@ -361,18 +367,18 @@ namespace OpenIZ.Mobile.Core.Android.Services
 
             // Navigate asset
             AppletAsset navigateAsset = null;
-
-            if (!this.m_cacheApplets.TryGetValue(request.Url.AbsolutePath, out navigateAsset))
+            String appletPath = request.Url.AbsolutePath.ToLower();
+            if (!this.m_cacheApplets.TryGetValue(appletPath, out navigateAsset))
             {
 
-                navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(request.Url.AbsolutePath);
+                navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(appletPath);
 
                 if (navigateAsset == null)
                     throw new FileNotFoundException(request.RawUrl);
 
                 lock (m_lockObject)
-                    if (!this.m_cacheApplets.ContainsKey(request.Url.AbsolutePath))
-                        this.m_cacheApplets.Add(request.Url.AbsolutePath, navigateAsset);
+                    if (!this.m_cacheApplets.ContainsKey(appletPath))
+                        this.m_cacheApplets.Add(appletPath, navigateAsset);
             }
 
             // Block access to HTML f

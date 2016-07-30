@@ -41,6 +41,20 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 return s_instance;
             }
         }
+
+        ///// <summary>
+        ///// Release the connection
+        ///// </summary>
+        ///// <param name="databasePath"></param>
+        //public void ReleaseConnection(string databasePath)
+        //{
+        //    Object lockObject = null;
+        //    if (!this.m_locks.TryGetValue(databasePath, out lockObject))
+        //        return;
+        //    else
+        //        Monitor.Exit(lockObject);
+        //}
+
         /// <summary>
         /// SQLLiteConnection manager
         /// </summary>
@@ -54,17 +68,21 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public SQLiteConnectionWithLock GetConnection(String dataSource)
         {
+            SQLiteConnectionWithLock conn = null;
+
             try
             {
-                SQLiteConnectionWithLock conn = null;
                 if (!this.m_connections.TryGetValue(dataSource, out conn))
                     lock (s_lockObject)
                         if (!this.m_connections.TryGetValue(dataSource, out conn))
                         {
+
                             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-#if DEBUG
-                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, false));
-                            conn.TraceListener = new TracerTraceListener();
+                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString( dataSource, true));
+                            this.m_connections.Add(dataSource, conn);
+                            this.m_tracer.TraceInfo("Connection to {0} established, {1} active connections", dataSource, this.m_connections.Count);
+#if DEBUG_SQL
+                conn.TraceListener = new TracerTraceListener();
 #endif
                         }
                 return conn;
@@ -72,6 +90,8 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             catch(Exception e)
             {
                 this.m_tracer.TraceError("Error getting connection: {0}", e);
+                if (conn != null)
+                    Monitor.Exit(conn);
                 throw;
             }
         }
@@ -90,7 +110,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public void Receive(string message)
         {
-            this.m_tracer.TraceInfo(message);
+            this.m_tracer.TraceVerbose(message);
         }
     }
 }

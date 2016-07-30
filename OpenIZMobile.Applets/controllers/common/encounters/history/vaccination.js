@@ -18,19 +18,27 @@ angular.element(document).ready(function () {
         // Iterate through vaccinations and organize them by antigen
         // TODO: Change this to be an AJAX call
         scope.display._vaccineAdministrations = {};
-        for(var ptcpt in scope.patient.participation.RecordTarget)
-        {
-            var model = scope.patient.participation.RecordTarget[ptcpt].sourceModel;
-            
-            var antigenId = model.participation.ExposureAgent[0].name.OfficialRecord[0].component.Other[0];
-            if (scope.display._vaccineAdministrations[antigenId] == null) {
-                scope.display._vaccineAdministrations[antigenId] = [];
-                for (var i = 0; i < model.doseSequence; i++)
-                    scope.display._vaccineAdministrations[antigenId].push(null);
-                model._enabled = true;
-            }
-            scope.display._vaccineAdministrations[antigenId].push(model);
-            scope.$apply();
-        }
+
+        scope.$watch(function (s) { return s.patient.participation }, function (newValue, oldValue) {
+            scope.display._vaccineAdministrations = {};
+            if(newValue != null)
+                for (var ptcpt in newValue.RecordTarget) {
+                    var model = newValue.RecordTarget[ptcpt].actModel;
+
+                    // Ignore anything except substance admins
+                    if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                        continue;
+
+                    var antigenId = model.participation.Product[0].playerModel.name.OfficialRecord[0].component.$other[0];
+                    if (scope.display._vaccineAdministrations[antigenId] == null) {
+                        scope.display._vaccineAdministrations[antigenId] = [];
+                        for (var i = 0; i < model.doseSequence; i++)
+                            scope.display._vaccineAdministrations[antigenId].push(null);
+                        //model._enabled = true;
+                    }
+                    scope.display._vaccineAdministrations[antigenId].push(model);
+    //                scope.$apply();
+                }
+        });
     });
 });
