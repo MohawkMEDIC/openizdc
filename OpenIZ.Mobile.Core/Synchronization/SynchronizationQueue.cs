@@ -246,7 +246,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 try
                 {
                     // Fetch the object
-                    var queueItem = conn.Table<TQueueEntry>().OrderBy(i => i.Id).First();
+                    var queueItem = conn.Table<TQueueEntry>().Where(o=>o.Id >= 0).OrderBy(i => i.Id).First();
 
                     // Delete the object
                     using (conn.Lock())

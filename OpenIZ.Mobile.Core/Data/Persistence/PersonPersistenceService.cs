@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
-            if (modelInstance.DateOfBirthPrecision.HasValue)
+            if (modelInstance.DateOfBirthPrecision.HasValue && PrecisionMap.ContainsKey(modelInstance.DateOfBirthPrecision.Value))
                 dbPerson.DateOfBirthPrecision = PrecisionMap[modelInstance.DateOfBirthPrecision.Value];
             return dbPerson;
         }

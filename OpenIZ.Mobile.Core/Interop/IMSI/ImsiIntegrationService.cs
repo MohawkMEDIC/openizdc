@@ -77,6 +77,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             };
             if (options.Credentials != null)
                 client.Client.Credentials = options.Credentials;
+            if (options.Timeout.HasValue)
+                client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
 
             var retVal = client.Query<TModel>(predicate, offset, count);
             //retVal?.Reconstitute();

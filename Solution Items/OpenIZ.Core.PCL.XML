@@ -1,0 +1,1463 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Core.PCL</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Core.Diagnostics.Tracer">
+            <summary>
+            Represents a logger
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.AddWriter(OpenIZ.Core.Diagnostics.TraceWriter)">
+            <summary>
+            Adds a writer to the trace stack
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="!:OpenIZ.Core.Diagnostics.Logger"/> class.
+            </summary>
+            <param name="source">Source.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.GetTracer(System.Type)">
+            <summary>
+            Creates a logging interface for the specified source
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.TraceEvent(System.Diagnostics.Tracing.EventLevel,System.String,System.Object[])">
+            <summary>
+            Trace an event
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.TraceError(System.String,System.Object[])">
+            <summary>
+            Trace error
+            </summary>
+            <param name="format">Format.</param>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.TraceWarning(System.String,System.Object[])">
+            <summary>
+            Trace error
+            </summary>
+            <param name="format">Format.</param>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.TraceInfo(System.String,System.Object[])">
+            <summary>
+            Trace error
+            </summary>
+            <param name="format">Format.</param>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.Tracer.TraceVerbose(System.String,System.Object[])">
+            <summary>
+            Trace error
+            </summary>
+            <param name="format">Format.</param>
+            <param name="args">Arguments.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Diagnostics.TraceWriter">
+            <summary>
+            Because we're using PCL we have to wrap the TraceWriter interface
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.TraceWriter.TraceInfo(System.String,System.String,System.Object[])">
+            <summary>
+            Trace information
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.TraceWriter.TraceEvent(System.Diagnostics.Tracing.EventLevel,System.String,System.String,System.Object[])">
+            <summary>
+            Trace an event to the writer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.TraceWriter.WriteTrace(System.Diagnostics.Tracing.EventLevel,System.String,System.String,System.Object[])">
+            <summary>
+            Write data to the event
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.TraceWriter.TraceError(System.String,System.String,System.Object[])">
+            <summary>
+            Trace an error
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Diagnostics.TraceWriter.TraceWarning(System.String,System.String,System.Object[])">
+            <summary>
+            Trace warning
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Credentials">
+            <summary>
+            Represents a series of credentials which are used when accessing the mobile core
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.Credentials.#ctor(System.Security.Principal.IPrincipal)">
+            <summary>
+            Initializes a new instance of the <see cref="!:OpenIZ.Mobile.Core.Authentication.Credentials"/> class.
+            </summary>
+            <param name="principal">Principal.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Credentials.Principal">
+            <summary>
+            Gets the principal represented by this credential
+            </summary>
+            <value>The principal.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Http.Credentials.GetHttpHeaders">
+            <summary>
+            Get the http headers which are requried for the credential
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.DefaultContentTypeMapper">
+            <summary>
+            Default body binder.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.DefaultContentTypeMapper.GetSerializer(System.String,System.Type)">
+            <summary>
+            Gets the body serializer based on the content type
+            </summary>
+            <returns>The serializer.</returns>
+            <param name="contentType">Content type.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.IRestClientCertificateDescription">
+            <summary>
+            Certificate description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientCertificateDescription.FindType">
+            <summary>
+            Gets the type of find algorithm of X509FindType
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientCertificateDescription.StoreName">
+            <summary>
+            Gets the name of the certificate store
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientCertificateDescription.StoreLocation">
+            <summary>
+            Gets the location of the certificate store
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientCertificateDescription.FindValue">
+            <summary>
+            Gets the find value
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.IRestClientEndpointDescription">
+            <summary>
+            REST based client endpoint description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientEndpointDescription.Address">
+            <summary>
+            Gets the address of the endpoint
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientEndpointDescription.Timeout">
+            <summary>
+            Gets or sets the timeouts
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.IRestClientBindingDescription">
+            <summary>
+            REST client binding
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientBindingDescription.ContentTypeMapper">
+            <summary>
+            Content type mapper
+            </summary>
+            <value>The content type mapper.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientBindingDescription.Security">
+            <summary>
+            Gets or sets the security configuration
+            </summary>
+            <value>The security.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientBindingDescription.Optimize">
+            <summary>
+            Gets or sets a value indicating whether this <see cref="!:OpenIZ.Mobile.Core.Configuration.ServiceClientBinding"/>
+            is optimized
+            </summary>
+            <value><c>true</c> if optimize; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.IRestClientDescription">
+            <summary>
+            Represents a description of a service
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientDescription.Endpoint">
+            <summary>
+            Gets or sets the endpoints for the client
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientDescription.Binding">
+            <summary>
+            Gets or sets the binding for the service client.
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.IRestClientSecurityDescription">
+            <summary>
+            Represtens REST client security description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.CertificateValidator">
+            <summary>
+            Gets the certificate validator
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.CredentialProvider">
+            <summary>
+            Gets the credential provider
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.Mode">
+            <summary>
+            Gets or sets the mode of security
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.ClientCertificate">
+            <summary>
+            Gets the certificate
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.AuthRealm">
+            <summary>
+            Gets the authentication realm
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientSecurityDescription.PreemptiveAuthentication">
+            <summary>
+            When true instructs the client to pre-emptively authenticate itself
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.Description.SecurityScheme">
+            <summary>
+            Security scheme
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.FormElementAttribute">
+            <summary>
+            Form element attribute.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.FormElementAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Http.FormElementAttribute"/> class.
+            </summary>
+            <param name="name">Name.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Http.FormElementAttribute.Name">
+            <summary>
+            Gets or sets the name.
+            </summary>
+            <value>The name.</value>
+        </member>
+        <member name="T:OpenIZ.Core.Http.FormBodySerializer">
+            <summary>
+            Form body serializer.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.FormBodySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.FormBodySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            De-serialize
+            </summary>
+            <returns>The serialize.</returns>
+            <param name="s">S.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Http.HttpBasicCredentials">
+            <summary>
+            Represents a credential provider which does basic http
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.HttpBasicCredentials.#ctor(System.Security.Principal.IPrincipal,System.String)">
+            <summary>
+            Creates the basic credential 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.HttpBasicCredentials.GetHttpHeaders">
+            <summary>
+            Gets the HTTP headers
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.IBodySerializer">
+            <summary>
+            Defines behavior of a content/type mapper
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IBodySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IBodySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            Serialize the reply stream
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.IContentTypeMapper">
+            <summary>
+            Defines a class that binds a series of serializers to content/types
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IContentTypeMapper.GetSerializer(System.String,System.Type)">
+            <summary>
+            Gets the body serializer based on the content type
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.ICertificateValidator">
+            <summary>
+            Fired when there are invalid certificate is encountered
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.ICertificateValidator.ValidateCertificate(System.Object,System.Object)">
+            <summary>
+            Determines if the remote certificate is valid
+            </summary>
+            <returns><c>true</c>, if certificate was validated, <c>false</c> otherwise.</returns>
+            <param name="certificate">Certificate.</param>
+            <param name="chain">Chain.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Http.ICredentialProvider">
+            <summary>
+            Authorization event args
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.ICredentialProvider.GetCredentials(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Gets or sets the credentials which are used to authenticate
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.ICredentialProvider.Authenticate(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Authenticate a user in the credential.
+            </summary>
+            <param name="context">Context.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Http.ICredentialProvider.GetCredentials(System.Security.Principal.IPrincipal)">
+            <summary>
+            Gets credentials for the specified principal
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.IRestClient">
+            <summary>
+            Represents a RESTFul client which encapsulates some of the functions of the request
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.IRestClient.Credentials">
+            <summary>
+            Gets or sets the credentials to be used for this client
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.IRestClient.Accept">
+            <summary>
+            Gets or sets a list of acceptable response formats
+            </summary>
+            <value>The accept.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Get``1(System.String)">
+            <summary>
+            Gets the specified item
+            </summary>
+            <param name="resourceName">Resource name.</param>
+            <param name="queryString">Query string.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Get``1(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Gets a inumerable result set of type T
+            </summary>
+            <param name="resourceName">Resource name.</param>
+            <param name="query">Query.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Invoke``2(System.String,System.String,System.String,``0)">
+            <summary>
+            Invokes the specified method against the URL provided
+            </summary>
+            <param name="method">Method.</param>
+            <param name="resourceName">Resource name.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Invoke``2(System.String,System.String,System.String,``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Invokes the specified method against the url provided
+            </summary>
+            <param name="method">Method.</param>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <param name="query">Query.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Post``2(System.String,System.String,``0)">
+            <summary>
+            Executes a post against the url
+            </summary>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Delete``1(System.String)">
+            <summary>
+            Deletes the specified object
+            </summary>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Put``2(System.String,System.String,``0)">
+            <summary>
+            Executes a PUT for the specified object
+            </summary>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Options``1(System.String)">
+            <summary>
+            Executes an Options against the URL
+            </summary>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.IRestClient.Head(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Executes a HEAD operation against the URL
+            </summary>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="P:OpenIZ.Core.Http.IRestClient.Description">
+            <summary>
+            Gets the service client description
+            </summary>
+            <value>The description.</value>
+        </member>
+        <member name="E:OpenIZ.Core.Http.IRestClient.Requesting">
+            <summary>
+            Fired prior to rest client invoking a method
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Http.IRestClient.Responded">
+            <summary>
+            Fired after the request has been finished
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.JsonBodySerializer">
+            <summary>
+            Represents a body serializer that uses JSON
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.JsonBodySerializer.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Http.JsonBodySerializer"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.JsonBodySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.JsonBodySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            De-serialize the body
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.RestClientBase">
+            <summary>
+            Represents a simple rest client
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Http.RestClientBase.Requesting">
+            <summary>
+            Fired on request
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Http.RestClientBase.Responded">
+            <summary>
+            Fired on response
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="!:OpenIZ.Core.Http.RestClient"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.#ctor(OpenIZ.Core.Http.Description.IRestClientDescription)">
+            <summary>
+            Initializes a new instance of the <see cref="!:OpenIZ.Core.Http.RestClient"/> class.
+            </summary>
+            <param name="binder">The serialization binder to use.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateQueryString(System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Create the query string from a list of query parameters
+            </summary>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateHttpRequest(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Create the HTTP request
+            </summary>
+            <param name="url">URL.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Get``1(System.String)">
+            <summary>
+            Gets the specified item
+            </summary>
+            <param name="resourceName">Resource name.</param>
+            <param name="queryString">Query string.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Get``1(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Gets a inumerable result set of type T
+            </summary>
+            <param name="resourceName">Resource name.</param>
+            <param name="query">Query.</param>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Invoke``2(System.String,System.String,System.String,``0)">
+            <summary>
+            Invokes the specified method against the URL provided
+            </summary>
+            <param name="method">Method.</param>
+            <param name="resourceName">Resource name.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+            <param name="url">URL.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Invoke``2(System.String,System.String,System.String,``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Invoke the specified method
+            </summary>
+            <typeparam name="TBody"></typeparam>
+            <typeparam name="TResult"></typeparam>
+            <param name="method"></param>
+            <param name="url"></param>
+            <param name="contentType"></param>
+            <param name="body"></param>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.InvokeInternal``2(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.Net.HttpRequestHeader,System.String},``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Invokes the specified method against the url provided
+            </summary>
+            <param name="method">Method.</param>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <param name="query">Query.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Post``2(System.String,System.String,``0)">
+            <summary>
+            Executes a post against the url
+            </summary>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Delete``1(System.String)">
+            <summary>
+            Deletes the specified object
+            </summary>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Put``2(System.String,System.String,``0)">
+            <summary>
+            Executes a PUT for the specified object
+            </summary>
+            <param name="url">URL.</param>
+            <param name="contentType">Content type.</param>
+            <param name="body">Body.</param>
+            <typeparam name="TBody">The 1st type parameter.</typeparam>
+            <typeparam name="TResult">The 2nd type parameter.</typeparam>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Options``1(System.String)">
+            <summary>
+            Executes an Options against the URL
+            </summary>
+            <param name="url">URL.</param>
+            <typeparam name="TResult">The 1st type parameter.</typeparam>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientBase.Credentials">
+            <summary>
+            Gets or sets the credentials to be used for this client
+            </summary>
+            <value>The credentials.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientBase.Accept">
+            <summary>
+            Gets or sets a list of acceptable response formats
+            </summary>
+            <value>The accept.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientBase.Description">
+            <summary>
+            Get the description of this service
+            </summary>
+            <value>The description.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.ValidateResponse(System.Net.WebResponse)">
+            <summary>
+            Validate the response
+            </summary>
+            <returns><c>true</c>, if response was validated, <c>false</c> otherwise.</returns>
+            <param name="response">Response.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+            <filterpriority>2</filterpriority>
+            <remarks>Call <see cref="M:OpenIZ.Core.Http.RestClientBase.Dispose"/> when you are finished using the <see cref="T:OpenIZ.Core.Http.RestClientBase"/>.
+            The <see cref="M:OpenIZ.Core.Http.RestClientBase.Dispose"/> method leaves the <see cref="T:OpenIZ.Core.Http.RestClientBase"/> in an unusable
+            state. After calling <see cref="M:OpenIZ.Core.Http.RestClientBase.Dispose"/>, you must release all references to the
+            <see cref="T:OpenIZ.Core.Http.RestClientBase"/> so the garbage collector can reclaim the memory that the
+            <see cref="T:OpenIZ.Core.Http.RestClientBase"/> was occupying.</remarks>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientBase.Head(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+            <summary>
+            Perform a head operation against the specified url
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.ServiceClientErrorType">
+            <summary>
+            Service client error type
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.RestClientException`1">
+            <summary>
+            Rest client exception.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientException`1.Result">
+            <summary>
+            The result
+            </summary>
+            <value>The result.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientException`1.#ctor(`0,System.Exception,System.Net.WebExceptionStatus,System.Net.WebResponse)">
+            <summary>
+            Create the client exception
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientException`1.ToString">
+            <summary>
+            Returns a string that represents the current object.
+            </summary>
+            <returns>A string that represents the current object.</returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="T:OpenIZ.Core.Http.RestClientEventArgsBase">
+            <summary>
+            Rest client request
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientEventArgsBase.#ctor(System.String,System.String,OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Object)">
+            <summary>
+            Rest client event args
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientEventArgsBase.Query">
+            <summary>
+            Query passed to the request
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientEventArgsBase.Method">
+            <summary>
+            Gets the method
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientEventArgsBase.Url">
+            <summary>
+            Gets or sets the URL of the request
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientEventArgsBase.Body">
+            <summary>
+            Gets or sets the body of the request / response
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestClientEventArgsBase.ContentType">
+            <summary>
+            Gets the content type
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.RestRequestEventArgs">
+            <summary>
+            Request event args
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestRequestEventArgs.#ctor(System.String,System.String,OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Object)">
+            <summary>
+            Creates the request event args with the specified values
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestRequestEventArgs.AdditionalHeaders">
+            <summary>
+            Gets or sets additional headers
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestRequestEventArgs.Cancel">
+            <summary>
+            Gets or sets an indicator whether this request can be cancelled
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.RestResponseEventArgs">
+            <summary>
+            Rest client event args
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestResponseEventArgs.#ctor(System.String,System.String,OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Object,System.Int32)">
+            <summary>
+            REST response client event args
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.RestResponseEventArgs.StatusCode">
+            <summary>
+            Identifies the response code
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.XmlBodySerializer">
+            <summary>
+            Represents a body serializer that uses XmlSerializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.XmlBodySerializer.#ctor(System.Type)">
+            <summary>
+            Creates a new body serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.XmlBodySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.XmlBodySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            Serialize the reply stream
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.Clients.ServiceClientBase">
+            <summary>
+            Represents a basic service client
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.Clients.ServiceClientBase.Client">
+            <summary>
+            Gets the client.
+            </summary>
+            <value>The client.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Interop.Clients.ServiceClientBase.#ctor(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="!:OpenIZ.Mobile.Core.Interop.Clients.ServiceClientBase"/> class.
+            </summary>
+            <param name="clientName">Client name.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Services.ICarePlanService">
+            <summary>
+            Represents a class which can create care plans
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create a care plam
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.ICarePlanService.Protocols">
+            <summary>
+            Gets the list of protocols which can be or should be used to create the care plans
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.ICarePlanService.Repository">
+            <summary>
+            Gets or sets the clinical repository to use
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IClinicalProtocolRepositoryService">
+            <summary>
+            Represents a service that can do clinical protocols
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IClinicalProtocolRepositoryService.FindProtocol(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Acts.Protocol,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Find protocols in the repository service
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IClinicalProtocolRepositoryService.InsertProtocol(OpenIZ.Core.Model.Acts.Protocol)">
+            <summary>
+            Find protocols in the repository service
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IConceptRepositoryService">
+            <summary>
+            Represents a service which is responsible for the
+            maintenance of concepts
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertConcept(OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Perform an insert, throwing an error if duplicate exists
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConcept(OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Inserts or updates a concept into the persistence store
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveReferenceTerm(OpenIZ.Core.Model.DataTypes.ReferenceTerm)">
+            <summary>
+            Saves a reference term
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConceptClass(OpenIZ.Core.Model.DataTypes.ConceptClass)">
+            <summary>
+            Saves a concept class
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptSet(System.String)">
+            <summary>
+            Get the concept set by mnemonic
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConcept(System.String)">
+            <summary>
+            Get a concept by its mnemonic
+            </summary>
+            <param name="mnemonic">The concept mnemonic to get</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConcepts(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.Concept,System.Boolean}})">
+            <summary>
+            Performs an arbirary query 
+            </summary>
+            <param name="query">The query to execute</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConcepts(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.Concept,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Find concepts 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptsByName(System.String,System.String)">
+            <summary>
+            Finds a series of concepts by name
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptsByReferenceTerm(System.String,System.String)">
+            <summary>
+            Find a reference term by code system oid
+            </summary>
+            <param name="code">The code</param>
+            <param name="codeSystemOid">The oid of the code system</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.Implies(OpenIZ.Core.Model.DataTypes.Concept,OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.IsMember(OpenIZ.Core.Model.DataTypes.ConceptSet,OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Returns true if the concept <paramref name="concept"/> is a member of set <paramref name="set"/>
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetReferenceTerm(OpenIZ.Core.Model.DataTypes.Concept,System.String)">
+            <summary>
+            Gets the specified reference term from <paramref name="concept"/> in <paramref name="codeSystemOid"/>
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConcept(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified concept
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.ObsoleteConcept(System.Guid)">
+            <summary>
+            Obsoletes the specified concept
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertConceptSet(OpenIZ.Core.Model.DataTypes.ConceptSet)">
+            <summary>
+            Creates the specified concept set
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConceptSet(OpenIZ.Core.Model.DataTypes.ConceptSet)">
+            <summary>
+            Saves or updates the existing concept set
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.ObsoleteConceptSet(System.Guid)">
+            <summary>
+            Obsoletes the concept set
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptSet(System.Guid)">
+            <summary>
+            Gets the specified concept set.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptSets(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptSet,System.Boolean}})">
+            <summary>
+            Performs an arbirary query 
+            </summary>
+            <param name="query">The query to execute</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptSets(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptSet,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Find concepts 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IDataCachingService">
+            <summary>
+            Represents a data caching service which allows services to retrieve
+            cached objects
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem``1(System.Guid)">
+            <summary>
+            Get the specified cache item
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IMaterialRepositoryService">
+            <summary>
+            Represents the repository handler for materials
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.SaveMaterial(OpenIZ.Core.Model.Entities.Material)">
+            <summary>
+            Saves the specified material from data layer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.InsertMaterial(OpenIZ.Core.Model.Entities.Material)">
+            <summary>
+            Inserts the material in the persistence layer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.GetMaterial(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified material from the database
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.ObsoleteMaterial(System.Guid)">
+            <summary>
+            Obsoletes the specified material
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
+            <summary>
+            Finds the specified material
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Finds the specified material with the specified restrictions
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.Impl.IMetadataRepositoryService">
+            <summary>
+            Represents a repository which deals with metadata such as assigning authorities,
+            concept classes, etc.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.IMetadataRepositoryService.GetAssigningAuthority(System.Guid)">
+            <summary>
+            Gets an assigning authority
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.IMetadataRepositoryService.FindAssigningAuthority(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.Boolean}})">
+            <summary>
+            Finds the specified assigning authority 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.IMetadataRepositoryService.FindAssigningAuthority(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Finds the specified assigning authority with restrictions
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler">
+            <summary>
+            null algorithm phonetic algorithm
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler.AlgorithmId">
+            <summary>
+            Gets the algorithm id
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.NullPhoneticAlgorithmHandler.GenerateCode(System.String)">
+            <summary>
+            Generate the phonetic code
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPatientRepositoryService">
+            <summary>
+            Represents the patient repository service. This service is responsible
+            for ensuring that patient roles in the IMS database are in a consistent 
+            state.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Insert(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Inserts the given patient
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Save(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Updates the given patient only if they already exist
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the given patient
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Merge(OpenIZ.Core.Model.Roles.Patient,OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Merges two patients together
+            </summary>
+            <param name="survivor">The surviving patient record</param>
+            <param name="victim">The victim patient record</param>
+            <returns>A new version of patient <paramref name="a"/> representing the merge</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified patient
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.UnMerge(OpenIZ.Core.Model.Roles.Patient,System.Guid)">
+            <summary>
+            Un-merges two patients from each other
+            </summary>
+            <param name="patient">The patient which is to be un-merged</param>
+            <param name="versionKey">The version of patient P where the split should occur</param>
+            <returns>A new patient representing the split record</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Roles.Patient,System.Boolean}})">
+            <summary>
+            Searches the patient service for the specified patient matching the 
+            given predicate
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatientRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Roles.Patient,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches the database for the specified patient
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPhoneticAlgorithmHandler">
+            <summary>
+            Phonetic algorithm handler
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.IPhoneticAlgorithmHandler.AlgorithmId">
+            <summary>
+            Gets the algorithm ID
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPhoneticAlgorithmHandler.GenerateCode(System.String)">
+            <summary>
+            Generate a phonetic code from the input data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPlaceRepositoryService">
+            <summary>
+            Represents a repository service for managing places
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Insert(OpenIZ.Core.Model.Entities.Place)">
+            <summary>
+            Inserts the specified place
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Save(OpenIZ.Core.Model.Entities.Place)">
+            <summary>
+            Saves the specified place
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the specified place
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified place
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Place,System.Boolean}})">
+            <summary>
+            Searches the patient service for the specified place matching the 
+            given predicate
+            </summary>
+            <param name="predicate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPlaceRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Place,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches the database for the specified place
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Insert(OpenIZ.Core.Model.Roles.Provider)">
+            <summary>
+            Inserts the specified provider.
+            </summary>
+            <param name="provider">The provider to insert.</param>
+            <returns>Returns the inserted provider.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Save(OpenIZ.Core.Model.Roles.Provider)">
+            <summary>
+            /// Saves the specified provider.
+            </summary>
+            <param name="provider">The provider to save.</param>
+            <returns>Returns the saved provider.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the specified provider.
+            </summary>
+            <param name="id">The id of the provider to obsolete.</param>
+            <returns>Returns the obsoleted provider.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified provider.
+            </summary>
+            <param name="id">The id of the provider.</param>
+            <param name="versionId">The version id of the provider.</param>
+            <returns>Returns the specified provider.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Roles.Provider,System.Boolean}})">
+            <summary>
+            Searches for a provider using a given predicate.
+            </summary>
+            <param name="predicate">The predicate to use for searching for the provider.</param>
+            <returns>Returns a list of providers who match the specified predicate.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IProviderRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Roles.Provider,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches for a provider using a given predicate.
+            </summary>
+            <param name="predicate">The predicate to use for searching for the provider.</param>
+            <param name="count">The count of the providers to return.</param>
+            <param name="offset">The offset for the search results.</param>
+            <param name="totalCount">The total count of the search results.</param>
+            <returns>Returns a list of providers who match the specified predicate.</returns>
+        </member>
+        <member name="T:OpenIZ.Core.Services.ISecurityRepositoryService">
+            <summary>
+            Security repository service is responsible for the maintenance of security entities
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.ChangePassword(System.Guid,System.String)">
+            <summary>
+            Changes a user's password.
+            </summary>
+            <param name="userId">The id of the user.</param>
+            <param name="password">The new password of the user.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.CreateDevice(OpenIZ.Core.Model.Security.SecurityDevice)">
+            <summary>
+            Creates a device.
+            </summary>
+            <param name="device">The security device.</param>
+            <returns>Returns the newly created device.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.CreateRole(OpenIZ.Core.Model.Security.SecurityRole)">
+            <summary>
+            Creates a role.
+            </summary>
+            <param name="roleInfo">The security role.</param>
+            <returns>Returns the newly created security role.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.CreateUser(OpenIZ.Core.Model.Security.SecurityUser,System.String)">
+            <summary>
+            Creates a user with a specified password.
+            </summary>
+            <param name="userInfo">The security user.</param>
+            <param name="password">The password.</param>
+            <returns>Returns the newly created user.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindDevices(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityDevice,System.Boolean}})">
+            <summary>
+            Gets a list of devices based on a query.
+            </summary>
+            <param name="query">The query to use to match the devices.</param>
+            <returns>Returns a list of devices.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindDevices(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityDevice,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Gets a list of devices based on a query.
+            </summary>
+            <param name="query">The filter to use to match the devices.</param>
+            <param name="offset">The offset of the search.</param>
+            <param name="count">The number of devices.</param>
+            <param name="totalResults">The total number of devices.</param>
+            <returns>Returns a list of devices.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindPolicies(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}})">
+            <summary>
+            Gets a list of policies based on a query.
+            </summary>
+            <param name="query">The query to use to match the policies.</param>
+            <returns>Returns a list of policies.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindPolicies(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Gets a list of policies based on a query.
+            </summary>
+            <param name="query">The query to use to match the policies.</param>
+            <param name="offset">The offset of the search.</param>
+            <param name="count">The number of policies.</param>
+            <param name="totalResults">The total number of policies.</param>
+            <returns>Returns a list of policies.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindRoles(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}})">
+            <summary>
+            Gets a list of roles based on a query.
+            </summary>
+            <param name="query">The query to use to match the roles.</param>
+            <returns>Returns a list of roles.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindRoles(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Gets a list of roles based on a query.
+            </summary>
+            <param name="query">The query to use to match the roles.</param>
+            <param name="offset">The offset of the search.</param>
+            <param name="count">The number of roles.</param>
+            <param name="totalResults">The total number of roles.</param>
+            <returns>Returns a list of roles.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.CreateUserEntity(OpenIZ.Core.Model.Entities.UserEntity)">
+            <summary>
+            Creates the specified user entity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindUsers(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityUser,System.Boolean}})">
+            <summary>
+            Gets a list of users based on a query.
+            </summary>
+            <param name="query">The query to use to match the users.</param>
+            <returns>Returns a list of users.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindUsers(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityUser,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Gets a list of users based on a query.
+            </summary>
+            <param name="query">The query to use to match the users.</param>
+            <param name="offset">The offset of the search.</param>
+            <param name="count">The number of users.</param>
+            <param name="totalResults">The total number of users.</param>
+            <returns>Returns a list of roles.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetDevice(System.Guid)">
+            <summary>
+            Gets a specific device.
+            </summary>
+            <param name="deviceId">The id of the device to be retrieved.</param>
+            <returns>Returns the device.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetUserEntity(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified user entity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetRole(System.Guid)">
+            <summary>
+            Gets a specific role.
+            </summary>
+            <param name="roleId">The id of the role to retrieve.</param>
+            <returns>Returns the role.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.ObsoleteUserEntity(System.Guid)">
+            <summary>
+            Obsoletes the specfied user entity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetUser(System.Guid)">
+            <summary>
+            Gets a specific user.
+            </summary>
+            <param name="userId">The id of the user to retrieve.</param>
+            <returns>Returns the user.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetUser(System.Security.Principal.IIdentity)">
+            <summary>
+            Gets the specified security user based on the principal
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.LockUser(System.Guid)">
+            <summary>
+            Locks a specific user.
+            </summary>
+            <param name="userId">The id of the user to lock.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.ObsoleteDevice(System.Guid)">
+            <summary>
+            Obsoletes a device.
+            </summary>
+            <param name="deviceId">The id of the device to be obsoleted.</param>
+            <returns>Returns the obsoleted device.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.ObsoleteRole(System.Guid)">
+            <summary>
+            Obsoletes a role.
+            </summary>
+            <param name="roleId">The id of the role to be obsoleted.</param>
+            <returns>Returns the obsoleted role.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.ObsoleteUser(System.Guid)">
+            <summary>
+            Obsoletes a user.
+            </summary>
+            <param name="userId">The id of the user to be obsoleted.</param>
+            <returns>Returns the obsoleted user.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindUserEntity(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.UserEntity,System.Boolean}})">
+            <summary>
+            Finds the specified user entity 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindUserEntity(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.UserEntity,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds the specified user entity 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.SaveDevice(OpenIZ.Core.Model.Security.SecurityDevice)">
+            <summary>
+            Updates a security device.
+            </summary>
+            <param name="device">The security device containing the updated information.</param>
+            <returns>Returns the updated device.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.SaveRole(OpenIZ.Core.Model.Security.SecurityRole)">
+            <summary>
+            Updates a security role.
+            </summary>
+            <param name="role">The security role containing the updated information.</param>
+            <returns>Returns the updated role.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.SaveUserEntity(OpenIZ.Core.Model.Entities.UserEntity)">
+            <summary>
+            Saves (inserts or updates) the specified user entity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.SaveUser(OpenIZ.Core.Model.Security.SecurityUser)">
+            <summary>
+            Updates a security user.
+            </summary>
+            <param name="user">The security user containing the updated information.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.UnlockUser(System.Guid)">
+            <summary>
+            Unlocks a specific user.
+            </summary>
+            <param name="userId">The id of the user to be unlocked.</param>
+        </member>
+        <member name="T:OpenIZ.Core.Protocol.IClinicalProtocol">
+            <summary>
+            Represents a clinical protocol
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Load(OpenIZ.Core.Model.Acts.Protocol)">
+            <summary>
+            Load the specified protocol data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.GetProtcolData">
+            <summary>
+            Get the protocol data
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Protocol.IClinicalProtocol.Id">
+            <summary>
+            Gets the identifier for the protocol
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Protocol.IClinicalProtocol.Name">
+            <summary>
+            Gets the name of the protocol
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Calculate(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Calculate the clinical protocol for the given patient
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Update(OpenIZ.Core.Model.Roles.Patient,System.Collections.Generic.List{OpenIZ.Core.Model.Acts.Act})">
+            <summary>
+            Update the care plan based on new data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Protocol.SimpleCarePlanService">
+            <summary>
+            Represents a care plan service that can bundle protocol acts together 
+            based on their start/stop times
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.#ctor">
+            <summary>
+            Constructs the aggregate care planner
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Protocol.SimpleCarePlanService.Protocols">
+            <summary>
+            Gets the protocols
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Protocol.SimpleCarePlanService.Repository">
+            <summary>
+            Gets or sets the repository to be used
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create a care plan
+            </summary>
+            <param name="p"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

@@ -10,8 +10,9 @@ angular.element(document).ready(function () {
 
         // Init data
         scope.patient = scope.patient || new OpenIZModel.Patient({});
-        scope.patient.identifier = scope.patient.identifier || { "NEW" : {authority: "NEW", value: null } };
+        scope.patient.identifier = scope.patient.identifier || { $other : {authority: null, value: null } };
         
+   
         // Scan the specified barcode
         scope.scanBarcode = scope.scanBarcode || function(identifier)
         {

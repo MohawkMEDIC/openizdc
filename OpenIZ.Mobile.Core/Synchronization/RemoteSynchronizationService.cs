@@ -85,29 +85,37 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Pool startup sync if configured..
             this.m_threadPool.QueueUserWorkItem((state) =>
             {
-                if (Monitor.IsEntered(this.m_lock))
-                    return; // Someone has a lock on us
+                
                 try
                 {
-                    lock (this.m_lock)
+                    if(Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
                     {
+                        int totalResults = 0;
                         foreach (var syncResource in this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & SynchronizationPullTriggerType.OnStart) != 0))
                         {
 
                             foreach (var fltr in syncResource.Filters)
-                                this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
+                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
                             if (syncResource.Filters.Count == 0)
-                                this.Pull(syncResource.ResourceType);
+                                totalResults += this.Pull(syncResource.ResourceType);
 
+                        }
+
+                        if (totalResults > 0)
+                        {
+                            var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                            alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
                     }
 
-                    var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                    alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, null, Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                 }
                 catch (Exception e)
                 {
                     this.m_tracer.TraceError("Cannot process startup command: {0}", e);
+                }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
                 }
 
             });
@@ -129,16 +137,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Perform a pull on the root resource
         /// </summary>
-        public void Pull(Type modelType)
+        public int Pull(Type modelType)
         {
-            this.Pull(modelType, new NameValueCollection());
+            return this.Pull(modelType, new NameValueCollection());
 
         }
 
         /// <summary>
         /// Pull the model according to a filter
         /// </summary>
-        public void Pull(Type modelType, NameValueCollection filter)
+        public int Pull(Type modelType, NameValueCollection filter)
         {
             try
             {
@@ -158,28 +166,33 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 var result = new Bundle() { TotalResults = 1 };
                 var eTag = String.Empty;
+                var retVal = 0;
                 // Enqueue
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
                     float perc = i / (float)result.TotalResults;
+                    retVal = result.TotalResults;
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, new NameValueCollection(), i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials });
+                    result = this.m_integrationService.Find(modelType, new NameValueCollection(), i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
 
                     // Queue the act of queueing
-
-                    SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                    if (result != null)
+                        SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                    else
+                        break;
 
                     if (String.IsNullOrEmpty(eTag))
-                        eTag = result.Item.FirstOrDefault()?.Tag;
+                        eTag = result?.Item.FirstOrDefault()?.Tag;
                 }
 
                 // Log that we synchronized successfully
                 SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
-
+                return retVal;
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
+                return 0;
             }
         }
 

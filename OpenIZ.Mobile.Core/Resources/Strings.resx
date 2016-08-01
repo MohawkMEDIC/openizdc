@@ -126,6 +126,14 @@
   <data name="locale_importDoneSubject" xml:space="preserve">
     <value>Remote Data Imported</value>
   </data>
+  <data name="locale_importErrorBody" xml:space="preserve">
+    <value>There was an error importing the data from the remote data source. More details are below:
+
+{0}</value>
+  </data>
+  <data name="locale_importErrorSubject" xml:space="preserve">
+    <value>Error importing remote data</value>
+  </data>
   <data name="locale_setting_deploy" xml:space="preserve">
     <value>Deploying Data</value>
   </data>

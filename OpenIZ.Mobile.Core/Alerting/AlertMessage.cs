@@ -24,11 +24,12 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public AlertMessage(String from, String to, String subject, String body, AlertMessageFlags flags = AlertMessageFlags.None)
         {
+            this.TimeStamp = DateTime.Now;
             this.From = from;
             this.Subject = subject;
             this.Body = body;
             this.To = to;
-            this.CreatedBy = ApplicationContext.Current.Principal.Identity.Name;
+            this.CreatedBy = ApplicationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
             this.Flags = flags;
         }
 
@@ -36,14 +37,14 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// Gets or sets the id of the alert
         /// </summary>
         [JsonProperty("id"), XmlElement("id"), Ignore]
-        public Guid Id { get { return new Guid(this.Key); } set { this.Key = value.ToByteArray(); } }
+        public Guid Id { get { return Guid.Parse(this.Key); } set { this.Key = value.ToString(); } }
 
-        
+
         /// <summary>
         /// The key for data storage
         /// </summary>
-        [JsonIgnore, XmlIgnore, Column("key"), PrimaryKey, MaxLength(16)]
-        public byte[] Key { get; set; }
+        [JsonProperty("key"), XmlElement("key"), Column("key"), PrimaryKey]
+        public String Key { get; set; }
 
         /// <summary>
         /// Gets or sets the time

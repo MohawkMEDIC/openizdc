@@ -31,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
     /// Represents an assigning authority
     /// </summary>
     [Table("assigning_authority")]
-    public class DbAssigningAuthority : DbIdentified
+    public class DbAssigningAuthority : DbBaseData
     {
 
         /// <summary>
@@ -69,6 +69,27 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// </summary>
         [Column("assigningDevice")]
         public byte[] AssigningDeviceUuid { get; set; }
+
+    }
+
+
+    /// <summary>
+    /// Identifier scope
+    /// </summary>
+    [Table("assigning_authority_scope")]
+    public class DbAuthorityScope : DbIdentified
+    {
+        /// <summary>
+        /// Gets or sets the scope of the auhority
+        /// </summary>
+        [Column("authority"), MaxLength(16), NotNull]
+        public byte[] AssigningAuthorityUuid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the scope of the auhority
+        /// </summary>
+        [Column("concept"), MaxLength(16), NotNull]
+        public byte[] ScopeConceptUuid { get; set; }
 
     }
 }

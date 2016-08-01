@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public AlertMessage GetAlert(Guid id)
         {
-            var idKey = id.ToByteArray();
+            var idKey = id.ToString();
             var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
             using (conn.Lock())
                 return conn.Table<AlertMessage>().Where(o => o.Key == idKey).FirstOrDefault();
@@ -105,7 +105,7 @@ namespace OpenIZ.Mobile.Core.Alerting
                     // Check for key and assign ID
                     if (msg.Key == null)
                     {
-                        msg.Key = Guid.NewGuid().ToByteArray();
+                        msg.Key = Guid.NewGuid().ToString();
                         msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
                         conn.Insert(msg);
                     }

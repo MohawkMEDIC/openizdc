@@ -124,6 +124,11 @@
             Gets a list of all tags associated with the act
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Act.Protocols">
+            <summary>
+            Identifies protocols attached to the act
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.Act.Participations">
             <summary>
             Participations
@@ -133,6 +138,12 @@
             <summary>
             Forces the delay load properties in this type to reload
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.Clean">
+            <summary>
+            Clean the patient of any empty "noise" elements
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActParticipation">
             <summary>
@@ -174,9 +185,51 @@
             Gets or sets the role that the entity played in participating in the act
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActParticipation.ActKey">
+            <summary>
+            The entity that this relationship targets
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActParticipation.Act">
+            <summary>
+            The entity that this relationship targets
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.Refresh">
             <summary>
             Forces a delay load from the underlying model
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.Clean">
+            <summary>
+            Clean
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.IsEmpty">
+            <summary>
+            Determine if this is empty
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Acts.ActProtocol">
+            <summary>
+            Represents information related to the clinical protocol to which an act is a member of
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.ProtocolKey">
+            <summary>
+            Gets or sets the protocol  to which this act belongs
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.Protocol">
+            <summary>
+            Gets or sets the protocol data related to the protocol
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.StateData">
+            <summary>
+            Represents any state data related to the act / protocol link
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActRelationship">
@@ -337,6 +390,31 @@
         <member name="M:OpenIZ.Core.Model.Acts.PatientEncounter.Refresh">
             <summary>
             Refresh forcing delay load
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Acts.Protocol">
+            <summary>
+            Represents the model of a protocol
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.Name">
+            <summary>
+            Gets or sets the name of the protocol
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.HandlerClass">
+            <summary>
+            Gets or sets the handler for this protocol (which can load the definition
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.HandlerClassName">
+            <summary>
+            Gets or sets the handler class AQN
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.Definition">
+            <summary>
+            Contains instructions which the handler class can understand
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.SubstanceAdministration">
@@ -1022,6 +1100,11 @@
             Stock class identifier
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.Form">
+            <summary>
+            Represents a form code
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.UnitOfMeasure">
             <summary>
             Unit of measure identifier
@@ -1417,6 +1500,11 @@
             The URL of the assigning authority
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AuthorityScopeXml">
+            <summary>
+            Represents scopes to which the authority is bound
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDeviceKey">
             <summary>
             Assigning device identifier
@@ -1425,6 +1513,11 @@
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDevice">
             <summary>
             Gets or sets the assigning device
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AuthorityScope">
+            <summary>
+            Gets concept sets to which this concept is a member
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.Refresh">
@@ -1892,6 +1985,12 @@
             Force reloading of delay load properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.IdentifierBase`1.IsEmpty">
+            <summary>
+            True if the identifier is empty
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.IdentifierType">
             <summary>
             Represents a basic information class which classifies the use of an identifier
@@ -2327,6 +2426,12 @@
             Gets the acts in which this entity participates
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.Clean">
+            <summary>
+            Clean the patient of any empty "noise" elements
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddress">
             <summary>
             Entity address
@@ -2356,6 +2461,17 @@
             <summary>
             Gets or sets the component types
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityAddress.Clean">
+            <summary>
+            Remove empty components
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityAddress.IsEmpty">
+            <summary>
+            True if empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddressComponent">
             <summary>
@@ -2415,6 +2531,17 @@
             <summary>
             Refreshes the underlying content
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityName.Clean">
+            <summary>
+            Clean object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityName.IsEmpty">
+            <summary>
+            True if empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityNameComponent">
             <summary>
@@ -2499,6 +2626,18 @@
             Gets or sets the association type
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.IsEmpty">
+            <summary>
+            Is empty
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.Clean">
+            <summary>
+            Clean the entity
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.Refresh">
             <summary>
             Refresh this entity
@@ -2523,6 +2662,12 @@
             <summary>
             Gets or sets the name use key
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IsEmpty">
+            <summary>
+            Empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.AddressUse">
             <summary>
@@ -2574,6 +2719,12 @@
             <summary>
             Gets or sets the value of the name component
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.IsEmpty">
+            <summary>
+            Gets if the item is empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.Refresh">
             <summary>
@@ -2921,6 +3072,17 @@
             <summary>
             Gets a tag which changes whenever the object is updated
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.Clean">
+            <summary>
+            Cleans the identified data of any "empty" stuff
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.IsEmpty">
+            <summary>
+            True if the object is empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.IdentifiedData.Clone">
             <summary>
@@ -3914,16 +4076,6 @@
         <member name="P:OpenIZ.Core.Model.Security.SecurityUser.UserPhoto">
             <summary>
             Gets or sets the binary representation of the user's photo
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Security.SecurityUser.Entities">
-            <summary>
-            Gets the list of entities associated with this security user
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Security.SecurityUser.EntitiesXml">
-            <summary>
-            Concepts as identifiers for XML purposes only
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Security.SecurityUser.LastLoginTime">

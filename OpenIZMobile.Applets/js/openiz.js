@@ -23,6 +23,11 @@
 
 
 /// <reference path="~/lib/jquery.min.js"/>
+// SHIM
+var OpenIZApplicationService = window.OpenIZApplicationService || {
+    GetLocale: function () { return 'en'; },
+    GetStrings: function () { return '[]'; }
+};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -97,7 +102,7 @@ var OpenIZ = OpenIZ || {
             $.ajax({
                 method: 'GET',
                 url: "/__ims/" + controlData.resource,
-                data: controlData.data,
+                data: controlData.query,
                 dataType: "json",
                 accept: 'application/json',
                 contentType: 'application/json',
@@ -445,7 +450,7 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    console.info(JSON.stringify(xhr));
+                   // console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
                 },
                 error: function (data) {
@@ -497,10 +502,12 @@ var OpenIZ = OpenIZ || {
          */
         showWait: function (textStr) {
             if (textStr != null)
-                $("#waitModalText").val(textStr);
+                $("#waitModalText").text(textStr);
+            else
+                setTimeout(OpenIZ.App.updateStatus, 6000);
+
             $('#waitModal').modal({ show: true, backdrop: 'static' });
             OpenIZ.App.statusShown = true;
-            setTimeout(OpenIZ.App.updateStatus, 6000);
         },
         /**
          * @summary Hide the waiting panel
@@ -663,8 +670,8 @@ var OpenIZ = OpenIZ || {
          * @summary Send an asynchronous alert
          * @param {Object} alertData The alert data
          */
-        sendAlertAsync: function (controlData) {
-            $.post('/__app/alerts', controlData.alert, function (e) { controlData.continueWith(e); }, "json")
+        saveAlertAsync: function (controlData) {
+            $.post('/__app/alerts', controlData.data, function (e) { controlData.continueWith(e); }, "json")
             .fail(function (data) {
                 var error = data.responseJSON;
                 if (error.error !== undefined) // structured error
@@ -1178,14 +1185,13 @@ var OpenIZ = OpenIZ || {
                 escapeMarkup: function (markup) { return markup; }, // Format normally
                 minimumInputLength: 4,
                 templateSelection: function (place) {
-                    return "<span class='glyphicon glyphicon-map-marker'></span>" + place.name.OfficialRecord[0].component.$other[0];
+                    return "<span class='glyphicon glyphicon-map-marker'></span>" + place.name.OfficialRecord.component.$other.value;
                 },
-
                 templateResult: function (place) {
                     if (place.text != null)
                         return place.text;
                     return "<div class='label label-default'>" +
-                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()][0] + "</div> " + place.name.OfficialRecord[0].component.$other[0];
+                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + place.name.OfficialRecord.component.$other.value;
                 }
             });
         }

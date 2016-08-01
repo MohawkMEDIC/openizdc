@@ -177,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbUserEntity>();
                     db.CreateTable<DbPlaceService>();
                     db.CreateTable<DbPersonLanguageCommunication>();
-
+                    db.CreateTable<DbAuthorityScope>();
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();
                     db.CreateTable<DbProvider>();

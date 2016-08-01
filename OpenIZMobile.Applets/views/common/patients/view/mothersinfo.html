@@ -1,0 +1,36 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
+
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
+        <div class="col-xs-10">
+                {{patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given | oizEntityName}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
+        <div class="col-xs-10">
+              {{patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family | oizEntityName}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+        <div class="col-xs-4">
+                {{patient.relationship.Mother.targetModel.identifier.$other.authority}}
+        </div>
+        <div class="col-xs-6">
+               {{patient.relationship.Mother.targetModel.identifier.$other.value}}
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
+        <div class="col-xs-10">
+            <table class="table">
+                <tr ng-repeat="(type,value) in patient.relationship.Mother.targetModel.telecom">
+                    <td>{{value}}</td>
+                    <td>({{type}})</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</fieldset>

@@ -29,7 +29,7 @@ angular.element(document).ready(function () {
                     if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                         continue;
 
-                    var antigenId = model.participation.Product[0].playerModel.name.OfficialRecord[0].component.$other[0];
+                    var antigenId = model.participation.Product.playerModel.name.OfficialRecord.component.$other.value;
                     if (scope.display._vaccineAdministrations[antigenId] == null) {
                         scope.display._vaccineAdministrations[antigenId] = [];
                         for (var i = 0; i < model.doseSequence; i++)

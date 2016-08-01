@@ -89,6 +89,26 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There was an error importing the data from the remote data source. More details are below:
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string locale_importErrorBody {
+            get {
+                return ResourceManager.GetString("locale_importErrorBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error importing remote data.
+        /// </summary>
+        internal static string locale_importErrorSubject {
+            get {
+                return ResourceManager.GetString("locale_importErrorSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deploying Data.
         /// </summary>
         internal static string locale_setting_deploy {

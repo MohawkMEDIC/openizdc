@@ -320,6 +320,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -340,6 +342,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -368,6 +372,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -388,6 +394,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;

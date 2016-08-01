@@ -69,6 +69,7 @@ create view if not exists sqp_Entity as
 		entity_name_comp_type.mnemonic as name_component_type_mnemonic,
 		entity_name_comp_type.mnemonic as name_component_guard,
 		entity_relationship.relationshipType as relationship_type,
+		rel_type.mnemonic as relationship_guard,
 		rel_entity_name.use as relationship_name_use,
 		rel_entity_name_comp.type as relationship_name_component_type,
 		rel_entity_name_comp.value as relationship_name_component_value,
@@ -93,8 +94,9 @@ create view if not exists sqp_Entity as
 		left join entity_name_comp on (entity_name.uuid = entity_name_comp.name_uuid)
 		left join concept as entity_name_comp_type on (entity_name_comp_type.uuid = entity_name_comp.type)
 		left join entity_relationship on (entity_relationship.entity_uuid = entity.uuid)
+		left join concept as rel_type on (entity_relationship.relationshipType = rel_type.uuid)
 		left join entity_telecom on (entity_telecom.entity_uuid = entity.uuid)
-		left join entity as rel_entity on (rel_entity.uuid = entity_relationship.entity_uuid)
+		left join entity as rel_entity on (rel_entity.uuid = entity_relationship.target)
 		left join entity_name as rel_entity_name on (rel_entity.uuid = rel_entity_name.entity_uuid)
 		left join entity_name_comp as rel_entity_name_comp on (rel_entity_name.uuid = rel_entity_name_comp.name_uuid)
 		left join entity_telecom as rel_entity_telecom on (rel_entity_telecom.entity_uuid = rel_entity.uuid);
@@ -141,6 +143,7 @@ select person.*,
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
+		entity.relationship_guard,
 		entity.relationship_type,
 		entity.relationship_name_use,
 		entity.relationship_name_component_type,
@@ -199,6 +202,7 @@ create view if not exists sqp_Patient as
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
 		entity.relationship_type,
+		entity.relationship_guard,
 		entity.relationship_name_use,
 		entity.relationship_name_component_type,
 		entity.relationship_name_component_value,
@@ -488,3 +492,8 @@ SELECT act.*,
 	LEFT JOIN act_participation_view ON (act.uuid = act_participation_view.act_uuid)
 	LEFT JOIN act_relationship_view ON (act.uuid = act_relationship_view.act_uuid);
 	
+
+CREATE VIEW sqp_AssigningAuthority AS
+	SELECT assigning_authority.*, assigning_authority_scope.concept as scope_id, concept.mnemonic as scope_mnemomnic
+	FROM assigning_authority LEFT JOIN assigning_authority_scope ON (assigning_authority.uuid = assigning_authority_scope.authority)
+	LEFT JOIN concept ON (assigning_authority_scope.concept = concept.uuid);

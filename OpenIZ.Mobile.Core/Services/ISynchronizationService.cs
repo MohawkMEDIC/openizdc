@@ -23,12 +23,12 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Pull data from the remove server and place it on the inbound queue
         /// </summary>
-        void Pull(Type modelType);
+        int Pull(Type modelType);
 
         /// <summary>
         /// Pull data from the remove server and place it on the inbound queue
         /// </summary>
-        void Pull(Type modelType, NameValueCollection filter);
+        int Pull(Type modelType, NameValueCollection filter);
 
 
     }

@@ -426,9 +426,14 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (ApplicationContext.Current.Principal == null)
                 return Guid.Empty;
-            var securityUser = context.Table<DbSecurityUser>().SingleOrDefault(o => o.UserName == ApplicationContext.Current.Principal.Identity.Name);
+            String name = ApplicationContext.Current.Principal.Identity.Name;
+            var securityUser = context.Table<DbSecurityUser>().Where(o => o.UserName == name).ToList().SingleOrDefault();
             if (securityUser == null)
-                throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
+            {
+                this.m_tracer.TraceWarning("User doesn't exist locally, using GUID.EMPTY");
+                return Guid.Empty;
+                //throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
+            }
             return securityUser.Key;
         }
 

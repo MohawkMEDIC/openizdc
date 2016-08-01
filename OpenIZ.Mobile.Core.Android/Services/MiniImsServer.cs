@@ -278,8 +278,14 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                 break;
                             case RestMessageFormat.SimpleJson:
                                 response.ContentType = "application/json";
-                                using (StreamWriter sw = new StreamWriter(response.OutputStream))
-                                    sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData));
+                                if (result is IdentifiedData)
+                                {
+                                    using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                                        sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData));
+                                }
+                                else
+                                    this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result.GetType());
+
                                 break;
                             case RestMessageFormat.Json:
                                 response.ContentType = "application/json";

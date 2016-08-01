@@ -28,14 +28,14 @@
         <div class="col-xs-4">
             <div class="input-group">
                 <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
-                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null"></select>
+                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"></select>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="input-group">
                 <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.$other.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
@@ -45,15 +45,15 @@
     </div>
     <div class="form-group">
         <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
-        <div class="col-xs-2">
+        <div class="col-xs-4">
             <div class="input-group">
                 <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
                         bind:source="Concept" bind:value="name[en].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
             </div>
         </div>
-        <div class="col-xs-8">
+        <div class="col-xs-6">
             <div class="input-group">
-                <input type="text" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>

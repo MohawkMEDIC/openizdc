@@ -9,8 +9,14 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
     $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
-        loadTime: new Date()
+        loadTime: new Date(),
+        maxEventOccranceTime: new Date(), // Dislike Javascript
+        minAppointmentTime: new Date(), // quite a bit
+        locale: OpenIZ.Localization.getLocale()
     };
+
+    $rootScope.page.maxEventOccranceTime.setDate($rootScope.page.maxEventOccranceTime.getDate() + 1); // <-- This is why
+    $rootScope.page.minAppointmentTime.setDate($rootScope.page.minAppointmentTime.getDate() - 1); // why I can't call addDays or something?
 
     // Get current session
     $rootScope.session = OpenIZ.Authentication.getSession();

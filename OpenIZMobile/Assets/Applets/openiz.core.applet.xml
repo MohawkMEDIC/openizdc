@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.5.997.">
+  <info id="org.openiz.core" version="0.6.5.747.">
     <icon>~/img/cog.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -69,6 +69,41 @@
   <asset name="openizdc.licenseheader" mimeType="application/octet-stream">
     <contentBin>77u/ZXh0ZW5zaW9uczogZGVzaWduZXIuY3MgZ2VuZXJhdGVkLmNzDQpleHRlbnNpb25zOiAuY3MgLmNwcCAuaCAuanMNCi8qDQogKiBDb3B5cmlnaHQgMjAxNS0lQ3VycmVudFllYXIlIE1vaGF3ayBDb2xsZWdlIG9mIEFwcGxpZWQgQXJ0cyBhbmQgVGVjaG5vbG9neQ0KICogDQogKiANCiAqIExpY2Vuc2VkIHVuZGVyIHRoZSBBcGFjaGUgTGljZW5zZSwgVmVyc2lvbiAyLjAgKHRoZSAiTGljZW5zZSIpOyB5b3UgDQogKiBtYXkgbm90IHVzZSB0aGlzIGZpbGUgZXhjZXB0IGluIGNvbXBsaWFuY2Ugd2l0aCB0aGUgTGljZW5zZS4gWW91IG1heSANCiAqIG9idGFpbiBhIGNvcHkgb2YgdGhlIExpY2Vuc2UgYXQgDQogKiANCiAqIGh0dHA6Ly93d3cuYXBhY2hlLm9yZy9saWNlbnNlcy9MSUNFTlNFLTIuMCANCiAqIA0KICogVW5sZXNzIHJlcXVpcmVkIGJ5IGFwcGxpY2FibGUgbGF3IG9yIGFncmVlZCB0byBpbiB3cml0aW5nLCBzb2Z0d2FyZQ0KICogZGlzdHJpYnV0ZWQgdW5kZXIgdGhlIExpY2Vuc2UgaXMgZGlzdHJpYnV0ZWQgb24gYW4gIkFTIElTIiBCQVNJUywgV0lUSE9VVA0KICogV0FSUkFOVElFUyBPUiBDT05ESVRJT05TIE9GIEFOWSBLSU5ELCBlaXRoZXIgZXhwcmVzcyBvciBpbXBsaWVkLiBTZWUgdGhlIA0KICogTGljZW5zZSBmb3IgdGhlIHNwZWNpZmljIGxhbmd1YWdlIGdvdmVybmluZyBwZXJtaXNzaW9ucyBhbmQgbGltaXRhdGlvbnMgdW5kZXIgDQogKiB0aGUgTGljZW5zZS4NCiAqIA0KICogVXNlcjogJVVzZXJOYW1lJQ0KICogRGF0ZTogJUNyZWF0aW9uWWVhciUtJUNyZWF0aW9uTW9udGglLSVDcmVhdGlvbkRheSUNCiAqLw0KZXh0ZW5zaW9uczogLmFzcHggLmFzY3gNCmV4dGVuc2lvbnM6ICAueG1sIC5jb25maWcgLnhzZCAueHNsdCAuaHRtIC5odG1sDQo8IS0tDQogLSBDb3B5cmlnaHQgMjAxNS0lQ3VycmVudFllYXIlIE1vaGF3ayBDb2xsZWdlIG9mIEFwcGxpZWQgQXJ0cyBhbmQgVGVjaG5vbG9neQ0KIC0NCiAtIA0KIC0gTGljZW5zZWQgdW5kZXIgdGhlIEFwYWNoZSBMaWNlbnNlLCBWZXJzaW9uIDIuMCAodGhlICJMaWNlbnNlIik7IHlvdSANCiAtIG1heSBub3QgdXNlIHRoaXMgZmlsZSBleGNlcHQgaW4gY29tcGxpYW5jZSB3aXRoIHRoZSBMaWNlbnNlLiBZb3UgbWF5IA0KIC0gb2J0YWluIGEgY29weSBvZiB0aGUgTGljZW5zZSBhdCANCiAtIA0KIC0gaHR0cDovL3d3dy5hcGFjaGUub3JnL2xpY2Vuc2VzL0xJQ0VOU0UtMi4wIA0KIC0gDQogLSBVbmxlc3MgcmVxdWlyZWQgYnkgYXBwbGljYWJsZSBsYXcgb3IgYWdyZWVkIHRvIGluIHdyaXRpbmcsIHNvZnR3YXJlDQogLSBkaXN0cmlidXRlZCB1bmRlciB0aGUgTGljZW5zZSBpcyBkaXN0cmlidXRlZCBvbiBhbiAiQVMgSVMiIEJBU0lTLCBXSVRIT1VUDQogLSBXQVJSQU5USUVTIE9SIENPTkRJVElPTlMgT0YgQU5ZIEtJTkQsIGVpdGhlciBleHByZXNzIG9yIGltcGxpZWQuIFNlZSB0aGUgDQogLSBMaWNlbnNlIGZvciB0aGUgc3BlY2lmaWMgbGFuZ3VhZ2UgZ292ZXJuaW5nIHBlcm1pc3Npb25zIGFuZCBsaW1pdGF0aW9ucyB1bmRlciANCiAtIHRoZSBMaWNlbnNlLg0KIC0gDQogLSBVc2VyOiAlVXNlck5hbWUlDQogLSBEYXRlOiAlQ3JlYXRpb25ZZWFyJS0lQ3JlYXRpb25Nb250aCUtJUNyZWF0aW9uRGF5JQ0KIC0tPg==</contentBin>
   </asset>
+  <asset name="controllers/alerts/view.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="~/js/openiz.js"/&gt;
+
+/// &lt;reference path="~/js/openiz-model.js"/&gt;
+/// &lt;reference path="~/lib/jquery.min.js"/&gt;
+/// &lt;reference path="~/lib/angular.min.js"/&gt;
+/// &lt;reference path="~/controllers/layouts/navbar.js"/&gt;
+
+layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
+    
+    OpenIZ.App.getAlertsAsync({
+        query: {
+            key: OpenIZ.urlParams["alertId"],
+            _count: 1
+        },
+        onExpcetion: function(ex) {
+            OpenIZ.App.hideWait();
+            if (typeof (ex) == "string")
+                alert(ex);
+            else if (ex.message != undefined)
+                alert("" + ex.message + " - " + ex.details);
+            else
+                alert(ex);
+        },
+        continueWith: function (data) {
+            $scope.alert = data[0];
+            var foo = "";
+            
+            $scope.alert.body = $scope.alert.body.replace("\n", "&lt;br/&gt;");
+            $scope.$apply();
+        }
+    });
+
+}]);</contentText>
+  </asset>
   <asset name="controllers/common/encounters/history/vaccination.js" mimeType="text/javascript">
     <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/js/openiz-model.js"/&gt;
@@ -101,7 +136,7 @@ angular.element(document).ready(function () {
                     if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                         continue;
 
-                    var antigenId = model.participation.Product[0].playerModel.name.OfficialRecord[0].component.$other[0];
+                    var antigenId = model.participation.Product.playerModel.name.OfficialRecord.component.$other.value;
                     if (scope.display._vaccineAdministrations[antigenId] == null) {
                         scope.display._vaccineAdministrations[antigenId] = [];
                         for (var i = 0; i &lt; model.doseSequence; i++)
@@ -125,10 +160,10 @@ angular.element(document).ready(function () {
 
 angular.element(document).ready(function () {
 
-    $('input[type=text].tagEntry').tokenfield({
-        delimiter: ' ,',
-        createTokensOnBlur: true
-    })
+
+   
+
+
     //$('.select2-tag').each(function (e, d) {
     //    $(d).on('select2:open', function (s) {
     //        s.preventDefault();
@@ -151,8 +186,9 @@ angular.element(document).ready(function () {
 
         // Init data
         scope.patient = scope.patient || new OpenIZModel.Patient({});
-        scope.patient.identifier = scope.patient.identifier || { "NEW" : {authority: "NEW", value: null } };
+        scope.patient.identifier = scope.patient.identifier || { $other : {authority: null, value: null } };
         
+   
         // Scan the specified barcode
         scope.scanBarcode = scope.scanBarcode || function(identifier)
         {
@@ -399,6 +435,38 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
   <asset name="controllers/layouts/navbar.min.js" mimeType="text/javascript">
     <contentText>layoutApp.controller("LayoutController",["$scope","$interval","$rootScope",function(n){n.menuItems=OpenIZ.App.getMenus();n.logout=n.logout||function(){confirm(OpenIZ.Localization.getString("locale.layout.navbar.logout.confirm"))&amp;&amp;(OpenIZ.Authentication.abandonSession(),window.location.reload())};n.setLocale=n.setLocale||function(n){OpenIZ.Localization.setLocale(n);window.location.reload()};n.checkMessages=function(){OpenIZ.App.getAlertsAsync({query:{flags:"!2",_count:5},continueWith:function(t){(n.messages==null||t.length!=n.messages.length)&amp;&amp;(n.messages=t,n.$apply());setTimeout(n.checkMessages,3e4)}})};setTimeout(n.checkMessages,3e4);n.checkMessages()}]);</contentText>
   </asset>
+  <asset name="controllers/layouts/navbar.patient.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="~/js/openiz.js"/&gt;
+
+/// &lt;reference path="~/js/openiz-model.js"/&gt;
+/// &lt;reference path="~/lib/angular.min.js"/&gt;
+/// &lt;reference path="~/lib/jquery.min.js"/&gt;
+
+layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
+
+
+    // Get the patient 
+    OpenIZ.Patient.findAsync({
+        query: { id: OpenIZ.urlParams['patientId'], _count: 1 },
+        continueWith: function (data) {
+            $scope.patient = data.item[0];
+
+            $scope.$apply();
+        },
+        onException: function (ex) {
+            OpenIZ.App.hideWait();
+            if (typeof (ex) == "string")
+                alert(ex);
+            else if (ex.message != undefined)
+                alert("" + ex.message + " - " + ex.details);
+            else
+                alert(ex);
+        }
+    });
+
+   
+}]);</contentText>
+  </asset>
   <asset name="controllers/layouts/root.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="~/js/openiz-model.js"/&gt;
 
@@ -411,8 +479,14 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
     $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
-        loadTime: new Date()
+        loadTime: new Date(),
+        maxEventOccranceTime: new Date(), // Dislike Javascript
+        minAppointmentTime: new Date(), // quite a bit
+        locale: OpenIZ.Localization.getLocale()
     };
+
+    $rootScope.page.maxEventOccranceTime.setDate($rootScope.page.maxEventOccranceTime.getDate() + 1); // &lt;-- This is why
+    $rootScope.page.minAppointmentTime.setDate($rootScope.page.minAppointmentTime.getDate() - 1); // why I can't call addDays or something?
 
     // Get current session
     $rootScope.session = OpenIZ.Authentication.getSession();
@@ -438,7 +512,7 @@ angular.element(document).ready(function () {
 });</contentText>
   </asset>
   <asset name="controllers/layouts/root.min.js" mimeType="text/javascript">
-    <contentText>var layoutApp=angular.module("layout",["openiz"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date};n.session=OpenIZ.Authentication.getSession()});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
+    <contentText>var layoutApp=angular.module("layout",["openiz"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventOccranceTime:new Date,minAppointmentTime:new Date,locale:OpenIZ.Localization.getLocale()};n.page.maxEventOccranceTime.setDate(n.page.maxEventOccranceTime.getDate()+1);n.page.minAppointmentTime.setDate(n.page.minAppointmentTime.getDate()-1);n.session=OpenIZ.Authentication.getSession()});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
   </asset>
   <asset name="controllers/settings/settings.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;
@@ -535,6 +609,10 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 }
 
 .patient-panel small { color: #fff }
+
+.vaccine-table-column {
+    width:20%;
+}
 
 .input-group .form-control:first-child {
     border-radius: 4px;
@@ -1959,15 +2037,53 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
+    .filter('oizEntityIdentifier', function() {
+        return function (modelValue) {
+            if (modelValue.NID !== undefined)
+                return modelValue.NID.value;
+            else
+                for (var k in modelValue)
+                    return modelValue.NID;
+
+        };
+    })
+    .filter('oizEntityName', function () {
+        return function(modelValue) {
+            if (modelValue === null || modelValue === undefined)
+                return "";
+            else if (modelValue.join !== undefined)
+                return modelValue.join(' ');
+            else if (modelValue.component !== undefined) {
+                var nameStr = "";
+                if (typeof (modelValue.component.Given) === "string")
+                    nameStr += modelValue.component.Given;
+                else if (modelValue.component.Given.join !== undefined)
+                    nameStr += modelValue.component.Given.join(' ');
+                nameStr += " ";
+                if (typeof (modelValue.component.Family) === "string")
+                    nameStr += modelValue.component.Family;
+                else if (modelValue.component.Family.join !== undefined)
+                    nameStr += modelValue.component.Family.join(' ');
+                return nameStr;
+            }
+            else
+                return modelValue;
+        }
+    })
     .directive('oizTag', function () {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, ctrl) {
                 ctrl.$parsers.unshift(tagParser);
+                ctrl.$formatters.unshift(tagFormatter);
                 function tagParser(viewValue) {
                     return String(viewValue).split(',');
                 }
-
+                function tagFormatter(viewValue) {
+                    if (typeof (viewValue) === Array)
+                        return viewValue.join(viewView)
+                    return viewValue;
+                }
             }
         }
     });</contentText>
@@ -1998,6 +2114,11 @@ angular.module('openiz', [])
 
 
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
+// SHIM
+var OpenIZApplicationService = window.OpenIZApplicationService || {
+    GetLocale: function () { return 'en'; },
+    GetStrings: function () { return '[]'; }
+};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -2072,7 +2193,7 @@ var OpenIZ = OpenIZ || {
             $.ajax({
                 method: 'GET',
                 url: "/__ims/" + controlData.resource,
-                data: controlData.data,
+                data: controlData.query,
                 dataType: "json",
                 accept: 'application/json',
                 contentType: 'application/json',
@@ -2420,7 +2541,7 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    console.info(JSON.stringify(xhr));
+                   // console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
                 },
                 error: function (data) {
@@ -2472,10 +2593,12 @@ var OpenIZ = OpenIZ || {
          */
         showWait: function (textStr) {
             if (textStr != null)
-                $("#waitModalText").val(textStr);
+                $("#waitModalText").text(textStr);
+            else
+                setTimeout(OpenIZ.App.updateStatus, 6000);
+
             $('#waitModal').modal({ show: true, backdrop: 'static' });
             OpenIZ.App.statusShown = true;
-            setTimeout(OpenIZ.App.updateStatus, 6000);
         },
         /**
          * @summary Hide the waiting panel
@@ -2638,8 +2761,8 @@ var OpenIZ = OpenIZ || {
          * @summary Send an asynchronous alert
          * @param {Object} alertData The alert data
          */
-        sendAlertAsync: function (controlData) {
-            $.post('/__app/alerts', controlData.alert, function (e) { controlData.continueWith(e); }, "json")
+        saveAlertAsync: function (controlData) {
+            $.post('/__app/alerts', controlData.data, function (e) { controlData.continueWith(e); }, "json")
             .fail(function (data) {
                 var error = data.responseJSON;
                 if (error.error !== undefined) // structured error
@@ -3153,14 +3276,13 @@ var OpenIZ = OpenIZ || {
                 escapeMarkup: function (markup) { return markup; }, // Format normally
                 minimumInputLength: 4,
                 templateSelection: function (place) {
-                    return "&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;/span&gt;" + place.name.OfficialRecord[0].component.$other[0];
+                    return "&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;/span&gt;" + place.name.OfficialRecord.component.$other.value;
                 },
-
                 templateResult: function (place) {
                     if (place.text != null)
                         return place.text;
                     return "&lt;div class='label label-default'&gt;" +
-                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()][0] + "&lt;/div&gt; " + place.name.OfficialRecord[0].component.$other[0];
+                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "&lt;/div&gt; " + place.name.OfficialRecord.component.$other.value;
                 }
             });
         }
@@ -3388,7 +3510,7 @@ $(document).ready(function () {
 });</contentText>
   </asset>
   <asset name="js/openiz.min.js" mimeType="text/javascript">
-    <contentText>var OpenIZ=OpenIZ||{urlParams:{},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith(t)},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.data,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith(t)},error:function(t){var i=t.responseJSON;if(n.onException===undefined&amp;&amp;console.error(i),i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})}},Util:{toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(new OpenIZModel.Session(i));else n.onException(new OpenIZModel.Exception("err_general",i,null))},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},login:function(n,t){var i,r;try{if(i=OpenIZSessionService.Login(n,t),i==null)return null;if(i.lastIndexOf("err",0)==0&amp;&amp;i!="err_oauth2_invalid_grant")throw new OpenIZModel.Exception(OpenIZ.Localization.getString(i),null,null);else if(r=JSON.parse(i),r!=null&amp;&amp;r.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_"+r.error),r.error_description,null);else return i!=null?new OpenIZModel.Session(i):null}catch(u){console.warn(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString(u.message),u.details,u);}},setPasswordAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.setPassword(n.userName,n.password)},n)},setPassword:function(){},register:function(){},getSessionAsync:function(n){$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(new OpenIZModel.Session(t));else n.onException(new OpenIZModel.Exception("err_general",t,null))})},getSession:function(){try{var n=OpenIZSessionService.GetSession();return n!=null&amp;&amp;OpenIZModel!==undefined?new OpenIZModel.Session(JSON.parse(n)):null}catch(t){return console.error(t),null}},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.refreshSession()},n)},refreshSession:function(){var n,t;try{if(OpenIZ.Authentication.getSession()==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_no_session"),OpenIZ.Localization.getString("err_no_session_detail"),null);if(n=OpenIZSessionService.Refresh(),n==null)return null;if(n.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(n),null,null);else if(t=JSON.parse(n),t!=null&amp;&amp;t.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_"+t.error),t.error_description,null);else return n!=null?new OpenIZModel.Session(n):null}catch(i){console.warn(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"),i.message,i);}}},CarePlan:{getCarePlanAsync:function(n){$.ajax({method:"POST",url:"/__plan/patient",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info(JSON.stringify(t));n.continueWith(t)},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})}},App:{statusShown:!1,updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null&amp;&amp;$("#waitModalText").val(n);$("#waitModal").modal({show:!0,backdrop:"static"});OpenIZ.App.statusShown=!0;setTimeout(OpenIZ.App.updateStatus,6e3)},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},sendAlertAsync:function(n){$.post("/__app/alerts",n.alert,function(t){n.continueWith(t)},"json").fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return OpenIZ.Localization.locale==null&amp;&amp;(OpenIZ.Localization.locale=OpenIZApplicationService.GetLocale()),OpenIZ.Localization.locale},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},setStrings:function(n,t){languageStrings[lang]=t},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}},getEmptyAsync:function(n){OpenIZ.Ims.get({resource:"Empty/Patient",continueWith:n.continueWith,onException:n.onException})}},Place:{bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt;"+n.name.OfficialRecord[0].component.$other[0]},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()][0]+"&lt;\/div&gt; "+n.name.OfficialRecord[0].component.$other[0]}})}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain}catch(n){console.error(n)}},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON}});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();$(document).ready(function(){$('input[type="date"]').each(function(n,t){var r,i,u;$(t).attr("oiz-max-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-max-date"))),r=OpenIZ.Util.toDateInputString(i),$(t).attr("max",r));$(t).attr("oiz-min-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-min-date"))),u=OpenIZ.Util.toDateInputString(i),$(t).attr("min",u))});$("div.collapse[oiz-collapseIndicator]").each(function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})})});</contentText>
+    <contentText>var OpenIZApplicationService=window.OpenIZApplicationService||{GetLocale:function(){return"en"},GetStrings:function(){return"[]"}},OpenIZ=OpenIZ||{urlParams:{},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith(t)},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith(t)},error:function(t){var i=t.responseJSON;if(n.onException===undefined&amp;&amp;console.error(i),i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})}},Util:{toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(new OpenIZModel.Session(i));else n.onException(new OpenIZModel.Exception("err_general",i,null))},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})},login:function(n,t){var i,r;try{if(i=OpenIZSessionService.Login(n,t),i==null)return null;if(i.lastIndexOf("err",0)==0&amp;&amp;i!="err_oauth2_invalid_grant")throw new OpenIZModel.Exception(OpenIZ.Localization.getString(i),null,null);else if(r=JSON.parse(i),r!=null&amp;&amp;r.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_"+r.error),r.error_description,null);else return i!=null?new OpenIZModel.Session(i):null}catch(u){console.warn(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString(u.message),u.details,u);}},setPasswordAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.setPassword(n.userName,n.password)},n)},setPassword:function(){},register:function(){},getSessionAsync:function(n){$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(new OpenIZModel.Session(t));else n.onException(new OpenIZModel.Exception("err_general",t,null))})},getSession:function(){try{var n=OpenIZSessionService.GetSession();return n!=null&amp;&amp;OpenIZModel!==undefined?new OpenIZModel.Session(JSON.parse(n)):null}catch(t){return console.error(t),null}},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Authentication.refreshSession()},n)},refreshSession:function(){var n,t;try{if(OpenIZ.Authentication.getSession()==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_no_session"),OpenIZ.Localization.getString("err_no_session_detail"),null);if(n=OpenIZSessionService.Refresh(),n==null)return null;if(n.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(n),null,null);else if(t=JSON.parse(n),t!=null&amp;&amp;t.error!==undefined)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_"+t.error),t.error_description,null);else return n!=null?new OpenIZModel.Session(n):null}catch(i){console.warn(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"),i.message,i);}}},CarePlan:{getCarePlanAsync:function(n){$.ajax({method:"POST",url:"/__plan/patient",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith(t)},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}})}},App:{statusShown:!1,updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);$("#waitModal").modal({show:!0,backdrop:"static"});OpenIZ.App.statusShown=!0},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},saveAlertAsync:function(n){$.post("/__app/alerts",n.data,function(t){n.continueWith(t)},"json").fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return OpenIZ.Localization.locale==null&amp;&amp;(OpenIZ.Localization.locale=OpenIZApplicationService.GetLocale()),OpenIZ.Localization.locale},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},setStrings:function(n,t){languageStrings[lang]=t},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}},getEmptyAsync:function(n){OpenIZ.Ims.get({resource:"Empty/Patient",continueWith:n.continueWith,onException:n.onException})}},Place:{bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt;"+n.name.OfficialRecord.component.$other.value},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain}catch(n){console.error(n)}},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON}});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();$(document).ready(function(){$('input[type="date"]').each(function(n,t){var r,i,u;$(t).attr("oiz-max-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-max-date"))),r=OpenIZ.Util.toDateInputString(i),$(t).attr("max",r));$(t).attr("oiz-min-date")&amp;&amp;(i=new Date,i.setDate(i.getDate()+parseInt($(t).attr("oiz-min-date"))),u=OpenIZ.Util.toDateInputString(i),$(t).attr("min",u))});$("div.collapse[oiz-collapseIndicator]").each(function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("oiz-collapseIndicator");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})})});</contentText>
   </asset>
   <asset name="layouts/minimal.html" mimeType="text/html">
     <contentHtml>
@@ -3534,6 +3656,66 @@ $(document).ready(function () {
             </p>
             </div>
           </footer>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="layouts/navbar.patient.html" mimeType="text/html">
+    <contentHtml>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/controllers/layouts/navbar.patient.js</script>
+      <content>
+        <div ng-controller="PatientLayoutController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel-group">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
+                  <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicaotr">
+                  </span>
+                  <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong>
+                  <small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                </a>
+                <span class="pull-right">
+                    {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                </span>
+              </div>
+              <div class="panel-collapse collapse" id="patientSummaryPanel">
+                <div class="panel-body">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <label class="col-xs-2">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                      <div class="col-xs-4">
+                        <span ng-model="patient.name.OfficialRecord.given" class="oiz-clicktoedit" data-inputtype="tag">
+                                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                                </span>
+                      </div>
+                      <label class="col-xs-2">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                      <div class="col-xs-4">
+                        <span ng-model="patient.name.OfficialRecord.family" class="oiz-clicktoedit" data-inputtype="tag">
+                                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                                </span>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <label class="col-xs-2">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                      <div class="col-xs-4">
+                        <span ng-model="patient.dateOfBirth" class="oiz-clicktoedit" data-inputtype="date">
+                                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                                </span>
+                      </div>
+                      <label class="col-xs-2">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+                      <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+                    </div>
+                    <div class="row">
+                      <label class="col-xs-2">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
+                      <div class="col-xs-4">{{ patient.multipleBirthOrderText }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- #include virtual="content" -->
+          </div>
         </div>
       </content>
     </contentHtml>
@@ -5055,6 +5237,57 @@ if(k&amp;&amp;j[k]&amp;&amp;(e||j[k].data)||void 0!==d||"string"!=typeof b)retur
 c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("change")):void this.current(function(d){for(var e=[],f=0;f&lt;d.length;f++){var g=d[f].id;g!==a.id&amp;&amp;-1===c.inArray(g,e)&amp;&amp;e.push(g)}b.$element.val(e),b.$element.trigger("change")})},d.prototype.bind=function(a,b){var c=this;this.container=a,a.on("select",function(a){c.select(a.data)}),a.on("unselect",function(a){c.unselect(a.data)})},d.prototype.destroy=function(){this.$element.find("*").each(function(){c.removeData(this,"data")})},d.prototype.query=function(a,b){var d=[],e=this,f=this.$element.children();f.each(function(){var b=c(this);if(b.is("option")||b.is("optgroup")){var f=e.item(b),g=e.matches(a,f);null!==g&amp;&amp;d.push(g)}}),b({results:d})},d.prototype.addOptions=function(a){b.appendMany(this.$element,a)},d.prototype.option=function(a){var b;a.children?(b=document.createElement("optgroup"),b.label=a.text):(b=document.createElement("option"),void 0!==b.textContent?b.textContent=a.text:b.innerText=a.text),a.id&amp;&amp;(b.value=a.id),a.disabled&amp;&amp;(b.disabled=!0),a.selected&amp;&amp;(b.selected=!0),a.title&amp;&amp;(b.title=a.title);var d=c(b),e=this._normalizeItem(a);return e.element=b,c.data(b,"data",e),d},d.prototype.item=function(a){var b={};if(b=c.data(a[0],"data"),null!=b)return b;if(a.is("option"))b={id:a.val(),text:a.text(),disabled:a.prop("disabled"),selected:a.prop("selected"),title:a.prop("title")};else if(a.is("optgroup")){b={text:a.prop("label"),children:[],title:a.prop("title")};for(var d=a.children("option"),e=[],f=0;f&lt;d.length;f++){var g=c(d[f]),h=this.item(g);e.push(h)}b.children=e}return b=this._normalizeItem(b),b.element=a[0],c.data(a[0],"data",b),b},d.prototype._normalizeItem=function(a){c.isPlainObject(a)||(a={id:a,text:a}),a=c.extend({},{text:""},a);var b={selected:!1,disabled:!1};return null!=a.id&amp;&amp;(a.id=a.id.toString()),null!=a.text&amp;&amp;(a.text=a.text.toString()),null==a._resultId&amp;&amp;a.id&amp;&amp;null!=this.container&amp;&amp;(a._resultId=this.generateResultId(this.container,a)),c.extend({},b,a)},d.prototype.matches=function(a,b){var c=this.options.get("matcher");return c(a,b)},d}),b.define("select2/data/array",["./select","../utils","jquery"],function(a,b,c){function d(a,b){var c=b.get("data")||[];d.__super__.constructor.call(this,a,b),this.addOptions(this.convertToOptions(c))}return b.Extend(d,a),d.prototype.select=function(a){var b=this.$element.find("option").filter(function(b,c){return c.value==a.id.toString()});0===b.length&amp;&amp;(b=this.option(a),this.addOptions(b)),d.__super__.select.call(this,a)},d.prototype.convertToOptions=function(a){function d(a){return function(){return c(this).val()==a.id}}for(var e=this,f=this.$element.find("option"),g=f.map(function(){return e.item(c(this)).id}).get(),h=[],i=0;i&lt;a.length;i++){var j=this._normalizeItem(a[i]);if(c.inArray(j.id,g)&gt;=0){var k=f.filter(d(j)),l=this.item(k),m=c.extend(!0,{},j,l),n=this.option(m);k.replaceWith(n)}else{var o=this.option(j);if(j.children){var p=this.convertToOptions(j.children);b.appendMany(o,p)}h.push(o)}}return h},d}),b.define("select2/data/ajax",["./array","../utils","jquery"],function(a,b,c){function d(a,b){this.ajaxOptions=this._applyDefaults(b.get("ajax")),null!=this.ajaxOptions.processResults&amp;&amp;(this.processResults=this.ajaxOptions.processResults),d.__super__.constructor.call(this,a,b)}return b.Extend(d,a),d.prototype._applyDefaults=function(a){var b={data:function(a){return c.extend({},a,{q:a.term})},transport:function(a,b,d){var e=c.ajax(a);return e.then(b),e.fail(d),e}};return c.extend({},b,a,!0)},d.prototype.processResults=function(a){return a},d.prototype.query=function(a,b){function d(){var d=f.transport(f,function(d){var f=e.processResults(d,a);e.options.get("debug")&amp;&amp;window.console&amp;&amp;console.error&amp;&amp;(f&amp;&amp;f.results&amp;&amp;c.isArray(f.results)||console.error("Select2: The AJAX results did not return an array in the `results` key of the response.")),b(f)},function(){e.trigger("results:message",{message:"errorLoading"})});e._request=d}var e=this;null!=this._request&amp;&amp;(c.isFunction(this._request.abort)&amp;&amp;this._request.abort(),this._request=null);var f=c.extend({type:"GET"},this.ajaxOptions);"function"==typeof f.url&amp;&amp;(f.url=f.url.call(this.$element,a)),"function"==typeof f.data&amp;&amp;(f.data=f.data.call(this.$element,a)),this.ajaxOptions.delay&amp;&amp;""!==a.term?(this._queryTimeout&amp;&amp;window.clearTimeout(this._queryTimeout),this._queryTimeout=window.setTimeout(d,this.ajaxOptions.delay)):d()},d}),b.define("select2/data/tags",["jquery"],function(a){function b(b,c,d){var e=d.get("tags"),f=d.get("createTag");void 0!==f&amp;&amp;(this.createTag=f);var g=d.get("insertTag");if(void 0!==g&amp;&amp;(this.insertTag=g),b.call(this,c,d),a.isArray(e))for(var h=0;h&lt;e.length;h++){var i=e[h],j=this._normalizeItem(i),k=this.option(j);this.$element.append(k)}}return b.prototype.query=function(a,b,c){function d(a,f){for(var g=a.results,h=0;h&lt;g.length;h++){var i=g[h],j=null!=i.children&amp;&amp;!d({results:i.children},!0),k=i.text===b.term;if(k||j)return f?!1:(a.data=g,void c(a))}if(f)return!0;var l=e.createTag(b);if(null!=l){var m=e.option(l);m.attr("data-select2-tag",!0),e.addOptions([m]),e.insertTag(g,l)}a.results=g,c(a)}var e=this;return this._removeOldTags(),null==b.term||null!=b.page?void a.call(this,b,c):void a.call(this,b,d)},b.prototype.createTag=function(b,c){var d=a.trim(c.term);return""===d?null:{id:d,text:d}},b.prototype.insertTag=function(a,b,c){b.unshift(c)},b.prototype._removeOldTags=function(b){var c=(this._lastTag,this.$element.find("option[data-select2-tag]"));c.each(function(){this.selected||a(this).remove()})},b}),b.define("select2/data/tokenizer",["jquery"],function(a){function b(a,b,c){var d=c.get("tokenizer");void 0!==d&amp;&amp;(this.tokenizer=d),a.call(this,b,c)}return b.prototype.bind=function(a,b,c){a.call(this,b,c),this.$search=b.dropdown.$search||b.selection.$search||c.find(".select2-search__field")},b.prototype.query=function(a,b,c){function d(a){e.trigger("select",{data:a})}var e=this;b.term=b.term||"";var f=this.tokenizer(b,this.options,d);f.term!==b.term&amp;&amp;(this.$search.length&amp;&amp;(this.$search.val(f.term),this.$search.focus()),b.term=f.term),a.call(this,b,c)},b.prototype.tokenizer=function(b,c,d,e){for(var f=d.get("tokenSeparators")||[],g=c.term,h=0,i=this.createTag||function(a){return{id:a.term,text:a.term}};h&lt;g.length;){var j=g[h];if(-1!==a.inArray(j,f)){var k=g.substr(0,h),l=a.extend({},c,{term:k}),m=i(l);null!=m?(e(m),g=g.substr(h+1)||"",h=0):h++}else h++}return{term:g}},b}),b.define("select2/data/minimumInputLength",[],function(){function a(a,b,c){this.minimumInputLength=c.get("minimumInputLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){return b.term=b.term||"",b.term.length&lt;this.minimumInputLength?void this.trigger("results:message",{message:"inputTooShort",args:{minimum:this.minimumInputLength,input:b.term,params:b}}):void a.call(this,b,c)},a}),b.define("select2/data/maximumInputLength",[],function(){function a(a,b,c){this.maximumInputLength=c.get("maximumInputLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){return b.term=b.term||"",this.maximumInputLength&gt;0&amp;&amp;b.term.length&gt;this.maximumInputLength?void this.trigger("results:message",{message:"inputTooLong",args:{maximum:this.maximumInputLength,input:b.term,params:b}}):void a.call(this,b,c)},a}),b.define("select2/data/maximumSelectionLength",[],function(){function a(a,b,c){this.maximumSelectionLength=c.get("maximumSelectionLength"),a.call(this,b,c)}return a.prototype.query=function(a,b,c){var d=this;this.current(function(e){var f=null!=e?e.length:0;return d.maximumSelectionLength&gt;0&amp;&amp;f&gt;=d.maximumSelectionLength?void d.trigger("results:message",{message:"maximumSelected",args:{maximum:d.maximumSelectionLength}}):void a.call(d,b,c)})},a}),b.define("select2/dropdown",["jquery","./utils"],function(a,b){function c(a,b){this.$element=a,this.options=b,c.__super__.constructor.call(this)}return b.Extend(c,b.Observable),c.prototype.render=function(){var b=a('&lt;span class="select2-dropdown"&gt;&lt;span class="select2-results"&gt;&lt;/span&gt;&lt;/span&gt;');return b.attr("dir",this.options.get("dir")),this.$dropdown=b,b},c.prototype.bind=function(){},c.prototype.position=function(a,b){},c.prototype.destroy=function(){this.$dropdown.remove()},c}),b.define("select2/dropdown/search",["jquery","../utils"],function(a,b){function c(){}return c.prototype.render=function(b){var c=b.call(this),d=a('&lt;span class="select2-search select2-search--dropdown"&gt;&lt;input class="select2-search__field" type="search" tabindex="-1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="textbox" /&gt;&lt;/span&gt;');return this.$searchContainer=d,this.$search=d.find("input"),c.prepend(d),c},c.prototype.bind=function(b,c,d){var e=this;b.call(this,c,d),this.$search.on("keydown",function(a){e.trigger("keypress",a),e._keyUpPrevented=a.isDefaultPrevented()}),this.$search.on("input",function(b){a(this).off("keyup")}),this.$search.on("keyup input",function(a){e.handleSearch(a)}),c.on("open",function(){e.$search.attr("tabindex",0),e.$search.focus(),window.setTimeout(function(){e.$search.focus()},0)}),c.on("close",function(){e.$search.attr("tabindex",-1),e.$search.val("")}),c.on("results:all",function(a){if(null==a.query.term||""===a.query.term){var b=e.showSearch(a);b?e.$searchContainer.removeClass("select2-search--hide"):e.$searchContainer.addClass("select2-search--hide")}})},c.prototype.handleSearch=function(a){if(!this._keyUpPrevented){var b=this.$search.val();this.trigger("query",{term:b})}this._keyUpPrevented=!1},c.prototype.showSearch=function(a,b){return!0},c}),b.define("select2/dropdown/hidePlaceholder",[],function(){function a(a,b,c,d){this.placeholder=this.normalizePlaceholder(c.get("placeholder")),a.call(this,b,c,d)}return a.prototype.append=function(a,b){b.results=this.removePlaceholder(b.results),a.call(this,b)},a.prototype.normalizePlaceholder=function(a,b){return"string"==typeof b&amp;&amp;(b={id:"",text:b}),b},a.prototype.removePlaceholder=function(a,b){for(var c=b.slice(0),d=b.length-1;d&gt;=0;d--){var e=b[d];this.placeholder.id===e.id&amp;&amp;c.splice(d,1)}return c},a}),b.define("select2/dropdown/infiniteScroll",["jquery"],function(a){function b(a,b,c,d){this.lastParams={},a.call(this,b,c,d),this.$loadingMore=this.createLoadingMore(),this.loading=!1}return b.prototype.append=function(a,b){this.$loadingMore.remove(),this.loading=!1,a.call(this,b),this.showLoadingMore(b)&amp;&amp;this.$results.append(this.$loadingMore)},b.prototype.bind=function(b,c,d){var e=this;b.call(this,c,d),c.on("query",function(a){e.lastParams=a,e.loading=!0}),c.on("query:append",function(a){e.lastParams=a,e.loading=!0}),this.$results.on("scroll",function(){var b=a.contains(document.documentElement,e.$loadingMore[0]);if(!e.loading&amp;&amp;b){var c=e.$results.offset().top+e.$results.outerHeight(!1),d=e.$loadingMore.offset().top+e.$loadingMore.outerHeight(!1);c+50&gt;=d&amp;&amp;e.loadMore()}})},b.prototype.loadMore=function(){this.loading=!0;var b=a.extend({},{page:1},this.lastParams);b.page++,this.trigger("query:append",b)},b.prototype.showLoadingMore=function(a,b){return b.pagination&amp;&amp;b.pagination.more},b.prototype.createLoadingMore=function(){var b=a('&lt;li class="select2-results__option select2-results__option--load-more"role="treeitem" aria-disabled="true"&gt;&lt;/li&gt;'),c=this.options.get("translations").get("loadingMore");return b.html(c(this.lastParams)),b},b}),b.define("select2/dropdown/attachBody",["jquery","../utils"],function(a,b){function c(b,c,d){this.$dropdownParent=d.get("dropdownParent")||a(document.body),b.call(this,c,d)}return c.prototype.bind=function(a,b,c){var d=this,e=!1;a.call(this,b,c),b.on("open",function(){d._showDropdown(),d._attachPositioningHandler(b),e||(e=!0,b.on("results:all",function(){d._positionDropdown(),d._resizeDropdown()}),b.on("results:append",function(){d._positionDropdown(),d._resizeDropdown()}))}),b.on("close",function(){d._hideDropdown(),d._detachPositioningHandler(b)}),this.$dropdownContainer.on("mousedown",function(a){a.stopPropagation()})},c.prototype.destroy=function(a){a.call(this),this.$dropdownContainer.remove()},c.prototype.position=function(a,b,c){b.attr("class",c.attr("class")),b.removeClass("select2"),b.addClass("select2-container--open"),b.css({position:"absolute",top:-999999}),this.$container=c},c.prototype.render=function(b){var c=a("&lt;span&gt;&lt;/span&gt;"),d=b.call(this);return c.append(d),this.$dropdownContainer=c,c},c.prototype._hideDropdown=function(a){this.$dropdownContainer.detach()},c.prototype._attachPositioningHandler=function(c,d){var e=this,f="scroll.select2."+d.id,g="resize.select2."+d.id,h="orientationchange.select2."+d.id,i=this.$container.parents().filter(b.hasScroll);i.each(function(){a(this).data("select2-scroll-position",{x:a(this).scrollLeft(),y:a(this).scrollTop()})}),i.on(f,function(b){var c=a(this).data("select2-scroll-position");a(this).scrollTop(c.y)}),a(window).on(f+" "+g+" "+h,function(a){e._positionDropdown(),e._resizeDropdown()})},c.prototype._detachPositioningHandler=function(c,d){var e="scroll.select2."+d.id,f="resize.select2."+d.id,g="orientationchange.select2."+d.id,h=this.$container.parents().filter(b.hasScroll);h.off(e),a(window).off(e+" "+f+" "+g)},c.prototype._positionDropdown=function(){var b=a(window),c=this.$dropdown.hasClass("select2-dropdown--above"),d=this.$dropdown.hasClass("select2-dropdown--below"),e=null,f=this.$container.offset();f.bottom=f.top+this.$container.outerHeight(!1);var g={height:this.$container.outerHeight(!1)};g.top=f.top,g.bottom=f.top+g.height;var h={height:this.$dropdown.outerHeight(!1)},i={top:b.scrollTop(),bottom:b.scrollTop()+b.height()},j=i.top&lt;f.top-h.height,k=i.bottom&gt;f.bottom+h.height,l={left:f.left,top:g.bottom},m=this.$dropdownParent;"static"===m.css("position")&amp;&amp;(m=m.offsetParent());var n=m.offset();l.top-=n.top,l.left-=n.left,c||d||(e="below"),k||!j||c?!j&amp;&amp;k&amp;&amp;c&amp;&amp;(e="below"):e="above",("above"==e||c&amp;&amp;"below"!==e)&amp;&amp;(l.top=g.top-h.height),null!=e&amp;&amp;(this.$dropdown.removeClass("select2-dropdown--below select2-dropdown--above").addClass("select2-dropdown--"+e),this.$container.removeClass("select2-container--below select2-container--above").addClass("select2-container--"+e)),this.$dropdownContainer.css(l)},c.prototype._resizeDropdown=function(){var a={width:this.$container.outerWidth(!1)+"px"};this.options.get("dropdownAutoWidth")&amp;&amp;(a.minWidth=a.width,a.width="auto"),this.$dropdown.css(a)},c.prototype._showDropdown=function(a){this.$dropdownContainer.appendTo(this.$dropdownParent),this._positionDropdown(),this._resizeDropdown()},c}),b.define("select2/dropdown/minimumResultsForSearch",[],function(){function a(b){for(var c=0,d=0;d&lt;b.length;d++){var e=b[d];e.children?c+=a(e.children):c++}return c}function b(a,b,c,d){this.minimumResultsForSearch=c.get("minimumResultsForSearch"),this.minimumResultsForSearch&lt;0&amp;&amp;(this.minimumResultsForSearch=1/0),a.call(this,b,c,d)}return b.prototype.showSearch=function(b,c){return a(c.data.results)&lt;this.minimumResultsForSearch?!1:b.call(this,c)},b}),b.define("select2/dropdown/selectOnClose",[],function(){function a(){}return a.prototype.bind=function(a,b,c){var d=this;a.call(this,b,c),b.on("close",function(){d._handleSelectOnClose()})},a.prototype._handleSelectOnClose=function(){var a=this.getHighlightedResults();if(!(a.length&lt;1)){var b=a.data("data");null!=b.element&amp;&amp;b.element.selected||null==b.element&amp;&amp;b.selected||this.trigger("select",{data:b})}},a}),b.define("select2/dropdown/closeOnSelect",[],function(){function a(){}return a.prototype.bind=function(a,b,c){var d=this;a.call(this,b,c),b.on("select",function(a){d._selectTriggered(a)}),b.on("unselect",function(a){d._selectTriggered(a)})},a.prototype._selectTriggered=function(a,b){var c=b.originalEvent;c&amp;&amp;c.ctrlKey||this.trigger("close",{})},a}),b.define("select2/i18n/en",[],function(){return{errorLoading:function(){return"The results could not be loaded."},inputTooLong:function(a){var b=a.input.length-a.maximum,c="Please delete "+b+" character";return 1!=b&amp;&amp;(c+="s"),c},inputTooShort:function(a){var b=a.minimum-a.input.length,c="Please enter "+b+" or more characters";return c},loadingMore:function(){return"Loading more results…"},maximumSelected:function(a){var b="You can only select "+a.maximum+" item";return 1!=a.maximum&amp;&amp;(b+="s"),b},noResults:function(){return"No results found"},searching:function(){return"Searching…"}}}),b.define("select2/defaults",["jquery","require","./results","./selection/single","./selection/multiple","./selection/placeholder","./selection/allowClear","./selection/search","./selection/eventRelay","./utils","./translation","./diacritics","./data/select","./data/array","./data/ajax","./data/tags","./data/tokenizer","./data/minimumInputLength","./data/maximumInputLength","./data/maximumSelectionLength","./dropdown","./dropdown/search","./dropdown/hidePlaceholder","./dropdown/infiniteScroll","./dropdown/attachBody","./dropdown/minimumResultsForSearch","./dropdown/selectOnClose","./dropdown/closeOnSelect","./i18n/en"],function(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,A,B,C){function D(){this.reset()}D.prototype.apply=function(l){if(l=a.extend(!0,{},this.defaults,l),null==l.dataAdapter){if(null!=l.ajax?l.dataAdapter=o:null!=l.data?l.dataAdapter=n:l.dataAdapter=m,l.minimumInputLength&gt;0&amp;&amp;(l.dataAdapter=j.Decorate(l.dataAdapter,r)),l.maximumInputLength&gt;0&amp;&amp;(l.dataAdapter=j.Decorate(l.dataAdapter,s)),l.maximumSelectionLength&gt;0&amp;&amp;(l.dataAdapter=j.Decorate(l.dataAdapter,t)),l.tags&amp;&amp;(l.dataAdapter=j.Decorate(l.dataAdapter,p)),(null!=l.tokenSeparators||null!=l.tokenizer)&amp;&amp;(l.dataAdapter=j.Decorate(l.dataAdapter,q)),null!=l.query){var C=b(l.amdBase+"compat/query");l.dataAdapter=j.Decorate(l.dataAdapter,C)}if(null!=l.initSelection){var D=b(l.amdBase+"compat/initSelection");l.dataAdapter=j.Decorate(l.dataAdapter,D)}}if(null==l.resultsAdapter&amp;&amp;(l.resultsAdapter=c,null!=l.ajax&amp;&amp;(l.resultsAdapter=j.Decorate(l.resultsAdapter,x)),null!=l.placeholder&amp;&amp;(l.resultsAdapter=j.Decorate(l.resultsAdapter,w)),l.selectOnClose&amp;&amp;(l.resultsAdapter=j.Decorate(l.resultsAdapter,A))),null==l.dropdownAdapter){if(l.multiple)l.dropdownAdapter=u;else{var E=j.Decorate(u,v);l.dropdownAdapter=E}if(0!==l.minimumResultsForSearch&amp;&amp;(l.dropdownAdapter=j.Decorate(l.dropdownAdapter,z)),l.closeOnSelect&amp;&amp;(l.dropdownAdapter=j.Decorate(l.dropdownAdapter,B)),null!=l.dropdownCssClass||null!=l.dropdownCss||null!=l.adaptDropdownCssClass){var F=b(l.amdBase+"compat/dropdownCss");l.dropdownAdapter=j.Decorate(l.dropdownAdapter,F)}l.dropdownAdapter=j.Decorate(l.dropdownAdapter,y)}if(null==l.selectionAdapter){if(l.multiple?l.selectionAdapter=e:l.selectionAdapter=d,null!=l.placeholder&amp;&amp;(l.selectionAdapter=j.Decorate(l.selectionAdapter,f)),l.allowClear&amp;&amp;(l.selectionAdapter=j.Decorate(l.selectionAdapter,g)),l.multiple&amp;&amp;(l.selectionAdapter=j.Decorate(l.selectionAdapter,h)),null!=l.containerCssClass||null!=l.containerCss||null!=l.adaptContainerCssClass){var G=b(l.amdBase+"compat/containerCss");l.selectionAdapter=j.Decorate(l.selectionAdapter,G)}l.selectionAdapter=j.Decorate(l.selectionAdapter,i)}if("string"==typeof l.language)if(l.language.indexOf("-")&gt;0){var H=l.language.split("-"),I=H[0];l.language=[l.language,I]}else l.language=[l.language];if(a.isArray(l.language)){var J=new k;l.language.push("en");for(var K=l.language,L=0;L&lt;K.length;L++){var M=K[L],N={};try{N=k.loadPath(M)}catch(O){try{M=this.defaults.amdLanguageBase+M,N=k.loadPath(M)}catch(P){l.debug&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn('Select2: The language file for "'+M+'" could not be automatically loaded. A fallback will be used instead.');continue}}J.extend(N)}l.translations=J}else{var Q=k.loadPath(this.defaults.amdLanguageBase+"en"),R=new k(l.language);R.extend(Q),l.translations=R}return l},D.prototype.reset=function(){function b(a){function b(a){return l[a]||a}return a.replace(/[^\u0000-\u007E]/g,b)}function c(d,e){if(""===a.trim(d.term))return e;if(e.children&amp;&amp;e.children.length&gt;0){for(var f=a.extend(!0,{},e),g=e.children.length-1;g&gt;=0;g--){var h=e.children[g],i=c(d,h);null==i&amp;&amp;f.children.splice(g,1)}return f.children.length&gt;0?f:c(d,f)}var j=b(e.text).toUpperCase(),k=b(d.term).toUpperCase();return j.indexOf(k)&gt;-1?e:null}this.defaults={amdBase:"./",amdLanguageBase:"./i18n/",closeOnSelect:!0,debug:!1,dropdownAutoWidth:!1,escapeMarkup:j.escapeMarkup,language:C,matcher:c,minimumInputLength:0,maximumInputLength:0,maximumSelectionLength:0,minimumResultsForSearch:0,selectOnClose:!1,sorter:function(a){return a},templateResult:function(a){return a.text},templateSelection:function(a){return a.text},theme:"default",width:"resolve"}},D.prototype.set=function(b,c){var d=a.camelCase(b),e={};e[d]=c;var f=j._convertData(e);a.extend(this.defaults,f)};var E=new D;return E}),b.define("select2/options",["require","jquery","./defaults","./utils"],function(a,b,c,d){function e(b,e){if(this.options=b,null!=e&amp;&amp;this.fromElement(e),this.options=c.apply(this.options),e&amp;&amp;e.is("input")){var f=a(this.get("amdBase")+"compat/inputData");this.options.dataAdapter=d.Decorate(this.options.dataAdapter,f)}}return e.prototype.fromElement=function(a){var c=["select2"];null==this.options.multiple&amp;&amp;(this.options.multiple=a.prop("multiple")),null==this.options.disabled&amp;&amp;(this.options.disabled=a.prop("disabled")),null==this.options.language&amp;&amp;(a.prop("lang")?this.options.language=a.prop("lang").toLowerCase():a.closest("[lang]").prop("lang")&amp;&amp;(this.options.language=a.closest("[lang]").prop("lang"))),null==this.options.dir&amp;&amp;(a.prop("dir")?this.options.dir=a.prop("dir"):a.closest("[dir]").prop("dir")?this.options.dir=a.closest("[dir]").prop("dir"):this.options.dir="ltr"),a.prop("disabled",this.options.disabled),a.prop("multiple",this.options.multiple),a.data("select2Tags")&amp;&amp;(this.options.debug&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn('Select2: The `data-select2-tags` attribute has been changed to use the `data-data` and `data-tags="true"` attributes and will be removed in future versions of Select2.'),a.data("data",a.data("select2Tags")),a.data("tags",!0)),a.data("ajaxUrl")&amp;&amp;(this.options.debug&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn("Select2: The `data-ajax-url` attribute has been changed to `data-ajax--url` and support for the old attribute will be removed in future versions of Select2."),a.attr("ajax--url",a.data("ajaxUrl")),a.data("ajax--url",a.data("ajaxUrl")));var e={};e=b.fn.jquery&amp;&amp;"1."==b.fn.jquery.substr(0,2)&amp;&amp;a[0].dataset?b.extend(!0,{},a[0].dataset,a.data()):a.data();var f=b.extend(!0,{},e);f=d._convertData(f);for(var g in f)b.inArray(g,c)&gt;-1||(b.isPlainObject(this.options[g])?b.extend(this.options[g],f[g]):this.options[g]=f[g]);return this},e.prototype.get=function(a){return this.options[a]},e.prototype.set=function(a,b){this.options[a]=b},e}),b.define("select2/core",["jquery","./options","./utils","./keys"],function(a,b,c,d){var e=function(a,c){null!=a.data("select2")&amp;&amp;a.data("select2").destroy(),this.$element=a,this.id=this._generateId(a),c=c||{},this.options=new b(c,a),e.__super__.constructor.call(this);var d=a.attr("tabindex")||0;a.data("old-tabindex",d),a.attr("tabindex","-1");var f=this.options.get("dataAdapter");this.dataAdapter=new f(a,this.options);var g=this.render();this._placeContainer(g);var h=this.options.get("selectionAdapter");this.selection=new h(a,this.options),this.$selection=this.selection.render(),this.selection.position(this.$selection,g);var i=this.options.get("dropdownAdapter");this.dropdown=new i(a,this.options),this.$dropdown=this.dropdown.render(),this.dropdown.position(this.$dropdown,g);var j=this.options.get("resultsAdapter");this.results=new j(a,this.options,this.dataAdapter),this.$results=this.results.render(),this.results.position(this.$results,this.$dropdown);var k=this;this._bindAdapters(),this._registerDomEvents(),this._registerDataEvents(),this._registerSelectionEvents(),this._registerDropdownEvents(),this._registerResultsEvents(),this._registerEvents(),this.dataAdapter.current(function(a){k.trigger("selection:update",{data:a})}),a.addClass("select2-hidden-accessible"),a.attr("aria-hidden","true"),this._syncAttributes(),a.data("select2",this)};return c.Extend(e,c.Observable),e.prototype._generateId=function(a){var b="";return b=null!=a.attr("id")?a.attr("id"):null!=a.attr("name")?a.attr("name")+"-"+c.generateChars(2):c.generateChars(4),b=b.replace(/(:|\.|\[|\]|,)/g,""),b="select2-"+b},e.prototype._placeContainer=function(a){a.insertAfter(this.$element);var b=this._resolveWidth(this.$element,this.options.get("width"));null!=b&amp;&amp;a.css("width",b)},e.prototype._resolveWidth=function(a,b){var c=/^width:(([-+]?([0-9]*\.)?[0-9]+)(px|em|ex|%|in|cm|mm|pt|pc))/i;if("resolve"==b){var d=this._resolveWidth(a,"style");return null!=d?d:this._resolveWidth(a,"element")}if("element"==b){var e=a.outerWidth(!1);return 0&gt;=e?"auto":e+"px"}if("style"==b){var f=a.attr("style");if("string"!=typeof f)return null;for(var g=f.split(";"),h=0,i=g.length;i&gt;h;h+=1){var j=g[h].replace(/\s/g,""),k=j.match(c);if(null!==k&amp;&amp;k.length&gt;=1)return k[1]}return null}return b},e.prototype._bindAdapters=function(){this.dataAdapter.bind(this,this.$container),this.selection.bind(this,this.$container),this.dropdown.bind(this,this.$container),this.results.bind(this,this.$container)},e.prototype._registerDomEvents=function(){var b=this;this.$element.on("change.select2",function(){b.dataAdapter.current(function(a){b.trigger("selection:update",{data:a})})}),this._sync=c.bind(this._syncAttributes,this),this.$element[0].attachEvent&amp;&amp;this.$element[0].attachEvent("onpropertychange",this._sync);var d=window.MutationObserver||window.WebKitMutationObserver||window.MozMutationObserver;null!=d?(this._observer=new d(function(c){a.each(c,b._sync)}),this._observer.observe(this.$element[0],{attributes:!0,subtree:!1})):this.$element[0].addEventListener&amp;&amp;this.$element[0].addEventListener("DOMAttrModified",b._sync,!1)},e.prototype._registerDataEvents=function(){var a=this;this.dataAdapter.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerSelectionEvents=function(){var b=this,c=["toggle","focus"];this.selection.on("toggle",function(){b.toggleDropdown()}),this.selection.on("focus",function(a){b.focus(a)}),this.selection.on("*",function(d,e){-1===a.inArray(d,c)&amp;&amp;b.trigger(d,e)})},e.prototype._registerDropdownEvents=function(){var a=this;this.dropdown.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerResultsEvents=function(){var a=this;this.results.on("*",function(b,c){a.trigger(b,c)})},e.prototype._registerEvents=function(){var a=this;this.on("open",function(){a.$container.addClass("select2-container--open")}),this.on("close",function(){a.$container.removeClass("select2-container--open")}),this.on("enable",function(){a.$container.removeClass("select2-container--disabled")}),this.on("disable",function(){a.$container.addClass("select2-container--disabled")}),this.on("blur",function(){a.$container.removeClass("select2-container--focus")}),this.on("query",function(b){a.isOpen()||a.trigger("open",{}),this.dataAdapter.query(b,function(c){a.trigger("results:all",{data:c,query:b})})}),this.on("query:append",function(b){this.dataAdapter.query(b,function(c){a.trigger("results:append",{data:c,query:b})})}),this.on("keypress",function(b){var c=b.which;a.isOpen()?c===d.ESC||c===d.TAB||c===d.UP&amp;&amp;b.altKey?(a.close(),b.preventDefault()):c===d.ENTER?(a.trigger("results:select",{}),b.preventDefault()):c===d.SPACE&amp;&amp;b.ctrlKey?(a.trigger("results:toggle",{}),b.preventDefault()):c===d.UP?(a.trigger("results:previous",{}),b.preventDefault()):c===d.DOWN&amp;&amp;(a.trigger("results:next",{}),b.preventDefault()):(c===d.ENTER||c===d.SPACE||c===d.DOWN&amp;&amp;b.altKey)&amp;&amp;(a.open(),b.preventDefault())})},e.prototype._syncAttributes=function(){this.options.set("disabled",this.$element.prop("disabled")),this.options.get("disabled")?(this.isOpen()&amp;&amp;this.close(),this.trigger("disable",{})):this.trigger("enable",{})},e.prototype.trigger=function(a,b){var c=e.__super__.trigger,d={open:"opening",close:"closing",select:"selecting",unselect:"unselecting"};if(void 0===b&amp;&amp;(b={}),a in d){var f=d[a],g={prevented:!1,name:a,args:b};if(c.call(this,f,g),g.prevented)return void(b.prevented=!0)}c.call(this,a,b)},e.prototype.toggleDropdown=function(){this.options.get("disabled")||(this.isOpen()?this.close():this.open())},e.prototype.open=function(){this.isOpen()||this.trigger("query",{})},e.prototype.close=function(){this.isOpen()&amp;&amp;this.trigger("close",{})},e.prototype.isOpen=function(){return this.$container.hasClass("select2-container--open")},e.prototype.hasFocus=function(){return this.$container.hasClass("select2-container--focus")},e.prototype.focus=function(a){this.hasFocus()||(this.$container.addClass("select2-container--focus"),this.trigger("focus",{}))},e.prototype.enable=function(a){this.options.get("debug")&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn('Select2: The `select2("enable")` method has been deprecated and will be removed in later Select2 versions. Use $element.prop("disabled") instead.'),(null==a||0===a.length)&amp;&amp;(a=[!0]);var b=!a[0];this.$element.prop("disabled",b)},e.prototype.data=function(){this.options.get("debug")&amp;&amp;arguments.length&gt;0&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn('Select2: Data can no longer be set using `select2("data")`. You should consider setting the value instead using `$element.val()`.');var a=[];return this.dataAdapter.current(function(b){a=b}),a},e.prototype.val=function(b){if(this.options.get("debug")&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn('Select2: The `select2("val")` method has been deprecated and will be removed in later Select2 versions. Use $element.val() instead.'),null==b||0===b.length)return this.$element.val();var c=b[0];a.isArray(c)&amp;&amp;(c=a.map(c,function(a){return a.toString()})),this.$element.val(c).trigger("change")},e.prototype.destroy=function(){this.$container.remove(),this.$element[0].detachEvent&amp;&amp;this.$element[0].detachEvent("onpropertychange",this._sync),null!=this._observer?(this._observer.disconnect(),this._observer=null):this.$element[0].removeEventListener&amp;&amp;this.$element[0].removeEventListener("DOMAttrModified",this._sync,!1),this._sync=null,this.$element.off(".select2"),this.$element.attr("tabindex",this.$element.data("old-tabindex")),this.$element.removeClass("select2-hidden-accessible"),this.$element.attr("aria-hidden","false"),this.$element.removeData("select2"),this.dataAdapter.destroy(),this.selection.destroy(),this.dropdown.destroy(),this.results.destroy(),this.dataAdapter=null,this.selection=null,this.dropdown=null,this.results=null},e.prototype.render=function(){var b=a('&lt;span class="select2 select2-container"&gt;&lt;span class="selection"&gt;&lt;/span&gt;&lt;span class="dropdown-wrapper" aria-hidden="true"&gt;&lt;/span&gt;&lt;/span&gt;');return b.attr("dir",this.options.get("dir")),this.$container=b,this.$container.addClass("select2-container--"+this.options.get("theme")),b.data("element",this.$element),b},e}),b.define("select2/compat/utils",["jquery"],function(a){function b(b,c,d){var e,f,g=[];e=a.trim(b.attr("class")),e&amp;&amp;(e=""+e,a(e.split(/\s+/)).each(function(){0===this.indexOf("select2-")&amp;&amp;g.push(this)})),e=a.trim(c.attr("class")),e&amp;&amp;(e=""+e,a(e.split(/\s+/)).each(function(){0!==this.indexOf("select2-")&amp;&amp;(f=d(this),null!=f&amp;&amp;g.push(f))})),b.attr("class",g.join(" "))}return{syncCssClasses:b}}),b.define("select2/compat/containerCss",["jquery","./utils"],function(a,b){function c(a){return null}function d(){}return d.prototype.render=function(d){var e=d.call(this),f=this.options.get("containerCssClass")||"";a.isFunction(f)&amp;&amp;(f=f(this.$element));var g=this.options.get("adaptContainerCssClass");if(g=g||c,-1!==f.indexOf(":all:")){f=f.replace(":all:","");var h=g;g=function(a){var b=h(a);return null!=b?b+" "+a:a}}var i=this.options.get("containerCss")||{};return a.isFunction(i)&amp;&amp;(i=i(this.$element)),b.syncCssClasses(e,this.$element,g),e.css(i),e.addClass(f),e},d}),b.define("select2/compat/dropdownCss",["jquery","./utils"],function(a,b){function c(a){return null}function d(){}return d.prototype.render=function(d){var e=d.call(this),f=this.options.get("dropdownCssClass")||"";a.isFunction(f)&amp;&amp;(f=f(this.$element));var g=this.options.get("adaptDropdownCssClass");if(g=g||c,-1!==f.indexOf(":all:")){f=f.replace(":all:","");var h=g;g=function(a){var b=h(a);return null!=b?b+" "+a:a;
 }}var i=this.options.get("dropdownCss")||{};return a.isFunction(i)&amp;&amp;(i=i(this.$element)),b.syncCssClasses(e,this.$element,g),e.css(i),e.addClass(f),e},d}),b.define("select2/compat/initSelection",["jquery"],function(a){function b(a,b,c){c.get("debug")&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn("Select2: The `initSelection` option has been deprecated in favor of a custom data adapter that overrides the `current` method. This method is now called multiple times instead of a single time when the instance is initialized. Support will be removed for the `initSelection` option in future versions of Select2"),this.initSelection=c.get("initSelection"),this._isInitialized=!1,a.call(this,b,c)}return b.prototype.current=function(b,c){var d=this;return this._isInitialized?void b.call(this,c):void this.initSelection.call(null,this.$element,function(b){d._isInitialized=!0,a.isArray(b)||(b=[b]),c(b)})},b}),b.define("select2/compat/inputData",["jquery"],function(a){function b(a,b,c){this._currentData=[],this._valueSeparator=c.get("valueSeparator")||",","hidden"===b.prop("type")&amp;&amp;c.get("debug")&amp;&amp;console&amp;&amp;console.warn&amp;&amp;console.warn("Select2: Using a hidden input with Select2 is no longer supported and may stop working in the future. It is recommended to use a `&lt;select&gt;` element instead."),a.call(this,b,c)}return b.prototype.current=function(b,c){function d(b,c){var e=[];return b.selected||-1!==a.inArray(b.id,c)?(b.selected=!0,e.push(b)):b.selected=!1,b.children&amp;&amp;e.push.apply(e,d(b.children,c)),e}for(var e=[],f=0;f&lt;this._currentData.length;f++){var g=this._currentData[f];e.push.apply(e,d(g,this.$element.val().split(this._valueSeparator)))}c(e)},b.prototype.select=function(b,c){if(this.options.get("multiple")){var d=this.$element.val();d+=this._valueSeparator+c.id,this.$element.val(d),this.$element.trigger("change")}else this.current(function(b){a.map(b,function(a){a.selected=!1})}),this.$element.val(c.id),this.$element.trigger("change")},b.prototype.unselect=function(a,b){var c=this;b.selected=!1,this.current(function(a){for(var d=[],e=0;e&lt;a.length;e++){var f=a[e];b.id!=f.id&amp;&amp;d.push(f.id)}c.$element.val(d.join(c._valueSeparator)),c.$element.trigger("change")})},b.prototype.query=function(a,b,c){for(var d=[],e=0;e&lt;this._currentData.length;e++){var f=this._currentData[e],g=this.matches(b,f);null!==g&amp;&amp;d.push(g)}c({results:d})},b.prototype.addOptions=function(b,c){var d=a.map(c,function(b){return a.data(b[0],"data")});this._currentData.push.apply(this._currentData,d)},b}),b.define("select2/compat/matcher",["jquery"],function(a){function b(b){function c(c,d){var e=a.extend(!0,{},d);if(null==c.term||""===a.trim(c.term))return e;if(d.children){for(var f=d.children.length-1;f&gt;=0;f--){var g=d.children[f],h=b(c.term,g.text,g);h||e.children.splice(f,1)}if(e.children.length&gt;0)return e}return b(c.term,d.text,d)?e:null}return c}return b}),b.define("select2/compat/query",[],function(){function a(a,b,c){c.get("debug")&amp;&amp;window.console&amp;&amp;console.warn&amp;&amp;console.warn("Select2: The `query` option has been deprecated in favor of a custom data adapter that overrides the `query` method. Support will be removed for the `query` option in future versions of Select2."),a.call(this,b,c)}return a.prototype.query=function(a,b,c){b.callback=c;var d=this.options.get("query");d.call(null,b)},a}),b.define("select2/dropdown/attachContainer",[],function(){function a(a,b,c){a.call(this,b,c)}return a.prototype.position=function(a,b,c){var d=c.find(".dropdown-wrapper");d.append(b),b.addClass("select2-dropdown--below"),c.addClass("select2-container--below")},a}),b.define("select2/dropdown/stopPropagation",[],function(){function a(){}return a.prototype.bind=function(a,b,c){a.call(this,b,c);var d=["blur","change","click","dblclick","focus","focusin","focusout","input","keydown","keyup","keypress","mousedown","mouseenter","mouseleave","mousemove","mouseover","mouseup","search","touchend","touchstart"];this.$dropdown.on(d.join(" "),function(a){a.stopPropagation()})},a}),b.define("select2/selection/stopPropagation",[],function(){function a(){}return a.prototype.bind=function(a,b,c){a.call(this,b,c);var d=["blur","change","click","dblclick","focus","focusin","focusout","input","keydown","keyup","keypress","mousedown","mouseenter","mouseleave","mousemove","mouseover","mouseup","search","touchend","touchstart"];this.$selection.on(d.join(" "),function(a){a.stopPropagation()})},a}),function(c){"function"==typeof b.define&amp;&amp;b.define.amd?b.define("jquery-mousewheel",["jquery"],c):"object"==typeof exports?module.exports=c:c(a)}(function(a){function b(b){var g=b||window.event,h=i.call(arguments,1),j=0,l=0,m=0,n=0,o=0,p=0;if(b=a.event.fix(g),b.type="mousewheel","detail"in g&amp;&amp;(m=-1*g.detail),"wheelDelta"in g&amp;&amp;(m=g.wheelDelta),"wheelDeltaY"in g&amp;&amp;(m=g.wheelDeltaY),"wheelDeltaX"in g&amp;&amp;(l=-1*g.wheelDeltaX),"axis"in g&amp;&amp;g.axis===g.HORIZONTAL_AXIS&amp;&amp;(l=-1*m,m=0),j=0===m?l:m,"deltaY"in g&amp;&amp;(m=-1*g.deltaY,j=m),"deltaX"in g&amp;&amp;(l=g.deltaX,0===m&amp;&amp;(j=-1*l)),0!==m||0!==l){if(1===g.deltaMode){var q=a.data(this,"mousewheel-line-height");j*=q,m*=q,l*=q}else if(2===g.deltaMode){var r=a.data(this,"mousewheel-page-height");j*=r,m*=r,l*=r}if(n=Math.max(Math.abs(m),Math.abs(l)),(!f||f&gt;n)&amp;&amp;(f=n,d(g,n)&amp;&amp;(f/=40)),d(g,n)&amp;&amp;(j/=40,l/=40,m/=40),j=Math[j&gt;=1?"floor":"ceil"](j/f),l=Math[l&gt;=1?"floor":"ceil"](l/f),m=Math[m&gt;=1?"floor":"ceil"](m/f),k.settings.normalizeOffset&amp;&amp;this.getBoundingClientRect){var s=this.getBoundingClientRect();o=b.clientX-s.left,p=b.clientY-s.top}return b.deltaX=l,b.deltaY=m,b.deltaFactor=f,b.offsetX=o,b.offsetY=p,b.deltaMode=0,h.unshift(b,j,l,m),e&amp;&amp;clearTimeout(e),e=setTimeout(c,200),(a.event.dispatch||a.event.handle).apply(this,h)}}function c(){f=null}function d(a,b){return k.settings.adjustOldDeltas&amp;&amp;"mousewheel"===a.type&amp;&amp;b%120===0}var e,f,g=["wheel","mousewheel","DOMMouseScroll","MozMousePixelScroll"],h="onwheel"in document||document.documentMode&gt;=9?["wheel"]:["mousewheel","DomMouseScroll","MozMousePixelScroll"],i=Array.prototype.slice;if(a.event.fixHooks)for(var j=g.length;j;)a.event.fixHooks[g[--j]]=a.event.mouseHooks;var k=a.event.special.mousewheel={version:"3.1.12",setup:function(){if(this.addEventListener)for(var c=h.length;c;)this.addEventListener(h[--c],b,!1);else this.onmousewheel=b;a.data(this,"mousewheel-line-height",k.getLineHeight(this)),a.data(this,"mousewheel-page-height",k.getPageHeight(this))},teardown:function(){if(this.removeEventListener)for(var c=h.length;c;)this.removeEventListener(h[--c],b,!1);else this.onmousewheel=null;a.removeData(this,"mousewheel-line-height"),a.removeData(this,"mousewheel-page-height")},getLineHeight:function(b){var c=a(b),d=c["offsetParent"in a.fn?"offsetParent":"parent"]();return d.length||(d=a("body")),parseInt(d.css("fontSize"),10)||parseInt(c.css("fontSize"),10)||16},getPageHeight:function(b){return a(b).height()},settings:{adjustOldDeltas:!0,normalizeOffset:!0}};a.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})}),b.define("jquery.select2",["jquery","jquery-mousewheel","./select2/core","./select2/defaults"],function(a,b,c,d){if(null==a.fn.select2){var e=["open","close","destroy"];a.fn.select2=function(b){if(b=b||{},"object"==typeof b)return this.each(function(){var d=a.extend(!0,{},b);new c(a(this),d)}),this;if("string"==typeof b){var d;return this.each(function(){var c=a(this).data("select2");null==c&amp;&amp;window.console&amp;&amp;console.error&amp;&amp;console.error("The select2('"+b+"') method was called on an element that is not using Select2.");var e=Array.prototype.slice.call(arguments,1);d=c[b].apply(c,e)}),a.inArray(b,e)&gt;-1?this:d}throw new Error("Invalid arguments for Select2: "+b)}}return null==a.fn.select2.defaults&amp;&amp;(a.fn.select2.defaults=d),c}),{define:b.define,require:b.require}}(),c=b.require("jquery.select2");return a.fn.select2.amd=b,c});</contentText>
   </asset>
+  <asset name="views/alerts/view.html" mimeType="text/html">
+    <contentHtml>
+      <title>Alert</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/controllers/alerts/view.js</script>
+      <content>
+        <div class="container" ng-controller="ViewAlertController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="row">
+            <div class="col-xs-12">
+              <h3>{{ alert.subject }}</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <span class="text-muted">{{ alert.time | date : 'yyyy-MMM-dd' }}</span>
+            </div>
+          </div>
+          <div class="row">
+            <label class="col-xs-2">{{ 'locale.alerts.from' | i18n }}</label>
+            <div class="col-xs-10">{{ alert.from }}</div>
+          </div>
+          <div class="row">
+            <label class="col-xs-2">{{ 'locale.alerts.to' | i18n }}</label>
+            <div class="col-xs-10">{{ alert.to }}</div>
+          </div>
+          <div class="row">
+            <hr />
+          </div>
+          <div class="row">
+            <div class="well">{{ alert.body }}</div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="btn-group pull-right">
+                <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
+                  <span class="glyphicon glyphicon-trash">
+                  </span>
+                        {{ 'locale.actions.delete' | i18n }}
+                    </button>
+                <button class="btn-primary btn btn-lg" ng-class="acknowledgeAlert()">
+                  <span class="glyphicon glyphicon-ok">
+                  </span>
+                        {{ 'locale.alerts.acknolwedge' | i18n }}
+                    </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
   <asset name="views/common/encounters/history/vaccination.html" mimeType="text/html">
     <contentHtml>
       <script>/org.openiz.core/controllers/common/encounters/history/vaccination.js</script>
@@ -5065,12 +5298,12 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
             <table class="table table-striped oiz-vaccination-history-table">
               <thead>
                 <tr>
-                  <th>
+                  <th class="vaccine-table-column">
                   </th>
-                  <th style="text-align:center">0</th>
-                  <th style="text-align:center">1</th>
-                  <th style="text-align:center">2</th>
-                  <th style="text-align:center">3</th>
+                  <th class="vaccine-table-column" style="text-align:center">0</th>
+                  <th class="vaccine-table-column" style="text-align:center">1</th>
+                  <th class="vaccine-table-column" style="text-align:center">2</th>
+                  <th class="vaccine-table-column" style="text-align:center">3</th>
                 </tr>
               </thead>
               <tbody>
@@ -5079,7 +5312,7 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
                   <td ng-repeat="sequence in event">
                     <div ng-if="sequence != null" class="input-group">
                       <span class="input-group-addon">
-                        <input type="checkbox" ng-model="sequence._enabled" ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept == 'EC74541F-87C4-4327-A4B9-97F325501747' ? 'disabled' : null" value="1" />
+                        <input type="checkbox" ng-model="sequence._enabled" ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime &gt; $root.page.maxEventOccranceTime ? 'disabled' : null" value="1" />
                       </span>
                       <input ng-disabled="!sequence._enabled" type="date" class="form-control" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
                     </div>
@@ -5173,7 +5406,7 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
   <asset name="views/common/patients/register/demographics.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="oiz-demographics" xmlns:bind="http://openiz.org/applet/binding">
           <div class="form-group">
             <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
             <div class="col-xs-10">
@@ -5248,7 +5481,7 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
           <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
             <div class="col-xs-3">
               <div class="input-group">
-                <select ng-model="identifier.authority" class="form-control" bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null">
+                <select ng-model="identifier.authority" class="form-control" bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D">
                 </select>
               </div>
             </div>
@@ -5317,7 +5550,7 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
             <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
             <div class="col-xs-4">
               <div class="input-group">
-                <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority" bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null">
+                <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority" bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA">
                 </select>
               </div>
             </div>
@@ -5325,7 +5558,7 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
               <div class="input-group">
                 <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
+                  <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.$other.value)">
                     <span>
                       <span class="glyphicon glyphicon-barcode">
                       </span> {{ 'locale.action.scan' | i18n }}</span>
@@ -5340,15 +5573,15 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
           </div>
           <div class="form-group">
             <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
-            <div class="col-xs-2">
+            <div class="col-xs-4">
               <div class="input-group">
                 <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use" bind:source="Concept" bind:value="name[en].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse">
                 </select>
               </div>
             </div>
-            <div class="col-xs-8">
+            <div class="col-xs-6">
               <div class="input-group">
-                <input type="text" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}">
                     <span class="glyphicon glyphicon-question-sign">
@@ -5412,15 +5645,15 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
           </div>
           <div class="form-group">
             <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
-            <div class="col-xs-2">
+            <div class="col-xs-4">
               <div class="input-group">
                 <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.$other.targetModel.telecom.$other.use" bind:source="Concept" bind:value="name[en].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse">
                 </select>
               </div>
             </div>
-            <div class="col-xs-8">
+            <div class="col-xs-6">
               <div class="input-group">
-                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.$other.targetModel.telecom.$other.value" class="form-control" />
+                <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.$other.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}">
                     <span class="glyphicon glyphicon-question-sign">
@@ -5478,6 +5711,181 @@ c(a.element).is("option")?(a.element.selected=!1,void this.$element.trigger("cha
             </tr>
           </tfoot>
         </table>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/demographics-adult.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+          <!--#include virtual="/org.openiz.core/views/common/patients/view/demographics.html"-->
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="phoneNumber">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+            <div class="col-xs-6">
+              <span type="tel" name="phoneNumber" ng-model="patient.telecom[Direct]">{{patient.telecom[Direct]}}</span>
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/demographics-pediatric.html" mimeType="text/html">
+    <contentHtml>
+      <script>/org.openiz.core/lib/bootstrap-tokenfield.min.js</script>
+      <style>/org.openiz.core/css/bootstrap-tokenfield.min.css</style>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
+          <!--#include virtual="/org.openiz.core/views/common/patients/view/demographics.html"-->
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
+            <div class="col-xs-4">
+              <span>{{patient.multipleBirthOrder}}</span>
+            </div>
+            <div class="col-xs-6">
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/demographics.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="oiz-demographics" xmlns:bind="http://openiz.org/applet/binding">
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+            <div class="col-xs-10">
+                {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+        </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+            <div class="col-xs-10">
+            {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+        </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+            <div class="col-xs-4">
+            {{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}
+            <span ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span></div>
+            <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+            <div class="col-xs-4">
+            {{ patient.genderConceptModel.name[$root.page.locale] }}
+
+                
+        </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/identifiers.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>{{ 'locale.patient.identifiers.authority' | i18n }}</th>
+                <th>{{ 'locale.patient.identifiers.value' | i18n }}</th>
+                <th>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="(authority, identifier) in patient.identifier">
+                <td>{{authority}}</td>
+                <td>{{identifier.value}}</td>
+                <td>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/mothersinfo.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
+            <div class="col-xs-10">
+                {{patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given | oizEntityName}}
+        </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
+            <div class="col-xs-10">
+              {{patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family | oizEntityName}}
+        </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+            <div class="col-xs-4">
+                {{patient.relationship.Mother.targetModel.identifier.$other.authority}}
+        </div>
+            <div class="col-xs-6">
+               {{patient.relationship.Mother.targetModel.identifier.$other.value}}
+        </div>
+          </div>
+          <div class="form-group">
+            <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
+            <div class="col-xs-10">
+              <table class="table">
+                <tr ng-repeat="(type,value) in patient.relationship.Mother.targetModel.telecom">
+                  <td>{{value}}</td>
+                  <td>({{type}})</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/relationship.html" mimeType="text/html">
+    <contentHtml>
+      <script>/org.openiz.core/controllers/common/patients/register/identifiers.js</script>
+      <content>
+        <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+          <div class="panel panel-default" ng-repeat="(type, relation) in patient.relationship">
+            <div class="panel-body">
+              <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationType">{{ 'locale.patient.realtive.type' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.typeConceptModel.name[$root.page.locale]}}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationGivenName">{{ 'locale.patient.realtive.givenName' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.targetModel.name.OfficialRecord.component.Given | oizEntityName}}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationFamilyName">{{ 'locale.patient.relative.familyName' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.targetModel.name.OfficialRecord.component.Family | oizEntityName}}
+
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
+                <div class="col-xs-10">
+                  <table class="table">
+                    <tr ng-repeat="(type,value) in relation.targetModel.telecom">
+                      <td>{{value}}</td>
+                      <td>({{type}})</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
       </content>
     </contentHtml>
   </asset>

@@ -57,6 +57,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 			get;
 			set;
 		}
+
 	}
 
 	/// <summary>

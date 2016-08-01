@@ -8,6 +8,10 @@
 
 .patient-panel small { color: #fff }
 
+.vaccine-table-column {
+    width:20%;
+}
+
 .input-group .form-control:first-child {
     border-radius: 4px;
 }

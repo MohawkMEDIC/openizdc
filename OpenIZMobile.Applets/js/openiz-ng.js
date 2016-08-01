@@ -79,15 +79,53 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
+    .filter('oizEntityIdentifier', function() {
+        return function (modelValue) {
+            if (modelValue.NID !== undefined)
+                return modelValue.NID.value;
+            else
+                for (var k in modelValue)
+                    return modelValue.NID;
+
+        };
+    })
+    .filter('oizEntityName', function () {
+        return function(modelValue) {
+            if (modelValue === null || modelValue === undefined)
+                return "";
+            else if (modelValue.join !== undefined)
+                return modelValue.join(' ');
+            else if (modelValue.component !== undefined) {
+                var nameStr = "";
+                if (typeof (modelValue.component.Given) === "string")
+                    nameStr += modelValue.component.Given;
+                else if (modelValue.component.Given.join !== undefined)
+                    nameStr += modelValue.component.Given.join(' ');
+                nameStr += " ";
+                if (typeof (modelValue.component.Family) === "string")
+                    nameStr += modelValue.component.Family;
+                else if (modelValue.component.Family.join !== undefined)
+                    nameStr += modelValue.component.Family.join(' ');
+                return nameStr;
+            }
+            else
+                return modelValue;
+        }
+    })
     .directive('oizTag', function () {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, ctrl) {
                 ctrl.$parsers.unshift(tagParser);
+                ctrl.$formatters.unshift(tagFormatter);
                 function tagParser(viewValue) {
                     return String(viewValue).split(',');
                 }
-
+                function tagFormatter(viewValue) {
+                    if (typeof (viewValue) === Array)
+                        return viewValue.join(viewView)
+                    return viewValue;
+                }
             }
         }
     });

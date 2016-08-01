@@ -49,6 +49,11 @@ namespace OpenIZ.Mobile.Core.Services
         /// Gets or sets the If-None-Match
         /// </summary>
         public String IfNoneMatch { get; set; }
+
+        /// <summary>
+        /// Gets or sets the timeout
+        /// </summary>
+        public int? Timeout { get; set; }
     }
 
     /// <summary>

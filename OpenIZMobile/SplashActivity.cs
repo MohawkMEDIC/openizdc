@@ -80,8 +80,8 @@ namespace OpenIZMobile
             OpenIZ.Mobile.Core.ApplicationContext.Current = null;
 
             this.FindViewById<TextView>(Resource.Id.txt_splash_version).Text = String.Format("V {0} ({1})",
-                typeof(OpenIZConfiguration).Assembly.GetName().Version,
-                typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
+                typeof(SplashActivity).Assembly.GetName().Version,
+                typeof(SplashActivity).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion
             );
 
             CancellationTokenSource ctSource = new CancellationTokenSource();

@@ -281,6 +281,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
             foreach (var ins in insertRecords)
             {
+                if (ins.IsEmpty()) continue;
                 ins.SourceEntityKey = sourceKey;
                 persistenceService.Insert(dataContext, ins);
             }

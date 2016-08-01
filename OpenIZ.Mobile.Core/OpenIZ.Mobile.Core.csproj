@@ -57,6 +57,7 @@
     <Compile Include="Data\Persistence\ActDerivedPersistenceService.cs" />
     <Compile Include="Data\Persistence\ActPersistenceService.cs" />
     <Compile Include="Data\Persistence\ApplicationEntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\AuthorityPersistenceService.cs" />
     <Compile Include="Data\Persistence\BundlePersistenceService.cs" />
     <Compile Include="Data\Persistence\ConceptPersistenceService.cs" />
     <Compile Include="Data\Persistence\ControlActPersistenceService.cs" />
