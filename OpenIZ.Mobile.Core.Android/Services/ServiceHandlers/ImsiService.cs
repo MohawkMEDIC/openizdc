@@ -75,6 +75,24 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             // Clean up the patientPatient
             patientToInsert = patientToInsert.Clean() as Patient ;
 
+            // Correct the address information
+            if (patientToInsert.Addresses?.Count > 0)
+            {
+                var ct = patientToInsert.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract).Value;
+                IPlaceRepositoryService iprs = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+                var homePlace = iprs.Get(Guid.Parse(ct), Guid.Empty);
+                patientToInsert.Addresses = homePlace.Addresses;
+            }
+
+            // Generate temporary identifier
+            if (!(patientToInsert.Identifiers?.Count > 0))
+                patientToInsert.Identifiers = new List<EntityIdentifier>()
+                {
+                    new EntityIdentifier(new AssigningAuthority()
+                    {
+                        DomainName = "TEMP"
+                    }, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace(":",""))
+                };
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
             // Persist the acts 
             return repository.Insert(patientToInsert);

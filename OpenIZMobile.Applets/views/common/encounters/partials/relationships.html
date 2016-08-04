@@ -1,0 +1,18 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"  
+        xmlns:bind="http://openiz.org/binding">
+    <div ng-repeat="enc in encounter.relationship">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>{{ enc.typeConceptModel.name.en }}</span>
+            </div>
+            <div ng-switch="enc.typeConcept.mnemonic">
+                <div ng-switch-when="EncounterType-BirthEncounter">
+                    <!-- #include virtual="/org.openiz.core/views/encounters/templates/birth.html" -->
+                </div>
+                <div ng-switch-when="EncounterType-Vaccination">
+                    <!-- #include virtual="/org.openiz.core/views/encounters/templates/vaccination.html" -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
