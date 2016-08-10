@@ -29,12 +29,17 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	[Table("entity")]
 	public class DbEntity : DbVersionedData
 	{
+        /// <summary>
+        /// Gets or sets the template
+        /// </summary>
+        [Column("template"), MaxLength(16)]
+        public byte[] TemplateUuid { get; set; }
 
-		/// <summary>
-		/// Gets or sets the class concept identifier.
-		/// </summary>
-		/// <value>The class concept identifier.</value>
-		[Column("classConcept"), MaxLength(16), NotNull]
+        /// <summary>
+        /// Gets or sets the class concept identifier.
+        /// </summary>
+        /// <value>The class concept identifier.</value>
+        [Column("classConcept"), MaxLength(16), NotNull]
 		public byte[] ClassConceptUuid {
 			get;
 			set;

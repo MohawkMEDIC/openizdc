@@ -78,8 +78,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override UserEntity Update(SQLiteConnectionWithLock context, UserEntity data)
         {
-            data.SecurityUser?.EnsureExists(context);
-            data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
+//            data.SecurityUser?.EnsureExists(context);
+//            data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             this.m_personPersister.Update(context, data);
             return base.Update(context, data);
         }

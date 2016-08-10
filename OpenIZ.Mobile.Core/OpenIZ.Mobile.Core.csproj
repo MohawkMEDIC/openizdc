@@ -54,6 +54,7 @@
     <Compile Include="Data\Model\Entities\DbPersonLanguageCommunication.cs" />
     <Compile Include="Data\Model\Entities\DbPlaceService.cs" />
     <Compile Include="Data\Model\Entities\DbUserEntity.cs" />
+    <Compile Include="Data\Model\Extensibility\DbTemplateDefinition.cs" />
     <Compile Include="Data\Persistence\ActDerivedPersistenceService.cs" />
     <Compile Include="Data\Persistence\ActPersistenceService.cs" />
     <Compile Include="Data\Persistence\ApplicationEntityPersistenceService.cs" />

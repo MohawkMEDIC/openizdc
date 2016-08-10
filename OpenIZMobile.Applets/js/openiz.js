@@ -72,11 +72,18 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    controlData.continueWith(xhr);
+
+                    if(controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(xhr);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
-                    if (error.error !== undefined) // oauth 2 error
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
@@ -87,6 +94,9 @@ var OpenIZ = OpenIZ || {
                                 data,
                                 null
                             ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(xhr);
                 }
             });
         },
@@ -107,23 +117,31 @@ var OpenIZ = OpenIZ || {
                 accept: 'application/json',
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    controlData.continueWith(xhr);
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if(controlData.finally !== undefined)
+                        controlData.finally(xhr);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
                     if (controlData.onException === undefined)
                         console.error(error);
-                    if (error.error !== undefined) // oauth 2 error
+                    else if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
                             ));
-
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("err_general" + error,
                                 data,
                                 null
                             ));
+
+                    // Do finally
+                    if (controlData.finally !== undefined)
+                        controlData.finally(xhr);
+
                 }
             });
         }
@@ -133,7 +151,19 @@ var OpenIZ = OpenIZ || {
      * @class
      */
     Util: {
-
+        /** 
+         * @summary Renders the person
+         */
+        renderName: function (entityName) {
+            var retVal = "";
+            if (entityName.component.Given !== null)
+                retVal += entityName.component.Given;
+            if (entityName.component.Family !== null)
+                retVal += entityName.component.Family;
+            if (entityName.component.$other !== null)
+                retVal += entityName.component.$other.value;
+            return retVal;
+        },
         /**
          * @summary Changes the specified date string into an appropriate ISO string
          * @memberof OpenIZ.Util
@@ -224,7 +254,7 @@ var OpenIZ = OpenIZ || {
                  },
                  error: function (data) {
                      var error = data.responseJSON;
-                     if (error.error !== undefined) // oauth 2 error
+                     if (error != null && error.error !== undefined) // oauth 2 error
                          controlData.onException(new OpenIZModel.Exception(error.error,
                                  error.error_description,
                                  null
@@ -341,6 +371,19 @@ var OpenIZ = OpenIZ || {
                         data,
                         null
                     ));
+            }).error(function (data) {
+                var error = data.responseJSON;
+                if (error != null && error.error !== undefined) // oauth 2 error
+                    controlData.onException(new OpenIZModel.Exception(error.error,
+                            error.error_description,
+                            null
+                        ));
+
+                else // unknown error
+                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                            data,
+                            null
+                        ));
             });
 
         },
@@ -468,6 +511,28 @@ var OpenIZ = OpenIZ || {
                             ));
                 }
             });
+        },
+        /**
+         * @summary Get an empty template object asynchronously
+         */
+        getEntityTemplateAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Entity/Template",
+                query: { "templateId" : controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException
+            });
+        },
+        /**
+         * @summary Get an empty template object asynchronously
+         */
+        getActTemplateAsync : function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Act/Template",
+                query: { "templateId": controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException
+            });
         }
     },
     /**
@@ -475,7 +540,13 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     App: {
-        statusShown : false,
+        statusShown: false,
+        /**
+         * @summary Resolves the specified template
+         */
+        resolveTemplate : function(templateId) {
+            return OpenIZApplicationService.GetTemplateForm(templateId);
+        },
         /**
          * @summary Update the status of the 
          */
@@ -654,7 +725,9 @@ var OpenIZ = OpenIZ || {
             $.getJSON('/__app/alerts', controlData.query, function (e) { controlData.continueWith(e); }).
                 fail(function (data) {
                     var error = data.responseJSON;
-                    if (error.error !== undefined) // structured error
+                    if (controlData.onException === undefined || error == null)
+                        console.error(error);
+                    else if (error.error !== undefined) // structured error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
@@ -1133,16 +1206,6 @@ var OpenIZ = OpenIZ || {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"), e.message, e);
             }
-        },
-        /**
-         * @summary Get an empty patient asynchronously
-         */
-        getEmptyAsync: function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "Empty/Patient",
-                continueWith: controlData.continueWith,
-                onException: controlData.onException
-            });
         }
     },
 
@@ -1185,7 +1248,10 @@ var OpenIZ = OpenIZ || {
                 escapeMarkup: function (markup) { return markup; }, // Format normally
                 minimumInputLength: 4,
                 templateSelection: function (place) {
-                    return "<span class='glyphicon glyphicon-map-marker'></span>" + place.name.OfficialRecord.component.$other.value;
+                    if (place.name != null)
+                        return "<span class='glyphicon glyphicon-map-marker'></span> " + place.name.OfficialRecord.component.$other.value;
+                    else
+                        return "<span class='glyphicon glyphicon-map-marker'></span> " + place.text;
                 },
                 templateResult: function (place) {
                     if (place.text != null)
@@ -1194,6 +1260,66 @@ var OpenIZ = OpenIZ || {
                         place.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + place.name.OfficialRecord.component.$other.value;
                 }
             });
+        }
+    },
+    Provider: {
+        /**
+         * @summmary Find the provider asynchronously
+         */
+        findProviderAsync : function(controlData) {
+            OpenIZ.Ims.get({
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                resource: 'Provider',
+                query: controlData.query
+            });
+        },
+        /**
+         * @summary Bind a Person filter to a select box
+         * @param {Element} target The element to be bound to
+         * @param {String} filter The filter to show (to be added to the current name filter)
+         */
+        bindSelect: function (target, filter) {
+            $(target).select2({
+                ajax: {
+                    url: "/__ims/Provider",
+                    dataType: 'json',
+                    delay: 500,
+                    method: "GET",
+                    data: function (params) {
+                        filter["name.component.value"] = "~" + params.term;
+                        filter["_count"] = 5;
+                        filter["_offset"] = 0;
+                        return filter;
+                    },
+                    processResults: function (data, params) {
+
+                        params.page = params.page || 0;
+
+                        return {
+                            results: data.item,
+                            pagination: {
+                                more: data.offset + data.count < data.total
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                escapeMarkup: function (markup) { return markup; }, // Format normally
+                minimumInputLength: 1,
+                templateSelection: function (provider) {
+                    if (provider.text != null)
+                        return "<span class='glyphicon glyphicon-user'></span> " + provider.text;
+                    return "<span class='glyphicon glyphicon-user'></span> " + OpenIZ.Util.renderName(provider.name.OfficialRecord);
+                },
+                templateResult: function (provider) {
+                    if (provider.text != null)
+                        return provider.text;
+                    return "<span class='glyphicon glyphicon-user'></span> " + OpenIZ.Util.renderName(provider.name.OfficialRecord);
+                }
+            });
+
         }
     },
     /**
@@ -1383,37 +1509,3 @@ $.ajaxSetup({
         OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
 })();
 
-// Bind datepickers
-$(document).ready(function () {
-
-    //OpenIZModel = new __OpenIZModel();
-    $('input[type="date"]').each(function (k, v) {
-        if ($(v).attr('oiz-max-date')) {
-            var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('oiz-max-date')));
-            var maxDate = OpenIZ.Util.toDateInputString(date);
-            $(v).attr('max', maxDate);
-        }
-        if ($(v).attr('oiz-min-date')) {
-            var date = new Date();
-            date.setDate(date.getDate() + parseInt($(v).attr('oiz-min-date')));
-            var minDate = OpenIZ.Util.toDateInputString(date)
-            $(v).attr('min', minDate);
-        }
-    });
-
-    // Indicators
-    $('div.collapse[oiz-collapseIndicator]').each(function (k, v) {
-
-        $(v).on('hide.bs.collapse', function () {
-            var indicator = $(this).attr('oiz-collapseIndicator');
-            $(indicator).removeClass('glyphicon-chevron-down');
-            $(indicator).addClass('glyphicon-chevron-right');
-        });
-        $(v).on('show.bs.collapse', function () {
-            var indicator = $(this).attr('oiz-collapseIndicator');
-            $(indicator).addClass('glyphicon-chevron-down');
-            $(indicator).removeClass('glyphicon-chevron-right');
-        });
-    });
-});

@@ -21,7 +21,7 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
     // Get current session
     $rootScope.session = OpenIZ.Authentication.getSession();
 
-  
+    $rootScope.OpenIZ = OpenIZ;
 });
 
 // Configure the safe ng-urls

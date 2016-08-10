@@ -1,9 +1,10 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/binding">
-    <oiz:script>/org.openiz.core/controllers/encounters/register/encounter.js</oiz:script>
-    <div class="form-group">
+          xmlns:bind="http://openiz.org/applet/binding"
+          class="oiz-encounter-entry">
+    <oiz:script>/org.openiz.core/controllers/common/encounters/register/encounter.js</oiz:script>
+    <div class="form-group row">
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
-        <div class="col-xs-8 col-sm-4"><input type="date" class="form-control" ng-model="encounter.actTime"/></div>
+        <div class="col-xs-8 col-sm-4"><input type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" class="form-control" ng-model="encounter.actTime" /></div>
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>
         <div class="col-xs-8 col-sm-4">
             <div class="input-group">
@@ -12,24 +13,34 @@
                            ng-model="encounter.participation.Location._enabled"
                            value="1" />
                 </span>
-                <select ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player"></select>
+                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" class="form-control">
+                    <option value="{{encounter.participation.Location.player}}">{{encounter.participation.Location.playerModel.name.OfficialRecord | oizEntityName }}</option>
+                </select>
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.disposition' | i18n }}</label>
-        <div class="col-xs-8 col-sm-4"><select ng-model="encounter.dischargeDisposition" bind:source="Concept" bind:filter="conceptSet.mnemonic=EncounterDischargeDisposition" bind:value="name[en].value"></select> </div>
+        <div class="col-xs-8 col-sm-4">
+            <select ng-model="encounter.dischargeDisposition" bind:source="Concept" bind:filter="conceptSet.mnemonic=DischargeDisposition" bind:value="name[{{ locale }}].value" class="form-control"></select>
+        </div>
     </div>
-    <div class="form-group">
+    <div class="form-group row">
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
-        <div class="col-xs-8 col-sm-4"><select name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player"></select></div>
+        <div class="col-xs-8 col-sm-4">
+            <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player">
+                <option selected="selected" value="{{encounter.participation.Performer.player}}">{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}</option>
+            </select>
+        </div>
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
         <div class="col-xs-8 col-sm-4">
             <div class="input-group">
-                <select name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player"></select>
+                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player">
+                    <option selected="selected" value="{{encounter.participation.Verifier.player}}">{{encounter.participation.Verifier.playerModel.name.OfficialRecord | oizEntityName }}</option>
+                </select>
             </div>
         </div>
-        <!-- #include virtual="/org.openiz.core/views/encounters/partials/relationships.html" -->
     </div>
-
+    <div class="panel-body" ng-include="OpenIZ.App.resolveTemplate(encounter.template.mnemonic)">
+    </div>
 </fieldset>

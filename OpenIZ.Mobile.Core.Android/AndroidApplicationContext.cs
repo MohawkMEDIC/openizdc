@@ -472,7 +472,32 @@ namespace OpenIZ.Mobile.Core.Android
 				};
 			}
 		}
-		#endregion
-	}
+
+        /// <summary>
+        /// Get applet asset
+        /// </summary>
+        internal byte[] GetAppletAssetFile(AppletAsset navigateAsset)
+        {
+            String itmPath = System.IO.Path.Combine(
+                                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
+                                        "assets",
+                                        navigateAsset.Manifest.Info.Id,
+                                        navigateAsset.Name);
+            using(MemoryStream response = new MemoryStream())
+            using (var fs = File.OpenRead(itmPath))
+            {
+                int br = 8092;
+                byte[] buffer = new byte[8092];
+                while (br == 8092)
+                {
+                    br = fs.Read(buffer, 0, 8092);
+                    response.Write(buffer, 0, br);
+                }
+                return response.ToArray();
+            }
+
+        }
+        #endregion
+    }
 }
 

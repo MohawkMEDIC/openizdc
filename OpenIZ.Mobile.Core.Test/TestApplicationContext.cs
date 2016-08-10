@@ -33,6 +33,7 @@ using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Diagnostics;
 using System.Security.Principal;
+using OpenIZ.Mobile.Core.Android.Threading;
 
 namespace OpenIZ.Mobile.Core.Test
 {
@@ -109,6 +110,7 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(LocalIdentityService).AssemblyQualifiedName,
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
+                    typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName
                 }
                     };
@@ -138,7 +140,13 @@ namespace OpenIZ.Mobile.Core.Test
                     m_configuration.Sections.Add(diagSection);
                     m_configuration.Sections.Add(appSection);
                     m_configuration.Sections.Add(secSection);
-
+                    appSection.Cache = new CacheConfiguration()
+                    {
+                        MaxAge = 10,
+                        MaxDirtyAge = 10,
+                        MaxSize = 1000,
+                        MaxPressureAge = 10
+                    };
                     try
                     {
                         // If the DB File doesn't exist we have to clear the migrations
@@ -148,7 +156,7 @@ namespace OpenIZ.Mobile.Core.Test
                         }
 
                         DataMigrator migrator = new DataMigrator();
-                        migrator.Ensure();
+                        //migrator.Ensure();
 
                         // Set the entity source
                         EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());

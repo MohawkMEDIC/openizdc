@@ -1,0 +1,26 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
+    <div class="row">
+        <label class="control-label col-xs-12 col-sm-2">
+            {{ 'locale.encounters.immunization.title' | i18n }} {{ act.actModel.participation.Product.playerModel.name.Assigned | oizEntityName }}{{act.actModel.doseSequence}}
+        </label>
+        <div class="col-xs-12 col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <input type="checkbox"
+                           ng-model="act._enabled"
+                           checked="checked"
+                           value="1" />
+                </span>
+                <select class="form-control" ng-if="act._created" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType" bind:value="name[Assigned].component[null].value"></select>
+                <span class="input-group-addon" ng-if="act._created"></span>
+                <select class="form-control" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Consumable.player" oiz-lookup="oiz-lookup" oiz-lookup-source="ManufacturedMaterial" oiz-lookup-filter="relationship[RegulatedProduct].player={{ act.actModel.participation.Product.playerModel.id }}">
+                </select>
+                <span class="input-group-addon">
+                    {{ 'locale.encounters.immunizations.site' | i18n }}
+                </span>
+                <select class="form-control" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.site" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=AdministrationSite">
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

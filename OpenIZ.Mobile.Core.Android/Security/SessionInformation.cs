@@ -32,6 +32,11 @@ using Newtonsoft.Json;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
 using System.Security.Principal;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Services;
+using System.Globalization;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -48,6 +53,9 @@ namespace OpenIZ.Mobile.Core.Android.Security
         {
 
         }
+
+        // The tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(SessionInformation));
 
         /// <summary>
         /// Create the session object from the principal
@@ -69,6 +77,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
                 this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration)?.Value ?? DateTime.MaxValue.ToString());
                 this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToArray();
                 this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
+
             }
             else
             {
@@ -77,7 +86,44 @@ namespace OpenIZ.Mobile.Core.Android.Security
                 this.Issued = DateTime.Now;
                 this.Expiry = DateTime.MaxValue;
             }
+
+            // Grab the user entity
+            try
+            {
+                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+                int t;
+                var securityUser = userService.GetUser(principal.Identity);
+                this.UserEntity = userService.FindUserEntity(o => o.SecurityUserKey == securityUser.Key, 0, 1, out t).FirstOrDefault() ??
+                    new UserEntity()
+                    {
+                        SecurityUserKey = securityUser.Key,
+                        LanguageCommunication = new List<PersonLanguageCommunication>() { new PersonLanguageCommunication(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, true) },
+                        Telecoms = new List<EntityTelecomAddress>()
+                        {
+                        new EntityTelecomAddress(TelecomAddressUseKeys.Public, securityUser.Email ?? securityUser.PhoneNumber)
+                        },
+                        Names = new List<EntityName>()
+                        {
+                        new EntityName(NameUseKeys.OfficialRecord, securityUser.UserName)
+                        }
+                    };
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error getting extended session information: {0}", e);
+            }
         }
+
+        private object ApplicationContextIDataPersistenceService<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets the user entity
+        /// </summary>
+        [JsonProperty("entity")]
+        public UserEntity UserEntity { get; set; }
 
         /// <summary>
         /// Gets the user name

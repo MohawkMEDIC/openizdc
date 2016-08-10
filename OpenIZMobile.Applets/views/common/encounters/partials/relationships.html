@@ -3,14 +3,10 @@
     <div ng-repeat="enc in encounter.relationship">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <span>{{ enc.typeConceptModel.name.en }}</span>
+                <span>{{ enc.template.name }}</span>
             </div>
-            <div ng-switch="enc.typeConcept.mnemonic">
-                <div ng-switch-when="EncounterType-BirthEncounter">
-                    <!-- #include virtual="/org.openiz.core/views/encounters/templates/birth.html" -->
-                </div>
-                <div ng-switch-when="EncounterType-Vaccination">
-                    <!-- #include virtual="/org.openiz.core/views/encounters/templates/vaccination.html" -->
+            <div class="panel-collapse in">
+                <div class="panel-body" ng-include="enc.template.formUrl">
                 </div>
             </div>
         </div>

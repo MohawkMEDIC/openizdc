@@ -124,6 +124,87 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Get providers from the database
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/Provider" ,FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Bundle GetProvider()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var predicate = QueryExpressionParser.BuildLinqExpression<Provider>(search);
+            var patientService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
+            int totalResults = 0,
+                offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+            var retVal = patientService.Find(predicate, offset, count, out totalResults);
+
+            // Serialize the response
+            return new Bundle()
+            {
+                Item = retVal.OfType<IdentifiedData>().ToList(),
+                Offset = offset,
+                Count = count,
+                TotalResults = totalResults
+            };
+
+        }
+
+        /// <summary>
+        /// Get a template
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/Act/Template", FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act GetActTemplate()
+        {
+            var templateString = this.GetTemplateString();
+            // Load the data from the template string
+            var retVal = JsonViewModelSerializer.DeSerialize<Act>(templateString);
+            retVal.Key = Guid.NewGuid();
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Get a template
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/Entity/Template", FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Entity GetEntityTemplate()
+        {
+            var templateString = this.GetTemplateString();
+            // Load the data from the template string
+            var retVal = JsonViewModelSerializer.DeSerialize<Entity>(templateString);
+            retVal.Key = Guid.NewGuid();
+            //retVal.SetDelayLoad(true);
+            return retVal;
+        }
+
+        /// <summary>
+        /// Get the template string
+        /// </summary>
+        private String GetTemplateString()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            // The template to construct
+            List<String> templateId = search["templateId"];
+
+            // Attempt to get the template definition
+            var template = AndroidApplicationContext.Current.LoadedApplets.GetTemplateDefinition(templateId.First());
+
+            // Load and replace constants
+            var templateBytes = template.DefinitionContent;
+            if (templateBytes == null)
+                templateBytes = AndroidApplicationContext.Current.GetAppletAssetFile(AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(template.Definition));
+
+            var templateString = Encoding.UTF8.GetString(templateBytes);
+            var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var securityUser = securityRepo.GetUser(ApplicationContext.Current.Principal.Identity);
+            var userEntity = securityRepo.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
+            templateString = templateString.Replace("{{now}}", DateTime.Now.ToString("o")).Replace("{{userId}}", securityUser.Key.ToString()).Replace("{{userEntityId}}", userEntity?.Key.ToString()).Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.Key.ToString());
+            return templateString;
+        }
+
+        /// <summary>
         /// Get a patient
         /// </summary>
         [RestOperation(Method = "GET", UriPath = "/Empty/Patient", FaultProvider = nameof(ImsiFault))]

@@ -63,6 +63,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MobileTest.cs" />
+    <Compile Include="OpenIZThreadPool.cs" />
     <Compile Include="Persistence\ActPersistenceServiceTest.cs" />
     <Compile Include="Persistence\ConceptPersistenceServiceTest.cs" />
     <Compile Include="Persistence\EntityPersistenceServiceTest.cs" />
@@ -87,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IMSI\TroublesomePlaceBundle.xml" />
+    <Content Include="Data\OpenIZData.sql" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -94,6 +96,9 @@
   <ItemGroup>
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
+    </None>
+    <None Include="OpenIZ.sqlite">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Choose>

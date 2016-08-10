@@ -39,10 +39,35 @@ namespace OpenIZ.Mobile.Core.Android.Net
     public class NetworkInformationService : INetworkInformationService
     {
         /// <summary>
+        /// Network avaialbility changed
+        /// </summary>
+        public NetworkInformationService()
+        {
+            NetworkChange.NetworkAvailabilityChanged += (o, e) => this.NetworkStatusChanged?.Invoke(this, e);
+        }
+
+        /// <summary>
+        /// Return whether the network is available
+        /// </summary>
+        public bool IsNetworkAvailable
+        {
+            get
+            {
+                return NetworkInterface.GetIsNetworkAvailable();
+            }
+        }
+
+        /// <summary>
+        /// Network status has changed
+        /// </summary>
+        public event EventHandler NetworkStatusChanged;
+
+        /// <summary>
         /// Gets all available interfaces
         /// </summary>
         public IEnumerable<NetworkInterfaceInfo> GetInterfaces()
         {
+     
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
                 o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up
             ));
@@ -50,13 +75,42 @@ namespace OpenIZ.Mobile.Core.Android.Net
         }
 
         /// <summary>
+        /// Perform a DNS lookup
+        /// </summary>
+        public string Nslookup(string address)
+        {
+            try
+            {
+                Uri uri = null;
+                if (Uri.TryCreate(address, UriKind.RelativeOrAbsolute, out uri))
+                    address = uri.Host;
+                var resolution = System.Net.Dns.GetHostEntry(address); 
+                return resolution.AddressList.First().ToString();
+            }
+            catch
+            {
+                return String.Empty;
+            }
+        }
+
+        /// <summary>
         /// Retrieves the ping time to the specified host
         /// </summary>
         public long Ping(string hostName)
         {
-            System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping();
-            var reply = p.Send(hostName);
-            return reply.Status == IPStatus.Success ? reply.RoundtripTime : -1 ;
+            try
+            {
+                Uri uri = null;
+                if (Uri.TryCreate(hostName, UriKind.RelativeOrAbsolute, out uri))
+                    hostName = uri.Host;
+                System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping();
+                var reply = p.Send(hostName);
+                return reply.Status == IPStatus.Success ? reply.RoundtripTime : -1;
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

@@ -27,7 +27,7 @@
         <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
-                <input type="date" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" oiz-max-date="0" />
+                <input type="date" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"/>
                 <span class="input-group-addon">
                     <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
                     <label for="approximateDob">
@@ -44,7 +44,7 @@
             <div class="input-group">
                 <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
                         aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
-                        bind:value="name[en].value"></select>
+                        bind:value="name[{{ locale }}].value"></select>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>

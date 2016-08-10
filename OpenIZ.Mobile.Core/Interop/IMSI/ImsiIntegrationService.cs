@@ -146,23 +146,25 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             // 1. Is there a network avaialble?
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
                 return false;
-            else if (restClient.Description.Endpoint.All(o=>nis.Ping(o.Address) == 0)) // 2. Can we ping a well-known service?
+            else if (restClient.Description.Endpoint.All(o => nis.Ping(o.Address) == -1) && 
+                restClient.Description.Endpoint.All(o=>o.Address.Contains(nis.Nslookup(o.Address)))) // 2. Can we ping a well-known service?
                 return false;
-            else // Head is up?
-            {
-                try
-                {
-                    restClient.Options<String>("/");
-                    return true;
-                }
-                catch(WebException e)
-                { 
-                    // Did we get anything back?
-                    return e.Response != null && 
-                        e.Status != WebExceptionStatus.SendFailure &&
-                        e.Status != WebExceptionStatus.ConnectFailure;
-                }
-            }
+            return true;
+            //else // Head is up?
+            //{
+            //    try
+            //    {
+            //        restClient.Options<String>("/");
+            //        return true;
+            //    }
+            //    catch(WebException e)
+            //    { 
+            //        // Did we get anything back?
+            //        return e.Response != null && 
+            //            e.Status != WebExceptionStatus.SendFailure &&
+            //            e.Status != WebExceptionStatus.ConnectFailure;
+            //    }
+            //}
         }
 
         /// <summary>

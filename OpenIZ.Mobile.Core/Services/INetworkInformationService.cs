@@ -73,5 +73,20 @@ namespace OpenIZ.Mobile.Core.Services
         /// Pings the specified host
         /// </summary>
         long Ping(String hostName);
+
+        /// <summary>
+        /// Gets whether the network is available
+        /// </summary>
+        bool IsNetworkAvailable { get; }
+
+        /// <summary>
+        /// Fired when the network status changes
+        /// </summary>
+        event EventHandler NetworkStatusChanged;
+
+        /// <summary>
+        /// Perform a DNS lookup
+        /// </summary>
+        string Nslookup(string address);
     }
 }

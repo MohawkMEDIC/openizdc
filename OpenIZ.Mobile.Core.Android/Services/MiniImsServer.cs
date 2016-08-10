@@ -387,15 +387,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                         this.m_cacheApplets.Add(appletPath, navigateAsset);
             }
 
-            // Block access to HTML f
-            if (navigateAsset.MimeType == "text/html")
-            {
-                string auth = request.Headers["Authorization"];
 
-                var expectedAuth = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}:{1}", AndroidApplicationContext.Current.Application.Name, AndroidApplicationContext.Current.Application.ApplicationSecret)));
-                if (expectedAuth != auth)
-                    throw new UnauthorizedAccessException();
-            }
 
 #if DEBUG
             response.AddHeader("Cache-Control", "no-cache");
@@ -410,21 +402,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
             // Write asset
             if (navigateAsset.Content == null)
             {
-                String itmPath = System.IO.Path.Combine(
-                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
-                            "assets",
-                            navigateAsset.Manifest.Info.Id,
-                            navigateAsset.Name);
-                using (var fs = File.OpenRead(itmPath))
-                {
-                    int br = 8092;
-                    byte[] buffer = new byte[8092];
-                    while (br == 8092)
-                    {
-                        br = fs.Read(buffer, 0, 8092);
-                        response.OutputStream.Write(buffer, 0, br);
-                    }
-                }
+                var content = AndroidApplicationContext.Current.GetAppletAssetFile(navigateAsset);
+                response.OutputStream.Write(content, 0, content.Length);
             }
             else
             {

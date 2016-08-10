@@ -97,15 +97,28 @@ angular.module('openiz', [])
                 return modelValue.join(' ');
             else if (modelValue.component !== undefined) {
                 var nameStr = "";
-                if (typeof (modelValue.component.Given) === "string")
-                    nameStr += modelValue.component.Given;
-                else if (modelValue.component.Given.join !== undefined)
-                    nameStr += modelValue.component.Given.join(' ');
-                nameStr += " ";
-                if (typeof (modelValue.component.Family) === "string")
-                    nameStr += modelValue.component.Family;
-                else if (modelValue.component.Family.join !== undefined)
-                    nameStr += modelValue.component.Family.join(' ');
+                if (modelValue.component.Given !== undefined) {
+                    if (typeof (modelValue.component.Given) === "string")
+                        nameStr += modelValue.component.Given;
+                    else if (modelValue.component.Given.join !== undefined)
+                        nameStr += modelValue.component.Given.join(' ');
+                    nameStr += " ";
+                }
+                if (modelValue.component.Family !== undefined) {
+                    if (typeof (modelValue.component.Family) === "string")
+                        nameStr += modelValue.component.Family;
+                    else if (modelValue.component.Family.join !== undefined)
+                        nameStr += modelValue.component.Family.join(' ');
+                }
+                if (modelValue.component.$other !== undefined) {
+                    if (typeof (modelValue.component.$other) === "string")
+                        nameStr += modelValue.component.$other;
+                    else if (modelValue.component.$other.join !== undefined)
+                        nameStr += modelValue.component.$other.join(' ');
+                    else if(modelValue.component.$other.value !== undefined)
+                        nameStr += modelValue.component.$other.value;
+
+                }
                 return nameStr;
             }
             else
@@ -128,4 +141,20 @@ angular.module('openiz', [])
                 }
             }
         }
+    })
+    .directive('oizCollapseindicator', function () {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $(element).on('hide.bs.collapse', function () {
+                    var indicator = $(this).attr('data-oiz-chevron');
+                    $(indicator).removeClass('glyphicon-chevron-down');
+                    $(indicator).addClass('glyphicon-chevron-right');
+                });
+                $(element).on('show.bs.collapse', function () {
+                    var indicator = $(this).attr('data-oiz-chevron');
+                    $(indicator).addClass('glyphicon-chevron-down');
+                    $(indicator).removeClass('glyphicon-chevron-right');
+                });
+            }
+        };
     });

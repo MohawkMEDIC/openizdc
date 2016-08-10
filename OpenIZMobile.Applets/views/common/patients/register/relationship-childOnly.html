@@ -5,8 +5,8 @@
         <label class="col-xs-2 control-label" for="relationType">{{ 'locale.patient.realtive.type' | i18n }}</label>
         <div class="col-xs-10">
             <div class="input-group">
-                <select ng-model="patient.relationship.$other.typeConcept" class="form-control"
-                        bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother" bind:value="name[en].value"></select>
+                <select ng-model="patient.relationship.$other.relationshipType" class="form-control"
+                        bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother" bind:value="name[{{ locale }}].value"></select>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
@@ -40,7 +40,7 @@
         <div class="col-xs-4">
             <div class="input-group">
                 <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.$other.targetModel.telecom.$other.use"
-                        bind:source="Concept" bind:value="name[en].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
             </div>
         </div>
         <div class="col-xs-6">

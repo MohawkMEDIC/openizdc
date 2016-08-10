@@ -178,15 +178,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns></returns>
         public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
         {
+            int td;
+            return this.FindUserEntity(expression, 0, null, out td);
+        }
+
+        /// <summary>
+        /// Find user entity
+        /// </summary>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
+        {
             var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (persistence == null)
                 throw new InvalidOperationException("Persistence service missing");
-            return persistence.Query(expression);
-        }
-
-        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
-        {
-            throw new NotImplementedException();
+            return persistence.Query(expression, offset, count, out totalCount);
         }
 
         /// <summary>

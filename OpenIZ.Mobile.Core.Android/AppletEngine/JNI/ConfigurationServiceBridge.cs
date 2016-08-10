@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                         syncConfig.SynchronizationResources.Add(new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = SynchronizationPullTriggerType.OnStart
+                            Triggers = SynchronizationPullTriggerType.Always
                         });
                     }
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);

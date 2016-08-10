@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var person = dataInstance as DbPerson;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context);
-            retVal.DateOfBirth = person.DateOfBirth;
+            retVal.DateOfBirth = person.DateOfBirth.HasValue ? (DateTime?)person.DateOfBirth.Value.ToLocalTime() : null;
 
             // Reverse lookup
             if (!String.IsNullOrEmpty(person.DateOfBirthPrecision))

@@ -84,8 +84,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
 			// Algorithm is valid?
 			if (this.m_configuration.TokenAlgorithms?.Contains ((String)headers ["alg"]) == false)
 				throw new SecurityTokenException(SecurityTokenExceptionType.InvalidTokenType, String.Format ("Token algorithm {0} not permitted", headers ["alg"]));
-
-
+            
 			// Attempt to get the certificate
 			if (((String)headers ["alg"]).StartsWith ("RS")) {
 				var cert = X509CertificateUtils.FindCertificate (X509FindType.FindByThumbprint, StoreLocation.CurrentUser, StoreName.My, headers ["x5t"].ToString ());
@@ -122,7 +121,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
             this.RefreshToken = refreshToken;
 
 			this.m_identities.Clear ();
-			this.m_identities.Add(new ClaimsIdentity((String)body["unique_name"], true, claims));
+			this.m_identities.Add(new ClaimsIdentity(body["unique_name"].Value<String>().ToLower(), true, claims));
 		}
 
 

@@ -43,6 +43,7 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
+using OpenIZ.Mobile.Core.Android.Net;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -127,6 +128,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalPlaceService).AssemblyQualifiedName,
                     typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
+                    typeof(LocalSecurityService).AssemblyQualifiedName,
+                    typeof(NetworkInformationService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,

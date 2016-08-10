@@ -153,7 +153,7 @@ select person.*,
 		entity.telecom_use,
 		entity.telecom_value
 	from person inner join sqp_Entity as entity on (person.uuid = entity.uuid)
-		where entity.classConcept = X'46A8E29DF2DDBC4E902E84508C5089EA';
+		where entity.classConcept IN (X'46A8E29DF2DDBC4E902E84508C5089EA', X'D8FE046B64C19C46910BF824C2BDA4F0');
 	
 
 
@@ -345,7 +345,8 @@ select user.*,
 	security_user.locked as securityUser_lockout,
 	sqp_Person.*
 	from sqp_Person inner join user  on (user.uuid = sqp_Person.uuid)
-	inner join security_user on (security_user.uuid = user.securityUser);
+	left join security_user on (security_user.uuid = user.securityUser);
+
 -- DEVICE VIEW
 create view if not exists sqp_DeviceEntity as
 select device.*,
@@ -459,7 +460,7 @@ select application.*,
 
 -- ACT SUPPORTING VIEW
 
-CREATE VIEW sqp_act AS
+CREATE VIEW IF NOT EXISTS sqp_act AS
 SELECT act.*,
 	class_concept.mnemonic AS classConcept_mnemonic,
 	mood_concept.mnemonic AS moodConcept_mnemonic,
@@ -493,7 +494,30 @@ SELECT act.*,
 	LEFT JOIN act_relationship_view ON (act.uuid = act_relationship_view.act_uuid);
 	
 
-CREATE VIEW sqp_AssigningAuthority AS
+CREATE VIEW IF NOT EXISTS sqp_AssigningAuthority AS
 	SELECT assigning_authority.*, assigning_authority_scope.concept as scope_id, concept.mnemonic as scope_mnemomnic
 	FROM assigning_authority LEFT JOIN assigning_authority_scope ON (assigning_authority.uuid = assigning_authority_scope.authority)
 	LEFT JOIN concept ON (assigning_authority_scope.concept = concept.uuid);
+
+CREATE VIEW IF NOT EXISTS sqp_material AS
+SELECT sqp_entity.*,
+	material.expiry as expiryDate,
+	material.isAdministrative as isAdministrative,
+	material.quantity as quantity,
+	formConcept.uuid as formConcept,
+	formConcept.mnemonic as formConcept_mnemonic,
+	quantityConcept.uuid as quantityConcept,
+	quantityConcept.mnemonic as quantityConcept_mnemonic
+FROM sqp_entity INNER JOIN material ON (sqp_entity.uuid = material.uuid)
+LEFT JOIN concept as formConcept ON (material.form_concept_uuid = formConcept.uuid)
+LEFT JOIN concept as quantityConcept ON (material.quantity_concept_uuid = quantityConcept.uuid)
+WHERE classConcept = X'BE7390D38F0F0E44B8C87034CC138A95';
+
+create view if not exists sqp_Provider as 
+select sqp_Person.*, 
+	provider.*,
+	specialty.mnemonic as specialty_mnemonic
+	from sqp_Person inner join provider on (sqp_Person.uuid = provider.uuid)
+	left join concept specialty on (specialty.uuid = provider.specialty)
+	where sqp_Person.classConcept = X'D8FE046B64C19C46910BF824C2BDA4F0';
+

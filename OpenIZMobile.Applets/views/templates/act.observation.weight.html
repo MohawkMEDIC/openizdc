@@ -1,0 +1,14 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
+    <div class="row">
+        <label class="control-label col-sm-2 col-xs-12">
+            {{ 'locale.encounters.weight.title' | i18n }}
+        </label>
+        <div class="col-xs-6 col-sm-4">
+            <input type="number" class="form-control" ng-model="act.actModel.value" />
+        </div>
+        <div class="col-xs-6 col-sm-6">
+            <select ng-model="act.actModel.unitOfMeasure" class="col-xs-6 form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value">
+            </select>
+        </div>
+    </div>
+</div>

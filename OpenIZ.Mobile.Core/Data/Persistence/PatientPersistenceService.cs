@@ -62,12 +62,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
             var dbp = context.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context);
-            retVal.DateOfBirth = dbp.DateOfBirth;
+            retVal.DateOfBirth = dbp.DateOfBirth.HasValue ? (DateTime?)dbp.DateOfBirth.Value.ToLocalTime() : null;
             // Reverse lookup
             if (!String.IsNullOrEmpty(dbp.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
 
-            retVal.DeceasedDate = patient.DeceasedDate;
+            retVal.DeceasedDate = patient.DeceasedDate.HasValue ? (DateTime?)patient.DeceasedDate.Value.ToLocalTime() : null;
             // Reverse lookup
             if (!String.IsNullOrEmpty(patient.DeceasedDatePrecision))
                 retVal.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == patient.DeceasedDatePrecision).Select(o => o.Key).First();

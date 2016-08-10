@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         {
 
                             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString( dataSource, true));
+                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString( dataSource,true));
                             this.m_connections.Add(dataSource, conn);
                             this.m_tracer.TraceInfo("Connection to {0} established, {1} active connections", dataSource, this.m_connections.Count);
 #if DEBUG_SQL
