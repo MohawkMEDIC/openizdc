@@ -64,5 +64,11 @@
     "inputFiles": [
       "lib/jquery.datefix.js"
     ]
+  },
+  {
+    "outputFileName": "lib/select2.min.js",
+    "inputFiles": [
+      "lib/select2.js"
+    ]
   }
 ]

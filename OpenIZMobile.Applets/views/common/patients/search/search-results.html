@@ -1,4 +1,5 @@
-﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet" ng-controller="PatientSearchController">
+﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-responsive table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet" ng-controller="PatientSearchController" 
+       xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
     <!--
         Partial responsible for showing patient search results 
@@ -7,27 +8,38 @@
         -->
     <thead>
         <tr>
-            <th>{{ 'locale.patient.search.header.names' | i18n }}</th>
-            <th>{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</th>
-            <th>{{ 'locale.patient.search.header.gender' | i18n }}</th>
-            <th>{{ 'locale.patient.search.header.cityVillage' | i18n }}</th>
-            <th>{{ 'locale.patient.search.header.healthFacility' | i18n }}</th>
-            <th>{{ 'locale.patient.search.header.actions' | i18n }}</th>
+            <th style="width:25px"><a href="#detailFilter" data-toggle="collapse"><span class="glyphicon glyphicon-chevron-right" id="detailFilterIndicator"></span></a></th>
+            <th style="width:20%">{{ 'locale.patient.search.header.names' | i18n }}</th>
+            <th style="width:15%">{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</th>
+            <th style="width:15%">{{ 'locale.patient.search.header.gender' | i18n }}</th>
+            <th style="width:20%">{{ 'locale.patient.search.header.cityVillage' | i18n }}</th>
+            <th style="width:20%">{{ 'locale.patient.search.header.healthFacility' | i18n }}</th>
+            <th style="width:14%">{{ 'locale.patient.search.header.actions' | i18n }}</th>
+        </tr>
+        <tr class="collapse" id="detailFilter" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#detailFilterIndicator">
+            <th></th>
+            <th><input class="form-control" ng-model="search.query['name.component.value']" type="search" name="nameDetailFilter" /></th>
+            <th><input style="max-width:200px" class="form-control" ng-model="search.query['dateOfBirth']" type="date" name="dobFilter" /></th>
+            <th><select class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:vaue="name[{{ locale }}].value" ng-model="search.query['genderConcept']" name="genderFilter" /></th>
+            <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
+            <th><select class="form-control" ng-model="search.query['participation[DedicatedServiceDeliveryLocation].player.name.component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
+            <th><button class="btn btn-info" type="submit"><span class="glyphicon glyphicon-refresh"></span></button></th>
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="patient in search.results.items">
-            <td>{{ patient.name.OfficialRecord.component.Given }} {{ patient.name.OfficialRecord.component.Family }}</td>
-            <td>{{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}</td>
-            <td>{{ patient.genderConcept.name }}</td>
-            <td>N.Y.I.</td>
-            <td>N.Y.I.</td>
+        <tr ng-repeat="patient in search.results.item">
+            <td>{{$index}}</td>
+            <td>{{ ::patient.name.OfficialRecord | oizEntityName }}</td>
+            <td>{{ ::patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.fuzzy' | i18n }}</span></td>
+            <td>{{ ::patient.genderConceptModel.name[$root.page.locale].value }}</td>
+            <td>{{ ::patient.address.HomeAddress.component.City }}</td>
+            <td>{{ ::patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</td>
             <td>
                 <span class="btn-group">
-                    <a class="btn btn-primary" ng-click="viewPatient(patient)">
+                    <a class="btn btn-primary" href="./view.html?patientId={{::patient.id}}">
                         {{ 'locale.patient.action.view' | i18n }}<span class="glyphicon glyphicon-eye-open"></span>
                     </a>
-                    <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-class="{'btn-success':patient.CheckedIn==true}">
+                    <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-class="{'btn-success':isInEncounter(patient)}">
                         {{ 'locale.patient.action.startEncounter' | i18n }}
                     </a>
                 </span>

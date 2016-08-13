@@ -79,7 +79,7 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
-    .filter('oizEntityIdentifier', function() {
+    .filter('oizEntityIdentifier', function () {
         return function (modelValue) {
             if (modelValue.NID !== undefined)
                 return modelValue.NID.value;
@@ -90,39 +90,8 @@ angular.module('openiz', [])
         };
     })
     .filter('oizEntityName', function () {
-        return function(modelValue) {
-            if (modelValue === null || modelValue === undefined)
-                return "";
-            else if (modelValue.join !== undefined)
-                return modelValue.join(' ');
-            else if (modelValue.component !== undefined) {
-                var nameStr = "";
-                if (modelValue.component.Given !== undefined) {
-                    if (typeof (modelValue.component.Given) === "string")
-                        nameStr += modelValue.component.Given;
-                    else if (modelValue.component.Given.join !== undefined)
-                        nameStr += modelValue.component.Given.join(' ');
-                    nameStr += " ";
-                }
-                if (modelValue.component.Family !== undefined) {
-                    if (typeof (modelValue.component.Family) === "string")
-                        nameStr += modelValue.component.Family;
-                    else if (modelValue.component.Family.join !== undefined)
-                        nameStr += modelValue.component.Family.join(' ');
-                }
-                if (modelValue.component.$other !== undefined) {
-                    if (typeof (modelValue.component.$other) === "string")
-                        nameStr += modelValue.component.$other;
-                    else if (modelValue.component.$other.join !== undefined)
-                        nameStr += modelValue.component.$other.join(' ');
-                    else if(modelValue.component.$other.value !== undefined)
-                        nameStr += modelValue.component.$other.value;
-
-                }
-                return nameStr;
-            }
-            else
-                return modelValue;
+        return function (modelValue) {
+            return OpenIZ.Util.renderName(modelValue);
         }
     })
     .directive('oizTag', function () {
@@ -141,6 +110,69 @@ angular.module('openiz', [])
                 }
             }
         }
+    })
+    .directive('oizEntitysearch', function ($timeout) {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
+
+
+                    var modelType = $(element).attr('oiz-entitysearch');
+                    var filterString = $(element).attr('data-filter');
+
+                    var filter = {};
+                    if (filterString !== undefined)
+                        filter = JSON.parse(filterString);
+                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27'
+
+                    // Add appropriate styling so it looks half decent
+                    $(element).attr('style', 'width:100%; height:100%');
+                    // Bind select 2 search
+                    $(element).select2({
+                        ajax: {
+                            url: "/__ims/" + modelType,
+                            dataType: 'json',
+                            delay: 500,
+                            method: "GET",
+                            data: function (params) {
+                                filter["name.component.value"] = "~" + params.term;
+                                filter["_count"] = 5;
+                                filter["_offset"] = 0;
+                                return filter;
+                            },
+                            processResults: function (data, params) {
+                                params.page = params.page || 0;
+                                return {
+                                    results: $.map(data.item, function (o) {
+                                        o.text = o.text || OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                        return o;
+                                    }),
+                                    pagination: {
+                                        more: data.offset + data.count < data.total
+                                    }
+                                };
+                            },
+                            cache: true
+                        },
+                        escapeMarkup: function (markup) { return markup; }, // Format normally
+                        minimumInputLength: 4,
+                        templateSelection: function (result) {
+                            if (result.name != null)
+                                return OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else
+                                return result.text;
+                        },
+                        templateResult: function (result) {
+                            if (result.name != null)
+                                return "<div class='label label-default'>" +
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else
+                                return result.text;
+                        }
+                    });
+                });
+            }
+        };
     })
     .directive('oizCollapseindicator', function () {
         return {

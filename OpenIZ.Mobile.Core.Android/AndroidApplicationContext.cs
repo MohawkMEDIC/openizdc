@@ -217,7 +217,7 @@ namespace OpenIZ.Mobile.Core.Android
                     retVal.Start();
 
                     // Load protocols
-                    var protocols = retVal.GetService<ICarePlanService>().Protocols;
+                    retVal.GetService<ICarePlanService>().Initialize();
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;

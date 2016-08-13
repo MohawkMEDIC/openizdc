@@ -4,10 +4,18 @@
             {{ 'locale.encounters.weight.title' | i18n }}
         </label>
         <div class="col-xs-6 col-sm-4">
-            <input type="number" class="form-control" ng-model="act.actModel.value" />
+            <div class="input-group">
+                <span class="input-group-addon">
+                    <input type="checkbox"
+                           ng-model="act._enabled"
+                           checked="checked"
+                           value="1" />
+                </span>
+                <input ng-disabled="!act._enabled" type="number" class="form-control" ng-model="act.actModel.value" />
+            </div>
         </div>
         <div class="col-xs-6 col-sm-6">
-            <select ng-model="act.actModel.unitOfMeasure" class="col-xs-6 form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value">
+            <select ng-disabled="!act._enabled"  ng-model="act.actModel.unitOfMeasure" class="col-xs-6 form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value">
             </select>
         </div>
     </div>

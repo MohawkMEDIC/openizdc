@@ -37,6 +37,7 @@ using OpenIZ.Core.Services;
 using System.Globalization;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -93,6 +94,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
                 int t;
                 var securityUser = userService.GetUser(principal.Identity);
+                this.SecurityUser = securityUser;
                 this.UserEntity = userService.FindUserEntity(o => o.SecurityUserKey == securityUser.Key, 0, 1, out t).FirstOrDefault() ??
                     new UserEntity()
                     {
@@ -124,6 +126,12 @@ namespace OpenIZ.Mobile.Core.Android.Security
         /// </summary>
         [JsonProperty("entity")]
         public UserEntity UserEntity { get; set; }
+
+        /// <summary>
+        /// Gets or sets the security user information
+        /// </summary>
+        [JsonProperty("user")]
+        public SecurityUser SecurityUser { get; set; }
 
         /// <summary>
         /// Gets the user name

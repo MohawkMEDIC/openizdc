@@ -10,16 +10,20 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
         loadTime: new Date(),
-        maxEventOccranceTime: new Date(), // Dislike Javascript
-        minAppointmentTime: new Date(), // quite a bit
+        maxEventTime: new Date(), // Dislike Javascript
+        minEventTime: new Date(), // quite a bit
         locale: OpenIZ.Localization.getLocale()
     };
 
-    $rootScope.page.maxEventOccranceTime.setDate($rootScope.page.maxEventOccranceTime.getDate() + 1); // <-- This is why
-    $rootScope.page.minAppointmentTime.setDate($rootScope.page.minAppointmentTime.getDate() - 1); // why I can't call addDays or something?
+    $rootScope.page.maxEventTime.setDate($rootScope.page.maxEventTime.getDate() + 1); // <-- This is why
+    $rootScope.page.minEventTime.setDate($rootScope.page.minEventTime.getDate() - 1); // why I can't call addDays or something?
 
     // Get current session
-    $rootScope.session = OpenIZ.Authentication.getSession();
+    OpenIZ.Authentication.getSessionAsync({
+        continueWith: function (session) {
+            $rootScope.session = session;
+        }
+    });
 
     $rootScope.OpenIZ = OpenIZ;
 });

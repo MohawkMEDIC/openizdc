@@ -57,6 +57,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             throw new NotImplementedException();
         }
 
+        public SecurityPolicy CreatePolicy(SecurityPolicy policy)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates the provided role
         /// </summary>

@@ -207,7 +207,7 @@ namespace OpenIZ.Mobile.Core
                 if (!d.Start())
                     tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
             }
-
+            
             this.Started?.Invoke(this, EventArgs.Empty);
 
         }

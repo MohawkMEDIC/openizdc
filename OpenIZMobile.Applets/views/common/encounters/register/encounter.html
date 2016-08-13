@@ -13,7 +13,8 @@
                            ng-model="encounter.participation.Location._enabled"
                            value="1" />
                 </span>
-                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" class="form-control">
+                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" class="form-control"  oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                    <option value="">{{ 'locale.common.location.none' | i18n }}</option>
                     <option value="{{encounter.participation.Location.player}}">{{encounter.participation.Location.playerModel.name.OfficialRecord | oizEntityName }}</option>
                 </select>
             </div>
@@ -28,14 +29,14 @@
     <div class="form-group row">
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
         <div class="col-xs-8 col-sm-4">
-            <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player">
+            <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="Provider">
                 <option selected="selected" value="{{encounter.participation.Performer.player}}">{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}</option>
             </select>
         </div>
         <label class="col-xs-4 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
         <div class="col-xs-8 col-sm-4">
             <div class="input-group">
-                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player">
+                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player"  oiz-entitysearch="Provider">
                     <option selected="selected" value="{{encounter.participation.Verifier.player}}">{{encounter.participation.Verifier.playerModel.name.OfficialRecord | oizEntityName }}</option>
                 </select>
             </div>
