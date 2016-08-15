@@ -146,9 +146,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             // 1. Is there a network avaialble?
             if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
                 return false;
-            else if (restClient.Description.Endpoint.All(o => nis.Ping(o.Address) == -1) && 
-                restClient.Description.Endpoint.All(o=>o.Address.Contains(nis.Nslookup(o.Address)))) // 2. Can we ping a well-known service?
-                return false;
+            //else if (restClient.Description.Endpoint.All(o => nis.Ping(o.Address) == -1) && 
+            //    restClient.Description.Endpoint.All(o=>o.Address.Contains(nis.Nslookup(o.Address)))) // 2. Can we ping a well-known service?
+            //    return false;
             return true;
             //else // Head is up?
             //{

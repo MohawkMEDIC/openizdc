@@ -126,9 +126,13 @@ namespace OpenIZ.Mobile.Core
 			if (!this.m_cache.TryGetValue (serviceType, out candidateService)) {
 				ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection> ();
 				candidateService = appSection.Services.Find (o => serviceType.GetTypeInfo().IsAssignableFrom(o.GetType().GetTypeInfo()));
-				if (candidateService != null)
-					lock (this.m_lockObject)
-						this.m_cache.Add (serviceType, candidateService);
+                if (candidateService != null)
+                    lock (this.m_lockObject)
+                        if (!this.m_cache.ContainsKey(serviceType))
+                        {
+                            this.m_cache.Add(serviceType, candidateService);
+                        }
+                        else candidateService = this.m_cache[serviceType];
 			}
 			return candidateService;
 		}

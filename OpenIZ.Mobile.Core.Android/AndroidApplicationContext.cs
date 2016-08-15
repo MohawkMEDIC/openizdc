@@ -46,6 +46,7 @@ using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Core.Services;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Protocol;
+using OpenIZ.Core;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -204,8 +205,8 @@ namespace OpenIZ.Mobile.Core.Android
 						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
                         // Prepare clinical protocols
-                        retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
-
+                        //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
+                        ApplicationServiceContext.Current = ApplicationContext.Current;
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());
 						throw;

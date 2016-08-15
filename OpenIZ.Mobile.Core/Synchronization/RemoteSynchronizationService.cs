@@ -18,6 +18,8 @@ using OpenIZ.Mobile.Core.Resources;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Alerting;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -189,7 +191,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     float perc = i / (float)result.TotalResults;
                     retVal = result.TotalResults;
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
+                    result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
 
                     // Queue the act of queueing
                     if (result != null)

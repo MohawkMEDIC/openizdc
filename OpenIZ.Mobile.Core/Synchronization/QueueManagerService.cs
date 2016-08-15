@@ -17,9 +17,11 @@
  * User: justi
  * Date: 2016-7-13
  */
+using OpenIZ.Core.Alerting;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;

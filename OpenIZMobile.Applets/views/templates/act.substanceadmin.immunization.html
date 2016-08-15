@@ -11,9 +11,9 @@
                            checked="checked"
                            value="1" />
                 </span>
-                <select class="form-control" ng-if="act._created" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType" bind:value="name[Assigned].component[null].value"></select>
+                <select class="form-control" ng-if="act._created" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value"></select>
                 <span class="input-group-addon" ng-if="act._created"></span>
-                <select class="form-control" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Consumable.player" oiz-lookup="oiz-lookup" oiz-lookup-source="ManufacturedMaterial" oiz-lookup-filter="relationship[RegulatedProduct].player={{ act.actModel.participation.Product.playerModel.id }}">
+                <select class="form-control" ng-disabled="!act._enabled" style="height:100%" ng-model="act.actModel.participation.Consumable.player" oiz-databind="ManufacturedMaterial" data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.actModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}" }' data-display="OpenIZ.Util.renderManufacturedMaterial(scope)">
                 </select>
                 <span class="input-group-addon">
                     {{ 'locale.encounters.immunizations.site' | i18n }}

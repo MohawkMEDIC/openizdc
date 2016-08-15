@@ -1,50 +1,51 @@
-﻿<form ng-controller="UserProfileController" ng-submit="updateProfile" class="form form-horizontal" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+﻿<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="updateProfile" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>~/controllers/settings/profile.js</oiz:script>
-    <div class="form-group">
-        <label class="col-xs-12 col-sm-2" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Given" /> </div>
-    </div>
-    <div class="form-group">
-        <label class="col-xs-12 col-sm-2" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Family" /> </div>
-    </div>
-    <div class="form-group">
-        <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
-        <div class="col-xs-4">
-            <select name="telephone" id="telephone" class="form-control" ng-model="$root.session.entity.telecom.$other.use"
-                    bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+    <div class="container-fluid">
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
+            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Given" /> </div>
         </div>
-        <div class="col-xs-6">
-            <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="$root.session.entity.telecom.$other.value" class="form-control" />
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
+            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Family" /> </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="col-xs-12 col-sm-2" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10">
-            <div class="input-group">
-                <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-                    <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.OfficialRecord | oizEntityName }}</option>
-                </select>
+        <div class="form-group">
+            <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
+            <div class="col-xs-4">
+                <select name="telephone" id="telephone" class="form-control" ng-model="$root.session.entity.telecom.$other.use"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+            </div>
+            <div class="col-xs-6">
+                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="$root.session.entity.telecom.$other.value" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="input-group">
+                    <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.OfficialRecord | oizEntityName }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
+            <div class="col-xs-12 col-sm-10">
+                <div class="input-group">
+                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language.languageCode">
+                        <option value="en">English</option>
+                        <option value="sw">Kiswahili</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group pull-right">
+                    <button type="submit" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-check"></span>{{ 'locale.actions.save' | i18n }}</button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-xs-12 col-sm-2" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10">
-            <div class="input-group">
-                <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language.languageCode">
-                    <option value="en">English</option>
-                    <option value="sw">Kiswahili</option>
-                </select>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="btn-group pull-left">
-                <button type="submit" class="btn btn-lg btn-primary">{{ 'locale.actions.save' | i18n }}</button>
-            </div>
-        </div>
-    </div>
-
 </form>

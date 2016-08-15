@@ -94,10 +94,12 @@ angular.module('openiz', [])
             return OpenIZ.Util.renderName(modelValue);
         }
     })
-    .directive('oizTag', function () {
+    .directive('oizTag', function ($timeout) {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, ctrl) {
+
+                // Parsers
                 ctrl.$parsers.unshift(tagParser);
                 ctrl.$formatters.unshift(tagFormatter);
                 function tagParser(viewValue) {
@@ -108,8 +110,57 @@ angular.module('openiz', [])
                         return viewValue.join(viewView)
                     return viewValue;
                 }
+
+                // Tag input
+                $timeout(
+                    $(element).tokenfield({
+                        delimiter: ' ,',
+                        createTokensOnBlur: true
+                    })
+                );
             }
         }
+    })
+    .directive('oizDatabind', function($timeout) {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
+                    var modelType = $(element).attr('oiz-databind');
+                    var filterString = $(element).attr('data-filter');
+                    var displayString = $(element).attr('data-display');
+
+                    var filter = {};
+                    if (filterString !== undefined)
+                        filter = JSON.parse(filterString);
+                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    // Get the bind element
+                    OpenIZ.Ims.get({
+                        resource: modelType,
+                        query: filter,
+                        continueWith: function (data) {
+
+                            var options = $(element)[0].options;
+                            $('option', element[0]).remove(); // clear existing 
+                            options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                            for (var i in data.item) {
+                                var text = null;
+                                if (displayString != null) {
+                                    var scope = data.item[i];
+                                    // HACK:
+                                    text = eval(displayString);
+                                }
+                                else
+                                    text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
+
+                                // Append element
+                                options[options.length] = new Option(text, data.item[i].id);
+                            }
+                        }
+                    });
+                });
+            }
+        };
     })
     .directive('oizEntitysearch', function ($timeout) {
         return {
@@ -119,11 +170,12 @@ angular.module('openiz', [])
 
                     var modelType = $(element).attr('oiz-entitysearch');
                     var filterString = $(element).attr('data-filter');
+                    var displayString = $(element).attr('data-display');
 
                     var filter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27'
+                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
                     $(element).attr('style', 'width:100%; height:100%');
@@ -141,6 +193,8 @@ angular.module('openiz', [])
                                 return filter;
                             },
                             processResults: function (data, params) {
+                                $('option', element[0]).remove(); // clear existing 
+
                                 params.page = params.page || 0;
                                 return {
                                     results: $.map(data.item, function (o) {

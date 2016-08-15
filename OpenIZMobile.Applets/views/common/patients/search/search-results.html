@@ -1,4 +1,4 @@
-﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-responsive table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet" ng-controller="PatientSearchController" 
+﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-responsive table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet" 
        xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
     <!--
@@ -18,12 +18,12 @@
         </tr>
         <tr class="collapse" id="detailFilter" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#detailFilterIndicator">
             <th></th>
-            <th><input class="form-control" ng-model="search.query['name.component.value']" type="search" name="nameDetailFilter" /></th>
-            <th><input style="max-width:200px" class="form-control" ng-model="search.query['dateOfBirth']" type="date" name="dobFilter" /></th>
+            <th><input class="form-control" oiz-tag="oiz-tag" ng-model="search.query['name.component.value']" type="search" name="nameDetailFilter" /></th>
+            <th><input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}" style="max-width:200px" class="form-control" ng-model="search.query['dateOfBirth']" type="date" name="dobFilter" /></th>
             <th><select class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:vaue="name[{{ locale }}].value" ng-model="search.query['genderConcept']" name="genderFilter" /></th>
             <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
             <th><select class="form-control" ng-model="search.query['participation[DedicatedServiceDeliveryLocation].player.name.component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
-            <th><button class="btn btn-info" type="submit"><span class="glyphicon glyphicon-refresh"></span></button></th>
+            <th><button class="btn btn-info" ng-click="search.search()" type="button"><span class="glyphicon glyphicon-refresh"></span></button></th>
         </tr>
     </thead>
     <tbody>

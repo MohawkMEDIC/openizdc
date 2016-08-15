@@ -14,6 +14,8 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {

@@ -29,8 +29,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Alerting\AlertEventArgs.cs" />
-    <Compile Include="Alerting\AlertMessage.cs" />
+    <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />
     <Compile Include="Caching\CacheEntry.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
@@ -81,7 +80,8 @@
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
-    <Compile Include="Services\IAlertService.cs" />
+    <Compile Include="Services\Impl\LocalActService.cs" />
+    <Compile Include="Services\Impl\LocalMaterialService.cs" />
     <Compile Include="Services\Impl\LocalPlaceService.cs" />
     <Compile Include="Synchronization\RemoteSynchronizationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

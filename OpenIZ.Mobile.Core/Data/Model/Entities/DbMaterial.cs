@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("form_concept_uuid"), Indexed, NotNull, MaxLength(16)]
+		[Column("form_concept_uuid"), Indexed, MaxLength(16)]
 		public byte[] FormConceptUuid {
 			get;
 			set;
@@ -85,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Manufactured material.
 	/// </summary>
 	[Table("manufactured_material")]
-	public class DbManufacturedMaterial : DbMaterial
+	public class DbManufacturedMaterial : DbIdentified
 	{
 
 		/// <summary>

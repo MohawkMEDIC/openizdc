@@ -239,6 +239,11 @@
     <property modelName="FormConceptKey" domainName="FormConceptUuid"/>
     <property modelName="QuantityConceptKey" domainName="QuantityConceptUuid"/>
   </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbManufacturedMaterial, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
   
   <!-- Provider Maps -->
   <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"

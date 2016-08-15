@@ -93,11 +93,32 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                         DomainName = "TEMP"
                     }, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace(":",""))
                 };
+
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
             // Persist the acts 
             return repository.Insert(patientToInsert);
         }
         
+        /// <summary>
+        /// Create the act in the datastore
+        /// </summary>
+        [RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
+        {
+            var cleanedAct = actToInsert.Clean() as Act;
+            ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+            // Correct author information and controlling act information
+            var currentUserEntity = userService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
+            if (!cleanedAct.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+                cleanedAct.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+
+            // Now we want to persist
+            return actService.Insert(cleanedAct);
+        }
+
         /// <summary>
         /// Get a patient
         /// </summary>
@@ -137,6 +158,32 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                 count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
             var retVal = patientService.Find(predicate, offset, count, out totalResults);
+
+            // Serialize the response
+            return new Bundle()
+            {
+                Item = retVal.OfType<IdentifiedData>().ToList(),
+                Offset = offset,
+                Count = count,
+                TotalResults = totalResults
+            };
+
+        }
+
+        /// <summary>
+        /// Get providers from the database
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Bundle GetManufacturedMaterial()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
+            var patientService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+            int totalResults = 0,
+                offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+            var retVal = patientService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
 
             // Serialize the response
             return new Bundle()

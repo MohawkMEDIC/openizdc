@@ -40,7 +40,7 @@ create view if not exists sqp_Concept AS
 
 -- ENTITY VIEW HELPER
 create view if not exists sqp_Entity as 
-	select entity.*,
+select entity.*,
 		class.mnemonic as classConcept_mnemonic,
 		determiner.mnemonic as determinerConcept_mnemonic,
 		type.mnemonic as typeConcept_mnemonic,
@@ -68,7 +68,10 @@ create view if not exists sqp_Entity as
 		entity_name_comp.phoneticAlgorithm as name_component_phoneticAlgorithm,
 		entity_name_comp_type.mnemonic as name_component_type_mnemonic,
 		entity_name_comp_type.mnemonic as name_component_guard,
-		entity_relationship.relationshipType as relationship_type,
+		er.relationshipType as relationship_type,
+		er.entity_uuid as relationship_source,
+		er.target as relationship_target,
+		not(er.kuuid = entity.uuid) as relationship_inversionInd,
 		rel_type.mnemonic as relationship_guard,
 		rel_entity_name.use as relationship_name_use,
 		rel_entity_name_comp.type as relationship_name_component_type,
@@ -93,14 +96,18 @@ create view if not exists sqp_Entity as
 		left join concept as entity_name_concept on (entity_name_concept.uuid = entity_name.use)
 		left join entity_name_comp on (entity_name.uuid = entity_name_comp.name_uuid)
 		left join concept as entity_name_comp_type on (entity_name_comp_type.uuid = entity_name_comp.type)
-		left join entity_relationship on (entity_relationship.entity_uuid = entity.uuid)
-		left join concept as rel_type on (entity_relationship.relationshipType = rel_type.uuid)
+		left join (
+			select entity_uuid as kuuid, * from entity_relationship
+			union 
+			select target as kuuid, * from entity_relationship
+		) as er on (er.kuuid = entity.uuid)
+		left join concept as rel_type on (er.relationshipType = rel_type.uuid)
 		left join entity_telecom on (entity_telecom.entity_uuid = entity.uuid)
-		left join entity as rel_entity on (rel_entity.uuid = entity_relationship.target)
+		left join entity as rel_entity on (rel_entity.uuid = er.target)
 		left join entity_name as rel_entity_name on (rel_entity.uuid = rel_entity_name.entity_uuid)
 		left join entity_name_comp as rel_entity_name_comp on (rel_entity_name.uuid = rel_entity_name_comp.name_uuid)
 		left join entity_telecom as rel_entity_telecom on (rel_entity_telecom.entity_uuid = rel_entity.uuid);
-	
+		
 -- PERSON VIEW
 create view if not exists sqp_Person as
 select person.*,
@@ -511,7 +518,10 @@ SELECT sqp_entity.*,
 FROM sqp_entity INNER JOIN material ON (sqp_entity.uuid = material.uuid)
 LEFT JOIN concept as formConcept ON (material.form_concept_uuid = formConcept.uuid)
 LEFT JOIN concept as quantityConcept ON (material.quantity_concept_uuid = quantityConcept.uuid)
-WHERE classConcept = X'BE7390D38F0F0E44B8C87034CC138A95';
+WHERE classConcept IN (X'BE7390D38F0F0E44B8C87034CC138A95', X'86C2FEFAD5890B429085054ACA9D1EEF');
+
+create view if not exists sqp_ManufacturedMaterial as
+select sqp_material.*, lot from sqp_material inner join manufactured_material on (sqp_material.uuid = manufactured_material.uuid);
 
 create view if not exists sqp_Provider as 
 select sqp_Person.*, 
@@ -521,3 +531,5 @@ select sqp_Person.*,
 	left join concept specialty on (specialty.uuid = provider.specialty)
 	where sqp_Person.classConcept = X'D8FE046B64C19C46910BF824C2BDA4F0';
 
+
+create index entity_relationship_type on entity_relationship(entity_uuid, target, relationshipType);

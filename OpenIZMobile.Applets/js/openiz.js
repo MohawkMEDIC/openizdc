@@ -138,7 +138,7 @@ var OpenIZ = OpenIZ || {
                     var error = data.responseJSON;
                     if (controlData.onException === undefined)
                         console.error(error);
-                    else if (error.error !== undefined) // oauth 2 error
+                    else if (error != undefined && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
@@ -166,7 +166,14 @@ var OpenIZ = OpenIZ || {
          * @summary Log an exception to the console
          */
         logException : function(e) {
-            console.error(e);
+            console.warn(e);
+        },
+        /** 
+         * @summary Render the manufactured material
+         */
+        renderManufacturedMaterial : function(scope) {
+            var name = OpenIZ.Util.renderName(scope.name.OfficialRecord);
+            return name + "(LN#: " + scope.lotNumber + ")";
         },
         /** 
          * @summary Renders the person
@@ -418,14 +425,15 @@ var OpenIZ = OpenIZ || {
                 url += "&actTime=<" + controlData.maxDate.toISOString();
             if (controlData.classConcept !== undefined)
                 url += "&classConcept=" + controlData.classConcept;
+            console.info("Generating care plan...");
             $.ajax({
                 method: 'POST',
                 url: url,
                 data: JSON.stringify(controlData.data),
-
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
+                    console.info("Retrieved care plan...");
                    // console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
                     if (controlData.finally !== undefined)
@@ -739,7 +747,7 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            return navigator.language || navigator.userLanguage;
+            return (navigator.language || navigator.userLanguage).substring(0, 2);
         },
         /**
          * @summary Sets the current user interface locale
