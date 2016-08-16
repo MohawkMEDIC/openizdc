@@ -33,6 +33,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Interop;
 using System.Net;
 using OpenIZ.Mobile.Core.Android.Resources;
+using OpenIZ.Messaging.AMI.Client;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -251,6 +252,9 @@ namespace OpenIZ.Mobile.Core.Android.Security
         /// </summary>
         public void ChangePassword(string userName, string password)
         {
+			using (AmiServiceClient client = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami")))
+			{
+			}
             throw new NotImplementedException();
         }
         /// <summary>
