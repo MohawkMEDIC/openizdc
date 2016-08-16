@@ -385,7 +385,11 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
-
+		/// <summary>
+		/// Gets or sets the timeout
+		/// </summary>
+		[XmlAttribute("timeout")]
+		public int Timeout { get; set; }
 	}
 
 

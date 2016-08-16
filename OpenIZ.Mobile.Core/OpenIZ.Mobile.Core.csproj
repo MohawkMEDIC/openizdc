@@ -198,9 +198,6 @@
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model.AMI">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
-    </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
     </Reference>

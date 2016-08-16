@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.5.516.">
+  <info id="org.openiz.core" version="0.6.5.727.">
     <icon>~/img/cog.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -22,8 +22,76 @@
       <text>Suggestion Box</text>
     </menuItem>
   </menuItem>
-  <asset name="bundleconfig.json" mimeType="application/octet-stream">
-    <contentBin>Ww0KICB7DQogICAgIm91dHB1dEZpbGVOYW1lIjogImpzL29wZW5pei1sb2NhbGl6ZS5taW4uanMiLA0KICAgICJpbnB1dEZpbGVzIjogWw0KICAgICAgImpzL29wZW5pei1sb2NhbGl6ZS5qcyINCiAgICBdDQogIH0sDQogIHsNCiAgICAib3V0cHV0RmlsZU5hbWUiOiAianMvb3Blbml6LW1vZGVsLm1pbi5qcyIsDQogICAgImlucHV0RmlsZXMiOiBbDQogICAgICAianMvb3Blbml6LW1vZGVsLmpzIg0KICAgIF0NCiAgfSwNCiAgew0KICAgICJvdXRwdXRGaWxlTmFtZSI6ICJqcy9vcGVuaXoubWluLmpzIiwNCiAgICAiaW5wdXRGaWxlcyI6IFsNCiAgICAgICJqcy9vcGVuaXouanMiDQogICAgXQ0KICB9LA0KICB7DQogICAgIm91dHB1dEZpbGVOYW1lIjogImNzcy90aGVtZS5taW4uY3NzIiwNCiAgICAiaW5wdXRGaWxlcyI6IFsNCiAgICAgICJjc3MvdGhlbWUuY3NzIg0KICAgIF0NCiAgfSwNCiAgew0KICAgICJvdXRwdXRGaWxlTmFtZSI6ICJjb250cm9sbGVycy9jb21tb24vcGF0aWVudHMvc2VhcmNoL3NlYXJjaC1yZXN1bHRzLm1pbi5qcyIsDQogICAgImlucHV0RmlsZXMiOiBbDQogICAgICAiY29udHJvbGxlcnMvY29tbW9uL3BhdGllbnRzL3NlYXJjaC9zZWFyY2gtcmVzdWx0cy5qcyINCiAgICBdDQogIH0sDQogIHsNCiAgICAib3V0cHV0RmlsZU5hbWUiOiAiY29udHJvbGxlcnMvY29tbW9uL3NlY3VyaXR5L2xvZ2luLm1pbi5qcyIsDQogICAgImlucHV0RmlsZXMiOiBbDQogICAgICAiY29udHJvbGxlcnMvY29tbW9uL3NlY3VyaXR5L2xvZ2luLmpzIg0KICAgIF0NCiAgfSwNCiAgew0KICAgICJvdXRwdXRGaWxlTmFtZSI6ICJjb250cm9sbGVycy9zZXR0aW5ncy9zZXR0aW5ncy5taW4uanMiLA0KICAgICJpbnB1dEZpbGVzIjogWw0KICAgICAgImNvbnRyb2xsZXJzL3NldHRpbmdzL3NldHRpbmdzLmpzIg0KICAgIF0NCiAgfSwNCiAgew0KICAgICJvdXRwdXRGaWxlTmFtZSI6ICJjb250cm9sbGVycy9sYXlvdXRzL3Jvb3QubWluLmpzIiwNCiAgICAiaW5wdXRGaWxlcyI6IFsNCiAgICAgICJjb250cm9sbGVycy9sYXlvdXRzL3Jvb3QuanMiDQogICAgXQ0KICB9LA0KICB7DQogICAgIm91dHB1dEZpbGVOYW1lIjogImNvbnRyb2xsZXJzL2xheW91dHMvbmF2YmFyLm1pbi5qcyIsDQogICAgImlucHV0RmlsZXMiOiBbDQogICAgICAiY29udHJvbGxlcnMvbGF5b3V0cy9uYXZiYXIuanMiDQogICAgXQ0KICB9LA0KICB7DQogICAgIm91dHB1dEZpbGVOYW1lIjogImxpYi9ib290c3RyYXAtdG9rZW5maWVsZC5taW4uanMiLA0KICAgICJpbnB1dEZpbGVzIjogWw0KICAgICAgImxpYi9ib290c3RyYXAtdG9rZW5maWVsZC5qcyINCiAgICBdDQogIH0sDQogIHsNCiAgICAib3V0cHV0RmlsZU5hbWUiOiAibGliL2pxdWVyeS5kYXRlZml4Lm1pbi5qcyIsDQogICAgImlucHV0RmlsZXMiOiBbDQogICAgICAibGliL2pxdWVyeS5kYXRlZml4LmpzIg0KICAgIF0NCiAgfQ0KXQ0K</contentBin>
+  <asset name="bundleconfig.json" mimeType="text/javascript">
+    <contentText>[
+  {
+    "outputFileName": "js/openiz-localize.min.js",
+    "inputFiles": [
+      "js/openiz-localize.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-model.min.js",
+    "inputFiles": [
+      "js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz.min.js",
+    "inputFiles": [
+      "js/openiz.js"
+    ]
+  },
+  {
+    "outputFileName": "css/theme.min.css",
+    "inputFiles": [
+      "css/theme.css"
+    ]
+  },
+  {
+    "outputFileName": "controllers/common/patients/search/search-results.min.js",
+    "inputFiles": [
+      "controllers/common/patients/search/search-results.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/common/security/login.min.js",
+    "inputFiles": [
+      "controllers/common/security/login.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/settings/settings.min.js",
+    "inputFiles": [
+      "controllers/settings/settings.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/layouts/root.min.js",
+    "inputFiles": [
+      "controllers/layouts/root.js"
+    ]
+  },
+  {
+    "outputFileName": "controllers/layouts/navbar.min.js",
+    "inputFiles": [
+      "controllers/layouts/navbar.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/bootstrap-tokenfield.min.js",
+    "inputFiles": [
+      "lib/bootstrap-tokenfield.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/jquery.datefix.min.js",
+    "inputFiles": [
+      "lib/jquery.datefix.js"
+    ]
+  }
+]
+</contentText>
   </asset>
   <asset name="index.html" mimeType="text/html">
     <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>

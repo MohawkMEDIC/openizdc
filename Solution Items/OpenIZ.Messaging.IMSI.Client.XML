@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Messaging.IMSI.Client</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient">
+            <summary>
+            Represents the IMSI service client.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.#ctor(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient"/> class
+            with a specified <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
+            </summary>
+            <param name="client">The <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Create``1(``0)">
+            <summary>
+            Creates specified data.
+            </summary>
+            <typeparam name="TModel">The type of data to be created.</typeparam>
+            <param name="data">The data to be created.</param>
+            <returns>Returns the newly created data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Get``1(System.Guid,System.Nullable{System.Guid})">
+            <summary>
+            Gets a specified object by key and an optional version key.
+            </summary>
+            <typeparam name="TModel">The type of data for which to retrieve.</typeparam>
+            <param name="key">The key of the data.</param>
+            <param name="versionKey">The version key of the data.</param>
+            <returns>Returns the specified data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.History``1(System.Guid)">
+            <summary>
+            Gets history of the specified object.
+            </summary>
+            <typeparam name="TModel">The type of object for which to retrieve history.</typeparam>
+            <param name="key">The key of the object.</param>
+            <returns>Returns a bundle containing the history of the object.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Obsolete``1(``0)">
+            <summary>
+            Obsoletes the specified data.
+            </summary>
+            <typeparam name="TModel">The type of data to be obsoleted.</typeparam>
+            <param name="data">The data to obsolete.</param>
+            <returns>Returns the obsoleted data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            Performs a query.
+            </summary>
+            <typeparam name="TModel">The type of object to query.</typeparam>
+            <param name="query">The query parameters as a LINQ expression.</param>
+            <returns>Returns a Bundle containing the data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32})">
+            <summary>
+            Performs a query.
+            </summary>
+            <typeparam name="TModel">The type of object to query.</typeparam>
+            <param name="query">The query parameters as a LINQ expression.</param>
+            <returns>Returns a Bundle containing the data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Update``1(``0)">
+            <summary>
+            Updates a specified object.
+            </summary>
+            <typeparam name="TModel">The type of data to be updated.</typeparam>
+            <param name="data">The data to be updated.</param>
+            <returns>Returns the updated data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose of any managed resources.
+            </summary>
+            <param name="disposing">Whether the current invocation is disposing.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Dispose">
+            <summary>
+            Dispose of any resources.
+            </summary>
+        </member>
+    </members>
+</doc>
