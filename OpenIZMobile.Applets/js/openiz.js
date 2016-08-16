@@ -1427,6 +1427,13 @@ var OpenIZ = OpenIZ || {
         saveUserPreferences: function (preferences) {
             // TODO: Implement
         }
+    },
+    
+    Security: {
+        changePassword: function (username, existing, password, confirmation)
+        {
+            OpenIZUserService.ChangePassword(username, existing, password, confirmation);
+        }
     }
 
 

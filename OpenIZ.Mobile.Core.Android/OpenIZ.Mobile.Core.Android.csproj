@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="AppletEngine\JNI\PatientFunctionBridge.cs" />
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
+    <Compile Include="AppletEngine\JNI\UserServiceBridge.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
