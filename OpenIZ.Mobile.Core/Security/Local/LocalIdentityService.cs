@@ -326,7 +326,7 @@ namespace OpenIZ.Mobile.Core.Security
         /// <param name="userName"></param>
         /// <param name="password"></param>
         public void ChangePassword(string userName, string password)
-		{
+        {
             this.ChangePassword(userName, password, ApplicationContext.Current.Principal);
         }
 

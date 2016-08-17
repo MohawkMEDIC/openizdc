@@ -23,22 +23,6 @@
 
 
 /// <reference path="~/lib/jquery.min.js"/>
-// SHIM
-var OpenIZApplicationService = window.OpenIZApplicationService || {
-    GetLocale: function () { return 'en'; },
-    GetStrings: function () { return '[]'; },
-    GetTemplateForm: function (templateId) {
-        switch (templateId) {
-            case "Act.Observation.Weight":
-                return "/org.openiz.core/views/templates/act.observation.weight.html";
-            case "Act.SubstanceAdmin.Immunization":
-                return "/org.openiz.core/views/templates/act.substanceadmin.immunization.html";
-            default:
-                return "../templates/" + templateId + ".html";
-
-        }
-    }
-};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -83,18 +67,11 @@ var OpenIZ = OpenIZ || {
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
-
-                    if(controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
-
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
+                    controlData.continueWith(xhr);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
-                    if (controlData.onException === null)
-                        console.error(error);
-                    else if (error.error !== undefined) // oauth 2 error
+                    if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
@@ -105,9 +82,6 @@ var OpenIZ = OpenIZ || {
                                 data,
                                 null
                             ));
-
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
                 }
             });
         },
@@ -123,36 +97,28 @@ var OpenIZ = OpenIZ || {
             $.ajax({
                 method: 'GET',
                 url: "/__ims/" + controlData.resource,
-                data: controlData.query,
+                data: controlData.data,
                 dataType: "json",
                 accept: 'application/json',
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
-
-                    if(controlData.finally !== undefined)
-                        controlData.finally();
+                    controlData.continueWith(xhr);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
                     if (controlData.onException === undefined)
                         console.error(error);
-                    else if (error != undefined && error.error !== undefined) // oauth 2 error
+                    if (error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
                             ));
+
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("err_general" + error,
                                 data,
                                 null
                             ));
-
-                    // Do finally
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
-
                 }
             });
         }
@@ -162,56 +128,7 @@ var OpenIZ = OpenIZ || {
      * @class
      */
     Util: {
-        /**
-         * @summary Log an exception to the console
-         */
-        logException : function(e) {
-            console.warn(e);
-        },
-        /** 
-         * @summary Render the manufactured material
-         */
-        renderManufacturedMaterial : function(scope) {
-            var name = OpenIZ.Util.renderName(scope.name.OfficialRecord);
-            return name + "(LN#: " + scope.lotNumber + ")";
-        },
-        /** 
-         * @summary Renders the person
-         */
-        renderName: function (entityName) {
-            if (entityName === null || entityName === undefined)
-                return "";
-            else if (entityName.join !== undefined)
-                return entityName.join(' ');
-            else if (entityName.component !== undefined) {
-                var nameStr = "";
-                if (entityName.component.Given !== undefined) {
-                    if (typeof (entityName.component.Given) === "string")
-                        nameStr += entityName.component.Given;
-                    else if (entityName.component.Given.join !== undefined)
-                        nameStr += entityName.component.Given.join(' ');
-                    nameStr += " ";
-                }
-                if (entityName.component.Family !== undefined) {
-                    if (typeof (entityName.component.Family) === "string")
-                        nameStr += entityName.component.Family;
-                    else if (entityName.component.Family.join !== undefined)
-                        nameStr += entityName.component.Family.join(' ');
-                }
-                if (entityName.component.$other !== undefined) {
-                    if (typeof (entityName.component.$other) === "string")
-                        nameStr += entityName.component.$other;
-                    else if (entityName.component.$other.join !== undefined)
-                        nameStr += entityName.component.$other.join(' ');
-                    else if (entityName.component.$other.value !== undefined)
-                        nameStr += entityName.component.$other.value;
 
-                }
-                return nameStr;
-            }
-            else
-                return entityName;
-        },
         /**
          * @summary Changes the specified date string into an appropriate ISO string
          * @memberof OpenIZ.Util
@@ -293,19 +210,16 @@ var OpenIZ = OpenIZ || {
                              null
                          );
                      else if (data != null)
-                         controlData.continueWith(data);
+                         controlData.continueWith(new OpenIZModel.Session(data));
                      else
                          controlData.onException(new OpenIZModel.Exception("err_general",
                              data,
                              null
                          ));
-
-                    if(controlData.finally !== undefined)
-                        controlData.finally(); 
                  },
                  error: function (data) {
                      var error = data.responseJSON;
-                     if (error != null && error.error !== undefined) // oauth 2 error
+                     if (error.error !== undefined) // oauth 2 error
                          controlData.onException(new OpenIZModel.Exception(error.error,
                                  error.error_description,
                                  null
@@ -316,11 +230,46 @@ var OpenIZ = OpenIZ || {
                                  data,
                                  null
                              ));
-                     if (controlData.finally !== undefined)
-                         controlData.finally();
-
                  }
              });
+        },
+        /**
+        * @summary Performs a login with the authentication service returning the active Session object if applicable
+        * @memberof OpenIZ.Authentication
+        * @method
+        * @param {String} userName the name of the user to authenticate
+        * @param {String} password The user's password
+        * @param {String} tfsSecret The two-factor authentication secret
+        * @returns A new OpenIZ.Session object with the current session information if successful, null if not
+        * @throws An applicable exception for the validation error.
+        */
+        login: function (userName, password, tfaSecret) {
+            try {
+
+                var data = OpenIZSessionService.Login(userName, password);
+
+                if (data == null)
+                    return null;
+                else if (data.lastIndexOf("err", 0) == 0 && data != "err_oauth2_invalid_grant")
+                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString(data), null, null);
+                else {
+                    var pData = JSON.parse(data);
+                    if (pData != null && pData.error !== undefined)
+                        throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_oauth2_" + pData.error),
+                            pData.error_description,
+                            null
+                        );
+                    else if (data != null)
+                        return new OpenIZModel.Session(data);
+                    else
+                        return null;
+
+                }
+            }
+            catch (ex) {
+                console.warn(ex);
+                throw new OpenIZModel.Exception(OpenIZ.Localization.getString(ex.message), ex.details, ex);
+            }
         },
         /**
          * @summary Set password asynchronously
@@ -337,6 +286,34 @@ var OpenIZ = OpenIZ || {
          * });
          */
         setPasswordAsync: function (controlData) {
+            OpenIZ.Util.startTaskAsync(function () {
+                return OpenIZ.Authentication.setPassword(controlData.userName, controlData.password);
+            }, controlData);
+        },
+        /**
+        * @summary Sets the password for the specified user to some other password. 
+        * @memberof OpenIZ.Authentication
+        * @method
+        * Note: You will need to have the ChangePassword policy or be changing the password of the currently 
+        * logged in user or else this function will return an error
+        * @param {String} userName The name of the user to which the password change applies
+        * @param {String} password The password of the user.
+        * @returns True if the password was successfully changed, false otherwise
+        */
+        setPassword: function (userName, password) {
+            // TODO: Implement
+        },
+        /**
+        * @summary Registers the specified user data 
+        * @memberof OpenIZ.Authentication
+        * @method
+        * @param {String} userName The desired user name for the user
+        * @param {String} password The password the user desires
+        * @param {Object} profileData The data (instance of OpenIZUser class) which contains the user's data
+        * @returns The user profile
+        */
+        register: function (userName, password, profileData) {
+            // TODO: Implement
         },
         /**
         * @summary Gets the current session from the client host
@@ -345,7 +322,6 @@ var OpenIZ = OpenIZ || {
         * @returns An instance of Session representing the current session
         */
         getSessionAsync: function (controlData) {
-            controlData.onException = controlData.onException || OpenIZ.Util.logException;
             // Perform auth request
             $.getJSON('/__auth/get_session', null, function (data) {
                 if (data != null && data.error !== undefined)
@@ -354,30 +330,32 @@ var OpenIZ = OpenIZ || {
                         null
                     );
                 else if (data != null)
-                    controlData.continueWith(data);
+                    controlData.continueWith(new OpenIZModel.Session(data));
                 else
                     controlData.onException(new OpenIZModel.Exception("err_general",
                         data,
                         null
                     ));
-            }).error(function (data) {
-                var error = data.responseJSON;
-                if (error != null && error.error !== undefined) // oauth 2 error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
-                            error.error_description,
-                            null
-                        ));
-
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                            data,
-                            null
-                        ));
-            }).always(function() { 
-                if(controlData.finally !== undefined)
-                    controlData.finally(); 
             });
 
+        },
+        /**
+        * @summary Gets the current session from the client host
+        * @memberof OpenIZ.Authentication
+        * @method
+        * @returns An instance of Session representing the current session
+        */
+        getSession: function () {
+            try {
+                var data = OpenIZSessionService.GetSession();
+                if (data != null && OpenIZModel !== undefined)
+                    return new OpenIZModel.Session(JSON.parse(data));
+                return null;
+            }
+            catch (ex) {
+                console.error(ex);
+                return null;
+            }
         },
         /**
          * @summary Destroys the current session
@@ -407,7 +385,49 @@ var OpenIZ = OpenIZ || {
          * });
          */
         refreshSessionAsync: function (controlData) {
-        }
+            OpenIZ.Util.startTaskAsync(function () {
+                return OpenIZ.Authentication.refreshSession();
+            }, controlData);
+        },
+        /** 
+         * @summary Refreshes the current session so that the token remains valid
+         * @memberof OpenIZ.Authentication
+         * @method
+         * @returns The newly created session
+         */
+        refreshSession: function () {
+            try {
+                if (OpenIZ.Authentication.getSession() == null)
+                    throw new OpenIZModel.Exception(
+                        OpenIZ.Localization.getString("err_no_session"),
+                        OpenIZ.Localization.getString("err_no_session_detail"),
+                        null
+                    );
+                // Refresh the specified session data
+                var data = OpenIZSessionService.Refresh();
+
+                if (data == null)
+                    return null;
+                else if (data.lastIndexOf("err", 0) == 0)
+                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString(data), null, null);
+                else {
+                    var pData = JSON.parse(data);
+                    if (pData != null && pData.error !== undefined)
+                        throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_" + pData.error),
+                            pData.error_description,
+                            null);
+                    else if (data != null)
+                        return new OpenIZModel.Session(data);
+                    else
+                        return null;
+
+                }
+            }
+            catch (ex) {
+                console.warn(ex);
+                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_refresh_session"), ex.message, ex);
+            }
+        },
     },
     /** 
      * @summary Represents functions for interacting with the protocol service
@@ -418,26 +438,15 @@ var OpenIZ = OpenIZ || {
          * @summary Generate a care plan for the specified patient
          */
         getCarePlanAsync: function (controlData) {
-            var url = "/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";
-            if (controlData.minDate !== undefined)
-                url += "&actTime=>" + controlData.minDate.toISOString();
-            if (controlData.maxDate !== undefined)
-                url += "&actTime=<" + controlData.maxDate.toISOString();
-            if (controlData.classConcept !== undefined)
-                url += "&classConcept=" + controlData.classConcept;
-            console.info("Generating care plan...");
             $.ajax({
                 method: 'POST',
-                url: url,
+                url: "/__plan/patient",
                 data: JSON.stringify(controlData.data),
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
-                    console.info("Retrieved care plan...");
-                   // console.info(JSON.stringify(xhr));
+                    console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -452,34 +461,7 @@ var OpenIZ = OpenIZ || {
                                 data,
                                 null
                             ));
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
-
                 }
-            });
-        },
-        /**
-         * @summary Get an empty template object asynchronously
-         */
-        getEntityTemplateAsync: function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "Entity/Template",
-                query: { "templateId" : controlData.templateId },
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                finally: controlData.finally
-            });
-        },
-        /**
-         * @summary Get an empty template object asynchronously
-         */
-        getActTemplateAsync : function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "Act/Template",
-                query: { "templateId": controlData.templateId },
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                finally: controlData.finally
             });
         }
     },
@@ -488,13 +470,7 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     App: {
-        statusShown: false,
-        /**
-         * @summary Resolves the specified template
-         */
-        resolveTemplate : function(templateId) {
-            return OpenIZApplicationService.GetTemplateForm(templateId);
-        },
+        statusShown : false,
         /**
          * @summary Update the status of the 
          */
@@ -520,23 +496,11 @@ var OpenIZ = OpenIZ || {
          * @param {String} textStr The text on the alert panel to show
          */
         showWait: function (textStr) {
-
             if (textStr != null)
-                $("#waitModalText").text(textStr);
-            else
-                setTimeout(OpenIZ.App.updateStatus, 6000);
-
-            if (!OpenIZ.App.statusShown) {
-                $('#waitModal').modal({ show: true, backdrop: 'static' });
-                OpenIZ.App.statusShown = true;
-            }
-        },
-        /**
-         * @summary Returns whether the internet is available
-         */
-        networkAvailable: function() {
-            try { return OpenIZApplicationService.GetNetworkState(); }
-            catch (e) { return false;}
+                $("#waitModalText").val(textStr);
+            $('#waitModal').modal({ show: true, backdrop: 'static' });
+            OpenIZ.App.statusShown = true;
+            setTimeout(OpenIZ.App.updateStatus, 6000);
         },
         /**
          * @summary Hide the waiting panel
@@ -683,9 +647,7 @@ var OpenIZ = OpenIZ || {
             $.getJSON('/__app/alerts', controlData.query, function (e) { controlData.continueWith(e); }).
                 fail(function (data) {
                     var error = data.responseJSON;
-                    if (controlData.onException === undefined || error == null)
-                        console.error(error);
-                    else if (error.error !== undefined) // structured error
+                    if (error.error !== undefined) // structured error
                         controlData.onException(new OpenIZModel.Exception(error.error,
                                 error.error_description,
                                 null
@@ -701,8 +663,8 @@ var OpenIZ = OpenIZ || {
          * @summary Send an asynchronous alert
          * @param {Object} alertData The alert data
          */
-        saveAlertAsync: function (controlData) {
-            $.post('/__app/alerts', controlData.data, function (e) { controlData.continueWith(e); }, "json")
+        sendAlertAsync: function (controlData) {
+            $.post('/__app/alerts', controlData.alert, function (e) { controlData.continueWith(e); }, "json")
             .fail(function (data) {
                 var error = data.responseJSON;
                 if (error.error !== undefined) // structured error
@@ -747,7 +709,9 @@ var OpenIZ = OpenIZ || {
          * @returns The ISO language code of the current UI 
          */
         getLocale: function () {
-            return (navigator.language || navigator.userLanguage).substring(0, 2);
+            if (OpenIZ.Localization.locale == null)
+                OpenIZ.Localization.locale = OpenIZApplicationService.GetLocale();
+            return OpenIZ.Localization.locale;
         },
         /**
          * @summary Sets the current user interface locale
@@ -758,6 +722,16 @@ var OpenIZ = OpenIZ || {
          */
         setLocale: function (locale) {
             return OpenIZApplicationService.SetLocale(locale);
+        },
+        /**
+         * @summary Set the strings used for localization
+         * @method
+         * @memberof OpenIZ.Localization
+         * @param {String} locale The ISO639-2 language code of the data
+         * @param {Object} localeData The localization data
+         */
+        setStrings: function (locale, localeData) {
+            languageStrings[lang] = localeData;
         },
         /**
          * @memberof OpenIZ.Localization
@@ -1152,6 +1126,16 @@ var OpenIZ = OpenIZ || {
                 console.error(e);
                 throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"), e.message, e);
             }
+        },
+        /**
+         * @summary Get an empty patient asynchronously
+         */
+        getEmptyAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Empty/Patient",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException
+            });
         }
     },
 
@@ -1194,78 +1178,16 @@ var OpenIZ = OpenIZ || {
                 escapeMarkup: function (markup) { return markup; }, // Format normally
                 minimumInputLength: 4,
                 templateSelection: function (place) {
-                    if (place.name != null)
-                        return "<span class='glyphicon glyphicon-map-marker'></span> " + place.name.OfficialRecord.component.$other.value;
-                    else
-                        return "<span class='glyphicon glyphicon-map-marker'></span> " + place.text;
+                    return "<span class='glyphicon glyphicon-map-marker'></span>" + place.name.OfficialRecord[0].component.$other[0];
                 },
+
                 templateResult: function (place) {
                     if (place.text != null)
                         return place.text;
                     return "<div class='label label-default'>" +
-                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + place.name.OfficialRecord.component.$other.value;
+                        place.typeConceptModel.name[OpenIZ.Localization.getLocale()][0] + "</div> " + place.name.OfficialRecord[0].component.$other[0];
                 }
             });
-        }
-    },
-    Provider: {
-        /**
-         * @summmary Find the provider asynchronously
-         */
-        findProviderAsync : function(controlData) {
-            OpenIZ.Ims.get({
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                finally: controlData.finally,
-                resource: 'Provider',
-                query: controlData.query
-            });
-        },
-        /**
-         * @summary Bind a Person filter to a select box
-         * @param {Element} target The element to be bound to
-         * @param {String} filter The filter to show (to be added to the current name filter)
-         */
-        bindSelect: function (target, filter) {
-            $(target).select2({
-                ajax: {
-                    url: "/__ims/Provider",
-                    dataType: 'json',
-                    delay: 500,
-                    method: "GET",
-                    data: function (params) {
-                        filter["name.component.value"] = "~" + params.term;
-                        filter["_count"] = 5;
-                        filter["_offset"] = 0;
-                        return filter;
-                    },
-                    processResults: function (data, params) {
-
-                        params.page = params.page || 0;
-
-                        return {
-                            results: data.item,
-                            pagination: {
-                                more: data.offset + data.count < data.total
-                            }
-                        };
-                    },
-                    cache: true
-                },
-                escapeMarkup: function (markup) { return markup; }, // Format normally
-                minimumInputLength: 1,
-                templateSelection: function (provider) {
-                    if (provider.text != null)
-                        return "<span class='glyphicon glyphicon-user'></span> " + provider.text;
-                    return "<span class='glyphicon glyphicon-user'></span> " + OpenIZ.Util.renderName(provider.name.OfficialRecord);
-                },
-                templateResult: function (provider) {
-                    if (provider.text != null)
-                        return provider.text;
-                    return "<span class='glyphicon glyphicon-user'></span> " + OpenIZ.Util.renderName(provider.name.OfficialRecord);
-                }
-            });
-
         }
     },
     /**
@@ -1427,36 +1349,9 @@ var OpenIZ = OpenIZ || {
         saveUserPreferences: function (preferences) {
             // TODO: Implement
         }
-    },
-    
-    Security: {
-        changePassword: function (username, existing, password, confirmation)
-        {
-            try {
-                OpenIZUserService.ChangePassword(username, existing, password, confirmation);
-                OpenIZ.App.toast("Password changed successfully");
-            } catch (e) {
-                console.log(e);
-            }
-
-            OpenIZ.App.toast("Unable to change password");
-            return false;
-        },
-        updateUser: function(user)
-        {
-            try {
-                OpenIZUserService.Save(JSON.stringify(user));
-                OpenIZ.App.toast("Profile settings updated");
-
-                return true;
-            } catch (e) {
-                console.log(e);
-            }
-
-            OpenIZ.App.toast("Unable to update user preferences");
-            return false;
-        }
     }
+
+
 };
 /**
  * @summary Current Locale
@@ -1482,3 +1377,37 @@ $.ajaxSetup({
         OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
 })();
 
+// Bind datepickers
+$(document).ready(function () {
+
+    //OpenIZModel = new __OpenIZModel();
+    $('input[type="date"]').each(function (k, v) {
+        if ($(v).attr('oiz-max-date')) {
+            var date = new Date();
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-max-date')));
+            var maxDate = OpenIZ.Util.toDateInputString(date);
+            $(v).attr('max', maxDate);
+        }
+        if ($(v).attr('oiz-min-date')) {
+            var date = new Date();
+            date.setDate(date.getDate() + parseInt($(v).attr('oiz-min-date')));
+            var minDate = OpenIZ.Util.toDateInputString(date)
+            $(v).attr('min', minDate);
+        }
+    });
+
+    // Indicators
+    $('div.collapse[oiz-collapseIndicator]').each(function (k, v) {
+
+        $(v).on('hide.bs.collapse', function () {
+            var indicator = $(this).attr('oiz-collapseIndicator');
+            $(indicator).removeClass('glyphicon-chevron-down');
+            $(indicator).addClass('glyphicon-chevron-right');
+        });
+        $(v).on('show.bs.collapse', function () {
+            var indicator = $(this).attr('oiz-collapseIndicator');
+            $(indicator).addClass('glyphicon-chevron-down');
+            $(indicator).removeClass('glyphicon-chevron-right');
+        });
+    });
+});

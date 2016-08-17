@@ -38,7 +38,6 @@ using System.Reflection;
 using OpenIZ.Mobile.Core.Configuration;
 using System.Globalization;
 using System.Security.Principal;
-using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -253,15 +252,6 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 return "err_menu";
             }
         }
-
-		[Export]
-		[JavascriptInterface]
-		public string GetNetworkState()
-		{
-			var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
-
-			return networkInformationService.IsNetworkAvailable.ToString();
-		}
 
         /// <summary>
         /// Process menu item
