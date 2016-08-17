@@ -226,6 +226,9 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f05000b
 			public const int err_oauth2_unsupported_grant_type = 2131034123;
 			
+			// aapt resource value: 0x7f050032
+			public const int err_online_required = 2131034162;
+			
 			// aapt resource value: 0x7f05002e
 			public const int err_startup = 2131034158;
 			

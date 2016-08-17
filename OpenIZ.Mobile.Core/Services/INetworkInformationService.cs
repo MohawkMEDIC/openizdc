@@ -58,20 +58,35 @@ namespace OpenIZ.Mobile.Core.Services
         public bool IsActive { get; private set; }
     }
 
-    /// <summary>
-    /// Represents network information service 
-    /// </summary>
-    public interface INetworkInformationService
-    {
+	/// <summary>
+	/// Represents network information service 
+	/// </summary>
+	public interface INetworkInformationService
+	{
 
-        /// <summary>
-        /// Get interface information 
-        /// </summary>
-        IEnumerable<NetworkInterfaceInfo> GetInterfaces();
+		/// <summary>
+		/// Get interface information 
+		/// </summary>
+		IEnumerable<NetworkInterfaceInfo> GetInterfaces();
 
-        /// <summary>
-        /// Pings the specified host
-        /// </summary>
-        long Ping(String hostName);
-    }
+		/// <summary>
+		/// Pings the specified host
+		/// </summary>
+		long Ping(String hostName);
+
+		/// <summary>
+		/// Gets whether the network is available
+		/// </summary>
+		bool IsNetworkAvailable { get; }
+
+		/// <summary>
+		/// Fired when the network status changes
+		/// </summary>
+		event EventHandler NetworkStatusChanged;
+
+		/// <summary>
+		/// Perform a DNS lookup
+		/// </summary>
+		string Nslookup(string address);
+	}
 }
