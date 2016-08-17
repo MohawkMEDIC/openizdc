@@ -24,7 +24,7 @@ using Android.App;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("OpenIZMobile")]
+[assembly: AssemblyTitle ("OpenIZ Disconnected Client")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
@@ -37,8 +37,8 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.6.6.*")]
-[assembly: AssemblyInformationalVersion("Sprint 6")]
+[assembly: AssemblyVersion ("0.6.7.*")]
+[assembly: AssemblyInformationalVersion("Chippewa PRE2")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

@@ -128,25 +128,6 @@ namespace OpenIZ.Mobile.Core.Android.Net
         }
 
         /// <summary>
-        /// Perform a DNS lookup
-        /// </summary>
-        public string Nslookup(string address)
-        {
-            try
-            {
-				System.Uri uri = null;
-                if (System.Uri.TryCreate(address, UriKind.RelativeOrAbsolute, out uri))
-                    address = uri.Host;
-                var resolution = System.Net.Dns.GetHostEntry(address); 
-                return resolution.AddressList.First().ToString();
-            }
-            catch
-            {
-                return String.Empty;
-            }
-        }
-
-        /// <summary>
         /// Retrieves the ping time to the specified host
         /// </summary>
         public long Ping(string hostName)

@@ -108,8 +108,6 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
-    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
-    <AndroidAsset Include="Assets\Applets\tz.rita.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -162,34 +160,29 @@
     <AndroidResource Include="Resources\drawable\icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\PCV13Vaccine.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.rota.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\RotaVaccine.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.pcv13.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\BcgVaccine.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.bcg.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\DTP-HepB-HibTrivalent.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.dtp.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\MeaslesRubellaVaccine.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.mr.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\OralPolioVaccine.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.opv.xml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\ChildWeight.xml" />
+    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.other.weight.xml" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
-"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
-"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\rita-applet\rita" -o "$(TargetDir)\tz.rita.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
  copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
- copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"
- copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
- copy "$(TargetDir)\tz.rita.applet.pak" "$(ProjectDir)\Assets\Applets\tz.rita.applet.pak"
-</PreBuildEvent>
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
   </PropertyGroup>
 </Project>
