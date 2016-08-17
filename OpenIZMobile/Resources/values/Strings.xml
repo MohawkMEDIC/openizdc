@@ -57,6 +57,7 @@
 	<string name="err_login">Login error: </string>
 	<string name="err_login_invalidusername">Invalid username/password</string>
 	<string name="err_exception">An unexpected error occurred</string>
+  <string name="err_online_required">The device must be online to perform this function</string>
 
   <string name="startup_configuration">Loading Configuration</string>
   <string name="startup_data">Applying Database Changes</string>

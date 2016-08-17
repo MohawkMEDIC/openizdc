@@ -36,6 +36,7 @@ using OpenIZ.Core.Applets.ViewModel;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -44,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		// Tracer
 		private Tracer m_tracer = Tracer.GetTracer(typeof(UserServiceBridge));
 
-		private IDataPersistenceService<SecurityUser> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+		private IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 
 		/// <summary>
 		/// Changes the password of a user.
@@ -58,43 +59,53 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 		[JavascriptInterface]
 		public string ChangePassword(string username, string existing, string password, string confirmation)
 		{
-			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			string retVal = null;
 
-			if (securityRepositoryService == null)
+			var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
+
+			if (networkInformationService.IsNetworkAvailable)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+				if (securityRepositoryService == null)
+				{
+					throw new InvalidOperationException(string.Format("{0} not found", nameof(ISecurityRepositoryService)));
+				}
+
+				var user = securityRepositoryService.FindUsers(u => u.UserName == username).FirstOrDefault();
+
+				if (user == null)
+				{
+					throw new ArgumentException(Strings.err_invalid_argumentType, nameof(user));
+				}
+
+				if (password != confirmation)
+				{
+					throw new ArgumentException(Strings.err_invalid_argumentType, nameof(password));
+				}
+
+				securityRepositoryService.ChangePassword(user.Key.Value, password);
+
+				retVal = JniUtil.ToJson<SecurityUser>(user);
 			}
 
-			var user = securityRepositoryService.FindUsers(u => u.UserName == username).FirstOrDefault();
-
-			if (user == null)
-			{
-				throw new ArgumentException(Strings.err_invalid_argumentType, nameof(user));
-			}
-
-			if (password != confirmation)
-			{
-				throw new ArgumentException(Strings.err_invalid_argumentType, nameof(password));
-			}
-
-			securityRepositoryService.ChangePassword(user.Key.Value, password);
-
-			return JniUtil.ToJson<SecurityUser>(user);
+			return retVal;
 		}
 
 		[Export]
 		[JavascriptInterface]
-		public string Save(string imsiSecurityUser)
+		public string Save(string imsiUserEntity)
 		{
 			string retVal = null;
 
 			try
 			{
-				var user = JsonViewModelSerializer.DeSerialize<SecurityUser>(imsiSecurityUser);
+				var user = JsonViewModelSerializer.DeSerialize<UserEntity>(imsiUserEntity);
+
 
 				if (user == null)
 				{
-					throw new ArgumentException(Strings.err_invalid_argumentType, nameof(imsiSecurityUser));
+					throw new ArgumentException(Strings.err_invalid_argumentType, nameof(imsiUserEntity));
 				}
 
 				user = this.persistenceService.Update(user);
@@ -103,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 			}
 			catch (Exception e)
 			{
-				this.m_tracer.TraceError("Error updating user {0}: {1}", imsiSecurityUser, e);
+				this.m_tracer.TraceError("Error updating user {0}: {1}", imsiUserEntity, e);
 				retVal = "err_general";
 			}
 

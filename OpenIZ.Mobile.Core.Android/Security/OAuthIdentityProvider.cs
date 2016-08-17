@@ -42,8 +42,6 @@ namespace OpenIZ.Mobile.Core.Android.Security
     /// </summary>
     public class OAuthIdentityProvider : IIdentityProviderService
     {
-
-
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OAuthIdentityProvider));
 
@@ -240,23 +238,40 @@ namespace OpenIZ.Mobile.Core.Android.Security
         {
             throw new NotImplementedException();
         }
-        /// <summary>
-        /// Changes the user's password
-        /// </summary>
+
+		/// <summary>
+		/// Changes the users password.
+		/// </summary>
+		/// <param name="userName">The username of the user.</param>
+		/// <param name="newPassword">The new password of the user.</param>
+		/// <param name="principal">The authentication principal.</param>
 		public void ChangePassword(string userName, string newPassword, System.Security.Principal.IPrincipal principal)
-        {
-            throw new NotImplementedException();
-        }
-        /// <summary>
-        /// Changes the user's password
-        /// </summary>
-        public void ChangePassword(string userName, string password)
         {
 			using (AmiServiceClient client = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami")))
 			{
+				client.Client.Accept = "application/xml";
+				client.Client.Credentials = new TokenCredentialProvider().GetCredentials(principal);
+				var user = client.GetUsers(u => u.UserName == userName).CollectionItem.FirstOrDefault();
+
+				if (user == null)
+				{
+					throw new ArgumentException(string.Format("User {0} not found", userName));
+				}
+
+				client.ChangePassword(user.UserId.Value, newPassword);
 			}
-            throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Changes the users password.
+		/// </summary>
+		/// <param name="userName">The username of the user.</param>
+		/// <param name="password">The new password of the user.</param>
+        public void ChangePassword(string userName, string password)
+        {
+			this.ChangePassword(userName, password, ApplicationContext.Current.Principal);
         }
+
         /// <summary>
         /// Creates an identity
         /// </summary>
@@ -271,6 +286,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// Deletes the specified identity
         /// </summary>
@@ -278,6 +294,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
         {
             throw new NotImplementedException();
         }
+
         #endregion
     }
 }
