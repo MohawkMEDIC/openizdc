@@ -50,7 +50,8 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             NetworkChange.NetworkAvailabilityChanged += (o, e) => this.NetworkStatusChanged?.Invoke(this, e);
 
-			this.NetworkStatusChanged += NetworkInformationService_NetworkStatusChanged;
+            // TODO: Discuss the ramifications of this
+			// this.NetworkStatusChanged += NetworkInformationService_NetworkStatusChanged;
         }
 
 		/// <summary>
@@ -62,6 +63,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
 		{
 			INetworkInformationService networkInformationService = (INetworkInformationService)sender;
 
+            // Because we may have network connectivity
 			if (networkInformationService.IsNetworkAvailable)
 			{
 				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(LocalPolicyInformationService).AssemblyQualifiedName);
