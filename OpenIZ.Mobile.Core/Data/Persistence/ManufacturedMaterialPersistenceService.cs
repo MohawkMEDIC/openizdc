@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var domainMmat = dataInstance as DbManufacturedMaterial;
             var domainMat = dataInstance as DbMaterial;
-            var dbm = context.Table<DbMaterial>().FirstOrDefault(o => o.Uuid == domainMat.Uuid);
+            var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
             var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(dbm, context);
             retVal.LotNumber = domainMmat.LotNumber;
             return retVal;

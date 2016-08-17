@@ -208,23 +208,23 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
                 StatusConceptKey = StatusKeys.Active,
                 TypeConceptKey = Guid.Parse("7F81B83E-0D78-4685-8BA4-224EB315CE54") // Some random concept for the "Type"
             };
-            toBeQueried.Names.Add(new EntityName(NameUseKeys.Assigned, "Some Clinic"));
+            toBeQueried.Names.Add(new EntityName(NameUseKeys.Assigned, "Some Clinic 3332"));
 
             var afterTest = base.DoTestInsert(toBeQueried);
             var id = afterTest.Key;
             Assert.AreEqual(StatusKeys.Active, afterTest.StatusConcept.Key);
 
             // Query 
-            var query = base.DoTestQuery(o => o.CreationTime > DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")), id);
+            var query = base.DoTestQuery(o => o.CreationTime > DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic 3332")), id);
             Assert.AreEqual(1, query.Count());
 
             // No results
             var idp = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
-            query = idp.Query(o => o.CreationTime < DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic")));
+            query = idp.Query(o => o.CreationTime < DateTime.MinValue && o.ClassConcept.Key == EntityClassKeys.Place && o.Names.Any(n => n.NameUse.Key == NameUseKeys.Assigned && n.Component.Any(c => c.Value == "Some Clinic 3332")));
             Assert.AreEqual(0, query.Count());
 
             // One result (like)
-            query = idp.Query(o => o.Names.Any(n=>n.Component.Any(c => c.Value.Contains("Clinic"))));
+            query = idp.Query(o => o.Names.Any(n=>n.Component.Any(c => c.Value.Contains("Clinic 3332"))));
             Assert.AreEqual(1, query.Count());
 
         }

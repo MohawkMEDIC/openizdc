@@ -46,6 +46,7 @@ using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Core.Services;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Protocol;
+using OpenIZ.Core;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -205,7 +206,7 @@ namespace OpenIZ.Mobile.Core.Android
 
                         // Prepare clinical protocols
                         //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
-
+                        ApplicationServiceContext.Current = ApplicationContext.Current;
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());
 						throw;
@@ -217,7 +218,7 @@ namespace OpenIZ.Mobile.Core.Android
                     retVal.Start();
 
                     // Load protocols
-                    var protocols = retVal.GetService<ICarePlanService>().Protocols;
+                    retVal.GetService<ICarePlanService>().Initialize();
 				} catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;
@@ -472,7 +473,32 @@ namespace OpenIZ.Mobile.Core.Android
 				};
 			}
 		}
-		#endregion
-	}
+
+        /// <summary>
+        /// Get applet asset
+        /// </summary>
+        internal byte[] GetAppletAssetFile(AppletAsset navigateAsset)
+        {
+            String itmPath = System.IO.Path.Combine(
+                                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
+                                        "assets",
+                                        navigateAsset.Manifest.Info.Id,
+                                        navigateAsset.Name);
+            using(MemoryStream response = new MemoryStream())
+            using (var fs = File.OpenRead(itmPath))
+            {
+                int br = 8092;
+                byte[] buffer = new byte[8092];
+                while (br == 8092)
+                {
+                    br = fs.Read(buffer, 0, 8092);
+                    response.Write(buffer, 0, br);
+                }
+                return response.ToArray();
+            }
+
+        }
+        #endregion
+    }
 }
 

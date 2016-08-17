@@ -1,0 +1,40 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
+
+    <div class="panel panel-default" ng-repeat="(type, relation) in patient.relationship">
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationType">{{ 'locale.patient.realtive.type' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.typeConceptModel.name[$root.page.locale]}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationGivenName">{{ 'locale.patient.realtive.givenName' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.targetModel.name.OfficialRecord.component.Given | oizEntityName}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationFamilyName">{{ 'locale.patient.relative.familyName' | i18n }}</label>
+                <div class="col-xs-10">
+                    {{relation.targetModel.name.OfficialRecord.component.Family | oizEntityName}}
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
+                <div class="col-xs-10">
+                    <table class="table">
+                        <tr ng-repeat="(type,value) in relation.targetModel.telecom">
+                            <td>{{value}}</td>
+                            <td>({{type}})</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</fieldset>

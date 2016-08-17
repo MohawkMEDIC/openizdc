@@ -1,0 +1,39 @@
+﻿<div class="container" ng-controller="ViewAlertController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+    <oiz:script>/org.openiz.core/controllers/alerts/view.js</oiz:script>
+    <oiz:title>Alert</oiz:title>
+        <div class="row">
+            <div class="col-xs-12"><h3>{{ alert.subject }}</h3></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12"><span class="text-muted">{{ alert.time | date : 'yyyy-MMM-dd' }}</span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2">{{ 'locale.alerts.from' | i18n }}</label>
+            <div class="col-xs-10">{{ alert.from }}</div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2">{{ 'locale.alerts.to' | i18n }}</label>
+            <div class="col-xs-10">{{ alert.to }}</div>
+        </div>
+        <div class="row">
+            <hr/>
+        </div>
+        <div class="row">
+            <div class="well">{{ alert.body }}</div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group pull-right">
+                    <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        {{ 'locale.actions.delete' | i18n }}
+                    </button>
+                    <button class="btn-primary btn btn-lg" ng-class="acknowledgeAlert()">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        {{ 'locale.alerts.acknolwedge' | i18n }}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+</div>

@@ -31,7 +31,7 @@
                     </ul>
 
                 </li>
-                <li class="dropdown" id="langDropDown" ng-if="$root.session.identity.name === undefined">
+                <li class="dropdown" id="langDropDown" ng-if="$root.session.user === undefined">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.globe.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.layout.navbar.language' | i18n }}</span> <span class="caret"></span>
                     </a>
@@ -48,7 +48,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown" ng-show="$root.session.identity.name">
+                <li class="dropdown" ng-show="$root.session.user">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | i18n }}</span>
                         <span ng-if="messages" class="badge">
@@ -79,13 +79,13 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown" ng-show="$root.session.identity.name">
+                <li class="dropdown" ng-show="$root.session.user">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        <img src="/org.openiz.core/img/appbar.user.png" class="navbar-icon" /> {{ $root.session.identity.name }}  <span class="caret"></span>
+                        <img src="/org.openiz.core/img/appbar.user.png" class="navbar-icon" /> {{ $root.session.user.userName }}  <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
-                            <a href="#">
+                            <a href="/org.openiz.core/views/settings/preferences.html">
                                 <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | i18n }}
                             </a>
                         </li>

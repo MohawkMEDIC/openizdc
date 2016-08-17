@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             switch (authRequest["grant_type"][0])
             {
                 case "password":
-                    AndroidApplicationContext.Current.Authenticate(authRequest["username"].FirstOrDefault(), authRequest["password"].FirstOrDefault());
+                    AndroidApplicationContext.Current.Authenticate(authRequest["username"].FirstOrDefault().ToLower(), authRequest["password"].FirstOrDefault());
                     break;
                 case "refresh":
                     var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();

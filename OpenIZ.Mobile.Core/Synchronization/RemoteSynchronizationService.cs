@@ -18,6 +18,8 @@ using OpenIZ.Mobile.Core.Resources;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Alerting;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -40,6 +42,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
         private IIntegrationService m_integrationService;
         // Device principal 
         private IPrincipal m_devicePrincipal;
+        // Network information service
+        private INetworkInformationService m_networkInfoService;
 
         /// <summary>
         /// Fired when the service is starting
@@ -81,43 +85,65 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.m_configuration = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
             this.m_integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+            this.m_networkInfoService = ApplicationContext.Current.GetService<INetworkInformationService>();
+            
+            this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);
 
-            // Pool startup sync if configured..
-            this.m_threadPool.QueueUserWorkItem((state) =>
-            {
-                if (Monitor.IsEntered(this.m_lock))
-                    return; // Someone has a lock on us
-                try
-                {
-                    lock (this.m_lock)
-                    {
-                        foreach (var syncResource in this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & SynchronizationPullTriggerType.OnStart) != 0))
-                        {
-
-                            foreach (var fltr in syncResource.Filters)
-                                this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
-                            if (syncResource.Filters.Count == 0)
-                                this.Pull(syncResource.ResourceType);
-
-                        }
-                    }
-
-                    var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                    alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, null, Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Cannot process startup command: {0}", e);
-                }
-
-            });
-
+            this.Pull(SynchronizationPullTriggerType.OnStart);
+            
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
 
         }
 
+        /// <summary>
+        /// Pull from remote
+        /// </summary>
+        private void Pull(SynchronizationPullTriggerType trigger)
+        {
+            // Pool startup sync if configured..
+            this.m_threadPool.QueueUserWorkItem((state) =>
+            {
+
+
+                try
+                {
+                    if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
+                    {
+                        if (!this.m_integrationService.IsAvailable()) return;
+
+                        int totalResults = 0;
+                        foreach (var syncResource in this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & trigger) != 0))
+                        {
+
+                            foreach (var fltr in syncResource.Filters)
+                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
+                            if (syncResource.Filters.Count == 0)
+                                totalResults += this.Pull(syncResource.ResourceType);
+
+                        }
+
+                        if (totalResults > 0)
+                        {
+                            var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                            alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
+                        }
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Cannot process startup command: {0}", e);
+                }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
+
+            });
+
+        }
         /// <summary>
         /// Perform a fetch operation which performs a head
         /// </summary>
@@ -129,16 +155,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Perform a pull on the root resource
         /// </summary>
-        public void Pull(Type modelType)
+        public int Pull(Type modelType)
         {
-            this.Pull(modelType, new NameValueCollection());
+            return this.Pull(modelType, new NameValueCollection());
 
         }
 
         /// <summary>
         /// Pull the model according to a filter
         /// </summary>
-        public void Pull(Type modelType, NameValueCollection filter)
+        public int Pull(Type modelType, NameValueCollection filter)
         {
             try
             {
@@ -158,28 +184,36 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 var result = new Bundle() { TotalResults = 1 };
                 var eTag = String.Empty;
+                var retVal = 0;
                 // Enqueue
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
                     float perc = i / (float)result.TotalResults;
+                    retVal = result.TotalResults;
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, new NameValueCollection(), i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials });
+                    result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
 
                     // Queue the act of queueing
-
-                    SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                    if (result != null)
+                        SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                    else
+                        break;
 
                     if (String.IsNullOrEmpty(eTag))
-                        eTag = result.Item.FirstOrDefault()?.Tag;
+                        eTag = result?.Item.FirstOrDefault()?.Tag;
                 }
 
                 // Log that we synchronized successfully
                 SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
-
+                return retVal;
             }
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
+                var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+
+                return 0;
             }
         }
 

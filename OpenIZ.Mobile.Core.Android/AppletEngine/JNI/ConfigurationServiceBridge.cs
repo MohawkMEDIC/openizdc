@@ -37,6 +37,7 @@ using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Interop.IMSI;
 using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -119,13 +120,19 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     // TODO: Customize this
-                    foreach(var res in new String[] { "ConceptSet", "Concept", "Place", "AssigningAuthority", "IdentifierType", "ConceptClass", "Organization", "SecurityRole", "UserEntity", "Provider", "Material", "ManufacturedMaterial"  })
+                    foreach(var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial"  })
                     {
-                        syncConfig.SynchronizationResources.Add(new SynchronizationResource()
+                        var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = SynchronizationPullTriggerType.OnStart
-                        });
+                            Triggers = SynchronizationPullTriggerType.Always
+                        };
+
+                        var efield = typeof(EntityClassKeys).GetField(res);
+                        if(efield != null && res != "Place")
+                            syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
+
+                        syncConfig.SynchronizationResources.Add(syncSetting);
                     }
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);
                     break;

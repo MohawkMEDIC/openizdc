@@ -8,6 +8,10 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Model.Map;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Alerting
 {
@@ -16,6 +20,8 @@ namespace OpenIZ.Mobile.Core.Alerting
     /// </summary>
     public class LocalAlertService : IAlertService
     {
+        // Mapper
+        private static ModelMapper s_mapper = new ModelMapper(typeof(LocalAlertService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Alerting.ModelMap.xml"));
 
         // Connection string
         private string m_connectionString = ApplicationContext.Current.Configuration.GetConnectionString(
@@ -36,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Alerting
             var idKey = id.ToByteArray();
             var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
             using (conn.Lock())
-                return conn.Table<AlertMessage>().Where(o => o.Key == idKey).FirstOrDefault();
+                return conn.Table<DbAlertMessage>().Where(o => o.Id == idKey).FirstOrDefault()?.ToAlert();
         }
 
         /// <summary>
@@ -50,7 +56,10 @@ namespace OpenIZ.Mobile.Core.Alerting
             {
                 var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
                 using (conn.Lock())
-                    return conn.Table<AlertMessage>().Where(predicate).Skip(offset).Take(count ?? 100).OrderByDescending(o=>o.TimeStamp).ToList();
+                {
+                    var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate);
+                    return conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o=>o.ToAlert()).ToList();
+                }
             }
             catch(Exception e)
             {
@@ -69,7 +78,8 @@ namespace OpenIZ.Mobile.Core.Alerting
                 this.m_tracer.TraceVerbose("Broadcasting alert {0}", msg);
 
                 // Broadcast alert
-                var args = new AlertEventArgs() { Message = msg };
+                // TODO: Fix this, this is bad
+                var args = new AlertEventArgs(msg);
                 this.Received?.Invoke(this, args);
                 if (args.Ignore)
                     return;
@@ -88,28 +98,30 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// <summary>
         /// Save the alert without notifying anyone
         /// </summary>
-        public void SaveAlert(AlertMessage msg)
+        public void SaveAlert(AlertMessage alert)
         {
             var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
             using (conn.Lock())
                 try
                 {
-                    if (msg.Flags.HasFlag(AlertMessageFlags.Transient)) return; // Transient messages don't get saved
+                    if (alert.Flags.HasFlag(AlertMessageFlags.Transient)) return; // Transient messages don't get saved
+
+                    var msg = new DbAlertMessage(alert);
 
                     this.m_tracer.TraceVerbose("Saving alert {0}", msg);
                     conn.BeginTransaction();
 
-                    if(!conn.TableMappings.Any(o=>o.MappedType == typeof(AlertMessage)))
-                        conn.CreateTable<AlertMessage>();
+                    if(!conn.TableMappings.Any(o=>o.MappedType == typeof(DbAlertMessage)))
+                        conn.CreateTable<DbAlertMessage>();
 
                     // Check for key and assign ID
-                    if (msg.Key == null)
+                    try
                     {
-                        msg.Key = Guid.NewGuid().ToByteArray();
+                        msg.Id = Guid.NewGuid().ToByteArray();
                         msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
                         conn.Insert(msg);
                     }
-                    else
+                    catch(SQLite.Net.SQLiteException)
                     {
                         conn.Update(msg);
                     }

@@ -24,6 +24,8 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
     /// <summary>
     /// Represents a simple mobile test which sets up context
     /// </summary>
+    [DeploymentItem("sqlite3.dll")]
+    [DeploymentItem("OpenIZ.sqlite")]
     public abstract class MobileTest
     {
 

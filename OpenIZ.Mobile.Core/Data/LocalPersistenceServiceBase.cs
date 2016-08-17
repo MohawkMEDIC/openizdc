@@ -39,6 +39,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Threading;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Data.Connection;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -395,7 +396,7 @@ namespace OpenIZ.Mobile.Core.Data
                 try
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
-
+                    
                     var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
 
                     var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
@@ -426,9 +427,14 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (ApplicationContext.Current.Principal == null)
                 return Guid.Empty;
-            var securityUser = context.Table<DbSecurityUser>().SingleOrDefault(o => o.UserName == ApplicationContext.Current.Principal.Identity.Name);
+            String name = ApplicationContext.Current.Principal.Identity.Name;
+            var securityUser = context.Table<DbSecurityUser>().Where(o => o.UserName == name).ToList().SingleOrDefault();
             if (securityUser == null)
-                throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
+            {
+                this.m_tracer.TraceWarning("User doesn't exist locally, using GUID.EMPTY");
+                return Guid.Empty;
+                //throw new InvalidOperationException("Constraint Violation: User doesn't exist locally");
+            }
             return securityUser.Key;
         }
 

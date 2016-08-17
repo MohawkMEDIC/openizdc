@@ -1,12 +1,22 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
-    <oiz:script>/org.openiz.core/lib/bootstrap-tokenfield.min.js</oiz:script>
-    <oiz:style>/org.openiz.core/css/bootstrap-tokenfield.min.css</oiz:style>    
+          xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
     <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="phoneNumber">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+        <label class="col-xs-2 control-label" for="patientTelecom">{{ 'locale.patient.demographics.telephone' | i18n }}</label>
+        <div class="col-xs-4">
+            <div class="input-group">
+                <select name="patientTelecomType" id="patientTelecomType" class="form-control" ng-model="patient.telecom.$other.use"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+            </div>
+        </div>
         <div class="col-xs-6">
-            <input type="tel" name="phoneNumber" ng-model="patient.telecom[Direct]" class="form-control"/>
+            <div class="input-group">
+                <input type="tel" autocomplete="off" autocapitalize="off" name="patientTelecom" ng-model="patient.telecom.$other.value" class="form-control" />
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                </span>
+
+            </div>
         </div>
     </div>
 </fieldset>

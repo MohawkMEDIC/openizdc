@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Gets or sets the entity identifier.
         /// </summary>
         /// <value>The entity identifier.</value>
-        [Column("entity_uuid"), MaxLength(16), NotNull, Indexed(Name = "entity_relationship_target_type", Unique = true)]
+        [Column("entity_uuid"), MaxLength(16), NotNull, Indexed]
         public byte[] EntityUuid
         {
             get;
@@ -48,14 +48,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the target entity
         /// </summary>
-        [Column("target"), MaxLength(16), NotNull, Indexed(Name = "entity_relationship_target_type", Unique = true)]
+        [Column("target"), MaxLength(16), NotNull, Indexed]
         public byte[] TargetUuid { get; set; }
 
 
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("relationshipType"), MaxLength(16), NotNull, Indexed(Name = "entity_relationship_target_type", Unique = true)]
+        [Column("relationshipType"), MaxLength(16), NotNull]
         public byte[] RelationshipTypeUuid { get; set; }
     }
 }

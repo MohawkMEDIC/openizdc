@@ -158,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
                             else
                                 requestStream = r.Result;
                         });
-                        if (!requestTask.Wait(4000)) throw new TimeoutException();
+                        if (!requestTask.Wait(this.Description.Endpoint[0].Timeout)) throw new TimeoutException();
                         else if (requestException != null) throw requestException;
 
                         if (contentType == null)
@@ -188,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Android.Http
                         else
                             response = r.Result as HttpWebResponse;
                     });
-                    if (!responseTask.Wait(4000)) throw new TimeoutException();
+                    if (!responseTask.Wait(this.Description.Endpoint[0].Timeout)) throw new TimeoutException();
                     else if (responseError != null)
                     {
                         if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)

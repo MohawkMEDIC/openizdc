@@ -19,6 +19,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.search = scope.search.search || function () {
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
             OpenIZ.Patient.findAsync({
                 query: scope.search.query,
                 offset: 0,
@@ -29,6 +30,9 @@ $(document).ready(function () {
                 },
                 onException: function (e) {
                     OpenIZ.App.toast(e.message);
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait();
                 }
             });
 

@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="locale_downloadError" xml:space="preserve">
+    <value>Error Downloading Remote Data</value>
+  </data>
+  <data name="locale_downloadErrorBody" xml:space="preserve">
+    <value>There was an error downloading the specified resources: {0}</value>
+  </data>
   <data name="locale_import" xml:space="preserve">
     <value>Importing Data...</value>
   </data>
@@ -125,6 +131,14 @@
   </data>
   <data name="locale_importDoneSubject" xml:space="preserve">
     <value>Remote Data Imported</value>
+  </data>
+  <data name="locale_importErrorBody" xml:space="preserve">
+    <value>There was an error importing the data from the remote data source. More details are below:
+
+{0}</value>
+  </data>
+  <data name="locale_importErrorSubject" xml:space="preserve">
+    <value>Error importing remote data</value>
   </data>
   <data name="locale_setting_deploy" xml:space="preserve">
     <value>Deploying Data</value>

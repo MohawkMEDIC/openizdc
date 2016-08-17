@@ -232,6 +232,19 @@
     <property modelName="GenderConceptKey" domainName="GenderConceptUuid"/>
   </class>
 
+  <!-- Material Maps -->
+  <class modelClass="OpenIZ.Core.Model.Entities.Material, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbMaterial, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="FormConceptKey" domainName="FormConceptUuid"/>
+    <property modelName="QuantityConceptKey" domainName="QuantityConceptUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0"
+     domainClass="OpenIZ.Mobile.Core.Data.Model.Entities.DbManufacturedMaterial, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+  
   <!-- Provider Maps -->
   <class modelClass="OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Mobile.Core.Data.Model.Roles.DbProvider, OpenIZ.Mobile.Core, Version=0.5.0.0">
@@ -337,6 +350,34 @@
     <property modelName="SourceEntityKey" domainName="ActUuid"/>
     <property modelName="ParticipationRoleKey" domainName="ParticipationRoleUuid"/>
   </class>
-  
-  
+
+  <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbActParticipation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="PlayerEntityKey" domainName="EntityUuid"/>
+    <property modelName="SourceEntityKey" domainName="ActUuid"/>
+    <property modelName="ParticipationRoleKey" domainName="ParticipationRoleUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbSubstanceAdministration, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="RouteKey" domainName="RouteConceptUuid"/>
+    <property modelName="DoseUnitKey" domainName="DoseUnitConceptUuid"/>
+  </class>
+
+
+  <class modelClass="OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbPatientEncounter, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="DischargeDispositionKey" domainName="DischargeDispositionUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0"
+         domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbTemplateDefinition, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"/>
+    <property modelName="UpdatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+  </class>
 </modelMap>

@@ -9,13 +9,23 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
     $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
-        loadTime: new Date()
+        loadTime: new Date(),
+        maxEventTime: new Date(), // Dislike Javascript
+        minEventTime: new Date(), // quite a bit
+        locale: OpenIZ.Localization.getLocale()
     };
 
-    // Get current session
-    $rootScope.session = OpenIZ.Authentication.getSession();
+    $rootScope.page.maxEventTime.setDate($rootScope.page.maxEventTime.getDate() + 1); // <-- This is why
+    $rootScope.page.minEventTime.setDate($rootScope.page.minEventTime.getDate() - 1); // why I can't call addDays or something?
 
-  
+    // Get current session
+    OpenIZ.Authentication.getSessionAsync({
+        continueWith: function (session) {
+            $rootScope.session = session;
+        }
+    });
+
+    $rootScope.OpenIZ = OpenIZ;
 });
 
 // Configure the safe ng-urls

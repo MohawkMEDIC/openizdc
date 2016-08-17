@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="5DDA76D6-C192-4260-90CC-BBD96B790656" id="PCV13" name="PCV13 Immunization Schedule">
+  <rule id="PCV1">
+    <when evaluation="and">
+      <!-- PCV1 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+              template: {
+                  mnemonic: "Act.SubstanceAdmin.Immunization"
+              },
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitModel" : {
+                "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+                "mnemonic" : "DOSE"
+              },
+              "routeModel" : {
+                "id": "d594f99f-0151-41a0-a359-282ab54683a1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+              "siteModel" : {
+                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
+                "mnemonic": 'Site-LeftArm'
+              },           
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
+                      "mnemonic": "VaccineType-PCV13"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["Pneumococcal conjugate PCV 13"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["PCV13"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign propertyName="ActTime">DateOfBirth.Value + new TimeSpan(42, 0, 0, 0)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value + new TimeSpan(42,0,0,0)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value + new TimeSpan(49, 0, 0, 0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="PCV2">
+    <when evaluation="and">
+      <!-- PCV 1 is in their file yet -->
+      <imsiExpression negationIndicator="false">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+      participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
+    </imsiExpression>
+      <!-- PCV 2 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+           {
+				      "$type": "SubstanceAdministration",
+              template: {
+                  mnemonic: "Act.SubstanceAdmin.Immunization"
+              },
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+				      "doseSequence": 2,
+              "doseQuantity" : 1.0,
+              "doseUnitModel" : {
+                "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+                "mnemonic" : "DOSE"
+              },
+              "routeModel" : {
+                "id": "d594f99f-0151-41a0-a359-282ab54683a1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+              "siteModel" : {
+                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
+                "mnemonic": 'Site-LeftArm'
+              },           
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
+                      "mnemonic": "VaccineType-PCV13"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["Pneumococcal conjugate PCV 13"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["PCV13"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+  <rule id="PCV3">
+    <when evaluation="and">
+      <!-- PCV 2 is in their file yet -->
+      <imsiExpression negationIndicator="false">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
+      </imsiExpression>
+      <!-- PCV 3 is not in their file yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=3
+      </imsiExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+            {
+				      "$type": "SubstanceAdministration",
+              template: {
+                  mnemonic: "Act.SubstanceAdmin.Immunization"
+              },
+				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+				      "doseSequence": 3,
+              "doseQuantity" : 1.0,
+              "doseUnitModel" : {
+                "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+                "mnemonic" : "DOSE"
+              },
+              "routeModel" : {
+                "id": "d594f99f-0151-41a0-a359-282ab54683a1",
+                "mnemonic": "RouteOfAdministration-IM"
+              },
+              "siteModel" : {
+                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
+                "mnemonic": 'Site-LeftArm'
+              },        
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "typeConceptModel": {
+                      "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
+                      "mnemonic": "VaccineType-PCV13"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["Pneumococcal conjugate PCV 13"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["PCV13"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+          ]]>
+        </jsonModel>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+      </action>
+    </then>
+  </rule>
+</ProtocolDefinition>

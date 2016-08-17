@@ -57,15 +57,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             throw new NotImplementedException();
         }
 
-		public SecurityPolicy CreatePolicy(SecurityPolicy policy)
-		{
-			throw new NotImplementedException();
-		}
+        public SecurityPolicy CreatePolicy(SecurityPolicy policy)
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Creates the provided role
-		/// </summary>
-		public SecurityRole CreateRole(SecurityRole roleInfo)
+        /// <summary>
+        /// Creates the provided role
+        /// </summary>
+        public SecurityRole CreateRole(SecurityRole roleInfo)
         {
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
             if (pers == null)
@@ -128,6 +128,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return persistence.Insert(userEntity);
         }
 
+
         public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
         {
             throw new NotImplementedException();
@@ -182,15 +183,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns></returns>
         public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression)
         {
+            int td;
+            return this.FindUserEntity(expression, 0, null, out td);
+        }
+
+        /// <summary>
+        /// Find user entity
+        /// </summary>
+        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
+        {
             var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (persistence == null)
                 throw new InvalidOperationException("Persistence service missing");
-            return persistence.Query(expression);
-        }
-
-        public IEnumerable<UserEntity> FindUserEntity(Expression<Func<UserEntity, bool>> expression, int offset, int? count, out int totalCount)
-        {
-            throw new NotImplementedException();
+            return persistence.Query(expression, offset, count, out totalCount);
         }
 
         /// <summary>
@@ -262,21 +267,21 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return pers.Query(o=>o.UserName == identity.Name && o.ObsoletionTime == null).FirstOrDefault();
         }
 
-		/// <summary>
-		/// Gets the specified user entity
-		/// </summary>
-		public UserEntity GetUserEntity(IIdentity identity)
-		{
-			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			if (pers == null)
-				throw new InvalidOperationException("Missing persistence service");
-			return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault();
-		}
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public UserEntity GetUserEntity(IIdentity identity)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing persistence service");
+            return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault();
+        }
 
-		/// <summary>
-		/// Gets the specified user entity
-		/// </summary>
-		public UserEntity GetUserEntity(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets the specified user entity
+        /// </summary>
+        public UserEntity GetUserEntity(Guid id, Guid versionId)
         {
             var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (persistence == null)
@@ -348,6 +353,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             throw new NotImplementedException();
         }
+
 
         /// <summary>
         /// Saves the specified role

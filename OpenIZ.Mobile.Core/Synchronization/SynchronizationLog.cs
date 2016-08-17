@@ -70,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
-                return logEntry?.LastSync;
+                return logEntry?.LastSync.ToLocalTime();
             }
         }
 

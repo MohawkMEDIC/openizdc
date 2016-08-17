@@ -1,0 +1,14 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"  
+        xmlns:bind="http://openiz.org/binding">
+    <div ng-repeat="enc in encounter.relationship">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>{{ enc.template.name }}</span>
+            </div>
+            <div class="panel-collapse in">
+                <div class="panel-body" ng-include="enc.template.formUrl">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

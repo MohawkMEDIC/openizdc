@@ -1,0 +1,20 @@
+﻿{
+  "$type": "QuantityObservation",
+  "template": {
+    "mnemonic": "Act.Observation.Weight"
+  },
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+  "typeConcept": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "player": "{{locationId}}"
+    },
+    "Product": {
+      "playerModel": {
+        "$type": "Material"
+      }
+    }
+  }
+}

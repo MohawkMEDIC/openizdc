@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <value>The name.</value>
 		public string Name {
 			get {
-				return this.m_claims.Find (o => o.Type == DefaultNameClaimType).Value;
+				return this.m_claims.Find (o => o.Type == DefaultNameClaimType).Value.ToLower();
 			}
 		}
 

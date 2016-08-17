@@ -89,10 +89,11 @@ namespace OpenIZ.Mobile.Core.Configuration
     public enum SynchronizationPullTriggerType
     {
         Never = 0x0,
-        Always = OnStart | OnCommit | OnStop | OnPush,
+        Always = OnStart | OnCommit | OnStop | OnPush | OnNetworkChange,
         OnStart = 0x01,
         OnCommit = 0x02,
         OnStop = 0x04,
-        OnPush = 0x08
+        OnPush = 0x08,
+        OnNetworkChange = 0x10
     }
 }

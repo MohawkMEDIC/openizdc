@@ -7,11 +7,11 @@
         <table class="table table-striped oiz-vaccination-history-table">
             <thead>
                 <tr>
-                    <th></th>
-                    <th style="text-align:center">0</th>
-                    <th style="text-align:center">1</th>
-                    <th style="text-align:center">2</th>
-                    <th style="text-align:center">3</th>
+                    <th class="vaccine-table-column"></th>
+                    <th class="vaccine-table-column" style="text-align:center">0</th>
+                    <th class="vaccine-table-column" style="text-align:center">1</th>
+                    <th class="vaccine-table-column" style="text-align:center">2</th>
+                    <th class="vaccine-table-column" style="text-align:center">3</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,7 +22,7 @@
                             <span class="input-group-addon">
                                 <input type="checkbox"
                                        ng-model="sequence._enabled"
-                                       ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept == 'EC74541F-87C4-4327-A4B9-97F325501747' ? 'disabled' : null"
+                                       ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime > $root.page.maxEventTime ? 'disabled' : null"
                                        value="1"/>
                             </span>
                             <input

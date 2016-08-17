@@ -50,6 +50,10 @@ angular.module('openiz', [])
                  * @summary Gets the specified locale key
                  */
                 getString: function (key) {
+
+                    // make sure we always have the latest locale
+                    //localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
+
                     var entry = localize.dictionary[key];
                     if (entry != null)
                         return entry;
@@ -75,15 +79,168 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
-    .directive('oizTag', function () {
+    .filter('oizEntityIdentifier', function () {
+        return function (modelValue) {
+            if (modelValue.NID !== undefined)
+                return modelValue.NID.value;
+            else
+                for (var k in modelValue)
+                    return modelValue.NID;
+
+        };
+    })
+    .filter('oizEntityName', function () {
+        return function (modelValue) {
+            return OpenIZ.Util.renderName(modelValue);
+        }
+    })
+    .directive('oizTag', function ($timeout) {
         return {
             require: 'ngModel',
             link: function (scope, element, attrs, ctrl) {
+
+                // Parsers
                 ctrl.$parsers.unshift(tagParser);
+                ctrl.$formatters.unshift(tagFormatter);
                 function tagParser(viewValue) {
                     return String(viewValue).split(',');
                 }
+                function tagFormatter(viewValue) {
+                    if (typeof (viewValue) === Array)
+                        return viewValue.join(viewView)
+                    return viewValue;
+                }
 
+                // Tag input
+                $timeout(
+                    $(element).tokenfield({
+                        delimiter: ' ,',
+                        createTokensOnBlur: true
+                    })
+                );
             }
         }
+    })
+    .directive('oizDatabind', function($timeout) {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
+                    var modelType = $(element).attr('oiz-databind');
+                    var filterString = $(element).attr('data-filter');
+                    var displayString = $(element).attr('data-display');
+
+                    var filter = {};
+                    if (filterString !== undefined)
+                        filter = JSON.parse(filterString);
+                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    // Get the bind element
+                    OpenIZ.Ims.get({
+                        resource: modelType,
+                        query: filter,
+                        continueWith: function (data) {
+
+                            var options = $(element)[0].options;
+                            $('option', element[0]).remove(); // clear existing 
+                            options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                            for (var i in data.item) {
+                                var text = null;
+                                if (displayString != null) {
+                                    var scope = data.item[i];
+                                    // HACK:
+                                    text = eval(displayString);
+                                }
+                                else
+                                    text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
+
+                                // Append element
+                                options[options.length] = new Option(text, data.item[i].id);
+                            }
+                        }
+                    });
+                });
+            }
+        };
+    })
+    .directive('oizEntitysearch', function ($timeout) {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
+
+
+                    var modelType = $(element).attr('oiz-entitysearch');
+                    var filterString = $(element).attr('data-filter');
+                    var displayString = $(element).attr('data-display');
+
+                    var filter = {};
+                    if (filterString !== undefined)
+                        filter = JSON.parse(filterString);
+                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    // Add appropriate styling so it looks half decent
+                    $(element).attr('style', 'width:100%; height:100%');
+                    // Bind select 2 search
+                    $(element).select2({
+                        ajax: {
+                            url: "/__ims/" + modelType,
+                            dataType: 'json',
+                            delay: 500,
+                            method: "GET",
+                            data: function (params) {
+                                filter["name.component.value"] = "~" + params.term;
+                                filter["_count"] = 5;
+                                filter["_offset"] = 0;
+                                return filter;
+                            },
+                            processResults: function (data, params) {
+                                $('option', element[0]).remove(); // clear existing 
+
+                                params.page = params.page || 0;
+                                return {
+                                    results: $.map(data.item, function (o) {
+                                        o.text = o.text || OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                        return o;
+                                    }),
+                                    pagination: {
+                                        more: data.offset + data.count < data.total
+                                    }
+                                };
+                            },
+                            cache: true
+                        },
+                        escapeMarkup: function (markup) { return markup; }, // Format normally
+                        minimumInputLength: 4,
+                        templateSelection: function (result) {
+                            if (result.name != null)
+                                return OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else
+                                return result.text;
+                        },
+                        templateResult: function (result) {
+                            if (result.name != null)
+                                return "<div class='label label-default'>" +
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else
+                                return result.text;
+                        }
+                    });
+                });
+            }
+        };
+    })
+    .directive('oizCollapseindicator', function () {
+        return {
+            link: function (scope, element, attrs, ctrl) {
+                $(element).on('hide.bs.collapse', function () {
+                    var indicator = $(this).attr('data-oiz-chevron');
+                    $(indicator).removeClass('glyphicon-chevron-down');
+                    $(indicator).addClass('glyphicon-chevron-right');
+                });
+                $(element).on('show.bs.collapse', function () {
+                    var indicator = $(this).attr('data-oiz-chevron');
+                    $(indicator).addClass('glyphicon-chevron-down');
+                    $(indicator).removeClass('glyphicon-chevron-right');
+                });
+            }
+        };
     });

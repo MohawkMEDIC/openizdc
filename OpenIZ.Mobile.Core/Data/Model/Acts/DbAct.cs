@@ -33,6 +33,15 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
     [Table("act")]
     public class DbAct : DbVersionedData
     {
+        /// <summary>
+        /// Gets or sets the template
+        /// </summary>
+        [Column("template"), MaxLength(16)]
+        public byte[] TemplateUuid { get; set; }
+
+        /// <summary>
+        /// True if negated
+        /// </summary>
         [Column("isNegated")]
         public bool IsNegated { get; set; }
 

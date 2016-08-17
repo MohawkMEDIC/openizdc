@@ -6,10 +6,10 @@
 
 angular.element(document).ready(function () {
 
-    $('input[type=text].tagEntry').tokenfield({
-        delimiter: ' ,',
-        createTokensOnBlur: true
-    })
+
+   
+
+
     //$('.select2-tag').each(function (e, d) {
     //    $(d).on('select2:open', function (s) {
     //        s.preventDefault();

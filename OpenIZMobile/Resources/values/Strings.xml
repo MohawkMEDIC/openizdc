@@ -19,13 +19,17 @@
  - Date: 2016-6-14
  -->
 <resources>
-	<string name="app_name">OpenIZ Mobile</string>
+	<string name="app_name">TImR Mobile</string>
+	<string name="user_name">User Name</string>
+	<string name="password">Password</string>
+	<string name="login">Login</string>
+	<string name="login_title">TImR Login</string>
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
 	<string name="installing_applets">Installing </string>
   <string name="starting_services">Starting Services...</string>
   <string name="loading">Please Wait...</string>
-  
+     
   <!-- Errors -->
 	<!-- Setup screen -->
 	<string name="setup_title">Welcome to TImR!</string>
@@ -49,7 +53,7 @@
 	<!-- Errors -->
 	<string name="err_general">Oops! Something went wrong!</string>
 	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
-	<string name="err_startup">A serious error occurred during startup. OpenIZ Mobile cannot continue. Please reference the following error code when seeking help:</string>
+	<string name="err_startup">A serious error occurred during startup. TImR Mobile cannot continue. Please reference the following error code when seeking help:</string>
 	<string name="err_login">Login error: </string>
 	<string name="err_login_invalidusername">Invalid username/password</string>
 	<string name="err_exception">An unexpected error occurred</string>

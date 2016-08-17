@@ -51,7 +51,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override TModel Update(SQLiteConnectionWithLock context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
-            if(!data.VersionKey.HasValue)
+            var key = data.Key?.ToByteArray();
+            if (!data.VersionKey.HasValue)
+                data.VersionKey = Guid.NewGuid();
+            else if (context.Table<TDomain>().Where(o=>o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
                 data.VersionKey = Guid.NewGuid();
             return base.Update(context, data);
         }

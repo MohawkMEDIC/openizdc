@@ -313,53 +313,6 @@ var OpenIZModel = OpenIZModel || {
     },
 
     /**
-     * @summary Represents OpenIZ session data, rather, the session that is currently in play.
-     * @class
-     * @constructor
-     * @param {Object} sessionData The IMSI formatted session data
-     * @property {Object} identity The identity of the authenticated user
-     * @property {String} method The method of authentication, either local, oauth, or basic
-     * @property {Date} expires The date on which the session will expire
-     * @property {Date} issued The date on which the session was issued
-     * @property {String} refresh_token The token which can be used as a refresh
-     * @property {String} jwt Contains the JWT token assets (name, etc.) from the session
-     */
-    Session : function (sessionData) {
-
-        // console.info("Session.ctor " + sessionData);
-
-        this.$type = "Session";
-        this.identity = {
-            name: sessionData.username,
-            roles: sessionData.roles
-        };
-        this.method = sessionData.method;
-        this.expires = sessionData.exp;
-        this.issued = sessionData.nbf;
-        this.refresh_token = sessionData.refresh_token;
-        this.jwt = sessionData.jwt;
-
-        /**
-         * @summary Returns whether the current session is expired
-         */
-        this.isExpired = function () {
-            return new Date() > this.expires;
-        };
-        /**
-         * @summary The abandon function is used to abandon the current session
-         */
-        this.abandon = function () {
-            return OpenIZ.Authentication.abandonSession();
-        };
-        /**
-         * @summary The refresh function is used to refresh the current session 
-         */
-        this.refresh = function () {
-            return OpenIZ.Authentication.refreshSession();
-        };
-    },
-
-    /**
      * @summary Represents a security user (user information)
      * @class Security User model
      * @constructor

@@ -1,0 +1,6 @@
+﻿<modelMap xmlns="http://openiz.org/model/map">
+  <class modelClass="OpenIZ.Core.Alerting.AlertMessage, OpenIZ.Core.PCL, Version=1.0.0.0"
+		domainClass="OpenIZ.Mobile.Core.Alerting.DbAlertMessage, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    
+  </class>
+</modelMap>

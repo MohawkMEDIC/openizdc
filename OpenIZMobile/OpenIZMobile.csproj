@@ -51,12 +51,12 @@
     <AndroidLinkMode>SdkOnly</AndroidLinkMode>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <Debugger>Xamarin</Debugger>
+    <Debugger>Microsoft</Debugger>
     <AotAssemblies>False</AotAssemblies>
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <DebugSymbols>False</DebugSymbols>
-    <AndroidLinkSkip>System.Xml.Linq</AndroidLinkSkip>
+    <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
     <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
   </PropertyGroup>
   <ItemGroup>
@@ -82,7 +82,10 @@
     </Reference>
     <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -105,6 +108,8 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
+    <AndroidAsset Include="Assets\Applets\tz.rita.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -121,7 +126,6 @@
     <AndroidResource Include="Resources\drawable\logo.png" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\values\attrs.xml" />
-    <AndroidResource Include="Resources\drawable\logo_lg.png" />
     <AndroidResource Include="Resources\drawable\circle_bg.xml" />
     <AndroidResource Include="Resources\values\Styles.xml" />
     <AndroidResource Include="Resources\layout\Splash.axml" />
@@ -151,9 +155,41 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values-sw\Strings.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\logo_lg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\PCV13Vaccine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\RotaVaccine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\BcgVaccine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\DTP-HepB-HibTrivalent.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\MeaslesRubellaVaccine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\OralPolioVaccine.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\ChildWeight.xml" />
+  </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
+"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
+"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\rita-applet\rita" -o "$(TargetDir)\tz.rita.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
  copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
- copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"</PreBuildEvent>
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"
+ copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
+ copy "$(TargetDir)\tz.rita.applet.pak" "$(ProjectDir)\Assets\Applets\tz.rita.applet.pak"
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

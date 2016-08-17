@@ -139,7 +139,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Build a query
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("SELECT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
+            sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
 			List<Object> vals = new List<Object> ();
 			if (parms.Count > 0) {
 				foreach (var s in parms) {
@@ -239,7 +239,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #if DEBUG
             this.m_tracer.TraceVerbose("EXECUTE: {0}", sb);
             foreach (var v in vals)
-                this.m_tracer.TraceVerbose(" --> {0}", v);
+                this.m_tracer.TraceVerbose(" --> {0}", v is byte[] ? BitConverter.ToString(v as Byte[]).Replace("-","") : v);
 #endif
 
 
@@ -281,6 +281,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var insertRecords = storage.Where(o => !existing.Any(ecn => ecn.Key == o.Key));
             foreach (var ins in insertRecords)
             {
+                if (ins.IsEmpty()) continue;
                 ins.SourceEntityKey = sourceKey;
                 persistenceService.Insert(dataContext, ins);
             }

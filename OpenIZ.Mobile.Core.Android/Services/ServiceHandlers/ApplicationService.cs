@@ -14,6 +14,8 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -49,11 +51,30 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             catch(Exception e)
             {
                 this.m_tracer.TraceError("Could not retrieve alerts {0}...", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get the alerts from the service
+        /// </summary>
+        [RestOperation(UriPath = "/alerts", Method = "POST")]
+        public AlertMessage SaveAlert(AlertMessage alert)
+        {
+            try
+            {
+                // Gets the specified alert messages
+                var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                alertService.SaveAlert(alert);
+                return alert;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Could not retrieve alerts {0}...", e);
                 return null;
             }
         }
 
-        
     }
 
 }

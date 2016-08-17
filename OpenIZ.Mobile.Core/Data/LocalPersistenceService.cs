@@ -49,7 +49,6 @@ namespace OpenIZ.Mobile.Core.Data
 
         // Guid of stuff that exists and the version
         private static Dictionary<String, Guid?> s_exists = new Dictionary<String, Guid?>();
-
         // Lock 
         private static Object s_lock = new object();
 
@@ -61,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
-
+            else if (context.IsInTransaction) return;
             // Load associations
             foreach (var pi in typeof(TModel).GetRuntimeProperties())
             {
@@ -91,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(entryType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
                     if (idpInstance == null) continue;
-                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
+                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
 
                     // Execute query
                     if (queryMethod == null) continue;
@@ -320,6 +319,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -340,6 +341,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -368,6 +371,8 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
@@ -388,12 +393,14 @@ namespace OpenIZ.Mobile.Core.Data
             /// </summary>
             public override TModel Update(SQLiteConnectionWithLock context, TModel data)
             {
+                if (data.IsEmpty()) return data;
+
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
                     if (rp.GetCustomAttribute<DataIgnoreAttribute>() != null) continue;
 
                     var instance = rp.GetValue(data);
-                    if (instance != null)
+                    if (instance != null && rp.Name != "SourceEntity") // HACK: Prevent infinite loops on associtive entities
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
                         ModelExtensions.UpdateParentKeys(data, rp);
@@ -442,6 +449,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
             var appSection = ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>();
 
+            this.m_tracer.TraceInfo("Starting local persistence services...");
             // Iterate the persistence services
             foreach (var t in typeof(LocalPersistenceService).GetTypeInfo().Assembly.ExportedTypes.Where(o => o.Namespace == "OpenIZ.Mobile.Core.Data.Persistence" && !o.GetTypeInfo().IsAbstract && !o.GetTypeInfo().IsGenericTypeDefinition))
             {

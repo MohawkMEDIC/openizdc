@@ -29,6 +29,9 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -57,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String CountyOrParish = "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5";
         private const String Country = "48B2FFB3-07DB-47BA-AD73-FC8FB8502471";
         private const String NonLivingSubject = "9025E5C9-693B-49D4-973C-D7010F3A23EE";
-
+        
         /// <summary>
         /// To model instance
         /// </summary>
@@ -204,6 +207,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
+            // Ensure participations
+            if (data.Participations != null)
+                foreach (var itm in data.Participations)
+                {
+                    itm.PlayerEntityKey = retVal.Key;
+                    itm.EnsureExists(context);
+                }
             return retVal;
         }
 
@@ -286,7 +296,30 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
+            // Participations
+            if(data.Participations != null)
+            {
+                foreach (var itm in data.Participations)
+                {
+                    itm.PlayerEntityKey = retVal.Key;
+                    itm.Act?.EnsureExists(context);
+                    itm.SourceEntityKey = itm.Act?.Key ?? itm.SourceEntityKey;
+                } 
+                var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList();
+                base.UpdateAssociatedItems<ActParticipation, Act>(
+                    existing,
+                    data.Participations,
+                    retVal.Key,
+                    context);
+            }
+          
+
             return retVal;
+        }
+
+        private TableQuery<object> DbActPersistence()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

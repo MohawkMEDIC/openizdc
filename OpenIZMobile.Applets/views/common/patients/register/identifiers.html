@@ -1,12 +1,11 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
-
     <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
         <div class="col-xs-3">
             <div class="input-group">
                 <select ng-model="identifier.authority" class="form-control"
-                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null"></select>
+                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
             </div>
         </div>
         <div class="col-xs-9">

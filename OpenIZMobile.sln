@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZMobile", "OpenIZMobile\OpenIZMobile.csproj", "{B031B6B7-B756-4959-B72F-61DB32270647}"
 EndProject
@@ -62,6 +62,7 @@ Global
 		{B031B6B7-B756-4959-B72F-61DB32270647}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{554DF209-7744-433F-993A-783E2A2803EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{554DF209-7744-433F-993A-783E2A2803EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{554DF209-7744-433F-993A-783E2A2803EF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{554DF209-7744-433F-993A-783E2A2803EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{554DF209-7744-433F-993A-783E2A2803EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{00EE5306-AAE5-4145-B430-6BA3FB07054B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

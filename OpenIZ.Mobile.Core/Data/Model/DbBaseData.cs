@@ -35,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// </summary>
 		/// <value>The creation time.</value>
 		[Column("creationTime"), NotNull]
-		public DateTime? CreationTime {
+		public DateTimeOffset? CreationTime {
 			get;
 			set;
 		}
@@ -45,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// </summary>
 		/// <value>The obsoletion time.</value>
 		[Column("obsoletionTime")]
-		public DateTime? ObsoletionTime {
+		public DateTimeOffset? ObsoletionTime {
 			get;
 			set;
 		}
@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// </summary>
 		/// <value>The updated time.</value>
 		[Column("updatedTime")]
-		public DateTime? UpdatedTime {
+		public DateTimeOffset? UpdatedTime {
 			get;
 			set;
 		}

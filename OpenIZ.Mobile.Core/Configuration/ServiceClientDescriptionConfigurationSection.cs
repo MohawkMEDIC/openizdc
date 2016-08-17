@@ -374,6 +374,13 @@ namespace OpenIZ.Mobile.Core.Configuration
 	[XmlType (nameof (ServiceClientEndpoint), Namespace = "http://openiz.org/mobile/configuration")]
 	public class ServiceClientEndpoint : IRestClientEndpointDescription
 	{
+        /// <summary>
+        /// Timeout of 4 sec
+        /// </summary>
+        public ServiceClientEndpoint()
+        {
+            this.Timeout = 4000;
+        }
 
 		/// <summary>
 		/// Gets or sets the service client endpoint's address

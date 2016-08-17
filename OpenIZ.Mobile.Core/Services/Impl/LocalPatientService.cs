@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -71,8 +72,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public Patient Insert(Patient p)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
 
-            return persistenceService.Insert(p);
+            // Persist patient
+            var retVal = persistenceService.Insert(p);
+
+            return retVal;
         }
 
         /// <summary>

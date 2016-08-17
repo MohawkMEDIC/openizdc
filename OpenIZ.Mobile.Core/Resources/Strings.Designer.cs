@@ -62,6 +62,24 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error Downloading Remote Data.
+        /// </summary>
+        internal static string locale_downloadError {
+            get {
+                return ResourceManager.GetString("locale_downloadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error downloading the specified resources: {0}.
+        /// </summary>
+        internal static string locale_downloadErrorBody {
+            get {
+                return ResourceManager.GetString("locale_downloadErrorBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Importing Data....
         /// </summary>
         internal static string locale_import {
@@ -85,6 +103,26 @@ namespace OpenIZ.Mobile.Core.Resources {
         internal static string locale_importDoneSubject {
             get {
                 return ResourceManager.GetString("locale_importDoneSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error importing the data from the remote data source. More details are below:
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string locale_importErrorBody {
+            get {
+                return ResourceManager.GetString("locale_importErrorBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error importing remote data.
+        /// </summary>
+        internal static string locale_importErrorSubject {
+            get {
+                return ResourceManager.GetString("locale_importErrorSubject", resourceCulture);
             }
         }
         

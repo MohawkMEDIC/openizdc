@@ -56,8 +56,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.ExpiryDate = dataInstance.ExpiryDate;
             retVal.IsAdministrative = dataInstance.IsAdministrative;
             retVal.Quantity = dataInstance.Quantity;
-            retVal.QuantityConceptKey = new Guid(dataInstance.QuantityConceptUuid);
-            retVal.FormConceptKey = new Guid(dataInstance.FormConceptUuid);
+            if(dataInstance.QuantityConceptUuid != null)
+                retVal.QuantityConceptKey = new Guid(dataInstance.QuantityConceptUuid);
+            if(dataInstance.FormConceptUuid != null)
+                retVal.FormConceptKey = new Guid(dataInstance.FormConceptUuid);
             retVal.LoadAssociations(context);
             return retVal;
 

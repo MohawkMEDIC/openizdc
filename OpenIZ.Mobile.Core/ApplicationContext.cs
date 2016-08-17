@@ -70,6 +70,22 @@ namespace OpenIZ.Mobile.Core
 
         // Fired when application wishes to show progress of some sort
         public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
+        /// <summary>
+        /// Fired when the application is starting
+        /// </summary>
+        public event EventHandler Starting;
+        /// <summary>
+        /// Fired when the application startup has completed
+        /// </summary>
+        public event EventHandler Started;
+        /// <summary>
+        /// Fired when the application is stopping
+        /// </summary>
+        public event EventHandler Stopping;
+        /// <summary>
+        /// Fired when the application has stopped
+        /// </summary>
+        public event EventHandler Stopped;
 
         /// <summary>
         /// Sets the progress
@@ -110,9 +126,13 @@ namespace OpenIZ.Mobile.Core
 			if (!this.m_cache.TryGetValue (serviceType, out candidateService)) {
 				ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection> ();
 				candidateService = appSection.Services.Find (o => serviceType.GetTypeInfo().IsAssignableFrom(o.GetType().GetTypeInfo()));
-				if (candidateService != null)
-					lock (this.m_lockObject)
-						this.m_cache.Add (serviceType, candidateService);
+                if (candidateService != null)
+                    lock (this.m_lockObject)
+                        if (!this.m_cache.ContainsKey(serviceType))
+                        {
+                            this.m_cache.Add(serviceType, candidateService);
+                        }
+                        else candidateService = this.m_cache[serviceType];
 			}
 			return candidateService;
 		}
@@ -173,13 +193,14 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The device.</value>
 		public abstract SecurityDevice Device { get; }
-        
+
         /// <summary>
         /// Start the daemon services
         /// </summary>
         protected void Start()
         {
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
+            this.Starting?.Invoke(this, EventArgs.Empty);
 
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
@@ -190,13 +211,18 @@ namespace OpenIZ.Mobile.Core
                 if (!d.Start())
                     tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
             }
+            
+            this.Started?.Invoke(this, EventArgs.Empty);
+
         }
-        
+
         /// <summary>
         /// Force stop
         /// </summary>
         public void Stop()
         {
+            this.Stopping?.Invoke(this, EventArgs.Empty);
+
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
@@ -206,7 +232,11 @@ namespace OpenIZ.Mobile.Core
                 if (!d.Stop())
                     tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
             }
+
+            this.Stopped?.Invoke(this, EventArgs.Empty);
+
         }
+
     }
 }
 

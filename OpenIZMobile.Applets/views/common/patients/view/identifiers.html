@@ -1,0 +1,21 @@
+﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{{ 'locale.patient.identifiers.authority' | i18n }}</th>
+                <th>{{ 'locale.patient.identifiers.value' | i18n }}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="(authority, identifier) in patient.identifier">
+                <td>{{authority}}</td>
+                <td>{{identifier.value}}</td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+   
+</fieldset>
