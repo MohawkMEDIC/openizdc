@@ -1427,9 +1427,36 @@ var OpenIZ = OpenIZ || {
         saveUserPreferences: function (preferences) {
             // TODO: Implement
         }
+    },
+    
+    Security: {
+        changePassword: function (username, existing, password, confirmation)
+        {
+            try {
+                OpenIZUserService.ChangePassword(username, existing, password, confirmation);
+                OpenIZ.App.toast("Password changed successfully");
+            } catch (e) {
+                console.log(e);
+            }
+
+            OpenIZ.App.toast("Unable to change password");
+            return false;
+        },
+        updateUser: function(user)
+        {
+            try {
+                OpenIZUserService.Save(JSON.stringify(user));
+                OpenIZ.App.toast("Profile settings updated");
+
+                return true;
+            } catch (e) {
+                console.log(e);
+            }
+
+            OpenIZ.App.toast("Unable to update user preferences");
+            return false;
+        }
     }
-
-
 };
 /**
  * @summary Current Locale

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZMobile", "OpenIZMobile\OpenIZMobile.csproj", "{B031B6B7-B756-4959-B72F-61DB32270647}"
 EndProject
@@ -10,7 +10,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0C665902-E2DA-45D3-AD9C-03DE3451CD33}"
 	ProjectSection(SolutionItems) = preProject
 		Solution Items\Newtonsoft.Json.dll = Solution Items\Newtonsoft.Json.dll
+		Solution Items\OpenIZ.Core.Applets.dll = Solution Items\OpenIZ.Core.Applets.dll
 		Solution Items\OpenIZ.Core.Model.dll = Solution Items\OpenIZ.Core.Model.dll
+		Solution Items\OpenIZ.Core.PCL.dll = Solution Items\OpenIZ.Core.PCL.dll
+		Solution Items\OpenIZ.Messaging.AMI.Client.dll = Solution Items\OpenIZ.Messaging.AMI.Client.dll
+		Solution Items\OpenIZ.Messaging.IMSI.Client.dll = Solution Items\OpenIZ.Messaging.IMSI.Client.dll
+		Solution Items\OpenIZ.Protocol.Xml.dll = Solution Items\OpenIZ.Protocol.Xml.dll
 		Solution Items\SQLite-net.dll = Solution Items\SQLite-net.dll
 	EndProjectSection
 EndProject

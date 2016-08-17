@@ -1,5 +1,5 @@
-﻿<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="updateProfile" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
-    <oiz:script>~/controllers/settings/profile.js</oiz:script>
+﻿<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="savePreferences($root.session.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+    <oiz:script>/org.openiz.core/controllers/settings/profile.js</oiz:script>
     <div class="container-fluid">
         <div class="form-group">
             <label class="col-xs-12 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>

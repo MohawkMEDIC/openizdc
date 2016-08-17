@@ -30,6 +30,11 @@ using Android.Views;
 using Android.Widget;
 using OpenIZ.Mobile.Core.Services;
 using System.Net.NetworkInformation;
+using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Data;
+using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Security;
+using Android.Net;
 
 namespace OpenIZ.Mobile.Core.Android.Net
 {
@@ -44,17 +49,44 @@ namespace OpenIZ.Mobile.Core.Android.Net
         public NetworkInformationService()
         {
             NetworkChange.NetworkAvailabilityChanged += (o, e) => this.NetworkStatusChanged?.Invoke(this, e);
+
+			this.NetworkStatusChanged += NetworkInformationService_NetworkStatusChanged;
         }
 
-        /// <summary>
-        /// Return whether the network is available
-        /// </summary>
-        public bool IsNetworkAvailable
+		/// <summary>
+		/// Updates the registered services in the application context when the network status changes.
+		/// </summary>
+		/// <param name="sender">The sender of the event.</param>
+		/// <param name="e">The event arguments.</param>
+		private void NetworkInformationService_NetworkStatusChanged(object sender, EventArgs e)
+		{
+			INetworkInformationService networkInformationService = (INetworkInformationService)sender;
+
+			if (networkInformationService.IsNetworkAvailable)
+			{
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(LocalPolicyInformationService).AssemblyQualifiedName);
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiPolicyInformationService).AssemblyQualifiedName);
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiPersistenceService).AssemblyQualifiedName);
+			}
+			else
+			{
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
+				ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalIdentityService).AssemblyQualifiedName);
+			}
+		}
+
+		/// <summary>
+		/// Return whether the network is available
+		/// </summary>
+		public bool IsNetworkAvailable
         {
             get
             {
-                return NetworkInterface.GetIsNetworkAvailable();
-            }
+				ConnectivityManager connectivityManager = (ConnectivityManager)AndroidApplicationContext.Current.Context.GetSystemService(Context.ConnectivityService);
+
+				return connectivityManager.ActiveNetworkInfo != null && connectivityManager.ActiveNetworkInfo.IsConnected;
+			}
         }
 
         /// <summary>
@@ -81,8 +113,8 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             try
             {
-                Uri uri = null;
-                if (Uri.TryCreate(address, UriKind.RelativeOrAbsolute, out uri))
+				System.Uri uri = null;
+                if (System.Uri.TryCreate(address, UriKind.RelativeOrAbsolute, out uri))
                     address = uri.Host;
                 var resolution = System.Net.Dns.GetHostEntry(address); 
                 return resolution.AddressList.First().ToString();
@@ -100,8 +132,8 @@ namespace OpenIZ.Mobile.Core.Android.Net
         {
             try
             {
-                Uri uri = null;
-                if (Uri.TryCreate(hostName, UriKind.RelativeOrAbsolute, out uri))
+				System.Uri uri = null;
+                if (System.Uri.TryCreate(hostName, UriKind.RelativeOrAbsolute, out uri))
                     hostName = uri.Host;
                 System.Net.NetworkInformation.Ping p = new System.Net.NetworkInformation.Ping();
                 var reply = p.Send(hostName);
