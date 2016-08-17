@@ -204,7 +204,7 @@ namespace OpenIZ.Mobile.Core.Android
 						EntitySource.Current = new EntitySource(retVal.GetService<IEntitySourceProvider>());
 
                         // Prepare clinical protocols
-                        retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
+                        //retVal.GetService<ICarePlanService>().Repository = retVal.GetService<IClinicalProtocolRepositoryService>();
 
 					} catch (Exception e) {
 						retVal.m_tracer.TraceError (e.ToString ());

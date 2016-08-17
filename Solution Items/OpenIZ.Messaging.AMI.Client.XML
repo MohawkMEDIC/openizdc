@@ -1,0 +1,246 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Messaging.AMI.Client</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Messaging.AMI.Client.AmiServiceClient">
+            <summary>
+            Represents the AMI service client.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.#ctor(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Messaging.AMI.Client.AmiServiceClient"/> class
+            with a specified <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
+            </summary>
+            <param name="client">The <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.AcceptCertificateSigningRequest(System.String)">
+            <summary>
+            Accepts a certificate signing request.
+            </summary>
+            <param name="id">The id of the certificate signing request.</param>
+            <returns>Returns the submission result.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.ChangePassword(System.Guid,System.String)">
+            <summary>
+            Changes the password of a user.
+            </summary>
+            <param name="id">The id of the user whose password is to be changed.</param>
+            <param name="password">The new password of the user.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateDevice(OpenIZ.Core.Model.Security.SecurityDevice)">
+            <summary>
+            Creates a device in the IMS.
+            </summary>
+            <param name="device">The device to be created.</param>
+            <returns>Returns the newly created device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreatePlace(OpenIZ.Core.Model.Entities.Place)">
+            <summary>
+            Creates a place in the IMS.
+            </summary>
+            <param name="place">The place to be created.</param>
+            <returns>Returns the newly created place.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreatePolicy(OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo)">
+            <summary>
+            Creates a policy in the IMS.
+            </summary>
+            <param name="policy">The policy to be created.</param>
+            <returns>Returns the newly created policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateRole(OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo)">
+            <summary>
+            Creates a role in the IMS.
+            </summary>
+            <param name="role">The role to be created.</param>
+            <returns>Returns the newly created role.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.CreateUser(OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo)">
+            <summary>
+            Creates a user in the IMS.
+            </summary>
+            <param name="user">The user to be created.</param>
+            <returns>Returns the newly created user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteDevice(System.String)">
+            <summary>
+            Deletes a device.
+            </summary>
+            <param name="id">The id of the device to be deleted.</param>
+            <returns>Returns the deleted device.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeletePlace(System.String)">
+            <summary>
+            Deletes a place.
+            </summary>
+            <param name="id">The id of the place to be deleted.</param>
+            <returns>Returns the deleted place.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeletePolicy(System.String)">
+            <summary>
+            Deletes a security policy.
+            </summary>
+            <param name="id">The id of the policy to be deleted.</param>
+            <returns>Returns the deleted policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteRole(System.String)">
+            <summary>
+            Deletes a security role.
+            </summary>
+            <param name="id">The id of the role to be deleted.</param>
+            <returns>Returns the deleted role.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.DeleteUser(System.String)">
+            <summary>
+            Deletes a security user.
+            </summary>
+            <param name="id">The id of the user to be deleted.</param>
+            <returns>Returns the deleted user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose of any managed resources.
+            </summary>
+            <param name="disposing">Whether the current invocation is disposing.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.Dispose">
+            <summary>
+            Dispose of any resources.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.FindRole(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}})">
+            <summary>
+            Retrieves the specified role from the AMI
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.FindPolicy(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}})">
+            <summary>
+            Retrieves the specified role from the AMI
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificates(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Security.X509Certificate2Info,System.Boolean}})">
+            <summary>
+            Gets a list of certificates.
+            </summary>
+            <param name="query">The query expression to use to find the certificates.</param>
+            <returns>Returns a collection of certificates which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetConcepts(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.Concept,System.Boolean}})">
+            <summary>
+            Gets a list of concepts.
+            </summary>
+            <param name="query">The query expression to use to find the concepts.</param>
+            <returns>Returns a collection of concepts which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetConceptSets(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptSet,System.Boolean}})">
+            <summary>
+            Gets a list of concept sets.
+            </summary>
+            <param name="query">The query expression to use to find the concept sets.</param>
+            <returns>Returns a collection of concept sets which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificateSigningRequest(System.String)">
+            <summary>
+            Gets a certificate signing request.
+            </summary>
+            <param name="id">The id of the certificate signing request to be retrieved.</param>
+            <returns>Returns a certificate signing request.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetCertificateSigningRequests(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.AMI.Security.SubmissionInfo,System.Boolean}})">
+            <summary>
+            Gets a list of certificate signing requests.
+            </summary>
+            <param name="query">The query expression to use to find the certificate signing requests.</param>
+            <returns>Returns a collection of certificate signing requests which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetDevices(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityDevice,System.Boolean}})">
+            <summary>
+            Gets a list of devices.
+            </summary>
+            <param name="query">The query expression to use to find the devices.</param>
+            <returns>Returns a collection of devices which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetPlaces(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Place,System.Boolean}})">
+            <summary>
+            Gets a list of places.
+            </summary>
+            <param name="query">The query expression to use to find the places.</param>
+            <returns>Returns a collection of places which match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetPolicies(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityPolicy,System.Boolean}})">
+            <summary>
+            Retrieves a specified policy.
+            </summary>
+            <param name="query">The query expression to use to find the policy.</param>
+            <returns>Returns a collection of policies which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetPolicy(System.String)">
+            <summary>
+            Gets a specific policy.
+            </summary>
+            <param name="id">The id of the policy to be retrieved.</param>
+            <returns>Returns the specific policy.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetRole(System.String)">
+            <summary>
+            Gets a specific role.
+            </summary>
+            <param name="id">The id of the role to be retrieved.</param>
+            <returns>Returns the specified user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetRoles(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityRole,System.Boolean}})">
+            <summary>
+            Retrieves a specified role.
+            </summary>
+            <param name="query">The query expression to use to find the role.</param>
+            <returns>Returns a collection of roles which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetUser(System.String)">
+            <summary>
+            Gets a specific user.
+            </summary>
+            <param name="id">The id of the user to be retrieved.</param>
+            <returns>Returns the specified user.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.GetUsers(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityUser,System.Boolean}})">
+            <summary>
+            Retrieves a specified user.
+            </summary>
+            <param name="query">The query expression to use to find the user.</param>
+            <returns>Returns a collection of users which match the specified query parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.SubmitCertificateSigningRequest(OpenIZ.Core.Model.AMI.Security.SubmissionRequest)">
+            <summary>
+            Submits a certificate signing request to the AMI.
+            </summary>
+            <param name="submissionRequest">The certificate signing request.</param>
+            <returns>Returns the submission result.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateConcept(OpenIZ.Core.Model.DataTypes.Concept)">
+            <summary>
+            Updates a concept.
+            </summary>
+            <param name="concept">The concept containing the updated information.</param>
+            <returns>Returns the updated concept.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdatePlace(OpenIZ.Core.Model.Entities.Place)">
+            <summary>
+            Updates a place.
+            </summary>
+            <param name="place">The place containing the updated information.</param>
+            <returns>Returns the updated place.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.AMI.Client.AmiServiceClient.UpdateUser(System.String,OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo)">
+            <summary>
+            Updates a user.
+            </summary>
+            <param name="id">The id of the user to be updated.</param>
+            <param name="user">The user containing the updated information.</param>
+            <returns>Returns the updated user.</returns>
+        </member>
+    </members>
+</doc>
