@@ -10,6 +10,8 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Model.Map;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Alerting
 {
@@ -18,6 +20,8 @@ namespace OpenIZ.Mobile.Core.Alerting
     /// </summary>
     public class LocalAlertService : IAlertService
     {
+        // Mapper
+        private static ModelMapper s_mapper = new ModelMapper(typeof(LocalAlertService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Alerting.ModelMap.xml"));
 
         // Connection string
         private string m_connectionString = ApplicationContext.Current.Configuration.GetConnectionString(
@@ -35,10 +39,10 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public AlertMessage GetAlert(Guid id)
         {
-            var idKey = id.ToString();
+            var idKey = id.ToByteArray();
             var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
             using (conn.Lock())
-                return conn.Table<DbAlertMessage>().Where(o => o.Key == idKey).FirstOrDefault().ToAlert();
+                return conn.Table<DbAlertMessage>().Where(o => o.Id == idKey).FirstOrDefault()?.ToAlert();
         }
 
         /// <summary>
@@ -52,7 +56,10 @@ namespace OpenIZ.Mobile.Core.Alerting
             {
                 var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
                 using (conn.Lock())
-                    return conn.Table<AlertMessage>().Where(predicate).Skip(offset).Take(count ?? 100).OrderByDescending(o=>o.TimeStamp).ToList();
+                {
+                    var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate);
+                    return conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o=>o.ToAlert()).ToList();
+                }
             }
             catch(Exception e)
             {
@@ -97,8 +104,9 @@ namespace OpenIZ.Mobile.Core.Alerting
             using (conn.Lock())
                 try
                 {
-                    var msg = new DbAlertMessage(alert); // TODO: Fix this
-                    if (msg.Flags.HasFlag(AlertMessageFlags.Transient)) return; // Transient messages don't get saved
+                    if (alert.Flags.HasFlag(AlertMessageFlags.Transient)) return; // Transient messages don't get saved
+
+                    var msg = new DbAlertMessage(alert);
 
                     this.m_tracer.TraceVerbose("Saving alert {0}", msg);
                     conn.BeginTransaction();
@@ -107,13 +115,13 @@ namespace OpenIZ.Mobile.Core.Alerting
                         conn.CreateTable<DbAlertMessage>();
 
                     // Check for key and assign ID
-                    if (msg.Key == null)
+                    try
                     {
-                        msg.Key = Guid.NewGuid().ToString();
+                        msg.Id = Guid.NewGuid().ToByteArray();
                         msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
                         conn.Insert(msg);
                     }
-                    else
+                    catch(SQLite.Net.SQLiteException)
                     {
                         conn.Update(msg);
                     }

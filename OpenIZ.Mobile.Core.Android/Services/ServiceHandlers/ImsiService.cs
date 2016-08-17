@@ -16,6 +16,7 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Constants;
 using System.Linq;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -39,6 +40,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
     public class ImsiService
     {
 
+        // Tracer 
+        private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
+
         /// <summary>
         /// Search places
         /// </summary>
@@ -48,6 +52,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
+            this.m_tracer.TraceVerbose("Searching Places : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
             var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
             int totalResults = 0,
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
@@ -128,6 +134,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+
+            this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
             int totalResults = 0,
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
@@ -153,6 +162,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Provider>(search);
+
+            this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
             var patientService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
             int totalResults = 0,
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
@@ -179,6 +191,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
+
+            this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
             var patientService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
             int totalResults = 0,
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
@@ -244,10 +259,12 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 templateBytes = AndroidApplicationContext.Current.GetAppletAssetFile(AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(template.Definition));
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
+            this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-            var securityUser = securityRepo.GetUser(ApplicationContext.Current.Principal.Identity);
-            var userEntity = securityRepo.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
+            var securityUser = securityRepo?.GetUser(ApplicationContext.Current.Principal.Identity);
+            var userEntity = securityRepo?.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
             templateString = templateString.Replace("{{now}}", DateTime.Now.ToString("o")).Replace("{{userId}}", securityUser.Key.ToString()).Replace("{{userEntityId}}", userEntity?.Key.ToString()).Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.Key.ToString());
+            this.m_tracer.TraceVerbose("Template {0} (Post-Populated): {1}", templateId, templateString);
             return templateString;
         }
 

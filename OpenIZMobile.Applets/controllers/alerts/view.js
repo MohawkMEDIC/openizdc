@@ -9,7 +9,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
     
     OpenIZ.App.getAlertsAsync({
         query: {
-            key: OpenIZ.urlParams["alertId"],
+            id: OpenIZ.urlParams["alertId"],
             _count: 1
         },
         onExpcetion: function(ex) {

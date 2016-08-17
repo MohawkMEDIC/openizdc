@@ -17,7 +17,7 @@ namespace OpenIZ.Mobile.Core.Alerting
 
         public DbAlertMessage()
         {
-
+            this.Id = Guid.NewGuid().ToByteArray();
         }
 
         /// <summary>
@@ -32,33 +32,31 @@ namespace OpenIZ.Mobile.Core.Alerting
             this.To = am.To;
             this.CreatedBy = ApplicationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
             this.Flags = am.Flags;
+            this.Id = am.Id.ToByteArray();
+        }
+
+        /// <summary>
+        /// Gets the alert
+        /// </summary>
+        public AlertMessage ToAlert()
+        {
+            return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags)
+            {
+                Id = new Guid(this.Id)
+            };
         }
 
         /// <summary>
         /// Identifier
         /// </summary>
-        public Guid Id { get { return Guid.Parse(this.Key); } set { this.Key = value.ToString(); } }
-
-
-        /// <summary>
-        /// The key for data storage
-        /// </summary>
-        [Column("key"), PrimaryKey]
-        public String Key { get; set; }
+        [Column("key"), PrimaryKey, MaxLength(16)]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// Gets or sets the time
         /// </summary>
         [Column("time")]
         public DateTime TimeStamp { get; set; }
-
-        /// <summary>
-        /// Convert to message based alert
-        /// </summary>
-        internal AlertMessage ToAlert()
-        {
-            return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags);
-        }
 
         /// <summary>
         /// Gets or sets the status of the alert

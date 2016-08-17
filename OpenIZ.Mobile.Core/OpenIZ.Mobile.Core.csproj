@@ -83,6 +83,7 @@
     <Compile Include="Services\Impl\LocalActService.cs" />
     <Compile Include="Services\Impl\LocalMaterialService.cs" />
     <Compile Include="Services\Impl\LocalPlaceService.cs" />
+    <Compile Include="Services\Impl\LocalProviderService.cs" />
     <Compile Include="Synchronization\RemoteSynchronizationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
@@ -246,6 +247,7 @@
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
   <ItemGroup>

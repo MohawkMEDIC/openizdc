@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.5.168.">
+  <info id="org.openiz.core" version="0.6.5.0662">
     <icon>~/img/cog.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -103,6 +103,12 @@
     "inputFiles": [
       "lib/select2.js"
     ]
+  },
+  {
+    "outputFileName": "js/openiz-ng.min.js",
+    "inputFiles": [
+      "js/openiz-ng.js"
+    ]
   }
 ]
 </contentText>
@@ -163,7 +169,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
     
     OpenIZ.App.getAlertsAsync({
         query: {
-            key: OpenIZ.urlParams["alertId"],
+            id: OpenIZ.urlParams["alertId"],
             _count: 1
         },
         onExpcetion: function(ex) {
@@ -2282,6 +2288,9 @@ angular.module('openiz', [])
             }
         };
     });</contentText>
+  </asset>
+  <asset name="js/openiz-ng.min.js" mimeType="text/javascript">
+    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n.NID!==undefined)return n.NID.value;for(var t in n)return n.NID}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).directive("oizTag",function(n){return{require:"ngModel",link:function(t,i,r,u){function f(n){return String(n).split(",")}function e(n){return typeof n===Array?n.join(viewView):n}u.$parsers.unshift(f);u.$formatters.unshift(e);n($(i).tokenfield({delimiter:" ,",createTokensOnBlur:!0}))}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var u=$(i).attr("oiz-databind"),t=$(i).attr("data-filter"),r=$(i).attr("data-display"),n={};t!==undefined&amp;&amp;(n=JSON.parse(t));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";OpenIZ.Ims.get({resource:u,query:n,continueWith:function(n){var t=$(i)[0].options,u,f,e;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(u in n.item)f=null,r!=null?(e=n.item[u],f=eval(r)):f=OpenIZ.Util.renderName(n.item[u].name.OfficialRecord),t[t.length]=new Option(f,n.item[u].id)}})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var r=$(i).attr("oiz-entitysearch"),t=$(i).attr("data-filter"),u=$(i).attr("data-display"),n={};t!==undefined&amp;&amp;(n=JSON.parse(t));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({ajax:{url:"/__ims/"+r,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n,t){return $("option",i[0]).remove(),t.page=t.page||0,{results:$.map(n.item,function(n){return n.text=n.text||OpenIZ.Util.renderName(n.name.OfficialRecord),n}),pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?OpenIZ.Util.renderName(n.name.OfficialRecord):n.text},templateResult:function(n){return n.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
   </asset>
   <asset name="js/openiz.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="openiz-model.js"/&gt;
@@ -11937,10 +11946,10 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <asset name="templates/act.observation.weight.json" mimeType="text/javascript">
     <contentText>{
+  "$type": "QuantityObservation",
   "template": {
     "mnemonic": "Act.Observation.Weight"
   },
-  "$type": "QuantityObservation",
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
   "typeConcept": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
@@ -11959,16 +11968,16 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <asset name="templates/act.substanceadmin.immunization.json" mimeType="text/javascript">
     <contentText>{
+  "$type": "SubstanceAdministration",
   "template": {
     "mnemonic": "Act.SubstanceAdmin.Immunization"
   },
-  "$type": "SubstanceAdminsitration",
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
   "typeConcept": "6E7A3521-2967-4C0A-80EC-6C5C197B2178",
   "actTime": "{{now}}",
   "value": 0.0,
-  "unitOfMeasure" : "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796"
+  "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796"
 }</contentText>
   </asset>
   <asset name="views/alerts/view.html" mimeType="text/html">

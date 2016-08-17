@@ -70,5 +70,11 @@
     "inputFiles": [
       "lib/select2.js"
     ]
+  },
+  {
+    "outputFileName": "js/openiz-ng.min.js",
+    "inputFiles": [
+      "js/openiz-ng.js"
+    ]
   }
 ]

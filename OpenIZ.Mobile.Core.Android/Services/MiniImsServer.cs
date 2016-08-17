@@ -284,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                         sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData));
                                 }
                                 else
-                                    this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result.GetType());
+                                    this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result);
 
                                 break;
                             case RestMessageFormat.Json:

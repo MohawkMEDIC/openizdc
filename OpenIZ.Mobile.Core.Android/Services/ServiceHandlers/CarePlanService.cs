@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             sw.Start();
             var plan = protocolService.CreateCarePlan(p);
             sw.Stop();
-            Trace.TraceInformation(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
+            this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
             // Instructions?
             if (search.Count > 0)
             {
