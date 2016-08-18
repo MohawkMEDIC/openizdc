@@ -17,6 +17,7 @@ using OpenIZ.Core.Model.Constants;
 using System.Linq;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -335,17 +336,55 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             return retVal;
         }
 
-        /// <summary>
-        /// Handle a fault
-        /// </summary>
-        public ErrorResult ImsiFault(Exception e)
-        {
-            return new ErrorResult()
-            {
-                Error = e.Message,
-                ErrorDescription = e.InnerException?.Message
-            };
-        }
+		/// <summary>
+		/// Gets the user profile of the current user.
+		/// </summary>
+		/// <returns>Returns the user profile of the current user.</returns>
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
+		[RestOperation(UriPath = "/UserEntity", Method = "GET")]
+		public UserEntity GetUserProfile()
+		{
+			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+			return securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
+		}
 
+		/// <summary>
+		/// Handle a fault
+		/// </summary>
+		public ErrorResult ImsiFault(Exception e)
+		{
+			return new ErrorResult()
+			{
+				Error = e.Message,
+				ErrorDescription = e.InnerException?.Message
+			};
+		}
+
+		/// <summary>
+		/// Saves the user profile.
+		/// </summary>
+		/// <param name="user">The users modified profile information.</param>
+		/// <returns>Returns the users updated profile.</returns>
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
+		[RestOperation(UriPath = "/UserEntity", Method = "POST")]
+		public UserEntity SaveUserProfile([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
+		{
+			IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			var userEntity = securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
+
+			if (userEntity == null)
+			{
+				throw new ArgumentException();
+			}
+
+			if (user.Key.GetValueOrDefault(Guid.Empty) == Guid.Empty)
+			{
+				user.Key = userEntity.Key;
+			}
+
+			return persistenceService.Update(user);
+		}
     }
 }

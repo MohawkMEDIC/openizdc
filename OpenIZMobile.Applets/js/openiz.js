@@ -84,7 +84,7 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
 
-                    if(controlData.continueWith !== undefined)
+                    if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr);
 
                     if (controlData.finally !== undefined)
@@ -131,7 +131,7 @@ var OpenIZ = OpenIZ || {
                     if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr);
 
-                    if(controlData.finally !== undefined)
+                    if (controlData.finally !== undefined)
                         controlData.finally();
                 },
                 error: function (data) {
@@ -165,13 +165,13 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Log an exception to the console
          */
-        logException : function(e) {
+        logException: function (e) {
             console.warn(e);
         },
         /** 
          * @summary Render the manufactured material
          */
-        renderManufacturedMaterial : function(scope) {
+        renderManufacturedMaterial: function (scope) {
             var name = OpenIZ.Util.renderName(scope.name.OfficialRecord);
             return name + "(LN#: " + scope.lotNumber + ")";
         },
@@ -300,8 +300,8 @@ var OpenIZ = OpenIZ || {
                              null
                          ));
 
-                    if(controlData.finally !== undefined)
-                        controlData.finally(); 
+                     if (controlData.finally !== undefined)
+                         controlData.finally();
                  },
                  error: function (data) {
                      var error = data.responseJSON;
@@ -418,9 +418,9 @@ var OpenIZ = OpenIZ || {
                             data,
                             null
                         ));
-            }).always(function() { 
-                if(controlData.finally !== undefined)
-                    controlData.finally(); 
+            }).always(function () {
+                if (controlData.finally !== undefined)
+                    controlData.finally();
             });
 
         },
@@ -458,7 +458,7 @@ var OpenIZ = OpenIZ || {
      * @summary Represents functions for interacting with the protocol service
      * @class
      */
-    CarePlan : {
+    CarePlan: {
         /**
          * @summary Generate a care plan for the specified patient
          */
@@ -479,7 +479,7 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
                     console.info("Retrieved care plan...");
-                   // console.info(JSON.stringify(xhr));
+                    // console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
                     if (controlData.finally !== undefined)
                         controlData.finally();
@@ -509,7 +509,7 @@ var OpenIZ = OpenIZ || {
         getEntityTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Entity/Template",
-                query: { "templateId" : controlData.templateId },
+                query: { "templateId": controlData.templateId },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally
@@ -518,7 +518,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Get an empty template object asynchronously
          */
-        getActTemplateAsync : function (controlData) {
+        getActTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Act/Template",
                 query: { "templateId": controlData.templateId },
@@ -536,7 +536,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Get the online state of the application
          */
-        getOnlineState : function() {
+        getOnlineState: function () {
             return OpenIZApplicationService.GetOnlineState();
         },
         /**
@@ -546,7 +546,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Resolves the specified template
          */
-        resolveTemplate : function(templateId) {
+        resolveTemplate: function (templateId) {
             return OpenIZApplicationService.GetTemplateForm(templateId);
         },
         /**
@@ -588,9 +588,9 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Returns whether the internet is available
          */
-        networkAvailable: function() {
+        networkAvailable: function () {
             try { return OpenIZApplicationService.GetNetworkState(); }
-            catch (e) { return false;}
+            catch (e) { return false; }
         },
         /**
          * @summary Hide the waiting panel
@@ -1266,7 +1266,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summmary Find the provider asynchronously
          */
-        findProviderAsync : function(controlData) {
+        findProviderAsync: function (controlData) {
             OpenIZ.Ims.get({
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
@@ -1486,32 +1486,14 @@ var OpenIZ = OpenIZ || {
      * @class
      * @summary Security repository class
      */
-    Security: {
-        changePassword: function (username, existing, password, confirmation)
-        {
-            try {
-                OpenIZUserService.ChangePassword(username, existing, password, confirmation);
-                OpenIZ.App.toast("Password changed successfully");
-            } catch (e) {
-                console.log(e);
-            }
-
-            OpenIZ.App.toast("Unable to change password");
-            return false;
-        },
-        updateUser: function(user)
-        {
-            try {
-                OpenIZUserService.Save(JSON.stringify(user));
-                OpenIZ.App.toast("Profile settings updated");
-
-                return true;
-            } catch (e) {
-                console.log(e);
-            }
-
-            OpenIZ.App.toast("Unable to update user preferences");
-            return false;
+    UserEntity: {
+        updateAsync: function (controlData) {
+            OpenIZ.Ims.post({
+                resource: "UserEntity",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
         }
     }
 };
