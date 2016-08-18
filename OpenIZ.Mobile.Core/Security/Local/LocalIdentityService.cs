@@ -331,9 +331,17 @@ namespace OpenIZ.Mobile.Core.Security
         }
 
         /// <summary>
+        /// Create specified identity
+        /// </summary>
+        public IIdentity CreateIdentity(String userName, String password)
+        {
+            return this.CreateIdentity(Guid.NewGuid(), userName, password);
+        }
+
+        /// <summary>
         /// Creates an identity for the user
         /// </summary>
-        public IIdentity CreateIdentity(string userName, string password)
+        public IIdentity CreateIdentity(Guid sid, string userName, string password)
         {
             var conn = this.CreateConnection();
             IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
@@ -344,7 +352,7 @@ namespace OpenIZ.Mobile.Core.Security
                 CreationTime = DateTime.Now,
                 CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == ApplicationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
                 UserName = userName,
-                Key = Guid.NewGuid()
+                Key = sid
             };
             using (conn.Lock())
             {

@@ -22,6 +22,7 @@ using System.Linq;
 using OpenIZ.Mobile.Core.Configuration;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Diagnostics
 {

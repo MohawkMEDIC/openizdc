@@ -105,6 +105,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         }
 
         /// <summary>
+        /// Gets the online status
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public bool GetOnlineState()
+        {
+            return ApplicationContext.Current?.GetService<INetworkInformationService>()?.IsNetworkAvailable == true;
+        }
+
+        /// <summary>
         /// Send log file
         /// </summary>
         [Export]

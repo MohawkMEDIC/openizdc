@@ -261,7 +261,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                             CredentialProvider = new TokenCredentialProvider(),
                             PreemptiveAuthentication = true
                         },
-                        Optimize = true
+                        Optimize = false
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {

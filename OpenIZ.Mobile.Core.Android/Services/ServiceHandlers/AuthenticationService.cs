@@ -72,6 +72,18 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Sets the user's password
+        /// </summary>
+        [RestOperation(Method = "POST", UriPath = "/passwd", FaultProvider = nameof(AuthenticationFault))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public SessionInformation SetPassword([RestMessage(RestMessageFormat.FormData)]NameValueCollection controlData)
+        {
+            var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
+            idp.ChangePassword(controlData["username"].FirstOrDefault().ToLower(), controlData["password"].FirstOrDefault(), ApplicationContext.Current.Principal);
+            return new SessionInformation(ApplicationContext.Current.Principal);
+        }
+
+        /// <summary>
         /// Authentication fault
         /// </summary>
         public OAuthTokenResponse AuthenticationFault(Exception e)

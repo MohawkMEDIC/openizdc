@@ -34,6 +34,8 @@ using OpenIZ.Mobile.Core.Interop;
 using System.Net;
 using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Messaging.AMI.Client;
+using OpenIZ.Core.Services;
+using OpenIZ.Core.Model.AMI.Auth;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -180,7 +182,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
                         }
 
                         if (localUser == null)
-                            localIdp.CreateIdentity(principal.Identity.Name, password);
+                            localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
                         else
                             localIdp.ChangePassword(principal.Identity.Name, password, principal);
                         // Add user to roles
@@ -244,22 +246,50 @@ namespace OpenIZ.Mobile.Core.Android.Security
 		/// </summary>
 		/// <param name="userName">The username of the user.</param>
 		/// <param name="newPassword">The new password of the user.</param>
-		/// <param name="principal">The authentication principal.</param>
+		/// <param name="principal">The authentication principal (the user that is changing the password).</param>
 		public void ChangePassword(string userName, string newPassword, System.Security.Principal.IPrincipal principal)
         {
-			using (AmiServiceClient client = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami")))
-			{
-				client.Client.Accept = "application/xml";
-				client.Client.Credentials = new TokenCredentialProvider().GetCredentials(principal);
-				var user = client.GetUsers(u => u.UserName == userName).CollectionItem.FirstOrDefault();
 
-				if (user == null)
-				{
-					throw new ArgumentException(string.Format("User {0} not found", userName));
-				}
+            try
+            {
+                // The principal must change their own password or must have the changepassword credential
+                if (!userName.Equals(principal.Identity.Name, StringComparison.InvariantCultureIgnoreCase))
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, PolicyIdentifiers.ChangePassword).Demand();
+                else if (!principal.Identity.IsAuthenticated)
+                    throw new InvalidOperationException("Unauthenticated principal cannot change user password");
 
-				client.ChangePassword(user.UserId.Value, newPassword);
-			}
+                // Get the user's identity
+                var securityUserService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+                using (AmiServiceClient client = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami")))
+                {
+                    client.Client.Accept = "application/xml";
+
+                    // User service is null
+                    var securityUser = securityUserService.GetUser(principal.Identity);
+                    if (securityUser == null)
+                        throw new ArgumentException(string.Format("User {0} not found", userName));
+
+                    // Use the current configuration's credential provider
+                    var user = new SecurityUserInfo()
+                    {
+                        UserId = securityUser.Key,
+                        UserName = securityUser.UserName,
+                        Password = newPassword
+                    };
+
+                    // Set the credentials 
+                    client.Client.Credentials = ApplicationContext.Current.Configuration.GetServiceDescription("ami").Binding.Security.CredentialProvider.GetCredentials(principal);
+
+                    client.UpdateUser(user.UserId.Value, user);
+                }
+
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error changing password for user {0} : {1}", userName, e);
+                throw;
+            }
+
 		}
 
 		/// <summary>
@@ -291,6 +321,11 @@ namespace OpenIZ.Mobile.Core.Android.Security
         /// Deletes the specified identity
         /// </summary>
         public void DeleteIdentity(string userName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IIdentity CreateIdentity(Guid sid, string userName, string password)
         {
             throw new NotImplementedException();
         }

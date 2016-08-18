@@ -21,6 +21,7 @@ using System;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.IO;
 using System.Diagnostics.Tracing;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Diagnostics
 {

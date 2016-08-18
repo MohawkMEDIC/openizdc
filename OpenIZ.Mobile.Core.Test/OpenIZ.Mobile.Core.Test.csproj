@@ -38,6 +38,10 @@
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
     </Reference>

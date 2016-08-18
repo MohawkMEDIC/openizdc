@@ -136,18 +136,27 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Change the user's password
 		/// </summary>
 		void ChangePassword(string userName, string newPassword, IPrincipal principal);
+
         /// <summary>
         /// Changes the user's password
         /// </summary>
         void ChangePassword(string userName, string password);
+
         /// <summary>
         /// Creates the specified user
         /// </summary>
         IIdentity CreateIdentity(string userName, string password);
+
+        /// <summary>
+        /// Create an identity with the specified data
+        /// </summary>
+        IIdentity CreateIdentity(Guid sid, String userName, String password);
+
         /// <summary>
         /// Locks the user account out
         /// </summary>
         void SetLockout(string userName, bool v);
+
         /// <summary>
         /// Deletes the specified identity
         /// </summary>

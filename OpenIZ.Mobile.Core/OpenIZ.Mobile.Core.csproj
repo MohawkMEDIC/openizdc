@@ -98,7 +98,6 @@
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
     <Compile Include="Configuration\DiagnosticsConfigurationSection.cs" />
-    <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Resources\Strings.fr.Designer.cs">

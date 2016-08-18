@@ -337,6 +337,51 @@ var OpenIZ = OpenIZ || {
          * });
          */
         setPasswordAsync: function (controlData) {
+            $.ajax(
+            {
+                method: 'POST',
+                url: '/__auth/passwd',
+                data: {
+                    username: controlData.userName,
+                    password: controlData.password
+                },
+                dataType: "json",
+                contentType: 'application/x-www-urlform-encoded',
+                success: function (xhr, data) {
+                    if (data != null && data.error !== undefined)
+                        controlData.onException(new OpenIZModel.Exception(data.error),
+                            data.error_description,
+                            null
+                        );
+                    else if (data != null)
+                        controlData.continueWith(data);
+                    else
+                        controlData.onException(new OpenIZModel.Exception("err_general",
+                            data,
+                            null
+                        ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (error != null && error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+
+                }
+            });
         },
         /**
         * @summary Gets the current session from the client host
@@ -488,6 +533,15 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     App: {
+        /**
+         * @summary Get the online state of the application
+         */
+        getOnlineState : function() {
+            return OpenIZApplicationService.GetOnlineState();
+        },
+        /**
+         * @summary Indicates whether the status dialog is shown
+         */
         statusShown: false,
         /**
          * @summary Resolves the specified template
@@ -1428,7 +1482,10 @@ var OpenIZ = OpenIZ || {
             // TODO: Implement
         }
     },
-    
+    /**
+     * @class
+     * @summary Security repository class
+     */
     Security: {
         changePassword: function (username, existing, password, confirmation)
         {

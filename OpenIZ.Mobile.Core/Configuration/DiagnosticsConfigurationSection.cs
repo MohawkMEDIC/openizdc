@@ -27,6 +27,7 @@ using System.IO;
 using System.Diagnostics.Tracing;
 using OpenIZ.Mobile.Core.Diagnostics;
 using Newtonsoft.Json;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Configuration
 {

@@ -47,6 +47,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -136,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Android
 				return true;
 			}
 			catch(Exception e) {
-				Log.Error ("OpenIZ FATAL", e.ToString ());
+				Log.Error ("OpenIZ 0118 999 881 999 119 7253", e.ToString ());
 				return false;
 			}
 		}
@@ -219,7 +220,14 @@ namespace OpenIZ.Mobile.Core.Android
 
                     // Load protocols
                     retVal.GetService<ICarePlanService>().Initialize();
-				} catch (Exception e) {
+
+                    // Set the tracer writers for the PCL goodness!
+                    foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
+
+
+                }
+                catch (Exception e) {
 					retVal.m_tracer?.TraceError (e.ToString ());
 					ApplicationContext.Current = null;
                     throw;
