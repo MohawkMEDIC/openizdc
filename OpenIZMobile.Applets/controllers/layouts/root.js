@@ -18,6 +18,7 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
 
     setInterval(function () {
         $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+        $rootScope.$applyAsync();
     }, 10000);
 
     $rootScope.page.maxEventTime.setDate($rootScope.page.maxEventTime.getDate() + 1); // <-- This is why

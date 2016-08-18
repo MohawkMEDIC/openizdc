@@ -73,9 +73,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Messaging.AMI.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Messaging.AMI.Client.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Protocol.Xml">
       <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
