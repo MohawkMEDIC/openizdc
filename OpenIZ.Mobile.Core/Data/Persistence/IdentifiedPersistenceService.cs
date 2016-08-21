@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using System.Collections;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -40,6 +41,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		where TModel : IdentifiedData, new()
 		where TDomain : DbIdentified, new()
 	{
+
+        // Caching service
+        private IDataCachingService m_cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
 		#region implemented abstract members of LocalDataPersistenceService
 		/// <summary>
 		/// Maps the data to a model instance
@@ -124,8 +129,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var domainList = retVal.ToList();
             
-            return domainList.Select(o=>this.ToModelInstance(o, context)).ToList();
+            return domainList.Select(o=>this.CacheConvert(o, context)).ToList();
 		}
+
+        /// <summary>
+        /// Try conversion from cache otherwise map
+        /// </summary>
+        private TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context)
+        {
+            var cacheItem = this.m_cache.GetCacheItem<TModel>(new Guid(o.Uuid));
+            if (cacheItem == null)
+                cacheItem = this.ToModelInstance(o, context);
+            return cacheItem;
+        }
 
         /// <summary>
         /// Performs the actual query

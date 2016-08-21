@@ -10,5 +10,19 @@ angular.element(document).ready(function () {
         var scope = angular.element(e).scope();
 
         // Encounter 
+        scope.validateAct = scope.validateAct || function (act) {
+
+            var validation = [];
+
+            // Act not done!?
+            if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ... 
+                validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
+            else {
+               
+            }
+
+            return validation;
+
+        };
     });
 });

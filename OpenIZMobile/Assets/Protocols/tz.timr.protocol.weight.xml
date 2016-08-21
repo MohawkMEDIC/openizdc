@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
   <rule id="Weight">
     <when evaluation="and">
       <!-- Patient does not have Weights taken or proposed-->
@@ -14,6 +14,7 @@
               "template": {
                 "mnemonic": "Act.Observation.Weight"
               },
+             
               "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
               "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
               "typeConcept": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",

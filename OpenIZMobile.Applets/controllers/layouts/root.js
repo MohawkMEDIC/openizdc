@@ -2,7 +2,7 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function ($rootScope) {
 
     $rootScope.system = {};
     $rootScope.system.config = {};
@@ -30,6 +30,13 @@ var layoutApp = angular.module('layout', ['openiz']).run(function ($rootScope) {
             $rootScope.session = session;
         }
     });
+
+    $rootScope.changeInputType = function (controlId, type) {
+        $(controlId).attr('type', type);
+        if ($(controlId).attr('data-max-' + type) != null) {
+            $(controlId).attr('max', $(controlId).attr('data-max-' + type));
+        }
+    };
 
     $rootScope.OpenIZ = OpenIZ;
 });

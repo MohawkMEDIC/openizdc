@@ -126,7 +126,7 @@ namespace OpenIZMobile
                 if (AndroidApplicationContext.Current != null)
                     return true;
 
-                if (!AndroidApplicationContext.Start(this.ApplicationContext))
+                if (!AndroidApplicationContext.Start(this.ApplicationContext, this.Application))
                 {
 
                     CancellationTokenSource ctSource = new CancellationTokenSource();

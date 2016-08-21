@@ -14,7 +14,7 @@ angular.element(document).ready(function () {
         
    
         // Scan the specified barcode
-        scope.scanBarcode = scope.scanBarcode || function(identifier)
+        scope.scanBarcode = scope.scanBarcode || function(authority, identifier)
         {
             identifier.value = OpenIZ.App.scanBarcode();
         }
@@ -24,7 +24,7 @@ angular.element(document).ready(function () {
         {
             if (scope.patient.identifier["NEW"] != null &&
                 scope.patient.identifier["NEW"].authority != "NEW") {
-                scope.patient.identifier[scope.patient.identifier["NEW"].authority] = scope.patient.identifier["NEW"].authority;
+                scope.patient.identifier[scope.patient.identifier["NEW"].authority] = scope.patient.identifier["NEW"];
                 scope.patient.identifier["NEW"] = { authority: "NEW", value: null };
             }
             else if (scope.patient.identifier["NEW"] == null)

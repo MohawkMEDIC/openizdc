@@ -103,9 +103,22 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 else
                 {
                     logEntry.LastSync = DateTime.Now;
-                    logEntry.LastETag = eTag;
+                    if(!String.IsNullOrEmpty(eTag))
+                        logEntry.LastETag = eTag;
                     conn.Update(logEntry);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Get all synchronizations
+        /// </summary>
+        public List<SynchronizationLogEntry> GetAll()
+        {
+            var conn = this.CreateConnection();
+            using (conn.Lock())
+            {
+                return conn.Table<SynchronizationLogEntry>().ToList();
             }
         }
     }

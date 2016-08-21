@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -33,21 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>
     {
-        /// <summary>
-        /// Represents the name as a model instance
-        /// </summary>
-        public override EntityName ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
-        {
-            DbEntityName en = dataInstance as DbEntityName;
-            var retVal = base.ToModelInstance(dataInstance, context);
-            retVal.Component = new List<EntityNameComponent>(context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == en.Uuid).ToArray().Select(o => new EntityNameComponent() {
-                ComponentTypeKey = o.ComponentTypeUuid == null ? null : (Guid?)new Guid(o.ComponentTypeUuid),
-                Value = o.Value
-                }
-            ));
-            return retVal;
 
-        }
 
         /// <summary>
         /// Insert the specified object

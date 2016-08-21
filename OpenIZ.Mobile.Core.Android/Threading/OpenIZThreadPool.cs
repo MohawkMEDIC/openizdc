@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.Threading
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
-        private int m_concurrencyLevel = 4;
+        private int m_concurrencyLevel = System.Environment.ProcessorCount * 4;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         // Active threads

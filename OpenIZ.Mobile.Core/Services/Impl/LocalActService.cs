@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenIZ.Core.Model.Acts;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -60,6 +61,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 throw new InvalidOperationException("Persistence service not found");
 
             // Insert
+            data = this.Validate(data);
             return pers.Insert(data) as Act;
         }
 
@@ -114,6 +116,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Persistence service not found");
 
+            data = this.Validate(data);
+
             try // to insert
             {
                 return pers.Update(data) as Act;
@@ -122,6 +126,20 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             {
                 return pers.Insert(data) as Act;
             }
+        }
+
+        /// <summary>
+        /// Validate data or rather prepare for insert
+        /// </summary>
+        public Act Validate(Act data)
+        {
+            // Correct author information and controlling act information
+            data = data.Clean() as Act;
+            ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var currentUserEntity = userService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
+            if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+                data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+            return data;
         }
     }
 }

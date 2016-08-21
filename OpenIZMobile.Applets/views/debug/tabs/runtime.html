@@ -1,0 +1,62 @@
+﻿<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.machineInfo' | i18n }}</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.environment.os' | i18n }}</th>
+                    <td>{{ about.environment.osVersion }} <span class="label label-info" ng-if="about.environment.is64bit">64-bit</span></td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.environment.cpu' | i18n }}</th>
+                    <td>{{ about.environment.processorCount }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.environment.runtimeVersion' | i18n }}</th>
+                    <td>{{ about.environment.version }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.environment.mem' | i18n }}</th>
+                    <td>{{ about.environment.usedMem | number:0 }} b</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.fileInfo' | i18n }}</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.files.name' | i18n }}</th>
+                    <th>{{ 'locale.about.files.size' | i18n }}</th>
+                    <th>{{ 'locale.about.files.date' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="f in about.fileInfo">
+                    <td>{{ f.description }}</td>
+                    <td>{{ f.size | number:0 }} b</td>
+                    <td>{{ f.lastWrite | date: 'yyyy-MMM-dd HH:mm'}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.syncInfo' | i18n }}</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.sync.resource' | i18n }}</th>
+                    <th>{{ 'locale.about.sync.date' | i18n }} / {{ 'locale.about.sync.etag' | i18n }}</th>
+                    <th>{{ 'locale.about.sync.filter' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="s in about.syncInfo">
+                    <td>{{ s.resource }}</td>
+                    <td>{{ s.lastSync | date: 'yyyy-MMM-dd HH:mm' }} <small>{{ s.etag }}</small></td>
+                    <td>{{ s.filter }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

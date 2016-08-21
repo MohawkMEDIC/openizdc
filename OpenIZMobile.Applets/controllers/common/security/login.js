@@ -11,7 +11,13 @@ angular.element(document).ready(function () {
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
 
-        scope.login = scope.login || function (username, password) {
+        scope.login = scope.login || function (form, username, password) {
+
+            if (!form.$valid)
+            {
+                alert(OpenIZ.Localization.getString("locale.security.login.invalid"));
+                return;
+            }
             OpenIZ.App.showWait();
             OpenIZ.Authentication.loginAsync({
                 userName: username,

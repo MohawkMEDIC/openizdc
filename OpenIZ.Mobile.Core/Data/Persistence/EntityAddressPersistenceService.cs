@@ -34,6 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityAddressPersistenceService : IdentifiedPersistenceService<EntityAddress, DbEntityAddress>
     {
 
+
         /// <summary>
         /// Insert the specified object
         /// </summary>

@@ -37,74 +37,109 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 		
+		public partial class Id
+		{
+			
+			// aapt resource value: 0x7f040000
+			public static int contentFrame = 2130968576;
+			
+			static Id()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Id()
+			{
+			}
+		}
+		
+		public partial class Layout
+		{
+			
+			// aapt resource value: 0x7f020000
+			public static int zxingscanneractivitylayout = 2130837504;
+			
+			// aapt resource value: 0x7f020001
+			public static int zxingscannerfragmentlayout = 2130837505;
+			
+			static Layout()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Layout()
+			{
+			}
+		}
+		
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f020001
-			public static int ApplicationName = 2130837505;
+			// aapt resource value: 0x7f030001
+			public static int ApplicationName = 2130903041;
 			
-			// aapt resource value: 0x7f020000
-			public static int Hello = 2130837504;
+			// aapt resource value: 0x7f030000
+			public static int Hello = 2130903040;
 			
-			// aapt resource value: 0x7f020005
-			public static int applet_confirm_close = 2130837509;
+			// aapt resource value: 0x7f030005
+			public static int applet_confirm_close = 2130903045;
 			
-			// aapt resource value: 0x7f020004
-			public static int cancel = 2130837508;
+			// aapt resource value: 0x7f030004
+			public static int cancel = 2130903044;
 			
-			// aapt resource value: 0x7f020003
-			public static int confirm = 2130837507;
+			// aapt resource value: 0x7f030003
+			public static int confirm = 2130903043;
 			
-			// aapt resource value: 0x7f020006
-			public static int err_general = 2130837510;
+			// aapt resource value: 0x7f030006
+			public static int err_general = 2130903046;
 			
-			// aapt resource value: 0x7f020008
-			public static int err_oauth2_invalid_client = 2130837512;
+			// aapt resource value: 0x7f030008
+			public static int err_oauth2_invalid_client = 2130903048;
 			
-			// aapt resource value: 0x7f020009
-			public static int err_oauth2_invalid_grant = 2130837513;
+			// aapt resource value: 0x7f030009
+			public static int err_oauth2_invalid_grant = 2130903049;
 			
-			// aapt resource value: 0x7f020007
-			public static int err_oauth2_invalid_request = 2130837511;
+			// aapt resource value: 0x7f030007
+			public static int err_oauth2_invalid_request = 2130903047;
 			
-			// aapt resource value: 0x7f02000c
-			public static int err_oauth2_invalid_scope = 2130837516;
+			// aapt resource value: 0x7f03000c
+			public static int err_oauth2_invalid_scope = 2130903052;
 			
-			// aapt resource value: 0x7f02000a
-			public static int err_oauth2_unauthorized_client = 2130837514;
+			// aapt resource value: 0x7f03000a
+			public static int err_oauth2_unauthorized_client = 2130903050;
 			
-			// aapt resource value: 0x7f02000b
-			public static int err_oauth2_unsupported_grant_type = 2130837515;
+			// aapt resource value: 0x7f03000b
+			public static int err_oauth2_unsupported_grant_type = 2130903051;
 			
-			// aapt resource value: 0x7f02000e
-			public static int err_token_InvalidSignature = 2130837518;
+			// aapt resource value: 0x7f03000e
+			public static int err_token_InvalidSignature = 2130903054;
 			
-			// aapt resource value: 0x7f02000f
-			public static int err_token_InvalidTokenType = 2130837519;
+			// aapt resource value: 0x7f03000f
+			public static int err_token_InvalidTokenType = 2130903055;
 			
-			// aapt resource value: 0x7f020010
-			public static int err_token_KeyNotFound = 2130837520;
+			// aapt resource value: 0x7f030010
+			public static int err_token_KeyNotFound = 2130903056;
 			
-			// aapt resource value: 0x7f020011
-			public static int err_token_NotYetValid = 2130837521;
+			// aapt resource value: 0x7f030011
+			public static int err_token_NotYetValid = 2130903057;
 			
-			// aapt resource value: 0x7f02000d
-			public static int err_token_TokenExpired = 2130837517;
+			// aapt resource value: 0x7f03000d
+			public static int err_token_TokenExpired = 2130903053;
 			
-			// aapt resource value: 0x7f020002
-			public static int library_name = 2130837506;
+			// aapt resource value: 0x7f030002
+			public static int library_name = 2130903042;
 			
-			// aapt resource value: 0x7f020012
-			public static int startup_configuration = 2130837522;
+			// aapt resource value: 0x7f030012
+			public static int startup_configuration = 2130903058;
 			
-			// aapt resource value: 0x7f020013
-			public static int startup_data = 2130837523;
+			// aapt resource value: 0x7f030013
+			public static int startup_data = 2130903059;
 			
-			// aapt resource value: 0x7f020015
-			public static int startup_setup = 2130837525;
+			// aapt resource value: 0x7f030015
+			public static int startup_setup = 2130903061;
 			
-			// aapt resource value: 0x7f020014
-			public static int startup_update = 2130837524;
+			// aapt resource value: 0x7f030014
+			public static int startup_update = 2130903060;
 			
 			static String()
 			{

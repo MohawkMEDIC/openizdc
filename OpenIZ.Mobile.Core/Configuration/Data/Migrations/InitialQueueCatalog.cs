@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                 db.CreateTable<OutboundQueueEntry>();
                 db.CreateTable<DeadLetterQueueEntry>();
                 db.CreateTable<SynchronizationLogEntry>();
-                db.CreateTable<AlertMessage>();
+                db.CreateTable<DbAlertMessage>();
                 new LocalAlertService()?.SaveAlert(new AlertMessage()
                 {
                     Body = Strings.locale_welcomeMessageBody,

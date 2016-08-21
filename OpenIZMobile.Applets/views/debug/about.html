@@ -1,4 +1,18 @@
-﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html"
+     ng-controller="AboutApplicationController">
     <oiz:script>~/controllers/debug/about.js</oiz:script>
     <oiz:title>Debug Information</oiz:title>
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#versions" data-toggle="tab">{{ 'locale.about.tabs.versions' | i18n }}</a></li>
+        <li role="presentation"><a href="#log" data-toggle="tab">{{ 'locale.about.tabs.log' | i18n }}</a></li>
+        <li role="presentation"><a href="#runtime" data-toggle="tab">{{ 'locale.about.tabs.runtime' | i18n }}</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="versions"><!-- #include virtual="~/views/debug/tabs/versions.html" --></div>
+        <div role="tabpanel" class="tab-pane" id="log"><!-- #include virtual="~/views/debug/tabs/log.html" --></div>
+        <div role="tabpanel" class="tab-pane" id="runtime"><!-- #include virtual="~/views/debug/tabs/runtime.html" --></div>
+    </div>
+
 </div>

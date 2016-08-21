@@ -48,6 +48,7 @@ using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core;
 using System.Diagnostics;
+using Android.App;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -145,12 +146,13 @@ namespace OpenIZ.Mobile.Core.Android
 		/// <summary>
 		/// Start the application context
 		/// </summary>
-		public static bool Start (A.Content.Context context)
+		public static bool Start (A.Content.Context context, A.App.Application application)
 		{
 
 			var retVal = new AndroidApplicationContext ();
             retVal.Context = context;
 			retVal.m_configurationManager = new ConfigurationManager ();
+            retVal.AndroidApplication = application;
 
 			// Not configured
 			if (!retVal.ConfigurationManager.IsConfigured) {
@@ -481,6 +483,11 @@ namespace OpenIZ.Mobile.Core.Android
 				};
 			}
 		}
+
+        /// <summary>
+        /// Gets or sets the android application
+        /// </summary>
+        public Application AndroidApplication { get; private set; }
 
         /// <summary>
         /// Get applet asset

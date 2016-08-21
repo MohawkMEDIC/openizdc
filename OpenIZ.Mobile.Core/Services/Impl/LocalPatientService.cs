@@ -27,6 +27,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -72,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public Patient Insert(Patient p)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
+            p = this.Validate(p);
 
             // Persist patient
             var retVal = persistenceService.Insert(p);
@@ -104,6 +106,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public Patient Save(Patient p)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            p = this.Validate(p);
             try
             {
                 return persistenceService.Update(p);
@@ -120,6 +123,35 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         public Patient UnMerge(Patient patient, Guid versionKey)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Validate the patient
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public Patient Validate(Patient p)
+        {
+            p = p.Clean() as Patient; // clean up messy data
+            // Correct the address information
+            if (p.Addresses?.Count > 0)
+            {
+                var ct = p.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract).Value;
+                IPlaceRepositoryService iprs = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+                var homePlace = iprs.Get(Guid.Parse(ct), Guid.Empty);
+                p.Addresses = homePlace.Addresses;
+            }
+
+            // Generate temporary identifier
+            if (!(p.Identifiers?.Count > 0))
+                p.Identifiers = new List<EntityIdentifier>()
+                {
+                    new EntityIdentifier(new AssigningAuthority()
+                    {
+                        DomainName = "TEMP"
+                    }, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace(":",""))
+                };
+            return p;
         }
     }
 }

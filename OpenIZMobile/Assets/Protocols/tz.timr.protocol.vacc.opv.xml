@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" name="Oral Polio Vaccine" protocolVersion="1" uuid="C2A628F3-DB52-45ED-B863-0FB4B1B8E77C">
   <rule id="OPV0">
     <!-- When the patient has not received any, -->
     <when evaluation="and">
@@ -18,7 +18,8 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
-				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 0,
               "doseQuantity" : 1.0,
@@ -86,6 +87,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
+             
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
 				      "doseSequence": 1,
@@ -157,6 +159,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
+             
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 2,
@@ -229,6 +232,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
+             
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 3,

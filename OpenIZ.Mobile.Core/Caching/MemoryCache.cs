@@ -167,14 +167,14 @@ namespace OpenIZ.Mobile.Core.Caching
                     lock (this.m_lock)
                     {
                         var entry = cache[key];
-                        entry.Data = (data as IdentifiedData)?.GetLocked() ?? data;
+                        entry.Data =  data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
                         {
-                            cache.Add(key, new CacheEntry(DateTime.Now, (data as IdentifiedData)?.GetLocked()?? data));
+                            cache.Add(key, new CacheEntry(DateTime.Now, data));
                             this.m_tracer.TraceInfo("Cache {0} is now {1} large", objData, cache.Count);
 
                         }

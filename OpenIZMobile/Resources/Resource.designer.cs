@@ -26,6 +26,9 @@ namespace OpenIZMobile
 		
 		public static void UpdateIdValues()
 		{
+			global::OpenIZ.Mobile.Core.Android.Resource.Id.contentFrame = global::OpenIZMobile.Resource.Id.contentFrame;
+			global::OpenIZ.Mobile.Core.Android.Resource.Layout.zxingscanneractivitylayout = global::OpenIZMobile.Resource.Layout.zxingscanneractivitylayout;
+			global::OpenIZ.Mobile.Core.Android.Resource.Layout.zxingscannerfragmentlayout = global::OpenIZMobile.Resource.Layout.zxingscannerfragmentlayout;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.ApplicationName = global::OpenIZMobile.Resource.String.ApplicationName;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.Hello = global::OpenIZMobile.Resource.String.Hello;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.applet_confirm_close = global::OpenIZMobile.Resource.String.applet_confirm_close;
@@ -48,6 +51,9 @@ namespace OpenIZMobile
 			global::OpenIZ.Mobile.Core.Android.Resource.String.startup_data = global::OpenIZMobile.Resource.String.startup_data;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.startup_setup = global::OpenIZMobile.Resource.String.startup_setup;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.startup_update = global::OpenIZMobile.Resource.String.startup_update;
+			global::ZXing.Mobile.Resource.Id.contentFrame = global::OpenIZMobile.Resource.Id.contentFrame;
+			global::ZXing.Mobile.Resource.Layout.zxingscanneractivitylayout = global::OpenIZMobile.Resource.Layout.zxingscanneractivitylayout;
+			global::ZXing.Mobile.Resource.Layout.zxingscannerfragmentlayout = global::OpenIZMobile.Resource.Layout.zxingscannerfragmentlayout;
 		}
 		
 		public partial class Attribute
@@ -118,6 +124,9 @@ namespace OpenIZMobile
 			// aapt resource value: 0x7f070000
 			public const int applet_view = 2131165184;
 			
+			// aapt resource value: 0x7f070003
+			public const int contentFrame = 2131165187;
+			
 			// aapt resource value: 0x7f070001
 			public const int txt_splash_info = 2131165185;
 			
@@ -142,6 +151,12 @@ namespace OpenIZMobile
 			
 			// aapt resource value: 0x7f040001
 			public const int Splash = 2130968577;
+			
+			// aapt resource value: 0x7f040002
+			public const int zxingscanneractivitylayout = 2130968578;
+			
+			// aapt resource value: 0x7f040003
+			public const int zxingscannerfragmentlayout = 2130968579;
 			
 			static Layout()
 			{

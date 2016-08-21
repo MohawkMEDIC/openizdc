@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="F6186968-9BA7-40DE-939B-42FCC00083A3" id="DTP-HepB-Hib" name="DTP-HepB-Hib Vaccine Schedule">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="F6186968-9BA7-40DE-939B-42FCC00083A3" id="DTP-HepB-Hib" name="DTP-HepB-Hib Vaccine Schedule">
   <rule id="DTP1">
     <when evaluation="and">
       <!-- DTP1 is not in their file yet -->
@@ -17,7 +17,8 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
-				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 1,
               "doseQuantity" : 1.0,
@@ -88,7 +89,8 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
-				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 2,
               "doseQuantity" : 1.0,
@@ -159,7 +161,8 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
-				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 3,
               "doseQuantity" : 1.0,

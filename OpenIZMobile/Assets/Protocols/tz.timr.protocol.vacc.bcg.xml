@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="463FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="BCG" name="BCG Vaccine Schedule">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="463FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="BCG" name="BCG Vaccine Schedule">
   <rule id="BCG">
     <when evaluation="and">
       <!-- Patient does not have BCG -->
@@ -18,6 +18,7 @@
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 0,
               "doseQuantity" : 1.0,
+             
               "doseUnitModel" : {
                 "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
                 "mnemonic" : "DOSE"

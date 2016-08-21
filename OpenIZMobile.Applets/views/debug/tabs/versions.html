@@ -1,0 +1,48 @@
+﻿<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.logo' | i18n }} {{ about.product }} {{ about.infoVersion }}</h3>
+            v.{{ about.version }} (C) {{ about.copyright }} {{ about.company }} <br/>
+            OpenIZ Platform: {{ about.openiz.version }} ({{about.openiz.infoVersion}})
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+
+            <h3>{{ 'locale.about.versions.applets.title' | i18n }}</h3>
+            <hr />
+            <table class="table table-striped">
+                <tr>
+                    <th></th>
+                    <th>{{ 'locale.about.versions.applet' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.author' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.id' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="app in about.applet">
+                    <td><img src="{{ app.icon }}" alt="logo" /></td>
+                    <td>{{ app.name[0].value }} v.{{app.version}}</td>
+                    <td>{{ app.author }}</td>
+                    <td>{{ app.id }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.versions.assemblies.title' | i18n}}</h3>
+            <hr />
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.versions.assembly' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.version' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.info' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="asm in about.assembly">
+                    <td>{{ asm.name }}</td>
+                    <td>{{ asm.version }}</td>
+                    <td>{{ asm.info }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

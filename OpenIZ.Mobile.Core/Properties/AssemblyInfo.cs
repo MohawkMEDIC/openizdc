@@ -24,11 +24,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("OpenIZ Mobile Core")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("OpenIZ Mobile Core Functions")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct("Open Immunize")]
-[assembly: AssemblyCopyright ("JustinFyfe")]
+[assembly: AssemblyCopyright ("2015-2016")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 [assembly: AssemblyInformationalVersion("Chippewa")]
-[assembly: AssemblyVersion ("0.6.4.*")]
+[assembly: AssemblyVersion ("0.6.7.*")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

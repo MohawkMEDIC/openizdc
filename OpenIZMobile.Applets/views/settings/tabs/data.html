@@ -1,0 +1,46 @@
+﻿<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 col-xs-2">
+                <img src="~/img/appbar.database.png" alt="database" class="left" />
+            </div>
+            <div class="col-md-10 col-xs-10" style="vertical-align:middle">
+                <em>{{ 'locale.settings.dataDescription' | i18n }}</em>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <span class="control-label col-sm-2">{{ 'locale.settings.dataMode' | i18n }}</span>
+        <div class="col-sm-10">
+            <select class="form-control" ng-model="config.data.mode">
+                <option value="sync">Synchronized</option>
+                <option value="online">Online Only</option>
+                <option value="offline">Offline Only</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" ng-if="config.data.mode == 'sync'">
+        <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}:</label>
+        <div class="col-sm-10">
+            <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
+                <option value="onstart">On Startup</option>
+                <option value="onclose">On Close</option>
+                <option value="oncommit">On Commit</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" ng-if="config.data.mode == 'sync'">
+        <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
+                <option value="1">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
+                <option value="5">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
+                <option value="15">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
+                <option value="30">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
+                <option value="0">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
+                <option value="-1">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
+            </select>
+        </div>
+    </div>
+</div>
+

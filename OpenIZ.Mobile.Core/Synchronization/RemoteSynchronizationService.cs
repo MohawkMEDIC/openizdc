@@ -175,7 +175,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 // TODO: Clean this up - Login as device account
                 if (this.m_devicePrincipal == null ||
                     DateTime.Parse((this.m_devicePrincipal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
-                    this.m_devicePrincipal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate("Administrator", "Mohawk123");
+                    this.m_devicePrincipal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate("administrator", "Mohawk123");
                 var credentials = ApplicationContext.Current.Configuration.GetServiceDescription("imsi").Binding.Security.CredentialProvider.GetCredentials(this.m_devicePrincipal);
 
                 // Get last modified date
@@ -189,10 +189,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
                     float perc = i / (float)result.TotalResults;
-                    retVal = result.TotalResults;
+                    
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
                     result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
-
+                    retVal = result.TotalResults;
                     // Queue the act of queueing
                     if (result != null)
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
@@ -211,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
 
                 return 0;
             }

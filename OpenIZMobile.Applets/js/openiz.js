@@ -163,6 +163,23 @@ var OpenIZ = OpenIZ || {
      */
     Util: {
         /**
+         * @summary Render act
+         */
+        renderAct : function(act) {
+            switch (act.$type) {
+                case "SubstanceAdministration":
+                    return OpenIZ.Localization.getString("locale.encounters.administer") +
+                        OpenIZ.Util.renderName(act.participation.Product.name.OfficialRecord);
+                case "QuantityObservation":
+                case "CodedObservation":
+                case "TextObservation":
+                    return OpenIZ.Localization.getString('locale.encounters.observe') +
+                        act.typeConceptModel.name[OpenIZ.Localization.getLocale()];
+                default:
+                    return "";
+            }
+        },
+        /**
          * @summary Log an exception to the console
          */
         logException : function(e) {
@@ -172,8 +189,8 @@ var OpenIZ = OpenIZ || {
          * @summary Render the manufactured material
          */
         renderManufacturedMaterial : function(scope) {
-            var name = OpenIZ.Util.renderName(scope.name.OfficialRecord);
-            return name + "(LN#: " + scope.lotNumber + ")";
+            var name = OpenIZ.Util.renderName(scope.name.OfficialRecord || scope.name.Assigned);
+            return name + "[LN#: " + scope.lotNumber + "]";
         },
         /** 
          * @summary Renders the person
@@ -458,7 +475,13 @@ var OpenIZ = OpenIZ || {
      * @summary Represents functions for interacting with the protocol service
      * @class
      */
-    CarePlan : {
+    CarePlan: {
+        /**
+         * @summary Interprets the observation 
+         */
+        interpretObservation : function(obs, ruleSet) {
+            obs.interpretationConcept = '41d42abf-17ad-4144-bf97-ec3fd907f57d';
+        },
         /**
          * @summary Generate a care plan for the specified patient
          */
@@ -533,6 +556,36 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     App: {
+        /**
+         * @summary Create new guid
+         */
+        newGuid: function () {
+            return OpenIZApplicationService.NewGuid();
+        },
+        /**
+         * @summary Get application information data using typical async information parameters
+         */
+        getInfoAsync : function(controlData) {
+            $.getJSON('/__app/info', null, function (e) { controlData.continueWith(e); if (controlData.finally !== undefined) controlData.finally(); }).
+                fail(function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined || error == null)
+                        console.error(error);
+                    else if (error.error !== undefined) // structured error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                });
+        },
         /**
          * @summary Get the online state of the application
          */
@@ -982,8 +1035,23 @@ var OpenIZ = OpenIZ || {
         }
     },
 
-
-
+    /**
+     * @summary Represents a series of functions for submitting bundles
+     * @class
+     */
+    Bundle: {
+        /**
+         * @summary Insert the bundle asynchronously
+         */
+        insertAsync: function (controlData) {
+            OpenIZ.Ims.post({
+                resource: "Bundle",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
+        }
+    },
     /**
      * @summary Represents a series of functions related to patients
      * @class

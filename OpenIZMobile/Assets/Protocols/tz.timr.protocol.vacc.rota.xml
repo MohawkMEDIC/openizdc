@@ -1,4 +1,4 @@
-﻿<ProtocolDefinition xmlns="http://openiz.org/protocol" uuid="D4DFD6C2-2A83-4A4E-BBFE-7D607604A60C" name="Rota Virus Vaccine">
+﻿<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="D4DFD6C2-2A83-4A4E-BBFE-7D607604A60C" name="Rota Virus Vaccine">
   <rule id="ROTA1">
     <when evaluation="and">
       <!-- ROTA is not in their file yet -->
@@ -16,6 +16,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
+             
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },
 				      "doseSequence": 1,
@@ -87,6 +88,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Immunization"
               },
+             
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 2,

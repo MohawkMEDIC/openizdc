@@ -99,6 +99,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <param name="context">Context.</param>
         public AppletFunctionBridge(Context context, AppletWebView view)
         {
+            if(AndroidApplicationContext.Current.AndroidApplication != null)
+                ZXing.Mobile.MobileBarcodeScanner.Initialize(AndroidApplicationContext.Current.AndroidApplication);
             ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
             this.m_context = context;
             this.m_view = view;
@@ -217,6 +219,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
             return String.Format("{0} ({1})", this.m_appAssembly.GetName().Version,
                 this.m_appAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);
+        }
+
+        /// <summary>
+        /// Create new UUID
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String NewGuid()
+        {
+            return Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -399,7 +411,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
-                return "XXXXXXXXXXXX";
+                var scanner = new ZXing.Mobile.MobileBarcodeScanner();
+                String retVal = String.Empty;
+                var result = scanner.Scan().ContinueWith((o) => retVal = o.Result?.Text);
+                result.Wait();
+                return retVal;
             }
             catch (Exception e)
             {

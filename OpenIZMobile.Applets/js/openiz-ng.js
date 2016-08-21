@@ -127,6 +127,8 @@ angular.module('openiz', [])
                 $timeout(function () {
                     var modelType = $(element).attr('oiz-databind');
                     var filterString = $(element).attr('data-filter');
+                    var watchString = $(element).attr('data-watch');
+                    var watchTargetString = $(element).attr('data-watch-target');
                     var displayString = $(element).attr('data-display');
 
                     var filter = {};
@@ -134,30 +136,45 @@ angular.module('openiz', [])
                         filter = JSON.parse(filterString);
                     filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
-                    // Get the bind element
-                    OpenIZ.Ims.get({
-                        resource: modelType,
-                        query: filter,
-                        continueWith: function (data) {
+                    var bind = function() {
+                        // Get the bind element
+                        $(element)[0].disabled = true;
+                        OpenIZ.Ims.get({
+                            resource: modelType,
+                            query: filter,
+                            finally : function() {
+                                $(element)[0].disabled = false;
+                            },
+                            continueWith: function (data) {
 
-                            var options = $(element)[0].options;
-                            $('option', element[0]).remove(); // clear existing 
-                            options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
-                            for (var i in data.item) {
-                                var text = null;
-                                if (displayString != null) {
-                                    var scope = data.item[i];
-                                    // HACK:
-                                    text = eval(displayString);
+                                var options = $(element)[0].options;
+                                $('option', element[0]).remove(); // clear existing 
+                                options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                                for (var i in data.item) {
+                                    var text = null;
+                                    if (displayString != null) {
+                                        var scope = data.item[i];
+                                        // HACK:
+                                        text = eval(displayString);
+                                    }
+                                    else
+                                        text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
+
+                                    // Append element
+                                    options[options.length] = new Option(text, data.item[i].id);
                                 }
-                                else
-                                    text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
-
-                                // Append element
-                                options[options.length] = new Option(text, data.item[i].id);
                             }
-                        }
-                    });
+                        });
+                    };
+
+                    if(watchString !== null)
+                        scope.$watch(watchString, function (newValue, oldValue) {
+                            if (watchTargetString !== null && newValue !== undefined)
+                                filter[watchTargetString] = newValue;
+
+                            bind();
+                        });
+
                 });
             }
         };
@@ -167,20 +184,27 @@ angular.module('openiz', [])
             link: function (scope, element, attrs, ctrl) {
                 $timeout(function () {
 
-
                     var modelType = $(element).attr('oiz-entitysearch');
                     var filterString = $(element).attr('data-filter');
                     var displayString = $(element).attr('data-display');
+                    var defaultFilterString = $(element).attr('data-default');
 
-                    var filter = {};
+                    var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
+                    if (defaultFilterString !== undefined)
+                        filter = JSON.parse(defaultFilterString);
                     filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
                     $(element).attr('style', 'width:100%; height:100%');
+
                     // Bind select 2 search
                     $(element).select2({
+                        dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
+                        defaultResults: $.map($('option', element[0]), function (o) {
+                            return { "id": o.value, "text": o.innerText };
+                        }),
                         ajax: {
                             url: "/__ims/" + modelType,
                             dataType: 'json',
@@ -195,15 +219,13 @@ angular.module('openiz', [])
                             processResults: function (data, params) {
                                 $('option', element[0]).remove(); // clear existing 
 
-                                params.page = params.page || 0;
+                                //params.page = params.page || 0;
+                                var data = data.item || data;
                                 return {
-                                    results: $.map(data.item, function (o) {
-                                        o.text = o.text || OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                    results: $.map(data, function (o) {
+                                        o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : "");
                                         return o;
-                                    }),
-                                    pagination: {
-                                        more: data.offset + data.count < data.total
-                                    }
+                                    })
                                 };
                             },
                             cache: true
@@ -213,13 +235,19 @@ angular.module('openiz', [])
                         templateSelection: function (result) {
                             if (result.name != null)
                                 return OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else
+                            else if (result.text != "")
                                 return result.text;
+                            else if (result.element !== undefined)
+                                return result.element.innerText;
                         },
+                        keepSearchResults : true,
                         templateResult: function (result) {
-                            if (result.name != null)
+                            if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else if (result.name != null)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
                             else
                                 return result.text;
                         }
