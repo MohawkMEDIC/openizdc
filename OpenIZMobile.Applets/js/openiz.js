@@ -56,6 +56,47 @@ var OpenIZ = OpenIZ || {
     urlParams: {},
 
     /**
+     * @summary Provides operations for managing acts.
+     * @class
+     */
+    Act: {
+
+        /**
+         * @summary Performs a patient insert asynchronously
+         * @memberof OpenIZ.Act
+         * @method
+         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {Object} controlData The data which is used to control the call
+         * @example
+         * OpenIZ.Act.insertAsync({
+         *      patient: new OpenIZModel.Act(...),
+         *      continueWith: function(result) { // Do something with result },
+         *      onException: function(ex) { // Handle exception }
+         * });
+         */
+        insertAsync: function (controlData) {
+            OpenIZ.Ims.post({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
+        },
+        /**
+        * @summary Get an empty template object asynchronously
+        */
+        getActTemplateAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Act/Template",
+                query: { "templateId": controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        }
+    },
+
+    /**
      * @summary Interoperation with the IMS
      * @class
      */
