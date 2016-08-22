@@ -43,13 +43,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="principal"></param>
         /// <returns></returns>
-        public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
 
             var domainMmat = dataInstance as DbManufacturedMaterial;
             var domainMat = dataInstance as DbMaterial;
             var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
-            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(dbm, context);
+            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(dbm, context, loadFast);
             retVal.LotNumber = domainMmat.LotNumber;
             return retVal;
 

@@ -33,10 +33,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class SecurityUserPersistenceService : BaseDataPersistenceService<SecurityUser, DbSecurityUser>
     {
-        public override SecurityUser ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override SecurityUser ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var dbUser = dataInstance as DbSecurityUser;
-            var retVal = base.ToModelInstance(dataInstance, context);
+            var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             retVal.Roles = context.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?", dbUser.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
             foreach (var itm in retVal.Roles)
             {
@@ -106,9 +106,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityRole ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override SecurityRole ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var retVal = base.ToModelInstance(dataInstance, context);
+            var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbRole = dataInstance as DbSecurityRole;
             retVal.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o, null)).ToList();
 
@@ -163,9 +163,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityDevice ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override SecurityDevice ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var retVal = base.ToModelInstance(dataInstance, context);
+            var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbDevice = dataInstance as DbSecurityDevice;
             retVal.Policies = context.Table<DbSecurityDevicePolicy>().Where(o=>o.DeviceId == dbDevice.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o, null)).ToList();
             return retVal;
@@ -220,9 +220,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityApplication ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override SecurityApplication ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var retVal = base.ToModelInstance(dataInstance, context);
+            var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbApplication = dataInstance as DbSecurityApplication;
             retVal.Policies = context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == dbApplication.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o, null)).ToList();
             return retVal;

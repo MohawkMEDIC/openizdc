@@ -372,7 +372,30 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="DischargeDispositionKey" domainName="DischargeDispositionUuid"/>
   </class>
+  
+  <class modelClass="OpenIZ.Core.Model.Acts.Observation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="InterpretationConceptKey" domainName="InterpretationConceptUuid"/>
+  </class>
 
+  <class modelClass="OpenIZ.Core.Model.Acts.QuantityObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbQuantityObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="UnitOfMeasureKey" domainName="UnitOfMeasureUuid"/>
+  </class>
+
+  <class modelClass="OpenIZ.Core.Model.Acts.CodedObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbCodedObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+    <property modelName="ValueKey" domainName="Value"/>
+  </class>
+      
+  <class modelClass="OpenIZ.Core.Model.Acts.TextObservation, OpenIZ.Core.Model, Version=1.0.0.0"
+       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbTextObservation, OpenIZ.Mobile.Core, Version=0.5.0.0">
+    <property modelName="Key" domainName="Uuid"/>
+  </class>
+      
   <class modelClass="OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0"
          domainClass="OpenIZ.Mobile.Core.Data.Model.Extensibility.DbTemplateDefinition, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>

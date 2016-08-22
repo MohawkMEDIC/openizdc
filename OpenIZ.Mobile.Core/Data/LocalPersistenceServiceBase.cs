@@ -337,6 +337,7 @@ namespace OpenIZ.Mobile.Core.Data
                         }
                         else
                             filter.Add(f.Key, f.Value);
+
                     }
                     // Query
                     return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults);
@@ -443,7 +444,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public abstract TData ToModelInstance(Object dataInstance, SQLiteConnectionWithLock context);
+        public abstract TData ToModelInstance(Object dataInstance, SQLiteConnectionWithLock context, bool loadFast);
 
         /// <summary>
         /// Froms the model instance.

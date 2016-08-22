@@ -38,11 +38,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Organization ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Organization ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var organization = dataInstance as DbOrganization;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context);
+            var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context, loadFast);
             retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;
         }

@@ -18,6 +18,9 @@ using System.Linq;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Android.AppletEngine.JNI;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -125,26 +128,77 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 
             if (search.ContainsKey("_id"))
-                return patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+            {
+                // Force load from DB
+                MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
+                var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                // Ensure expanded
+                JniUtil.ExpandProperties(patient, search);
+                return patient;
+            }
             else
             {
-                var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
 
-                this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
                 int totalResults = 0,
                     offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                     count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-                var retVal = patientService.Find(predicate, offset, count, out totalResults);
+
+                IEnumerable<Patient> retVal = null;
+
+                // Any filter
+                if (search.ContainsKey("any") || search.ContainsKey("any[]"))
+                {
+
+                    this.m_tracer.TraceVerbose("Searching Patients : ANY: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
+
+                    string[] filters =
+                    {
+                        "identifier.value",
+                        "name.component.value",
+                        "relationship.target.name.component.value"
+                    };
+
+                    var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
+                    // Filtes
+                    foreach (var itm in filters)
+                    {
+                        var nvc = new NameValueCollection()
+                        {
+                            { itm, values.SelectMany(o=>o.Split(',')).Select(o=>"~" + o).ToList() }
+                        };
+                        var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(nvc);
+                        var tret = patientService.Find(predicate, offset, count, out totalResults);
+
+                        if (retVal == null)
+                            retVal = tret;
+                        else
+                            retVal = retVal.OfType<IIdentifiedEntity>().Union(tret.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Patient>();
+                    }
+                    search.Remove("any");
+                    search.Remove("any[]");
+                }
+                
+                if(search.Keys.Count(o=>!o.StartsWith("_")) > 0)
+                {
+                    var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+                    this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
+                    var tret = patientService.Find(predicate, offset, count, out totalResults);
+                    if (retVal == null)
+                        retVal = tret;
+                    else
+                        retVal = retVal.OfType<IIdentifiedEntity>().Intersect(tret.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Patient>();
+                }
 
                 // Serialize the response
                 return new Bundle()
-                {
-                    Item = retVal.OfType<IdentifiedData>().ToList(),
-                    Offset = offset,
-                    Count = count,
-                    TotalResults = totalResults
-                };
+                    {
+                        Item = retVal.OfType<IdentifiedData>().ToList(),
+                        Offset = offset,
+                        Count = count,
+                        TotalResults = totalResults
+                    };
             }
         }
 
@@ -367,22 +421,28 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		[RestOperation(UriPath = "/UserEntity", Method = "POST")]
 		public UserEntity SaveUserProfile([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
 		{
-			IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
+			//IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
-			var userEntity = securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
-
-			if (userEntity == null)
-			{
-				throw new ArgumentException();
-			}
-
-			if (user.Key.GetValueOrDefault(Guid.Empty) == Guid.Empty)
-			{
-				user.Key = userEntity.Key;
-			}
-
-			return persistenceService.Update(user);
+			var userEntity = securityRepositoryService.GetUser(ApplicationContext.Current.Principal.Identity);
+            if (userEntity != null && !user.SecurityUserKey.HasValue)
+                user.SecurityUserKey = userEntity.Key;  
+			return securityRepositoryService.SaveUserEntity(user);
 		}
+    }
+
+    /// <summary>
+    /// Key comparion
+    /// </summary>
+    internal class KeyComparer : IEqualityComparer<IIdentifiedEntity>
+    {
+        public bool Equals(IIdentifiedEntity x, IIdentifiedEntity y)
+        {
+            return x.Key == y.Key;
+        }
+
+        public int GetHashCode(IIdentifiedEntity obj)
+        {
+            return obj.GetHashCode();
+        }
     }
 }

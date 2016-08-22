@@ -25,7 +25,7 @@ $(document).ready(function () {
                 offset: 0,
                 count: scope.search.pageSize,
                 continueWith: function (r) {
-                    scope.search.results = r.all('Patient');
+                    scope.search.results = r.item;
                     scope.$apply();
                 },
                 onException: function (e) {

@@ -36,11 +36,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override ApplicationEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override ApplicationEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var applicationEntity = dataInstance as DbApplicationEntity;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == applicationEntity.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<ApplicationEntity>(dbe, context);
+            var retVal = m_entityPersister.ToModelInstance<ApplicationEntity>(dbe, context, loadFast);
             retVal.SecurityApplicationKey = new Guid(applicationEntity.SecurityApplicationUuid);
             retVal.SoftwareName = applicationEntity.SoftwareName;
             retVal.VersionName = applicationEntity.VersionName;

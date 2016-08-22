@@ -31,6 +31,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Interfaces;
 using System.Collections;
 using OpenIZ.Core.Services;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -51,10 +52,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		/// </summary>
 		/// <returns>The model instance.</returns>
 		/// <param name="dataInstance">Data instance.</param>
-		public override TModel ToModelInstance (object dataInstance, SQLiteConnectionWithLock context)
+		public override TModel ToModelInstance (object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
 		{
 			var retVal = m_mapper.MapDomainInstance<TDomain, TModel> (dataInstance as TDomain);
-            retVal.LoadAssociations(context);
+
+                retVal.LoadAssociations(context);
             return retVal;
         }
 
@@ -129,17 +131,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var domainList = retVal.ToList();
             
-            return domainList.Select(o=>this.CacheConvert(o, context)).ToList();
+            return domainList.Select(o=>this.CacheConvert(o, context, count > 1)).ToList();
 		}
 
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        private TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context)
+        protected TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context, bool loadFast)
         {
             var cacheItem = this.m_cache.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
-                cacheItem = this.ToModelInstance(o, context);
+                cacheItem = this.ToModelInstance(o, context, loadFast);
             return cacheItem;
         }
 
@@ -151,20 +153,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
         public override IEnumerable<TModel> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
-		{
+        {
 
             // Build a query
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
-			List<Object> vals = new List<Object> ();
-			if (parms.Count > 0) {
-				foreach (var s in parms) {
+            List<Object> vals = new List<Object>();
+            if (parms.Count > 0) {
+                sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
 
-                    sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
+                foreach (var s in parms) {
+
 
                     object rValue = s.Value;
                     if (!(rValue is IList))
                         rValue = new List<Object>() { rValue };
+
+                    sb.Append("(");
 
                     string key = s.Key.Replace(".", "_");
                     // Are there guards?
@@ -181,7 +186,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     foreach (var itm in rValue as IList)
                     {
                         var value = itm;
-                        
+
                         if (value is String)
                         {
                             var sValue = itm as String;
@@ -216,21 +221,24 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                     value = sValue.Substring(1);
                                     break;
                                 case '~':
-                                    sb.AppendFormat(" {0} LIKE '%' || ? || '%' AND ", key);
+                                    sb.AppendFormat(" {0} LIKE '%' || ? || '%'  OR ", key);
                                     value = sValue.Substring(1);
                                     break;
                                 default:
-                                    sb.AppendFormat(" {0} = ? AND ", key);
+                                    sb.AppendFormat(" {0} = ?  OR ", key);
                                     break;
                             }
                         }
                         else
-                            sb.AppendFormat(" {0} = ? AND ", key);
+                            sb.AppendFormat(" {0} = ?  OR ", key);
 
                         // Value correction
                         DateTime tdateTime = default(DateTime);
+                        Guid gValue = Guid.Empty;
                         if (value is Guid)
                             vals.Add(((Guid)value).ToByteArray());
+                        else if(Guid.TryParse(value.ToString(), out gValue))
+                            vals.Add(gValue.ToByteArray());
                         else if (DateTime.TryParse(value.ToString(), out tdateTime))
                             vals.Add(tdateTime);
                         else
@@ -238,10 +246,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     }
                     sb.Remove(sb.Length - 4, 4);
 
-                    sb.Append(" INTERSECT ");
+                    sb.Append(") AND ");
+
                 }
             }
-            sb.Remove(sb.Length - 10, 10);
+            sb.Remove(sb.Length - 4, 4);
             sb.Append(") ");
 
             if (count > 0)
@@ -255,13 +264,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #if DEBUG
             this.m_tracer.TraceVerbose("EXECUTE: {0}", sb);
             foreach (var v in vals)
-                this.m_tracer.TraceVerbose(" --> {0}", v is byte[] ? BitConverter.ToString(v as Byte[]).Replace("-","") : v);
+                this.m_tracer.TraceVerbose(" --> {0}", v is byte[] ? BitConverter.ToString(v as Byte[]).Replace("-", "") : v);
 #endif
 
 
+#if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray());
+#if DEBUG
+            sw.Stop();
+            this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
+#endif
             totalResults = retVal.Count;
-			return retVal.Select(o=>this.ToModelInstance(o, context)).ToList();
+			return retVal.Select(o=>this.CacheConvert(o, context, count > 1)).ToList();
 		}
 
 

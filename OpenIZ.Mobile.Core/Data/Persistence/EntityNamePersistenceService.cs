@@ -35,7 +35,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>
     {
 
-
         /// <summary>
         /// Insert the specified object
         /// </summary>
@@ -44,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.NameUse?.EnsureExists(context);
-
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.Insert(context, data);
 
             // Data component
@@ -65,6 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Ensure exists
             data.NameUse?.EnsureExists(context);
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
             var retVal = base.Update(context, data);
 

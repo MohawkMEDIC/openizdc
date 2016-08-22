@@ -29,6 +29,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -61,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <summary>
         /// Gets the specified patient
         /// </summary>
-        public IdentifiedData Get(Guid id, Guid versionId)
+        public Patient Get(Guid id, Guid versionId)
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
 
@@ -128,28 +129,33 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <summary>
         /// Validate the patient
         /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
         public Patient Validate(Patient p)
         {
-            p = p.Clean() as Patient; // clean up messy data
             // Correct the address information
             if (p.Addresses?.Count > 0)
             {
-                var ct = p.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract).Value;
+                var ct = p.Addresses?[0].Component?.FirstOrDefault(o => o.ComponentTypeKey == AddressComponentKeys.CensusTract || o.ComponentType?.Mnemonic == "CensusTract").Value;
                 IPlaceRepositoryService iprs = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
                 var homePlace = iprs.Get(Guid.Parse(ct), Guid.Empty);
-                p.Addresses = homePlace.Addresses;
+                p.Addresses = homePlace.Addresses.Select(o => new EntityAddress()
+                {
+                    AddressUse = p.Addresses[0].AddressUse,
+                    AddressUseKey = p.Addresses[0].AddressUseKey,
+                    Component = o.Component.Select(c => new EntityAddressComponent(c.ComponentTypeKey.Value, c.Value)).ToList()
+                }).ToList();
             }
 
+            p = p.Clean() as Patient; // clean up messy data
+            
             // Generate temporary identifier
             if (!(p.Identifiers?.Count > 0))
                 p.Identifiers = new List<EntityIdentifier>()
                 {
                     new EntityIdentifier(new AssigningAuthority()
                     {
-                        DomainName = "TEMP"
-                    }, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace(":",""))
+                        DomainName = "TEMP",
+                        Name= "Temporary Identifiers",
+                    }, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace("-",""))
                 };
             return p;
         }

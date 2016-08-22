@@ -37,6 +37,7 @@ using OpenIZ.Core.Exceptions;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
 using System.Collections;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -62,14 +63,24 @@ namespace OpenIZ.Mobile.Core.Data
                 throw new ArgumentNullException(nameof(me));
             else if (context.IsInTransaction) return;
             // Load associations
-            foreach (var pi in typeof(TModel).GetRuntimeProperties())
+            foreach (var pi in me.GetType().GetRuntimeProperties())
             {
                 if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
                     pi.GetCustomAttribute<AutoLoadAttribute>() == null)
                     continue;
 
                 var value = pi.GetValue(me);
-                if (value == null) continue;
+                if (value == null)
+                {
+                    var keyProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
+                    if (keyProperty == null) continue;
+                    var keyValue = me.GetType().GetRuntimeProperty(keyProperty)?.GetValue(me);
+                    if (keyValue == null) continue; // no key
+
+                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(pi.PropertyType);
+                    var idpInstance = ApplicationContext.Current.GetService(idpType);
+                    pi.SetValue(me, (idpInstance as IDataPersistenceService)?.Get((Guid)keyValue));
+                }
                 else if (value is IdentifiedData)
                     pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));
                 else if (value is IList)
@@ -101,6 +112,7 @@ namespace OpenIZ.Mobile.Core.Data
                         pi.SetValue(me, lValue);
                         foreach (var itm in results)
                         {
+                            (itm as IIdentifiedEntity).LoadAssociations(context);
                             lValue.Add(itm);
                         }
                     }
@@ -115,7 +127,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
             // Is there a classifier?
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-            var idpInstance = ApplicationContext.Current.GetService(idpType);
+            var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
             if (idpInstance == null) return null;
 
             IIdentifiedEntity existing = null;
@@ -123,16 +135,17 @@ namespace OpenIZ.Mobile.Core.Data
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)
             {
-                // We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
-                if (getMethod == null) return null;
-                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
+                existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
+                //// We have to find it
+                //var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
+                //if (getMethod == null) return null;
+                //existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
             }
 
             var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
             if (classAtt != null && existing == null)
             {
-
+               
                 object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
                                             // Follow the classifier
                 Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));

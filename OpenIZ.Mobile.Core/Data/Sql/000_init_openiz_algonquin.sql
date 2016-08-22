@@ -37,6 +37,7 @@ create view if not exists sqp_Concept AS
 		left join concept_concept_set on (concept_concept_set.concept_uuid = concept.uuid)
 		left join concept_set on (concept_set.uuid = concept_concept_set.concept_set_uuid);
 
+-- ENTITY VIEW HELPER
 
 -- ENTITY VIEW HELPER
 create view if not exists sqp_Entity as 
@@ -73,11 +74,11 @@ select entity.*,
 		er.target as relationship_target,
 		not(er.kuuid = entity.uuid) as relationship_inversionInd,
 		rel_type.mnemonic as relationship_guard,
-		rel_entity_name.use as relationship_name_use,
-		rel_entity_name_comp.type as relationship_name_component_type,
-		rel_entity_name_comp.value as relationship_name_component_value,
-		rel_entity_name_comp.phoneticCode as relationship_name_component_phoneticCode,
-		rel_entity_name_comp.phoneticAlgorithm as relationship_name_component_phoneticAlgorithm,
+		rel_entity_name.use as relationship_target_name_use,
+		rel_entity_name_comp.type as relationship_target_name_component_type,
+		rel_entity_name_comp.value as relationship_target_name_component_value,
+		rel_entity_name_comp.phoneticCode as relationship_target_name_component_phoneticCode,
+		rel_entity_name_comp.phoneticAlgorithm as relationship_target_name_component_phoneticAlgorithm,
 		entity_telecom.use as telecom_use,
 		entity_telecom.value as telecom_value
 	from entity inner join concept as class on (class.uuid = entity.classConcept)
@@ -152,11 +153,14 @@ select person.*,
 		entity.name_component_phoneticAlgorithm,
 		entity.relationship_guard,
 		entity.relationship_type,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
 	from person inner join sqp_Entity as entity on (person.uuid = entity.uuid)
@@ -208,13 +212,17 @@ create view if not exists sqp_Patient as
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
-		entity.relationship_type,
 		entity.relationship_guard,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_type,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
+
 		entity.telecom_use,
 		entity.telecom_value
 	from patient inner join sqp_Entity as entity on (patient.uuid = entity.uuid)
@@ -265,12 +273,16 @@ select organization.*,
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
+		entity.relationship_guard,
 		entity.relationship_type,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
 	from organization inner join sqp_Entity as entity on (organization.uuid = entity.uuid)
@@ -321,12 +333,16 @@ select place.*,
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
+		entity.relationship_guard,
 		entity.relationship_type,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
 	from place inner join sqp_Entity as entity on (place.uuid = entity.uuid)
@@ -397,12 +413,16 @@ select device.*,
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
+		entity.relationship_guard,
 		entity.relationship_type,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
 	from device inner join sqp_Entity as entity on (device.uuid = entity.uuid)
@@ -452,12 +472,16 @@ select application.*,
 		entity.name_component_value,
 		entity.name_component_phoneticCode,
 		entity.name_component_phoneticAlgorithm,
+		entity.relationship_guard,
 		entity.relationship_type,
-		entity.relationship_name_use,
-		entity.relationship_name_component_type,
-		entity.relationship_name_component_value,
-		entity.relationship_name_component_phoneticCode,
-		entity.relationship_name_component_phoneticAlgorithm,
+		entity.relationship_source,
+		entity.relationship_target,
+		entity.relationship_inversionInd,
+		entity.relationship_target_name_use,
+		entity.relationship_target_name_component_type,
+		entity.relationship_target_name_component_value,
+		entity.relationship_target_name_component_phoneticCode,
+		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
 		entity.telecom_value
 	from application inner join sqp_Entity as entity on (application.uuid = entity.uuid)
@@ -467,7 +491,7 @@ select application.*,
 
 -- ACT SUPPORTING VIEW
 
-CREATE VIEW IF NOT EXISTS sqp_act AS
+CREATE VIEW IF NOT EXISTS sqp_Act AS
 SELECT act.*,
 	class_concept.mnemonic AS classConcept_mnemonic,
 	mood_concept.mnemonic AS moodConcept_mnemonic,
@@ -506,7 +530,7 @@ CREATE VIEW IF NOT EXISTS sqp_AssigningAuthority AS
 	FROM assigning_authority LEFT JOIN assigning_authority_scope ON (assigning_authority.uuid = assigning_authority_scope.authority)
 	LEFT JOIN concept ON (assigning_authority_scope.concept = concept.uuid);
 
-CREATE VIEW IF NOT EXISTS sqp_material AS
+CREATE VIEW IF NOT EXISTS sqp_Material AS
 SELECT sqp_entity.*,
 	material.expiry as expiryDate,
 	material.isAdministrative as isAdministrative,

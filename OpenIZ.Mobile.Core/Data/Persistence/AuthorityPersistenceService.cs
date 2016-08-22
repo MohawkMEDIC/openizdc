@@ -18,10 +18,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert assigning authority to model
         /// </summary>
-        public override AssigningAuthority ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override AssigningAuthority ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var dataAA = dataInstance as DbAssigningAuthority;
-            var retVal = base.ToModelInstance(dataInstance, context);
+            var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             retVal.AuthorityScopeXml = context.Table<DbAuthorityScope>().Where(o => o.AssigningAuthorityUuid == dataAA.Uuid).ToList().Select(o=>new Guid(o.ScopeConceptUuid)).ToList();
             return retVal;
         }

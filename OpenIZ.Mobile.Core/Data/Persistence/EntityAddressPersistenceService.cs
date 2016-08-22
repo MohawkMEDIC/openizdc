@@ -43,6 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Insert(context, data);
 
@@ -65,6 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Update(context, data);
 

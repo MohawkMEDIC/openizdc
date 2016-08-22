@@ -32,6 +32,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -64,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context) where TEntityType : Entity, new()
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TEntityType : Entity, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
 
@@ -84,7 +85,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
+            // Now we want to load the relationships inversed!
             retVal.LoadAssociations(context);
+            if (!loadFast)
+            {
+                retVal.Relationships.RemoveAll(o => o.InversionIndicator);
+                retVal.Relationships.AddRange(
+                context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
+                {
+                    SourceEntityKey = new Guid(o.EntityUuid),
+                    InversionIndicator = true,
+                    SourceEntity = this.CacheConvert(context.Get<DbEntity>(o.EntityUuid), context, loadFast)
+                }));
+            }
+            
 
             return retVal;
         }
@@ -92,37 +106,37 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
             switch (new Guid(dbEntity.ClassConceptUuid).ToString())
             {
                 case Device:
-                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Person:
-                    return new PersonPersistenceService().ToModelInstance(dataInstance, context);
+                    return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Patient:
-                    return new PatientPersistenceService().ToModelInstance(dataInstance, context);
+                    return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Provider:
-                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Place:
                 case CityOrTown:
                 case Country:
                 case CountyOrParish:
                 case State:
                 case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().ToModelInstance(dataInstance, context);
+                    return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Organization:
-                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context);
+                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Material:
-                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 default:
-                    return this.ToModelInstance<Entity>(dbEntity, context);
+                    return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
 
             }
         }

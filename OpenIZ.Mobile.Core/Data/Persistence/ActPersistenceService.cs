@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context) where TActType : Act, new()
+        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
 
@@ -81,16 +81,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Act ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Act ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance as DbAct;
             switch (new Guid(dbAct.ClassConceptUuid).ToString())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context);
+                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Condition:
                 case Observation:
                     var dbObs = context.Table<DbObservation>().First(o => o.Uuid == dbAct.Uuid);
@@ -101,26 +101,29 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 context.Table<DbTextObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context, 
+                                loadFast);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
                                 context.Table<DbCodedObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context, 
+                                loadFast);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
                                 context.Table<DbQuantityObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context,
+                                loadFast);
                         default:
-                            return base.ToModelInstance(dataInstance, context);
+                            return base.ToModelInstance(dataInstance, context, loadFast);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context);
+                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 default:
-                    return this.ToModelInstance<Act>(dbAct, context);
+                    return this.ToModelInstance<Act>(dbAct, context, loadFast);
 
             }
         }

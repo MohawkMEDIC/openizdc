@@ -15,12 +15,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert database instance to patient encounter
         /// </summary>
-        public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
             var dbEnc = dataInstance as DbPatientEncounter ?? context.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).First();
             var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(a => a.Uuid == dbEnc.Uuid).First();
-            var retVal = m_actPersister.ToModelInstance<PatientEncounter>(dba, context);
+            var retVal = m_actPersister.ToModelInstance<PatientEncounter>(dba, context, loadFast);
 
             if (dbEnc.DischargeDispositionUuid != null)
                 retVal.DischargeDispositionKey = new Guid(dbEnc.DischargeDispositionUuid);

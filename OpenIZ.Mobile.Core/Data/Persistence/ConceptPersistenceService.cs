@@ -38,9 +38,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var modelInstance = base.ToModelInstance(dataInstance, context);
+            var modelInstance = base.ToModelInstance(dataInstance, context, loadFast);
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;

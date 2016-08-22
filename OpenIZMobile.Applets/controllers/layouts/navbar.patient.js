@@ -9,9 +9,9 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
 
     // Get the patient 
     OpenIZ.Patient.findAsync({
-        query: { id: OpenIZ.urlParams['patientId'], _count: 1 },
+        query: { _id: OpenIZ.urlParams['patientId'], _count: 1, _all: true },
         continueWith: function (data) {
-            $scope.patient = data.item[0];
+            $scope.patient = data;
 
             $scope.$apply();
         },
