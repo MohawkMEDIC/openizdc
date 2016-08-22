@@ -141,10 +141,12 @@
     <Compile Include="Services\AndroidClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\MiniImsServer.cs" />
+    <Compile Include="Services\Model\ErrorResult.cs" />
     <Compile Include="Services\ServiceHandlers\ApplicationService.cs" />
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
+    <Compile Include="Services\ServiceHandlers\QueueService.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>

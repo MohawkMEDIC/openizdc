@@ -21,29 +21,16 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Android.AppletEngine.JNI;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Mobile.Core.Android.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
-
-    /// <summary>
-    /// General IMSI error result
-    /// </summary>
-    [JsonObject]
-    public class ErrorResult
-    {
-        [JsonProperty("error")]
-        public String Error { get; set; }
-        [JsonProperty("error_description")]
-        public String ErrorDescription { get; set; }
-    }
-
     /// <summary>
     /// Represents an IMS service handler
     /// </summary>
     [RestService("/__ims")]
     public class ImsiService
     {
-
         // Tracer 
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 

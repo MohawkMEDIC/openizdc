@@ -36,24 +36,66 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             throw new NotImplementedException();
         }
 
+		/// <summary>
+		/// Gets a provider by key and version key.
+		/// </summary>
+		/// <param name="id">The key of the provider.</param>
+		/// <param name="versionId">The version key of the provider.</param>
+		/// <returns>Returns the provider.</returns>
         public Provider Get(Guid id, Guid versionId)
         {
-            throw new NotImplementedException();
+			var providerRepository = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
+
+			if (providerRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Provider>)));
+			}
+
+			return providerRepository.Query(p => p.Key == id && p.VersionKey == versionId).FirstOrDefault();
         }
 
+		/// <summary>
+		/// Inserts a provider.
+		/// </summary>
+		/// <param name="provider">The provider to be inserted.</param>
+		/// <returns>Returns the newly inserted provider.</returns>
         public Provider Insert(Provider provider)
         {
-            throw new NotImplementedException();
+			var providerRepository = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
+
+			if (providerRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Provider>)));
+			}
+
+			return providerRepository.Insert(provider);
         }
 
+		/// <summary>
+		/// Obsoletes a provider.
+		/// </summary>
+		/// <param name="id">The id of the provider to be obsoleted.</param>
+		/// <returns>Returns the obsoleted provider.</returns>
         public Provider Obsolete(Guid id)
         {
-            throw new NotImplementedException();
-        }
+			throw new NotImplementedException();
+		}
 
+		/// <summary>
+		/// Saves a provider.
+		/// </summary>
+		/// <param name="provider">The provider to be saved.</param>
+		/// <returns>Returns the updated provider.</returns>
         public Provider Save(Provider provider)
         {
-            throw new NotImplementedException();
-        }
+			var providerRepository = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>();
+
+			if (providerRepository == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<Provider>)));
+			}
+
+			return providerRepository.Update(provider);
+		}
     }
 }
