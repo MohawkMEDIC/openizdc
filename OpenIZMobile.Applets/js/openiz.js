@@ -56,6 +56,47 @@ var OpenIZ = OpenIZ || {
     urlParams: {},
 
     /**
+     * @summary Provides operations for managing acts.
+     * @class
+     */
+    Act: {
+
+        /**
+         * @summary Performs a patient insert asynchronously
+         * @memberof OpenIZ.Act
+         * @method
+         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {Object} controlData The data which is used to control the call
+         * @example
+         * OpenIZ.Act.insertAsync({
+         *      patient: new OpenIZModel.Act(...),
+         *      continueWith: function(result) { // Do something with result },
+         *      onException: function(ex) { // Handle exception }
+         * });
+         */
+        insertAsync: function (controlData) {
+            OpenIZ.Ims.post({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
+        },
+        /**
+        * @summary Get an empty template object asynchronously
+        */
+        getActTemplateAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Act/Template",
+                query: { "templateId": controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        }
+    },
+
+    /**
      * @summary Interoperation with the IMS
      * @class
      */
@@ -469,7 +510,63 @@ var OpenIZ = OpenIZ || {
          * });
          */
         refreshSessionAsync: function (controlData) {
-        }
+        },
+
+        /**
+        * @summary Finds a user by username.
+        * @memberof OpenIZ.Authentication
+        * @method
+        */
+        getUserAsync: function(controlData) {
+            $.ajax(
+            {
+                method: "POST",
+                url: "/__auth/get_user",
+                data: controlData.data,
+                contentType: "application/json; charset=UTF-8",
+                success: function (xhr, data)
+                {
+                    if (data != null && data.error !== undefined)
+                    {
+                        controlData.onException(new OpenIZModel.Exception(data.error), data.error_description, null);
+                    }
+                    else if (data != null)
+                    {
+                        controlData.continueWith(data);
+                    }
+                    else
+                    {
+                        controlData.onException(new OpenIZModel.Exception("err_general", data, null));
+                    }
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+                },
+                error: function (data)
+                {
+                    var error = data.responseJSON;
+
+                    if (error != null && error.error !== undefined)
+                    {
+                        // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                    }
+                    else
+                    {
+                        // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                    }
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+
+                }
+            });
+        },
     },
     /** 
      * @summary Represents functions for interacting with the protocol service

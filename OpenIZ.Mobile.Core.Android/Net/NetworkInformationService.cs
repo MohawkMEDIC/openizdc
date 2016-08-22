@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
     public class NetworkInformationService : INetworkInformationService
     {
         /// <summary>
-        /// Network avaialbility changed
+        /// Network availability changed
         /// </summary>
         public NetworkInformationService()
         {
