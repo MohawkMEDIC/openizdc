@@ -6,11 +6,23 @@ layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
 
         if (username !== undefined)
         {
-
+            OpenIZ.Authentication.getUserAsync({
+                data: {
+                    userName: username
+                },
+                continueWith: function(data)
+                {
+                    window.location.href = '~/views/common/security/resetPassword.html';
+                },
+                onException: function(error)
+                {
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.security.errors.unableToResetPassword"));
+                }
+            });
         }
         else
         {
-            OpenIZ.App.toast("Unable to reset password");
+            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.security.errors.unableToResetPassword"));
         }
     };
 }]);

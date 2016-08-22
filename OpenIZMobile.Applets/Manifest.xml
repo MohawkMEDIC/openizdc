@@ -78,6 +78,7 @@
     <string key="locale.security.forgotPassword.title">Forgot Password</string>
     <string key="locale.security.errors.usernameRequired">Please enter a username</string>
     <string key="locale.security.errors.passwordRequired">Please enter a password</string>
+    <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
     
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
