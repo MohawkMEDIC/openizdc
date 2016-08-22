@@ -8,7 +8,7 @@
             <div class="col-xs-9">
                 <div class="input-group">
                     <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
-                    <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.missingUsername' | i18n }}</p>
+                    <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
                 </div>
             </div>
         </div>
@@ -17,7 +17,7 @@
             <div class="col-xs-9">
                 <div class="input-group">
                     <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
-                    <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.missingPassword' | i18n }}</p>
+                    <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
         <div class="col-xs-12">
             <div class="btn-group pull-right">
                 <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
-                <a class="btn btn-lg btn-warning" href="~/views/security/resetName.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
+                <a class="btn btn-lg btn-warning" href="~/views/common/security/forgotPassword.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
                 <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
             </div>
         </div>

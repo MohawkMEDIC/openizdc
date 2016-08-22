@@ -56,6 +56,29 @@
     </menuItem>
   </menuItem>
   <strings lang="en">
+
+    <!-- Actions -->
+    <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.cancel">Cancel</string>
+    <string key="locale.action.save">Save</string>
+    
+    <!-- Common -->
+    <string key="locale.common.no">No</string>
+    <string key="locale.common.yes">Yes</string>
+    <string key="locale.common.unknown">Unknown</string>
+    
+    <!-- Login -->
+    <string key="locale.security.login.helpText">Please log into TImR to continue</string>
+    <string key="locale.security.login.label.username">Username</string>
+    <string key="locale.security.login.label.password">Password</string>
+    <string key="locale.security.login.placeholder.username">Enter your username</string>
+    <string key="locale.security.login.placeholder.password">Enter your password</string>
+    <string key="locale.security.login.button.forgotPassword">Forgot Password</string>
+    <string key="locale.security.login.button.login">Login</string>
+    <string key="locale.security.forgotPassword.title">Forgot Password</string>
+    <string key="locale.security.errors.usernameRequired">Please enter a username</string>
+    <string key="locale.security.errors.passwordRequired">Please enter a password</string>
+    
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
     <string key="locale.error.500.title">Internal Server Error</string>
