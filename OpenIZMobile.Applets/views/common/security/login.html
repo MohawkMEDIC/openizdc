@@ -3,29 +3,23 @@
     <openiz:script>/org.openiz.core/controllers/common/security/login.js</openiz:script>
     <fieldset class="form-horizontal form-group">
         <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
-        <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
+        <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
             <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
             <div class="col-xs-9">
                 <div class="input-group">
-                    <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control"
-                           name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                    <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                    <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.missingUsername' | i18n }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid">
-            <p class="alert alert-danger">{{ 'locale.security.errors.missingUsername' | i18n }}</p>
-        </div>
-        <div class="form-group">
+        <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
             <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
             <div class="col-xs-9">
                 <div class="input-group">
-                    <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control"
-                           name="password" id="passwordInput" />
+                    <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
+                    <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.missingPassword' | i18n }}</p>
                 </div>
             </div>
-        </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid ">
-            <p class="alert alert-danger">{{ 'locale.security.errors.missingPassword' | i18n }}</p>
         </div>
     </fieldset>
     <div class="row">

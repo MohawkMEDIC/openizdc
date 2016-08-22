@@ -137,6 +137,9 @@
     <string key="locale.preferences.telephone">Tel / E-Mail</string>
     <string key="locale.preferences.facility">Facility</string>
     <string key="locale.preferences.language">Language</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
 
     
     <!-- Login -->
