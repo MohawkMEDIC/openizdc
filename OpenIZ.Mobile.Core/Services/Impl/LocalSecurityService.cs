@@ -276,7 +276,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
-            return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault().LoadImmediateRelations();
+            return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault()?.LoadImmediateRelations();
         }
 
         /// <summary>

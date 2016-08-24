@@ -22,6 +22,7 @@ using OpenIZ.Mobile.Core.Android.AppletEngine.JNI;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Mobile.Core.Android.Services.Model;
+using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -102,6 +103,27 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
             return bundleService.Insert(bundleToInsert);
         }
+
+		[RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
+		public Bundle GetPatientEncounter()
+		{
+			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+			var patientEncounterService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+			int totalResults = 0;
+
+			var results = patientEncounterService.FindActs(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
+
+			return new Bundle
+			{
+				Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
+				Item = results.OfType<IdentifiedData>().ToList(),
+				Offset = 0,
+				TotalResults = totalResults
+			};
+		}
 
         /// <summary>
         /// Get a patient

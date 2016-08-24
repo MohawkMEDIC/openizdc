@@ -38,6 +38,32 @@ var OpenIZModel = OpenIZModel || {
     EmptyGuid : "00000000-0000-0000-0000-000000000000",
 
     /**
+    * @summary Keys for the setting of a mood for an act.
+    * @class
+    * @property {String} Appointment: 'C46EEE70-5612-473F-8D24-595EA15C9C39',
+    * @property {String} AppointmentRequest: '0395F357-6821-4562-8192-49AC3C94F548',
+    * @property {String} Definition: '3B14A426-6337-4F2A-B83B-E6BE7DBCD5A5',
+    * @property {String} EventOccurrence: 'EC74541F-87C4-4327-A4B9-97F325501747',
+    * @property {String} Goal: '13925967-E748-4DD6-B562-1E1DA3DDFB06',
+    * @property {String} Intent: '099BCC5E-8E2F-4D50-B509-9F9D5BBEB58E',
+    * @property {String} Promise: 'B389DEDF-BE61-456B-AA70-786E1A5A69E0',
+    * @property {String} Propose: 'ACF7BAF2-221F-4BC2-8116-CEB5165BE079',
+    * @property {String} Request: 'E658CA72-3B6A-4099-AB6E-7CF6861A5B61'
+    */
+    ActMoodKeys:
+    {
+        Appointment: 'C46EEE70-5612-473F-8D24-595EA15C9C39',
+        AppointmentRequest: '0395F357-6821-4562-8192-49AC3C94F548',
+        Definition: '3B14A426-6337-4F2A-B83B-E6BE7DBCD5A5',
+        EventOccurrence: 'EC74541F-87C4-4327-A4B9-97F325501747',
+        Goal: '13925967-E748-4DD6-B562-1E1DA3DDFB06',
+        Intent: '099BCC5E-8E2F-4D50-B509-9F9D5BBEB58E',
+        Promise: 'B389DEDF-BE61-456B-AA70-786E1A5A69E0',
+        Propose: 'ACF7BAF2-221F-4BC2-8116-CEB5165BE079',
+        Request: 'E658CA72-3B6A-4099-AB6E-7CF6861A5B61'
+    },
+
+    /**
      * @summary Keys for setting the use of an address
      * @class
     * @property {String} Direct D0DB6EDB-6CDC-4671-8BC2-00F1C808E188
