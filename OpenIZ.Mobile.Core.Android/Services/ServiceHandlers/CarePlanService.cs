@@ -11,6 +11,7 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Acts;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
+using OpenIZ.Mobile.Core.Android.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
