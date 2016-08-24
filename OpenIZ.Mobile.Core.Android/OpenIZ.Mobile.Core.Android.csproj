@@ -146,7 +146,6 @@
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
-    <Compile Include="Services\ServiceHandlers\QueueService.cs" />
     <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
     <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>
