@@ -21,7 +21,7 @@
             <th><input class="form-control" oiz-tag="oiz-tag" ng-model="search.query['name.component.value']" type="search" name="nameDetailFilter" /></th>
             <th><input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}" style="max-width:200px" class="form-control" ng-model="search.query['dateOfBirth']" type="date" name="dobFilter" /></th>
             <th><select class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:vaue="name[{{ locale }}].value" ng-model="search.query['genderConcept']" name="genderFilter" /></th>
-            <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
+            <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }' data-group-by="address.Direct.component.County"></select></th>
             <th><select class="form-control" ng-model="search.query['participation[DedicatedServiceDeliveryLocation].player.name.component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
             <th><button class="btn btn-info" ng-click="search.search()" type="button"><span class="glyphicon glyphicon-refresh"></span></button></th>
         </tr>

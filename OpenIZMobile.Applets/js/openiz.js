@@ -204,6 +204,22 @@ var OpenIZ = OpenIZ || {
      */
     Util: {
         /**
+         * @summary Render address for display
+         */
+        renderAddress : function(entity) {
+            var address = entity.address.Direct || entity.address.HomeAddress;
+            var retVal = "";
+            if(address.component.City)
+                retVal += address.component.City + ", ";
+            if (address.component.County != null)
+                retVal += address.component.County + ", ";
+            if (address.component.State != null)
+                retVal += address.component.State + ", ";
+            if (address.component.Country != null)
+                retVal += address.component.Country + ", ";
+            return retVal.substring(0, retVal.length - 2);
+        },
+        /**
          * @summary Render act
          */
         renderAct : function(act) {
@@ -1174,6 +1190,7 @@ var OpenIZ = OpenIZ || {
                 resource: "Patient",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
+                finally: controlData.finally,
                 query: controlData.query
             });
         },
@@ -1379,6 +1396,18 @@ var OpenIZ = OpenIZ || {
      * @summary Place functions
      */
     Place: {
+        /**
+         * @summary Find places async
+         */
+        findAsync : function(controlData) {
+            OpenIZ.Ims.get({
+                resource: "Place",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                query: controlData.query
+            });
+        },
         /**
          * @summary Bind a place filter to a select box
          * @param {Element} target The element to be bound to

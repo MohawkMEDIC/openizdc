@@ -210,6 +210,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     };
                     AndroidApplicationContext.Current.Configuration.Sections.Add(serviceClientSection);
                 }
+                else
+                    serviceClientSection.Client.Clear();
 
                 // TODO: Actually contact the AMI for this information
 

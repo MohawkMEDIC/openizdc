@@ -281,9 +281,11 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                 if (result is IdentifiedData)
                                 {
                                     using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                                    {
                                         sw.Write(JsonViewModelSerializer.Serialize((result as IdentifiedData).GetLocked()));
+                                    }
                                 }
-                                else
+                                else if(result != null)
                                     this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result);
 
                                 break;

@@ -28,6 +28,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Extensions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -275,7 +276,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
-            return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault();
+            return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault().LoadImmediateRelations();
         }
 
         /// <summary>
@@ -286,7 +287,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
             if (persistence == null)
                 throw new InvalidOperationException("Persistence service missing");
-            return persistence.Get(id);
+            return persistence.Get(id).LoadImmediateRelations();
         }
 
         /// <summary>

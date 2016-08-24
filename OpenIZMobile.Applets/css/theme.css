@@ -8,6 +8,10 @@
 
 .patient-panel small { color: #fff }
 
+.text-danger {
+    color:#d9534f
+}
+
 .vaccine-table-column {
     width:20%;
 }

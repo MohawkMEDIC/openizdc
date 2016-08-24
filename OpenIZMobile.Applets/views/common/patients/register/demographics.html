@@ -25,8 +25,8 @@
 
     <div class="form-group">
         <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-        <div class="col-xs-4">
-            <div class="input-group" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+        <div class="col-xs-4" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+            <div class="input-group">
                 <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon">
                     <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
@@ -38,10 +38,11 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
+            <p ng-show="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
         </div>
         <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-        <div class="col-xs-4">
-            <div class="input-group"  ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+        <div class="col-xs-4"  ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+            <div class="input-group" >
                 <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
                         aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
                         bind:value="name[{{ locale }}].value"></select>
@@ -49,12 +50,7 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-        </div>
-        <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid">
-            <p class="alert alert-danger">{{ 'locale.patient.errors.gender' | i18n }}</p>
-        </div>
-        <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid">
-            <p class="alert alert-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
+            <p ng-show="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>
 

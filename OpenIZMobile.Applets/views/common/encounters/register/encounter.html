@@ -7,7 +7,7 @@
         <div class="col-xs-12 col-sm-10"><input required="required" type="datetime-local" name="encounterDate" max="{{$root.page.loadTime | date: 'yyyy-MM-ddTHH:mm:SS'}}" class="form-control" ng-model="encounter.actTime" /></div>
     </div>
     <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.encounterDate.$touched||masterForm.$submitted)&amp;&amp;masterForm.encounterDate.$invalid">
-        <p class="alert alert-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
+        <p class="help-block text-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>

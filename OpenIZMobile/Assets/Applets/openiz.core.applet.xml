@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.3139">
+  <info id="org.openiz.core" version="0.6.7.3393">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -220,7 +220,19 @@ angular.element(document).ready(function () {
 
         scope.$watch(function (s) { return s.patient.participation }, function (newValue, oldValue) {
             scope.display._vaccineAdministrations = {};
-            if(newValue != null)
+            if(newValue != null &amp;&amp; newValue.RecordTarget !== undefined)
+            {
+                // Sort based on dose
+                newValue.RecordTarget.sort(function(a,b) {
+                    if (a.actModel.actTime &gt; b.actModel.actTime)
+                        return 1;
+                    else if (a.actModel.actTime &lt; b.actModel.actTime)
+                        return -1;
+                    else {
+                        return 0;
+                    }
+                });
+
                 for (var ptcpt in newValue.RecordTarget) {
                     var model = newValue.RecordTarget[ptcpt].actModel;
 
@@ -228,7 +240,7 @@ angular.element(document).ready(function () {
                     if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                         continue;
 
-                    var antigenId = model.participation.Product.playerModel.name.OfficialRecord.component.$other.value;
+                    var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
                     if (scope.display._vaccineAdministrations[antigenId] == null) {
                         scope.display._vaccineAdministrations[antigenId] = [];
                         for (var i = 0; i &lt; model.doseSequence; i++)
@@ -236,8 +248,9 @@ angular.element(document).ready(function () {
                         //model._enabled = true;
                     }
                     scope.display._vaccineAdministrations[antigenId].push(model);
-    //                scope.$apply();
+                    //                scope.$apply();
                 }
+            }
         });
     });
 });
@@ -444,6 +457,36 @@ $(document).ready(function () {
   <asset name="controllers/common/patients/search/search-results.min.js" mimeType="text/javascript">
     <contentText>$(document).ready(function(){$("table.oiz-patient-results").each(function(n,t){var i=angular.element(t).scope();i.search=i.search||{};i.search.query=i.search.query||{};i.search.results=null;i.search.pageSize=i.search.pageSize||10;i.search.search=i.search.search||function(){OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));OpenIZ.Patient.findAsync({query:i.search.query,offset:0,count:i.search.pageSize,continueWith:function(n){i.search.results=n.item;i.$apply()},onException:function(n){OpenIZ.App.toast(n.message)},"finally":function(){OpenIZ.App.hideWait()}})};i.search.next=i.search.next||function(){OpenIZ.Patient.findAsync({query:i.search.query,offset:i.search.results.offset+i.search.pageSize,count:i.search.pageSize,continueWith:function(n){i.search.results=n.all("Patient");i.$apply()},onException:function(n){OpenIZ.App.toast(n.message)}})};i.search.previous=i.search.previous||function(){OpenIZ.Patient.findAsync({query:i.search.query,offset:i.search.results.offset-i.search.pageSize,count:i.search.pageSize,continueWith:function(n){i.search.results=n.all("Patient");i.$apply()},onException:function(n){OpenIZ.App.toast(n.message)}})};i.search.goPage=i.search.goPage||function(n){OpenIZ.Patient.findAsync({query:i.search.query,offset:n*i.search.pageSize,count:i.search.pageSize,continueWith:function(n){i.search.results=n.all("Patient");i.$apply()},onException:function(n){OpenIZ.App.toast(n.message)}})}})});</contentText>
   </asset>
+  <asset name="controllers/common/security/forgotpassword.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;
+/// &lt;reference path="../../js/openiz.js"/&gt;
+layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
+
+    $scope.resetPassword = function (username) {
+
+        if (username !== undefined)
+        {
+            OpenIZ.Authentication.getUserAsync({
+                data: {
+                    userName: username
+                },
+                continueWith: function(data)
+                {
+                    window.location.href = '~/views/common/security/resetPassword.html';
+                },
+                onException: function(error)
+                {
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.security.errors.unableToResetPassword"));
+                }
+            });
+        }
+        else
+        {
+            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.security.errors.unableToResetPassword"));
+        }
+    };
+}]);</contentText>
+  </asset>
   <asset name="controllers/common/security/login.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="~/js/openiz-model.js"/&gt;
 
@@ -645,6 +688,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function 
     OpenIZ.Authentication.getSessionAsync({
         continueWith: function (session) {
             $rootScope.session = session;
+            session.entity.telecom = session.entity.telecom || {};
+            if (Object.keys(session.entity.telecom).length == 0)
+                session.entity.telecom.MobilePhone = { value: "" };
+            $rootScope.$apply();
         }
     });
 
@@ -677,7 +724,7 @@ angular.element(document).ready(function () {
 </contentText>
   </asset>
   <asset name="controllers/layouts/root.min.js" mimeType="text/javascript">
-    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
+    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t.entity.telecom=t.entity.telecom||{};Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""});n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
   </asset>
   <asset name="controllers/settings/password.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;
@@ -745,65 +792,22 @@ layoutApp.controller('PreferencesController', ['$scope', function ($scope) {
 layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
     $scope.saveProfile = function (userEntity) {
 
-        if (userEntity.name.OfficialRecord !== undefined)
-        {
-            if (userEntity.name.OfficialRecord.component.Family !== undefined)
-            {
-                for (var i = 0; i &lt; userEntity.name.OfficialRecord.component.Family.length; i++)
-                {
-                    userEntity.name[0].component.push(
-                    {
-                        $type: "EntityNameComponent",
-                        type: OpenIZModel.NameComponentKeys.Family,
-                        value: userEntity.name.OfficialRecord.component.Family[i]
-                    });
-                }
-            }
+        OpenIZ.App.showWait();
+        // Fix the type of telecom
+        var telKey = Object.keys(userEntity.telecom)[0];
+        userEntity.telecom.$other = userEntity.telecom[telKey];
+        delete userEntity.telecom[telKey];
+        
+        // When we update the facility we clear the model properties
+        userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel = null;
 
-
-            if (userEntity.name.OfficialRecord.component.Given !== undefined)
-            {
-                for (var i = 0; i &lt; userEntity.name.OfficialRecord.component.Given.length; i++)
-                {
-                    userEntity.name[0].component.push(
-                    {
-                        $type: "EntityNameComponent",
-                        type: OpenIZModel.NameComponentKeys.Given,
-                        value: userEntity.name.OfficialRecord.component.Given[i]
-                    });
-                }
-            }
-        }
-
-        if (userEntity.telecom.$other !== undefined)
-        {
-            if (userEntity.telecom.$other.use !== undefined)
-            {
-                userEntity.telecom[0].use = userEntity.telecom.$other.use;
-            }
-
-            if (userEntity.telecom.$other.value !== undefined)
-            {
-                userEntity.telecom[0].value = userEntity.telecom.$other.value;
-            }
-        }
-
-        if (userEntity.language.languageCode !== undefined)
-        {
-            userEntity.language.push(
-            {
-                $type: "PersonLanguageCommunication",
-                isPreferred: true,
-                languageCode: userEntity.language.languageCode
-            });
-        }
-
-
-
+        // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,
             continueWith: function (e) {
                 OpenIZ.App.toast("Profile updated successfully");
+                OpenIZ.Localization.setLocale(userEntity.language[0].languageCode);
+                window.location.reload();
             },
             onException: function (ex) {
                 console.log(ex);
@@ -813,6 +817,9 @@ layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
             }
         });
     };
+
+    // HACK: Copy first telecom to $other for view
+
 }]);</contentText>
   </asset>
   <asset name="controllers/settings/settings.js" mimeType="text/javascript">
@@ -910,6 +917,10 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 }
 
 .patient-panel small { color: #fff }
+
+.text-danger {
+    color:#d9534f
+}
 
 .vaccine-table-column {
     width:20%;
@@ -2327,12 +2338,16 @@ angular.module('openiz', [])
                 }
 
                 // Tag input
-                $timeout(
-                    $(element).tokenfield({
-                        delimiter: ' ,',
-                        createTokensOnBlur: true
-                    })
-                );
+                scope.$watch(attrs.ngModel, function (nvalue, ovalue) {
+                    if (ovalue != nvalue &amp;&amp;
+                        ovalue === undefined)
+                        $(element).trigger('change');
+                });
+
+                $(element).tokenfield({
+                    delimiter: ' ,',
+                    createTokensOnBlur: true
+                });
             }
         }
     })
@@ -2403,6 +2418,8 @@ angular.module('openiz', [])
                     var filterString = $(element).attr('data-filter');
                     var displayString = $(element).attr('data-display');
                     var defaultFilterString = $(element).attr('data-default');
+                    var groupString = $(element).attr('data-group-by');
+                    var groupDisplayString = $(element).attr('data-group-display');
 
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
@@ -2436,19 +2453,51 @@ angular.module('openiz', [])
 
                                 //params.page = params.page || 0;
                                 var data = data.item || data;
-                                return {
-                                    results: $.map(data, function (o) {
-                                        o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : "");
-                                        return o;
-                                    })
-                                };
+                                var retVal = { results: [] };
+                                if (groupString == null)
+                                    return {
+                                        results: $.map(data, function (o) {
+                                            o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : "");
+                                            return o;
+                                        })
+                                    };
+                                else {
+                                    // Get the group string
+                                    for (var itm in data) {
+                                        // parent obj
+                                        try
+                                        {
+                                            var scope = eval('data[itm].' + groupString);
+                                            var groupDisplay = "";
+                                            if (groupDisplayString != null)
+                                                groupDisplay = eval(groupDisplayString);
+                                            else
+                                                groupDisplay = scope;
+
+                                            var gidx = $.grep(retVal.results, function (e) { return e.text == groupDisplay });
+                                            if (gidx.length == 0)
+                                                retVal.results.push({ "text": groupDisplay, "children": [data[itm]] });
+                                            else
+                                                gidx[0].children.push(data[itm]);
+                                        }
+                                        catch (e) {
+                                            retVal.results.push(data[itm]);
+                                        }
+                                    }
+                                }
+
+                                return retVal;
                             },
                             cache: true
                         },
                         escapeMarkup: function (markup) { return markup; }, // Format normally
                         minimumInputLength: 4,
                         templateSelection: function (result) {
-                            if (result.name != null)
+                            if (displayString != null) {
+                                var scope = result;
+                                return eval(displayString);
+                            }
+                            else if (result.name != null)
                                 return OpenIZ.Util.renderName(result.name.OfficialRecord);
                             else if (result.text != "")
                                 return result.text;
@@ -2457,7 +2506,11 @@ angular.module('openiz', [])
                         },
                         keepSearchResults : true,
                         templateResult: function (result) {
-                            if (result.name != null &amp;&amp; result.typeConceptModel != null &amp;&amp; result.typeConceptModel.name != null)
+                            if (displayString != null) {
+                                var scope = result;
+                                return eval(displayString);
+                            }
+                            else if (result.name != null &amp;&amp; result.typeConceptModel != null &amp;&amp; result.typeConceptModel.name != null)
                                 return "&lt;div class='label label-default'&gt;" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "&lt;/div&gt; " + OpenIZ.Util.renderName(result.name.OfficialRecord);
                             else if (result.name != null)
@@ -2489,7 +2542,7 @@ angular.module('openiz', [])
     });</contentText>
   </asset>
   <asset name="js/openiz-ng.min.js" mimeType="text/javascript">
-    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n.NID!==undefined)return n.NID.value;for(var t in n)return n.NID}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).directive("oizTag",function(n){return{require:"ngModel",link:function(t,i,r,u){function f(n){return String(n).split(",")}function e(n){return typeof n===Array?n.join(viewView):n}u.$parsers.unshift(f);u.$formatters.unshift(e);n($(i).tokenfield({delimiter:" ,",createTokensOnBlur:!0}))}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var u=$(i).attr("oiz-entitysearch"),t=$(i).attr("data-filter"),f=$(i).attr("data-display"),r=$(i).attr("data-default"),n={};t!==undefined&amp;&amp;(n=JSON.parse(t));r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}}),ajax:{url:"/__ims/"+u,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){$("option",i[0]).remove();var n=n.item||n;return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?OpenIZ.Util.renderName(n.name.OfficialRecord):n.text!=""?n.text:n.element!==undefined?n.element.innerText:void 0},keepSearchResults:!0,templateResult:function(n){return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
+    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n.NID!==undefined)return n.NID.value;for(var t in n)return n.NID}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).directive("oizTag",function(){return{require:"ngModel",link:function(n,t,i,r){function u(n){return String(n).split(",")}function f(n){return typeof n===Array?n.join(viewView):n}r.$parsers.unshift(u);r.$formatters.unshift(f);n.$watch(i.ngModel,function(n,i){i!=n&amp;&amp;i===undefined&amp;&amp;$(t).trigger("change")});$(t).tokenfield({delimiter:" ,",createTokensOnBlur:!0})}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var o=$(i).attr("oiz-entitysearch"),r=$(i).attr("data-filter"),t=$(i).attr("data-display"),u=$(i).attr("data-default"),f=$(i).attr("data-group-by"),e=$(i).attr("data-group-display"),n={};r!==undefined&amp;&amp;(n=JSON.parse(r));u!==undefined&amp;&amp;(n=JSON.parse(u));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}}),ajax:{url:"/__ims/"+o,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){var n,t,r,s,u,o;if($("option",i[0]).remove(),n=n.item||n,t={results:[]},f==null)return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})};for(r in n)try{s=eval("data[itm]."+f);u="";u=e!=null?eval(e):s;o=$.grep(t.results,function(n){return n.text==u});o.length==0?t.results.push({text:u,children:[n[r]]}):o[0].children.push(n[r])}catch(h){t.results.push(n[r])}return t},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null?OpenIZ.Util.renderName(n.name.OfficialRecord):n.text!=""?n.text:n.element!==undefined?n.element.innerText:void 0},keepSearchResults:!0,templateResult:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
   </asset>
   <asset name="js/openiz.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="openiz-model.js"/&gt;
@@ -2548,6 +2601,47 @@ var OpenIZ = OpenIZ || {
      * @summary URL Parameters
      */
     urlParams: {},
+
+    /**
+     * @summary Provides operations for managing acts.
+     * @class
+     */
+    Act: {
+
+        /**
+         * @summary Performs a patient insert asynchronously
+         * @memberof OpenIZ.Act
+         * @method
+         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {Object} controlData The data which is used to control the call
+         * @example
+         * OpenIZ.Act.insertAsync({
+         *      patient: new OpenIZModel.Act(...),
+         *      continueWith: function(result) { // Do something with result },
+         *      onException: function(ex) { // Handle exception }
+         * });
+         */
+        insertAsync: function (controlData) {
+            OpenIZ.Ims.post({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                data: controlData.data
+            });
+        },
+        /**
+        * @summary Get an empty template object asynchronously
+        */
+        getActTemplateAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Act/Template",
+                query: { "templateId": controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        }
+    },
 
     /**
      * @summary Interoperation with the IMS
@@ -2656,6 +2750,22 @@ var OpenIZ = OpenIZ || {
      * @class
      */
     Util: {
+        /**
+         * @summary Render address for display
+         */
+        renderAddress : function(entity) {
+            var address = entity.address.Direct || entity.address.HomeAddress;
+            var retVal = "";
+            if(address.component.City)
+                retVal += address.component.City + ", ";
+            if (address.component.County != null)
+                retVal += address.component.County + ", ";
+            if (address.component.State != null)
+                retVal += address.component.State + ", ";
+            if (address.component.Country != null)
+                retVal += address.component.Country + ", ";
+            return retVal.substring(0, retVal.length - 2);
+        },
         /**
          * @summary Render act
          */
@@ -2963,7 +3073,63 @@ var OpenIZ = OpenIZ || {
          * });
          */
         refreshSessionAsync: function (controlData) {
-        }
+        },
+
+        /**
+        * @summary Finds a user by username.
+        * @memberof OpenIZ.Authentication
+        * @method
+        */
+        getUserAsync: function(controlData) {
+            $.ajax(
+            {
+                method: "POST",
+                url: "/__auth/get_user",
+                data: controlData.data,
+                contentType: "application/json; charset=UTF-8",
+                success: function (xhr, data)
+                {
+                    if (data != null &amp;&amp; data.error !== undefined)
+                    {
+                        controlData.onException(new OpenIZModel.Exception(data.error), data.error_description, null);
+                    }
+                    else if (data != null)
+                    {
+                        controlData.continueWith(data);
+                    }
+                    else
+                    {
+                        controlData.onException(new OpenIZModel.Exception("err_general", data, null));
+                    }
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+                },
+                error: function (data)
+                {
+                    var error = data.responseJSON;
+
+                    if (error != null &amp;&amp; error.error !== undefined)
+                    {
+                        // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                    }
+                    else
+                    {
+                        // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                    }
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+
+                }
+            });
+        },
     },
     /** 
      * @summary Represents functions for interacting with the protocol service
@@ -3571,6 +3737,7 @@ var OpenIZ = OpenIZ || {
                 resource: "Patient",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
+                finally: controlData.finally,
                 query: controlData.query
             });
         },
@@ -3776,6 +3943,18 @@ var OpenIZ = OpenIZ || {
      * @summary Place functions
      */
     Place: {
+        /**
+         * @summary Find places async
+         */
+        findAsync : function(controlData) {
+            OpenIZ.Ims.get({
+                resource: "Place",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                query: controlData.query
+            });
+        },
         /**
          * @summary Bind a place filter to a select box
          * @param {Element} target The element to be bound to
@@ -4086,7 +4265,7 @@ $.ajaxSetup({
 </contentText>
   </asset>
   <asset name="js/openiz.min.js" mimeType="text/javascript">
-    <contentText>var OpenIZApplicationService=window.OpenIZApplicationService||{GetLocale:function(){return"en"},GetStrings:function(){return"[]"},GetTemplateForm:function(n){switch(n){case"Act.Observation.Weight":return"/org.openiz.core/views/templates/act.observation.weight.html";case"Act.SubstanceAdmin.Immunization":return"/org.openiz.core/views/templates/act.substanceadmin.immunization.html";default:return"../templates/"+n+".html"}}},OpenIZ=OpenIZ||{urlParams:{},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Util:{renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getSessionAsync:function(n){n.onException=n.onException||OpenIZ.Util.logException;$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",t,null))}).error(function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}).always(function(){n.finally!==undefined&amp;&amp;n.finally()})},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(){}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},App:{newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){$.getJSON("/__app/info",null,function(t){n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()})},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},saveAlertAsync:function(n){$.post("/__app/alerts",n.data,function(t){n.continueWith(t)},"json").fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Place:{bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain}catch(n){console.error(n)}},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.post({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON}});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();</contentText>
+    <contentText>var OpenIZApplicationService=window.OpenIZApplicationService||{GetLocale:function(){return"en"},GetStrings:function(){return"[]"},GetTemplateForm:function(n){switch(n){case"Act.Observation.Weight":return"/org.openiz.core/views/templates/act.observation.weight.html";case"Act.SubstanceAdmin.Immunization":return"/org.openiz.core/views/templates/act.substanceadmin.immunization.html";default:return"../templates/"+n+".html"}}},OpenIZ=OpenIZ||{urlParams:{},Act:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Act",continueWith:n.continueWith,onException:n.onException,data:n.data})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Util:{renderAddress:function(n){var t=n.address.Direct||n.address.HomeAddress,i="";return t.component.City&amp;&amp;(i+=t.component.City+", "),t.component.County!=null&amp;&amp;(i+=t.component.County+", "),t.component.State!=null&amp;&amp;(i+=t.component.State+", "),t.component.Country!=null&amp;&amp;(i+=t.component.Country+", "),i.substring(0,i.length-2)},renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getSessionAsync:function(n){n.onException=n.onException||OpenIZ.Util.logException;$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",t,null))}).error(function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}).always(function(){n.finally!==undefined&amp;&amp;n.finally()})},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(){},getUserAsync:function(n){$.ajax({method:"POST",url:"/__auth/get_user",data:n.data,contentType:"application/json; charset=UTF-8",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},App:{newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){$.getJSON("/__app/info",null,function(t){n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()})},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){return OpenIZApplicationService.GetService(n)},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},saveAlertAsync:function(n){$.post("/__app/alerts",n.data,function(t){n.continueWith(t)},"json").fail(function(t){var i=t.responseJSON;if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Place:{findAsync:function(n){OpenIZ.Ims.get({resource:"Place",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Configuration:{getApplicationSetting:function(n){try{return OpenIZConfigurationService.GetApplicationSetting(n)}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{OpenIZConfigurationService.SetApplicationSetting(n,t)}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain}catch(n){console.error(n)}},getSection:function(n){try{return JSON.parse(OpenIZConfigurationService.GetSection(n))}catch(t){console.error(t)}},joinRealm:function(n,t){try{return OpenIZConfigurationService.JoinRealm(n,t)}catch(i){console.error(i)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},save:function(n){try{return OpenIZConfigurationService.Save(JSON.stringify(n))?(OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted"),!0):(OpenIZ.App.toast("Saving configuration failed"),!1)}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.post({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON}});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();</contentText>
   </asset>
   <asset name="layouts/minimal.html" mimeType="text/html">
     <contentHtml>
@@ -12491,7 +12670,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.encounterDate.$touched||masterForm.$submitted)&amp;&amp;masterForm.encounterDate.$invalid">
-            <p class="alert alert-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
+            <p class="help-block text-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
           </div>
           <div class="form-group row">
             <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>
@@ -12660,8 +12839,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
           </div>
           <div class="form-group">
             <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-            <div class="col-xs-4">
-              <div class="input-group" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+            <div class="col-xs-4" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+              <div class="input-group">
                 <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon">
                   <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
@@ -12676,10 +12855,11 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </button>
                 </span>
               </div>
+              <p ng-show="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
             </div>
             <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-            <div class="col-xs-4">
-              <div class="input-group" ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+            <div class="col-xs-4" ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+              <div class="input-group">
                 <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[{{ locale }}].value">
                 </select>
                 <span class="input-group-btn">
@@ -12689,12 +12869,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </button>
                 </span>
               </div>
-            </div>
-            <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid">
-              <p class="alert alert-danger">{{ 'locale.patient.errors.gender' | i18n }}</p>
-            </div>
-            <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid">
-              <p class="alert alert-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
+              <p ng-show="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.gender' | i18n }}</p>
             </div>
           </div>
         </div>
@@ -13005,7 +13180,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 <select class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:vaue="name[{{ locale }}].value" ng-model="search.query['genderConcept']" name="genderFilter" />
               </th>
               <th>
-                <select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
+                <select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }" data-group-by="address.Direct.component.County">
                 </select>
               </th>
               <th>
@@ -13223,6 +13398,38 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       </content>
     </contentHtml>
   </asset>
+  <asset name="views/common/security/forgotpassword.html" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">{{ 'locale.security.forgotPassword.title' | i18n }}</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/security/forgotpassword.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.security.forgotPassword.title' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <form name="forgotPasswordForm" novalidate="novalidate" class="form-horizontal" role="form" ng-submit="forgotPasswordForm.$valid &amp;&amp; resetPassword(username)" ng-controller="ForgotPasswordController">
+                <div class="form-group" ng-class="{ 'has-error' : forgotPasswordForm.username.$invalid &amp;&amp; forgotPasswordForm.username.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="text" ng-required="true" ng-model="username" name="username" class="form-control" />
+                    <p ng-show="forgotPasswordForm.username.$invalid &amp;&amp; forgotPasswordForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="{{ 'locale.action.submit' | i18n }}" class="btn btn-primary" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
   <asset name="views/common/security/login.html" mimeType="text/html">
     <contentHtml>
       <script>/org.openiz.core/controllers/common/security/login.js</script>
@@ -13230,34 +13437,30 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
         <form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)" xmlns:openiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml">
           <fieldset class="form-horizontal form-group">
             <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
-            <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
+            <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
               <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
               <div class="col-xs-9">
                 <div class="input-group">
                   <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                  <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
                 </div>
               </div>
             </div>
-            <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid">
-              <p class="alert alert-danger">{{ 'locale.security.errors.missingUsername' | i18n }}</p>
-            </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
               <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
               <div class="col-xs-9">
                 <div class="input-group">
-                  <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" id="passwordInput" />
+                  <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
+                  <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
                 </div>
               </div>
-            </div>
-            <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid ">
-              <p class="alert alert-danger">{{ 'locale.security.errors.missingPassword' | i18n }}</p>
             </div>
           </fieldset>
           <div class="row">
             <div class="col-xs-12">
               <div class="btn-group pull-right">
                 <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
-                <a class="btn btn-lg btn-warning" href="~/views/security/resetName.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
+                <a class="btn btn-lg btn-warning" href="~/views/common/security/forgotPassword.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
                 <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
               </div>
             </div>
@@ -13993,7 +14196,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <contentHtml>
       <script>/org.openiz.core/controllers/settings/password.js</script>
       <content>
-        <form class="form-horizontal form" novalidate="novalidate" ng-submit="changePassword($root.session.user.userName, changePassword.existing, changePassword.password, changePassword.confirmation)" ng-controller="UserPasswordController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+        <form name="changePasswordForm" class="form-horizontal form" novalidate="novalidate" ng-submit="changePasswordForm.$valid &amp;&amp; changePassword($root.session.user.userName, changePassword.existing, changePassword.password, changePassword.confirmation)" ng-controller="UserPasswordController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
           <div class="alert alert-warning" ng-if="!$root.page.onlineState">
         {{ 'locale.preferences.password.onlineOnly' | i18n }}
     </div>
@@ -14004,22 +14207,25 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 <input type="text" name="username" ng-model="::$root.session.user.userName" readonly="readonly" class="form-control" />
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : changePasswordForm.existing.$invalid &amp;&amp; changePasswordForm.existing.$touched }">
               <label for="existing" class="col-xs-12 col-sm-2 control-label">{{ 'locale.preferences.existingPassword' | i18n }}</label>
               <div class="col-xs-12 col-sm-10">
                 <input ng-disabled="!$root.page.onlineState" type="password" name="existing" ng-required="true" ng-model="changePassword.existing" class="form-control" />
+                <p ng-show="changePasswordForm.existing.$invalid &amp;&amp; changePasswordForm.existing.$touched" class="help-block text-danger">{{ 'locale.preferences.errors.existingPasswordRequired' | i18n }}</p>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : changePasswordForm.password.$invalid &amp;&amp; changePasswordForm.password.$touched }">
               <label for="password" class="col-xs-12 col-sm-2 control-label">{{ 'locale.preferences.password' | i18n }}</label>
               <div class="col-xs-12 col-sm-10">
                 <input ng-disabled="!$root.page.onlineState" type="password" name="password" ng-required="true" ng-model="changePassword.password" class="form-control" />
+                <p ng-show="changePasswordForm.password.$invalid &amp;&amp; changePasswordForm.password.$touched" class="help-block text-danger">{{ 'locale.preferences.errors.newPasswordRequired' | i18n }}</p>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{ 'has-error' : changePasswordForm.confirm.$invalid &amp;&amp; changePasswordForm.confirm.$touched }">
               <label for="confirm" class="col-xs-12 col-sm-2 control-label">{{ 'locale.preferences.confirm' | i18n }}</label>
               <div class="col-xs-12 col-sm-10">
                 <input ng-disabled="!$root.page.onlineState" type="password" name="confirm" ng-required="true" ng-model="changePassword.confirmation" class="form-control" />
+                <p ng-show="changePasswordForm.confirm.$invalid &amp;&amp; changePasswordForm.confirm.$touched" class="help-block text-danger">{{ 'locale.preferences.errors.confirmationPasswordRequired' | i18n }}</p>
               </div>
             </div>
             <div class="row">
@@ -14054,22 +14260,22 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 <input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Family" />
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" ng-repeat="(use,tel) in $root.session.entity.telecom">
               <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
               <div class="col-xs-4">
-                <select name="telephone" id="telephone" class="form-control" ng-model="$root.session.entity.telecom.$other.use" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse">
+                <select name="telephone" id="telephone" class="form-control" ng-model="tel.use" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse">
                 </select>
               </div>
               <div class="col-xs-6">
-                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="$root.session.entity.telecom.$other.value" class="form-control" />
+                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="tel.value" class="form-control" />
               </div>
             </div>
             <div class="form-group">
               <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
               <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                  <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
-                    <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.OfficialRecord | oizEntityName }}</option>
+                  <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
+                    <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                   </select>
                 </div>
               </div>
@@ -14078,7 +14284,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
               <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
               <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                  <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language.languageCode">
+                  <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language[0].languageCode">
                     <option value="en">English</option>
                     <option value="sw">Kiswahili</option>
                   </select>
@@ -14175,10 +14381,10 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="row form-group">
-            <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['uom_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['uom_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['uom_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['uom_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingUom' | i18n }}
         </div>
-            <div class="col-xs-offset-2 col-xs-10 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['weight_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['weight_' + act.actModel.id].$invalid">
+            <div class="col-xs-offset-2 col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['weight_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['weight_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.weightInvalid' | i18n }}
         </div>
           </div>
@@ -14200,11 +14406,11 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   <input type="checkbox" ng-model="act._enabled" checked="checked" value="1" />
                 </span>
                 <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.immunizations.antigen' | i18n }}</span>
-                <select ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
+                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.antigen' | i18n }}</option>
                 </select>
                 <span class="input-group-addon" ng-show="act._enabled">{{ 'locale.encounters.immunizations.lot' | i18n }}</span>
-                <select ng-show="act._enabled" ng-required="act._enabled" name="consumable_{{act.actModel.id}}" class="form-control" ng-model="act.actModel.participation.Consumable.player" data-watch="act.actModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter="{ &quot;relationship[ManufacturedProduct].source&quot; : &quot;{{ act.actModel.participation.Product.player }}&quot;, &quot;expiryDate&quot; : &quot;&gt;{{ $root.page.loadTime | date: &quot;yyyy-MM-dd&quot; }}&quot; }" data-display="scope.lotNumber">
+                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['consumable_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.actModel.id].$invalid}" ng-show="act._enabled" ng-required="act._enabled" name="consumable_{{act.actModel.id}}" class="form-control" ng-model="act.actModel.participation.Consumable.player" data-watch="act.actModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter="{ &quot;relationship[ManufacturedProduct].source&quot; : &quot;{{ act.actModel.participation.Product.player }}&quot;, &quot;expiryDate&quot; : &quot;&gt;{{ $root.page.loadTime | date: &quot;yyyy-MM-dd&quot; }}&quot; }" data-display="scope.lotNumber">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.lot' | i18n }}</option>
                 </select>
                 <span ng-show="act._enabled" class="input-group-addon">
@@ -14221,16 +14427,16 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="row form-group">
-            <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingProduct' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['consumable_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['consumable_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['site_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['site_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['site_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['site_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="!act._enabled &amp;&amp; (masterForm['reason_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['reason_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="!act._enabled &amp;&amp; (masterForm['reason_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['reason_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
         </div>
           </div>
@@ -14239,6 +14445,23 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     </contentHtml>
   </asset>
   <strings lang="en">
+    <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.cancel">Cancel</string>
+    <string key="locale.action.save">Save</string>
+    <string key="locale.common.no">No</string>
+    <string key="locale.common.yes">Yes</string>
+    <string key="locale.common.unknown">Unknown</string>
+    <string key="locale.security.login.helpText">Please log into TImR to continue</string>
+    <string key="locale.security.login.label.username">Username</string>
+    <string key="locale.security.login.label.password">Password</string>
+    <string key="locale.security.login.placeholder.username">Enter your username</string>
+    <string key="locale.security.login.placeholder.password">Enter your password</string>
+    <string key="locale.security.login.button.forgotPassword">Forgot Password</string>
+    <string key="locale.security.login.button.login">Login</string>
+    <string key="locale.security.forgotPassword.title">Forgot Password</string>
+    <string key="locale.security.errors.usernameRequired">Please enter a username</string>
+    <string key="locale.security.errors.passwordRequired">Please enter a password</string>
+    <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
     <string key="locale.error.500.title">Internal Server Error</string>
@@ -14316,6 +14539,9 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.preferences.telephone">Tel / E-Mail</string>
     <string key="locale.preferences.facility">Facility</string>
     <string key="locale.preferences.language">Language</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>

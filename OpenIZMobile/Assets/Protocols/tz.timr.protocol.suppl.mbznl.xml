@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ProtocolDefinition xmlns="http://openiz.org/protocol" id="MBDZNL" name="Mebendazole Supplement" uuid="7CB8E650-A8B9-42EF-B6DC-FF64570D3A56">
+  <rule id="MEBENDAZOLE" repeat="10">
+    <when evaluation="and">
+      <!-- Vitamin A not set yet -->
+      <imsiExpression negationIndicator="true">
+        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=Supplement-Mebendazole&amp;
+        participation[RecordTarget].source@SubstanceAdministration.doseSequence=$index
+      </imsiExpression>
+      <linqExpression>index>1</linqExpression>
+    </when>
+    <then>
+      <action>
+        <jsonModel>
+          <![CDATA[
+          {
+				      "$type": "SubstanceAdministration",
+              template: {
+                  mnemonic: "Act.SubstanceAdmin.Supplement"
+              },
+             
+              "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
+              "typeConceptModel": { "id" : "7D84A057-1FCC-4054-A51F-B77D230FC6D1", "mnemonic" : "DrugTherapy" },
+				      "doseSequence": 1,
+              "doseQuantity" : 1.0,
+              "doseUnitModel" : {
+                "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+                "mnemonic" : "DOSE"
+              },
+             "routeModel" : {
+                "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
+                "mnemonic": "RouteOfAdministration-PO"
+              },
+              "siteModel" : {
+                "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
+                "mnemonic": 'Site-Oral'
+              },         
+				      "participation": {
+					      "Product": [{
+                  "playerModel" : {
+                    "$type" : "Material",
+                    "id" : "7D80E518-6E04-4091-8D19-7A3BB2B32C1F",
+                    "typeConceptModel": {
+                      "id" : "1ee21592-da84-4253-a65f-84681aeae1b6",
+                      "mnemonic": "Supplement-Mebendazole"
+                    },
+						        "name": {
+							        "OfficialRecord": [{
+								        "component": {
+									        "$other": ["Benzimidazole derivative"]
+								        }
+							        }],
+                      "Assigned": [{
+								        "component": {
+									        "$other": ["Mebendazole"]
+								        }
+							        }]
+						        }
+                  }
+					      }]
+				      }
+			      }
+        ]]>
+        </jsonModel>
+        <assign propertyName="DoseSequence">index</assign>
+        <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index * 6)</assign>
+        <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index * 6).AddDays(-DateOfBirth.Value.Day + 1)</assign>
+        <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths((index+1) * 6).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>
+      </action>
+    </then>
+  </rule>
+</ProtocolDefinition>

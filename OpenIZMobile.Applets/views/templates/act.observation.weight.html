@@ -25,10 +25,10 @@
         </div>
     </div>
     <div class="row form-group">
-        <div class="col-xs-10 col-xs-offset-2 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['uom_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['uom_' + act.actModel.id].$invalid">
+        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['uom_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['uom_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingUom' | i18n }}
         </div>
-        <div class="col-xs-offset-2 col-xs-10 alert-danger alert" ng-if="act._enabled &amp;&amp; (masterForm['weight_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['weight_' + act.actModel.id].$invalid">
+        <div class="col-xs-offset-2 col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['weight_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['weight_' + act.actModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.weightInvalid' | i18n }}
         </div>
     </div>

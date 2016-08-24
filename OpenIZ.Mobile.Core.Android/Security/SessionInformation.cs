@@ -38,6 +38,7 @@ using System.Globalization;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Android.Security
 {
@@ -45,14 +46,14 @@ namespace OpenIZ.Mobile.Core.Android.Security
     /// Session information
     /// </summary>
     [JsonObject]
-    public class SessionInformation
+    public class SessionInformation : IdentifiedData
     {
         /// <summary>
         /// Default ctor
         /// </summary>
         public SessionInformation()
         {
-
+            this.Key = Guid.NewGuid();
         }
 
         // The tracer
@@ -76,14 +77,14 @@ namespace OpenIZ.Mobile.Core.Android.Security
 
                 this.Issued = DateTime.Parse(cp.FindClaim(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString());
                 this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration)?.Value ?? DateTime.MaxValue.ToString());
-                this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToArray();
+                this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToList();
                 this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
 
             }
             else
             {
                 IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();
-                this.Roles = rps.GetAllRoles(this.UserName);
+                this.Roles = rps.GetAllRoles(this.UserName).ToList();
                 this.Issued = DateTime.Now;
                 this.Expiry = DateTime.MaxValue;
             }
@@ -95,7 +96,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
                 int t;
                 var securityUser = userService.GetUser(principal.Identity);
                 this.SecurityUser = securityUser;
-                this.UserEntity = userService.FindUserEntity(o => o.SecurityUserKey == securityUser.Key, 0, 1, out t).FirstOrDefault() ??
+                this.UserEntity = userService.GetUserEntity(principal.Identity) ??
                     new UserEntity()
                     {
                         SecurityUserKey = securityUser.Key,
@@ -106,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
                         },
                         Names = new List<EntityName>()
                         {
-                        new EntityName(NameUseKeys.OfficialRecord, securityUser.UserName)
+                        new EntityName() { NameUseKey =  NameUseKeys.OfficialRecord, Component = new List<EntityNameComponent>() { new EntityNameComponent(NameComponentKeys.Given, securityUser.UserName) } }
                         }
                     };
             }
@@ -143,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
         /// Gets the roles to which the identity belongs
         /// </summary>
         [JsonProperty("roles")]
-        public String[] Roles { get; set; }
+        public List<String> Roles { get; set; }
 
         /// <summary>
         /// True if authenticated
@@ -180,5 +181,16 @@ namespace OpenIZ.Mobile.Core.Android.Security
         /// </summary>
         [JsonProperty("refresh_token")]
         public String RefreshToken { get; set; }
+
+        /// <summary>
+        /// Issue date
+        /// </summary>
+        public override DateTimeOffset ModifiedOn
+        {
+            get
+            {
+                return this.Issued;
+            }
+        }
     }
 }

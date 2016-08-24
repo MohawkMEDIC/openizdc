@@ -9,6 +9,8 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Acts;
+using System.Linq.Expressions;
+using OpenIZ.Core.Model.Reflection;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {

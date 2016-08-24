@@ -482,341 +482,6 @@
             Force delay loading of properties
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.AmiCollection`1">
-            <summary>
-            AMI collection base
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.AmiCollection`1.Size">
-            <summary>
-            Total collection size
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.AmiCollection`1.Offset">
-            <summary>
-            Total offset
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.AmiCollection`1.CollectionItem">
-            <summary>
-            Collection item
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.RevokeReason">
-            <summary>
-            The reason something is revoked
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.SubmissionInfo">
-            <summary>
-            Enrollment information
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.RequestID">
-            <summary>
-            RequestId
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.XmlStatusCode">
-            <summary>
-            Status code
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.DispositionMessage">
-            <summary>
-            Disposition message
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.SubmittedWhen">
-            <summary>
-            Submitted on
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.ResolvedWhen">
-            <summary>
-            Resolved on
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.RevokedWhen">
-            <summary>
-            Revoked on
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.XmlRevokeReason">
-            <summary>
-            Revokation reason
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.EMail">
-            <summary>
-            Email address of user
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.NotBefore">
-            <summary>
-            Before date
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.NotAfter">
-            <summary>
-            Expiry
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.AdminContact">
-            <summary>
-            Administration contact
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.AdminSiteAddress">
-            <summary>
-            Administration
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.RevokedReason">
-            <summary>
-            Revoke reason from Keystore
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionInfo.DistinguishedName">
-            <summary>
-            DN
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.SubmissionRequest">
-            <summary>
-            Submission request
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionRequest.CmcRequest">
-            <summary>
-            Gets or sets the cmc request
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionRequest.AdminContactName">
-            <summary>
-            Gets or sets the contact name
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionRequest.AdminAddress">
-            <summary>
-            Gets or sets the admin address
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.SubmissionResult">
-            <summary>
-            Represents the submission result
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Security.SubmissionResult.#ctor(System.String,System.Int32,OpenIZ.Core.Model.AMI.Security.SubmissionStatus,System.String)">
-            <summary>
-            Creates a new client certificate request result based on the internal request response
-            </summary>
-            <param name="certificateRequestResponse"></param>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionResult.Message">
-            <summary>
-            Gets or sets the message from the server
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionResult.Certificate">
-            <summary>
-            Gets or sets the certificate content
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionResult.Status">
-            <summary>
-            Gets or sets the status
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.SubmissionResult.RequestId">
-            <summary>
-            Gets or sets the request id
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.SubmissionStatus">
-            <summary>
-            Resubmission outcome
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info">
-            <summary>
-            Certificate information
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.#ctor(System.String,System.DateTime,System.DateTime,System.String,System.String)">
-            <summary>
-            Constructs a certificate info
-            </summary>
-            <param name="cert"></param>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.#ctor(System.Collections.Generic.List{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
-            <summary>
-            Create from a CA attribute set
-            </summary>
-            <param name="attributes"></param>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.Id">
-            <summary>
-            The identifier of the certificate
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.Issuer">
-            <summary>
-            Gets or sets the issuers
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.Subject">
-            <summary>
-            Distinguished name
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.NotBefore">
-            <summary>
-            Gets or sets the issue date
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.NotAfter">
-            <summary>
-            Gets or sets the expiry date
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Security.X509Certificate2Info.Thumbprint">
-            <summary>
-            Gets or sets the thumbprint
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo">
-            <summary>
-            Wrapper for policy information
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.#ctor">
-            <summary>
-            Policy information
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.#ctor(OpenIZ.Core.Model.Security.SecurityPolicy)">
-            <summary>
-            Constructs this policy information object from an IMS policy instane
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.#ctor(OpenIZ.Core.Model.Security.SecurityPolicyInstance)">
-            <summary>
-            Constructs this policy information object from an IMS policy instane
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.CanOverride">
-            <summary>
-            True if the policy can be overridden
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.Grant">
-            <summary>
-            The outcome grant if an instance
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.Name">
-            <summary>
-            The name of the policy
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.Oid">
-            <summary>
-            The OID of the policy
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityPolicyInfo.Policy">
-            <summary>
-            Gets or sets the policy information
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo">
-            <summary>
-            Represents security role information.
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo"/> class.
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.#ctor(OpenIZ.Core.Model.Security.SecurityRole)">
-            <summary>
-            Creates a new security role information object from the specified security role.
-            </summary>
-            <param name="role">The security role.</param>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.Id">
-            <summary>
-            Gets or sets the identifier of the message
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.Name">
-            <summary>
-            Gets or sets the name of the group
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.Policies">
-            <summary>
-            Represents policies
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo.Role">
-            <summary>
-            Gets or sets the role information
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo">
-            <summary>
-            Gets or sets security user information
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.#ctor">
-            <summary>
-            Default constructor
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.#ctor(OpenIZ.Core.Model.Security.SecurityUser)">
-            <summary>
-            Creates a new security user from the specified info
-            </summary>
-            <param name="u"></param>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.UserId">
-            <summary>
-            Gets the user identifier
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.UserName">
-            <summary>
-            Gets or sets the name of the user
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.Password">
-            <summary>
-            User password
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.Email">
-            <summary>
-            E-mail address
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.Lockout">
-            <summary>
-            Lockout
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.Roles">
-            <summary>
-            Roles
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo.User">
-            <summary>
-            Security user object
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Model.Attributes.AutoLoadAttribute">
             <summary>
             Auto load attribute
@@ -999,6 +664,11 @@
             Represents a collection of model items 
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.#ctor">
+            <summary>
+            Create new bundle
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Collection.Bundle.m_bundleContents">
             <summary>
             Represents bundle contents
@@ -1008,6 +678,12 @@
             <summary>
             Gets the time the bundle was modified
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.Clean">
+            <summary>
+            Clean the bundle
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:OpenIZ.Core.Model.Collection.Bundle.Item">
             <summary>
@@ -1138,6 +814,11 @@
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.ControlAct">
             <summary>
             Control act event
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Transport">
+            <summary>
+            The physical transporting of materials or people from one place to another
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActMoodKeys">
@@ -4230,10 +3911,18 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection)">
             <summary>
+            Buidl linq expression
+            </summary>
+            <typeparam name="TModelType"></typeparam>
+            <param name="httpQueryParameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection,System.Collections.Generic.Dictionary{System.String,System.Delegate})">
+            <summary>
             Build a LINQ expression
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection,System.String)">
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Collections.Generic.Dictionary{System.String,System.Delegate})">
             <summary>
             Build LINQ expression
             </summary>

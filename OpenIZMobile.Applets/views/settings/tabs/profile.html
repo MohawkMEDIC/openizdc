@@ -9,22 +9,22 @@
             <label class="col-xs-12 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
             <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Family" /> </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" ng-repeat="(use,tel) in $root.session.entity.telecom">
             <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
             <div class="col-xs-4">
-                <select name="telephone" id="telephone" class="form-control" ng-model="$root.session.entity.telecom.$other.use"
+                <select name="telephone" id="telephone" class="form-control" ng-model="tel.use"
                         bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
             </div>
             <div class="col-xs-6">
-                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="$root.session.entity.telecom.$other.value" class="form-control" />
+                <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="tel.value" class="form-control" />
             </div>
         </div>
         <div class="form-group">
             <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                    <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.OfficialRecord | oizEntityName }}</option>
+                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                     </select>
                 </div>
             </div>
@@ -33,7 +33,7 @@
             <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language.languageCode">
+                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language[0].languageCode">
                         <option value="en">English</option>
                         <option value="sw">Kiswahili</option>
                     </select>

@@ -135,11 +135,11 @@ namespace OpenIZ.Mobile.Core.Data
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)
             {
-                existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
+                //existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
                 //// We have to find it
-                //var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
-                //if (getMethod == null) return null;
-                //existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
+                if (getMethod == null) return null;
+                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
             }
 
             var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();

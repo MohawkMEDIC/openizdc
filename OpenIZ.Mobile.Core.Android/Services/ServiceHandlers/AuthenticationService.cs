@@ -36,6 +36,7 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Security;
+using System.Globalization;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {
@@ -71,7 +72,11 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             if (ApplicationContext.Current.Principal == null)
                 throw new SecurityException();
             else
-                return new SessionInformation(ApplicationContext.Current.Principal);
+            {
+                var retVal = new SessionInformation(ApplicationContext.Current.Principal);
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(retVal.UserEntity?.LanguageCommunication?.FirstOrDefault(o=>o.IsPreferred)?.LanguageCode ?? CultureInfo.DefaultThreadCurrentUICulture.TwoLetterISOLanguageName);
+                return retVal;
+            }
         }
 
 		/// <summary>
@@ -95,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <param name="authRequest"></param>
 		/// <returns></returns>
 		[RestOperation(Method = "GET", UriPath = "/get_session")]
-		[return: RestMessage(RestMessageFormat.Json)]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public SessionInformation GetSession()
 		{
 			if (ApplicationContext.Current.Principal == null)

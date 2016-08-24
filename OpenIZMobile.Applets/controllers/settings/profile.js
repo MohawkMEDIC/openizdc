@@ -3,65 +3,22 @@
 layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
     $scope.saveProfile = function (userEntity) {
 
-        if (userEntity.name.OfficialRecord !== undefined)
-        {
-            if (userEntity.name.OfficialRecord.component.Family !== undefined)
-            {
-                for (var i = 0; i < userEntity.name.OfficialRecord.component.Family.length; i++)
-                {
-                    userEntity.name[0].component.push(
-                    {
-                        $type: "EntityNameComponent",
-                        type: OpenIZModel.NameComponentKeys.Family,
-                        value: userEntity.name.OfficialRecord.component.Family[i]
-                    });
-                }
-            }
+        OpenIZ.App.showWait();
+        // Fix the type of telecom
+        var telKey = Object.keys(userEntity.telecom)[0];
+        userEntity.telecom.$other = userEntity.telecom[telKey];
+        delete userEntity.telecom[telKey];
+        
+        // When we update the facility we clear the model properties
+        userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel = null;
 
-
-            if (userEntity.name.OfficialRecord.component.Given !== undefined)
-            {
-                for (var i = 0; i < userEntity.name.OfficialRecord.component.Given.length; i++)
-                {
-                    userEntity.name[0].component.push(
-                    {
-                        $type: "EntityNameComponent",
-                        type: OpenIZModel.NameComponentKeys.Given,
-                        value: userEntity.name.OfficialRecord.component.Given[i]
-                    });
-                }
-            }
-        }
-
-        if (userEntity.telecom.$other !== undefined)
-        {
-            if (userEntity.telecom.$other.use !== undefined)
-            {
-                userEntity.telecom[0].use = userEntity.telecom.$other.use;
-            }
-
-            if (userEntity.telecom.$other.value !== undefined)
-            {
-                userEntity.telecom[0].value = userEntity.telecom.$other.value;
-            }
-        }
-
-        if (userEntity.language.languageCode !== undefined)
-        {
-            userEntity.language.push(
-            {
-                $type: "PersonLanguageCommunication",
-                isPreferred: true,
-                languageCode: userEntity.language.languageCode
-            });
-        }
-
-
-
+        // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,
             continueWith: function (e) {
                 OpenIZ.App.toast("Profile updated successfully");
+                OpenIZ.Localization.setLocale(userEntity.language[0].languageCode);
+                window.location.reload();
             },
             onException: function (ex) {
                 console.log(ex);
@@ -71,4 +28,7 @@ layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
             }
         });
     };
+
+    // HACK: Copy first telecom to $other for view
+
 }]);

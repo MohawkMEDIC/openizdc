@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Caching
     /// <summary>
     /// Represents a cache entry
     /// </summary>
-    public struct CacheEntry
+    public class CacheEntry
     {
 
         // Last read time
