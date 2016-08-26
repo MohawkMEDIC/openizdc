@@ -82,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
                     var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
                     if (getMethod != null) 
-                        pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity);
+                        pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, keyValue }) as IIdentifiedEntity);
                 }
                 else if (value is IdentifiedData)
                     pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));

@@ -89,8 +89,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.LoadAssociations(context);
             if (!loadFast)
             {
-                //foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
-                //    itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
+                foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
+                    itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
                 retVal.Relationships.RemoveAll(o => o.InversionIndicator);
                 retVal.Relationships.AddRange(
                     context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
