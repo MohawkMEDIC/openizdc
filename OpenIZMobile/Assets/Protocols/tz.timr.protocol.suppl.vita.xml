@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" id="VITA" name="Vitamin A Supplement" uuid="D743E71F-86BD-4992-A50B-4FF05838095C">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" id="zz_VITA" name="Vitamin A Supplement" uuid="D743E71F-86BD-4992-A50B-4FF05838095C">
   <rule id="VITA" repeat="9">
     <when evaluation="and">
       <!-- Vitamin A not set yet -->
@@ -18,7 +18,7 @@
               template: {
                   mnemonic: "Act.SubstanceAdmin.Supplement"
               },
-             
+              
               "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "7D84A057-1FCC-4054-A51F-B77D230FC6D1", "mnemonic" : "DrugTherapy" },
 				      "doseSequence": 1,
@@ -61,7 +61,7 @@
 				      }
 			      }
         ]]></jsonModel>
-        <assign propertyName="DoseSequence">index</assign>
+        <assign propertyName="SequenceId">index</assign>
         <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index * 6)</assign>
         <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index * 6).AddDays(-DateOfBirth.Value.Day + 1)</assign>
         <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths((index+1) * 6).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>

@@ -206,5 +206,9 @@ namespace OpenIZ.Mobile.Core.Test
             }
         }
 
+        public override void SaveConfiguration()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

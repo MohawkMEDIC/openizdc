@@ -93,7 +93,6 @@ namespace OpenIZ.Mobile.Core.Android.Security
             try
             {
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-                int t;
                 var securityUser = userService.GetUser(principal.Identity);
                 this.SecurityUser = securityUser;
                 this.UserEntity = userService.GetUserEntity(principal.Identity) ??

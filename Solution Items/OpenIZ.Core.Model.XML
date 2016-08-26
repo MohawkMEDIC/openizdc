@@ -715,11 +715,6 @@
             Gets or sets the total results
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Collection.Bundle.SetDelayLoad(System.Boolean)">
-            <summary>
-            Set delay loading on bundle
-            </summary>
-        </member>
         <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData)">
             <summary>
             Create a bundle
@@ -735,7 +730,7 @@
             Reconstitutes the bundle (takes the flat reference structures and fills them out into proper object references)
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Collection.Bundle.Reconstitute(OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.Reconstitute(OpenIZ.Core.Model.IdentifiedData,System.Collections.Generic.HashSet{OpenIZ.Core.Model.IdentifiedData})">
             <summary>
             Re-constitute the data
             </summary>
@@ -951,7 +946,7 @@
             The source act replaces the target act
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsManfestationOf">
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasManifestation">
             <summary>
             The assertion that a new observation may be a manifestation of another
             </summary>
@@ -1441,6 +1436,11 @@
             Status - Active
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Completed">
+            <summary>
+            Completed status
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys">
             <summary>
             Telecommunications address use keys
@@ -1650,6 +1650,12 @@
             <summary>
             Gets a list of concept relationships
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Concept.IsEmpty">
+            <summary>
+            True if concept is empty
+            </summary>
+            <returns></returns>
         </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.Concept.ClassKey">
             <summary>
@@ -2680,6 +2686,16 @@
         <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntityKey">
             <summary>
             The target of the association
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.HolderKey">
+            <summary>
+            The entity that this relationship targets
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.Holder">
+            <summary>
+            The entity that this relationship targets
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntity">

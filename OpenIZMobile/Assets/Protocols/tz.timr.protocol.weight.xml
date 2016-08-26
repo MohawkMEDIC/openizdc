@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="Weight" name="Weigh Schedule">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="zz__Weight" name="Weigh Schedule">
   <rule id="Weight" repeat="60">
     <variable name="minDate">DateOfBirth.Value.Date.AddMonths(index).AddDays(-DateOfBirth.Value.Day + 1)</variable>
     <variable name="maxDate">DateOfBirth.Value.Date.AddMonths(index + 1).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</variable>
     <when evaluation="and">
       <!-- Patient does not have Weights taken or proposed-->
       <imsiExpression negationIndicator="true">participation[RecordTarget].source.typeConcept.mnemonic=VitalSign-Weight&amp;participation[RecordTarget].source.actTime=>$minDate$&amp;participation[RecordTarget].source.actTime=&lt;$maxDate$</imsiExpression>
-      
     </when>
     <then>
       <action>
@@ -29,10 +28,9 @@
           ]]>
         </jsonModel>
         <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index)</assign>
-        <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index).AddDays(-DateOfBirth.Value.Day + 1)</assign>
-        <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths(index+1).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>
+        <assign propertyName="StartTime">minDate</assign>
+        <assign propertyName="StopTime">maxDate</assign>
       </action>
-
     </then>
   </rule>
 </ProtocolDefinition>

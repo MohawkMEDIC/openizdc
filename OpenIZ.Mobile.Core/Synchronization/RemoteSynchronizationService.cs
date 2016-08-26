@@ -191,7 +191,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     float perc = i / (float)result.TotalResults;
                     
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
+                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
                     // Queue the act of queueing
                     if (result != null)
                     {

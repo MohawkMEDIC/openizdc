@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ProtocolDefinition xmlns="http://openiz.org/protocol" id="MBDZNL" name="Mebendazole Supplement" uuid="7CB8E650-A8B9-42EF-B6DC-FF64570D3A56">
+<ProtocolDefinition xmlns="http://openiz.org/cdss" id="zz_MBDZNL" name="Mebendazole Supplement" uuid="7CB8E650-A8B9-42EF-B6DC-FF64570D3A56">
   <rule id="MEBENDAZOLE" repeat="10">
     <when evaluation="and">
       <!-- Vitamin A not set yet -->
@@ -62,7 +62,7 @@
 			      }
         ]]>
         </jsonModel>
-        <assign propertyName="DoseSequence">index</assign>
+        <assign propertyName="SequenceId">index</assign>
         <assign propertyName="ActTime">DateOfBirth.Value.Date.AddMonths(index * 6)</assign>
         <assign propertyName="StartTime">DateOfBirth.Value.Date.AddMonths(index * 6).AddDays(-DateOfBirth.Value.Day + 1)</assign>
         <assign propertyName="StopTime">DateOfBirth.Value.Date.AddMonths((index+1) * 6).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</assign>

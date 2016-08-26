@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Android.Services.Attributes;
 using OpenIZ.Core.Model.Entities;
 using System.IO;
@@ -137,31 +137,13 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 if (search.ContainsKey("any") || search.ContainsKey("any[]"))
                 {
 
-                    this.m_tracer.TraceVerbose("Searching Patients : ANY: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
+                    this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
 
-                    string[] filters =
-                    {
-                        "identifier.value",
-                        "name.component.value",
-                        "relationship.target.name.component.value"
-                    };
 
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
                     // Filtes
-                    foreach (var itm in filters)
-                    {
-                        var nvc = new NameValueCollection()
-                        {
-                            { itm, values.SelectMany(o=>o.Split(',')).Select(o=>"~" + o).ToList() }
-                        };
-                        var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(nvc);
-                        var tret = patientService.Find(predicate, offset, count, out totalResults);
-
-                        if (retVal == null)
-                            retVal = tret;
-                        else
-                            retVal = retVal.OfType<IIdentifiedEntity>().Union(tret.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Patient>();
-                    }
+                    var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
+                    retVal = fts.Search<Patient>(values.ToArray());
                     search.Remove("any");
                     search.Remove("any[]");
                 }
@@ -258,7 +240,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = JsonViewModelSerializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
+            retVal.LoadImmediateRelations();
 
+            // Delayload
             return retVal;
         }
 
@@ -273,6 +257,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = JsonViewModelSerializer.DeSerialize<Entity>(templateString);
             retVal.Key = Guid.NewGuid();
+            retVal.LoadImmediateRelations();
             //retVal.SetDelayLoad(true);
             return retVal;
         }
@@ -300,10 +285,11 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             var securityUser = securityRepo?.GetUser(ApplicationContext.Current.Principal.Identity);
             var userEntity = securityRepo?.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
             templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
+                .Replace("{{uuid}}", Guid.NewGuid().ToString())
                 .Replace("{{now}}", DateTime.Now.ToString("o"))
                 .Replace("{{userId}}", securityUser.Key.ToString())
                 .Replace("{{userEntityId}}", userEntity?.Key.ToString())
-                .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.Key.ToString());
+                .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString());
             this.m_tracer.TraceVerbose("Template {0} (Post-Populated): {1}", templateId, templateString);
             return templateString;
         }

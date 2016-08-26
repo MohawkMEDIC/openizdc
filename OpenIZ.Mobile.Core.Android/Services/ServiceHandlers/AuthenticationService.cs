@@ -74,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             else
             {
                 var retVal = new SessionInformation(ApplicationContext.Current.Principal);
-                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(retVal.UserEntity?.LanguageCommunication?.FirstOrDefault(o=>o.IsPreferred)?.LanguageCode ?? CultureInfo.DefaultThreadCurrentUICulture.TwoLetterISOLanguageName);
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(retVal?.UserEntity?.LanguageCommunication?.FirstOrDefault(o=>o.IsPreferred)?.LanguageCode ?? CultureInfo.DefaultThreadCurrentUICulture.TwoLetterISOLanguageName);
                 return retVal;
             }
         }

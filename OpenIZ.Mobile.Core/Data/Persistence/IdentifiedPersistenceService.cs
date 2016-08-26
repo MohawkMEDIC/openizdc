@@ -32,6 +32,8 @@ using OpenIZ.Core.Model.Interfaces;
 using System.Collections;
 using OpenIZ.Core.Services;
 using System.Diagnostics;
+using System.Reflection;
+using SQLite.Net.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -43,9 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		where TDomain : DbIdentified, new()
 	{
 
-        // Caching service
-        private IDataCachingService m_cache = ApplicationContext.Current.GetService<IDataCachingService>();
-
+        
 		#region implemented abstract members of LocalDataPersistenceService
 		/// <summary>
 		/// Maps the data to a model instance
@@ -83,8 +83,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 			if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
 				data.Key = domainObject.Key = Guid.NewGuid ();
-			
-			context.Insert (domainObject);
+
+#if DEBUG
+            foreach (var itm in typeof(TDomain).GetRuntimeProperties().Where(o => o.GetCustomAttribute<NotNullAttribute>() != null))
+                if (itm.GetValue(domainObject) == null)
+                    throw new ArgumentNullException(itm.Name, "Requires a value");
+#endif
+            context.Insert (domainObject);
 
 			return data;
 		}
@@ -139,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var cacheItem = this.m_cache.GetCacheItem<TModel>(new Guid(o.Uuid));
+            var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
                 cacheItem = this.ToModelInstance(o, context, loadFast);
             return cacheItem;

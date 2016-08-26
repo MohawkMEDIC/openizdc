@@ -46,6 +46,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Core.Applets.ViewModel;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Services
 {

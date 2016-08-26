@@ -44,6 +44,7 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Mobile.Core.Android.Net;
+using OpenIZ.Mobile.Core.Search;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -91,7 +92,11 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 						Name = "openIzData",
 						Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.sqlite")
 					},
-					new ConnectionString () {
+                    new ConnectionString () {
+                        Name = "openIzSearch",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.ftsearch.sqlite")
+                    },
+                    new ConnectionString () {
 						Name = "openIzQueue",
 						Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MessageQueue.sqlite")
 					},
@@ -141,8 +146,9 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(AndroidClinicalProtocolRepositoryService).AssemblyQualifiedName,
-                    typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName
-				},
+                    typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
+                    typeof(SearchIndexService).AssemblyQualifiedName,
+                },
                 Cache = new CacheConfiguration()
                 {
                     MaxAge = new TimeSpan(0, 5, 0).Ticks,

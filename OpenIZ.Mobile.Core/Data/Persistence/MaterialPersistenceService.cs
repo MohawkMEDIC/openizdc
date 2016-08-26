@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Material ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            return this.ToModelInstance<Material>(dataInstance as DbMaterial, context, loadFast);
+            return this.ToModelInstance<Material>(dataInstance, context, loadFast);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         internal TModel ToModelInstance<TModel>(object rawInstance, SQLiteConnectionWithLock context, bool loadFast)
             where TModel : Material, new()
         {
-            var iddat = rawInstance as DbVersionedData;
+            var iddat = rawInstance as DbIdentified;
             var dataInstance = rawInstance as DbMaterial ?? context.Table<DbMaterial>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = rawInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == dataInstance.Uuid).First();
             var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context, loadFast);

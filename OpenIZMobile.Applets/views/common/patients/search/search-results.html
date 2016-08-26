@@ -49,6 +49,13 @@
     <tfoot>
         <tr>
             <td colspan="2">{{ search.results.offset }} .. {{ search.results.offset + searchResults.count }} of {{ searchResults.totalResults }} </td>
+            <td colspan="5">
+                <ul class="pagination">
+                    <li><a ng-click="search.previous()">&lt;&lt;</a></li>
+                    <li ng-repeat="i in 0 .. (search.results.total / (search.resuts.count + 0.01))"><a ng-click="search.goPage($index)">{{$index}}</a></li>
+                    <li><a ng-click="search.next()">&gt;&gt;</a></li>
+                </ul>
+            </td>
         </tr>
     </tfoot>
 </table>

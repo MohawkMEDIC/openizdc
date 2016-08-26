@@ -303,7 +303,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var results = this.Query(connection, query, offset, count ?? -1, out totalResults);
 
-                    var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, results.Count());
+                    var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
                     this.Queried?.Invoke(this, postData);
 
                     totalResults = postData.TotalResults;
@@ -317,7 +317,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
                 catch (NotSupportedException e)
                 {
-                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
+                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0} ({1})", typeof(TData).Name, e);
 
                     // Build dictionary
                     var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query);

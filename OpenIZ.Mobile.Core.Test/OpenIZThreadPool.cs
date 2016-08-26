@@ -26,6 +26,7 @@ using System.Threading;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Threading
 {

@@ -1,47 +1,49 @@
 ﻿<div ng-controller="PatientLayoutController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
-    <oiz:script>/org.openiz.core/controllers/layouts/navbar.patient.js</oiz:script>
+    <oiz:script>/org.openiz.core/controllers/layouts/navbar.$parent.patient.js</oiz:script>
 
     <div class="panel-group">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
                     <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicaotr"></span>
-                    <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong><small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                    <strong style="font-size:1.1em">{{ $parent.patient.name.OfficialRecord | oizEntityName }} </strong><small>({{$parent.patient.genderConceptModel.name[$root.page.locale] }}) - {{ $parent.patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
                 </a>
                 <span class="pull-right">
-                    {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                    {{ 'locale.$parent.patient.identifiers' | i18n }} {{ $parent.patient.identifier | oizEntityIdentifier }}
                 </span>
             </div>
             <div class="panel-collapse collapse" id="patientSummaryPanel">
                 <div class="panel-body">
                     <div class="container-fluid">
                         <div class="row">
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.givenName' | i18n }}</label>
                             <div class="col-xs-4">
-                                <span ng-model="patient.name.OfficialRecord.given" class="oiz-clicktoedit" data-inputtype="tag">
-                                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                                <span ng-model="$parent.patient.name.OfficialRecord.given" oiz-editor="tag">
+                                    {{ $parent.patient.name.OfficialRecord.component.Given | oizEntityName }}
                                 </span>
                             </div>
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.familyName' | i18n }}</label>
                             <div class="col-xs-4">
-                                <span ng-model="patient.name.OfficialRecord.family" class="oiz-clicktoedit" data-inputtype="tag">
-                                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                                <span ng-model="$parent.patient.name.OfficialRecord.family" oiz-editor="tag">
+                                    {{ $parent.patient.name.OfficialRecord.component.Family | oizEntityName }}
                                 </span>
                             </div>
                         </div>
                         <div class="row">
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.dateOfBirth' | i18n }}</label>
                             <div class="col-xs-4">
-                                <span ng-model="patient.dateOfBirth" class="oiz-clicktoedit" data-inputtype="date">
-                                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                                <span ng-model="$parent.patient.dateOfBirth" oiz-editor="date">
+                                    {{ $parent.patient.dateOfBirth | date : 'yyyy-MM-dd' }}
                                 </span>
                             </div>
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-                            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.gender' | i18n }}</label>
+                            <div class="col-xs-4">{{ $parent.patient.genderConceptModel.name[$root.page.locale] }}</div>
                         </div>
                         <div class="row">
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
-                            <div class="col-xs-4">{{ patient.multipleBirthOrderText }}</div>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.birthOrder' | i18n }}</label>
+                            <div class="col-xs-4">{{ $parent.patient.multipleBirthOrderText }}</div>
+                            <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.facility' | i18n }}</label>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ $parent.patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
                         </div>
                     </div>
                 </div>

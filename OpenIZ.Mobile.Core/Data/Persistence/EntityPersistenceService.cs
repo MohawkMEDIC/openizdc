@@ -89,15 +89,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.LoadAssociations(context);
             if (!loadFast)
             {
-                foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
-                    itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
+                //foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
+                //    itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
                 retVal.Relationships.RemoveAll(o => o.InversionIndicator);
                 retVal.Relationships.AddRange(
                     context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
                     {
                         SourceEntityKey = new Guid(o.EntityUuid),
-                        InversionIndicator = true,
-                        SourceEntity = this.CacheConvert(context.Get<DbEntity>(o.EntityUuid), context, true)
+                        InversionIndicator = true
                     })
                 );
                 
@@ -113,7 +112,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
-            switch (new Guid(dbEntity.ClassConceptUuid).ToString())
+            switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
             {
                 case Device:
                     return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
@@ -155,7 +154,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.DeterminerConcept?.EnsureExists(context);
             data.StatusConcept?.EnsureExists(context);
             data.TypeConcept?.EnsureExists(context);
-            data.StatusConceptKey = data.StatusConceptKey == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+
+            data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Insert(context, data);
 

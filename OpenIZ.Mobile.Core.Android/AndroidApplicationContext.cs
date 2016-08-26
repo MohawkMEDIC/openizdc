@@ -79,11 +79,19 @@ namespace OpenIZ.Mobile.Core.Android
 		// Configuration manager
 		private ConfigurationManager m_configurationManager;
 
-		/// <summary>
-		/// Static CTOR bind to global handlers to log errors
-		/// </summary>
-		/// <value>The current.</value>
-		static AndroidApplicationContext() {
+        /// <summary>
+        /// Save the configuration
+        /// </summary>
+        public override void SaveConfiguration()
+        {
+            this.m_configurationManager.Save();
+        }
+
+        /// <summary>
+        /// Static CTOR bind to global handlers to log errors
+        /// </summary>
+        /// <value>The current.</value>
+        static AndroidApplicationContext() {
 
 
 			AppDomain.CurrentDomain.UnhandledException += (s,e)=> {

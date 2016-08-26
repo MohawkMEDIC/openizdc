@@ -34,6 +34,7 @@
     <Compile Include="Caching\CacheEntry.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Caching\MemoryCacheService.cs" />
+    <Compile Include="Configuration\Data\Migrations\InitialSearchCatalog.cs" />
     <Compile Include="Configuration\ForecastingConfigurationSection.cs" />
     <Compile Include="Configuration\SynchronizationConfigurationSection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionManager.cs" />
@@ -82,6 +83,11 @@
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
+    <Compile Include="Search\Model\SearchEntityType.cs" />
+    <Compile Include="Search\Model\SearchTerm.cs" />
+    <Compile Include="Search\Model\SearchTermEntity.cs" />
+    <Compile Include="Search\SearchIndexService.cs" />
+    <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />
     <Compile Include="Services\Impl\LocalBatchService.cs" />
     <Compile Include="Services\Impl\LocalMaterialService.cs" />
@@ -140,7 +146,6 @@
     <Compile Include="Services\IRoleProviderService.cs" />
     <Compile Include="Security\Local\LocalPolicyDecisionService.cs" />
     <Compile Include="Services\ISynchronizationService.cs" />
-    <Compile Include="Services\IThreadPoolService.cs" />
     <Compile Include="Services\IIntegrationService.cs" />
     <Compile Include="Synchronization\Model\SynchronizationLogEntry.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />

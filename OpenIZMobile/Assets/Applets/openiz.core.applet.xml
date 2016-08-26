@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.3393">
+  <info id="org.openiz.core" version="0.6.7.5045">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -688,9 +688,11 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function 
     OpenIZ.Authentication.getSessionAsync({
         continueWith: function (session) {
             $rootScope.session = session;
-            session.entity.telecom = session.entity.telecom || {};
-            if (Object.keys(session.entity.telecom).length == 0)
-                session.entity.telecom.MobilePhone = { value: "" };
+            if (session != null &amp;&amp; session.entity != null) {
+                session.entity.telecom = session.entity.telecom || {};
+                if (Object.keys(session.entity.telecom).length == 0)
+                    session.entity.telecom.MobilePhone = { value: "" };
+            }
             $rootScope.$apply();
         }
     });
@@ -724,7 +726,7 @@ angular.element(document).ready(function () {
 </contentText>
   </asset>
   <asset name="controllers/layouts/root.min.js" mimeType="text/javascript">
-    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t.entity.telecom=t.entity.telecom||{};Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""});n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
+    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t!=null&amp;&amp;t.entity!=null&amp;&amp;(t.entity.telecom=t.entity.telecom||{},Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""}));n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
   </asset>
   <asset name="controllers/settings/password.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;
@@ -2311,8 +2313,7 @@ angular.module('openiz', [])
                 return modelValue.NID.value;
             else
                 for (var k in modelValue)
-                    return modelValue.NID;
-
+                    return modelValue[k].value;
         };
     })
     .filter('oizEntityName', function () {
@@ -2434,9 +2435,17 @@ angular.module('openiz', [])
                     // Bind select 2 search
                     $(element).select2({
                         dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
-                        defaultResults: $.map($('option', element[0]), function (o) {
-                            return { "id": o.value, "text": o.innerText };
-                        }),
+                        defaultResults: function () {
+
+                            if ($(element[0]).attr('data-default-results') != null) {
+                                return JSON.parse($(element[0]).attr('data-default-results'));
+                            }
+                            else {
+                                return $.map($('option', element[0]), function (o) {
+                                    return { "id": o.value, "text": o.innerText };
+                                });
+                            }
+                        },
                         ajax: {
                             url: "/__ims/" + modelType,
                             dataType: 'json',
@@ -2493,16 +2502,29 @@ angular.module('openiz', [])
                         escapeMarkup: function (markup) { return markup; }, // Format normally
                         minimumInputLength: 4,
                         templateSelection: function (result) {
+                            var retVal = "";
+                            switch(modelType)
+                            {
+                                case "UserEntity":
+                                case "Provider":
+                                    retVal += "&lt;span class='glyphicon glyphicon-user'&gt;&lt;/span&gt;";
+                                    break;
+                                case "Place":
+                                    retVal += "&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;/span&gt;";
+                                    break;
+                            }
+                            retVal += "&amp;nbsp;";
                             if (displayString != null) {
                                 var scope = result;
-                                return eval(displayString);
+                                retVal += eval(displayString);
                             }
                             else if (result.name != null)
-                                return OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else if (result.text != "")
-                                return result.text;
+                                retVal += OpenIZ.Util.renderName(result.name.OfficialRecord);
                             else if (result.element !== undefined)
-                                return result.element.innerText;
+                                retVal += result.element.innerText;
+                            else if (result.text != "")
+                                retVal += result.text;
+                            return retVal;
                         },
                         keepSearchResults : true,
                         templateResult: function (result) {
@@ -2542,7 +2564,7 @@ angular.module('openiz', [])
     });</contentText>
   </asset>
   <asset name="js/openiz-ng.min.js" mimeType="text/javascript">
-    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n.NID!==undefined)return n.NID.value;for(var t in n)return n.NID}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).directive("oizTag",function(){return{require:"ngModel",link:function(n,t,i,r){function u(n){return String(n).split(",")}function f(n){return typeof n===Array?n.join(viewView):n}r.$parsers.unshift(u);r.$formatters.unshift(f);n.$watch(i.ngModel,function(n,i){i!=n&amp;&amp;i===undefined&amp;&amp;$(t).trigger("change")});$(t).tokenfield({delimiter:" ,",createTokensOnBlur:!0})}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var o=$(i).attr("oiz-entitysearch"),r=$(i).attr("data-filter"),t=$(i).attr("data-display"),u=$(i).attr("data-default"),f=$(i).attr("data-group-by"),e=$(i).attr("data-group-display"),n={};r!==undefined&amp;&amp;(n=JSON.parse(r));u!==undefined&amp;&amp;(n=JSON.parse(u));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}}),ajax:{url:"/__ims/"+o,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){var n,t,r,s,u,o;if($("option",i[0]).remove(),n=n.item||n,t={results:[]},f==null)return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})};for(r in n)try{s=eval("data[itm]."+f);u="";u=e!=null?eval(e):s;o=$.grep(t.results,function(n){return n.text==u});o.length==0?t.results.push({text:u,children:[n[r]]}):o[0].children.push(n[r])}catch(h){t.results.push(n[r])}return t},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null?OpenIZ.Util.renderName(n.name.OfficialRecord):n.text!=""?n.text:n.element!==undefined?n.element.innerText:void 0},keepSearchResults:!0,templateResult:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
+    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n.NID!==undefined)return n.NID.value;for(var t in n)return n[t].value}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).directive("oizTag",function(){return{require:"ngModel",link:function(n,t,i,r){function u(n){return String(n).split(",")}function f(n){return typeof n===Array?n.join(viewView):n}r.$parsers.unshift(u);r.$formatters.unshift(f);n.$watch(i.ngModel,function(n,i){i!=n&amp;&amp;i===undefined&amp;&amp;$(t).trigger("change")});$(t).tokenfield({delimiter:" ,",createTokensOnBlur:!0})}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var r=$(i).attr("oiz-entitysearch"),u=$(i).attr("data-filter"),t=$(i).attr("data-display"),f=$(i).attr("data-default"),e=$(i).attr("data-group-by"),o=$(i).attr("data-group-display"),n={};u!==undefined&amp;&amp;(n=JSON.parse(u));f!==undefined&amp;&amp;(n=JSON.parse(f));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:function(){return $(i[0]).attr("data-default-results")!=null?JSON.parse($(i[0]).attr("data-default-results")):$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}})},ajax:{url:"/__ims/"+r,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){var n,t,r,s,u,f;if($("option",i[0]).remove(),n=n.item||n,t={results:[]},e==null)return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})};for(r in n)try{s=eval("data[itm]."+e);u="";u=o!=null?eval(o):s;f=$.grep(t.results,function(n){return n.text==u});f.length==0?t.results.push({text:u,children:[n[r]]}):f[0].children.push(n[r])}catch(h){t.results.push(n[r])}return t},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){var i="",u;switch(r){case"UserEntity":case"Provider":i+="&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt;";break;case"Place":i+="&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt;"}return i+="&amp;nbsp;",t!=null?(u=n,i+=eval(t)):n.name!=null?i+=OpenIZ.Util.renderName(n.name.OfficialRecord):n.element!==undefined?i+=n.element.innerText:n.text!=""&amp;&amp;(i+=n.text),i},keepSearchResults:!0,templateResult:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
   </asset>
   <asset name="js/openiz.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="openiz-model.js"/&gt;
@@ -4418,7 +4440,7 @@ $.ajaxSetup({
   <asset name="layouts/navbar.patient.html" mimeType="text/html">
     <contentHtml>
       <layout>/org.openiz.core/layouts/navbar.html</layout>
-      <script>/org.openiz.core/controllers/layouts/navbar.patient.js</script>
+      <script>/org.openiz.core/controllers/layouts/navbar.$parent.patient.js</script>
       <content>
         <div ng-controller="PatientLayoutController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
           <div class="panel-group">
@@ -4427,43 +4449,47 @@ $.ajaxSetup({
                 <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
                   <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicaotr">
                   </span>
-                  <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong>
-                  <small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                  <strong style="font-size:1.1em">{{ $parent.patient.name.OfficialRecord | oizEntityName }} </strong>
+                  <small>({{$parent.patient.genderConceptModel.name[$root.page.locale] }}) - {{ $parent.patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
                 </a>
                 <span class="pull-right">
-                    {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                    {{ 'locale.$parent.patient.identifiers' | i18n }} {{ $parent.patient.identifier | oizEntityIdentifier }}
                 </span>
               </div>
               <div class="panel-collapse collapse" id="patientSummaryPanel">
                 <div class="panel-body">
                   <div class="container-fluid">
                     <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.givenName' | i18n }}</label>
                       <div class="col-xs-4">
-                        <span ng-model="patient.name.OfficialRecord.given" class="oiz-clicktoedit" data-inputtype="tag">
-                                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                        <span ng-model="$parent.patient.name.OfficialRecord.given" oiz-editor="tag">
+                                    {{ $parent.patient.name.OfficialRecord.component.Given | oizEntityName }}
                                 </span>
                       </div>
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.familyName' | i18n }}</label>
                       <div class="col-xs-4">
-                        <span ng-model="patient.name.OfficialRecord.family" class="oiz-clicktoedit" data-inputtype="tag">
-                                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                        <span ng-model="$parent.patient.name.OfficialRecord.family" oiz-editor="tag">
+                                    {{ $parent.patient.name.OfficialRecord.component.Family | oizEntityName }}
                                 </span>
                       </div>
                     </div>
                     <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.dateOfBirth' | i18n }}</label>
                       <div class="col-xs-4">
-                        <span ng-model="patient.dateOfBirth" class="oiz-clicktoedit" data-inputtype="date">
-                                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                        <span ng-model="$parent.patient.dateOfBirth" oiz-editor="date">
+                                    {{ $parent.patient.dateOfBirth | date : 'yyyy-MM-dd' }}
                                 </span>
                       </div>
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-                      <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.gender' | i18n }}</label>
+                      <div class="col-xs-4">{{ $parent.patient.genderConceptModel.name[$root.page.locale] }}</div>
                     </div>
                     <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
-                      <div class="col-xs-4">{{ patient.multipleBirthOrderText }}</div>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.birthOrder' | i18n }}</label>
+                      <div class="col-xs-4">{{ $parent.patient.multipleBirthOrderText }}</div>
+                      <label class="col-xs-2">{{ 'locale.$parent.patient.demographics.facility' | i18n }}</label>
+                      <div class="col-xs-4">
+                        <span class="glyphicon glyphicon-map-marker">
+                        </span> {{ $parent.patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
                     </div>
                   </div>
                 </div>
@@ -12681,7 +12707,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </span>
                 <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" class="form-control" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
                   <option value="">{{ 'locale.common.location.none' | i18n }}</option>
-                  <option value="{{encounter.participation.Location.player}}">{{encounter.participation.Location.playerModel.name.OfficialRecord | oizEntityName }}</option>
+                  <option selected="selected" value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                 </select>
               </div>
             </div>
@@ -12696,7 +12722,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
           <div class="form-group row">
             <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
-              <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="Provider">
+              <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="UserEntity">
                 <option selected="selected" value="{{encounter.participation.Performer.player}}">{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}</option>
               </select>
             </div>
@@ -12705,7 +12731,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
               <div class="input-group">
-                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player" oiz-entitysearch="Provider">
+                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player" oiz-entitysearch="UserEntity">
                   <option selected="selected" value="{{encounter.participation.Verifier.player}}">{{encounter.participation.Verifier.playerModel.name.OfficialRecord | oizEntityName }}</option>
                 </select>
               </div>
@@ -13217,6 +13243,19 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
           <tfoot>
             <tr>
               <td colspan="2">{{ search.results.offset }} .. {{ search.results.offset + searchResults.count }} of {{ searchResults.totalResults }} </td>
+              <td colspan="5">
+                <ul class="pagination">
+                  <li>
+                    <a ng-click="search.previous()">&lt;&lt;</a>
+                  </li>
+                  <li ng-repeat="i in 0 .. (search.results.total / (search.resuts.count + 0.01))">
+                    <a ng-click="search.goPage($index)">{{$index}}</a>
+                  </li>
+                  <li>
+                    <a ng-click="search.next()">&gt;&gt;</a>
+                  </li>
+                </ul>
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -13395,6 +13434,67 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
         </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/demographic-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/drug-therapy-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/intolerances.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/relationship-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="list-group">
+          <a ng-click="viewPerson(rel.id)" ng-repeat="rel in patient.relationship" ng-if="rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient'" class="list-group-item">
+            <h4 class="list-group-item-heading">{{rel.targetModel.name.OfficialRecord | oizEntityName}} <small>{{rel.targetModel.identifier | oizEntityIdentifier}}</small></h4>
+            <p class="list-group-item-text">
+            </p>
+          </a>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/vaccination-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/weight-detail.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/patients/view/tabs/weight-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        </div>
       </content>
     </contentHtml>
   </asset>

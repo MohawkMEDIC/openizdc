@@ -18,6 +18,7 @@
  * Date: 2016-7-2
  */
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
 using System;
@@ -46,10 +47,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
 
-            var domainMmat = dataInstance as DbManufacturedMaterial;
-            var domainMat = dataInstance as DbMaterial;
-            var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
-            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(dbm, context, loadFast);
+            var iddat = dataInstance as DbIdentified;
+            var domainMmat = dataInstance as DbManufacturedMaterial ?? context.Table<DbManufacturedMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
+            var domainMat = dataInstance as DbMaterial ?? context.Table<DbMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
+            //var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
+            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(domainMat, context, loadFast);
             retVal.LotNumber = domainMmat.LotNumber;
             return retVal;
 

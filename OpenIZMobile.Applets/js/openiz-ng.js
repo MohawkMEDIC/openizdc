@@ -85,8 +85,7 @@ angular.module('openiz', [])
                 return modelValue.NID.value;
             else
                 for (var k in modelValue)
-                    return modelValue.NID;
-
+                    return modelValue[k].value;
         };
     })
     .filter('oizEntityName', function () {
@@ -208,9 +207,17 @@ angular.module('openiz', [])
                     // Bind select 2 search
                     $(element).select2({
                         dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
-                        defaultResults: $.map($('option', element[0]), function (o) {
-                            return { "id": o.value, "text": o.innerText };
-                        }),
+                        defaultResults: function () {
+
+                            if ($(element[0]).attr('data-default-results') != null) {
+                                return JSON.parse($(element[0]).attr('data-default-results'));
+                            }
+                            else {
+                                return $.map($('option', element[0]), function (o) {
+                                    return { "id": o.value, "text": o.innerText };
+                                });
+                            }
+                        },
                         ajax: {
                             url: "/__ims/" + modelType,
                             dataType: 'json',
@@ -267,16 +274,29 @@ angular.module('openiz', [])
                         escapeMarkup: function (markup) { return markup; }, // Format normally
                         minimumInputLength: 4,
                         templateSelection: function (result) {
+                            var retVal = "";
+                            switch(modelType)
+                            {
+                                case "UserEntity":
+                                case "Provider":
+                                    retVal += "<span class='glyphicon glyphicon-user'></span>";
+                                    break;
+                                case "Place":
+                                    retVal += "<span class='glyphicon glyphicon-map-marker'></span>";
+                                    break;
+                            }
+                            retVal += "&nbsp;";
                             if (displayString != null) {
                                 var scope = result;
-                                return eval(displayString);
+                                retVal += eval(displayString);
                             }
                             else if (result.name != null)
-                                return OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else if (result.text != "")
-                                return result.text;
+                                retVal += OpenIZ.Util.renderName(result.name.OfficialRecord);
                             else if (result.element !== undefined)
-                                return result.element.innerText;
+                                retVal += result.element.innerText;
+                            else if (result.text != "")
+                                retVal += result.text;
+                            return retVal;
                         },
                         keepSearchResults : true,
                         templateResult: function (result) {

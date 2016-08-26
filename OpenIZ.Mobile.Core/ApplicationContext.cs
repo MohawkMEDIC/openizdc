@@ -158,11 +158,17 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The policy information service.</value>
 		public IPolicyInformationService PolicyInformationService { get { return this.GetService(typeof(IPolicyInformationService)) as IPolicyInformationService; } }
-		/// <summary>
-		/// Gets the policy decision service.
-		/// </summary>
-		/// <value>The policy decision service.</value>
-		public IPolicyDecisionService PolicyDecisionService { get { return this.GetService(typeof(IPolicyDecisionService)) as IPolicyDecisionService; } }
+
+        /// <summary>
+        /// Save configuration
+        /// </summary>
+        public abstract void SaveConfiguration();
+
+        /// <summary>
+        /// Gets the policy decision service.
+        /// </summary>
+        /// <value>The policy decision service.</value>
+        public IPolicyDecisionService PolicyDecisionService { get { return this.GetService(typeof(IPolicyDecisionService)) as IPolicyDecisionService; } }
 		/// <summary>
 		/// Gets the identity provider service.
 		/// </summary>

@@ -170,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceInfo("{0} remaining inbound queue items", SynchronizationQueue.Inbound.Count());
                         var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
                         var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
-                        (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
+                        //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
                         dpe = (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Entry ?? dpe;
 
                         this.ImportElement(dpe, queueEntry);

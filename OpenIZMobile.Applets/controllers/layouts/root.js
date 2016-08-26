@@ -28,9 +28,11 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function 
     OpenIZ.Authentication.getSessionAsync({
         continueWith: function (session) {
             $rootScope.session = session;
-            session.entity.telecom = session.entity.telecom || {};
-            if (Object.keys(session.entity.telecom).length == 0)
-                session.entity.telecom.MobilePhone = { value: "" };
+            if (session != null && session.entity != null) {
+                session.entity.telecom = session.entity.telecom || {};
+                if (Object.keys(session.entity.telecom).length == 0)
+                    session.entity.telecom.MobilePhone = { value: "" };
+            }
             $rootScope.$apply();
         }
     });

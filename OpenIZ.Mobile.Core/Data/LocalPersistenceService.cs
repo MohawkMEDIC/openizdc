@@ -77,9 +77,12 @@ namespace OpenIZ.Mobile.Core.Data
                     var keyValue = me.GetType().GetRuntimeProperty(keyProperty)?.GetValue(me);
                     if (keyValue == null) continue; // no key
 
+
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(pi.PropertyType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
-                    pi.SetValue(me, (idpInstance as IDataPersistenceService)?.Get((Guid)keyValue));
+                    var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
+                    if (getMethod != null) 
+                        pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity);
                 }
                 else if (value is IdentifiedData)
                     pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));
