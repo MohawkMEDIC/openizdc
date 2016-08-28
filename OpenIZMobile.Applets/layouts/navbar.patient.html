@@ -40,10 +40,8 @@
                             <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
                         </div>
                         <div class="row">
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
-                            <div class="col-xs-4">{{ patient.multipleBirthOrderText }}</div>
-                            <label class="col-xs-2">{{ 'locale.patient.demographics.village' | i18n }}</label>
-                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <label class="col-xs-2">{{ 'locale.patient.demographics.domicile' | i18n }}</label>
+                            <div class="col-xs-10"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
                         </div>
                     </div>
                 </div>
