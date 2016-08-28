@@ -36,39 +36,6 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 
         /// <summary>
-        /// Search places
-        /// </summary>
-        [RestOperation(Method = "GET", UriPath = "/Place", FaultProvider = nameof(ImsiFault))]
-        [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public IdentifiedData SearchPlace()
-        {
-            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-            var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
-
-            if (search.ContainsKey("_id"))
-                return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
-            else
-            {
-                var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
-                this.m_tracer.TraceVerbose("Searching Places : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
-
-                int totalResults = 0,
-                    offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-                    count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-                var retVal = placeService.Find(predicate, offset, count, out totalResults);
-
-                // Serialize the response
-                return new Bundle()
-                {
-                    Item = retVal.OfType<IdentifiedData>().ToList(),
-                    Offset = offset,
-                    Count = count,
-                    TotalResults = totalResults
-                };
-            }
-        }
-
-        /// <summary>
         /// Create patient
         /// </summary>
         [RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
@@ -100,17 +67,31 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle CreateBundle([RestMessage(RestMessageFormat.SimpleJson)]Bundle bundleToInsert)
         {
-            IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
+            IBatchRepositoryService bundleService =ApplicationContext.Current.GetService<IBatchRepositoryService>();
             return bundleService.Insert(bundleToInsert);
         }
 
+		/// <summary>
+		/// Gets a list of patient encounters.
+		/// </summary>
+		/// <returns>Returns a list of patient encounters.</returns>
 		[RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Bundle GetPatientEncounter()
 		{
-			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+			//var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+			//var patients = patientService.Find(x => x.Names.Any(c => c.Component.Any(v => v.Value.Contains(""))));
+
+			//return new Bundle()
+			//{
+			//	Item = patients.OfType<IdentifiedData>().ToList(),
+			//	Offset = 0,
+			//	Count = patients.Count(),
+			//	TotalResults = patients.Count()
+			//};
 
 			var patientEncounterService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
 			int totalResults = 0;
 
@@ -423,7 +404,66 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 user.SecurityUserKey = userEntity.Key;  
 			return securityRepositoryService.SaveUserEntity(user);
 		}
-    }
+
+		/// <summary>
+		/// Search places
+		/// </summary>
+		[RestOperation(Method = "GET", UriPath = "/Place", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
+		public IdentifiedData SearchPlace()
+		{
+			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+			var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+
+			if (search.ContainsKey("_id"))
+				return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+			else
+			{
+				var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
+				this.m_tracer.TraceVerbose("Searching Places : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
+				int totalResults = 0,
+					offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+				var retVal = placeService.Find(predicate, offset, count, out totalResults);
+
+				// Serialize the response
+				return new Bundle()
+				{
+					Item = retVal.OfType<IdentifiedData>().ToList(),
+					Offset = offset,
+					Count = count,
+					TotalResults = totalResults
+				};
+			}
+		}
+
+		/// <summary>
+		/// Updates an act.
+		/// </summary>
+		/// <param name="id">The id of the act to be updated.</param>
+		/// <param name="act">The act to update.</param>
+		/// <returns>Returns the updated act.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+		public Act UpdateAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+		{
+			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+			Guid actKey = Guid.Empty;
+			Guid actVersionKey = Guid.Empty;
+
+			if (query.ContainsKey("key") && Guid.TryParse(query["key"][0], out actKey) && query.ContainsKey("versionKey") && Guid.TryParse(query["versionKey"][0], out actVersionKey))
+			{
+				var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+
+				return actPersistenceService.Update(act);
+			}
+			else
+			{
+				throw new ArgumentException("Act not found");
+			}
+		}
+	}
 
     /// <summary>
     /// Key comparion

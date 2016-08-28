@@ -34,6 +34,10 @@
     <oid>1.2.3.4.5.6.7.8.10</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
+  <template mnemonic="Act.PatientEncounter.Checkin">
+    <oid>1.2.3.4.5.6.7.8.11</oid>
+    <definition>/org.openiz.core/templates/act.patientencounter.checkin.json</definition>
+  </template>
   
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
@@ -61,6 +65,10 @@
     <string key="locale.action.submit">Submit</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.save">Save</string>
+    <string key="locale.action.view">View</string>
+    <string key="locale.action.update">Update</string>
+    <string key="locale.action.edit">Edit</string>
+    <string key="locale.action.remove">Remove</string>
     
     <!-- Common -->
     <string key="locale.common.no">No</string>

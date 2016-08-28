@@ -153,6 +153,57 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
+        * @summary Post data to the IMS
+        * @param {Object} control Control data for the async method
+        * @param {String} control.resource The resource to post
+        * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
+        * @param {Function} control.onException A callback method to be called when the operation throws an exception
+        * @param {Object} data The post data (IMSI resource) to be posted
+        */
+        put: function (controlData) {
+            $.ajax({
+                method: 'PUT',
+                url: "/__ims/" + controlData.resource + "?key=" + controlData.key + "&versionKey=" + controlData.versionKey,
+                // || WARNING: JAVASCRIPT RANT AHEAD              ||
+                // ||                                             ||
+                // || Why!? Why!? Why is this even a line of code?||
+                // || I specified JSON and application/json yet   ||
+                // || the 1337 haxors at jQ decide not to encode  ||
+                // || the JSON data I send as JSON!? Why!?        ||
+                // \/ Stuff like this is why I dislike JavaScript \/
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                }
+            });
+        },
+        /**
          * @summary Get data from the IMS
          * @param {Object} control Control data for the async method
          * @param {String} control.resource The resource to post
