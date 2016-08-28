@@ -454,7 +454,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			Guid actKey = Guid.Empty;
 			Guid actVersionKey = Guid.Empty;
 
-			if (query.ContainsKey("key") && Guid.TryParse(query["key"][0], out actKey) && query.ContainsKey("versionKey") && Guid.TryParse(query["versionKey"][0], out actVersionKey))
+			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
 			{
 				var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
 

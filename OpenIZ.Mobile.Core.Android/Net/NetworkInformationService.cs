@@ -91,6 +91,17 @@ namespace OpenIZ.Mobile.Core.Android.Net
 			}
         }
 
+		/// <summary>
+		/// Gets whether the network is connected.
+		/// </summary>
+		public bool IsNetworkConnected
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
         /// <summary>
         /// Network status has changed
         /// </summary>

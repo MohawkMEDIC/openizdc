@@ -79,6 +79,11 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         bool IsNetworkAvailable { get; }
 
+		/// <summary>
+		/// Gets whether the network is connected.
+		/// </summary>
+		bool IsNetworkConnected { get; }
+
         /// <summary>
         /// Fired when the network status changes
         /// </summary>

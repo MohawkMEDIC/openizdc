@@ -163,7 +163,7 @@ var OpenIZ = OpenIZ || {
         put: function (controlData) {
             $.ajax({
                 method: 'PUT',
-                url: "/__ims/" + controlData.resource + "?key=" + controlData.key + "&versionKey=" + controlData.versionKey,
+                url: "/__ims/" + controlData.resource + "?_id=" + controlData.id + "&_versionId=" + controlData.versionId,
                 // || WARNING: JAVASCRIPT RANT AHEAD              ||
                 // ||                                             ||
                 // || Why!? Why!? Why is this even a line of code?||
