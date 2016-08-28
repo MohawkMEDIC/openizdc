@@ -34,6 +34,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityAddressPersistenceService : IdentifiedPersistenceService<EntityAddress, DbEntityAddress>
     {
 
+        /// <summary>
+        /// Override model instance
+        /// </summary>
+        public override object FromModelInstance(EntityAddress modelInstance, SQLiteConnectionWithLock context)
+        {
+            foreach (var itm in modelInstance.Component)
+                itm.Value = itm.Value.Trim();
+            return base.FromModelInstance(modelInstance, context);
+        }
 
         /// <summary>
         /// Insert the specified object

@@ -122,8 +122,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                patient = patient.LoadDisplayProperties().LoadImmediateRelations();
                 // Ensure expanded
-                JniUtil.ExpandProperties(patient, search);
+                //JniUtil.ExpandProperties(patient, search);
                 return patient;
             }
             else
@@ -146,7 +147,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
                     // Filtes
                     var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
-                    retVal = fts.Search<Patient>(values.ToArray());
+                    retVal = fts.Search<Patient>(values.ToArray(), offset, count, out totalResults);
                     search.Remove("any");
                     search.Remove("any[]");
                 }
@@ -164,11 +165,12 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 }
 
                 // Serialize the response
+                var itms = retVal.OfType<Patient>().Select(o=>o.LoadDisplayProperties());
                 return new Bundle()
                     {
-                        Item = retVal.OfType<IdentifiedData>().ToList(),
+                        Item = itms.OfType<IdentifiedData>().ToList(),
                         Offset = offset,
-                        Count = count,
+                        Count = itms.Count(),
                         TotalResults = totalResults
                     };
             }
@@ -373,7 +375,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		public UserEntity GetUserProfile()
 		{
 			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
+			return securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity).LoadDisplayProperties();
 		}
 
 		/// <summary>

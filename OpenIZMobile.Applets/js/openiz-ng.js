@@ -81,6 +81,8 @@ angular.module('openiz', [])
     }])
     .filter('oizEntityIdentifier', function () {
         return function (modelValue) {
+            if (modelValue === undefined)
+                return "";
             if (modelValue.NID !== undefined)
                 return modelValue.NID.value;
             else
@@ -91,6 +93,11 @@ angular.module('openiz', [])
     .filter('oizEntityName', function () {
         return function (modelValue) {
             return OpenIZ.Util.renderName(modelValue);
+        }
+    })
+    .filter('oizEntityAddress', function () {
+        return function (modelValue) {
+            return OpenIZ.Util.renderAddress(modelValue);
         }
     })
     .directive('oizTag', function ($timeout) {

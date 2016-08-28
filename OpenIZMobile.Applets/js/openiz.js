@@ -257,10 +257,18 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Render address for display
          */
-        renderAddress : function(entity) {
-            var address = entity.address.Direct || entity.address.HomeAddress;
+        renderAddress: function (entity) {
+            if (entity === undefined) return;
+
+            var address = entity.component !== undefined ? entity : 
+                entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress) :
+                (entity.Direct || entity.HomeAddress);
             var retVal = "";
-            if(address.component.City)
+            if (address.component.AdditionalLocator)
+                retVal += address.component.AdditionalLocator + ", ";
+            if (address.component.StreetAddressLine)
+                retVal += address.component.StreetAddressLine + ", ";
+            if (address.component.City)
                 retVal += address.component.City + ", ";
             if (address.component.County != null)
                 retVal += address.component.County + ", ";

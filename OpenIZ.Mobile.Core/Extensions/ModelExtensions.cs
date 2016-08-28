@@ -5,6 +5,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,20 @@ namespace OpenIZ.Mobile.Core.Extensions
     public static class ModelExtensions
     {
 
+        /// <summary>
+        /// Load common properties for display
+        /// </summary>
+        public static TModel LoadDisplayProperties<TModel>(this TModel me) where TModel : BaseEntityData
+        {
+            if (me == null) return null;
+            me.SetDelayLoad(true);
+
+            // Load all properties on the entity
+            foreach (var pi in typeof(TModel).GetRuntimeProperties())
+                pi.GetValue(me);
+
+            return me;
+        }
 
         /// <summary>
         /// Load immediate relationships and participations for user interface
@@ -23,25 +38,44 @@ namespace OpenIZ.Mobile.Core.Extensions
         public static TModel LoadImmediateRelations<TModel>(this TModel me) where TModel : BaseEntityData
         {
             if (me == null) return null;
-            var delayLoad = me.IsDelayLoadEnabled;
             me.SetDelayLoad(true);
+            
+            // Act
             if (me is Act)
             {
                 var act = me as Act;
-                var loadEntity = act.Relationships.Where(o => o.TargetAct == null).ToList();
+                for (int i = 0; i < act.Relationships.Count; i++)
+                {
+                    var te = act.Relationships[i].TargetAct;
+                }
                 if (act.Participations.Count < 100)
-                    act.Participations.Where(o => o.PlayerEntity == null).ToList();
+                    for (int i = 0; i < act.Participations.Count; i++)
+                    {
+                        var tp = act.Participations[i].PlayerEntity;
+                    }
             }
             else if (me is Entity)
             {
                 var entity = me as Entity;
-                var loadEntity = entity.Relationships.Where(o => o.TargetEntity == null).ToList();
-                loadEntity = entity.Relationships.Where(o => o.InversionIndicator && o.Holder == null).ToList();
+                Object l;
+                // Relationships
+                for (int i = 0; i < entity.Relationships.Count; i++)
+                {
+
+                    if(!entity.Relationships[i].InversionIndicator)
+                        l = entity.Relationships[i].TargetEntity;
+                    else
+                        l = entity.Relationships[i].Holder;
+                }
+                // Participations
                 if (entity.Participations.Count < 100)
-                    entity.Participations.Where(o => o.Act == null).ToList();
+                    for (int i = 0; i < entity.Participations.Count; i++)
+                    {
+                        var tp= entity.Participations[i].Act;
+                    }
+
             }
 
-            me.SetDelayLoad(delayLoad);
             return me;
 
         }

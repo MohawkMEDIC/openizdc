@@ -21,11 +21,11 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Performs a freetext search 
         /// </summary>
-        IEnumerable<TEntity> Search<TEntity>(String term) where TEntity : Entity;
+        IEnumerable<TEntity> Search<TEntity>(String term, int offset, int? count, out int totalResults) where TEntity : Entity;
         /// <summary>
         /// Search based on tokens
         /// </summary>
-        IEnumerable<TEntity> Search<TEntity>(String[] term) where TEntity : Entity;
+        IEnumerable<TEntity> Search<TEntity>(String[] term, int offset, int? count, out int totalResults) where TEntity : Entity;
 
     }
 }

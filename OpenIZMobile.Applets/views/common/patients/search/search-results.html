@@ -1,9 +1,9 @@
-﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-responsive table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet" 
+﻿<table xmlns="http://www.w3.org/1999/xhtml" class="table table-responsive table-striped table-bordered oiz-patient-results" xmlns:oiz="http://openiz.org/applet"
        xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
     <!--
-        Partial responsible for showing patient search results 
-        
+        Partial responsible for showing patient search results
+
         Binds to: {OpenIZModel.Bundle} $scope.search.results
         -->
     <thead>
@@ -13,7 +13,7 @@
             <th style="width:15%">{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</th>
             <th style="width:15%">{{ 'locale.patient.search.header.gender' | i18n }}</th>
             <th style="width:20%">{{ 'locale.patient.search.header.cityVillage' | i18n }}</th>
-            <th style="width:20%">{{ 'locale.patient.search.header.healthFacility' | i18n }}</th>
+            <th style="width:20%">{{ 'locale.patient.search.header.identifier' | i18n }}</th>
             <th style="width:14%">{{ 'locale.patient.search.header.actions' | i18n }}</th>
         </tr>
         <tr class="collapse" id="detailFilter" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#detailFilterIndicator">
@@ -21,19 +21,25 @@
             <th><input class="form-control" oiz-tag="oiz-tag" ng-model="search.query['name.component.value']" type="search" name="nameDetailFilter" /></th>
             <th><input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}" style="max-width:200px" class="form-control" ng-model="search.query['dateOfBirth']" type="date" name="dobFilter" /></th>
             <th><select class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGender" bind:vaue="name[{{ locale }}].value" ng-model="search.query['genderConcept']" name="genderFilter" /></th>
-            <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }' data-group-by="address.Direct.component.County"></select></th>
-            <th><select class="form-control" ng-model="search.query['participation[DedicatedServiceDeliveryLocation].player.name.component.value']" type="search" name="nameDetailFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'></select></th>
+            <th><select class="form-control" ng-model="search.query['address[HomeAddress].component.value']" type="search" name="addressFilter" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }' data-group-by="address.Direct.component.County"></select></th>
+            <th><input type="text" class="form-control" ng-model="search.query['identifier.value']" name="identifierFilter" /></th>
             <th><button class="btn btn-info" ng-click="search.search()" type="button"><span class="glyphicon glyphicon-refresh"></span></button></th>
         </tr>
     </thead>
     <tbody>
         <tr ng-repeat="patient in search.results.item">
-            <td>{{$index}}</td>
+            <td>{{search.results.offset + 1 + $index}}</td>
             <td>{{ ::patient.name.OfficialRecord | oizEntityName }}</td>
             <td>{{ ::patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.fuzzy' | i18n }}</span></td>
-            <td>{{ ::patient.genderConceptModel.name[$root.page.locale].value }}</td>
-            <td>{{ ::patient.address.HomeAddress.component.City }}</td>
-            <td>{{ ::patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</td>
+            <td>{{ ::patient.genderConceptModel.name[$root.page.locale] }}</td>
+            <td>{{ ::patient.address.HomeAddress | oizEntityAddress }}</td>
+            <td>
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="(dmn, id) in patient.identifier">
+                        {{ ::id.value }} <span class="label label-info">{{ ::dmn }}</span>
+                    </li>
+                </ul>
+            </td>
             <td>
                 <span class="btn-group">
                     <a class="btn btn-primary" href="./view.html?patientId={{::patient.id}}">
@@ -46,13 +52,13 @@
             </td>
         </tr>
     </tbody>
-    <tfoot>
+    <tfoot ng-if="search.results">
         <tr>
-            <td colspan="2">{{ search.results.offset }} .. {{ search.results.offset + searchResults.count }} of {{ searchResults.totalResults }} </td>
+            <td colspan="2">{{ search.results.offset + 1 }} .. {{ search.results.offset + search.results.count }} of {{ search.results.totalResults }} </td>
             <td colspan="5">
-                <ul class="pagination">
+                <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total > 1" >
                     <li><a ng-click="search.previous()">&lt;&lt;</a></li>
-                    <li ng-repeat="i in 0 .. (search.results.total / (search.resuts.count + 0.01))"><a ng-click="search.goPage($index)">{{$index}}</a></li>
+                    <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages"><a ng-click="search.goPage(i)">{{i}}</a></li>
                     <li><a ng-click="search.next()">&gt;&gt;</a></li>
                 </ul>
             </td>

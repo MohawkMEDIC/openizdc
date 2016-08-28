@@ -15,6 +15,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Constants;
 using System.Threading;
 using OpenIZ.Mobile.Core.Resources;
+using OpenIZ.Mobile.Core.Extensions;
 
 namespace OpenIZ.Mobile.Core.Search
 {
@@ -72,43 +73,55 @@ namespace OpenIZ.Mobile.Core.Search
         /// <summary>
         /// Perform a search of the free-text index
         /// </summary>
-        public IEnumerable<TEntity> Search<TEntity>(string term) where TEntity : Entity
+        public IEnumerable<TEntity> Search<TEntity>(string term, int offset, int? count, out int totalResults) where TEntity : Entity
         {
             // Tokenize on space
             var tokens = term.Split(' ');
-            return this.Search<TEntity>(tokens);
+            return this.Search<TEntity>(tokens, offset, count, out totalResults);
         }
 
         /// <summary>
         /// Search based on already tokenized string
         /// </summary>
-        public IEnumerable<TEntity> Search<TEntity>(String[] tokens) where TEntity : Entity
+        public IEnumerable<TEntity> Search<TEntity>(String[] tokens, int offset, int? count, out int totalResults) where TEntity : Entity
         {
             var conn = this.CreateConnection();
             using (conn.Lock())
             {
                 // Search query builder
                 StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.AppendFormat("SELECT * FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) INNER JOIN {2} ON ({0}.entity = {2}.uuid) WHERE {2} = '{3}' AND (",
-                    conn.GetMapping<Model.SearchTermEntity>().TableName, conn.GetMapping<Model.SearchTerm>().TableName, conn.GetMapping<Model.SearchEntityType>().TableName, typeof(TEntity).FullName);
+
+                queryBuilder.AppendFormat("SELECT DISTINCT {1}.* FROM {0} INNER JOIN {1} ON ({0}.entity = {1}.key) WHERE {1}.type = '{2}' AND {0}.entity IN (",
+                    conn.GetMapping<Model.SearchTermEntity>().TableName, 
+                    conn.GetMapping<Model.SearchEntityType>().TableName, 
+                    typeof(TEntity).FullName);
 
                 foreach (var tkn in tokens)
-                    if(tkn.Contains("*"))
-                        queryBuilder.AppendFormat("{0}.term LIKE '{1}' OR ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*","%"));
-                    else
-                        queryBuilder.AppendFormat("{0}.term = '{1}' OR ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
+                {
+                    queryBuilder.AppendFormat("SELECT {0}.entity FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) WHERE ",
+                        conn.GetMapping<Model.SearchTermEntity>().TableName,
+                        conn.GetMapping<Model.SearchTerm>().TableName,
+                        typeof(TEntity).FullName);
 
-                queryBuilder.Remove(queryBuilder.Length - 3, 3);
+                    if (tkn.Contains("*"))
+                        queryBuilder.AppendFormat("{0}.term LIKE '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*", "%"));
+                    else
+                        queryBuilder.AppendFormat("{0}.term = '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
+                    queryBuilder.Append(" INTERSECT ");
+                }
+
+                queryBuilder.Remove(queryBuilder.Length - 11, 11);
                 queryBuilder.Append(")");
 
                 // Search now!
                 this.m_tracer.TraceVerbose("FREETEXT SEARCH: {0}", queryBuilder);
 
                 // Perform query
-                var results = conn.Query<Model.SearchTermEntity>(queryBuilder.ToString());
+                var results = conn.Query<Model.SearchEntityType>(queryBuilder.ToString());
 
                 var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
-                return results.AsParallel().Select(o => persistence.Get(new Guid(o.EntityId)));
+                totalResults = results.Count();
+                return results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
             }
         }
 
@@ -128,9 +141,9 @@ namespace OpenIZ.Mobile.Core.Search
 
                     conn.BeginTransaction();
 
-                    var tokens = e.Names.SelectMany(o => o.Component.Select(c => c.Value.ToLower()))
+                    var tokens = e.Names.SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
                         .Union(e.Identifiers.Select(o => o.Value))
-                        .Union(e.Addresses.SelectMany(o => o.Component.Select(c => c.Value.ToLower())))
+                        .Union(e.Addresses.SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
                         .Union(e.Telecoms.Select(o => o.Value.ToLower()));
 
                     // Insert new terms
@@ -234,9 +247,9 @@ namespace OpenIZ.Mobile.Core.Search
                 // Bind entity
                 if (bundlePersistence != null && !this.m_bundleBound)
                 {
-                    bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity));
-                    bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity));
-                    bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity));
+                    bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
+                    bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
+                    bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity)).ToList();
                     this.m_bundleBound = true;
                 }
 
