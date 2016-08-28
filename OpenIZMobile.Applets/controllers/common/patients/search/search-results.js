@@ -133,5 +133,39 @@ $(document).ready(function () {
             });
         };
 
+        scope.act = { };
+
+        OpenIZ.Act.getActTemplateAsync({
+            templateId: "Act.PatientEncounter.Checkin",
+            continueWith: function (data) {
+                scope.act = data;
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
+
+        /**
+        * @summary Starts an encounter for a patient.
+        */
+        scope.startEncounter = function (patient) {
+            console.log(patient);
+
+            scope.act.participation.RecordTarget.player = patient.id;
+
+            OpenIZ.Ims.post({
+                resource: "Act",
+                data: scope.act,
+                continueWith: function (data) {
+                    console.log(data);
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.patient.queue.success"));
+                },
+                onException: function (error) {
+                    console.log(error);
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.patient.queue.error"));
+                }
+            });
+        };
+
     });
 });
