@@ -146,9 +146,10 @@ namespace OpenIZ.Mobile.Core.Search
                         .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value))
                         .Union((e.Addresses ?? new List<EntityAddress>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
                         .Union((e.Telecoms ?? new List<EntityTelecomAddress>()).Select(o => o.Value.ToLower()))
-                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component.Select(c => c.Value.Trim().ToLower()))))
-                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Telecoms ?? new List<EntityTelecomAddress>()).Select(c => c.Value.Trim().ToLower())));
-
+                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component?.Select(c => c.Value?.Trim().ToLower()))))
+                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Telecoms ?? new List<EntityTelecomAddress>()).Select(c => c.Value?.Trim().ToLower())))
+                        .Where(o=>o != null);
+                    
                     // Insert new terms
                     var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
                     var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();

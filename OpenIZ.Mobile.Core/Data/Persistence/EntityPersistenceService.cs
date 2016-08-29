@@ -99,7 +99,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         InversionIndicator = true
                     })
                 );
-                
+                retVal.Participations = new List<ActParticipation>(context.Table<DbActParticipation>().Where(o => o.EntityUuid == dbInstance.Uuid).ToList().Select(o => new ActParticipation(new Guid(o.ParticipationRoleUuid), retVal)
+                {
+                    ActKey = new Guid(o.ActUuid),
+                    Key = o.Key
+                }));
             }
 
             return retVal;

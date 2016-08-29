@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.5160">
+  <info id="org.openiz.core" version="0.6.7.5901">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -13615,8 +13615,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" style="max-height:200px; overflow-y:scroll">
           <ul class="list-group">
-            <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.moodConcept = 'acf7baf2-221f-4bc2-8116-ceb5165be079'" ng-class="{'list-group-item-success':act.relationship.Fulfills}">
-              <h4 class="list-group-item-heading">{{act.classConceptModel.name[$root.page.locale] }} - {{act.typeConceptModel.name[$root.page.locale]}} <small>({{ act.startTime | date: 'yyyy-MM-dd' }} - {{act.stopTime | date: 'yyyy-MM-dd'}})</small></h4>
+            <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'" ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
+              <h4 class="list-group-item-heading">{{act.actModel.classConceptModel.name[$root.page.locale] }} - {{act.actModel.typeConceptModel.name[$root.page.locale]}} <small>({{ act.actModel.startTime | date: 'yyyy-MM-dd' }} - {{act.actModel.stopTime | date: 'yyyy-MM-dd'}})</small></h4>
               <p class="list-group-item-text">
                 <em>
                   <mark>TODO: Summary of the act here</mark>
