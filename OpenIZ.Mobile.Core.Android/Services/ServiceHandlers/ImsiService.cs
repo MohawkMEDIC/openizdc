@@ -87,12 +87,10 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 			var results = patientEncounterService.FindActs(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
-			var encounters = results.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).ToList();
-
 			return new Bundle
 			{
-				Count = encounters.Count(x => x.GetType() == typeof(IdentifiedData)),
-				Item = encounters.OfType<IdentifiedData>().ToList(),
+				Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
+				Item = results.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList(),
 				Offset = 0,
 				TotalResults = totalResults
 			};
