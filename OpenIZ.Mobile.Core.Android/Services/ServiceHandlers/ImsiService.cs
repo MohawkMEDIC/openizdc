@@ -76,19 +76,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// </summary>
 		/// <returns>Returns a list of patient encounters.</returns>
 		[RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Bundle GetPatientEncounter()
 		{
-			//var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-			//var patients = patientService.Find(x => x.Names.Any(c => c.Component.Any(v => v.Value.Contains(""))));
-
-			//return new Bundle()
-			//{
-			//	Item = patients.OfType<IdentifiedData>().ToList(),
-			//	Offset = 0,
-			//	Count = patients.Count(),
-			//	TotalResults = patients.Count()
-			//};
-
 			var patientEncounterService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
 			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
@@ -97,10 +87,12 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 			var results = patientEncounterService.FindActs(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
+			var encounters = results.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).ToList();
+
 			return new Bundle
 			{
-				Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
-				Item = results.OfType<IdentifiedData>().ToList(),
+				Count = encounters.Count(x => x.GetType() == typeof(IdentifiedData)),
+				Item = encounters.OfType<IdentifiedData>().ToList(),
 				Offset = 0,
 				TotalResults = totalResults
 			};
