@@ -1,11 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProtocolDefinition xmlns="http://openiz.org/cdss" uuid="063FFFAD-FC37-4666-B949-4A96AE2A4FB9" id="zz__Weight" name="Weigh Schedule">
+  <!-- Younger than 5 only -->
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
   <rule id="Weight" repeat="60">
     <variable name="minDate">DateOfBirth.Value.Date.AddMonths(index).AddDays(-DateOfBirth.Value.Day + 1)</variable>
     <variable name="maxDate">DateOfBirth.Value.Date.AddMonths(index + 1).AddDays(-DateOfBirth.Value.Day).AddHours(23).AddMinutes(59)</variable>
     <when evaluation="and">
       <!-- Patient does not have Weights taken or proposed-->
-      <imsiExpression negationIndicator="true">participation[RecordTarget].source.typeConcept.mnemonic=VitalSign-Weight&amp;participation[RecordTarget].source.actTime=>$minDate$&amp;participation[RecordTarget].source.actTime=&lt;$maxDate$</imsiExpression>
+      <imsiExpression negationIndicator="true">participation[RecordTarget].act.typeConcept.mnemonic=VitalSign-Weight&amp;participation[RecordTarget].act.actTime=>$minDate$&amp;participation[RecordTarget].act.actTime=&lt;$maxDate$</imsiExpression>
     </when>
     <then>
       <action>

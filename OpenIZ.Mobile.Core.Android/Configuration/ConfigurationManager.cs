@@ -45,6 +45,7 @@ using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Mobile.Core.Android.Net;
 using OpenIZ.Mobile.Core.Search;
+using OpenIZ.Mobile.Core.Protocol;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -140,6 +141,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
+                    typeof(ProtocolWatchService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,

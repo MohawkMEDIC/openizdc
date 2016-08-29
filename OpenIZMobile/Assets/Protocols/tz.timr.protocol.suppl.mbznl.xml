@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ProtocolDefinition xmlns="http://openiz.org/cdss" id="zz_MBDZNL" name="Mebendazole Supplement" uuid="7CB8E650-A8B9-42EF-B6DC-FF64570D3A56">
+  <!-- Younger than 5 only -->
+  <when evaluation="and">
+    <linqExpression>now.Subtract(DateOfBirth.Value.Date).TotalDays &lt;= 1825</linqExpression>
+  </when>
   <rule id="MEBENDAZOLE" repeat="10">
     <when evaluation="and">
       <!-- Vitamin A not set yet -->

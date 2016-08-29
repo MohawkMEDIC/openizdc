@@ -1,0 +1,61 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="container-fluid">
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.givenName' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.familyName' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.dateOfBirth' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12" ng-if="patient.dateOfBirthPrecision">
+            {{ patient.dateOfBirth | date: 'yyyy-MM' }}
+        </div>
+        <div class="col-sm-10 col-xs-12" ng-if="!patient.dateOfBirthPrecision">
+            {{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}
+        </div>
+    </div>
+    <div class="row" ng-if="patient.multipleBirthOrder">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.birthOrder' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ 'locale.common.yes' | i18n }} - {{ patient.multipleBirthOrderText }}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.gender' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.genderConceptModel.name[$root.page.locale]}}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.facility' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.relationship.DedicatedServiceDeliveryLocation.name.OfficialRecord | oizEntityName}}
+        </div>
+    </div>
+    <div class="row">
+        <label class="col-sm-2 col-xs-12">
+            {{ 'locale.patient.demographics.domicile' | i18n }}
+        </label>
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.address.HomeAddress | oizEntityAddress }}
+        </div>
+    </div>
+</div>

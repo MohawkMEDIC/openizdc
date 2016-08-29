@@ -205,5 +205,29 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             throw new NotImplementedException();
         }
 
+        public IEnumerable<ConceptClass> FindConceptClasses(Expression<Func<ConceptClass, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ConceptClass> FindConceptClasses(Expression<Func<ConceptClass, bool>> query, int offset, int? count, out int totalCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptClass GetConceptClass(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptClass InsertConceptClass(ConceptClass conceptClass)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptClass ObsoleteConceptClass(Guid key)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

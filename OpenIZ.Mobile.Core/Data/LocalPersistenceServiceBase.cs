@@ -128,35 +128,35 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Persist object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("INSERT {0}", data);
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("INSERT {0}", data);
 
-                    connection.BeginTransaction();
-                    data.SetDelayLoad(false);
-                    data = this.Insert(connection, data);
-                    data.SetDelayLoad(true);
-                    connection.Commit();
-
-                    this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
-
-                    return data;
+                        connection.BeginTransaction();
+                        data.SetDelayLoad(false);
+                        data = this.Insert(connection, data);
+                        data.SetDelayLoad(true);
+                        connection.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Insert, data, e);
+                    }
 
                 }
-
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Insert, data, e);
-
-                }
+                this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                return data;
             }
-
+            catch { throw; }
 
         }
+
         /// <summary>
         /// Update the specified data
         /// </summary>
@@ -178,31 +178,35 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Persist object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("UPDATE {0}", data);
-                    connection.BeginTransaction();
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("UPDATE {0}", data);
+                        connection.BeginTransaction();
 
-                    data.SetDelayLoad(false);
-                    data = this.Update(connection, data);
-                    data.SetDelayLoad(true);
+                        data.SetDelayLoad(false);
+                        data = this.Update(connection, data);
+                        data.SetDelayLoad(true);
 
-                    connection.Commit();
+                        connection.Commit();
 
-                    this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
-                    return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Update, data, e);
+
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Update, data, e);
-
-                }
+                this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                return data;
             }
+            catch { throw; }
         }
 
         /// <summary>
@@ -226,30 +230,35 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Obsolete object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
-                    connection.BeginTransaction();
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
+                        connection.BeginTransaction();
 
-                    data.SetDelayLoad(false);
-                    data = this.Obsolete(connection, data);
-                    data.SetDelayLoad(true);
+                        data.SetDelayLoad(false);
+                        data = this.Obsolete(connection, data);
+                        data.SetDelayLoad(true);
 
-                    connection.Commit();
+                        connection.Commit();
 
-                    this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
-                    return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
-                }
+                this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                return data;
             }
+            catch { throw; }
         }
 
         /// <summary>
@@ -397,7 +406,7 @@ namespace OpenIZ.Mobile.Core.Data
                 try
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
-                    
+
                     var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
 
                     var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);

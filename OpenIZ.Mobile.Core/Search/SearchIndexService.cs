@@ -16,6 +16,7 @@ using OpenIZ.Core.Model.Constants;
 using System.Threading;
 using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Extensions;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Search
 {
@@ -141,10 +142,12 @@ namespace OpenIZ.Mobile.Core.Search
 
                     conn.BeginTransaction();
 
-                    var tokens = e.Names.SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
-                        .Union(e.Identifiers.Select(o => o.Value))
-                        .Union(e.Addresses.SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
-                        .Union(e.Telecoms.Select(o => o.Value.ToLower()));
+                    var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
+                        .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value))
+                        .Union((e.Addresses ?? new List<EntityAddress>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
+                        .Union((e.Telecoms ?? new List<EntityTelecomAddress>()).Select(o => o.Value.ToLower()))
+                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component.Select(c => c.Value.Trim().ToLower()))))
+                        .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Telecoms ?? new List<EntityTelecomAddress>()).Select(c => c.Value.Trim().ToLower())));
 
                     // Insert new terms
                     var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();

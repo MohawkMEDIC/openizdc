@@ -13,6 +13,22 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
         continueWith: function (data) {
             $scope.patient = data;
 
+            // Set multiple birth text
+            switch (data.multipleBirthOrder) {
+                case 1:
+                    $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.first');
+                    break;
+                case 2:
+                    $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.second');
+                    break;
+                case 3:
+                    $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.third');
+                    break;
+                case 0:
+                    $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.unknown');
+                    break;
+            };
+
             $scope.$apply();
         },
         onException: function (ex) {
@@ -26,5 +42,5 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
         }
     });
 
-   
+
 }]);
