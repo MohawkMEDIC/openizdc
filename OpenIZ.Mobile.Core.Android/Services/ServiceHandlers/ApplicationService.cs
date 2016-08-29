@@ -14,13 +14,13 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Core.Alerting;
 using OpenIZ.Core.Services;
 using Newtonsoft.Json;
 using OpenIZ.Core.Applets.Model;
 using System.Reflection;
 using OpenIZ.Mobile.Core.Configuration;
 using System.IO;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 {

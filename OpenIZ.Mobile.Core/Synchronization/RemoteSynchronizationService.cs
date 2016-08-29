@@ -19,7 +19,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services;
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {

@@ -71,7 +71,7 @@ namespace OpenIZ.Mobile.Core.Extensions
                 if (entity.Participations.Count < 100)
                     for (int i = 0; i < entity.Participations.Count; i++)
                     {
-                        var tp= entity.Participations[i].Act;
+                        var tp= entity.Participations[i].Act.LoadDisplayProperties();
                     }
 
             }

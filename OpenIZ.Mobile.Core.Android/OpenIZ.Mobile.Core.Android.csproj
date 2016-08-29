@@ -45,6 +45,9 @@
       <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp" />
+    <Reference Include="OpenIZ.Core.Alert">
+      <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>

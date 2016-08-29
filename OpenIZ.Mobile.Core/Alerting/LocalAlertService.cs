@@ -9,9 +9,9 @@ using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Services;
-using OpenIZ.Core.Alerting;
 using OpenIZ.Core.Model.Map;
 using System.Reflection;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Mobile.Core.Alerting
 {

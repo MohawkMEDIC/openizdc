@@ -26,7 +26,7 @@ using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Resources;
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {

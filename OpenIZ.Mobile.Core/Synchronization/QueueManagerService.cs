@@ -17,7 +17,7 @@
  * User: justi
  * Date: 2016-7-13
  */
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Interfaces;

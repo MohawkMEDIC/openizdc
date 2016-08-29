@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
