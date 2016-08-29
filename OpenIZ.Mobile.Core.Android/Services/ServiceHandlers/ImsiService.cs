@@ -437,6 +437,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <param name="act">The act to update.</param>
 		/// <returns>Returns the updated act.</returns>
 		[RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Act UpdateAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
 		{
 			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
@@ -446,9 +447,16 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
 			{
-				var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+				if (act.Key == actKey && act.VersionKey == actVersionKey)
+				{
+					var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
 
-				return actPersistenceService.Update(act);
+					return actPersistenceService.Update(act);
+				}
+				else
+				{
+					throw new ArgumentException("Act not found");
+				}
 			}
 			else
 			{

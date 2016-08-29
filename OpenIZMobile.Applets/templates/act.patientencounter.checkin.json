@@ -1,6 +1,5 @@
 ﻿{
   "$type": "PatientEncounter",
-  "key": "{{uuid}}",
   "template": {
     "mnemonic": "Act.PatientEncounter.Checkin"
   },
