@@ -681,20 +681,23 @@ var OpenIZ = OpenIZ || {
                 },
                 error: function (data) {
                     var error = data.responseJSON;
-                    if (error.error !== undefined) // error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
-                                error.error_description,
-                                null
-                            ));
 
-                    else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                                data,
-                                null
-                            ));
+                    if (controlData.onException !== undefined)
+                    {
+                        if (error.error !== undefined) // error
+                        {
+                            controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                        }
+                        else
+                        {
+                            // unknown error
+                            controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                        }
+                    }
                     if (controlData.finally !== undefined)
+                    {
                         controlData.finally();
-
+                    }
                 }
             });
         },
