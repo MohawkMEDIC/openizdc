@@ -172,7 +172,9 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
-
+    
+    <!-- Stock Management -->
+    <string key="locale.stock.lowstock.title">Low Stock</string>
     
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
