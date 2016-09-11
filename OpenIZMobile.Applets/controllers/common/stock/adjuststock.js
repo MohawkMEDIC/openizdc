@@ -1,4 +1,5 @@
 ﻿/// <reference path="../js/openiz-model.js"/>
+/// <reference path="../js/openiz.js"/>
 
 /*
  * Copyright 2016 PATH International
@@ -16,13 +17,15 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-19
+ * User: khannan
+ * Date: 2016-9-10
  */
 
-/// <reference path="../js/openiz.js"/>
+layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
 
-layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
+    $scope.adjustStock = function () {
+
+    };
 
 }]);

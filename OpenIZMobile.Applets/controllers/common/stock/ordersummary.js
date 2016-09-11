@@ -24,33 +24,58 @@
 
 layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
 
-    var ctx = $('#orderSummaryChart');
+    var labels = [];
+    var data = [];
+    labels[0] = "Released";
+    labels[1] = "Cancelled";
+    labels[2] = "Requested";
+    labels[3] = "Shipped";
+    labels[4] = "Packed";
+    data[0] = 3;
+    data[1] = 4;
+    data[2] = 2;
+    data[3] = 6;
+    data[4] = 1;
 
-    var data = {
-        labels: [
-            "Red",
-            "Blue",
-            "Yellow"
-        ],
-        datasets: [
-            {
-                data: [300, 50, 100],
-                backgroundColor: [
-                    "#FF6384",
-                    "#36A2EB",
-                    "#FFCE56"
-                ],
-                hoverBackgroundColor: [
-                    "#FF6384",
-                    "#36A2EB",
-                    "#FFCE56"
-                ]
-            }]
-    };
-
-    var stockChart = new Chart(ctx, {
+    var ctxOrders = document.getElementById("orderSummaryChart");
+    var myChart = new Chart(ctxOrders, {
         type: 'pie',
-        data: data
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Stock Status (Doses)',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
     });
 
 }]);

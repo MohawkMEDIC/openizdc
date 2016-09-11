@@ -18,24 +18,26 @@
  - Date: 2016-9-8
 -->
 <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="StockDashboardController" xmlns:oiz="http://openiz.org/applet">
-    <oiz:style>~/css/theme.css</oiz:style>
     <oiz:script>/org.openiz.core/lib/chart.min.js</oiz:script>
     <oiz:script>~/controllers/common/stock/dashboard.js</oiz:script>
+    <oiz:title lang="en">Stock Overview</oiz:title>
     <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
 
     <div class="row">
-
-        <div class="col-xs-12 col-sm-4">
-            <!-- #include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html" -->
-            <!-- #include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html" -->
+        <div class="col-xs-12">
+            <div class="col-xs-6">
+                <!-- #include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html" -->
+            </div>
+            <div class="col-xs-6">
+                <!-- #include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html" -->
+            </div>
         </div>
-        <div class="col-xs-12 col-sm-8">
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
-                </div>
-                <div>
-                    <canvas id="stockDashboardChart" width="400" height="200"></canvas>
                 </div>
                 <table class="panel-body table table-striped table-responsive">
                     <tr>
@@ -45,6 +47,8 @@
                         <td>{{ 'locale.stock.tableHeader.amc' | i18n }}</td>
                         <td>{{ 'locale.stock.tableHeader.remain' | i18n }}</td>
                         <td>{{ 'locale.stock.tableHeader.action' | i18n }}</td>
+                        <td></td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td>
@@ -55,9 +59,13 @@
                         <td>35</td>
                         <td>30 d</td>
                         <td>
-                            <div class="btn-group">
-                                <a class="btn btn-danger">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                            </div>
+                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
                         </td>
                     </tr>
                     <tr class="danger">
@@ -69,9 +77,13 @@
                         <td>60</td>
                         <td>2 d</td>
                         <td>
-                            <div class="btn-group">
-                                <a class="btn btn-danger">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                            </div>
+                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
                         </td>
                     </tr>
                     <tr class="info">
@@ -83,10 +95,13 @@
                         <td>10</td>
                         <td>15 d</td>
                         <td>
-                            <div class="btn-group">
-                                <a class="btn btn-danger">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                                <a class="btn btn-success">{{ 'locale.stock.action.order' | i18n }}</a>
-                            </div>
+                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
                         </td>
                     </tr>
                 </table>

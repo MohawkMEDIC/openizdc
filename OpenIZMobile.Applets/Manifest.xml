@@ -38,6 +38,10 @@
     <oid>1.2.3.4.5.6.7.8.11</oid>
     <definition>/org.openiz.core/templates/act.patientencounter.checkin.json</definition>
   </template>
+  <template mnemonic="Act.TransferStock">
+    <oid>1.2.3.4.5.6.7.8.12</oid>
+    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
+  </template>
   
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
@@ -174,7 +178,29 @@
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     
     <!-- Stock Management -->
-    <string key="locale.stock.lowstock.title">Low Stock</string>
+    <string key="locale.stock.action.transfer">Transfer</string>
+    <string key="locale.stock.adjustStock">Adjust Stock</string>
+    <string key="locale.stock.lowstock">Low Stock</string>
+    <string key="locale.stock.ordersummary.title">Order Summary</string>
+    <string key="locale.stock.gtin">GTIN</string>
+    <string key="locale.stock.lotNumber">Lot No.</string>
+    <string key="locale.stock.vaccine">Vaccine</string>
+    <string key="locale.stock.vaccines.title">Vaccines</string>
+    <string key="locale.stock.dateRecorded">Date Recorded</string>
+    <string key="locale.stock.unitOfMeasure">Unit of Measure</string>
+    <string key="locale.stock.adjustmentReason">Adjustment Reason</string>
+    <string key="locale.stock.quantity">Quantity</string>
+    <string key="locale.stock.notes">Notes</string>
+    <string key="locale.stock.errors.dateRecordedRequired">Please enter a recorded date</string>
+    <string key="locale.stock.errors.unitOfMeasureRequired">Please select a unit of measure</string>
+    <string key="locale.stock.errors.adjustmentReasonRequired">Please select an adjustment reason</string>
+    <string key="locale.stock.errors.quantityRequired">Please enter a quantity</string>
+    <string key="locale.stock.transferFromFacility">From Facility</string>
+    <string key="locale.stock.transferToFacility">To Facility</string>
+    <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
+    <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
+    <string key="locale.stock.transferStock">Transfer Stock</string>
+    <string key="locale.stock.currentLevel">Current Quantity</string>
     
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>

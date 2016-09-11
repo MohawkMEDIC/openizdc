@@ -1740,6 +1740,22 @@ var OpenIZ = OpenIZ || {
     },
     /**
      * @class
+     * @summary Manufactured material class
+     */
+    ManufacturedMaterial:
+    {
+        getManufacturedMaterials: function (controlData)
+        {
+            OpenIZ.Ims.get({
+                resource: "ManufacturedMaterial",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                query: controlData.query
+            })
+        }
+    },
+    /**
+     * @class
      * @summary Security repository class
      */
     UserEntity: {
