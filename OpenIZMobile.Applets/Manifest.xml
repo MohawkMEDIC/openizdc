@@ -201,6 +201,10 @@
     <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
     <string key="locale.stock.transferStock">Transfer Stock</string>
     <string key="locale.stock.currentLevel">Current Quantity</string>
+    <string key="locale.stock.orderNo">Order No.</string>
+    <string key="locale.stock.orderDate">Order Date</string>
+    <string key="locale.stock.destinationHealthFacility">Destination</string>
+    <string key="locale.stock.orderStatus">Order Status</string>
     
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
