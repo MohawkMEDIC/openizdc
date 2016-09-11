@@ -205,6 +205,8 @@
     <string key="locale.stock.orderDate">Order Date</string>
     <string key="locale.stock.destinationHealthFacility">Destination</string>
     <string key="locale.stock.orderStatus">Order Status</string>
+    <string key="locale.stock.orderDetails">Order Details</string>
+    <string key="locale.stock.order">Order</string>
     
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
