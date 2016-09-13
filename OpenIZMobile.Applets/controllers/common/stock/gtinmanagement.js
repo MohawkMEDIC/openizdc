@@ -21,7 +21,7 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
+layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
 
     OpenIZ.Act.getActTemplateAsync({
         templateId: "Act.TransferStock",
@@ -33,7 +33,7 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
         }
     });
 
-    $scope.query = "lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5"
+    $scope.query = "lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=25"
 
     $scope.stock = [];
 
@@ -58,21 +58,5 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
             $("#transfer-stock-loading-bar").hide();
         }
     });
-
-    $scope.transferStock = function () {
-
-        OpenIZ.Ims.post({
-            resource: "Act",
-            data: $scope.act,
-            continueWith: function(data)
-            {
-                console.log(data);
-            },
-            onException: function(ex)
-            {
-                console.log(ex);
-            }
-        })
-    };
 
 }]);

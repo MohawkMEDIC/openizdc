@@ -1,4 +1,5 @@
 ﻿/// <reference path="../js/openiz-model.js"/>
+/// <reference path="../js/openiz.js"/>
 
 /*
  * Copyright 2016 PATH International
@@ -20,9 +21,47 @@
  * Date: 2016-7-19
  */
 
-/// <reference path="../js/openiz.js"/>
-
 layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
+    // TODO: add facility id here
+    $scope.lowStockQuery = "relationship[HeldEntity].holder=" + "";
 
+    //OpenIZ.Ims.get({
+    //    resource: "ManufacturedMaterial",
+    //    query: $scope.lowStockQuery,
+    //    continueWith: function (data) {
+    //        console.log(data);
+    //    },
+    //    onException: function (ex) {
+    //        console.log(ex);
+    //    }
+    //});
+
+    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.Eventoccurrence + "&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
+
+    OpenIZ.Ims.get({
+        resource: "Act",
+        query: $scope.orderQuery,
+        continueWith: function(data)
+        {
+            console.log(data);
+        },
+        onException: function(ex)
+        {
+            console.log(ex);
+        }
+    });
+
+    $scope.stockSnapshotQuery = "";
+
+    //OpenIZ.Ims.get({
+    //    resource: "ManufacturedMaterial",
+    //    query: $scope.stockSnapshotQuery,
+    //    continueWith: function (data) {
+    //        console.log(data);
+    //    },
+    //    onException: function (ex) {
+    //        console.log(ex);
+    //    }
+    //});
 }]);
