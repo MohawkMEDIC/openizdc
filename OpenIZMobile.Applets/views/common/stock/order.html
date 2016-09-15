@@ -24,7 +24,36 @@
     <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
 
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        {{ 'locale.stock.stockorders.title' | i18n }}
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse in">
+                    <div class="panel-body">
+                        <form name="searchOrdersForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchOrdersForm.$valid &amp;&amp; searchOrders()">
+                            <div class="form-group" ng-class="{ 'has-error' : searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched }">
+                                <label class="col-xs-3 control-label">{{ 'locale.stock.orderNumber' | i18n }}</label>
+                                <div class="col-xs-7">
+                                    <input type="text" name="orderNumber" ng-required="true" ng-model="orderNumber" class="form-control" />
+                                    <p ng-show="searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.orderNumberRequired' | i18n }}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-10">
+                                    <button type="submit" class="btn btn-primary pull-right">
+                                        Search For Stock Orders
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
             <!-- #include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html" -->
         </div>
     </div>
@@ -47,28 +76,10 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="order in orders">
-                                <td>{{ order.number }}</td>
-                                <td>{{ order.date }}</td>
-                                <td>{{ order.healthFacility }}</td>
-                                <td>{{ order.status }}</td>
-                                <td>
-                                    <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1234</td>
-                                <td>10/9/2016</td>
-                                <td>Arusha Health Centre for Women</td>
-                                <td>Requested</td>
-                                <td>
-                                    <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5678</td>
-                                <td>11/9/2016</td>
-                                <td>Arusha Laboratory Dispensary</td>
-                                <td>Requested</td>
+                                <td>{{ order.orderNo }}</td>
+                                <td>{{ order.orderDate }}</td>
+                                <td>{{ order.destinationHealthFacility }}</td>
+                                <td>{{ order.orderStatus }}</td>
                                 <td>
                                     <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
                                 </td>
