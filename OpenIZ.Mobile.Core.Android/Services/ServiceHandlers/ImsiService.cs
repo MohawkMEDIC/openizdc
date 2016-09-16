@@ -433,7 +433,6 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <summary>
 		/// Updates an act.
 		/// </summary>
-		/// <param name="id">The id of the act to be updated.</param>
 		/// <param name="act">The act to update.</param>
 		/// <returns>Returns the updated act.</returns>
 		[RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
@@ -461,6 +460,38 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			else
 			{
 				throw new ArgumentException("Act not found");
+			}
+		}
+
+		/// <summary>
+		/// Updates a manufactured material.
+		/// </summary>
+		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
+		/// <returns>Returns the updated manufactured material.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+		public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)
+		{
+			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+			Guid actKey = Guid.Empty;
+			Guid actVersionKey = Guid.Empty;
+
+			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+			{
+				if (manufacturedMaterial.Key == actKey && manufacturedMaterial.VersionKey == actVersionKey)
+				{
+					var manufacturedMaterialPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
+
+					return manufacturedMaterialPersistenceService.Update(manufacturedMaterial);
+				}
+				else
+				{
+					throw new ArgumentException("Manufactured Material not found");
+				}
+			}
+			else
+			{
+				throw new ArgumentException("Manufactured Material not found");
 			}
 		}
 	}
