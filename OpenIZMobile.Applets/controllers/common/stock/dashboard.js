@@ -37,7 +37,7 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
     //    }
     //});
 
-    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.Eventoccurrence + "&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
+    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
     OpenIZ.Ims.get({
         resource: "Act",

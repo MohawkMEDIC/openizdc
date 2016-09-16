@@ -216,9 +216,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             // Serialize the response
             return new Bundle()
             {
-                Item = retVal.OfType<IdentifiedData>().ToList(),
-                Offset = offset,
-                Count = count,
+				Count = retVal.Count(x => x.GetType() == typeof(IdentifiedData)),
+				Item = retVal.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList(),
+				Offset = offset,
                 TotalResults = totalResults
             };
 
