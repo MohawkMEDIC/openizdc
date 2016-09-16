@@ -77,21 +77,11 @@
                                 <td>{{ vaccine.identifier | oizEntityIdentifier }}</td>
                                 <td>{{ vaccine.quantity }}</td>
                                 <td>
-                                    <div class="form-group" ng-class="{ 'has-error' : newQuantity.$invalid &amp;&amp; newQuantity.$touched }">
-                                        <div class="col-md-10">
-                                            <input type="number" name="newQuantity" ng-required="true" ng-model="newQuantity" class="form-control" />
-                                            <p ng-show="newQuantity.$invalid &amp;&amp; newQuantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                                        </div>
-                                    </div>
+                                    <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div class="form-group">
-                        <div class="col-xs-10">
-                            <button type="button" class="btn btn-primary" ng-click="update(vaccine)">Update</button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

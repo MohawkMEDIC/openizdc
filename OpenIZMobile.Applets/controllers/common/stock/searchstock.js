@@ -48,28 +48,4 @@ layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
         });
     };
 
-    $scope.update = function (manufacturedMaterial) {
-
-        console.log(manufacturedMaterial);
-
-        OpenIZ.Ims.put({
-            id: manufacturedMaterial.id,
-            versionId: manufacturedMaterial.versionId,
-            resource: "ManufacturedMaterial",
-            data: manufacturedMaterial,
-            controlData: function(data)
-            {
-                console.log(data);
-
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.stockUpdatedSuccessfully"));
-            },
-            onException: function(ex)
-            {
-                console.log(ex);
-
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.errors.unableToUpdateStock"));
-            }
-        })
-    };
-
 }]);
