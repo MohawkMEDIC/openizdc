@@ -26,11 +26,11 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
 
     var labels = [];
     var data = [];
-    labels[0] = "Released";
-    labels[1] = "Cancelled";
-    labels[2] = "Requested";
-    labels[3] = "Shipped";
-    labels[4] = "Packed";
+    labels[0] = OpenIZ.Localization.getString("locale.stock.released");
+    labels[1] = OpenIZ.Localization.getString("locale.stock.cancelled");
+    labels[2] = OpenIZ.Localization.getString("locale.stock.requested");
+    labels[3] = OpenIZ.Localization.getString("locale.stock.shipped");
+    labels[4] = OpenIZ.Localization.getString("locale.stock.packed");
     data[0] = 3;
     data[1] = 4;
     data[2] = 2;
@@ -51,7 +51,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
                     'rgba(255, 206, 86, 0.2)',
                     'rgba(75, 192, 192, 0.2)',
                     'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255,99,132,1)',
@@ -59,7 +59,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]

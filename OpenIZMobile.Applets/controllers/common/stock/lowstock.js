@@ -37,24 +37,50 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
             }
         },
         data: {
-            labels: ["OPV", "BCG", "MR"],
-            datasets: [{
-                label: 'On Hand',
-                data: [40, 20, 30],
-                backgroundColor: [
-                    'rgba(128,255,128,0.2)',
-                    'rgba(255,128,128,0.2)',
-                    'rgba(128,128,255,0.2)'
-                ]
-            }, {
-                label: 'AMC',
-                data: [35, 60, 10],
-                backgroundColor: [
-                    'rgba(128,128,128,0.2)',
-                    'rgba(128,128,128,0.2)',
-                    'rgba(128,128,128,0.2)'
-                ]
-            }]
+            labels: [],
+            datasets: []
+        }
+    });
+
+    var lowStockQuery = "lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5";
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: lowStockQuery,
+        continueWith: function (data) {
+
+            if (data.item !== undefined) {
+                for (var i = 0; i < data.item.length; i++) {
+
+                    var vaccine = data.item[i];
+
+                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value);
+                    stockChart.data.datasets.push({
+                        label: vaccine.name.Assigned.component.$other.value,
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                        ]
+                    });
+                }
+
+                // HACK
+                for (var j = 0; j < stockChart.data.datasets.length; j++) {
+                    stockChart.data.datasets[j].data[j] = data.item[j].quantity + 1;
+                }
+
+                stockChart.update(1, true);
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        },
+        finally: function()
+        {
+            stockChart.update();
         }
     });
 

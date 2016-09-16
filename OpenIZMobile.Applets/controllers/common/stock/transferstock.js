@@ -41,8 +41,6 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
         query: $scope.query,
         continueWith: function (data)
         {
-            console.log(data);
-
             if (data.item !== undefined)
             {
                 for (var i = 0; i < data.item.length; i++) {

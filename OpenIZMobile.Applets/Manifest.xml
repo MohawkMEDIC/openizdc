@@ -73,12 +73,12 @@
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>
-    
+
     <!-- Common -->
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.unknown">Unknown</string>
-    
+
     <!-- Login -->
     <string key="locale.security.login.helpText">Please log into TImR to continue</string>
     <string key="locale.security.login.label.username">Username</string>
@@ -91,7 +91,7 @@
     <string key="locale.security.errors.usernameRequired">Please enter a username</string>
     <string key="locale.security.errors.passwordRequired">Please enter a password</string>
     <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
-    
+
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
     <string key="locale.error.500.title">Internal Server Error</string>
@@ -108,7 +108,7 @@
     <string key="locale.error.bug.input.trivial">I am able to work around this bug</string>
     <string key="locale.error.bug.input.description">Describe this bug:</string>
     <string key="locale.error.bug.input.logFile">Attach Log File:</string>
-    
+
     <!-- Settings -->
     <string key="locale.settings.realmTitle">Join Realm</string>
     <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
@@ -176,12 +176,13 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
-    
+
     <!-- Stock Management -->
     <string key="locale.stock.action.transfer">Transfer</string>
     <string key="locale.stock.adjustStock">Adjust Stock</string>
     <string key="locale.stock.lowstock">Low Stock</string>
     <string key="locale.stock.ordersummary.title">Order Summary</string>
+    <string key="locale.stock.stockorders.title">Stock Orders</string>
     <string key="locale.stock.gtin">GTIN</string>
     <string key="locale.stock.lotNumber">Lot No.</string>
     <string key="locale.stock.vaccine">Vaccine</string>
@@ -199,6 +200,7 @@
     <string key="locale.stock.transferToFacility">To Facility</string>
     <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
     <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
+    <string key="locale.stock.errors.orderNumberRequired">Please enter an order number</string>
     <string key="locale.stock.transferStock">Transfer Stock</string>
     <string key="locale.stock.currentLevel">Current Quantity</string>
     <string key="locale.stock.orderNo">Order No.</string>
@@ -207,7 +209,14 @@
     <string key="locale.stock.orderStatus">Order Status</string>
     <string key="locale.stock.orderDetails">Order Details</string>
     <string key="locale.stock.order">Order</string>
-    
+    <string key="locale.stock.orderNumber">Order No</string>
+    <string key="locale.stock.released">Released</string>
+    <string key="locale.stock.cancelled">Cancelled</string>
+    <string key="locale.stock.packed">Packed</string>
+    <string key="locale.stock.shipped">Shipped</string>
+    <string key="locale.stock.requested">Requested</string>
+    <string key="locale.stock.stockStatusDoses">Stock Status (Doses)</string>
+
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>

@@ -23,12 +23,23 @@
 
 layoutApp.controller('OrderController', ['$scope', function ($scope) {
 
-    $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
+    $scope.summaryQuery = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
 
-    $scope.orders = [];
+    $scope.orders = [{
+            orderNo: 1234,
+            orderDate: "10/9/2016",
+            destinationHealthFacility: "Arusha Health Centre for Women",
+            orderStatus: "Requested"
+        },
+        {
+            orderNo: 5678,
+            orderDate: "11/9/2016",
+            destinationHealthFacility: "Arusha Laboratory Dispensary",
+            orderStatus: "Requested"
+        }];
 
     OpenIZ.Ims.get({
-        query: $scope.query,
+        query: $scope.summaryQuery,
         resource: "Act",
         continueWith: function (data)
         {
@@ -46,4 +57,25 @@ layoutApp.controller('OrderController', ['$scope', function ($scope) {
             console.log(JSON.stringify(ex));
         }
     });
+
+    $scope.searchOrders = function () {
+        searchQuery = "identifier.value=" + $scope.orderNumber + "&" + $scope.summaryQuery;
+
+        OpenIZ.Ims.get({
+            query: searchQuery,
+            resource: "Act",
+            continueWith: function (data) {
+                console.log(data);
+
+                if (data.item !== undefined) {
+                    for (var i = 0; i < data.item.length; i++) {
+                        //$scope.orders.push(data.item[i]);
+                    }
+                }
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
+    };
 }]);
