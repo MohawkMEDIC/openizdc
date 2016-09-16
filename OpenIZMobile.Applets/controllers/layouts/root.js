@@ -2,7 +2,7 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function ($rootScope) {
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
 
     $rootScope.system = {};
     $rootScope.system.config = {};
@@ -48,10 +48,22 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function 
 });
 
 // Configure the safe ng-urls
+layoutApp.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when("/orderDetail", {
+        templateUrl: "../views/common/stock/orderdetail.html",
+        controller: "OrderDetailController"
+    })
+    .otherwise({
+        redirectTo: '/orderDetail'
+    });
+}]);
+
 layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);
+
+
 
 angular.element(document).ready(function () {
     $("[data-toggle=popover]").popover({ container: 'body' });

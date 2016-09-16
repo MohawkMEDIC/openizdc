@@ -24,7 +24,7 @@
 layoutApp.controller('OrderDetailController', ['$scope', function ($scope) {
 
     $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
-
+    console.log($scope.query);
     $scope.order = {
         orderNo: 1234,
         orderDate: "11/9/2016",
@@ -32,7 +32,7 @@ layoutApp.controller('OrderDetailController', ['$scope', function ($scope) {
         orderStatus: "Requested"
     };
     $scope.orderItems = [];
-
+    OpenIZ.Ims.
     OpenIZ.Ims.get({
         query: $scope.query,
         resource: "Act",

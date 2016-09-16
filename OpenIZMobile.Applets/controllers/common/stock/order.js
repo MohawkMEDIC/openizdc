@@ -43,7 +43,7 @@ layoutApp.controller('OrderController', ['$scope', function ($scope) {
         },
         onException: function(ex)
         {
-            console.log(ex);
+            console.log(JSON.stringify(ex));
         }
     });
 }]);

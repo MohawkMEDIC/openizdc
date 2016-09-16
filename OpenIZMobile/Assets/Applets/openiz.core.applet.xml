@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.6740">
+  <info id="org.openiz.core" version="0.6.7.8976">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -36,6 +36,9 @@
   </template>
   <template mnemonic="Act.PatientEncounter.Checkin">
     <definition>/org.openiz.core/templates/act.patientencounter.checkin.json</definition>
+  </template>
+  <template mnemonic="Act.TransferStock">
+    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
   <asset name="bundleconfig.json" mimeType="text/javascript">
     <contentText>[
@@ -618,6 +621,503 @@ angular.element(document).ready(function () {
   <asset name="controllers/common/security/login.min.js" mimeType="text/javascript">
     <contentText>angular.element(document).ready(function(){$("form.form-login").each(function(n,t){var i=angular.element(t).scope();i.login=i.login||function(n,t,i){if(!n.$valid){alert(OpenIZ.Localization.getString("locale.security.login.invalid"));return}OpenIZ.App.showWait();OpenIZ.Authentication.loginAsync({userName:t,password:i,continueWith:function(n){n==null?alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant")):window.location=OpenIZ.urlParams.returnUrl},onException:function(n){OpenIZ.App.hideWait();typeof n=="string"?alert(n):n.message!=undefined?alert(""+n.message+" - "+n.details):alert(n)}})}})});</contentText>
   </asset>
+  <asset name="controllers/common/stock/adjuststock.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-10
+ */
+
+layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
+
+
+    $scope.adjustStock = function () {
+
+    };
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/dashboard.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-19
+ */
+
+layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
+
+    // TODO: add facility id here
+    $scope.lowStockQuery = "relationship[HeldEntity].holder=" + "";
+
+    //OpenIZ.Ims.get({
+    //    resource: "ManufacturedMaterial",
+    //    query: $scope.lowStockQuery,
+    //    continueWith: function (data) {
+    //        console.log(data);
+    //    },
+    //    onException: function (ex) {
+    //        console.log(ex);
+    //    }
+    //});
+
+    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.Eventoccurrence + "&amp;classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
+
+    OpenIZ.Ims.get({
+        resource: "Act",
+        query: $scope.orderQuery,
+        continueWith: function(data)
+        {
+            console.log(data);
+        },
+        onException: function(ex)
+        {
+            console.log(ex);
+        }
+    });
+
+    $scope.stockSnapshotQuery = "";
+
+    //OpenIZ.Ims.get({
+    //    resource: "ManufacturedMaterial",
+    //    query: $scope.stockSnapshotQuery,
+    //    continueWith: function (data) {
+    //        console.log(data);
+    //    },
+    //    onException: function (ex) {
+    //        console.log(ex);
+    //    }
+    //});
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/gtinmanagement.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-10
+ */
+
+layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
+
+    OpenIZ.Act.getActTemplateAsync({
+        templateId: "Act.TransferStock",
+        continueWith: function (e) {
+            $scope.act = e;
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
+
+    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=25"
+
+    $scope.stock = [];
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: $scope.query,
+        continueWith: function (data)
+        {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    $scope.stock.push(data.item[i]);
+                }
+
+                $("#transfer-stock-loading-bar").hide();
+            }
+        },
+        onException: function(ex)
+        {
+            console.log(ex);
+            $("#transfer-stock-loading-bar").hide();
+        }
+    });
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/lowstock.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-8
+ */
+
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+layoutApp.controller('LowStockController', ['$scope', function ($scope) {
+
+    var ctx = $('#lowStockChart');
+    var stockChart = new Chart(ctx, {
+        type: 'bar',
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        },
+        data: {
+            labels: ["OPV", "BCG", "MR"],
+            datasets: [{
+                label: 'On Hand',
+                data: [40, 20, 30],
+                backgroundColor: [
+                    'rgba(128,255,128,0.2)',
+                    'rgba(255,128,128,0.2)',
+                    'rgba(128,128,255,0.2)'
+                ]
+            }, {
+                label: 'AMC',
+                data: [35, 60, 10],
+                backgroundColor: [
+                    'rgba(128,128,128,0.2)',
+                    'rgba(128,128,128,0.2)',
+                    'rgba(128,128,128,0.2)'
+                ]
+            }]
+        }
+    });
+
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/order.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-10
+ */
+
+layoutApp.controller('OrderController', ['$scope', function ($scope) {
+
+    $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
+
+    $scope.orders = [];
+
+    OpenIZ.Ims.get({
+        query: $scope.query,
+        resource: "Act",
+        continueWith: function (data)
+        {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    //$scope.orders.push(data.item[i]);
+                }
+            }
+        },
+        onException: function(ex)
+        {
+            console.log(JSON.stringify(ex));
+        }
+    });
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/orderdetail.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-11
+ */
+
+layoutApp.controller('OrderDetailController', ['$scope', function ($scope) {
+
+    $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
+    console.log($scope.query);
+    $scope.order = {
+        orderNo: 1234,
+        orderDate: "11/9/2016",
+        destinationHealthFacility: "Arusha Health Centre for Women",
+        orderStatus: "Requested"
+    };
+    $scope.orderItems = [];
+    OpenIZ.Ims.
+    OpenIZ.Ims.get({
+        query: $scope.query,
+        resource: "Act",
+        continueWith: function (data)
+        {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    //$scope.orderItems.push(data.item[i]);
+                }
+            }
+        },
+        onException: function(ex)
+        {
+            console.log(ex);
+        }
+    });
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/ordersummary.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-9
+ */
+
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
+
+    var labels = [];
+    var data = [];
+    labels[0] = "Released";
+    labels[1] = "Cancelled";
+    labels[2] = "Requested";
+    labels[3] = "Shipped";
+    labels[4] = "Packed";
+    data[0] = 3;
+    data[1] = 4;
+    data[2] = 2;
+    data[3] = 6;
+    data[4] = 1;
+
+    var ctxOrders = document.getElementById("orderSummaryChart");
+    var myChart = new Chart(ctxOrders, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Stock Status (Doses)',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+    });
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/transferstock.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-10
+ */
+
+layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
+
+    OpenIZ.Act.getActTemplateAsync({
+        templateId: "Act.TransferStock",
+        continueWith: function (e) {
+            $scope.act = e;
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
+
+    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5"
+
+    $scope.stock = [];
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: $scope.query,
+        continueWith: function (data)
+        {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    $scope.stock.push(data.item[i]);
+                }
+
+                $("#transfer-stock-loading-bar").hide();
+            }
+        },
+        onException: function(ex)
+        {
+            console.log(ex);
+            $("#transfer-stock-loading-bar").hide();
+        }
+    });
+
+    $scope.transferStock = function () {
+
+        OpenIZ.Ims.post({
+            resource: "Act",
+            data: $scope.act,
+            continueWith: function(data)
+            {
+                console.log(data);
+            },
+            onException: function(ex)
+            {
+                console.log(ex);
+            }
+        })
+    };
+
+}]);
+</contentText>
+  </asset>
   <asset name="controllers/debug/about.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="~/js/openiz.js"/&gt;
 
@@ -757,7 +1257,7 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
 
 /// &lt;reference path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function ($rootScope) {
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
 
     $rootScope.system = {};
     $rootScope.system.config = {};
@@ -803,10 +1303,22 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize']).run(function 
 });
 
 // Configure the safe ng-urls
+layoutApp.config(['$routeProvider', function ($routeProvider) {
+    $routeProvider.when("/orderDetail", {
+        templateUrl: "../views/common/stock/orderdetail.html",
+        controller: "OrderDetailController"
+    })
+    .otherwise({
+        redirectTo: '/orderDetail'
+    });
+}]);
+
 layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);
+
+
 
 angular.element(document).ready(function () {
     $("[data-toggle=popover]").popover({ container: 'body' });
@@ -3378,20 +3890,23 @@ var OpenIZ = OpenIZ || {
                 },
                 error: function (data) {
                     var error = data.responseJSON;
-                    if (error.error !== undefined) // error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
-                                error.error_description,
-                                null
-                            ));
 
-                    else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                                data,
-                                null
-                            ));
+                    if (controlData.onException !== undefined)
+                    {
+                        if (error.error !== undefined) // error
+                        {
+                            controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                        }
+                        else
+                        {
+                            // unknown error
+                            controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                        }
+                    }
                     if (controlData.finally !== undefined)
+                    {
                         controlData.finally();
-
+                    }
                 }
             });
         },
@@ -4434,6 +4949,22 @@ var OpenIZ = OpenIZ || {
     },
     /**
      * @class
+     * @summary Manufactured material class
+     */
+    ManufacturedMaterial:
+    {
+        getManufacturedMaterials: function (controlData)
+        {
+            OpenIZ.Ims.get({
+                resource: "ManufacturedMaterial",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                query: controlData.query
+            })
+        }
+    },
+    /**
+     * @class
      * @summary Security repository class
      */
     UserEntity: {
@@ -4711,6 +5242,8 @@ $.ajaxSetup({
             </script>
             <script src="/org.openiz.core/lib/angular-sanitize.min.js" type="text/javascript">
             </script>
+            <script src="/org.openiz.core/lib/angular-route.min.js" type="text/javascript">
+            </script>
             <script src="/org.openiz.core/js/openiz-model.js" type="text/javascript">
             </script>
             <script src="/org.openiz.core/js/openiz-ng.js" type="text/javascript">
@@ -4730,6 +5263,24 @@ $.ajaxSetup({
         </html>
       </content>
     </contentHtml>
+  </asset>
+  <asset name="lib/angular-route.min.js" mimeType="text/javascript">
+    <contentText>/*
+ AngularJS v1.5.6
+ (c) 2010-2016 Google, Inc. http://angularjs.org
+ License: MIT
+*/
+(function(C,d){'use strict';function w(s,h,f){return{restrict:"ECA",terminal:!0,priority:400,transclude:"element",link:function(a,e,b,g,y){function k(){n&amp;&amp;(f.cancel(n),n=null);l&amp;&amp;(l.$destroy(),l=null);m&amp;&amp;(n=f.leave(m),n.then(function(){n=null}),m=null)}function z(){var b=s.current&amp;&amp;s.current.locals;if(d.isDefined(b&amp;&amp;b.$template)){var b=a.$new(),g=s.current;m=y(b,function(b){f.enter(b,null,m||e).then(function(){!d.isDefined(u)||u&amp;&amp;!a.$eval(u)||h()});k()});l=g.scope=b;l.$emit("$viewContentLoaded");
+l.$eval(r)}else k()}var l,m,n,u=b.autoscroll,r=b.onload||"";a.$on("$routeChangeSuccess",z);z()}}}function v(d,h,f){return{restrict:"ECA",priority:-400,link:function(a,e){var b=f.current,g=b.locals;e.html(g.$template);var y=d(e.contents());if(b.controller){g.$scope=a;var k=h(b.controller,g);b.controllerAs&amp;&amp;(a[b.controllerAs]=k);e.data("$ngControllerController",k);e.children().data("$ngControllerController",k)}a[b.resolveAs||"$resolve"]=g;y(a)}}}var r=d.module("ngRoute",["ng"]).provider("$route",function(){function s(a,
+e){return d.extend(Object.create(a),e)}function h(a,d){var b=d.caseInsensitiveMatch,g={originalPath:a,regexp:a},f=g.keys=[];a=a.replace(/([().])/g,"\\$1").replace(/(\/)?:(\w+)(\*\?|[\?\*])?/g,function(a,d,b,e){a="?"===e||"*?"===e?"?":null;e="*"===e||"*?"===e?"*":null;f.push({name:b,optional:!!a});d=d||"";return""+(a?"":d)+"(?:"+(a?d:"")+(e&amp;&amp;"(.+?)"||"([^/]+)")+(a||"")+")"+(a||"")}).replace(/([\/$\*])/g,"\\$1");g.regexp=new RegExp("^"+a+"$",b?"i":"");return g}var f={};this.when=function(a,e){var b=
+d.copy(e);d.isUndefined(b.reloadOnSearch)&amp;&amp;(b.reloadOnSearch=!0);d.isUndefined(b.caseInsensitiveMatch)&amp;&amp;(b.caseInsensitiveMatch=this.caseInsensitiveMatch);f[a]=d.extend(b,a&amp;&amp;h(a,b));if(a){var g="/"==a[a.length-1]?a.substr(0,a.length-1):a+"/";f[g]=d.extend({redirectTo:a},h(g,b))}return this};this.caseInsensitiveMatch=!1;this.otherwise=function(a){"string"===typeof a&amp;&amp;(a={redirectTo:a});this.when(null,a);return this};this.$get=["$rootScope","$location","$routeParams","$q","$injector","$templateRequest",
+"$sce",function(a,e,b,g,h,k,r){function l(q){var c=t.current;(A=(p=w())&amp;&amp;c&amp;&amp;p.$$route===c.$$route&amp;&amp;d.equals(p.pathParams,c.pathParams)&amp;&amp;!p.reloadOnSearch&amp;&amp;!x)||!c&amp;&amp;!p||a.$broadcast("$routeChangeStart",p,c).defaultPrevented&amp;&amp;q&amp;&amp;q.preventDefault()}function m(){var q=t.current,c=p;if(A)q.params=c.params,d.copy(q.params,b),a.$broadcast("$routeUpdate",q);else if(c||q)x=!1,(t.current=c)&amp;&amp;c.redirectTo&amp;&amp;(d.isString(c.redirectTo)?e.path(v(c.redirectTo,c.params)).search(c.params).replace():e.url(c.redirectTo(c.pathParams,
+e.path(),e.search())).replace()),g.when(c).then(n).then(function(e){c==t.current&amp;&amp;(c&amp;&amp;(c.locals=e,d.copy(c.params,b)),a.$broadcast("$routeChangeSuccess",c,q))},function(d){c==t.current&amp;&amp;a.$broadcast("$routeChangeError",c,q,d)})}function n(a){if(a){var c=d.extend({},a.resolve);d.forEach(c,function(a,b){c[b]=d.isString(a)?h.get(a):h.invoke(a,null,null,b)});a=u(a);d.isDefined(a)&amp;&amp;(c.$template=a);return g.all(c)}}function u(a){var c,b;d.isDefined(c=a.template)?d.isFunction(c)&amp;&amp;(c=c(a.params)):d.isDefined(b=
+a.templateUrl)&amp;&amp;(d.isFunction(b)&amp;&amp;(b=b(a.params)),d.isDefined(b)&amp;&amp;(a.loadedTemplateUrl=r.valueOf(b),c=k(b)));return c}function w(){var a,c;d.forEach(f,function(b,g){var f;if(f=!c){var h=e.path();f=b.keys;var l={};if(b.regexp)if(h=b.regexp.exec(h)){for(var k=1,n=h.length;k&lt;n;++k){var m=f[k-1],p=h[k];m&amp;&amp;p&amp;&amp;(l[m.name]=p)}f=l}else f=null;else f=null;f=a=f}f&amp;&amp;(c=s(b,{params:d.extend({},e.search(),a),pathParams:a}),c.$$route=b)});return c||f[null]&amp;&amp;s(f[null],{params:{},pathParams:{}})}function v(a,b){var e=
+[];d.forEach((a||"").split(":"),function(a,d){if(0===d)e.push(a);else{var f=a.match(/(\w+)(?:[?*])?(.*)/),g=f[1];e.push(b[g]);e.push(f[2]||"");delete b[g]}});return e.join("")}var x=!1,p,A,t={routes:f,reload:function(){x=!0;var b={defaultPrevented:!1,preventDefault:function(){this.defaultPrevented=!0;x=!1}};a.$evalAsync(function(){l(b);b.defaultPrevented||m()})},updateParams:function(a){if(this.current&amp;&amp;this.current.$$route)a=d.extend({},this.current.params,a),e.path(v(this.current.$$route.originalPath,
+a)),e.search(a);else throw B("norout");}};a.$on("$locationChangeStart",l);a.$on("$locationChangeSuccess",m);return t}]}),B=d.$$minErr("ngRoute");r.provider("$routeParams",function(){this.$get=function(){return{}}});r.directive("ngView",w);r.directive("ngView",v);w.$inject=["$route","$anchorScroll","$animate"];v.$inject=["$compile","$controller","$route"]})(window,window.angular);
+//# sourceMappingURL=angular-route.min.js.map
+</contentText>
   </asset>
   <asset name="lib/angular-sanitize.min.js" mimeType="text/javascript">
     <contentText>/*
@@ -12790,6 +13341,35 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796"
 }</contentText>
   </asset>
+  <asset name="templates/act.transferstock.json" mimeType="text/javascript">
+    <contentText>{
+  "$type": "Act",
+  "template": {
+    "mnemonic": "Act.TransferStock"
+  },
+  "moodConcept": "E658CA72-3B6A-4099-AB6E-7CF6861A5B61",
+  "classConcept": "FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0",
+  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Receiver": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": ""
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    }
+  }
+}</contentText>
+  </asset>
   <asset name="views/alerts/view.html" mimeType="text/html">
     <contentHtml>
       <title>Alert</title>
@@ -13833,6 +14413,541 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
         </form>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/adjust.html" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">Adjust Stock</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/stock/adjuststock.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.adjustStock' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <form name="adjustStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="adjustStockForm.$valid &amp;&amp; adjustStock()" ng-controller="AdjustStockController">
+                <div class="form-group">
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="gtin" ng-model="gtin" class="form-control" readonly="readonly" />
+                  </div>
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; adjustStockForm.dateRecorded.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ now | date: 'yyyy-MM-dd' }}" name="dateRecorded" class="form-control" />
+                    <p ng-show="adjustStockForm.dateRecorded.$invalid &amp;&amp; adjustStockForm.dateRecorded.$touched" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div ng-class="{ 'has-error' : adjustStockForm.unitOfMeasure.$invalid &amp;&amp; adjustStockForm.unitOfMeasure.$touched }">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.unitOfMeasure' | i18n }}</label>
+                    <div class="col-sm-4">
+                      <select name="unitOfMeasure" id="unitOfMeasureType" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
+                      </select>
+                      <p ng-show="adjustStockForm.unitOfMeasure.$invalid &amp;&amp; adjustStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
+                    </div>
+                  </div>
+                  <div ng-class="{ 'has-error' : adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched }">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.adjustmentReason' | i18n }}</label>
+                    <div class="col-sm-4">
+                      <select name="adjustmentReason" id="adjustmentReasonType" class="form-control" ng-model="adjustmentReason" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=StockReason">
+                      </select>
+                      <p ng-show="adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched" class="help-block text-danger">{{ 'locale.stock.errors.adjustmentReasonRequired' | i18n }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.quantity.$invalid &amp;&amp; adjustStockForm.quantity.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.quantity' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="number" name="quantity" ng-required="true" ng-model="quantity" class="form-control" />
+                    <p ng-show="adjustStockForm.quantity.$invalid &amp;&amp; adjustStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.notes' | i18n }}</label>
+                  <div class="col-md-10">
+                    <textarea name="notes" ng-model="notes" class="form-control">
+                    </textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/dashboard.html" mimeType="text/html">
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <contentHtml>
+      <title lang="en">Stock Overview</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/lib/chart.min.js</script>
+      <script>~/controllers/common/stock/dashboard.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="StockDashboardController" xmlns:oiz="http://openiz.org/applet">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="col-xs-6">
+                <!--#include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html"-->
+              </div>
+              <div class="col-xs-6">
+                <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
+                </div>
+                <table class="panel-body table table-striped table-responsive">
+                  <tr>
+                    <td>{{ 'locale.stock.tableHeader.antigen' | i18n }}</td>
+                    <td>{{ 'locale.stock.tableHeader.expiry' | i18n }}</td>
+                    <td>{{ 'locale.stock.tableHeader.onHand' | i18n }}</td>
+                    <td>{{ 'locale.stock.tableHeader.amc' | i18n }}</td>
+                    <td>{{ 'locale.stock.tableHeader.remain' | i18n }}</td>
+                    <td>{{ 'locale.stock.tableHeader.action' | i18n }}</td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                            ORAL POLIO VACCINE (OPV)<br /><small>Serum Inst. India LN# 20-30293</small></td>
+                    <td>30-JUL-2016</td>
+                    <td>40</td>
+                    <td>35</td>
+                    <td>30 d</td>
+                    <td>
+                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                    </td>
+                    <td>
+                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
+                    </td>
+                  </tr>
+                  <tr class="danger">
+                    <td>
+                            BACILLUS CALMETTA-GUERIN (BCG)<br /><small>Serum Inst. India LN# 34-30293</small></td>
+                    <td>30-JUL-2016</td>
+                    <td>20</td>
+                    <td>60</td>
+                    <td>2 d</td>
+                    <td>
+                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                    </td>
+                    <td>
+                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
+                    </td>
+                  </tr>
+                  <tr class="info">
+                    <td>
+                            MEASLES-RUBELLA (MR)<br /><small>GSK LN# 405-30492</small></td>
+                    <td>12-JUL-2016</td>
+                    <td>30</td>
+                    <td>10</td>
+                    <td>15 d</td>
+                    <td>
+                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                    </td>
+                    <td>
+                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/gtinmanagement.html" mimeType="text/html">
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <contentHtml>
+      <title lang="en">GTIN Management</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/stock/gtinmanagement.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" xmlns:bind="http://openiz.org/applet/binding" ng-controller="GtinManagementController" xmlns:oiz="http://openiz.org/applet">
+          <div class="col-xs-12">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
+              </div>
+              <label class="col-md-2 control-label">{{ 'locale.stock.vaccines.title' | i18n }}</label>
+              <div class="col-md-10">
+                <table class="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>
+                                {{ 'locale.stock.vaccine' | i18n }}
+                            </th>
+                      <th>
+                                {{ 'locale.stock.gtin' | i18n }}
+                            </th>
+                      <th>
+                                {{ 'locale.action.view' | i18n }}
+                            </th>
+                      <th>
+                                {{ 'locale.action.edit' | i18n }}
+                            </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="item in stock">
+                      <td>{{ item.name.Assigned | oizEntityName }}</td>
+                      <td>{{ item.identifier | oizEntityIdentifier }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td>
+                        <div class="form-group" ng-class="{ 'has-error' : transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched }">
+                          <div class="col-md-10">
+                            <input type="number" name="quantity_{{ $index }}" ng-required="true" ng-model="quantity" class="form-control" />
+                            <p ng-show="transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div ng-class="{ 'has-error' : transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched }">
+                          <div class="col-sm-4">
+                            <select name="unitOfMeasure_{{ $index }}" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
+                            </select>
+                            <p ng-show="transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div id="transfer-stock-loading-bar" class="progress">
+                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                        {{ 'locale.dialog.wait.text' | i18n }}
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/order.html" mimeType="text/html">
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <contentHtml>
+      <title lang="en">Order Summary</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/lib/chart.min.js</script>
+      <script>~/controllers/common/stock/order.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="OrderController" xmlns:oiz="http://openiz.org/applet">
+          <div class="row">
+            <div class="col-xs-12">
+              <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
+                </div>
+                <div class="panel panel-body">
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>{{ 'locale.stock.orderNo' | i18n }}</th>
+                        <th>{{ 'locale.stock.orderDate' | i18n }}</th>
+                        <th>{{ 'locale.stock.destinationHealthFacility' | i18n }}</th>
+                        <th>{{ 'locale.stock.orderStatus' | i18n }}</th>
+                        <th>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="order in orders">
+                        <td>{{ order.number }}</td>
+                        <td>{{ order.date }}</td>
+                        <td>{{ order.healthFacility }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>
+                          <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>1234</td>
+                        <td>10/9/2016</td>
+                        <td>Arusha Health Centre for Women</td>
+                        <td>Requested</td>
+                        <td>
+                          <a class="btn btn-primary" href="#/orderDetail">{{ 'locale.action.view' | i18n }}</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>5678</td>
+                        <td>11/9/2016</td>
+                        <td>Arusha Laboratory Dispensary</td>
+                        <td>Requested</td>
+                        <td>
+                          <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <ng-view>
+                  </ng-view>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/orderdetail.html" mimeType="text/html">
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <contentHtml>
+      <title lang="en">Order Summary</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/lib/chart.min.js</script>
+      <script>~/controllers/common/stock/orderdetail.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" xmlns:oiz="http://openiz.org/applet">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-primary">
+                <div class="panel panel-heading">
+                    {{ 'locale.stock.order' | i18n }}
+                </div>
+                <div class="panel panel-body">
+                  <div class="form-group">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderNo' | i18n }}</label>
+                    <span>{{ order.orderNo }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderDate' | i18n }}</label>
+                    <span>{{ order.orderDate }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.destinationHealthFacility' | i18n }}</label>
+                    <span>{{ order.destinationHealthFacility }}</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderStatus' | i18n }}</label>
+                    <span>{{ order.orderStatus }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">{{ 'locale.stock.orderDetails' | i18n }}</h4>
+                </div>
+                <div class="panel panel-body">
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>
+                                    {{ 'locale.stock.vaccine' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.gtin' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.currentLevel' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.quantity' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.unitOfMeasure' | i18n }}
+                                </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="detail in orderItems">
+                        <td>{{ item.name.Assigned | oizEntityName }}</td>
+                        <td>{{ item.identifier | oizEntityIdentifier }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ item.quantityOrdered }}</td>
+                        <td>{{ item.unitOfMeasure }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/transfer.html" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">Transfer Stock</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/stock/transferstock.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.transferStock' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <form name="transferStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="transferStockForm.$valid &amp;&amp; transferStock()" ng-controller="TransferStockController">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.transferFromFacility' | i18n }}</label>
+                  <div class="col-md-10">
+                    <select class="form-control" name="fromFacility" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" disabled="disabled">
+                      <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : transferStockForm.toFacility.$invalid &amp;&amp; transferStockForm.toFacility.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.transferToFacility' | i18n }}</label>
+                  <div class="col-md-10">
+                    <select class="form-control" name="toFacility" ng-model="toFacility" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
+                      <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    </select>
+                    <p ng-show="transferStockForm.toFacility.$invalid &amp;&amp; transferStockForm.toFacility.$touched" class="help-block text-danger">{{ 'locale.stock.errors.transferToFacilityRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
+                  <div class="col-md-10">
+                    <div class="input-group">
+                      <select class="form-control" name="lotNumber" ng-model="lotNumber" oiz-entitysearch="ManufacturedMaterial">
+                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                      </select>
+                      <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNuumberRequired' | i18n }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccines.title' | i18n }}</label>
+                  <div class="col-md-10">
+                    <table class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>
+                                        {{ 'locale.stock.vaccine' | i18n }}
+                                    </th>
+                          <th>
+                                        {{ 'locale.stock.gtin' | i18n }}
+                                    </th>
+                          <th>
+                                        {{ 'locale.stock.currentLevel' | i18n }}
+                                    </th>
+                          <th>
+                                        {{ 'locale.stock.quantity' | i18n }}
+                                    </th>
+                          <th>
+                                        {{ 'locale.stock.unitOfMeasure' | i18n }}
+                                    </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="item in stock">
+                          <td>{{ item.name.Assigned | oizEntityName }}</td>
+                          <td>{{ item.identifier | oizEntityIdentifier }}</td>
+                          <td>{{ item.quantity }}</td>
+                          <td>
+                            <div class="form-group" ng-class="{ 'has-error' : transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched }">
+                              <div class="col-md-10">
+                                <input type="number" name="quantity_{{ $index }}" ng-required="true" ng-model="quantity" class="form-control" />
+                                <p ng-show="transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <div ng-class="{ 'has-error' : transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched }">
+                              <div class="col-sm-4">
+                                <select name="unitOfMeasure_{{ $index }}" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
+                                </select>
+                                <p ng-show="transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div id="transfer-stock-loading-bar" class="progress">
+                      <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                                {{ 'locale.dialog.wait.text' | i18n }}
+                            </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                    <a class="btn btn-danger" href="dashboard.html">{{ 'locale.action.cancel' | i18n }}</a>
+                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/partials/lowstock.html" mimeType="text/html">
+    <contentHtml>
+      <script>~/controllers/common/stock/lowstock.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="LowStockController">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.lowstock.title' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <canvas id="lowStockChart">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/partials/ordersummary.html" mimeType="text/html">
+    <contentHtml>
+      <script>~/controllers/common/stock/ordersummary.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="OrderSummaryController">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.ordersummary.title' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <canvas id="orderSummaryChart">
+              </canvas>
+            </div>
+          </div>
+        </div>
       </content>
     </contentHtml>
   </asset>
@@ -14913,6 +16028,35 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
+    <string key="locale.stock.action.transfer">Transfer</string>
+    <string key="locale.stock.adjustStock">Adjust Stock</string>
+    <string key="locale.stock.lowstock">Low Stock</string>
+    <string key="locale.stock.ordersummary.title">Order Summary</string>
+    <string key="locale.stock.gtin">GTIN</string>
+    <string key="locale.stock.lotNumber">Lot No.</string>
+    <string key="locale.stock.vaccine">Vaccine</string>
+    <string key="locale.stock.vaccines.title">Vaccines</string>
+    <string key="locale.stock.dateRecorded">Date Recorded</string>
+    <string key="locale.stock.unitOfMeasure">Unit of Measure</string>
+    <string key="locale.stock.adjustmentReason">Adjustment Reason</string>
+    <string key="locale.stock.quantity">Quantity</string>
+    <string key="locale.stock.notes">Notes</string>
+    <string key="locale.stock.errors.dateRecordedRequired">Please enter a recorded date</string>
+    <string key="locale.stock.errors.unitOfMeasureRequired">Please select a unit of measure</string>
+    <string key="locale.stock.errors.adjustmentReasonRequired">Please select an adjustment reason</string>
+    <string key="locale.stock.errors.quantityRequired">Please enter a quantity</string>
+    <string key="locale.stock.transferFromFacility">From Facility</string>
+    <string key="locale.stock.transferToFacility">To Facility</string>
+    <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
+    <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
+    <string key="locale.stock.transferStock">Transfer Stock</string>
+    <string key="locale.stock.currentLevel">Current Quantity</string>
+    <string key="locale.stock.orderNo">Order No.</string>
+    <string key="locale.stock.orderDate">Order Date</string>
+    <string key="locale.stock.destinationHealthFacility">Destination</string>
+    <string key="locale.stock.orderStatus">Order Status</string>
+    <string key="locale.stock.orderDetails">Order Details</string>
+    <string key="locale.stock.order">Order</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>
