@@ -77,7 +77,7 @@
                                 <td>{{ vaccine.identifier | oizEntityIdentifier }}</td>
                                 <td>{{ vaccine.quantity }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                                    <a class="btn btn-primary" ng-href="adjust.html?id&#61;{{vaccine.id}}&amp;version&#61;{{vaccine.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
                                 </td>
                             </tr>
                         </tbody>

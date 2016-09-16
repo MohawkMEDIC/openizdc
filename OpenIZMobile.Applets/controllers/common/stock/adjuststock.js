@@ -21,11 +21,29 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
+    var params = queryParameterService.getUrlParameters();
 
+    console.log(params);
 
     $scope.adjustStock = function () {
+        var query = "id=" + params.id + "&version=" + params.version + "&statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
 
+        OpenIZ.Ims.get({
+            query: query,
+            resource: "ManufacturedMaterial",
+            continueWith: function (data) {
+
+                console.log(data);
+
+                if (data.item !== undefined) {
+                    $scope.vaccine = data.item[0];
+                }
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
     };
 
 }]);

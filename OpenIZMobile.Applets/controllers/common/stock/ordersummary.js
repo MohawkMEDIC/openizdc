@@ -43,7 +43,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Stock Status (Doses)',
+                label: OpenIZ.Localization.getString("locale.stock.stockStatusDoses"),
                 data: data,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
