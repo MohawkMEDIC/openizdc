@@ -18,10 +18,10 @@
  * the License.
  * 
  * User: khannan
- * Date: 2016-9-10
+ * Date: 2016-9-16
  */
 
-layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
+layoutApp.controller('EditGtinController', ['$scope', function ($scope) {
 
     $("#gtin-search-loading-bar").hide();
 
@@ -51,8 +51,7 @@ layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
                 console.log(ex);
                 $("#gtin-search-loading-bar").hide();
             },
-            finally: function()
-            {
+            finally: function () {
                 $("#gtin-search-loading-bar").hide();
             }
         });
