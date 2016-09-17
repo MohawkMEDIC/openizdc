@@ -1,4 +1,24 @@
-﻿<div class="container" ng-controller="ViewAlertController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+﻿<!--
+ - Copyright 2016 PATH International
+ - Developed by Mohawk College of Applied Arts and Technology
+ -
+ - Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License");
+ - you may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
+ - the License.
+ -
+ - User: khannan
+ - Date: 2016-9-10
+-->
+
+<div class="container" ng-controller="ViewAlertController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
     <oiz:script>/org.openiz.core/controllers/alerts/view.js</oiz:script>
     <oiz:title>Alert</oiz:title>
         <div class="row">
@@ -24,13 +44,13 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="btn-group pull-right">
-                    <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
+                    <button class="btn-danger btn btn-lg" ng-click="deleteAlert(alert)">
                         <span class="glyphicon glyphicon-trash"></span>
-                        {{ 'locale.actions.delete' | i18n }}
+                        {{ 'locale.action.delete' | i18n }}
                     </button>
-                    <button class="btn-primary btn btn-lg" ng-class="acknowledgeAlert()">
+                    <button class="btn-primary btn btn-lg" ng-click="updateAlert(alert)">
                         <span class="glyphicon glyphicon-ok"></span>
-                        {{ 'locale.alerts.acknolwedge' | i18n }}
+                        {{ 'locale.action.acknowledge' | i18n }}
                     </button>
                 </div>
             </div>

@@ -23,11 +23,15 @@
 
 layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
 
+    $("#stock-search-loading-bar").hide();
+
     $scope.vaccines = [];
 
     $scope.searchStock = function () {
 
-        var query = "name.component.value=~" + $scope.name + "&statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
+        $("#stock-search-loading-bar").show();
+
+        var query = "name.component.value=~" + $scope.name;
 
         OpenIZ.Ims.get({
             query: query,
@@ -41,9 +45,16 @@ layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
                         $scope.vaccines.push(data.item[i]);
                     }
                 }
+
+                $("#stock-search-loading-bar").hide();
             },
             onException: function (ex) {
                 console.log(ex);
+                $("#stock-search-loading-bar").hide();
+            },
+            finally: function()
+            {
+                $("#stock-search-loading-bar").hide();
             }
         });
     };

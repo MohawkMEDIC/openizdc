@@ -23,20 +23,6 @@
 
 layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
-    // TODO: add facility id here
-    $scope.lowStockQuery = "relationship[HeldEntity].holder=" + "";
-
-    //OpenIZ.Ims.get({
-    //    resource: "ManufacturedMaterial",
-    //    query: $scope.lowStockQuery,
-    //    continueWith: function (data) {
-    //        console.log(data);
-    //    },
-    //    onException: function (ex) {
-    //        console.log(ex);
-    //    }
-    //});
-
     $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
     OpenIZ.Ims.get({
@@ -52,16 +38,26 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
         }
     });
 
-    $scope.stockSnapshotQuery = "";
+    $scope.lowStock = [];
 
-    //OpenIZ.Ims.get({
-    //    resource: "ManufacturedMaterial",
-    //    query: $scope.stockSnapshotQuery,
-    //    continueWith: function (data) {
-    //        console.log(data);
-    //    },
-    //    onException: function (ex) {
-    //        console.log(ex);
-    //    }
-    //});
+    // TODO: add facility id here
+    var lowStockQuery = "lotNumber=!null&quantity=<5&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5";
+
+    OpenIZ.Ims.get({
+        resource: "ManufacturedMaterial",
+        query: lowStockQuery,
+        continueWith: function (data) {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i < data.item.length; i++) {
+                    $scope.lowStock.push(data.item[i]);
+                }
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
 }]);

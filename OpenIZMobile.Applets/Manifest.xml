@@ -67,12 +67,19 @@
 
     <!-- Actions -->
     <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.delete">Delete</string>
+    <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.save">Save</string>
     <string key="locale.action.view">View</string>
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>
+    <string key="locale.action.search">Search</string>
+
+    <!-- Alerts -->
+    <string key="locale.alert.updateSuccessful">Update Successful</string>
+    <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
 
     <!-- Common -->
     <string key="locale.common.no">No</string>
@@ -216,6 +223,12 @@
     <string key="locale.stock.shipped">Shipped</string>
     <string key="locale.stock.requested">Requested</string>
     <string key="locale.stock.stockStatusDoses">Stock Status (Doses)</string>
+    <string key="locale.stock.expiryDate">Expiry Date</string>
+    <string key="locale.stock.searchStock">Search Stock</string>
+    <string key="locale.stock.searchGTIN">Search GTIN</string>
+    <string key="locale.stock.vaccines">Vaccines</string>
+    <string key="locale.stock.updateSuccessful">Update successful</string>
+    <string key="locale.stock.updateUnsuccessful">Update Unsuccessful</string>
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>

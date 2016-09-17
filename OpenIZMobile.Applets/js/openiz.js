@@ -984,19 +984,46 @@ var OpenIZ = OpenIZ || {
          * @param {Object} alertData The alert data
          */
         saveAlertAsync: function (controlData) {
-            $.post('/__app/alerts', controlData.data, function (e) { controlData.continueWith(e); }, "json")
-            .fail(function (data) {
-                var error = data.responseJSON;
-                if (error.error !== undefined) // structured error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
-                            error.error_description,
-                            null
-                        ));
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                            data,
-                            null
-                        ));
+            $.ajax({
+                method: 'POST',
+                url: "/__app/alerts",
+                // || WARNING: JAVASCRIPT RANT AHEAD              ||
+                // ||                                             ||
+                // || Why!? Why!? Why is this even a line of code?||
+                // || I specified JSON and application/json yet   ||
+                // || the 1337 haxors at jQ decide not to encode  ||
+                // || the JSON data I send as JSON!? Why!?        ||
+                // \/ Stuff like this is why I dislike JavaScript \/
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                }
             });
         }
     },

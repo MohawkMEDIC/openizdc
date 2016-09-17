@@ -117,14 +117,15 @@ namespace OpenIZ.Mobile.Core.Alerting
                     // Check for key and assign ID
                     try
                     {
-                        msg.Id = Guid.NewGuid().ToByteArray();
-                        msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
-                        conn.Insert(msg);
+						conn.Update(msg);
                     }
                     catch(SQLite.Net.SQLiteException)
                     {
-                        conn.Update(msg);
-                    }
+						msg.Id = Guid.NewGuid().ToByteArray();
+						msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
+						conn.Insert(msg);
+					}
+
                     conn.Commit();
 
                 }

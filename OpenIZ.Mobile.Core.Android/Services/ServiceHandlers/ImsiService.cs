@@ -469,16 +469,17 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
 		/// <returns>Returns the updated manufactured material.</returns>
 		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)
 		{
 			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-			Guid actKey = Guid.Empty;
-			Guid actVersionKey = Guid.Empty;
+			Guid manufacturedMaterialKey = Guid.Empty;
+			Guid manufacturedMaterialVersionKey = Guid.Empty;
 
-			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out manufacturedMaterialKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out manufacturedMaterialVersionKey))
 			{
-				if (manufacturedMaterial.Key == actKey && manufacturedMaterial.VersionKey == actVersionKey)
+				if (manufacturedMaterial.Key == manufacturedMaterialKey && manufacturedMaterial.VersionKey == manufacturedMaterialVersionKey)
 				{
 					var manufacturedMaterialPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 

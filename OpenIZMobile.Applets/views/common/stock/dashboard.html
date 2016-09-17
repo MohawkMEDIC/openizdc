@@ -42,70 +42,31 @@
                     <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
                 </div>
                 <table class="panel-body table table-striped table-responsive">
-                    <tr>
-                        <td>{{ 'locale.stock.tableHeader.antigen' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.expiry' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.onHand' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.amc' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.remain' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.action' | i18n }}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            ORAL POLIO VACCINE (OPV)<br /><small>Serum Inst. India LN# 20-30293</small>
-                        </td>
-                        <td>30-JUL-2016</td>
-                        <td>40</td>
-                        <td>35</td>
-                        <td>30 d</td>
-                        <td>
-                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                        </td>
-                    </tr>
-                    <tr class="danger">
-                        <td>
-                            BACILLUS CALMETTA-GUERIN (BCG)<br /><small>Serum Inst. India LN# 34-30293</small>
-                        </td>
-                        <td>30-JUL-2016</td>
-                        <td>20</td>
-                        <td>60</td>
-                        <td>2 d</td>
-                        <td>
-                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                        </td>
-                    </tr>
-                    <tr class="info">
-                        <td>
-                            MEASLES-RUBELLA (MR)<br /><small>GSK LN# 405-30492</small>
-                        </td>
-                        <td>12-JUL-2016</td>
-                        <td>30</td>
-                        <td>10</td>
-                        <td>15 d</td>
-                        <td>
-                            <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="order.html">{{ 'locale.stock.action.order' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                        </td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>{{ 'locale.stock.tableHeader.antigen' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.expiry' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.onHand' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.action' | i18n }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stock in lowStock">
+                            <td>
+                                {{ stock.name.Assigned | oizEntityName }}<br /><small>LN# {{ stock.lotNumber }}</small>
+                            </td>
+                            <td>{{ stock.expiryDate | date: 'dd-MM-yyyy' }}</td>
+                            <td>{{ stock.quantity }}</td>
+                            <td>
+                                <a class="btn btn-primary" ng-href="adjust.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" ng-href="order.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.order' | i18n }}</a>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
