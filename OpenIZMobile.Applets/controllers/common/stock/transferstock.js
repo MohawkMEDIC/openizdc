@@ -21,56 +21,79 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
+layoutApp.controller('TransferStockController', ['$scope', function ($scope)
+{
+	OpenIZ.Act.getActTemplateAsync({
+		templateId: "Act.TransferStock",
+		continueWith: function (e)
+		{
+			$scope.act = e;
+		},
+		onException: function (ex)
+		{
+			console.log(ex);
+		}
+	});
 
-    OpenIZ.Act.getActTemplateAsync({
-        templateId: "Act.TransferStock",
-        continueWith: function (e) {
-            $scope.act = e;
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
+	function loadVaccines(lotNumber)
+	{
+	    var lotNumberQuery = "statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
 
-    $scope.query = "lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5"
+	    if (lotNumber !== undefined && lotNumber !== null && lotNumber !== "") {
+	        lotNumberQuery += "&lotNumber=" + lotNumber;
+	    }
+	    else {
+	        lotNumberQuery += "&lotNumber=!null";
+	    }
 
-    $scope.stock = [];
+	    $scope.stock = [];
 
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-        query: $scope.query,
-        continueWith: function (data)
-        {
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i < data.item.length; i++) {
-                    $scope.stock.push(data.item[i]);
-                }
+	    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+	        query: lotNumberQuery,
+	        continueWith: function (data)
+	        {
+	            if (data.item !== undefined) {
+	                for (var i = 0; i < data.item.length; i++) {
+	                    $scope.stock.push(data.item[i]);
+	                }
+	            }
 
-                $("#transfer-stock-loading-bar").hide();
-            }
-        },
-        onException: function(ex)
-        {
-            console.log(ex);
-            $("#transfer-stock-loading-bar").hide();
-        }
-    });
+	            $("#transfer-stock-loading-bar").hide();
+	        },
+	        onException: function (ex)
+	        {
+	            console.log(ex);
+	            $("#transfer-stock-loading-bar").hide();
+	        }
+	    });
+	}
 
-    $scope.transferStock = function () {
+	loadVaccines(undefined);
 
-        OpenIZ.Ims.post({
-            resource: "Act",
-            data: $scope.act,
-            continueWith: function(data)
-            {
-                console.log(data);
-            },
-            onException: function(ex)
-            {
-                console.log(ex);
-            }
-        })
-    };
+	$scope.lotNumberChanged = function ()
+	{
 
+	    console.log($scope.lotNumber);
+
+	    if ($scope.lotNumber !== undefined && $scope.lotNumber !== null && $scope.lotNumber !== "")
+	    {
+	        loadVaccines($scope.lotNumber.lotNumber);
+	    }
+	};
+
+	$scope.transferStock = function ()
+	{
+		OpenIZ.Ims.post({
+			resource: "Act",
+			data: $scope.act,
+			continueWith: function (data)
+			{
+				console.log(data);
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+			}
+		})
+	};
 }]);

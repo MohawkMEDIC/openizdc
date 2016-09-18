@@ -30,42 +30,42 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
 
     $scope.deleteAlert = function (alert) {
 
-        alert.flags = 2;
+        //alert.flags = 2;
 
-        OpenIZ.App.saveAlertAsync({
-            data: alert,
-            continueWith: function (data) {
-                OpenIZ.App.showWait();
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
-            },
-            onException: function (ex) {
-                console.log(ex);
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
-            },
-            finally: function () {
-                OpenIZ.App.hideWait();
-            }
-        });
+        //OpenIZ.App.saveAlertAsync({
+        //    data: alert,
+        //    continueWith: function (data) {
+        //        OpenIZ.App.showWait();
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+        //    },
+        //    onException: function (ex) {
+        //        console.log(ex);
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
+        //    },
+        //    finally: function () {
+        //        OpenIZ.App.hideWait();
+        //    }
+        //});
     };
 
     $scope.updateAlert = function (alert) {
 
-        alert.flags = 2;
+        //alert.flags = 2;
 
-        OpenIZ.App.saveAlertAsync({
-            data: alert,
-            continueWith: function (data) {
-                OpenIZ.App.showWait();
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
-            },
-            onException: function (ex) {
-                console.log(ex);
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
-            },
-            finally: function () {
-                OpenIZ.App.hideWait();
-            }
-        });
+        //OpenIZ.App.saveAlertAsync({
+        //    data: alert,
+        //    continueWith: function (data) {
+        //        OpenIZ.App.showWait();
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+        //    },
+        //    onException: function (ex) {
+        //        console.log(ex);
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
+        //    },
+        //    finally: function () {
+        //        OpenIZ.App.hideWait();
+        //    }
+        //});
     };
 
 }]);

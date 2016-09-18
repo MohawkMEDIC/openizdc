@@ -92,7 +92,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the lot number.
 		/// </summary>
 		/// <value>The lot number.</value>
-		[Column("lot"), NotNull, Indexed]
+		[Column("lotNumber"), NotNull, Indexed]
 		public String LotNumber {
 			get;
 			set;
