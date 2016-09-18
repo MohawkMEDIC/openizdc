@@ -52,7 +52,7 @@
                     <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <select class="form-control" ng-options="manufacturedMaterial as manufacturedMaterial.lotNumber for manufacturedMaterial in stock track by manufacturedMaterial.lotNumber" name="lotNumber" ng-model="lotNumber" ng-change="lotNumberChanged()"></select>
+                            <select class="form-control" ng-options="lotNumber as lotNumber for lotNumber in lotNumbers track by lotNumber" name="lotNumber" ng-model="lotNumber" ng-change="lotNumberChanged()"></select>
                             <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNumberRequired' | i18n }}</p>
                         </div>
                     </div>

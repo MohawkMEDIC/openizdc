@@ -21,40 +21,41 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
+layoutApp.controller('GtinManagementController', ['$scope', function ($scope)
+{
+	$("#gtin-search-loading-bar").hide();
 
-    $("#gtin-search-loading-bar").hide();
+	$scope.search = function ()
+	{
 
-    $scope.search = function () {
+		$("#gtin-search-loading-bar").show();
 
-        $("#gtin-search-loading-bar").show();
+		var query = "identifier.value=~" + $scope.gtin + "&lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=25"
 
-        var query = "identifier.value=~" + $scope.gtin + "&lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=25"
+		$scope.stock = [];
 
-        $scope.stock = [];
+		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+			query: query,
+			continueWith: function (data)
+			{
+				console.log(data);
 
-        OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-            query: query,
-            continueWith: function (data) {
-                console.log(data);
+				if (data.item !== undefined)
+				{
 
-                if (data.item !== undefined) {
+					for (var i = 0; i < data.item.length; i++)
+					{
+						$scope.stock.push(data.item[i]);
+					}
+				}
 
-                    for (var i = 0; i < data.item.length; i++) {
-                        $scope.stock.push(data.item[i]);
-                    }
-                }
-
-                $("#gtin-search-loading-bar").hide();
-            },
-            onException: function (ex) {
-                console.log(ex);
-                $("#gtin-search-loading-bar").hide();
-            },
-            finally: function()
-            {
-                $("#gtin-search-loading-bar").hide();
-            }
-        });
-    };
+				$("#gtin-search-loading-bar").hide();
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+				$("#gtin-search-loading-bar").hide();
+			}
+		});
+	};
 }]);

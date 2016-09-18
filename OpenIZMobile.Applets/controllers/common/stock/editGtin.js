@@ -21,39 +21,61 @@
  * Date: 2016-9-16
  */
 
-layoutApp.controller('EditGtinController', ['$scope', function ($scope) {
+layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+{
+	var params = queryParameterService.getUrlParameters();
 
-    $("#gtin-search-loading-bar").hide();
+	var query = "id=" + params.id;
 
-    $scope.search = function () {
+	var manufacturedMaterial = null;
 
-        $("#gtin-search-loading-bar").show();
+	OpenIZ.Ims.get({
+		query: query,
+		resource: "ManufacturedMaterial",
+		continueWith: function (data)
+		{
 
-        var query = "identifier.value=~" + $scope.gtin + "&lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=25"
+			console.log(data);
 
-        $scope.stock = [];
+			if (data.item !== undefined)
+			{
+				manufacturedMaterial = data.item[0];
 
-        OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-            query: query,
-            continueWith: function (data) {
-                console.log(data);
+				$scope.gtin = manufacturedMaterial.identifier.GTIN.value;
+				$scope.lotNumber = manufacturedMaterial.lotNumber;
+				$scope.expiryDate = manufacturedMaterial.expiryDate;
+				$scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
+			}
+		},
+		onException: function (ex)
+		{
+			console.log(ex);
+		}
+	});
 
-                if (data.item !== undefined) {
+	$scope.editGtin = function ()
+	{
+	    manufacturedMaterial.identifier.GTIN.value = $scope.gtin;
 
-                    for (var i = 0; i < data.item.length; i++) {
-                        $scope.stock.push(data.item[i]);
-                    }
-                }
+	    OpenIZ.Ims.put({
+	        id: params.id,
+	        versionId: params.version,
+	        data: manufacturedMaterial,
+	        resource: "ManufacturedMaterial",
+	        continueWith: function (data)
+	        {
+	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
 
-                $("#gtin-search-loading-bar").hide();
-            },
-            onException: function (ex) {
-                console.log(ex);
-                $("#gtin-search-loading-bar").hide();
-            },
-            finally: function () {
-                $("#gtin-search-loading-bar").hide();
-            }
-        });
-    };
+	            window.location.href = "gtinmanagement.html";
+	        },
+	        onException: function (ex)
+	        {
+	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
+	        },
+	        finally: function ()
+	        {
+	            OpenIZ.App.hideWait();
+	        }
+	    });
+	};
 }]);

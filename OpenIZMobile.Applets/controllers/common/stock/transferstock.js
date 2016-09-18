@@ -35,50 +35,68 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope)
 		}
 	});
 
+	$scope.lotNumbers = [];
+
 	function loadVaccines(lotNumber)
 	{
-	    var lotNumberQuery = "statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
+		var vaccineQuery = "statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
 
-	    if (lotNumber !== undefined && lotNumber !== null && lotNumber !== "") {
-	        lotNumberQuery += "&lotNumber=" + lotNumber;
-	    }
-	    else {
-	        lotNumberQuery += "&lotNumber=!null";
-	    }
+		if (lotNumber !== undefined && lotNumber !== null && lotNumber !== "")
+		{
+			vaccineQuery += "&lotNumber=" + lotNumber;
+		}
+		else
+		{
+			vaccineQuery += "&lotNumber=!null";
+		}
 
-	    $scope.stock = [];
+		$scope.stock = [];
 
-	    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-	        query: lotNumberQuery,
-	        continueWith: function (data)
-	        {
-	            if (data.item !== undefined) {
-	                for (var i = 0; i < data.item.length; i++) {
-	                    $scope.stock.push(data.item[i]);
-	                }
-	            }
+		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+			query: vaccineQuery,
+			continueWith: function (data)
+			{
+				if (data.item !== undefined)
+				{
+					for (var i = 0; i < data.item.length; i++)
+					{
+						if (data.item[i].quantity !== 0)
+						{
+							$scope.stock.push(data.item[i]);
+						}
 
-	            $("#transfer-stock-loading-bar").hide();
-	        },
-	        onException: function (ex)
-	        {
-	            console.log(ex);
-	            $("#transfer-stock-loading-bar").hide();
-	        }
-	    });
+						if (data.item[i].lotNumber !== undefined && data.item[i].lotNumber !== null && data.item[i].lotNumber !== "")
+						{
+							if ($scope.lotNumbers.indexOf(data.item[i].lotNumber) === -1)
+							{
+								$scope.lotNumbers.push(data.item[i].lotNumber);
+							}
+						}
+					}
+				}
+
+				$("#transfer-stock-loading-bar").hide();
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+				$("#transfer-stock-loading-bar").hide();
+			}
+		});
 	}
 
 	loadVaccines(undefined);
 
 	$scope.lotNumberChanged = function ()
 	{
+		console.log($scope.lotNumber);
 
-	    console.log($scope.lotNumber);
+		if ($scope.lotNumber !== undefined && $scope.lotNumber !== null && $scope.lotNumber !== "")
+		{
+			$("#transfer-stock-loading-bar").show();
 
-	    if ($scope.lotNumber !== undefined && $scope.lotNumber !== null && $scope.lotNumber !== "")
-	    {
-	        loadVaccines($scope.lotNumber.lotNumber);
-	    }
+			loadVaccines($scope.lotNumber.lotNumber);
+		}
 	};
 
 	$scope.transferStock = function ()
