@@ -52,6 +52,42 @@ layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);
 
+/**
+ * @summary The queryUrlParameterService is used to get url parameters.
+ *
+ * @description The purpose of this service is to get url parameters.
+ * @namespace queryUrlParameterService
+ */
+layoutApp.service('queryUrlParameterService', [function () {
+
+    /**
+     * @summary Gets the url parameters of the current page and returns an object with the URL parameter names and values as key-value pairs.
+     * @memberof queryUrlParameterService
+     * @method
+     * @example
+     * var params = getUrlParameters();
+     * var id = params.id;
+     * @returns An object of parameters from the URL of the current page.
+     */
+    function getUrlParameters() {
+        var url = window.location.href;
+        var regex = /[\?|\&]([^=]+)\=([^&]+)/g;
+        var params = {};
+
+        while ((match = regex.exec(url)) != null) {
+            params[match[1]] = match[2];
+        }
+
+        return params;
+    }
+
+    var parameterService = {
+        getUrlParameters: getUrlParameters
+    }
+
+    return parameterService;
+}]);
+
 angular.element(document).ready(function () {
     $("[data-toggle=popover]").popover({ container: 'body' });
     $('[data-toggle=popover]').on('shown.bs.popover', function () {

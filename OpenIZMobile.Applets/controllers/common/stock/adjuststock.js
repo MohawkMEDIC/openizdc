@@ -21,29 +21,61 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
 
-    console.log(sessionStorage.getItem("object"));
-    var object = JSON.parse(sessionStorage.getItem("object"));
-    var query = "id=" + object.id;
+    var params = queryParameterService.getUrlParameters();
 
-    $scope.stock = [];
+    var query = "id=" + params.id;
 
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+    var manufacturedMaterial = null;
+
+    OpenIZ.Ims.get({
         query: query,
+        resource: "ManufacturedMaterial",
         continueWith: function (data) {
+
+            console.log(data);
+
             if (data.item !== undefined) {
-                for (var i = 0; i < data.item.length; i++) {
-                    console.log(JSON.stringify(data.item[i]));
-                }
+                manufacturedMaterial = data.item[0];
+
+                $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
+                $scope.lotNumber = manufacturedMaterial.lotNumber;
+                $scope.expiryDate = manufacturedMaterial.expiryDate;
+                $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
             }
         },
         onException: function (ex) {
             console.log(ex);
         }
     });
+
     $scope.adjustStock = function () {
 
+        OpenIZ.App.showWait();
+
+        manufacturedMaterial.quantity = $scope.quantity;
+
+        OpenIZ.Ims.put({
+            id: params.id,
+            versionId: params.version,
+            data: manufacturedMaterial,
+            resource: "ManufacturedMaterial",
+            continueWith: function (data) {
+
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
+
+                window.location.href = "searchstock.html";
+            },
+            onException: function(ex)
+            {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
+            },
+            finally: function()
+            {
+                OpenIZ.App.hideWait();
+            }
+        });
     };
 
 }]);

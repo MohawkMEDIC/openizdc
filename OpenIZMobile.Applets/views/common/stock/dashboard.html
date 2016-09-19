@@ -42,28 +42,31 @@
                     <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
                 </div>
                 <table class="panel-body table table-striped table-responsive">
-                    <tr>
-                        <td>{{ 'locale.stock.tableHeader.antigen' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.expiry' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.onHand' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.amc' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.remain' | i18n }}</td>
-                        <td>{{ 'locale.stock.tableHeader.action' | i18n }}</td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr ng-repeat="item in stock">
-                        <td>{{ item.name.Assigned | oizEntityName }}</td>
-                        <td>{{ item.expiryDate }}</td>
-                        <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>
-                            <a class="btn btn-primary" ng-click="setItem(item.id, item.version)" ng-href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                        </td>
-                        <td>
-                            <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                        </td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>{{ 'locale.stock.tableHeader.antigen' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.expiry' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.onHand' | i18n }}</th>
+                            <th>{{ 'locale.stock.tableHeader.action' | i18n }}</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="stock in lowStock">
+                            <td>
+                                {{ stock.name.Assigned | oizEntityName }}<br /><small>LN# {{ stock.lotNumber }}</small>
+                            </td>
+                            <td>{{ stock.expiryDate | date: 'dd-MM-yyyy' }}</td>
+                            <td>{{ stock.quantity }}</td>
+                            <td>
+                                <a class="btn btn-primary" ng-href="adjust.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                            </td>
+                            <td>
+                                <a class="btn btn-primary" ng-href="order.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.order' | i18n }}</a>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

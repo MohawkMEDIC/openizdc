@@ -545,7 +545,7 @@ LEFT JOIN concept as quantityConcept ON (material.quantity_concept_uuid = quanti
 WHERE classConcept IN (X'BE7390D38F0F0E44B8C87034CC138A95', X'86C2FEFAD5890B429085054ACA9D1EEF');
 
 create view if not exists sqp_ManufacturedMaterial as
-select sqp_material.*, lot from sqp_material inner join manufactured_material on (sqp_material.uuid = manufactured_material.uuid);
+select sqp_material.*, lotNumber from sqp_material inner join manufactured_material on (sqp_material.uuid = manufactured_material.uuid);
 
 create view if not exists sqp_Provider as 
 select sqp_Person.*, 

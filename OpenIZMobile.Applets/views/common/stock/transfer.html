@@ -52,10 +52,8 @@
                     <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
                     <div class="col-md-10">
                         <div class="input-group">
-                            <select class="form-control" name="lotNumber" ng-model="lotNumber" oiz-entitysearch="ManufacturedMaterial">
-                                <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
-                            </select>
-                            <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNuumberRequired' | i18n }}</p>
+                            <select class="form-control" ng-options="lotNumber as lotNumber for lotNumber in lotNumbers track by lotNumber" name="lotNumber" ng-model="lotNumber" ng-change="lotNumberChanged()"></select>
+                            <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNumberRequired' | i18n }}</p>
                         </div>
                     </div>
                 </div>
@@ -85,7 +83,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in stock">
+                                <tr ng-repeat="item in stock | filter:lotNumber">
                                     <td>{{ item.name.Assigned | oizEntityName }}</td>
                                     <td>{{ item.identifier | oizEntityIdentifier }}</td>
                                     <td>{{ item.quantity }}</td>

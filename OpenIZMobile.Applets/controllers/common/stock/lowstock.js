@@ -42,7 +42,7 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
         }
     });
 
-    var lowStockQuery = "lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5";
+    var lowStockQuery = "lotNumber=!null&quantity=<5&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5";
 
     OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
         query: lowStockQuery,
