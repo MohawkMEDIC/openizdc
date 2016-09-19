@@ -23,7 +23,25 @@
 
 layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
 
+    console.log(sessionStorage.getItem("object"));
+    var object = JSON.parse(sessionStorage.getItem("object"));
+    var query = "id=" + object.id;
 
+    $scope.stock = [];
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: query,
+        continueWith: function (data) {
+            if (data.item !== undefined) {
+                for (var i = 0; i < data.item.length; i++) {
+                    console.log(JSON.stringify(data.item[i]));
+                }
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
     $scope.adjustStock = function () {
 
     };

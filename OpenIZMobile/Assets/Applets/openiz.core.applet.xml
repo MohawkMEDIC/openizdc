@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.8976">
+  <info id="org.openiz.core" version="0.6.7.2659">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -647,7 +647,25 @@ angular.element(document).ready(function () {
 
 layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
 
+    console.log(sessionStorage.getItem("object"));
+    var object = JSON.parse(sessionStorage.getItem("object"));
+    var query = "id=" + object.id;
 
+    $scope.stock = [];
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: query,
+        continueWith: function (data) {
+            if (data.item !== undefined) {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    console.log(JSON.stringify(data.item[i]));
+                }
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
     $scope.adjustStock = function () {
 
     };
@@ -682,6 +700,10 @@ layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
 layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
     // TODO: add facility id here
+    $scope.setItem = function (id, version) {
+        sessionStorage.setItem("object", JSON.stringify({ id: id, version: version }));
+    };
+
     $scope.lowStockQuery = "relationship[HeldEntity].holder=" + "";
 
     //OpenIZ.Ims.get({
@@ -694,8 +716,26 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
     //        console.log(ex);
     //    }
     //});
+    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5"
 
-    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.Eventoccurrence + "&amp;classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
+    $scope.stock = [];
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: $scope.query,
+        continueWith: function (data) {
+            if (data.item !== undefined) {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    console.log(JSON.stringify(data.item[i]));
+                    $scope.stock.push(data.item[i]);
+                }
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
+
+    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&amp;classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
     OpenIZ.Ims.get({
         resource: "Act",
@@ -830,24 +870,50 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
             }
         },
         data: {
-            labels: ["OPV", "BCG", "MR"],
-            datasets: [{
-                label: 'On Hand',
-                data: [40, 20, 30],
-                backgroundColor: [
-                    'rgba(128,255,128,0.2)',
-                    'rgba(255,128,128,0.2)',
-                    'rgba(128,128,255,0.2)'
-                ]
-            }, {
-                label: 'AMC',
-                data: [35, 60, 10],
-                backgroundColor: [
-                    'rgba(128,128,128,0.2)',
-                    'rgba(128,128,128,0.2)',
-                    'rgba(128,128,128,0.2)'
-                ]
-            }]
+            labels: [],
+            datasets: []
+        }
+    });
+
+    var lowStockQuery = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5";
+
+    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+        query: lowStockQuery,
+        continueWith: function (data) {
+
+            if (data.item !== undefined) {
+                for (var i = 0; i &lt; data.item.length; i++) {
+
+                    var vaccine = data.item[i];
+
+                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value);
+                    stockChart.data.datasets.push({
+                        label: vaccine.name.Assigned.component.$other.value,
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                        ]
+                    });
+                }
+
+                // HACK
+                for (var j = 0; j &lt; stockChart.data.datasets.length; j++) {
+                    stockChart.data.datasets[j].data[j] = data.item[j].quantity + 1;
+                }
+
+                stockChart.update(1, true);
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        },
+        finally: function()
+        {
+            stockChart.update();
         }
     });
 
@@ -881,12 +947,23 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
 
 layoutApp.controller('OrderController', ['$scope', function ($scope) {
 
-    $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
+    $scope.summaryQuery = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
 
-    $scope.orders = [];
+    $scope.orders = [{
+            orderNo: 1234,
+            orderDate: "10/9/2016",
+            destinationHealthFacility: "Arusha Health Centre for Women",
+            orderStatus: "Requested"
+        },
+        {
+            orderNo: 5678,
+            orderDate: "11/9/2016",
+            destinationHealthFacility: "Arusha Laboratory Dispensary",
+            orderStatus: "Requested"
+        }];
 
     OpenIZ.Ims.get({
-        query: $scope.query,
+        query: $scope.summaryQuery,
         resource: "Act",
         continueWith: function (data)
         {
@@ -904,6 +981,27 @@ layoutApp.controller('OrderController', ['$scope', function ($scope) {
             console.log(JSON.stringify(ex));
         }
     });
+
+    $scope.searchOrders = function () {
+        searchQuery = "identifier.value=" + $scope.orderNumber + "&amp;" + $scope.summaryQuery;
+
+        OpenIZ.Ims.get({
+            query: searchQuery,
+            resource: "Act",
+            continueWith: function (data) {
+                console.log(data);
+
+                if (data.item !== undefined) {
+                    for (var i = 0; i &lt; data.item.length; i++) {
+                        //$scope.orders.push(data.item[i]);
+                    }
+                }
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
+    };
 }]);
 </contentText>
   </asset>
@@ -994,11 +1092,11 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
 
     var labels = [];
     var data = [];
-    labels[0] = "Released";
-    labels[1] = "Cancelled";
-    labels[2] = "Requested";
-    labels[3] = "Shipped";
-    labels[4] = "Packed";
+    labels[0] = OpenIZ.Localization.getString("locale.stock.released");
+    labels[1] = OpenIZ.Localization.getString("locale.stock.cancelled");
+    labels[2] = OpenIZ.Localization.getString("locale.stock.requested");
+    labels[3] = OpenIZ.Localization.getString("locale.stock.shipped");
+    labels[4] = OpenIZ.Localization.getString("locale.stock.packed");
     data[0] = 3;
     data[1] = 4;
     data[2] = 2;
@@ -1019,7 +1117,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
                     'rgba(255, 206, 86, 0.2)',
                     'rgba(75, 192, 192, 0.2)',
                     'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
                 ],
                 borderColor: [
                     'rgba(255,99,132,1)',
@@ -1027,12 +1125,66 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
                     'rgba(255, 206, 86, 1)',
                     'rgba(75, 192, 192, 1)',
                     'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 159, 64, 1)'
                 ],
                 borderWidth: 1
             }]
         },
     });
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/searchstock.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-15
+ */
+
+layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
+
+    $scope.vaccines = [];
+
+    $scope.searchStock = function () {
+
+        var query = "name.component.value=~" + $scope.name + "&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
+
+        OpenIZ.Ims.get({
+            query: query,
+            resource: "ManufacturedMaterial",
+            continueWith: function (data) {
+
+                console.log(data);
+
+                if (data.item !== undefined) {
+                    for (var i = 0; i &lt; data.item.length; i++) {
+                        $scope.vaccines.push(data.item[i]);
+                    }
+                }
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
+    };
 
 }]);
 </contentText>
@@ -1081,8 +1233,6 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
         query: $scope.query,
         continueWith: function (data)
         {
-            console.log(data);
-
             if (data.item !== undefined)
             {
                 for (var i = 0; i &lt; data.item.length; i++) {
@@ -1258,7 +1408,6 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
 /// &lt;reference path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
-
     $rootScope.system = {};
     $rootScope.system.config = {};
     $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
@@ -1303,22 +1452,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).ru
 });
 
 // Configure the safe ng-urls
-layoutApp.config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.when("/orderDetail", {
-        templateUrl: "../views/common/stock/orderdetail.html",
-        controller: "OrderDetailController"
-    })
-    .otherwise({
-        redirectTo: '/orderDetail'
-    });
-}]);
-
 layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 }]);
-
-
 
 angular.element(document).ready(function () {
     $("[data-toggle=popover]").popover({ container: 'body' });
@@ -14507,12 +14644,12 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
         <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="StockDashboardController" xmlns:oiz="http://openiz.org/applet">
           <div class="row">
             <div class="col-xs-12">
-              <div class="col-xs-6">
-                <!--#include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html"-->
-              </div>
-              <div class="col-xs-6">
-                <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
-              </div>
+              <!--#include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html"-->
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
             </div>
           </div>
           <div class="row">
@@ -14534,43 +14671,13 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                     <td>
                     </td>
                   </tr>
-                  <tr>
+                  <tr ng-repeat="item in stock">
+                    <td>{{ item.name.Assigned | oizEntityName }}</td>
+                    <td>{{ item.expiryDate }}</td>
+                    <td>{{ item.identifier | oizEntityIdentifier }}</td>
+                    <td>{{ item.quantity }}</td>
                     <td>
-                            ORAL POLIO VACCINE (OPV)<br /><small>Serum Inst. India LN# 20-30293</small></td>
-                    <td>30-JUL-2016</td>
-                    <td>40</td>
-                    <td>35</td>
-                    <td>30 d</td>
-                    <td>
-                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                    </td>
-                    <td>
-                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                    </td>
-                  </tr>
-                  <tr class="danger">
-                    <td>
-                            BACILLUS CALMETTA-GUERIN (BCG)<br /><small>Serum Inst. India LN# 34-30293</small></td>
-                    <td>30-JUL-2016</td>
-                    <td>20</td>
-                    <td>60</td>
-                    <td>2 d</td>
-                    <td>
-                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                    </td>
-                    <td>
-                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                    </td>
-                  </tr>
-                  <tr class="info">
-                    <td>
-                            MEASLES-RUBELLA (MR)<br /><small>GSK LN# 405-30492</small></td>
-                    <td>12-JUL-2016</td>
-                    <td>30</td>
-                    <td>10</td>
-                    <td>15 d</td>
-                    <td>
-                      <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                      <a class="btn btn-primary" ng-click="setItem(item.id, item.version)" ng-href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
                     </td>
                     <td>
                       <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
@@ -14663,7 +14770,36 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="OrderController" xmlns:oiz="http://openiz.org/applet">
           <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                        {{ 'locale.stock.stockorders.title' | i18n }}
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse in">
+                  <div class="panel-body">
+                    <form name="searchOrdersForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchOrdersForm.$valid &amp;&amp; searchOrders()">
+                      <div class="form-group" ng-class="{ 'has-error' : searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched }">
+                        <label class="col-xs-3 control-label">{{ 'locale.stock.orderNumber' | i18n }}</label>
+                        <div class="col-xs-7">
+                          <input type="text" name="orderNumber" ng-required="true" ng-model="orderNumber" class="form-control" />
+                          <p ng-show="searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.orderNumberRequired' | i18n }}</p>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-xs-10">
+                          <button type="submit" class="btn btn-primary pull-right">
+                                        Search For Stock Orders
+                                    </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-6">
               <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
             </div>
           </div>
@@ -14687,36 +14823,16 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                     </thead>
                     <tbody>
                       <tr ng-repeat="order in orders">
-                        <td>{{ order.number }}</td>
-                        <td>{{ order.date }}</td>
-                        <td>{{ order.healthFacility }}</td>
-                        <td>{{ order.status }}</td>
-                        <td>
-                          <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>1234</td>
-                        <td>10/9/2016</td>
-                        <td>Arusha Health Centre for Women</td>
-                        <td>Requested</td>
-                        <td>
-                          <a class="btn btn-primary" href="#/orderDetail">{{ 'locale.action.view' | i18n }}</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>5678</td>
-                        <td>11/9/2016</td>
-                        <td>Arusha Laboratory Dispensary</td>
-                        <td>Requested</td>
+                        <td>{{ order.orderNo }}</td>
+                        <td>{{ order.orderDate }}</td>
+                        <td>{{ order.destinationHealthFacility }}</td>
+                        <td>{{ order.orderStatus }}</td>
                         <td>
                           <a class="btn btn-primary" href="orderdetail.html">{{ 'locale.action.view' | i18n }}</a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <ng-view>
-                  </ng-view>
                 </div>
               </div>
             </div>
@@ -14795,6 +14911,83 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                         <td>{{ item.quantity }}</td>
                         <td>{{ item.quantityOrdered }}</td>
                         <td>{{ item.unitOfMeasure }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/searchstock.html" mimeType="text/html">
+    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
+    <contentHtml>
+      <title lang="en">Search Stock</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>/org.openiz.core/lib/chart.min.js</script>
+      <script>~/controllers/common/stock/searchstock.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" ng-controller="SearchStockController" xmlns:oiz="http://openiz.org/applet">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                        {{ 'locale.stock.title' | i18n }}
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse in">
+                  <div class="panel-body">
+                    <form name="searchStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchStockForm.$valid &amp;&amp; searchStock()">
+                      <div class="form-group" ng-class="{ 'has-error' : searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched }">
+                        <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
+                        <div class="col-xs-10">
+                          <input type="text" name="orderNumber" ng-required="true" ng-model="name" class="form-control" />
+                          <p ng-show="searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched" class="help-block text-danger">{{ 'locale.stock.errors.vaccineRequired' | i18n }}</p>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-xs-10">
+                          <button type="submit" class="btn btn-primary">
+                                        Search for a vaccine
+                                    </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">{{ 'locale.stock.vaccines' | i18n }}</h4>
+                </div>
+                <div class="panel panel-body">
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>{{ 'locale.stock.vaccine' | i18n }}</th>
+                        <th>{{ 'locale.stock.lotNumber' | i18n }}</th>
+                        <th>{{ 'locale.stock.currentLevel' | i18n }}</th>
+                        <th>{{ 'locale.stock.quantity' | i18n }}</th>
+                        <th>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="vaccine in vaccines">
+                        <td>{{ vaccine.name.Assigned | oizEntityName }}</td>
+                        <td>{{ vaccine.identifier | oizEntityIdentifier }}</td>
+                        <td>{{ vaccine.quantity }}</td>
+                        <td>
+                          <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -16032,6 +16225,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.adjustStock">Adjust Stock</string>
     <string key="locale.stock.lowstock">Low Stock</string>
     <string key="locale.stock.ordersummary.title">Order Summary</string>
+    <string key="locale.stock.stockorders.title">Stock Orders</string>
     <string key="locale.stock.gtin">GTIN</string>
     <string key="locale.stock.lotNumber">Lot No.</string>
     <string key="locale.stock.vaccine">Vaccine</string>
@@ -16049,6 +16243,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.transferToFacility">To Facility</string>
     <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
     <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
+    <string key="locale.stock.errors.orderNumberRequired">Please enter an order number</string>
     <string key="locale.stock.transferStock">Transfer Stock</string>
     <string key="locale.stock.currentLevel">Current Quantity</string>
     <string key="locale.stock.orderNo">Order No.</string>
@@ -16057,6 +16252,13 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.orderStatus">Order Status</string>
     <string key="locale.stock.orderDetails">Order Details</string>
     <string key="locale.stock.order">Order</string>
+    <string key="locale.stock.orderNumber">Order No</string>
+    <string key="locale.stock.released">Released</string>
+    <string key="locale.stock.cancelled">Cancelled</string>
+    <string key="locale.stock.packed">Packed</string>
+    <string key="locale.stock.shipped">Shipped</string>
+    <string key="locale.stock.requested">Requested</string>
+    <string key="locale.stock.stockStatusDoses">Stock Status (Doses)</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>
