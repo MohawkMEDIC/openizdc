@@ -117,16 +117,26 @@ namespace OpenIZ.Mobile.Core.Alerting
                     // Check for key and assign ID
                     try
                     {
-						conn.Update(msg);
-                    }
-                    catch(SQLite.Net.SQLiteException)
-                    {
-						msg.Id = Guid.NewGuid().ToByteArray();
-						msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
-						conn.Insert(msg);
-					}
+						var existingAlert = this.GetAlert(new Guid(msg.Id));
 
-                    conn.Commit();
+						if (existingAlert == null)
+						{
+							msg.Id = Guid.NewGuid().ToByteArray();
+							msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
+							conn.Insert(msg);
+						}
+						else
+						{
+							conn.Update(msg);
+						}
+
+						conn.Commit();
+					}
+                    catch(SQLite.Net.SQLiteException e)
+                    {
+						this.m_tracer.TraceError("Error saving alert: {0}", e);
+						throw;
+					}
 
                 }
                 catch (Exception e)

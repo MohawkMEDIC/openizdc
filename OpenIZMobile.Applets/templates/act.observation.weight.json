@@ -1,19 +1,39 @@
 ﻿{
-  "$type": "QuantityObservation",
+  "$type": "Act",
   "template": {
     "mnemonic": "Act.Observation.Weight"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
-  "typeConcept": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+  "classConcept": "0D6B3439-C9BE-4480-AF39-EEB457C052D0",
+  "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
   "actTime": "{{now}}",
   "participation": {
     "Location": {
-      "player": "{{locationId}}"
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
     },
-    "Product": {
-      "playerModel": {
-        "$type": "Material"
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    },
+    "RecordTarget": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": ""
+    }
+  },
+  "relationship": {
+    "HasSubject": {
+      "targetModel": {
+        "$type": "QuantityObservation",
+        "classConcept": "",
+        "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+        "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+        "actTime": "{{now}}",
+        "value": 0,
+        "unitOfMeasure": ""
       }
     }
   }

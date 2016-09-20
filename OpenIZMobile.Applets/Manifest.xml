@@ -24,23 +24,27 @@
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
   <startup>~/index.html</startup>
-  <template mnemonic="Act.Observation.Weight">
-    <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
-    <oid>1.2.3.4.5.6.7.8.9</oid>
-    <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
-  </template>
+  
   <template mnemonic="Act.SubstanceAdmin.Immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
     <oid>1.2.3.4.5.6.7.8.10</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
+  
   <template mnemonic="Act.PatientEncounter.Checkin">
     <oid>1.2.3.4.5.6.7.8.11</oid>
     <definition>/org.openiz.core/templates/act.patientencounter.checkin.json</definition>
   </template>
+  
   <template mnemonic="Act.TransferStock">
     <oid>1.2.3.4.5.6.7.8.12</oid>
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
+  </template>
+  
+  <template mnemonic="Act.Observation.Weight">
+    <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
+    <oid>1.2.3.4.5.6.7.8.13</oid>
+    <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
   </template>
   
   <menuItem order="99">
