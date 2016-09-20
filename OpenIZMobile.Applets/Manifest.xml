@@ -42,6 +42,11 @@
     <oid>1.2.3.4.5.6.7.8.12</oid>
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
+  <template mnemonic="Act.PatientEncounter.Weight">
+    <oid>1.2.3.4.5.6.7.8.13</oid>
+    <definition>/org.openiz.core/templates/act.patientencounter.weight.json</definition>
+  </template>
+
   
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
@@ -208,6 +213,8 @@
     <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
     <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
     <string key="locale.stock.errors.orderNumberRequired">Please enter an order number</string>
+    <string key="locale.stock.errors.gtinRequired">Gtin Is Required</string>
+    <string key="locale.stock.editGtin">Edit Gtin</string>
     <string key="locale.stock.transferStock">Transfer Stock</string>
     <string key="locale.stock.currentLevel">Current Quantity</string>
     <string key="locale.stock.orderNo">Order No.</string>

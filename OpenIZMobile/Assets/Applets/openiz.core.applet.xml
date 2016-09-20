@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.2659">
+  <info id="org.openiz.core" version="0.6.7.5734">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -39,6 +39,9 @@
   </template>
   <template mnemonic="Act.TransferStock">
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
+  </template>
+  <template mnemonic="Act.PatientEncounter.Weight">
+    <definition>/org.openiz.core/templates/act.patientencounter.weight.json</definition>
   </template>
   <asset name="bundleconfig.json" mimeType="text/javascript">
     <contentText>[
@@ -182,7 +185,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
             id: OpenIZ.urlParams["alertId"],
             _count: 1
         },
-        onExpcetion: function(ex) {
+        onException: function(ex) {
             OpenIZ.App.hideWait();
             if (typeof (ex) == "string")
                 alert(ex);
@@ -193,12 +196,50 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope) {
         },
         continueWith: function (data) {
             $scope.alert = data[0];
-            var foo = "";
-            
             $scope.alert.body = $scope.alert.body.replace("\n", "&lt;br/&gt;");
             $scope.$apply();
         }
     });
+
+    $scope.deleteAlert = function (alert) {
+
+        //alert.flags = 2;
+
+        //OpenIZ.App.saveAlertAsync({
+        //    data: alert,
+        //    continueWith: function (data) {
+        //        OpenIZ.App.showWait();
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+        //    },
+        //    onException: function (ex) {
+        //        console.log(ex);
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
+        //    },
+        //    finally: function () {
+        //        OpenIZ.App.hideWait();
+        //    }
+        //});
+    };
+
+    $scope.updateAlert = function (alert) {
+
+        //alert.flags = 2;
+
+        //OpenIZ.App.saveAlertAsync({
+        //    data: alert,
+        //    continueWith: function (data) {
+        //        OpenIZ.App.showWait();
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+        //    },
+        //    onException: function (ex) {
+        //        console.log(ex);
+        //        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
+        //    },
+        //    finally: function () {
+        //        OpenIZ.App.hideWait();
+        //    }
+        //});
+    };
 
 }]);</contentText>
   </asset>
@@ -645,29 +686,61 @@ angular.element(document).ready(function () {
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
 
-    console.log(sessionStorage.getItem("object"));
-    var object = JSON.parse(sessionStorage.getItem("object"));
-    var query = "id=" + object.id;
+    var params = queryParameterService.getUrlParameters();
 
-    $scope.stock = [];
+    var query = "id=" + params.id;
 
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+    var manufacturedMaterial = null;
+
+    OpenIZ.Ims.get({
         query: query,
+        resource: "ManufacturedMaterial",
         continueWith: function (data) {
+
+            console.log(data);
+
             if (data.item !== undefined) {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    console.log(JSON.stringify(data.item[i]));
-                }
+                manufacturedMaterial = data.item[0];
+
+                $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
+                $scope.lotNumber = manufacturedMaterial.lotNumber;
+                $scope.expiryDate = manufacturedMaterial.expiryDate;
+                $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
             }
         },
         onException: function (ex) {
             console.log(ex);
         }
     });
+
     $scope.adjustStock = function () {
 
+        OpenIZ.App.showWait();
+
+        manufacturedMaterial.quantity = $scope.quantity;
+
+        OpenIZ.Ims.put({
+            id: params.id,
+            versionId: params.version,
+            data: manufacturedMaterial,
+            resource: "ManufacturedMaterial",
+            continueWith: function (data) {
+
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
+
+                window.location.href = "searchstock.html";
+            },
+            onException: function(ex)
+            {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
+            },
+            finally: function()
+            {
+                OpenIZ.App.hideWait();
+            }
+        });
     };
 
 }]);
@@ -699,42 +772,6 @@ layoutApp.controller('AdjustStockController', ['$scope', function ($scope) {
 
 layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
-    // TODO: add facility id here
-    $scope.setItem = function (id, version) {
-        sessionStorage.setItem("object", JSON.stringify({ id: id, version: version }));
-    };
-
-    $scope.lowStockQuery = "relationship[HeldEntity].holder=" + "";
-
-    //OpenIZ.Ims.get({
-    //    resource: "ManufacturedMaterial",
-    //    query: $scope.lowStockQuery,
-    //    continueWith: function (data) {
-    //        console.log(data);
-    //    },
-    //    onException: function (ex) {
-    //        console.log(ex);
-    //    }
-    //});
-    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5"
-
-    $scope.stock = [];
-
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-        query: $scope.query,
-        continueWith: function (data) {
-            if (data.item !== undefined) {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    console.log(JSON.stringify(data.item[i]));
-                    $scope.stock.push(data.item[i]);
-                }
-            }
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
-
     $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&amp;classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
     OpenIZ.Ims.get({
@@ -750,18 +787,112 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
         }
     });
 
-    $scope.stockSnapshotQuery = "";
+    $scope.lowStock = [];
 
-    //OpenIZ.Ims.get({
-    //    resource: "ManufacturedMaterial",
-    //    query: $scope.stockSnapshotQuery,
-    //    continueWith: function (data) {
-    //        console.log(data);
-    //    },
-    //    onException: function (ex) {
-    //        console.log(ex);
-    //    }
-    //});
+    // TODO: add facility id here
+    var lowStockQuery = "lotNumber=!null&amp;quantity=&lt;5&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5";
+
+    OpenIZ.Ims.get({
+        resource: "ManufacturedMaterial",
+        query: lowStockQuery,
+        continueWith: function (data) {
+            console.log(data);
+
+            if (data.item !== undefined)
+            {
+                for (var i = 0; i &lt; data.item.length; i++) {
+                    $scope.lowStock.push(data.item[i]);
+                }
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/editgtin.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-16
+ */
+
+layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+{
+	var params = queryParameterService.getUrlParameters();
+
+	var query = "id=" + params.id;
+
+	var manufacturedMaterial = null;
+
+	OpenIZ.Ims.get({
+		query: query,
+		resource: "ManufacturedMaterial",
+		continueWith: function (data)
+		{
+
+			console.log(data);
+
+			if (data.item !== undefined)
+			{
+				manufacturedMaterial = data.item[0];
+
+				$scope.gtin = manufacturedMaterial.identifier.GTIN.value;
+				$scope.lotNumber = manufacturedMaterial.lotNumber;
+				$scope.expiryDate = manufacturedMaterial.expiryDate;
+				$scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
+			}
+		},
+		onException: function (ex)
+		{
+			console.log(ex);
+		}
+	});
+
+	$scope.editGtin = function ()
+	{
+	    manufacturedMaterial.identifier.GTIN.value = $scope.gtin;
+
+	    OpenIZ.Ims.put({
+	        id: params.id,
+	        versionId: params.version,
+	        data: manufacturedMaterial,
+	        resource: "ManufacturedMaterial",
+	        continueWith: function (data)
+	        {
+	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
+
+	            window.location.href = "gtinmanagement.html";
+	        },
+	        onException: function (ex)
+	        {
+	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
+	        },
+	        finally: function ()
+	        {
+	            OpenIZ.App.hideWait();
+	        }
+	    });
+	};
 }]);
 </contentText>
   </asset>
@@ -789,44 +920,43 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
  * Date: 2016-9-10
  */
 
-layoutApp.controller('GtinManagementController', ['$scope', function ($scope) {
+layoutApp.controller('GtinManagementController', ['$scope', function ($scope)
+{
+	$("#gtin-search-loading-bar").hide();
 
-    OpenIZ.Act.getActTemplateAsync({
-        templateId: "Act.TransferStock",
-        continueWith: function (e) {
-            $scope.act = e;
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
+	$scope.search = function ()
+	{
 
-    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=25"
+		$("#gtin-search-loading-bar").show();
 
-    $scope.stock = [];
+		var query = "identifier.value=~" + $scope.gtin + "&amp;lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=25"
 
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-        query: $scope.query,
-        continueWith: function (data)
-        {
-            console.log(data);
+		$scope.stock = [];
 
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    $scope.stock.push(data.item[i]);
-                }
+		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+			query: query,
+			continueWith: function (data)
+			{
+				console.log(data);
 
-                $("#transfer-stock-loading-bar").hide();
-            }
-        },
-        onException: function(ex)
-        {
-            console.log(ex);
-            $("#transfer-stock-loading-bar").hide();
-        }
-    });
+				if (data.item !== undefined)
+				{
 
+					for (var i = 0; i &lt; data.item.length; i++)
+					{
+						$scope.stock.push(data.item[i]);
+					}
+				}
+
+				$("#gtin-search-loading-bar").hide();
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+				$("#gtin-search-loading-bar").hide();
+			}
+		});
+	};
 }]);
 </contentText>
   </asset>
@@ -875,7 +1005,7 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
         }
     });
 
-    var lowStockQuery = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5";
+    var lowStockQuery = "lotNumber=!null&amp;quantity=&lt;5&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5";
 
     OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
         query: lowStockQuery,
@@ -1109,7 +1239,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Stock Status (Doses)',
+                label: OpenIZ.Localization.getString("locale.stock.stockStatusDoses"),
                 data: data,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -1161,11 +1291,15 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
 
 layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
 
+    $("#stock-search-loading-bar").hide();
+
     $scope.vaccines = [];
 
     $scope.searchStock = function () {
 
-        var query = "name.component.value=~" + $scope.name + "&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
+        $("#stock-search-loading-bar").show();
+
+        var query = "name.component.value=~" + $scope.name;
 
         OpenIZ.Ims.get({
             query: query,
@@ -1179,9 +1313,16 @@ layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
                         $scope.vaccines.push(data.item[i]);
                     }
                 }
+
+                $("#stock-search-loading-bar").hide();
             },
             onException: function (ex) {
                 console.log(ex);
+                $("#stock-search-loading-bar").hide();
+            },
+            finally: function()
+            {
+                $("#stock-search-loading-bar").hide();
             }
         });
     };
@@ -1213,58 +1354,99 @@ layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
  * Date: 2016-9-10
  */
 
-layoutApp.controller('TransferStockController', ['$scope', function ($scope) {
+layoutApp.controller('TransferStockController', ['$scope', function ($scope)
+{
+	OpenIZ.Act.getActTemplateAsync({
+		templateId: "Act.TransferStock",
+		continueWith: function (e)
+		{
+			$scope.act = e;
+		},
+		onException: function (ex)
+		{
+			console.log(ex);
+		}
+	});
 
-    OpenIZ.Act.getActTemplateAsync({
-        templateId: "Act.TransferStock",
-        continueWith: function (e) {
-            $scope.act = e;
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
+	$scope.lotNumbers = [];
 
-    $scope.query = "lotNumber=!null&amp;statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&amp;_count=5"
+	function loadVaccines(lotNumber)
+	{
+		var vaccineQuery = "statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
 
-    $scope.stock = [];
+		if (lotNumber !== undefined &amp;&amp; lotNumber !== null &amp;&amp; lotNumber !== "")
+		{
+			vaccineQuery += "&amp;lotNumber=" + lotNumber;
+		}
+		else
+		{
+			vaccineQuery += "&amp;lotNumber=!null";
+		}
 
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-        query: $scope.query,
-        continueWith: function (data)
-        {
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    $scope.stock.push(data.item[i]);
-                }
+		$scope.stock = [];
 
-                $("#transfer-stock-loading-bar").hide();
-            }
-        },
-        onException: function(ex)
-        {
-            console.log(ex);
-            $("#transfer-stock-loading-bar").hide();
-        }
-    });
+		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
+			query: vaccineQuery,
+			continueWith: function (data)
+			{
+				if (data.item !== undefined)
+				{
+					for (var i = 0; i &lt; data.item.length; i++)
+					{
+						if (data.item[i].quantity !== 0)
+						{
+							$scope.stock.push(data.item[i]);
+						}
 
-    $scope.transferStock = function () {
+						if (data.item[i].lotNumber !== undefined &amp;&amp; data.item[i].lotNumber !== null &amp;&amp; data.item[i].lotNumber !== "")
+						{
+							if ($scope.lotNumbers.indexOf(data.item[i].lotNumber) === -1)
+							{
+								$scope.lotNumbers.push(data.item[i].lotNumber);
+							}
+						}
+					}
+				}
 
-        OpenIZ.Ims.post({
-            resource: "Act",
-            data: $scope.act,
-            continueWith: function(data)
-            {
-                console.log(data);
-            },
-            onException: function(ex)
-            {
-                console.log(ex);
-            }
-        })
-    };
+				$("#transfer-stock-loading-bar").hide();
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+				$("#transfer-stock-loading-bar").hide();
+			}
+		});
+	}
 
+	loadVaccines(undefined);
+
+	$scope.lotNumberChanged = function ()
+	{
+		console.log($scope.lotNumber);
+
+		if ($scope.lotNumber !== undefined &amp;&amp; $scope.lotNumber !== null &amp;&amp; $scope.lotNumber !== "")
+		{
+			$("#transfer-stock-loading-bar").show();
+
+			loadVaccines($scope.lotNumber.lotNumber);
+		}
+	};
+
+	$scope.transferStock = function ()
+	{
+		OpenIZ.Ims.post({
+			resource: "Act",
+			data: $scope.act,
+			continueWith: function (data)
+			{
+				console.log(data);
+			},
+			onException: function (ex)
+			{
+				console.log(ex);
+			}
+		})
+	};
 }]);
 </contentText>
   </asset>
@@ -1455,6 +1637,42 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).ru
 layoutApp.config(['$compileProvider', function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
+}]);
+
+/**
+ * @summary The queryUrlParameterService is used to get url parameters.
+ *
+ * @description The purpose of this service is to get url parameters.
+ * @namespace queryUrlParameterService
+ */
+layoutApp.service('queryUrlParameterService', [function () {
+
+    /**
+     * @summary Gets the url parameters of the current page and returns an object with the URL parameter names and values as key-value pairs.
+     * @memberof queryUrlParameterService
+     * @method
+     * @example
+     * var params = getUrlParameters();
+     * var id = params.id;
+     * @returns An object of parameters from the URL of the current page.
+     */
+    function getUrlParameters() {
+        var url = window.location.href;
+        var regex = /[\?|\&amp;]([^=]+)\=([^&amp;]+)/g;
+        var params = {};
+
+        while ((match = regex.exec(url)) != null) {
+            params[match[1]] = match[2];
+        }
+
+        return params;
+    }
+
+    var parameterService = {
+        getUrlParameters: getUrlParameters
+    }
+
+    return parameterService;
 }]);
 
 angular.element(document).ready(function () {
@@ -4330,19 +4548,46 @@ var OpenIZ = OpenIZ || {
          * @param {Object} alertData The alert data
          */
         saveAlertAsync: function (controlData) {
-            $.post('/__app/alerts', controlData.data, function (e) { controlData.continueWith(e); }, "json")
-            .fail(function (data) {
-                var error = data.responseJSON;
-                if (error.error !== undefined) // structured error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
-                            error.error_description,
-                            null
-                        ));
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                            data,
-                            null
-                        ));
+            $.ajax({
+                method: 'POST',
+                url: "/__app/alerts",
+                // || WARNING: JAVASCRIPT RANT AHEAD              ||
+                // ||                                             ||
+                // || Why!? Why!? Why is this even a line of code?||
+                // || I specified JSON and application/json yet   ||
+                // || the 1337 haxors at jQ decide not to encode  ||
+                // || the JSON data I send as JSON!? Why!?        ||
+                // \/ Stuff like this is why I dislike JavaScript \/
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                }
             });
         }
     },
@@ -5302,7 +5547,7 @@ $.ajaxSetup({
             <div class="panel panel-primary">
               <div class="panel-heading">
                 <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
-                  <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicaotr">
+                  <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicator">
                   </span>
                   <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong>
                   <small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
@@ -13464,6 +13709,48 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   }
 }</contentText>
   </asset>
+  <asset name="templates/act.patientencounter.weight.json" mimeType="text/javascript">
+    <contentText>{
+  "$type": "Act",
+  "template": {
+    "mnemonic": "Act.PatientEncounter.Weight"
+  },
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "classConcept": "0D6B3439-C9BE-4480-AF39-EEB457C052D0",
+  "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    },
+    "RecordTarget": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": ""
+    }
+  },
+  "relationship": {
+    "HasSubject": {
+      "targetModel": {
+        "$type": "QuantityObservation",
+        "classConcept": "28d022c6-8a8b-47c4-9e6a-2bc67308739e",
+        "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+        "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+        "value": 0,
+        "unitOfMeasure": "",
+        "actTime" :  "{{now}}"
+      }
+    }
+  }
+}</contentText>
+  </asset>
   <asset name="templates/act.substanceadmin.immunization.json" mimeType="text/javascript">
     <contentText>{
   "$type": "SubstanceAdministration",
@@ -13542,15 +13829,15 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
           <div class="row">
             <div class="col-xs-12">
               <div class="btn-group pull-right">
-                <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
+                <button class="btn-danger btn btn-lg" ng-click="deleteAlert(alert)">
                   <span class="glyphicon glyphicon-trash">
                   </span>
-                        {{ 'locale.actions.delete' | i18n }}
+                        {{ 'locale.action.delete' | i18n }}
                     </button>
-                <button class="btn-primary btn btn-lg" ng-class="acknowledgeAlert()">
+                <button class="btn-primary btn btn-lg" ng-click="updateAlert(alert)">
                   <span class="glyphicon glyphicon-ok">
                   </span>
-                        {{ 'locale.alerts.acknolwedge' | i18n }}
+                        {{ 'locale.action.acknowledge' | i18n }}
                     </button>
               </div>
             </div>
@@ -14559,13 +14846,13 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <layout>/org.openiz.core/layouts/navbar.html</layout>
       <script>~/controllers/common/stock/adjuststock.js</script>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" oiz:layout="/org.openiz.core/layouts/navbar.html">
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="AdjustStockController" oiz:layout="/org.openiz.core/layouts/navbar.html">
           <div class="panel panel-default">
             <div class="panel panel-heading">
             {{ 'locale.stock.adjustStock' | i18n }}
         </div>
             <div class="panel panel-body">
-              <form name="adjustStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="adjustStockForm.$valid &amp;&amp; adjustStock()" ng-controller="AdjustStockController">
+              <form name="adjustStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="adjustStockForm.$valid &amp;&amp; adjustStock()">
                 <div class="form-group">
                   <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
                   <div class="col-sm-4">
@@ -14577,9 +14864,13 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </div>
                 </div>
                 <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                  <div class="col-md-10">
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
+                  <div class="col-sm-4">
                     <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
+                  </div>
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
                   </div>
                 </div>
                 <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; adjustStockForm.dateRecorded.$touched }">
@@ -14590,17 +14881,9 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </div>
                 </div>
                 <div class="form-group">
-                  <div ng-class="{ 'has-error' : adjustStockForm.unitOfMeasure.$invalid &amp;&amp; adjustStockForm.unitOfMeasure.$touched }">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.unitOfMeasure' | i18n }}</label>
-                    <div class="col-sm-4">
-                      <select name="unitOfMeasure" id="unitOfMeasureType" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
-                      </select>
-                      <p ng-show="adjustStockForm.unitOfMeasure.$invalid &amp;&amp; adjustStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
-                    </div>
-                  </div>
                   <div ng-class="{ 'has-error' : adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched }">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.adjustmentReason' | i18n }}</label>
-                    <div class="col-sm-4">
+                    <label class="col-md-2 control-label">{{ 'locale.stock.adjustmentReason' | i18n }}</label>
+                    <div class="col-md-10">
                       <select name="adjustmentReason" id="adjustmentReasonType" class="form-control" ng-model="adjustmentReason" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=StockReason">
                       </select>
                       <p ng-show="adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched" class="help-block text-danger">{{ 'locale.stock.errors.adjustmentReasonRequired' | i18n }}</p>
@@ -14612,13 +14895,6 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   <div class="col-md-10">
                     <input type="number" name="quantity" ng-required="true" ng-model="quantity" class="form-control" />
                     <p ng-show="adjustStockForm.quantity.$invalid &amp;&amp; adjustStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.notes' | i18n }}</label>
-                  <div class="col-md-10">
-                    <textarea name="notes" ng-model="notes" class="form-control">
-                    </textarea>
                   </div>
                 </div>
                 <div class="form-group">
@@ -14659,32 +14935,84 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
                 </div>
                 <table class="panel-body table table-striped table-responsive">
-                  <tr>
-                    <td>{{ 'locale.stock.tableHeader.antigen' | i18n }}</td>
-                    <td>{{ 'locale.stock.tableHeader.expiry' | i18n }}</td>
-                    <td>{{ 'locale.stock.tableHeader.onHand' | i18n }}</td>
-                    <td>{{ 'locale.stock.tableHeader.amc' | i18n }}</td>
-                    <td>{{ 'locale.stock.tableHeader.remain' | i18n }}</td>
-                    <td>{{ 'locale.stock.tableHeader.action' | i18n }}</td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                  </tr>
-                  <tr ng-repeat="item in stock">
-                    <td>{{ item.name.Assigned | oizEntityName }}</td>
-                    <td>{{ item.expiryDate }}</td>
-                    <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>
-                      <a class="btn btn-primary" ng-click="setItem(item.id, item.version)" ng-href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                    </td>
-                    <td>
-                      <a class="btn btn-primary" href="transfer.html">{{ 'locale.stock.action.transfer' | i18n }}</a>
-                    </td>
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th>{{ 'locale.stock.tableHeader.antigen' | i18n }}</th>
+                      <th>{{ 'locale.stock.tableHeader.expiry' | i18n }}</th>
+                      <th>{{ 'locale.stock.tableHeader.onHand' | i18n }}</th>
+                      <th>{{ 'locale.stock.tableHeader.action' | i18n }}</th>
+                      <th>
+                      </th>
+                      <th>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="stock in lowStock">
+                      <td>
+                                {{ stock.name.Assigned | oizEntityName }}<br /><small>LN# {{ stock.lotNumber }}</small></td>
+                      <td>{{ stock.expiryDate | date: 'dd-MM-yyyy' }}</td>
+                      <td>{{ stock.quantity }}</td>
+                      <td>
+                        <a class="btn btn-primary" ng-href="adjust.html?id={{stock.id}}&amp;version={{stock.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                      </td>
+                      <td>
+                        <a class="btn btn-primary" ng-href="order.html?id={{stock.id}}&amp;version={{stock.version}}">{{ 'locale.stock.action.order' | i18n }}</a>
+                      </td>
+                    </tr>
+                  </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/editgtin.html" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">Edit GTIN</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/stock/editgtin.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" ng-controller="EditGtinController" xmlns:bind="http://openiz.org/applet/binding" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.editGtin' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <form name="editGtinForm" class="form-horizontal" novalidate="novalidate" ng-submit="editGtinForm.$valid &amp;&amp; editGtin()">
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="text" name="gtin" ng-model="gtin" class="form-control" ng-required="true" />
+                    <p ng-show="editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched" class="help-block text-danger">{{ 'locale.stock.errors.gtinRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -14699,59 +15027,72 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <script>~/controllers/common/stock/gtinmanagement.js</script>
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" xmlns:bind="http://openiz.org/applet/binding" ng-controller="GtinManagementController" xmlns:oiz="http://openiz.org/applet">
-          <div class="col-xs-12">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">
+                        {{ 'locale.stock.searchGTIN' | i18n }}
+                    </h3>
+                </div>
+                <div class="panel-collapse collapse in">
+                  <div class="panel-body">
+                    <form name="searchGtinForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchGtinForm.$valid &amp;&amp; search()">
+                      <div class="form-group" ng-class="{ 'has-error' : searchGtinForm.gtin.$invalid &amp;&amp; searchGtinForm.gtin.$touched }">
+                        <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
+                        <div class="col-xs-7">
+                          <input type="text" name="gtin" ng-required="true" ng-model="gtin" class="form-control" />
+                          <p ng-show="searchGtinForm.gtin.$invalid &amp;&amp; searchGtinForm.gtin.$touched" class="help-block text-danger">{{ 'locale.stock.errors.gtinRequired' | i18n }}</p>
+                        </div>
+                        <div class="col-xs-3 pull-right">
+                          <button type="submit" class="btn btn-primary">{{ 'locale.action.search' | i18n }}</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
-              <label class="col-md-2 control-label">{{ 'locale.stock.vaccines.title' | i18n }}</label>
-              <div class="col-md-10">
-                <table class="table table-striped table-bordered">
-                  <thead>
-                    <tr>
-                      <th>
-                                {{ 'locale.stock.vaccine' | i18n }}
-                            </th>
-                      <th>
-                                {{ 'locale.stock.gtin' | i18n }}
-                            </th>
-                      <th>
-                                {{ 'locale.action.view' | i18n }}
-                            </th>
-                      <th>
-                                {{ 'locale.action.edit' | i18n }}
-                            </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="item in stock">
-                      <td>{{ item.name.Assigned | oizEntityName }}</td>
-                      <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                      <td>{{ item.quantity }}</td>
-                      <td>
-                        <div class="form-group" ng-class="{ 'has-error' : transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched }">
-                          <div class="col-md-10">
-                            <input type="number" name="quantity_{{ $index }}" ng-required="true" ng-model="quantity" class="form-control" />
-                            <p ng-show="transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                          </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h4 class="panel-title">{{ 'locale.stock.vaccines' | i18n }}</h4>
+                </div>
+                <div class="col-md-10">
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th>
+                                    {{ 'locale.stock.vaccine' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.gtin' | i18n }}
+                                </th>
+                        <th>
+                                    {{ 'locale.stock.quantity' | i18n }}
+                                </th>
+                        <th>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="item in stock">
+                        <td>{{ item.name.Assigned | oizEntityName }}</td>
+                        <td>{{ item.identifier | oizEntityIdentifier }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>
+                          <a class="btn btn-warning" href="editGtin.html?id={{ item.id }}&amp;version={{ item.version }}">{{ 'locale.action.edit' | i18n }}</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div id="gtin-search-loading-bar" class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            {{ 'locale.dialog.wait.text' | i18n }}
                         </div>
-                      </td>
-                      <td>
-                        <div ng-class="{ 'has-error' : transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched }">
-                          <div class="col-sm-4">
-                            <select name="unitOfMeasure_{{ $index }}" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
-                            </select>
-                            <p ng-show="transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div id="transfer-stock-loading-bar" class="progress">
-                  <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                        {{ 'locale.dialog.wait.text' | i18n }}
-                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -14936,7 +15277,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h3 class="panel-title">
-                        {{ 'locale.stock.title' | i18n }}
+                        {{ 'locale.stock.searchStock' | i18n }}
                     </h3>
                 </div>
                 <div class="panel-collapse collapse in">
@@ -14944,16 +15285,12 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                     <form name="searchStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchStockForm.$valid &amp;&amp; searchStock()">
                       <div class="form-group" ng-class="{ 'has-error' : searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched }">
                         <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                        <div class="col-xs-10">
+                        <div class="col-xs-7">
                           <input type="text" name="orderNumber" ng-required="true" ng-model="name" class="form-control" />
                           <p ng-show="searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched" class="help-block text-danger">{{ 'locale.stock.errors.vaccineRequired' | i18n }}</p>
                         </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="col-xs-10">
-                          <button type="submit" class="btn btn-primary">
-                                        Search for a vaccine
-                                    </button>
+                        <div class="col-xs-3 pull-right">
+                          <button type="submit" class="btn btn-primary">{{ 'locale.action.search' | i18n }}</button>
                         </div>
                       </div>
                     </form>
@@ -14986,11 +15323,16 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                         <td>{{ vaccine.identifier | oizEntityIdentifier }}</td>
                         <td>{{ vaccine.quantity }}</td>
                         <td>
-                          <a class="btn btn-primary" href="adjust.html">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                          <a class="btn btn-primary" ng-href="adjust.html?id={{vaccine.id}}&amp;version={{vaccine.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                  <div id="stock-search-loading-bar" class="progress">
+                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                            {{ 'locale.dialog.wait.text' | i18n }}
+                        </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -15033,10 +15375,9 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
                   <div class="col-md-10">
                     <div class="input-group">
-                      <select class="form-control" name="lotNumber" ng-model="lotNumber" oiz-entitysearch="ManufacturedMaterial">
-                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                      <select class="form-control" ng-options="lotNumber as lotNumber for lotNumber in lotNumbers track by lotNumber" name="lotNumber" ng-model="lotNumber" ng-change="lotNumberChanged()">
                       </select>
-                      <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNuumberRequired' | i18n }}</p>
+                      <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNumberRequired' | i18n }}</p>
                     </div>
                   </div>
                 </div>
@@ -15064,7 +15405,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                         </tr>
                       </thead>
                       <tbody>
-                        <tr ng-repeat="item in stock">
+                        <tr ng-repeat="item in stock | filter:lotNumber">
                           <td>{{ item.name.Assigned | oizEntityName }}</td>
                           <td>{{ item.identifier | oizEntityIdentifier }}</td>
                           <td>{{ item.quantity }}</td>
@@ -16121,12 +16462,17 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <strings lang="en">
     <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.delete">Delete</string>
+    <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.save">Save</string>
     <string key="locale.action.view">View</string>
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>
+    <string key="locale.action.search">Search</string>
+    <string key="locale.alert.updateSuccessful">Update Successful</string>
+    <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.unknown">Unknown</string>
@@ -16244,6 +16590,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
     <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
     <string key="locale.stock.errors.orderNumberRequired">Please enter an order number</string>
+    <string key="locale.stock.errors.gtinRequired">Gtin Is Required</string>
+    <string key="locale.stock.editGtin">Edit Gtin</string>
     <string key="locale.stock.transferStock">Transfer Stock</string>
     <string key="locale.stock.currentLevel">Current Quantity</string>
     <string key="locale.stock.orderNo">Order No.</string>
@@ -16259,6 +16607,12 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.shipped">Shipped</string>
     <string key="locale.stock.requested">Requested</string>
     <string key="locale.stock.stockStatusDoses">Stock Status (Doses)</string>
+    <string key="locale.stock.expiryDate">Expiry Date</string>
+    <string key="locale.stock.searchStock">Search Stock</string>
+    <string key="locale.stock.searchGTIN">Search GTIN</string>
+    <string key="locale.stock.vaccines">Vaccines</string>
+    <string key="locale.stock.updateSuccessful">Update successful</string>
+    <string key="locale.stock.updateUnsuccessful">Update Unsuccessful</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>

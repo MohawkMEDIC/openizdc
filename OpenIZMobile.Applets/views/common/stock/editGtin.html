@@ -53,7 +53,7 @@
                 <div class="form-group" ng-class="{ 'has-error' : editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched }">
                     <label class="col-md-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
                     <div class="col-md-10">
-                        <input type="text" name="gtin" ng-model="gtin" class="form-control" />
+                        <input type="text" name="gtin" ng-model="gtin" class="form-control" ng-required="true"/>
                         <p ng-show="editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched" class="help-block text-danger">{{ 'locale.stock.errors.gtinRequired' | i18n }}</p>
                     </div>
                 </div>
