@@ -53,11 +53,11 @@
                     </div>
                 </div>
 
-                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; adjustStockForm.dateRecorded.$touched }">
+                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted) }">
                     <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
                     <div class="col-md-10">
-                        <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ now | date: 'yyyy-MM-dd' }}" name="dateRecorded" class="form-control" />
-                        <p ng-show="adjustStockForm.dateRecorded.$invalid &amp;&amp; adjustStockForm.dateRecorded.$touched" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
+                        <input type="date" ng-required="true" ng-model="dateRecorded" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" name="dateRecorded" class="form-control" />
+                        <p ng-show="adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
                     </div>
                 </div>
 
@@ -71,11 +71,11 @@
                     </div>
                 </div>
 
-                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.quantity.$invalid &amp;&amp; adjustStockForm.quantity.$touched }">
+                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.quantity.$invalid &amp;&amp; (adjustStockForm.quantity.$touched || adjustStockForm.$submitted) }">
                     <label class="col-md-2 control-label">{{ 'locale.stock.quantity' | i18n }}</label>
                     <div class="col-md-10">
                         <input type="number" name="quantity" ng-required="true" ng-model="quantity" class="form-control" />
-                        <p ng-show="adjustStockForm.quantity.$invalid &amp;&amp; adjustStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
+                        <p ng-show="adjustStockForm.quantity.$invalid &amp;&amp; (adjustStockForm.quantity.$touched || adjustStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
                     </div>
                 </div>
 
