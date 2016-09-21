@@ -75,9 +75,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// Gets a list of patient encounters.
 		/// </summary>
 		/// <returns>Returns a list of patient encounters.</returns>
-		[RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
+		[RestOperation(Method = "GET", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public Bundle GetPatientEncounter()
+		public Bundle GetAct()
 		{
 			var patientEncounterService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
