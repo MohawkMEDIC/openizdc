@@ -24,7 +24,7 @@
 
 layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
 
-    $scope.loadWeightChart = function () {
+    $scope.$on('loadWeightChart', function (event, arg) {
         // Query for patient weight
         var dateLabels = ["2015-04-10", "2015-04-18", "2015-05-03", "2015-07-14", "2015-11-11", "2016-02-09", "2016-05-10"];
         var weights = [10, 12, 18, 24, 30, 28, 34];
@@ -63,9 +63,9 @@ layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
         };
 
         console.log(config);
-
         var weightsChart = new Chart(ctxWeights, config);
-    }
+    });
+}]);
 
     //$(document).ready(function () {
 
@@ -106,5 +106,3 @@ layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
     //        }
     //    }
     //})
-
-}]);
