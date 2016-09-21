@@ -24,4 +24,87 @@
 
 layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
 
+    $scope.loadWeightChart = function () {
+        // Query for patient weight
+        var dateLabels = ["2015-04-10", "2015-04-18", "2015-05-03", "2015-07-14", "2015-11-11", "2016-02-09", "2016-05-10"];
+        var weights = [10, 12, 18, 24, 30, 28, 34];
+
+        var ctxWeights = document.getElementById("weightSummaryChart").getContext("2d");
+
+        var config = {
+            type: 'line',
+            data: {
+                labels: ["2015-04-10", "2015-04-18", "2015-05-03", "2015-07-14", "2015-11-11", "2016-02-09", "2016-05-10"],
+                datasets: [{
+                    label: "My First dataset",
+                    data: [10, 12, 18, 24, 30, 28, 34],
+                }]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                'millisecond': 'MMM DD',
+                                'second': 'MMM DD',
+                                'minute': 'MMM DD',
+                                'hour': 'MMM DD',
+                                'day': 'MMM DD',
+                                'week': 'MMM DD',
+                                'month': 'MMM DD',
+                                'quarter': 'MMM DD',
+                                'year': 'MMM DD'
+                            }
+                        }
+                    }],
+                }
+            }
+        };
+
+        console.log(config);
+
+        var weightsChart = new Chart(ctxWeights, config);
+    }
+
+    //$(document).ready(function () {
+
+    //    try {
+    //        loadWeightChart();
+    //    } catch (e) {
+    //        console.log(e);
+    //    }
+    //});
+
+    //var weightsChart = new Chart(ctxWeights, {
+    //    type: 'line',
+    //    data: {
+    //        labels: dateLabels,
+    //        datasets: [{
+    //            label: "Weight",
+    //            data: weights
+    //        }]
+    //    },
+    //    options: {
+    //        scales: {
+    //            xAxes: [{
+    //                type: 'time',
+    //                time: {
+    //                    displayFormats: {
+    //                        'millisecond': 'MMM DD',
+    //                        'second': 'MMM DD',
+    //                        'minute': 'MMM DD',
+    //                        'hour': 'MMM DD',
+    //                        'day': 'MMM DD',
+    //                        'week': 'MMM DD',
+    //                        'month': 'MMM DD',
+    //                        'quarter': 'MMM DD',
+    //                        'year': 'MMM DD'
+    //                    }
+    //                }
+    //            }]
+    //        }
+    //    }
+    //})
+
 }]);
