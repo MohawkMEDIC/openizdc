@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Extensions
                 {
                     var te = act.Relationships[i].TargetAct;
                 }
-                if (act.Participations.Count < 100)
+                //if (act.Participations.Count < 100)
                     for (int i = 0; i < act.Participations.Count; i++)
                     {
                         var tp = act.Participations[i].PlayerEntity;
@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Extensions
                         l = entity.Relationships[i].Holder;
                 }
                 // Participations
-                if (entity.Participations.Count < 100)
+                //if (entity.Participations.Count < 100)
                     for (int i = 0; i < entity.Participations.Count; i++)
                     {
                         var tp= entity.Participations[i].Act.LoadDisplayProperties();

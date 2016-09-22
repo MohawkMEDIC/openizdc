@@ -1,4 +1,5 @@
 ﻿/// <reference path="../js/openiz-model.js"/>
+/// <reference path="../js/openiz.js"/>
 
 /*
  * Copyright 2016 PATH International
@@ -20,11 +21,46 @@
  * Date: 2016-9-21
  */
 
-/// <reference path="../js/openiz.js"/>
+layoutApp.controller('WeightSummaryController', ['$scope', function ($scope)
+{
+    $scope.$on('loadWeightChart', function (event, arg)
+    {
+        var patientId = OpenIZ.urlParams["patientId"];
 
-layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
+        var weights = [];
 
-    $scope.$on('loadWeightChart', function (event, arg) {
+        if (patientId !== undefined && patientId !== null)
+        {
+            var query = "_id=" + patientId;
+
+            OpenIZ.Ims.get({
+                resource: "Patient",
+                query: query,
+                continueWith: function (data)
+                {
+                    for (var i = 0; i < data.participation.RecordTarget.length; i++)
+                    {
+                        var actModel = data.participation.RecordTarget[i].actModel;
+
+                        if (actModel !== undefined &&
+                            actModel.classConcept !== undefined &&
+                            actModel.moodConcept !== undefined &&
+                            actModel.classConcept.toUpperCase() === "28D022C6-8A8B-47C4-9E6A-2BC67308739E" &&
+                            actModel.moodConcept.toUpperCase() === OpenIZModel.ActMoodKeys.EventOccurrence)
+                        {
+                            console.log(actModel);
+                        }
+                    }
+
+                    console.log(data);
+                },
+                onException: function (ex)
+                {
+                    console.log(ex);
+                }
+            });
+        }
+
         // Query for patient weight
         var dateLabels = ["2015-04-10", "2015-04-18", "2015-05-03", "2015-07-14", "2015-11-11", "2016-02-09", "2016-05-10"];
         var weights = [10, 12, 18, 24, 30, 28, 34];
@@ -67,42 +103,42 @@ layoutApp.controller('WeightSummaryController', ['$scope', function ($scope) {
     });
 }]);
 
-    //$(document).ready(function () {
+//$(document).ready(function () {
 
-    //    try {
-    //        loadWeightChart();
-    //    } catch (e) {
-    //        console.log(e);
-    //    }
-    //});
+//    try {
+//        loadWeightChart();
+//    } catch (e) {
+//        console.log(e);
+//    }
+//});
 
-    //var weightsChart = new Chart(ctxWeights, {
-    //    type: 'line',
-    //    data: {
-    //        labels: dateLabels,
-    //        datasets: [{
-    //            label: "Weight",
-    //            data: weights
-    //        }]
-    //    },
-    //    options: {
-    //        scales: {
-    //            xAxes: [{
-    //                type: 'time',
-    //                time: {
-    //                    displayFormats: {
-    //                        'millisecond': 'MMM DD',
-    //                        'second': 'MMM DD',
-    //                        'minute': 'MMM DD',
-    //                        'hour': 'MMM DD',
-    //                        'day': 'MMM DD',
-    //                        'week': 'MMM DD',
-    //                        'month': 'MMM DD',
-    //                        'quarter': 'MMM DD',
-    //                        'year': 'MMM DD'
-    //                    }
-    //                }
-    //            }]
-    //        }
-    //    }
-    //})
+//var weightsChart = new Chart(ctxWeights, {
+//    type: 'line',
+//    data: {
+//        labels: dateLabels,
+//        datasets: [{
+//            label: "Weight",
+//            data: weights
+//        }]
+//    },
+//    options: {
+//        scales: {
+//            xAxes: [{
+//                type: 'time',
+//                time: {
+//                    displayFormats: {
+//                        'millisecond': 'MMM DD',
+//                        'second': 'MMM DD',
+//                        'minute': 'MMM DD',
+//                        'hour': 'MMM DD',
+//                        'day': 'MMM DD',
+//                        'week': 'MMM DD',
+//                        'month': 'MMM DD',
+//                        'quarter': 'MMM DD',
+//                        'year': 'MMM DD'
+//                    }
+//                }
+//            }]
+//        }
+//    }
+//})
