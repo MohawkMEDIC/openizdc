@@ -113,8 +113,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 patient = patient.LoadDisplayProperties().LoadImmediateRelations();
-                // Ensure expanded
-                //JniUtil.ExpandProperties(patient, search);
+				// Ensure expanded
+				//JniUtil.ExpandProperties(patient, search);
                 return patient;
             }
             else
@@ -202,26 +202,36 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetManufacturedMaterial()
         {
-            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-            var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
+			Bundle bundle = new Bundle();
 
-            this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+			try
+			{
+				var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+				var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
 
-            var patientService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
-            int totalResults = 0,
-                offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-                count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-            var retVal = patientService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
+				this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-            // Serialize the response
-            return new Bundle()
-            {
-				Count = retVal.Count(x => x.GetType() == typeof(IdentifiedData)),
-				Item = retVal.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList(),
-				Offset = offset,
-                TotalResults = totalResults
-            };
+				var patientService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+				int totalResults = 0,
+					offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+				var manufacturedMaterials = patientService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
 
+				// Serialize the response
+				bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
+				bundle.Item = manufacturedMaterials.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList();
+				bundle.Offset = offset;
+				bundle.TotalResults = totalResults;
+			}
+			catch (Exception e)
+			{
+#if DEBUG
+				this.m_tracer.TraceError("{0}", e.StackTrace);
+#endif
+				this.m_tracer.TraceError("{0}", e.Message);
+			}
+
+			return bundle;
         }
 
         /// <summary>

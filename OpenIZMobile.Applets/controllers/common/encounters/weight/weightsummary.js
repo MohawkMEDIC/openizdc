@@ -31,7 +31,7 @@ layoutApp.controller('WeightSummaryController', ['$scope', function ($scope)
 
         if (patientId !== undefined && patientId !== null)
         {
-            var query = "_id=" + patientId;
+            var query = "_id=" + patientId + "&participation.act.moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&participation.act.classConcept=28d022c6-8a8b-47c4-9e6a-2bc67308739e";
 
             OpenIZ.Ims.get({
                 resource: "Patient",
@@ -42,11 +42,7 @@ layoutApp.controller('WeightSummaryController', ['$scope', function ($scope)
                     {
                         var actModel = data.participation.RecordTarget[i].actModel;
 
-                        if (actModel !== undefined &&
-                            actModel.classConcept !== undefined &&
-                            actModel.moodConcept !== undefined &&
-                            actModel.classConcept.toUpperCase() === "28D022C6-8A8B-47C4-9E6A-2BC67308739E" &&
-                            actModel.moodConcept.toUpperCase() === OpenIZModel.ActMoodKeys.EventOccurrence)
+                        if (actModel !== undefined)
                         {
                             console.log(actModel);
                         }

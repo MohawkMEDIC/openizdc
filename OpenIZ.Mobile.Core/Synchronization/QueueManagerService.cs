@@ -109,12 +109,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     } catch(Exception e)
                     {
                         this.m_tracer.TraceWarning("Batch insert fails, performing individual inserts");
+
                         if (data is Bundle)
-                            foreach (var d in (data as Bundle).Item)
-                                this.ImportElement(d as IdentifiedData, queueEntry);
-                                //SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
+						{
+							foreach (var d in (data as Bundle).Item)
+							{
+								this.ImportElement(d as IdentifiedData, queueEntry);
+								SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
+							}
+						}
                         else
-                            throw;
+						{
+							throw;
+						}
                     }
                 else
                 {
@@ -143,8 +150,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var alertService = ApplicationContext.Current.GetService<IAlertService>();
                 alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, Strings.locale_importErrorSubject, String.Format(Strings.locale_importErrorBody, e), AlertMessageFlags.Alert));
 
-                // SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
-                throw;
+                SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
+                // throw;
             }
         }
 

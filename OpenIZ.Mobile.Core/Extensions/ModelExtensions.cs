@@ -44,35 +44,44 @@ namespace OpenIZ.Mobile.Core.Extensions
             if (me is Act)
             {
                 var act = me as Act;
+
+				// Relationships
                 for (int i = 0; i < act.Relationships.Count; i++)
                 {
-                    var te = act.Relationships[i].TargetAct;
+                    var te = act.Relationships[i].TargetAct.LoadDisplayProperties();
                 }
-                //if (act.Participations.Count < 100)
-                    for (int i = 0; i < act.Participations.Count; i++)
-                    {
-                        var tp = act.Participations[i].PlayerEntity;
-                    }
+
+				// Participations
+                for (int i = 0; i < act.Participations.Count; i++)
+                {
+                    var tp = act.Participations[i].PlayerEntity.LoadDisplayProperties();
+                }
             }
+
+			// Entity
             else if (me is Entity)
             {
                 var entity = me as Entity;
                 Object l;
+
                 // Relationships
                 for (int i = 0; i < entity.Relationships.Count; i++)
                 {
-
                     if(!entity.Relationships[i].InversionIndicator)
-                        l = entity.Relationships[i].TargetEntity;
+					{
+						l = entity.Relationships[i].TargetEntity.LoadDisplayProperties();
+					}
                     else
-                        l = entity.Relationships[i].Holder;
+					{
+						l = entity.Relationships[i].Holder.LoadDisplayProperties();
+					}
                 }
+
                 // Participations
-                //if (entity.Participations.Count < 100)
-                    for (int i = 0; i < entity.Participations.Count; i++)
-                    {
-                        var tp= entity.Participations[i].Act.LoadDisplayProperties();
-                    }
+                for (int i = 0; i < entity.Participations.Count; i++)
+                {
+                    var tp= entity.Participations[i].Act.LoadDisplayProperties();
+                }
 
             }
 
