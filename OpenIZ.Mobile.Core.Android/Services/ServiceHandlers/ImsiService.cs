@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle CreateBundle([RestMessage(RestMessageFormat.SimpleJson)]Bundle bundleToInsert)
         {
-            IBatchRepositoryService bundleService =ApplicationContext.Current.GetService<IBatchRepositoryService>();
+            IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
             return bundleService.Insert(bundleToInsert);
         }
 

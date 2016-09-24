@@ -40,11 +40,6 @@
     <oid>1.2.3.4.5.6.7.8.12</oid>
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
-  <template mnemonic="Act.PatientEncounter.Weight">
-    <oid>1.2.3.4.5.6.7.8.13</oid>
-    <definition>/org.openiz.core/templates/act.patientencounter.weight.json</definition>
-  </template>
-
   
   <template mnemonic="Act.Observation.Weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
