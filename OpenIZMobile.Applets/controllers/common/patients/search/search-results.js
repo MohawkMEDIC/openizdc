@@ -21,7 +21,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.search = scope.search.search || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
 
@@ -52,7 +52,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.next = scope.search.next || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             if (scope.search.paging.current == scope.search.paging.count)
                 return;
 
@@ -81,7 +81,7 @@ $(document).ready(function () {
          * @summary Goes to the previous page
          */
         scope.search.previous = scope.search.previous || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             if (scope.search.paging.current == 1)
                 return;
 
@@ -110,7 +110,7 @@ $(document).ready(function () {
          * @summary Goes to the specific page
          */
         scope.search.goPage = scope.search.goPage || function (pageNo) {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
 
             // Current page increment
             scope.search.paging.current = pageNo;

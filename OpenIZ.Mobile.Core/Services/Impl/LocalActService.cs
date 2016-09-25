@@ -139,7 +139,21 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var currentUserEntity = userService.GetUserEntity(ApplicationContext.Current.Principal.Identity);
             if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
                 data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
-            return data;
+
+			foreach (var relationship in data.Relationships)
+			{
+				if (!relationship.TargetAct.Participations.Any(o => o.ParticipationRole?.Mnemonic == "RecordTarget"))
+				{
+					relationship.TargetAct.Participations.AddRange(data.Participations.Where(p => p.ParticipationRole?.Mnemonic == "RecordTarget"));
+				}
+
+				if (!relationship.TargetAct.Participations.Any(o => o.ParticipationRole?.Mnemonic == "Performer"))
+				{
+					relationship.TargetAct.Participations.AddRange(data.Participations.Where(p => p.ParticipationRole?.Mnemonic == "Performer"));
+				}
+			}
+
+			return data;
         }
     }
 }

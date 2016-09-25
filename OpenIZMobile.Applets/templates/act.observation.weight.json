@@ -32,8 +32,29 @@
         "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
         "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
         "actTime": "{{now}}",
+        "typeConceptModel": {
+          "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+          "mnemonic": "VitalSign-Weight"
+        },
         "value": 0,
-        "unitOfMeasure": ""
+        "unitOfMeasure": "",
+        "participation": {
+          "Location": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": "{{facilityId}}"
+          },
+          "Authororiginator": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": "{{userId}}"
+          },
+          "RecordTarget": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": ""
+          }
+        }
       }
     }
   }
