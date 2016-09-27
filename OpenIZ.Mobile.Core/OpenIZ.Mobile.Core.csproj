@@ -151,6 +151,7 @@
     <Compile Include="Synchronization\Model\SynchronizationLogEntry.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
     <Compile Include="Synchronization\QueueManagerService.cs" />
+    <Compile Include="Synchronization\SynchronizationConflictEventArgs.cs" />
     <Compile Include="Synchronization\SynchronizationQueue.cs" />
     <Compile Include="Services\IDataPersistenceService.cs" />
     <Compile Include="Data\Model\Security\DbSecurityApplication.cs" />
