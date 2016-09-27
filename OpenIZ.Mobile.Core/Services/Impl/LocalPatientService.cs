@@ -169,13 +169,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             try
             {
                 patient = persistenceService.Update(p);
-            }
+
+				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Update);
+			}
             catch (KeyNotFoundException)
             {
                 patient = persistenceService.Insert(p);
-            }
 
-			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Update);
+				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
+			}
 
 			return patient;
         }
