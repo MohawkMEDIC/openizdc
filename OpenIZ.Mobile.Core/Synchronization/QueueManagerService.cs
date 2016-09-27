@@ -127,7 +127,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// </summary>
 		public void ExhaustOutboundQueue()
 		{
-			if (!Monitor.IsEntered(this.m_outboundLock)) return;
+			//if (!Monitor.IsEntered(this.m_outboundLock)) return;
 
 			lock (this.m_outboundLock)
 			{
