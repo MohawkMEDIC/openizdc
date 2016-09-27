@@ -300,8 +300,11 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 int offset = query.ContainsKey("_offset") ? Int32.Parse(query["_offset"][0]) : 0,
                     count = query.ContainsKey("_count") ? Int32.Parse(query["_count"][0]) : 100;
 
-                var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                return alertService.FindAlerts(predicate, offset, count);
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+
+				int totalCount = 0;
+
+                return alertService.Find(predicate, offset, count, out totalCount).ToList();
             }
             catch(Exception e)
             {
@@ -319,8 +322,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             try
             {
                 // Gets the specified alert messages
-                var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                alertService.SaveAlert(alert);
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                alertService.Save(alert);
                 return alert;
             }
             catch (Exception e)

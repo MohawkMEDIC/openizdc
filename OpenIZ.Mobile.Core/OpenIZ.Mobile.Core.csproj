@@ -91,7 +91,9 @@
     <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />
     <Compile Include="Services\Impl\LocalBatchService.cs" />
+    <Compile Include="Services\Impl\LocalEntityService.cs" />
     <Compile Include="Services\Impl\LocalMaterialService.cs" />
+    <Compile Include="Services\Impl\LocalOrganizationService.cs" />
     <Compile Include="Services\Impl\LocalPlaceService.cs" />
     <Compile Include="Services\Impl\LocalProviderService.cs" />
     <Compile Include="Services\IntegrationQueryOptions.cs" />

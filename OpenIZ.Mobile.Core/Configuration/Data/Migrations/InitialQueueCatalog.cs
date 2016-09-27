@@ -27,6 +27,7 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 {
@@ -35,6 +36,8 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 	/// </summary>
 	public class InitialQueueCatalog : IDbMigration
 	{
+		private Tracer tracer = Tracer.GetTracer(typeof(InitialQueueCatalog));
+
 		#region IDbMigration implementation
 		/// <summary>
 		/// Install the migration package
@@ -62,20 +65,34 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     });
 
                 tracer.TraceInfo("Installing queues...");
+
                 db.CreateTable<InboundQueueEntry>();
                 db.CreateTable<OutboundQueueEntry>();
                 db.CreateTable<DeadLetterQueueEntry>();
                 db.CreateTable<SynchronizationLogEntry>();
                 db.CreateTable<DbAlertMessage>();
-                new LocalAlertService()?.SaveAlert(new AlertMessage()
-                {
-                    Body = Strings.locale_welcomeMessageBody,
-                    CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name,
-                    From = "OpenIZ Team",
-                    Flags = AlertMessageFlags.None,
-                    Subject = Strings.locale_welcomeMessageSubject,
-                    TimeStamp = DateTime.Now
-                });
+
+				var securityRepository = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+				try
+				{
+					new LocalAlertService()?.Save(new AlertMessage()
+					{
+						Body = Strings.locale_welcomeMessageBody,
+						CreatedBy = securityRepository.GetUser(ApplicationContext.Current.Principal?.Identity),
+						From = "OpenIZ Team",
+						Flags = AlertMessageFlags.None,
+						Subject = Strings.locale_welcomeMessageSubject,
+						TimeStamp = DateTime.Now
+					});
+				}
+				catch (Exception e)
+				{
+#if DEBUG
+					this.tracer.TraceError("Unable to generate welcome message: {0}", e.StackTrace);
+#endif
+					this.tracer.TraceError("Unable to generate welcome message: {0}", e.Message);
+				}
             }
 
             return true;

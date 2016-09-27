@@ -252,7 +252,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			catch (Exception e)
 			{
 				this.m_tracer.TraceError("Error inserting object data: {0}", e);
-				var alertService = ApplicationContext.Current.GetService<IAlertService>();
+				var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 				alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, Strings.locale_importErrorSubject, String.Format(Strings.locale_importErrorBody, e), AlertMessageFlags.Alert));
 
 				SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
