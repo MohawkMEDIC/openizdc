@@ -25,14 +25,14 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public DbAlertMessage(AlertMessage am)
         {
-            this.TimeStamp = am.TimeStamp;
+            this.TimeStamp = am.TimeStamp.DateTime;
             this.From = am.From;
             this.Subject = am.Subject;
             this.Body = am.Body;
             this.To = am.To;
             this.CreatedBy = ApplicationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
             this.Flags = am.Flags;
-            this.Id = am.Id.ToByteArray();
+            this.Id = am.Key.Value.ToByteArray();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Alerting
         {
             return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags)
             {
-                Id = new Guid(this.Id)
+                Key = new Guid(this.Id)
             };
         }
 

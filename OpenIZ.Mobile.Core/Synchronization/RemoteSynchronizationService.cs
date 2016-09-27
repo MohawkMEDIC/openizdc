@@ -126,7 +126,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         if (totalResults > 0)
                         {
-                            var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                            var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
                     }
@@ -212,7 +212,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
-                var alertService = ApplicationContext.Current.GetService<IAlertService>();
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                 alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal?.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
 
                 return 0;

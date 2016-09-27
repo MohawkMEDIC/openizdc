@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of providers who match the specified predicate.</returns>
 		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
@@ -73,12 +73,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of providers who match the specified predicate.</returns>
 		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
 
-			return persistenceService.Query(predicate, offset, count, out totalCount);
+			return this.persistenceService.Query(predicate, offset, count, out totalCount);
 		}
 
 		/// <summary>
@@ -97,12 +97,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the specified provider.</returns>
 		public Provider Get(Guid id, Guid versionId)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
 
-			return persistenceService.Query(p => p.Key == id && p.VersionKey == versionId).FirstOrDefault();
+			return this.persistenceService.Query(p => p.Key == id && p.VersionKey == versionId).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -112,12 +112,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the inserted provider.</returns>
 		public Provider Insert(Provider provider)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
 
-			var result = persistenceService.Insert(provider);
+			var result = this.persistenceService.Insert(provider);
 
 			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Insert);
 
@@ -131,12 +131,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the obsoleted provider.</returns>
 		public Provider Obsolete(Guid id)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
 
-			var result = persistenceService.Obsolete(new Provider { Key = id });
+			var result = this.persistenceService.Obsolete(new Provider { Key = id });
 
 			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Obsolete);
 
@@ -150,12 +150,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the saved provider.</returns>
 		public Provider Save(Provider provider)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
 			}
 
-			var result = persistenceService.Update(provider);
+			var result = this.persistenceService.Update(provider);
 
 			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Update);
 

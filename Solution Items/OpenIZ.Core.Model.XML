@@ -205,6 +205,11 @@
             The entity that this relationship targets
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActParticipation.Quantity">
+            <summary>
+            Gets or sets the quantity of player in the act
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.Refresh">
             <summary>
             Forces a delay load from the underlying model
@@ -746,39 +751,9 @@
             Represents a series of class keys for use on acts
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.SubstanceAdministration">
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.AccountManagement">
             <summary>
-            The act represents a substance administration
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Condition">
-            <summary>
-            The act represetns a condition
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Registration">
-            <summary>
-            The act represents a registration
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Observation">
-            <summary>
-            The act represents a procedure
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Inform">
-            <summary>
-            The act represents an informational act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Encounter">
-            <summary>
-            The act represents an encounter
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Battery">
-            <summary>
-            The act represents a simple battery of procedures/administrations/etc
+            The act represents generic account management
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Act">
@@ -786,9 +761,9 @@
             Generic act
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Procedure">
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Battery">
             <summary>
-            The act represents a procedure (something done to a patient)
+            The act represents a simple battery of procedures/administrations/etc
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.CareProvision">
@@ -796,19 +771,49 @@
             The act represents some provision of care
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.AccountManagement">
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Condition">
             <summary>
-            The act represents generic account management
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Supply">
-            <summary>
-            The act represents a supply of some material
+            The act represetns a condition
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.ControlAct">
             <summary>
             Control act event
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Encounter">
+            <summary>
+            The act represents an encounter
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Inform">
+            <summary>
+            The act represents an informational act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Observation">
+            <summary>
+            The act represents a procedure
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Procedure">
+            <summary>
+            The act represents a procedure (something done to a patient)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Registration">
+            <summary>
+            The act represents a registration
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.SubstanceAdministration">
+            <summary>
+            The act represents a substance administration
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Supply">
+            <summary>
+            The act represents a supply of some material
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Transport">
@@ -821,9 +826,9 @@
             Act Mood keys
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Goal">
+        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Appointment">
             <summary>
-            The ACT represents some sort of GOAL
+            The ACT represents an appointment that was made to do something
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.AppointmentRequest">
@@ -831,19 +836,9 @@
             The ACT represents a special type of request to create an appointment
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Appointment">
+        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Definition">
             <summary>
-            The ACT represents an appointment that was made to do something
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Promise">
-            <summary>
-            The ACT represents a promise to do something
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Request">
-            <summary>
-            The ACT represents a request to do something
+            The ACT represents a definition of a type of act
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Eventoccurrence">
@@ -851,9 +846,19 @@
             The ACT represents something that has occurred
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Goal">
+            <summary>
+            The ACT represents some sort of GOAL
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Intent">
             <summary>
             The ACT represents an intent made by a human to do something
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Promise">
+            <summary>
+            The ACT represents a promise to do something
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Propose">
@@ -861,9 +866,9 @@
             The ACT represents a proposal that a human should do something
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Definition">
+        <member name="F:OpenIZ.Core.Model.Constants.ActMoodKeys.Request">
             <summary>
-            The ACT represents a definition of a type of act
+            The ACT represents a request to do something
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActParticipationKey">
@@ -871,14 +876,14 @@
             Represents the participation concepts which an entity can participate in an act
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.Transcriber">
-            <summary>
-            The person who transcribed data from the original act
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.EntryLocation">
             <summary>
             The location where the act was entered
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.IndirectTarget">
+            <summary>
+            The entity not directly present in the act but which will be the focust of th act
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.Location">
@@ -891,9 +896,64 @@
             The secondary performing person (support clinician)
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.IndirectTarget">
+        <member name="F:OpenIZ.Core.Model.Constants.ActParticipationKey.Transcriber">
             <summary>
-            The entity not directly present in the act but which will be the focust of th act
+            The person who transcribed data from the original act
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Constants.ActReasonKeys">
+            <summary>
+            Represents act reasons (reasons for an act)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.StartedTooLate">
+            <summary>
+            The patient started too late for the therapy
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.AllergyOrIntolerance">
+            <summary>
+            The patient is allergic or intolerant to the consumable
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.Expired">
+            <summary>
+            The vaccine or drug was expired
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.VaccineSafety">
+            <summary>
+            The vaccine was considered unsafe
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.ProfessionalJudgement">
+            <summary>
+            The vaccine was not performed per the professional judgement of the provider
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.ReligiousObjecton">
+            <summary>
+            The patient had a religious objection
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.PatientRefused">
+            <summary>
+            The patient refused the treatment
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.OutOfStock">
+            <summary>
+            There was insufficient stock to perform the action
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.Broken">
+            <summary>
+            The items are broken and can no longer be used to deliver care
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActReasonKeys.ColdStorageFailure">
+            <summary>
+            There was a cold-storage failure which resulted in the material being unusable.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys">
@@ -901,9 +961,9 @@
             Act relationship types
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.RefersTo">
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Appends">
             <summary>
-            Indicates that the source act refers to the target act
+            Indicates that the source act appends information contained in the target act
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Arrival">
@@ -916,24 +976,9 @@
             Links a transporation act from another act indicating departure of the subject
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Evaluates">
-            <summary>
-            Used to link a goal to an observation
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasControlVariable">
-            <summary>
-            Relationship from an act to one or more control variables (for example: device settings, or environment)
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Documents">
             <summary>
             The source act documents the target act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasSupport">
-            <summary>
-            Indicates an existing act is suggesting evidence for a new observation.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.EpisodeLink">
@@ -941,24 +986,9 @@
             Links two instances of the same act over time (example: chronic conditions)
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Replaces">
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Evaluates">
             <summary>
-            The source act replaces the target act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasManifestation">
-            <summary>
-            The assertion that a new observation may be a manifestation of another
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Appends">
-            <summary>
-            Indicates that the source act appends information contained in the target act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasSubject">
-            <summary>
-            Indicates the subject of a particular act (example: clinical act is a subject of a control act)
+            Used to link a goal to an observation
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Fulfills">
@@ -966,19 +996,9 @@
             Indicates that the source act fulfills the target act
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsDerivedFrom">
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasAuthorization">
             <summary>
-            Indicates the source act is derived from information contained in the target act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsCauseOf">
-            <summary>
-            Indicates that the source act is the cause of the target act
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsExcerptOf">
-            <summary>
-            Indicates that the source act is an excerpt of the target act
+            Indicates that the target act authorizes the source act
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasComponent">
@@ -986,9 +1006,14 @@
             Indicates that the target act is a component of the source act
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.StartsAfterStartOf">
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasControlVariable">
             <summary>
-            Indicates that the source act starts after the start of another act
+            Relationship from an act to one or more control variables (for example: device settings, or environment)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasManifestation">
+            <summary>
+            The assertion that a new observation may be a manifestation of another
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasPrecondition">
@@ -1001,14 +1026,49 @@
             Indicates a reasoning as to why the source act is occurring
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasAuthorization">
-            <summary>
-            Indicates that the target act authorizes the source act
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasReferenceValues">
             <summary>
             Indicates that the source act contains reference values from the target
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasSubject">
+            <summary>
+            Indicates the subject of a particular act (example: clinical act is a subject of a control act)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.HasSupport">
+            <summary>
+            Indicates an existing act is suggesting evidence for a new observation.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsCauseOf">
+            <summary>
+            Indicates that the source act is the cause of the target act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsDerivedFrom">
+            <summary>
+            Indicates the source act is derived from information contained in the target act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.IsExcerptOf">
+            <summary>
+            Indicates that the source act is an excerpt of the target act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.RefersTo">
+            <summary>
+            Indicates that the source act refers to the target act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Replaces">
+            <summary>
+            The source act replaces the target act
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.StartsAfterStartOf">
+            <summary>
+            Indicates that the source act starts after the start of another act
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActRelationshipTypeKeys.Transforms">
@@ -1016,14 +1076,14 @@
             Indicates that the source act transforms the target act
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Model.Constants.AddressUseKeys">
-            <summary>
-            Address use keys
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Model.Constants.AddressComponentKeys">
             <summary>
             Represents address component types
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Constants.AddressUseKeys">
+            <summary>
+            Address use keys
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.CodeSystemKeys">
@@ -1031,29 +1091,9 @@
             Code system identifiers
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ISO6391">
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.CVX">
             <summary>
-            ISO-639-1
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ICD10CM">
-            <summary>
-            ICD-10 CM
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.UCUM">
-            <summary>
-            UCUM
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ICD9">
-            <summary>
-            ICD9
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.LOINC">
-            <summary>
-            LOINC
+            Parse CVX
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ICD10">
@@ -1061,9 +1101,29 @@
             ICD10
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ICD10CM">
+            <summary>
+            ICD-10 CM
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ICD9">
+            <summary>
+            ICD9
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ISO6391">
+            <summary>
+            ISO-639-1
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.ISO6392">
             <summary>
             ISO639-2
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.LOINC">
+            <summary>
+            LOINC
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.SNOMEDCT">
@@ -1071,9 +1131,9 @@
             SNOMED-CT
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.CVX">
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.UCUM">
             <summary>
-            Parse CVX
+            UCUM
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ConceptClassKeys">
@@ -1094,6 +1154,11 @@
         <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.Finding">
             <summary>
             Finding class identifier
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.Form">
+            <summary>
+            Represents a form code
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.Material">
@@ -1136,11 +1201,6 @@
             Stock class identifier
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.Form">
-            <summary>
-            Represents a form code
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptClassKeys.UnitOfMeasure">
             <summary>
             Unit of measure identifier
@@ -1151,14 +1211,9 @@
             Reference type identifiers
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.SameAs">
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.InverseOf">
             <summary>
-            Same as relationship
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.NegationOf">
-            <summary>
-            Negation of 
+            Inverse of
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.MemberOf">
@@ -1166,9 +1221,14 @@
             Member of
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.InverseOf">
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.NegationOf">
             <summary>
-            Inverse of
+            Negation of
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptRelationshipTypeKeys.SameAs">
+            <summary>
+            Same as relationship
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ConceptSetKeys">
@@ -1218,7 +1278,7 @@
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.ConceptStatus">
             <summary>
-            Concept status 
+            Concept status
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.EntityClass">
@@ -1234,6 +1294,11 @@
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.EntityStatus">
             <summary>
             Entity status identifiers
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.FamilyMember">
+            <summary>
+            Family members
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.IndustryCode">
@@ -1261,14 +1326,14 @@
             Telecom address use
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.FamilyMember">
-            <summary>
-            Family members
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Model.Constants.DeterminerKeys">
             <summary>
             Determiner codes
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.DeterminerKeys.Described">
+            <summary>
+            Described
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.DeterminerKeys.DescribedQualified">
@@ -1281,24 +1346,9 @@
             instance
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.DeterminerKeys.Described">
-            <summary>
-            Described
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Model.Constants.EntityClassKeys">
             <summary>
             Entity class concept keys
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Entity">
-            <summary>
-            Entity
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ManufacturedMaterial">
-            <summary>
-            Manufactured material
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Animal">
@@ -1306,34 +1356,9 @@
             Animal
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Place">
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ChemicalSubstance">
             <summary>
-            Place
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Device">
-            <summary>
-            Device
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Organization">
-            <summary>
-            Organization
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Food">
-            <summary>
-            Food
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Material">
-            <summary>
-            Material
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Person">
-            <summary>
-            Person
+            Chemical Substance
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.CityOrTown">
@@ -1341,44 +1366,9 @@
             City or town
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ChemicalSubstance">
-            <summary>
-            Chemical Substance
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.State">
-            <summary>
-            State
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Container">
             <summary>
             Container
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.LivingSubject">
-            <summary>
-            Living Subject
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Patient">
-            <summary>
-            Patient
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ServiceDeliveryLocation">
-            <summary>
-            Service delivery location
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Provider">
-            <summary>
-            Service delivery location
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.CountyOrParish">
-            <summary>
-            County or parish
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Country">
@@ -1386,9 +1376,79 @@
             Country or nation
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.CountyOrParish">
+            <summary>
+            County or parish
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Device">
+            <summary>
+            Device
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Entity">
+            <summary>
+            Entity
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Food">
+            <summary>
+            Food
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.LivingSubject">
+            <summary>
+            Living Subject
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ManufacturedMaterial">
+            <summary>
+            Manufactured material
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Material">
+            <summary>
+            Material
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.NonLivingSubject">
             <summary>
             Non living subject
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Organization">
+            <summary>
+            Organization
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Patient">
+            <summary>
+            Patient
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Person">
+            <summary>
+            Person
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Place">
+            <summary>
+            Place
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.Provider">
+            <summary>
+            Service delivery location
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.ServiceDeliveryLocation">
+            <summary>
+            Service delivery location
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeys.State">
+            <summary>
+            State
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.EntityRelationshipTypeKeys">
@@ -1396,14 +1456,19 @@
             Base entity relationship type keys
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Constants.NameComponentKeys">
+            <summary>
+            Name component type keys
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.NameUseKeys">
             <summary>
             Name use keys
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Model.Constants.NameComponentKeys">
+        <member name="T:OpenIZ.Core.Model.Constants.NullReasonKeys">
             <summary>
-            Name component type keys
+            Null reason keys
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.PhoneticAlgorithmKeys">
@@ -1416,21 +1481,6 @@
             Concept identifiers
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.New">
-            <summary>
-            Status - New
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Obsolete">
-            <summary>
-            Status - Obsolete
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Nullfied">
-            <summary>
-            Status - Nullified
-            </summary>
-        </member>
         <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Active">
             <summary>
             Status - Active
@@ -1441,14 +1491,29 @@
             Completed status
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.New">
+            <summary>
+            Status - New
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Nullfied">
+            <summary>
+            Status - Nullified
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.StatusKeys.Obsolete">
+            <summary>
+            Status - Obsolete
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys">
             <summary>
             Telecommunications address use keys
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.WorkPlace">
+        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.AnsweringService">
             <summary>
-            For use in the workplace
+            answering service
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.EmergencyContact">
@@ -1456,14 +1521,9 @@
             Emergency contact
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.TemporaryAddress">
+        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.MobileContact">
             <summary>
-            temporary contact
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.AnsweringService">
-            <summary>
-            answering service
+            Mobile phone contact
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.Pager">
@@ -1476,9 +1536,14 @@
             public (800 number example) contact
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.MobileContact">
+        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.TemporaryAddress">
             <summary>
-            Mobile phone contact
+            temporary contact
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.TelecomAddressUseKeys.WorkPlace">
+            <summary>
+            For use in the workplace
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.UserClassKeys">
@@ -2774,6 +2839,11 @@
         <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.Value">
             <summary>
             Gets or sets the value of the telecom address
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IETFValue">
+            <summary>
+            Gets or sets the value as an IETF value
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.Refresh">

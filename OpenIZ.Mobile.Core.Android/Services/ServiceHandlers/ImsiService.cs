@@ -91,7 +91,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 			int totalResults = 0;
 
-			var results = patientEncounterService.FindActs(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
+			var results = patientEncounterService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
 			return new Bundle
 			{

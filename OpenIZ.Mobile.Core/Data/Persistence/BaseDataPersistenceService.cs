@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		where TDomain : DbBaseData, new()
 	{
         /// <summary>
-        /// Performthe actual insert.
+        /// Perform the actual insert.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context);
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
-			domainObject.CreationTime = domainObject.CreationTime == DateTime.MinValue || domainObject.CreationTime == null ? DateTime.Now : domainObject.CreationTime;
+			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 			context.Insert (domainObject);
 
