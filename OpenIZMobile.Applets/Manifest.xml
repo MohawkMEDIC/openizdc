@@ -40,11 +40,6 @@
     <oid>1.2.3.4.5.6.7.8.12</oid>
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
-  <template mnemonic="Act.PatientEncounter.Weight">
-    <oid>1.2.3.4.5.6.7.8.13</oid>
-    <definition>/org.openiz.core/templates/act.patientencounter.weight.json</definition>
-  </template>
-
   
   <template mnemonic="Act.Observation.Weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
@@ -94,6 +89,7 @@
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.unknown">Unknown</string>
+    <string key="locale.dialog.wait.text">Please wait</string>
 
     <!-- Login -->
     <string key="locale.security.login.helpText">Please log into TImR to continue</string>
@@ -240,6 +236,7 @@
     <string key="locale.stock.vaccines">Vaccines</string>
     <string key="locale.stock.updateSuccessful">Update successful</string>
     <string key="locale.stock.updateUnsuccessful">Update Unsuccessful</string>
+    <string key="locale.stock.lowstock.title">Low Stock</string>
     
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>

@@ -35,39 +35,45 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         // Tracer 
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 
-        /// <summary>
-        /// Create patient
-        /// </summary>
-        [RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
+		/// <summary>
+		/// Creates an act.
+		/// </summary>
+		/// <param name="actToInsert">The act to be inserted.</param>
+		/// <returns>Returns the inserted act.</returns>
+		[RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+		[return: RestMessage(RestMessageFormat.SimpleJson)]
+		public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
+		{
+			IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+			return actService.Insert(actToInsert);
+		}
+
+		/// <summary>
+		/// Creates a patient.
+		/// </summary>
+		/// <param name="patientToInsert">The patient to be inserted.</param>
+		/// <returns>Returns the inserted patient.</returns>
+		[RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Patient CreatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToInsert)
         {
-            // Insert the patient
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-            // Persist the acts 
+
             return repository.Insert(patientToInsert);
         }
         
         /// <summary>
-        /// Create the act in the datastore
-        /// </summary>
-        [RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
-        [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
-        {
-            IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
-            // Now we want to persist
-            return actService.Insert(actToInsert);
-        }
-        
-        /// <summary>
-        /// Create the act in the datastore
-        /// </summary>
+		/// Creates a bundle.
+		/// </summary>
+		/// <param name="bundleToInsert">The bundle to be inserted.</param>
+		/// <returns>Returns the inserted bundle.</returns>
         [RestOperation(Method = "POST", UriPath = "/Bundle", FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle CreateBundle([RestMessage(RestMessageFormat.SimpleJson)]Bundle bundleToInsert)
         {
-            IBatchRepositoryService bundleService =ApplicationContext.Current.GetService<IBatchRepositoryService>();
+            IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
+
             return bundleService.Insert(bundleToInsert);
         }
 
@@ -97,8 +103,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		}
 
         /// <summary>
-        /// Get a patient
-        /// </summary>
+		/// Gets a patient.
+		/// </summary>
+		/// <returns>Returns the patient.</returns>
         [RestOperation(Method = "GET", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetPatient()
@@ -167,8 +174,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         }
 
         /// <summary>
-        /// Get providers from the database
-        /// </summary>
+		/// Gets providers.
+		/// </summary>
+		/// <returns>Returns a list of providers.</returns>
         [RestOperation(Method = "GET", UriPath = "/Provider" ,FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetProvider()
@@ -196,8 +204,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         }
 
         /// <summary>
-        /// Get providers from the database
-        /// </summary>
+		/// Get manufactured materials.
+		/// </summary>
+		/// <returns>Returns a list of manufactured materials.</returns>
         [RestOperation(Method = "GET", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetManufacturedMaterial()
@@ -458,9 +467,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			{
 				if (act.Key == actKey && act.VersionKey == actVersionKey)
 				{
-					var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+					var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
-					return actPersistenceService.Update(act);
+					return actRepositoryService.Save(act);
 				}
 				else
 				{
@@ -491,9 +500,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			{
 				if (manufacturedMaterial.Key == manufacturedMaterialKey && manufacturedMaterial.VersionKey == manufacturedMaterialVersionKey)
 				{
-					var manufacturedMaterialPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
+					var manufacturedMaterialRepositoryService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 
-					return manufacturedMaterialPersistenceService.Update(manufacturedMaterial);
+					return manufacturedMaterialRepositoryService.SaveManufacturedMaterial(manufacturedMaterial);
 				}
 				else
 				{

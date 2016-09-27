@@ -1,5 +1,7 @@
 ﻿using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -7,13 +9,15 @@ using System.Linq.Expressions;
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
 	/// <summary>
-	/// Local material service
+	/// Represents a material repository service.
 	/// </summary>
 	public class LocalMaterialService : IMaterialRepositoryService
 	{
 		/// <summary>
-		/// Find the specified manufactured material
+		/// Finds a specific manufactured material based on a specific query.
 		/// </summary>
+		/// <param name="expression">The query to use to find the manufactured materials.</param>
+		/// <returns>Returns a list of manufactured materials which match the specific query.</returns>
 		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
@@ -70,14 +74,40 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Query(expression, offset, count, out totalCount);
 		}
 
+		/// <summary>
+		/// Gets a manufactured material by id and version id.
+		/// </summary>
+		/// <param name="id">The id of the manufactured material to be retrieved.</param>
+		/// <param name="versionId">The version id of the manufactured material to be retrieved.</param>
+		/// <returns>Returns a manufactured material.</returns>
 		public ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<ManufacturedMaterial>)));
+			}
+
+			return persistenceService.Get(id);
 		}
 
+		/// <summary>
+		/// Gets a material by id and version id.
+		/// </summary>
+		/// <param name="id">The id of the material to be retrieved.</param>
+		/// <param name="versionId">The version id of the material to be retrieved.</param>
+		/// <returns>Returns a material.</returns>
 		public Material GetMaterial(Guid id, Guid versionId)
 		{
-			throw new NotImplementedException();
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Material>)));
+			}
+
+			return persistenceService.Get(id);
 		}
 
 		/// <summary>
@@ -94,7 +124,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<ManufacturedMaterial>)));
 			}
 
-			return persistenceService.Insert(manufacturedMaterial);
+			var result = persistenceService.Insert(manufacturedMaterial);
+
+			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
+
+			return result;
 		}
 
 		/// <summary>
@@ -111,7 +145,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Material>)));
 			}
 
-			return persistenceService.Insert(material);
+			var result = persistenceService.Insert(material);
+
+			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
+
+			return result;
 		}
 
 		/// <summary>
@@ -135,7 +173,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new ArgumentException("Unable to locate manufactured material");
 			}
 
-			return persistenceService.Obsolete(manufacturedMaterial);
+			var result = persistenceService.Obsolete(manufacturedMaterial);
+
+			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
+
+			return result;
 		}
 
 		/// <summary>
@@ -159,7 +201,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new ArgumentException("Unable to locate material");
 			}
 
-			return persistenceService.Obsolete(material);
+			var result = persistenceService.Obsolete(material);
+
+			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
+
+			return result;
 		}
 
 		/// <summary>
@@ -176,14 +222,22 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<ManufacturedMaterial>)));
 			}
 
+			ManufacturedMaterial result = null;
+
 			try
 			{
-				return persistenceService.Update(manufacturedMaterial);
+				result = persistenceService.Update(manufacturedMaterial);
+
+				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Update);
 			}
 			catch (KeyNotFoundException)
 			{
-				return persistenceService.Insert(manufacturedMaterial);
+				result = persistenceService.Insert(manufacturedMaterial);
+
+				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
 			}
+
+			return result;
 		}
 
 		/// <summary>
@@ -200,14 +254,22 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Material>)));
 			}
 
+			Material result = null;
+
 			try
 			{
-				return persistenceService.Update(material);
+				result = persistenceService.Update(material);
+
+				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Update);
 			}
 			catch (KeyNotFoundException)
 			{
-				return persistenceService.Insert(material);
+				result = persistenceService.Insert(material);
+
+				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
 			}
+
+			return result;
 		}
 	}
 }

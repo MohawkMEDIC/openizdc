@@ -15,9 +15,14 @@ layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
         // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,
-            continueWith: function (e) {
+            continueWith: function (data) {
                 OpenIZ.App.toast("Profile updated successfully");
-                OpenIZ.Localization.setLocale(userEntity.language[0].languageCode);
+
+                if (data.language !== undefined)
+                {
+                    OpenIZ.Localization.setLocale(data.language[0].languageCode);
+                }
+
                 window.location.reload();
             },
             onException: function (ex) {

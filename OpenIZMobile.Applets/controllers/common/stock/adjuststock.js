@@ -29,6 +29,8 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
 
     var manufacturedMaterial = null;
 
+    $scope.dateRecorded = new Date();
+
     OpenIZ.Ims.get({
         query: query,
         resource: "ManufacturedMaterial",

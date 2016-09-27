@@ -31,32 +31,6 @@ using System.Threading.Tasks;
 namespace OpenIZ.Mobile.Core.Services
 {
     /// <summary>
-    /// Query options to control data coming back from the server
-    /// </summary>
-    public class IntegrationQueryOptions
-    {
-        /// <summary>
-        /// Gets or sets the credentials
-        /// </summary>
-        public Credentials Credentials { get; set; }
-
-        /// <summary>
-        /// Gets or sets the If-Modified-Since header
-        /// </summary>
-        public DateTime? IfModifiedSince { get; set; }
-
-        /// <summary>
-        /// Gets or sets the If-None-Match
-        /// </summary>
-        public String IfNoneMatch { get; set; }
-
-        /// <summary>
-        /// Gets or sets the timeout
-        /// </summary>
-        public int? Timeout { get; set; }
-    }
-
-    /// <summary>
     /// Represents an integration service which is responsible for sending and
     /// pulling data to/from remote sources
     /// </summary>
@@ -73,40 +47,48 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         Bundle Find<TModel>(NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
 
-        /// <summary>
-        /// Instructs the integration service to retrieve the specified object
-        /// </summary>
-        IdentifiedData Get(Type modelType, Guid key, Guid? versionKey, IntegrationQueryOptions options = null);
+		/// <summary>
+		/// Instructs the integration service to locate a specified object(s)
+		/// </summary>
+		Bundle Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
 
-        /// <summary>
-        /// Gets the specified object
-        /// </summary>
-        TModel Get<TModel>(Guid key, Guid? versionKey, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
+		/// <summary>
+		/// Instructs the integration service to retrieve the specified object
+		/// </summary>
+		IdentifiedData Get(Type modelType, Guid key, Guid? versionKey, IntegrationQueryOptions options = null);
 
-        /// <summary>
-        /// Instructs the integration service to save the specified object
-        /// </summary>
-        void Insert(IdentifiedData data);
+		/// <summary>
+		/// Gets a specified model.
+		/// </summary>
+		/// <typeparam name="TModel">The type of model data to retrieve.</typeparam>
+		/// <param name="key">The key of the model.</param>
+		/// <param name="versionKey">The version key of the model.</param>
+		/// <param name="options">The integrations query options.</param>
+		/// <returns>Returns a model.</returns>
+		TModel Get<TModel>(Guid key, Guid? versionKey, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
 
-        /// <summary>
-        /// Instructs the integration service to save the specified object
-        /// </summary>
-        void Update(IdentifiedData data);
+		/// <summary>
+		/// Inserts specified data.
+		/// </summary>
+		/// <param name="data">The data to be inserted.</param>
+		void Insert(IdentifiedData data);
 
-        /// <summary>
-        /// Instructs the integration service to save the specified object
-        /// </summary>
-        void Obsolete(IdentifiedData data);
+		/// <summary>
+		/// Determines whether the network is available.
+		/// </summary>
+		/// <returns>Returns true if the network is available.</returns>
+		bool IsAvailable();
 
-        /// <summary>
-        /// Instructs the integration service to locate a specified object(s)
-        /// </summary>
-        Bundle Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData;
+		/// <summary>
+		/// Obsoletes specified data.
+		/// </summary>
+		/// <param name="data">The data to be obsoleted.</param>
+		void Obsolete(IdentifiedData data);
 
-        /// <summary>
-        /// Determines if the integration target is available
-        /// </summary>
-        /// <returns></returns>
-        bool IsAvailable();
+		/// <summary>
+		/// Updates specified data.
+		/// </summary>
+		/// <param name="data">The data to be updated.</param>
+		void Update(IdentifiedData data);
     }
 }
