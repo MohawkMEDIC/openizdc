@@ -37,6 +37,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
     data[3] = 6;
     data[4] = 1;
 
+
     var ctxOrders = document.getElementById("orderSummaryChart");
     var myChart = new Chart(ctxOrders, {
         type: 'pie',
