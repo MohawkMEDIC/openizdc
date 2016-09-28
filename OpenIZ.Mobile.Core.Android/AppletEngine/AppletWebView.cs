@@ -92,11 +92,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             this.Settings.BuiltInZoomControls = false;
             this.Settings.DisplayZoomControls = false;
 
-            //this.SetLayerType(A.Views.LayeType., null);
-#if DEBUG
-            WebView.SetWebContentsDebuggingEnabled(true);
-#endif 
-            this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
+			WebView.SetWebContentsDebuggingEnabled(true);
+
+			this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
             this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
             this.AddJavascriptInterface(new ConceptServiceBridge(), "OpenIZConceptService");
             this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
