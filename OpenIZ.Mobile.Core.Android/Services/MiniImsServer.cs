@@ -363,15 +363,13 @@ namespace OpenIZ.Mobile.Core.Android.Services
 
         }
 
-        /// <summary>
-        /// Handle render asset request
-        /// </summary>
-        /// <param name="context"></param>
+		/// <summary>
+		/// Handles the process of rendering an asset.
+		/// </summary>
+		/// <param name="request">The HTTP request.</param>
+		/// <param name="response">The HTTP response.</param>
         private void HandleAssetRenderRequest(HttpListenerRequest request, HttpListenerResponse response)
-        {
-
-            //this.m_tracer.TraceInfo("Intercept request for {0}...", request.Url);
-
+		{
             // Try to demand policy 
 
             // Navigate asset
@@ -383,25 +381,33 @@ namespace OpenIZ.Mobile.Core.Android.Services
                 navigateAsset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(appletPath);
 
                 if (navigateAsset == null)
-                    throw new FileNotFoundException(request.RawUrl);
+				{
+					throw new FileNotFoundException(request.RawUrl);
+				}
 
                 lock (m_lockObject)
-                    if (!this.m_cacheApplets.ContainsKey(appletPath))
-                        this.m_cacheApplets.Add(appletPath, navigateAsset);
+				{
+					if (!this.m_cacheApplets.ContainsKey(appletPath))
+					{
+						this.m_cacheApplets.Add(appletPath, navigateAsset);
+					}
+				}           
             }
-
-
-
 #if DEBUG
             response.AddHeader("Cache-Control", "no-cache");
 #endif
 
             // Navigate policy?
             if (navigateAsset.Policies != null)
-                foreach (var policy in navigateAsset.Policies)
-                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
+			{
+				foreach (var policy in navigateAsset.Policies)
+				{
+					new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
+				}
+			}
 
             response.ContentType = navigateAsset.MimeType;
+
             // Write asset
             if (navigateAsset.Content == null)
             {
@@ -410,16 +416,23 @@ namespace OpenIZ.Mobile.Core.Android.Services
             }
             else
             {
-                var content = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+				string languageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+				if (languageCode == null)
+				{
+					languageCode = "en";
+				}
+
+				var content = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, languageCode);
+
                 response.OutputStream.Write(content, 0, content.Length);
-
             }
-
         }
 
-        /// <summary>
-        /// Stop the listener
-        /// </summary>
+		/// <summary>
+		/// Stops the IMS listener.
+		/// </summary>
+		/// <returns>Returns true if the listener stopped successfully.</returns>
         public bool Stop()
         {
             this.Stopping?.Invoke(this, EventArgs.Empty);
