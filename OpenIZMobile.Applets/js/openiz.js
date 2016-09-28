@@ -250,6 +250,40 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @summary Stock Functions
+     * @class
+     */
+
+    Stock: {
+        calculateQPeriod: function (qYear, pSupply) {
+            return qYear / 12 * pSupply;
+        },
+        calculateSReserve: function (qPeriod, reservePercent) {
+            return qPeriod*reservePercent;
+        },
+        calculateSMax: function (qPeriod, sReserve) {
+            return qPeriod + sReserve;
+        },
+        calculateSReorder: function (sReserve, qPeriod, lTime, pSupply) {
+            return sReserve + qPeriod*lTime/pSupply;
+        },
+        calculateQOrder: function (sMax, sAvailable, qPeriod, lTime, pSupply) {
+            return sMax - sAvailable + qPeriod * lTime/pSupply;
+        },
+        calculateQNeeded: function (sStart, qRecieved, sEnd, sLost) {
+            return (sStart+qRecieved) - (sEnd+sLost);
+        },
+        calculateAll: function(qYear, pSupply, reservePercent, lTime, sAvailable) {
+            var object = {};
+            object.qPeriod = OpenIZ.Stock.calculateQPeriod(qYear, pSupply);
+            object.sReserve = OpenIZ.Stock.calculateSReserve(object.qPeriod, reservePercent);
+            object.sMax = OpenIZ.Stock.calculateSMax(object.qPeriod, object.sReserve);
+            object.sReorder = OpenIZ.Stock.calculateSReorder(object.sReserve, object.qPeriod, lTime, pSupply);
+            object.qOrder = OpenIZ.Stock.calculateQOrder(object.sMax, sAvailable, object.qPeriod, lTime, pSupply);
+            return object;
+        }
+    },
+    /**
      * @summary Utility functions
      * @class
      */

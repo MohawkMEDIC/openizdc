@@ -53,9 +53,9 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
 
                     var vaccine = data.item[i];
 
-                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value);
+                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value.split("(")[0]);
                     stockChart.data.datasets.push({
-                        label: vaccine.name.Assigned.component.$other.value,
+                        label: vaccine.name.Assigned.component.$other.value.split("(")[0],
                         data: [],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
