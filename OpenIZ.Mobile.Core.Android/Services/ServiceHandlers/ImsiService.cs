@@ -103,6 +103,74 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		}
 
         /// <summary>
+        /// Gets an entity
+        /// </summary>
+        /// <returns>Returns an entity.</returns>
+        [RestOperation(Method = "GET", UriPath = "/Entity", FaultProvider = nameof(ImsiFault))]
+        //[return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetEntity()
+        {
+            var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            
+            if (search.ContainsKey("id"))
+            {
+                // Force load from DB
+                MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));
+                var entityId = Guid.Parse(search["id"].FirstOrDefault());
+                var entity = entityService.Get(entityId, Guid.Empty);
+                entity = entity.LoadDisplayProperties().LoadImmediateRelations();
+                return entity;
+            }
+            else
+            {
+                {
+                    int totalResults = 0,
+                        offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                        count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+
+                    IEnumerable<Entity> retVal = null;
+
+                    // Any filter
+                    if (search.ContainsKey("any") || search.ContainsKey("any[]"))
+                    {
+
+                        this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
+
+                        var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
+                        // Filtes
+                        var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
+                        retVal = fts.Search<Entity>(values.ToArray(), offset, count, out totalResults);
+                        search.Remove("any");
+                        search.Remove("any[]");
+                    }
+
+                    if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
+                    {
+                        var predicate = QueryExpressionParser.BuildLinqExpression<Entity>(search);
+                        this.m_tracer.TraceVerbose("Searching Entities : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
+                        var tret = entityService.Find(predicate, offset, count, out totalResults);
+                        if (retVal == null)
+                            retVal = tret;
+                        else
+                            retVal = retVal.OfType<IIdentifiedEntity>().Intersect(tret.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Entity>();
+                    }
+
+                    // Serialize the response
+                    var itms = retVal.OfType<Entity>().Select(o => o.LoadDisplayProperties());
+                    return new Bundle()
+                    {
+                        Item = itms.OfType<IdentifiedData>().ToList(),
+                        Offset = offset,
+                        Count = itms.Count(),
+                        TotalResults = totalResults
+                    };
+                }
+            }
+        }
+
+        /// <summary>
 		/// Gets a patient.
 		/// </summary>
 		/// <returns>Returns the patient.</returns>
@@ -110,7 +178,6 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetPatient()
         {
-
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
 

@@ -111,7 +111,7 @@ namespace OpenIZ.Mobile.Core.Security
 			if (policyInstance == null)
 			{
 				// TODO: Configure OptIn or OptOut
-				return PolicyGrantType.Deny;
+				return PolicyGrantType.Grant;
 			}
 			else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyGrantType.Elevate)
 			{

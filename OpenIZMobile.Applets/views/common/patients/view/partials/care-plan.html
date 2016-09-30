@@ -1,10 +1,9 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" style="max-height:200px; overflow-y:scroll">
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'"
+        <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079' &amp;&amp; act.actModel.startTime &lt; currentDate"
             ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
             <h4 class="list-group-item-heading">{{act.actModel.classConceptModel.name[$root.page.locale] }} - {{act.actModel.typeConceptModel.name[$root.page.locale]}} <small>({{ act.actModel.startTime | date: 'yyyy-MM-dd' }} - {{act.actModel.stopTime | date: 'yyyy-MM-dd'}})</small></h4>
             <p class="list-group-item-text">
-                <em><mark>TODO: Summary of the act here</mark></em>
             </p>
         </li>
     </ul>
