@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.560.">
+  <info id="org.openiz.core" version="0.6.7.6479">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -286,22 +286,36 @@ angular.element(document).ready(function () {
                     }
                 });
 
+                // Record target
                 for (var ptcpt in newValue.RecordTarget) {
-                    var model = newValue.RecordTarget[ptcpt].actModel;
 
-                    // Ignore anything except substance admins
-                    if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
-                        continue;
+                    var acts = [];
+                    
+                    // Patient encounters are the grouping of objects
+                    var participation = newValue.RecordTarget[ptcpt];
+                    if (participation.actModel.$type != 'PatientEncounter')
+                        acts.push(participation);
+                    else
+                        acts = participation.actModel.relationship;
 
-                    var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
-                    if (scope.display._vaccineAdministrations[antigenId] == null) {
-                        scope.display._vaccineAdministrations[antigenId] = [];
-                        for (var i = 0; i &lt; model.doseSequence; i++)
-                            scope.display._vaccineAdministrations[antigenId].push(null);
-                        //model._enabled = true;
+                    for (var act in acts) {
+
+                        var model = acts[act].actModel || acts[act].targetModel;
+
+                        // Ignore anything except substance admins
+                        if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                            continue;
+
+                        var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
+                        if (scope.display._vaccineAdministrations[antigenId] == null) {
+                            scope.display._vaccineAdministrations[antigenId] = [];
+                            for (var i = 0; i &lt; model.doseSequence; i++)
+                                scope.display._vaccineAdministrations[antigenId].push(null);
+                            //model._enabled = true;
+                        }
+                        scope.display._vaccineAdministrations[antigenId].push(model);
+                        //                scope.$apply();
                     }
-                    scope.display._vaccineAdministrations[antigenId].push(model);
-                    //                scope.$apply();
                 }
             }
         });
@@ -434,7 +448,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.search = scope.search.search || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
 
@@ -465,7 +479,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.next = scope.search.next || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             if (scope.search.paging.current == scope.search.paging.count)
                 return;
 
@@ -494,7 +508,7 @@ $(document).ready(function () {
          * @summary Goes to the previous page
          */
         scope.search.previous = scope.search.previous || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             if (scope.search.paging.current == 1)
                 return;
 
@@ -523,7 +537,7 @@ $(document).ready(function () {
          * @summary Goes to the specific page
          */
         scope.search.goPage = scope.search.goPage || function (pageNo) {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.patients.search.wait"));
+            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
 
             // Current page increment
             scope.search.paging.current = pageNo;
@@ -700,6 +714,8 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
 
     var manufacturedMaterial = null;
 
+    $scope.dateRecorded = new Date();
+
     OpenIZ.Ims.get({
         query: query,
         resource: "ManufacturedMaterial",
@@ -802,12 +818,14 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
         resource: "ManufacturedMaterial",
         query: lowStockQuery,
         continueWith: function (data) {
-            console.log(data);
+            console.log("DATA" + data);
 
             if (data.item !== undefined)
             {
                 for (var i = 0; i &lt; data.item.length; i++) {
                     $scope.lowStock.push(data.item[i]);
+                    console.log(data.item[i])
+                    
                 }
             }
         },
@@ -1022,9 +1040,9 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
 
                     var vaccine = data.item[i];
 
-                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value);
+                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value.split("(")[0]);
                     stockChart.data.datasets.push({
-                        label: vaccine.name.Assigned.component.$other.value,
+                        label: vaccine.name.Assigned.component.$other.value.split("(")[0],
                         data: [],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -1238,6 +1256,7 @@ layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
     data[2] = 2;
     data[3] = 6;
     data[4] = 1;
+
 
     var ctxOrders = document.getElementById("orderSummaryChart");
     var myChart = new Chart(ctxOrders, {
@@ -1774,9 +1793,14 @@ layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
         // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,
-            continueWith: function (e) {
+            continueWith: function (data) {
                 OpenIZ.App.toast("Profile updated successfully");
-                OpenIZ.Localization.setLocale(userEntity.language[0].languageCode);
+
+                if (data.language !== undefined)
+                {
+                    OpenIZ.Localization.setLocale(data.language[0].languageCode);
+                }
+
                 window.location.reload();
             },
             onException: function (ex) {
@@ -3865,6 +3889,40 @@ var OpenIZ = OpenIZ || {
 
                 }
             });
+        }
+    },
+    /**
+     * @summary Stock Functions
+     * @class
+     */
+
+    Stock: {
+        calculateQPeriod: function (qYear, pSupply) {
+            return qYear / 12 * pSupply;
+        },
+        calculateSReserve: function (qPeriod, reservePercent) {
+            return qPeriod*reservePercent;
+        },
+        calculateSMax: function (qPeriod, sReserve) {
+            return qPeriod + sReserve;
+        },
+        calculateSReorder: function (sReserve, qPeriod, lTime, pSupply) {
+            return sReserve + qPeriod*lTime/pSupply;
+        },
+        calculateQOrder: function (sMax, sAvailable, qPeriod, lTime, pSupply) {
+            return sMax - sAvailable + qPeriod * lTime/pSupply;
+        },
+        calculateQNeeded: function (sStart, qRecieved, sEnd, sLost) {
+            return (sStart+qRecieved) - (sEnd+sLost);
+        },
+        calculateAll: function(qYear, pSupply, reservePercent, lTime, sAvailable) {
+            var object = {};
+            object.qPeriod = OpenIZ.Stock.calculateQPeriod(qYear, pSupply);
+            object.sReserve = OpenIZ.Stock.calculateSReserve(object.qPeriod, reservePercent);
+            object.sMax = OpenIZ.Stock.calculateSMax(object.qPeriod, object.sReserve);
+            object.sReorder = OpenIZ.Stock.calculateSReorder(object.sReserve, object.qPeriod, lTime, pSupply);
+            object.qOrder = OpenIZ.Stock.calculateQOrder(object.sMax, sAvailable, object.qPeriod, lTime, pSupply);
+            return object;
         }
     },
     /**
@@ -14357,8 +14415,29 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
         "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
         "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
         "actTime": "{{now}}",
+        "typeConceptModel": {
+          "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+          "mnemonic": "VitalSign-Weight"
+        },
         "value": 0,
-        "unitOfMeasure": ""
+        "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796",
+        "participation": {
+          "Location": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": "{{facilityId}}"
+          },
+          "Authororiginator": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": "{{userId}}"
+          },
+          "RecordTarget": {
+            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+            "player": ""
+          }
+        }
       }
     }
   }
@@ -14373,6 +14452,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "0D6B3439-C9BE-4480-AF39-EEB457C052D0",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "typeConcept": "b47f044d-a9c8-4a65-9f84-d99d913beb97",
   "actTime": "{{now}}",
   "participation": {
     "Location": {
@@ -15518,7 +15598,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted) }">
                   <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
                   <div class="col-md-10">
-                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" name="dateRecorded" class="form-control" />
+                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ $root.page.loadTime | date: 'dd-MM-yyyy' }}" name="dateRecorded" class="form-control" />
                     <p ng-show="adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
                   </div>
                 </div>
@@ -16092,7 +16172,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <asset name="views/common/stock/partials/lowstock.html" mimeType="text/html">
     <contentHtml>
-      <script>~/controllers/common/stock/lowstock.js</script>
+      <script>/org.openiz.core/controllers/common/stock/lowstock.js</script>
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="LowStockController">
           <div class="panel panel-default">
@@ -16100,8 +16180,10 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             {{ 'locale.stock.lowstock.title' | i18n }}
         </div>
             <div class="panel panel-body">
-              <canvas id="lowStockChart">
-              </canvas>
+              <div>
+                <canvas id="lowStockChart">
+                </canvas>
+              </div>
             </div>
           </div>
         </div>
@@ -17117,6 +17199,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.unknown">Unknown</string>
+    <string key="locale.dialog.wait.text">Please wait</string>
     <string key="locale.security.login.helpText">Please log into TImR to continue</string>
     <string key="locale.security.login.label.username">Username</string>
     <string key="locale.security.login.label.password">Password</string>
@@ -17254,6 +17337,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.vaccines">Vaccines</string>
     <string key="locale.stock.updateSuccessful">Update successful</string>
     <string key="locale.stock.updateUnsuccessful">Update Unsuccessful</string>
+    <string key="locale.stock.lowstock.title">Low Stock</string>
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>

@@ -34,22 +34,36 @@ angular.element(document).ready(function () {
                     }
                 });
 
+                // Record target
                 for (var ptcpt in newValue.RecordTarget) {
-                    var model = newValue.RecordTarget[ptcpt].actModel;
 
-                    // Ignore anything except substance admins
-                    if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
-                        continue;
+                    var acts = [];
+                    
+                    // Patient encounters are the grouping of objects
+                    var participation = newValue.RecordTarget[ptcpt];
+                    if (participation.actModel.$type != 'PatientEncounter')
+                        acts.push(participation);
+                    else
+                        acts = participation.actModel.relationship;
 
-                    var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
-                    if (scope.display._vaccineAdministrations[antigenId] == null) {
-                        scope.display._vaccineAdministrations[antigenId] = [];
-                        for (var i = 0; i < model.doseSequence; i++)
-                            scope.display._vaccineAdministrations[antigenId].push(null);
-                        //model._enabled = true;
+                    for (var act in acts) {
+
+                        var model = acts[act].actModel || acts[act].targetModel;
+
+                        // Ignore anything except substance admins
+                        if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                            continue;
+
+                        var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
+                        if (scope.display._vaccineAdministrations[antigenId] == null) {
+                            scope.display._vaccineAdministrations[antigenId] = [];
+                            for (var i = 0; i < model.doseSequence; i++)
+                                scope.display._vaccineAdministrations[antigenId].push(null);
+                            //model._enabled = true;
+                        }
+                        scope.display._vaccineAdministrations[antigenId].push(model);
+                        //                scope.$apply();
                     }
-                    scope.display._vaccineAdministrations[antigenId].push(model);
-                    //                scope.$apply();
                 }
             }
         });

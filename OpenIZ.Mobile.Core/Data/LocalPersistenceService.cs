@@ -38,6 +38,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
 using System.Collections;
 using OpenIZ.Core.Services;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -50,18 +51,27 @@ namespace OpenIZ.Mobile.Core.Data
 
         // Guid of stuff that exists and the version
         private static Dictionary<String, Guid?> s_exists = new Dictionary<String, Guid?>();
+        
         // Lock 
         private static Object s_lock = new object();
 
+        private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
 
         /// <summary>
         /// Load specified associations
         /// </summary>
         public static void LoadAssociations<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
         {
+
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
             else if (context.IsInTransaction) return;
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
             // Load associations
             foreach (var pi in me.GetType().GetRuntimeProperties())
             {
@@ -121,6 +131,11 @@ namespace OpenIZ.Mobile.Core.Data
                     }
                 }
             }
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: LoadAssociations ({0} ms)", sw.ElapsedMilliseconds);
+#endif
         }
 
         /// <summary>
@@ -132,6 +147,11 @@ namespace OpenIZ.Mobile.Core.Data
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
             var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
             if (idpInstance == null) return null;
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             IIdentifiedEntity existing = null;
 
@@ -178,6 +198,12 @@ namespace OpenIZ.Mobile.Core.Data
                         (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
                 }
             }
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: TryGetExisting {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+#endif
+
             return existing;
 
         }
@@ -190,6 +216,11 @@ namespace OpenIZ.Mobile.Core.Data
             // Me
             var vMe = me as IVersionedEntity;
             String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             // Does it exist in our cache?
             Guid? existingGuidVer = null;
@@ -249,6 +280,11 @@ namespace OpenIZ.Mobile.Core.Data
                         s_exists.Add(dkey, null);
 
             }
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+#endif
         }
 
         ///// <summary>
@@ -256,6 +292,10 @@ namespace OpenIZ.Mobile.Core.Data
         ///// </summary>
         public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
         {
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
             if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
                 return;
@@ -265,6 +305,11 @@ namespace OpenIZ.Mobile.Core.Data
             // Get the delay load key property!
             var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
             keyField.SetValue(instance, value.Key);
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: UpdateParentKeys {0} ({1} ms)", instance, sw.ElapsedMilliseconds);
+#endif
         }
     }
 

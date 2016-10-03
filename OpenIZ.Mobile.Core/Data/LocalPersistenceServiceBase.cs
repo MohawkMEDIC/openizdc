@@ -126,6 +126,11 @@ namespace OpenIZ.Mobile.Core.Data
                 return data;
             }
 
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
             // Persist object
             var connection = this.CreateConnection();
             try
@@ -155,6 +160,14 @@ namespace OpenIZ.Mobile.Core.Data
             }
             catch { throw; }
 
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: INSERT {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
+
         }
 
         /// <summary>
@@ -175,7 +188,10 @@ namespace OpenIZ.Mobile.Core.Data
                 this.m_tracer.TraceWarning("Pre-Event handler indicates abort update for {0}", data);
                 return data;
             }
-
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             // Persist object
             var connection = this.CreateConnection();
             try
@@ -207,6 +223,13 @@ namespace OpenIZ.Mobile.Core.Data
                 return data;
             }
             catch { throw; }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: UPDATE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
         }
 
         /// <summary>
@@ -219,7 +242,10 @@ namespace OpenIZ.Mobile.Core.Data
                 throw new ArgumentNullException(nameof(data));
             else if (!data.Key.HasValue || data.Key == Guid.Empty)
                 throw new InvalidOperationException("Data missing key");
-
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
             this.Obsoleting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -259,6 +285,13 @@ namespace OpenIZ.Mobile.Core.Data
                 return data;
             }
             catch { throw; }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: OBSOLETE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
         }
 
         /// <summary>
@@ -302,6 +335,10 @@ namespace OpenIZ.Mobile.Core.Data
                 return preArgs.Results;
             }
 
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             // Query object
             var connection = this.CreateConnection();
             using (connection.Lock())
@@ -356,6 +393,13 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_tracer.TraceError("Error : {0}", e);
                     throw;
                 }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: QUERY {0} ({1} ms)", query, sw.ElapsedMilliseconds);
+            }
+#endif
 
             }
         }
