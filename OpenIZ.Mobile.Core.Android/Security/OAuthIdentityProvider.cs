@@ -176,8 +176,8 @@ namespace OpenIZ.Mobile.Core.Android.Security
                             if (!localRoles.Contains(itm.Value))
                             {
                                 localRp.CreateRole(itm.Value, new SystemPrincipal());
-                                localRp.AddPoliciesToRoles(amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray(), new String[] { itm.Value }, new SystemPrincipal());
                             }
+                            localRp.AddPoliciesToRoles(amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray(), new String[] { itm.Value }, new SystemPrincipal());
 
                         }
 

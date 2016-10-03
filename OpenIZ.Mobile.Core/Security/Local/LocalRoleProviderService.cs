@@ -65,7 +65,8 @@ namespace OpenIZ.Mobile.Core.Security
 						var dbr = conn.Table<DbSecurityRole>().FirstOrDefault(o => o.Name == rn);
 						if (dbr == null)
 							throw new KeyNotFoundException(String.Format("Role {0} not found", rn));
-						var toBeInserted = policyInstance.Select(
+                        var currentPolicies = conn.Query<DbSecurityPolicy>("select security_policy.* from security_policy inner join security_role_policy on (security_policy.uuid = security_role_policy.policy_id) where security_role_policy.role_id = ?", dbr.Uuid).ToList();
+						var toBeInserted = policyInstance.Where(o=>!currentPolicies.Any(p=>p.Oid == o.Policy.Oid)).Select(
 							o => new DbSecurityRolePolicy()
 							{
 								GrantType = (int)o.Rule,

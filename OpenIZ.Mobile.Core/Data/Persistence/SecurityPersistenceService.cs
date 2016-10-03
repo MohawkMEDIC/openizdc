@@ -124,12 +124,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.Insert(context, data);
 
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityRole>(
-                    new List<SecurityPolicyInstance>(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityRole>(
+            //        new List<SecurityPolicyInstance>(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
             return retVal;
         }
@@ -143,12 +143,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var entityUuid = retVal.Key.Value.ToByteArray();
 
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityRole>(
-                    context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityRole>(
+            //        context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
             return retVal;
         }
@@ -179,12 +179,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.Insert(context, data);
 
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityDevice>(
-                    new List<SecurityPolicyInstance>(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityDevice>(
+            //        new List<SecurityPolicyInstance>(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
 
             return retVal;
@@ -199,12 +199,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var entityUuid = retVal.Key.Value.ToByteArray();
 
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityDevice>(
-                    context.Table<DbSecurityDevicePolicy>().Where(o => o.DeviceId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o)).ToList(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityDevice>(
+            //        context.Table<DbSecurityDevicePolicy>().Where(o => o.DeviceId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o)).ToList(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
 
             return retVal;
@@ -236,12 +236,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.Insert(context, data);
 
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityApplication>(
-                    new List<SecurityPolicyInstance>(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityApplication>(
+            //        new List<SecurityPolicyInstance>(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
 
             return retVal;
@@ -256,12 +256,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var entityUuid = retVal.Key.Value.ToByteArray();
             // Roles
-            if (retVal.Policies != null)
-                base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityApplication>(
-                    context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o)).ToList(),
-                    retVal.Policies,
-                    retVal.Key,
-                    context);
+            //if (retVal.Policies != null)
+            //    base.UpdateAssociatedItems<SecurityPolicyInstance, SecurityApplication>(
+            //        context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o)).ToList(),
+            //        retVal.Policies,
+            //        retVal.Key,
+            //        context);
 
 
             return retVal;

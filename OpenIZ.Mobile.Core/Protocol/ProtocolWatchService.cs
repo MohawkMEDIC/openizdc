@@ -59,20 +59,23 @@ namespace OpenIZ.Mobile.Core.Protocol
                 if(persistence != null)
                     persistence.Inserted += (o, e) => {
 
-                        // We want to make sure the care plan contains everything in the protocols as possible
-                        var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
-                        var acts = cpService.CreateCarePlan(e.Data);
-
-                        // There were some acts proposed
-                        if (acts.Count() > 0)
+                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((s) =>
                         {
-                            var actService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
-                            Bundle batch = new Bundle()
+                            // We want to make sure the care plan contains everything in the protocols as possible
+                            var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
+                            var acts = cpService.CreateCarePlan(s as Patient);
+
+                            // There were some acts proposed
+                            if (acts.Count() > 0)
                             {
-                                Item = acts.OfType<IdentifiedData>().ToList()
-                            };
-                            actService.Insert(batch);
-                        }
+                                var actService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
+                                Bundle batch = new Bundle()
+                                {
+                                    Item = acts.OfType<IdentifiedData>().ToList()
+                                };
+                                actService.Insert(batch);
+                            }
+                        }, e.Data);
                     };
             };
             this.Started?.Invoke(this, EventArgs.Empty);

@@ -216,6 +216,11 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
             if (!key.HasValue) return null;
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
@@ -227,9 +232,18 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
+#if PERFMON
+                    sw.Stop();
+                    this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
+#endif
                     return candidate.Data;
                 }
             }
+
+#if PERFMON
+            sw.Stop();
+            this.m_tracer.TraceVerbose("PERF: TryGetEntry MISS {0} ({1} ms)", key, sw.ElapsedMilliseconds);
+#endif
             return null;
         }
 

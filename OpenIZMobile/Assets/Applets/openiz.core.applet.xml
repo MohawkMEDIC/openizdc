@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.6479">
+  <info id="org.openiz.core" version="0.6.7.0240">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -322,6 +322,45 @@ angular.element(document).ready(function () {
     });
 });
 </contentText>
+  </asset>
+  <asset name="controllers/common/encounters/register/actionpanel.js" mimeType="text/javascript">
+    <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
+/// &lt;reference path="~/js/openiz-model.js"/&gt;
+/// &lt;reference path="~/lib/angular.min.js"/&gt;
+/// &lt;reference path="~/lib/jquery.min.js"/&gt;
+
+angular.element(document).ready(function () {
+    $('.oiz-encounter-action-panel').each(function (i, e) {
+
+        // Get the current scope that we're in
+        var scope = angular.element(e).scope();
+
+        /** 
+        * Add sub-encounter sub-encounter
+        */
+        scope.addSubEncounter = scope.addSubEncounter || function (bind) {
+            OpenIZ.CarePlan.getActTemplateAsync({
+                templateId: templateName,
+                continueWith: function (d) {
+                    bind.push({
+                        _created: true,
+                        _enabled: true,
+                        targetModel: d
+                    });
+                    scope.$apply();
+                }
+            });
+
+        };
+
+        /** 
+         * Delete sub-encounter
+         */
+        $scope.delSubEncounter = function (bind, index) {
+            bind.splice(index, 1);
+        };
+    });
+});</contentText>
   </asset>
   <asset name="controllers/common/encounters/register/encounter.js" mimeType="text/javascript">
     <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
@@ -14617,6 +14656,72 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
               <div class="panel-collapse in">
                 <div class="panel-body" ng-include="enc.template.formUrl">
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/encounters/register/actionpanel.html" mimeType="text/html">
+    <contentHtml>
+      <script>~/controllers/common/encounters/register/actionpanel.js</script>
+      <content>
+        <div class="panel panel-info oiz-encounter-action-panel" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+          <div class="panel-heading">
+            <span class="panel-title">{{ 'locale.encounters.actionsPerformed.title' | i18n }}</span>
+          </div>
+          <table class="panel-body table table-striped table-responsive">
+            <tr ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747'">
+              <td>
+                <div class="container-fluid">
+                  <div class="row">
+                    <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div ng-if="act._created" class="btn-group pull-right">
+                        <button type="button" ng-if="$index &gt; 0" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" class="btn btn-danger">
+                          <span class="glyphicon glyphicon-trash">
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </table>
+          <div class="panel-body">
+            <div class="row">
+              <div class="btn-group pull-right dropdown">
+                <button type="button" class="btn btn-success" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-plus-sign">
+                  </span>
+                  <span class="caret">
+                  </span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.SubstanceAdmin.Immunization')">Vaccination</a>
+                  </li>
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.Observation.Weight')">Weight</a>
+                  </li>
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.Observation.Height')">Height</a>
+                  </li>
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.SubstanceAdmin.Supplement')">Supplement</a>
+                  </li>
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.Observation.CauseOfDeath')">Cause of Death</a>
+                  </li>
+                  <li>
+                    <a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'Act.Observation.Aefi')">Adverse Event</a>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
