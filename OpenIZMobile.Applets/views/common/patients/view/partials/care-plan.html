@@ -2,8 +2,13 @@
     <ul class="list-group">
         <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079' &amp;&amp; act.actModel.startTime &lt; currentDate"
             ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
-            <h4 class="list-group-item-heading">{{act.actModel.classConceptModel.name[$root.page.locale] }} - {{act.actModel.typeConceptModel.name[$root.page.locale]}} <small>({{ act.actModel.startTime | date: 'yyyy-MM-dd' }} - {{act.actModel.stopTime | date: 'yyyy-MM-dd'}})</small></h4>
-            <p class="list-group-item-text">
+            <h4 class="list-group-item-heading">
+                {{act.actModel.classConceptModel.name[$root.page.locale] }}  {{act.actModel.typeConceptModel.name[$root.page.locale]}}
+            </h4>
+                <p class="list-group-item-text">
+                   <small>Encounter Start: {{ act.actModel.startTime | date: 'yyyy-MM-dd' }} </small>
+                   <small ng-if="act.actModel.stopTime!=null">Encounter End: {{act.actModel.stopTime | date: 'yyyy-MM-dd'}}</small>
+                   <small ng-if="act.actModel.typeConceptModel.name[$root.page.locale]!='BODY WEIGHT (MEASURED)'">Vaccine: {{act.vaccineName}}</small>
             </p>
         </li>
     </ul>
