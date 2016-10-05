@@ -38,6 +38,8 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
 using System.Collections;
 using OpenIZ.Core.Services;
+using System.Diagnostics;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -47,21 +49,28 @@ namespace OpenIZ.Mobile.Core.Data
     /// </summary>
     public static class ModelExtensions
     {
-
-        // Guid of stuff that exists and the version
-        private static Dictionary<String, Guid?> s_exists = new Dictionary<String, Guid?>();
         // Lock 
         private static Object s_lock = new object();
 
+        private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
+        private static Dictionary<Type, Object> s_idpInstances = new Dictionary<Type, object>(20);
+        private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
 
         /// <summary>
         /// Load specified associations
         /// </summary>
         public static void LoadAssociations<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
         {
+
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
             else if (context.IsInTransaction) return;
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
             // Load associations
             foreach (var pi in me.GetType().GetRuntimeProperties())
             {
@@ -121,6 +130,11 @@ namespace OpenIZ.Mobile.Core.Data
                     }
                 }
             }
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: LoadAssociations ({0} ms)", sw.ElapsedMilliseconds);
+#endif
         }
 
         /// <summary>
@@ -128,16 +142,42 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, SQLiteConnectionWithLock context)
         {
-            // Is there a classifier?
-            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-            var idpInstance = ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
-            if (idpInstance == null) return null;
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             IIdentifiedEntity existing = null;
+
+            // First, is the object a concept?
+            Guid meKey = Guid.Empty;
+            Concept conceptMe = me as Concept;
+            if (conceptMe != null && s_conceptDictionary.TryGetValue(conceptMe.Mnemonic, out meKey))
+                me.Key = meKey;
+
+            // Have we already loaded the data provider?
+            object idpInstance = null;
+            if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
+            {
+                lock (s_lock)
+                {
+                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+                    idpInstance = ApplicationContext.Current.GetService(idpType);
+                    s_idpInstances.Add(me.GetType(), idpInstance);
+                }
+            }
+            if (idpInstance == null) return null;
+
 
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)
             {
+#if PERFMON
+                sw.Stop();
+                s_tracer.TraceVerbose("Using FAST GET method on ID {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+                sw.Start();
+#endif              
                 //existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
                 //// We have to find it
                 var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
@@ -148,7 +188,11 @@ namespace OpenIZ.Mobile.Core.Data
             var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
             if (classAtt != null && existing == null)
             {
-               
+#if PERFMON
+                sw.Stop();
+                s_tracer.TraceVerbose("Using SLOW QUERY method on ID {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+                sw.Start();
+#endif        
                 object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
                                             // Follow the classifier
                 Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
@@ -176,11 +220,24 @@ namespace OpenIZ.Mobile.Core.Data
                     me.Key = existing.Key;
                     if (me is IVersionedEntity)
                         (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
+                    break;
                 }
             }
+
+            // Add to concept dictionary
+            if (existing != null && conceptMe != null && !s_conceptDictionary.ContainsKey(conceptMe.Mnemonic))
+                lock (s_lock)
+                    s_conceptDictionary.Add(conceptMe.Mnemonic, conceptMe.Key.Value);
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: TryGetExisting {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+#endif
+
             return existing;
 
         }
+
         /// <summary>
         /// Ensure the specified object exists, insert it if it doesnt
         /// </summary>
@@ -189,21 +246,25 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Me
             var vMe = me as IVersionedEntity;
-            String dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
-
-            // Does it exist in our cache?
-            Guid? existingGuidVer = null;
-            if (me.Key != null && s_exists.TryGetValue(dkey, out existingGuidVer))
-            {
-                if (vMe?.VersionKey == existingGuidVer || vMe == null)
-                    return; // Exists already we know about it
-            }
-
+                                   
             // We have to find it
-            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-            var idpInstance = ApplicationContext.Current.GetService(idpType);
-
+            object idpInstance = null;
+            if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
+            {
+                lock (s_lock)
+                {
+                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
+                    idpInstance = ApplicationContext.Current.GetService(idpType);
+                    s_idpInstances.Add(me.GetType(), idpInstance);
+                }
+            }
+            
             var existing = me.TryGetExisting(context);
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             // Existing exists?
             if (existing != null)
@@ -222,19 +283,10 @@ namespace OpenIZ.Mobile.Core.Data
                     }
                 }
 
-                // Add
-                dkey = String.Format("{0}.{1}", me.GetType().FullName, existing.Key);
-
-                lock (s_lock)
-                    if (s_exists.ContainsKey(dkey))
-                        s_exists[dkey] = vMe?.VersionKey ?? (existing as IVersionedEntity)?.VersionKey;
-                    else
-                        s_exists.Add(dkey, vMe?.VersionKey ?? (existing as IVersionedEntity)?.VersionKey);
             }
             else // Insert
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
-                dkey = String.Format("{0}.{1}", me.GetType().FullName, me.Key);
                 if (insertMethod != null)
                 {
                     IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me }) as IIdentifiedEntity;
@@ -244,11 +296,12 @@ namespace OpenIZ.Mobile.Core.Data
                         vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
                 }
 
-                lock (s_lock)
-                    if (me.Key != Guid.Empty && !s_exists.ContainsKey(dkey))
-                        s_exists.Add(dkey, null);
-
             }
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
+#endif
         }
 
         ///// <summary>
@@ -256,6 +309,10 @@ namespace OpenIZ.Mobile.Core.Data
         ///// </summary>
         public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
         {
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
             if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
                 return;
@@ -265,6 +322,11 @@ namespace OpenIZ.Mobile.Core.Data
             // Get the delay load key property!
             var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
             keyField.SetValue(instance, value.Key);
+
+#if PERFMON
+            sw.Stop();
+            s_tracer.TraceVerbose("PERF: UpdateParentKeys {0} ({1} ms)", instance, sw.ElapsedMilliseconds);
+#endif
         }
     }
 

@@ -156,5 +156,14 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             return MemoryCache.Current.TryGetEntry(typeof(TData), key) as TData;
         }
+
+        /// <summary>
+        /// Gets the specified cache item
+        /// </summary>
+        /// <returns></returns>
+        public Object GetCacheItem(Type tdata, Guid key) 
+        {
+            return MemoryCache.Current.TryGetEntry(tdata, key);
+        }
     }
 }

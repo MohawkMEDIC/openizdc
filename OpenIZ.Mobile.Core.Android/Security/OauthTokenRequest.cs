@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Android.Security
     /// <summary>
     /// OAuth token response.
     /// </summary>
-    [JsonObject]
+    [JsonObject, Serializable]
     public class OAuthTokenResponse
     {
 
