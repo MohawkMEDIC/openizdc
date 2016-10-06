@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Alerting
             this.To = am.To;
             this.CreatedBy = ApplicationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
             this.Flags = am.Flags;
-            this.Id = am.Key.Value.ToByteArray();
+            this.Id = am.Key.HasValue ? am.Key.Value.ToByteArray() : Guid.NewGuid().ToByteArray();
         }
 
         /// <summary>

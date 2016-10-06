@@ -46,6 +46,16 @@
     <oid>1.2.3.4.5.6.7.8.13</oid>
     <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
   </template>
+
+  <template mnemonic="Act.AdjustStock">
+    <oid>1.2.3.4.5.6.7.8.14</oid>
+    <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
+  </template>
+
+  <template mnemonic="Act.CountStock">
+    <oid>1.2.3.4.5.6.7.8.15</oid>
+    <definition>/org.openiz.core/templates/act.countstock.json</definition>
+  </template>
   
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
@@ -191,6 +201,7 @@
 
     <!-- Stock Management -->
     <string key="locale.stock.action.transfer">Transfer</string>
+    <string key="locale.stock.action.count">Stock Count</string>
     <string key="locale.stock.adjustStock">Adjust Stock</string>
     <string key="locale.stock.lowstock">Low Stock</string>
     <string key="locale.stock.ordersummary.title">Order Summary</string>
@@ -203,6 +214,8 @@
     <string key="locale.stock.unitOfMeasure">Unit of Measure</string>
     <string key="locale.stock.adjustmentReason">Adjustment Reason</string>
     <string key="locale.stock.quantity">Quantity</string>
+    <string key="locale.stock.amount">Stock Counted</string>
+    <string key="locale.stock.countStock">Count Stock</string>
     <string key="locale.stock.notes">Notes</string>
     <string key="locale.stock.errors.dateRecordedRequired">Please enter a recorded date</string>
     <string key="locale.stock.errors.unitOfMeasureRequired">Please select a unit of measure</string>

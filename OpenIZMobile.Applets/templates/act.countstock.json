@@ -1,0 +1,35 @@
+﻿{
+  "$type": "Act",
+  "template": {
+    "mnemonic": "Act.CountStock"
+  },
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    },
+    "Consumable": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "playerModel": {
+        "$type":  "ManufacturedMaterial",
+        "id": ""
+      },
+      "actModel": {
+        "$type": "QuantityObservation",
+        "reasonConcept": "5edb55a1-723c-46e4-9fee-2c94db20b7ab",
+        "value":  0
+      }
+    }
+  }
+}
