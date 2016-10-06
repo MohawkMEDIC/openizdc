@@ -34,6 +34,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Diagnostics;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Android.Threading;
+using OpenIZ.Mobile.Core.Caching;
 
 namespace OpenIZ.Mobile.Core.Test
 {
@@ -111,6 +112,7 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
+                    typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName
                 }
                     };

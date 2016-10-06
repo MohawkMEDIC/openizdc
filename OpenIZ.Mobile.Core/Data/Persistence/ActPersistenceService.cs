@@ -212,6 +212,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Do the update
             var retVal = base.Update(context, data);
+
+            // Set appropriate versioning 
+            retVal.PreviousVersion = new Act()
+            {
+                ClassConcept = retVal.ClassConcept,
+                MoodConcept = retVal.MoodConcept,
+                Key = retVal.Key,
+                VersionKey = retVal.PreviousVersionKey,
+                CreationTime = (DateTimeOffset)retVal.CreationTime,
+                CreatedByKey = retVal.CreatedByKey
+            };
+            retVal.CreationTime = DateTimeOffset.Now;
+            retVal.CreatedByKey = data.CreatedByKey == Guid.Empty || data.CreatedByKey == null ? base.CurrentUserUuid(context) : data.CreatedByKey;
+
             var ruuid = retVal.Key.Value.ToByteArray();
 
             if (retVal.Extensions != null)

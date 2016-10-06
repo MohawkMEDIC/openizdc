@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.1269">
+  <info id="org.openiz.core" version="0.6.7.3947">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -39,6 +39,12 @@
   <template mnemonic="Act.Observation.Weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
     <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
+  </template>
+  <template mnemonic="Act.AdjustStock">
+    <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
+  </template>
+  <template mnemonic="Act.CountStock">
+    <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>
   <asset name="bundleconfig.json" mimeType="text/javascript">
     <contentText>[
@@ -764,7 +770,6 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
 
             if (data.item !== undefined) {
                 manufacturedMaterial = data.item[0];
-
                 $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
                 $scope.lotNumber = manufacturedMaterial.lotNumber;
                 $scope.expiryDate = manufacturedMaterial.expiryDate;
@@ -780,28 +785,114 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
 
         OpenIZ.App.showWait();
 
-        manufacturedMaterial.quantity = $scope.quantity;
-
-        OpenIZ.Ims.put({
-            id: params.id,
-            versionId: params.version,
-            data: manufacturedMaterial,
-            resource: "ManufacturedMaterial",
+        OpenIZ.Act.getActTemplateAsync({
+            templateId: "Act.AdjustStock",
             continueWith: function (data) {
-
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
-
-                window.location.href = "searchstock.html";
-            },
-            onException: function(ex)
-            {
-                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
-            },
-            finally: function()
-            {
+                var act = data;
+                console.log(data);
+                data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
+                data.participation.Consumable.actModel.value = $scope.quantity;
+                data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
+                data.participation.Consumable.playerModel.id = params.id;
+                OpenIZ.Ims.post({
+                    resource: "Act",
+                    data: data,
+                    continueWith: function (act) {
+                        console.log(act);
+                    },
+                    onException: function(ex){
+                        console.log(ex);
+                }
+                })
                 OpenIZ.App.hideWait();
             }
         });
+
+    };
+
+}]);
+</contentText>
+  </asset>
+  <asset name="controllers/common/stock/countstock.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
+/// &lt;reference path="../js/openiz.js"/&gt;
+
+/*
+ * Copyright 2016 PATH International
+ * Developed by Mohawk College of Applied Arts and Technology 
+ *
+ * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
+ * you may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * https://creativecommons.org/licenses/by-sa/4.0/legalcode
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: khannan
+ * Date: 2016-9-10
+ */
+
+layoutApp.controller('CountStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
+
+    var params = queryParameterService.getUrlParameters();
+
+    var query = "id=" + params.id;
+
+    var manufacturedMaterial = null;
+
+    $scope.dateRecorded = new Date();
+
+    OpenIZ.Ims.get({
+        query: query,
+        resource: "ManufacturedMaterial",
+        continueWith: function (data) {
+
+            console.log(data);
+
+            if (data.item !== undefined) {
+                manufacturedMaterial = data.item[0];
+                $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
+                $scope.lotNumber = manufacturedMaterial.lotNumber;
+                $scope.expiryDate = manufacturedMaterial.expiryDate;
+                $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
+            }
+        },
+        onException: function (ex) {
+            console.log(ex);
+        }
+    });
+
+    $scope.countStock = function () {
+        OpenIZ.App.showWait();
+
+        OpenIZ.Act.getActTemplateAsync({
+            templateId: "Act.CountStock",
+            continueWith: function (data) {
+                var act = data;
+                console.log(data);
+                data.participation.Consumable.actModel.value = $scope.quantity;
+                data.participation.Consumable.playerModel.id = params.id;
+                data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
+                OpenIZ.Ims.post({
+                    resource: "Act",
+                    data: data,
+                    continueWith: function (act) {
+                        console.log(act);
+                    },
+                    onException: function(ex){
+                        console.log(ex);
+                }
+                })
+                OpenIZ.App.hideWait();
+            }
+        });
+
+
     };
 
 }]);
@@ -1607,7 +1698,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
 
-layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
+layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $rootScope) {
 
 
     // Get the patient 
@@ -1631,7 +1722,8 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
                     $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.unknown');
                     break;
             };
-
+            console.log($scope.patient);
+            getActs(data);
             $scope.$apply();
         },
         onException: function (ex) {
@@ -1645,6 +1737,30 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope) {
         }
     });
 
+    function getActs(data) {
+        var today = new Date();
+        today.setYear(today.getFullYear()+1);
+        for (var i = 0; i &lt; $scope.patient.participation.RecordTarget.length; i++) {
+            if ($scope.patient.participation.RecordTarget[i].actModel.startTime &lt; today &amp;&amp; $scope.patient.participation.RecordTarget[i].actModel.typeConceptModel.name.en!='BODY WEIGHT (MEASURED)') {
+                getAct(i);
+            }
+        }
+    }
+    function getAct(index) {
+        OpenIZ.Ims.get({
+            resource: "Act",
+            query: "id=" + $scope.patient.participation.RecordTarget[index].act,
+            continueWith: function (acts) {
+                //$scope.patient.participation.RecordTarget[i].vaccineName = acts.item[0].participation.Product.playerModel.name.Assigned.component.$other.value;
+                if(acts!=null){
+                   $scope.patient.participation.RecordTarget[index].vaccineName = acts.item[0].participation.Product.playerModel.name.Assigned.component.$other.value;
+                }
+            },
+            onException: function (ex) {
+                console.log(ex);
+            }
+        });
+    }
 
 }]);</contentText>
   </asset>
@@ -14419,14 +14535,89 @@ var n,i,r;(function(t){function e(n,t){return k.call(n,t)}function l(n,t){var o,
        */
 return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("jquery-mousewheel",["jquery"],i):typeof exports=="object"?module.exports=i:i(n)}(function(n){function e(r){var f=r||window.event,w=h.call(arguments,1),l=0,o=0,e=0,a=0,b=0,k=0,v,y,p;if(r=n.event.fix(f),r.type="mousewheel","detail"in f&amp;&amp;(e=f.detail*-1),"wheelDelta"in f&amp;&amp;(e=f.wheelDelta),"wheelDeltaY"in f&amp;&amp;(e=f.wheelDeltaY),"wheelDeltaX"in f&amp;&amp;(o=f.wheelDeltaX*-1),"axis"in f&amp;&amp;f.axis===f.HORIZONTAL_AXIS&amp;&amp;(o=e*-1,e=0),l=e===0?o:e,"deltaY"in f&amp;&amp;(e=f.deltaY*-1,l=e),"deltaX"in f&amp;&amp;(o=f.deltaX,e===0&amp;&amp;(l=o*-1)),e!==0||o!==0)return f.deltaMode===1?(v=n.data(this,"mousewheel-line-height"),l*=v,e*=v,o*=v):f.deltaMode===2&amp;&amp;(y=n.data(this,"mousewheel-page-height"),l*=y,e*=y,o*=y),a=Math.max(Math.abs(e),Math.abs(o)),(!t||a&lt;t)&amp;&amp;(t=a,s(f,a)&amp;&amp;(t/=40)),s(f,a)&amp;&amp;(l/=40,o/=40,e/=40),l=Math[l&gt;=1?"floor":"ceil"](l/t),o=Math[o&gt;=1?"floor":"ceil"](o/t),e=Math[e&gt;=1?"floor":"ceil"](e/t),i.settings.normalizeOffset&amp;&amp;this.getBoundingClientRect&amp;&amp;(p=this.getBoundingClientRect(),b=r.clientX-p.left,k=r.clientY-p.top),r.deltaX=o,r.deltaY=e,r.deltaFactor=t,r.offsetX=b,r.offsetY=k,r.deltaMode=0,w.unshift(r,l,o,e),u&amp;&amp;clearTimeout(u),u=setTimeout(c,200),(n.event.dispatch||n.event.handle).apply(this,w)}function c(){t=null}function s(n,t){return i.settings.adjustOldDeltas&amp;&amp;n.type==="mousewheel"&amp;&amp;t%120==0}var o=["wheel","mousewheel","DOMMouseScroll","MozMousePixelScroll"],r="onwheel"in document||document.documentMode&gt;=9?["wheel"]:["mousewheel","DomMouseScroll","MozMousePixelScroll"],h=Array.prototype.slice,u,t,f,i;if(n.event.fixHooks)for(f=o.length;f;)n.event.fixHooks[o[--f]]=n.event.mouseHooks;i=n.event.special.mousewheel={version:"3.1.12",setup:function(){if(this.addEventListener)for(var t=r.length;t;)this.addEventListener(r[--t],e,!1);else this.onmousewheel=e;n.data(this,"mousewheel-line-height",i.getLineHeight(this));n.data(this,"mousewheel-page-height",i.getPageHeight(this))},teardown:function(){if(this.removeEventListener)for(var t=r.length;t;)this.removeEventListener(r[--t],e,!1);else this.onmousewheel=null;n.removeData(this,"mousewheel-line-height");n.removeData(this,"mousewheel-page-height")},getLineHeight:function(t){var r=n(t),i=r["offsetParent"in n.fn?"offsetParent":"parent"]();return i.length||(i=n("body")),parseInt(i.css("fontSize"),10)||parseInt(r.css("fontSize"),10)||16},getPageHeight:function(t){return n(t).height()},settings:{adjustOldDeltas:!0,normalizeOffset:!0}};n.fn.extend({mousewheel:function(n){return n?this.bind("mousewheel",n):this.trigger("mousewheel")},unmousewheel:function(n){return this.unbind("mousewheel",n)}})}),t.define("jquery.select2",["jquery","jquery-mousewheel","./select2/core","./select2/defaults"],function(n,t,i,r){if(n.fn.select2==null){var u=["open","close","destroy"];n.fn.select2=function(t){if(t=t||{},typeof t=="object")return this.each(function(){var r=n.extend(!0,{},t),u=new i(n(this),r)}),this;if(typeof t=="string"){var r,f=Array.prototype.slice.call(arguments,1);return(this.each(function(){var i=n(this).data("select2");i==null&amp;&amp;window.console&amp;&amp;console.error&amp;&amp;console.error("The select2('"+t+"') method was called on an element that is not using Select2.");r=i[t].apply(i,f)}),n.inArray(t,u)&gt;-1)?this:r}throw new Error("Invalid arguments for Select2: "+t);}}return n.fn.select2.defaults==null&amp;&amp;(n.fn.select2.defaults=r),i}),{define:t.define,require:t.require}}(),i=t.require("jquery.select2");return n.fn.select2.amd=t,i});</contentText>
   </asset>
-  <asset name="templates/act.observation.weight.json" mimeType="text/javascript">
+  <asset name="templates/act.adjuststock.json" mimeType="text/javascript">
     <contentText>{
   "$type": "Act",
+  "template": {
+    "mnemonic": "Act.AdjustStock"
+  },
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    },
+    "Consumable": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "playerModel": {
+        "$type":  "ManufacturedMaterial",
+        "id": ""
+      },
+      "actModel": {
+        "$type": "QuantityObservation",
+        "reasonConcept": "",
+        "value":  0
+      }
+    }
+  }
+}
+</contentText>
+  </asset>
+  <asset name="templates/act.countstock.json" mimeType="text/javascript">
+    <contentText>{
+  "$type": "Act",
+  "template": {
+    "mnemonic": "Act.CountStock"
+  },
+  "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
+  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "actTime": "{{now}}",
+  "participation": {
+    "Location": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{facilityId}}"
+    },
+    "Authororiginator": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "player": "{{userId}}"
+    },
+    "Consumable": {
+      "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
+      "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+      "playerModel": {
+        "$type":  "ManufacturedMaterial",
+        "id": ""
+      },
+      "actModel": {
+        "$type": "QuantityObservation",
+        "reasonConcept": "5edb55a1-723c-46e4-9fee-2c94db20b7ab",
+        "value":  0
+      }
+    }
+  }
+}
+</contentText>
+  </asset>
+  <asset name="templates/act.observation.weight.json" mimeType="text/javascript">
+    <contentText>{
+  "$type": "PatientEncounter",
   "template": {
     "mnemonic": "Act.Observation.Weight"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
   "actTime": "{{now}}",
   "participation": {
@@ -15449,12 +15640,14 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" style="max-height:200px; overflow-y:scroll">
           <ul class="list-group">
-            <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'" ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
-              <h4 class="list-group-item-heading">{{act.actModel.classConceptModel.name[$root.page.locale] }} - {{act.actModel.typeConceptModel.name[$root.page.locale]}} <small>({{ act.actModel.startTime | date: 'yyyy-MM-dd' }} - {{act.actModel.stopTime | date: 'yyyy-MM-dd'}})</small></h4>
+            <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079' &amp;&amp; act.actModel.startTime &lt; currentDate" ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
+              <h4 class="list-group-item-heading">
+                {{act.actModel.classConceptModel.name[$root.page.locale] }}  {{act.actModel.typeConceptModel.name[$root.page.locale]}}
+            </h4>
               <p class="list-group-item-text">
-                <em>
-                  <mark>TODO: Summary of the act here</mark>
-                </em>
+                <small>Encounter Start: {{ act.actModel.startTime | date: 'yyyy-MM-dd' }} </small>
+                <small ng-if="act.actModel.stopTime!=null">Encounter End: {{act.actModel.stopTime | date: 'yyyy-MM-dd'}}</small>
+                <small ng-if="act.actModel.typeConceptModel.name[$root.page.locale]!='BODY WEIGHT (MEASURED)'">Vaccine: {{act.vaccineName}}</small>
               </p>
             </li>
           </ul>
@@ -15558,18 +15751,31 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       </content>
     </contentHtml>
   </asset>
+  <asset name="views/common/patients/view/partials/mother-summary.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="list-group">
+          <a ng-click="viewPerson(rel.id)" ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="list-group-item">
+            <h4 class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</h4>
+            <small>ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+            <div ng-repeat="contact in rel.targetModel.telecom">
+              <small>Contact: {{contact.value}}</small>
+            </div>
+          </a>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
   <asset name="views/common/patients/view/partials/relationship-summary.html" mimeType="text/html">
     <contentHtml>
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="list-group">
-          <a ng-click="viewPerson(rel.id)" ng-repeat="(typ, rel) in patient.relationship" ng-if="rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient'" class="list-group-item">
-            <!-- TODO: Have the serializer send down the relationshipType so I can render it -->
-            <h4 class="list-group-item-heading">{{rel.targetModel.name.OfficialRecord | oizEntityName}} <small>({{typ}}) - {{rel.targetModel.identifier | oizEntityIdentifier}}</small></h4>
-            <p class="list-group-item-text">
-              <em>
-                <mark>TODO: What information would be useful here?</mark>
-              </em>
-            </p>
+          <a ng-click="viewPerson(rel.id)" ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ!='Mother'" class="list-group-item">
+            <h4 class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</h4>
+            <small>ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+            <div ng-repeat="contact in rel.targetModel.telecom">
+              <small>Contact: {{contact.value}}</small>
+            </div>
           </a>
         </div>
       </content>
@@ -16153,6 +16359,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                         <td>{{ vaccine.quantity }}</td>
                         <td>
                           <a class="btn btn-primary" ng-href="adjust.html?id={{vaccine.id}}&amp;version={{vaccine.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                          <a class="btn btn-primary" ng-href="stockCount.html?id={{vaccine.id}}&amp;version={{vaccine.version}}">{{ 'locale.stock.action.count' | i18n }}</a>
                         </td>
                       </tr>
                     </tbody>
@@ -16164,6 +16371,65 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/stock/stockcount.html" mimeType="text/html">
+    <contentHtml>
+      <title lang="en">Stock Count</title>
+      <layout>/org.openiz.core/layouts/navbar.html</layout>
+      <script>~/controllers/common/stock/countstock.js</script>
+      <content>
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="CountStockController" oiz:layout="/org.openiz.core/layouts/navbar.html">
+          <div class="panel panel-default">
+            <div class="panel panel-heading">
+            {{ 'locale.stock.countStock' | i18n }}
+        </div>
+            <div class="panel panel-body">
+              <form name="countStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="countStockForm.$valid &amp;&amp; countStock()">
+                <div class="form-group">
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="gtin" ng-model="gtin" class="form-control" readonly="readonly" />
+                  </div>
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
+                  </div>
+                  <label class="col-xs-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
+                  <div class="col-sm-4">
+                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : countStockForm.dateRecorded.$invalid &amp;&amp; (countStockForm.dateRecorded.$touched || countStockForm.$submitted) }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ $root.page.loadTime | date: 'dd-MM-yyyy' }}" name="dateRecorded" class="form-control" />
+                    <p ng-show="countStockForm.dateRecorded.$invalid &amp;&amp; (countStockForm.dateRecorded.$touched || countStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : countStockForm.count.$invalid &amp;&amp; (countStockForm.count.$touched || countStockForm.$submitted) }">
+                  <label class="col-md-2 control-label">{{ 'locale.stock.amount' | i18n }}</label>
+                  <div class="col-md-10">
+                    <input type="number" name="quantity" ng-required="true" ng-model="count" class="form-control" />
+                    <p ng-show="countStockForm.count.$invalid &amp;&amp; (countStockForm.count.$touched || countStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -17400,6 +17666,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.stock.action.transfer">Transfer</string>
+    <string key="locale.stock.action.count">Stock Count</string>
     <string key="locale.stock.adjustStock">Adjust Stock</string>
     <string key="locale.stock.lowstock">Low Stock</string>
     <string key="locale.stock.ordersummary.title">Order Summary</string>
@@ -17412,6 +17679,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.stock.unitOfMeasure">Unit of Measure</string>
     <string key="locale.stock.adjustmentReason">Adjustment Reason</string>
     <string key="locale.stock.quantity">Quantity</string>
+    <string key="locale.stock.amount">Stock Counted</string>
+    <string key="locale.stock.countStock">Count Stock</string>
     <string key="locale.stock.notes">Notes</string>
     <string key="locale.stock.errors.dateRecordedRequired">Please enter a recorded date</string>
     <string key="locale.stock.errors.unitOfMeasureRequired">Please select a unit of measure</string>

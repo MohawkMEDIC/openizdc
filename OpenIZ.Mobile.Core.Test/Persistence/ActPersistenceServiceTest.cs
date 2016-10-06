@@ -187,9 +187,10 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             // Now update the act
             var oldVerison = afterTest.VersionKey;
             var oldCt = afterTest.CreationTime;
+            var oldNegated = underTest.IsNegated;
             Thread.Sleep(1000);
             var afterUpdate = base.DoTestUpdate(afterTest, "IsNegated");
-            Assert.AreNotEqual(underTest.IsNegated, afterUpdate.IsNegated);
+            Assert.AreNotEqual(oldNegated, afterUpdate.IsNegated);
             Assert.AreNotEqual(oldVerison, afterUpdate.VersionKey);
             Assert.AreEqual(oldVerison, afterUpdate.PreviousVersionKey);
             Assert.AreNotEqual(oldCt, afterUpdate.CreationTime);

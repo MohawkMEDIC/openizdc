@@ -403,8 +403,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         public void HandlePostPersistenceEvent(Object data)
         {
-                this.AddUpdateEntry(data);
-
+            this.AddUpdateEntry(data);
         }
 
         /// <summary>

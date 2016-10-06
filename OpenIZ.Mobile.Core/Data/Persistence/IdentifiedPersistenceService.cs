@@ -168,8 +168,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
 
                 foreach (var s in parms) {
-
-
+                    
                     object rValue = s.Value;
                     if (!(rValue is IList))
                         rValue = new List<Object>() { rValue };
@@ -191,6 +190,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     foreach (var itm in rValue as IList)
                     {
                         var value = itm;
+
+                        if (key == "id") key = "uuid";
 
                         if (value is String)
                         {

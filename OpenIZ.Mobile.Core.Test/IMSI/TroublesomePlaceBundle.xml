@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Bundle xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://openiz.org/model">
-  <id>e7d60d42-e69b-409b-bf1d-0a28e221eb5e</id>
+  
   <item xsi:type="Place">
-    <id>6091276d-ef1d-4e4c-a171-3d2745576c2f</id>
     <creationTime>2016-07-22T02:37:08.6130000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -13,13 +12,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>fb4e7491-906d-47d3-a153-262b4f3ab910</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>15065</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -29,13 +28,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>45043382-2d89-41f7-ae12-790244782f65</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:201D1D6D-EE92-3E7E-8CA3-3D5D5A8FCD39</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -45,7 +44,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>dd7afab4-c488-4804-8930-30bae31222c5</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -54,12 +53,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>f81a6eb7-c60a-4241-8328-108f70250d6d</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -67,12 +66,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>b6f02902-67be-4e27-8be5-209ec961f18a</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -80,12 +79,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>d974aa0e-7cad-481d-9a33-75eff58fa7bd</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -93,12 +92,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>afd0b9c1-bc29-421a-90c7-ef1c6c9d2353</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -106,13 +105,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>a53f900d-a6d9-4001-acec-8ccaf2a224a0</id>
+      
       <source>6091276d-ef1d-4e4c-a171-3d2745576c2f</source>
       <effectiveVersionSequence>125</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>7acf32a9-6bd5-4623-98b8-fc3a11dc3899</id>
+        
         <source>a53f900d-a6d9-4001-acec-8ccaf2a224a0</source>
         <type xsi:nil="true" />
         <value>Nduruma Health Centre</value>
@@ -120,7 +119,7 @@
       </component>
     </name>
     <tag>
-      <id>3ae395d4-80ec-4abc-b385-d6d4319ec5d6</id>
+      
       <creationTime>2016-07-22T02:37:08.7170000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -133,7 +132,6 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>a49a1a85-2752-4c60-ae31-6e300b25f8c9</id>
     <creationTime>2016-07-22T02:38:29.8470000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -144,13 +142,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>d5af4e3b-d9ba-48d8-b757-7ded95cb4101</id>
+      
       <source>a49a1a85-2752-4c60-ae31-6e300b25f8c9</source>
       <effectiveVersionSequence>785</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16414</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -160,13 +158,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>5709890e-112a-4cc1-a045-c5d43a67ab3e</id>
+      
       <source>a49a1a85-2752-4c60-ae31-6e300b25f8c9</source>
       <effectiveVersionSequence>785</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.LO.7.1.1</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -176,7 +174,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>f653c1e1-2960-45fe-98fc-f2983ad71fe9</id>
+      
       <source>a49a1a85-2752-4c60-ae31-6e300b25f8c9</source>
       <effectiveVersionSequence>785</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -185,12 +183,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>ca13cebf-081b-4a27-96ef-93408ee3ad6a</id>
+      
       <source>a49a1a85-2752-4c60-ae31-6e300b25f8c9</source>
       <effectiveVersionSequence>785</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -198,13 +196,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>199df84a-31e1-432f-b41e-c0d8c8de23a2</id>
+      
       <source>a49a1a85-2752-4c60-ae31-6e300b25f8c9</source>
       <effectiveVersionSequence>785</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>6a55fd09-578b-4587-8fb7-b0d624baff7c</id>
+        
         <source>199df84a-31e1-432f-b41e-c0d8c8de23a2</source>
         <type xsi:nil="true" />
         <value>Orkejuloongishu</value>
@@ -212,7 +210,7 @@
       </component>
     </name>
     <tag>
-      <id>cfcdbb69-9a60-434e-8c82-831e186221f6</id>
+      
       <creationTime>2016-07-22T02:38:29.9400000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -225,7 +223,6 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Concept">
-    <id>c8064cbd-fa06-4530-b430-1a52f1530c27</id>
     <creationTime>2016-07-22T02:35:12.0030000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -237,14 +234,12 @@
     <conceptClass>54b93182-fc19-47a2-82c6-089fd70a4f45</conceptClass>
   </item>
   <item xsi:type="ConceptClass">
-    <id>54b93182-fc19-47a2-82c6-089fd70a4f45</id>
     <creationTime>2016-07-22T02:35:11.6600000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <name>Status</name>
     <mnemonic>Status</mnemonic>
   </item>
   <item xsi:type="Concept">
-    <id>a683d3c9-a0b5-405e-8898-2a9011eec994</id>
     <creationTime>2016-07-22T02:36:50.6200000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -255,7 +250,7 @@
     <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
     <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
     <name>
-      <id>78a7d4d8-bc70-41e1-bba4-52664f9985ef</id>
+      
       <source>a683d3c9-a0b5-405e-8898-2a9011eec994</source>
       <effectiveVersionSequence>560</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -265,14 +260,12 @@
     </name>
   </item>
   <item xsi:type="ConceptClass">
-    <id>0d6b3439-c9be-4480-af39-eeb457c052d0</id>
     <creationTime>2016-07-22T02:35:11.6630000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <name>Other Classification</name>
     <mnemonic>Other</mnemonic>
   </item>
   <item xsi:type="Concept">
-    <id>779b6a1d-2468-4d08-911d-59c206462fde</id>
     <creationTime>2016-07-22T02:36:50.4630000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -283,7 +276,7 @@
     <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
     <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
     <name>
-      <id>5937638d-baf6-4de4-a4ad-8ebc4ddbb7da</id>
+      
       <source>779b6a1d-2468-4d08-911d-59c206462fde</source>
       <effectiveVersionSequence>554</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -293,7 +286,6 @@
     </name>
   </item>
   <item xsi:type="Place">
-    <id>80f72627-f520-49dc-8971-33d6a5fb4a98</id>
     <creationTime>2016-07-22T02:37:53.6030000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -304,13 +296,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>835f8eef-f030-4fb2-8a20-6a87d933a5e5</id>
+      
       <source>80f72627-f520-49dc-8971-33d6a5fb4a98</source>
       <effectiveVersionSequence>481</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.19</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -320,13 +312,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>aa0484d2-5fd6-42ca-89a8-b3433526e9b6</id>
+      
       <source>80f72627-f520-49dc-8971-33d6a5fb4a98</source>
       <effectiveVersionSequence>481</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16190</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -336,7 +328,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>30ff31b2-7917-418a-bc7c-a08acad7f687</id>
+      
       <source>80f72627-f520-49dc-8971-33d6a5fb4a98</source>
       <effectiveVersionSequence>481</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -345,12 +337,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>c93e0fda-25af-4674-8535-dca5046c41c3</id>
+      
       <source>80f72627-f520-49dc-8971-33d6a5fb4a98</source>
       <effectiveVersionSequence>481</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -358,13 +350,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>bfce52a3-2f4b-4f88-86a0-e87d23ba74c2</id>
+      
       <source>80f72627-f520-49dc-8971-33d6a5fb4a98</source>
       <effectiveVersionSequence>481</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>094485fb-2bca-47ee-abe2-9683e3ed7b2a</id>
+        
         <source>bfce52a3-2f4b-4f88-86a0-e87d23ba74c2</source>
         <type xsi:nil="true" />
         <value>Moshono</value>
@@ -372,7 +364,7 @@
       </component>
     </name>
     <tag>
-      <id>9ab37872-36f7-42eb-9210-3414b24d6a4c</id>
+      
       <creationTime>2016-07-22T02:37:53.6930000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -385,7 +377,6 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>9e5ee783-0809-4d6f-b9dc-d9f287245686</id>
     <creationTime>2016-07-22T02:38:26.4300000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -396,13 +387,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>ac2da77a-7b03-4a6f-ae50-53243c2a5e6f</id>
+      
       <source>9e5ee783-0809-4d6f-b9dc-d9f287245686</source>
       <effectiveVersionSequence>757</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16397</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -412,13 +403,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>546bc4c4-eb76-420b-a661-545543a63fa8</id>
+      
       <source>9e5ee783-0809-4d6f-b9dc-d9f287245686</source>
       <effectiveVersionSequence>757</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.KR.4.6.3</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -428,7 +419,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>ec0e6cb6-5712-4a38-af1a-59e22d5ef2e1</id>
+      
       <source>9e5ee783-0809-4d6f-b9dc-d9f287245686</source>
       <effectiveVersionSequence>757</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -437,12 +428,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>dbad5a9a-f147-4234-973d-2cd92ec79a41</id>
+      
       <source>9e5ee783-0809-4d6f-b9dc-d9f287245686</source>
       <effectiveVersionSequence>757</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -450,13 +441,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>05579e80-d111-495a-85e6-0b8acfd7ac5e</id>
+      
       <source>9e5ee783-0809-4d6f-b9dc-d9f287245686</source>
       <effectiveVersionSequence>757</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>8f72c9b5-5bef-4797-a376-1fc55125e9a4</id>
+        
         <source>05579e80-d111-495a-85e6-0b8acfd7ac5e</source>
         <type xsi:nil="true" />
         <value>Jobaj</value>
@@ -464,7 +455,7 @@
       </component>
     </name>
     <tag>
-      <id>636f1405-f019-474b-b6ea-d15db7a5f458</id>
+      
       <creationTime>2016-07-22T02:38:26.5270000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -477,7 +468,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>9face630-89c2-466b-8674-8ec4a889a509</id>
+    
     <creationTime>2016-07-22T02:38:01.1070000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -488,13 +479,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>b0a57127-f423-45d3-93d9-8b7e5df4f80a</id>
+      
       <source>9face630-89c2-466b-8674-8ec4a889a509</source>
       <effectiveVersionSequence>544</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16178</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -504,13 +495,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>d0284cbe-9598-4ca1-b909-b971bb9e7a68</id>
+      
       <source>9face630-89c2-466b-8674-8ec4a889a509</source>
       <effectiveVersionSequence>544</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.17.8</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -520,7 +511,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>52d6b33a-1fac-45b0-8f74-a92618814731</id>
+      
       <source>9face630-89c2-466b-8674-8ec4a889a509</source>
       <effectiveVersionSequence>544</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -529,12 +520,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>1b3b2b13-d8d0-4a0d-aad2-dc94f7c5d1ce</id>
+      
       <source>9face630-89c2-466b-8674-8ec4a889a509</source>
       <effectiveVersionSequence>544</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -542,13 +533,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>da4e4ce5-c8d1-4cdf-a008-1011f72e8c89</id>
+      
       <source>9face630-89c2-466b-8674-8ec4a889a509</source>
       <effectiveVersionSequence>544</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>76dd8763-63d7-4e0c-871f-8c2c3886c654</id>
+        
         <source>da4e4ce5-c8d1-4cdf-a008-1011f72e8c89</source>
         <type xsi:nil="true" />
         <value>Kware</value>
@@ -556,7 +547,7 @@
       </component>
     </name>
     <tag>
-      <id>a014e3c1-4550-4d05-b5c9-bdccd6d26456</id>
+      
       <creationTime>2016-07-22T02:38:01.1930000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -569,7 +560,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>b7809aa0-9112-4ebf-a91a-4517014d0d1e</id>
+    
     <creationTime>2016-07-22T02:37:00.4870000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -580,13 +571,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>8bac3549-d103-4fd7-9698-ccaff8ed7758</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:EC36C222-AFCB-3A4F-B4C6-29F32ACBA98A</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -596,13 +587,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>36834d5e-3214-4cad-a1ff-fccc7f3264a3</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>13442</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -612,7 +603,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>dc20a7ec-a0bc-4c27-989a-58532d3bc0e2</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -677,12 +668,12 @@
       <inversionInd>true</inversionInd>
     </relationship>
     <extension>
-      <id>877aa19a-737c-408c-b34a-0b710dfdce07</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -690,12 +681,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>e6c48117-ea96-4dd8-b2eb-34230ba78c20</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -703,12 +694,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>d0e2e4b0-6b47-42aa-8e40-5c86028b2f72</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -716,12 +707,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>93078c0e-9e96-4449-8ac4-827f2f58b591</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -729,13 +720,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>1efb4f63-dc28-4be0-a67e-65ba29844a94</id>
+      
       <source>b7809aa0-9112-4ebf-a91a-4517014d0d1e</source>
       <effectiveVersionSequence>62</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>24f9daf1-4183-4676-b9ce-cb7c86e52fb1</id>
+        
         <source>1efb4f63-dc28-4be0-a67e-65ba29844a94</source>
         <type xsi:nil="true" />
         <value>Imani Arusha Dispensary</value>
@@ -743,7 +734,7 @@
       </component>
     </name>
     <tag>
-      <id>f2f57d0a-7352-4422-b2bf-9d41ab53f7ad</id>
+      
       <creationTime>2016-07-22T02:37:00.6100000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -756,7 +747,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>1b1dccec-f097-4c62-a826-412c244729e4</id>
+    
     <creationTime>2016-07-22T02:37:57.6500000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -767,13 +758,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>f6e25ea9-f9e2-4cfe-bee2-5ca9bc3c70eb</id>
+      
       <source>1b1dccec-f097-4c62-a826-412c244729e4</source>
       <effectiveVersionSequence>515</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.12.2</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -783,13 +774,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>44b7b944-9789-4978-94cd-99aa05bdc51b</id>
+      
       <source>1b1dccec-f097-4c62-a826-412c244729e4</source>
       <effectiveVersionSequence>515</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16137</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -799,7 +790,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>e2610aed-c7e2-4be9-800f-11182faaa78f</id>
+      
       <source>1b1dccec-f097-4c62-a826-412c244729e4</source>
       <effectiveVersionSequence>515</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -808,12 +799,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>1775d001-0172-4b5d-b43c-3c834e9dd9da</id>
+      
       <source>1b1dccec-f097-4c62-a826-412c244729e4</source>
       <effectiveVersionSequence>515</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -821,13 +812,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>d1ef4298-79f3-464e-b893-99cd52fb90eb</id>
+      
       <source>1b1dccec-f097-4c62-a826-412c244729e4</source>
       <effectiveVersionSequence>515</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>cac5e2a6-201b-4eec-a582-e6bea91d2aee</id>
+        
         <source>d1ef4298-79f3-464e-b893-99cd52fb90eb</source>
         <type xsi:nil="true" />
         <value>Darajani</value>
@@ -835,7 +826,7 @@
       </component>
     </name>
     <tag>
-      <id>8bc71b0c-a1d9-43ba-9a42-86e4137032ff</id>
+      
       <creationTime>2016-07-22T02:37:57.7400000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -848,7 +839,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>abb50eea-ea79-403e-b452-369c7ea6b2ce</id>
+    
     <creationTime>2016-07-22T02:38:42.7730000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -859,13 +850,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>7a6b9134-47ab-4eb3-8100-3d9dbbe64471</id>
+      
       <source>abb50eea-ea79-403e-b452-369c7ea6b2ce</source>
       <effectiveVersionSequence>892</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.NO.5.5</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -875,13 +866,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>be0a6ef4-91df-4f84-b5aa-bea00f6fb855</id>
+      
       <source>abb50eea-ea79-403e-b452-369c7ea6b2ce</source>
       <effectiveVersionSequence>892</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16569</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -891,7 +882,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>704633ea-c477-4958-ac5c-63bfe82f1378</id>
+      
       <source>abb50eea-ea79-403e-b452-369c7ea6b2ce</source>
       <effectiveVersionSequence>892</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -900,12 +891,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>1be65156-a32f-4aab-b48d-549fe0cee413</id>
+      
       <source>abb50eea-ea79-403e-b452-369c7ea6b2ce</source>
       <effectiveVersionSequence>892</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -913,13 +904,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>e43dfdb5-bf02-429d-a347-412d0183abbd</id>
+      
       <source>abb50eea-ea79-403e-b452-369c7ea6b2ce</source>
       <effectiveVersionSequence>892</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>9d90d977-5ea6-4946-8ff7-c9ae1c1d702b</id>
+        
         <source>e43dfdb5-bf02-429d-a347-412d0183abbd</source>
         <type xsi:nil="true" />
         <value>Sale</value>
@@ -927,7 +918,7 @@
       </component>
     </name>
     <tag>
-      <id>faf9ab35-0c06-443a-99e9-14d63bbc8bba</id>
+      
       <creationTime>2016-07-22T02:38:42.8700000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -940,7 +931,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</id>
+    
     <creationTime>2016-07-22T02:37:29.0630000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -951,13 +942,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>8af72ec2-51e6-4490-8f37-93a11fb699e9</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>18075</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -967,13 +958,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>1fec51da-3205-4c18-8778-9d1094341e79</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:B9379C35-99DA-30E2-B80B-38414147005F</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -983,7 +974,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>c937eac5-6fb0-4eda-84cc-750cd3c47ba4</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -992,12 +983,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>abcd1fde-7262-49da-bf3d-32b8094c081b</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1005,12 +996,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>2ae6db5c-cf1b-45f2-9b18-4e353734058f</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1018,12 +1009,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>9906d827-06e6-4ac5-b18a-70ece1536e7e</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1031,12 +1022,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>cbc605fc-93bf-4ff0-bed8-a6b7e48b0dcf</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1044,13 +1035,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>9702da51-d1ba-4cd7-9378-cf8a5c4f6777</id>
+      
       <source>2a8426fc-97e5-44ec-8564-3c6874d2b6a9</source>
       <effectiveVersionSequence>281</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>9a5dfbd0-99cb-41bb-877f-6254ee152ed0</id>
+        
         <source>9702da51-d1ba-4cd7-9378-cf8a5c4f6777</source>
         <type xsi:nil="true" />
         <value>Wayda Dispensary</value>
@@ -1058,7 +1049,7 @@
       </component>
     </name>
     <tag>
-      <id>87d8deef-b429-4b3c-9072-f6327a543990</id>
+      
       <creationTime>2016-07-22T02:37:29.1670000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1071,7 +1062,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>c3b7eef7-2660-4d81-912b-4b8423f0d141</id>
+    
     <creationTime>2016-07-22T02:38:09.9300000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1082,13 +1073,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>9288b514-b27c-4e18-9a03-8f88aff220bb</id>
+      
       <source>c3b7eef7-2660-4d81-912b-4b8423f0d141</source>
       <effectiveVersionSequence>619</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16282</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1098,13 +1089,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>c72b8616-3f3a-4c2b-9943-98a3dc0df61b</id>
+      
       <source>c3b7eef7-2660-4d81-912b-4b8423f0d141</source>
       <effectiveVersionSequence>619</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.6.15</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1114,7 +1105,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>5828406a-0c86-425c-ae4d-03803c6b6564</id>
+      
       <source>c3b7eef7-2660-4d81-912b-4b8423f0d141</source>
       <effectiveVersionSequence>619</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1123,12 +1114,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>9bc9a837-470c-41a8-8048-3c2239d7c66a</id>
+      
       <source>c3b7eef7-2660-4d81-912b-4b8423f0d141</source>
       <effectiveVersionSequence>619</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1136,13 +1127,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>191a92e0-44ff-4f5b-9b34-2866b1a5a5aa</id>
+      
       <source>c3b7eef7-2660-4d81-912b-4b8423f0d141</source>
       <effectiveVersionSequence>619</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>94cb4cf6-db0d-4683-8b2b-4603a5959dad</id>
+        
         <source>191a92e0-44ff-4f5b-9b34-2866b1a5a5aa</source>
         <type xsi:nil="true" />
         <value>Oljoro</value>
@@ -1150,7 +1141,7 @@
       </component>
     </name>
     <tag>
-      <id>d1798017-128e-48cd-9d06-78bab46e258f</id>
+      
       <creationTime>2016-07-22T02:38:10.0230000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1163,7 +1154,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>330ef00e-206c-463b-a13b-ca321d99e47a</id>
+    
     <creationTime>2016-07-22T02:37:52.3030000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1174,13 +1165,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>7dd9e23a-791f-4784-b19a-45a4328c2990</typeConcept>
     <identifier>
-      <id>9189f2fb-c1e1-4357-b8b2-71acc3ebb587</id>
+      
       <source>330ef00e-206c-463b-a13b-ca321d99e47a</source>
       <effectiveVersionSequence>470</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16110</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1190,13 +1181,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>d01dd6d2-6aa2-4a57-a934-c8ae2333c7f0</id>
+      
       <source>330ef00e-206c-463b-a13b-ca321d99e47a</source>
       <effectiveVersionSequence>470</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1206,7 +1197,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>56abfb49-e3c6-4478-ba85-cb3276103739</id>
+      
       <source>330ef00e-206c-463b-a13b-ca321d99e47a</source>
       <effectiveVersionSequence>470</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1215,12 +1206,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>aac0f5a9-cb8d-41a4-8edf-90533dc43706</id>
+      
       <source>330ef00e-206c-463b-a13b-ca321d99e47a</source>
       <effectiveVersionSequence>470</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1228,13 +1219,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>b0841187-54b2-4ecb-b140-8362b467976d</id>
+      
       <source>330ef00e-206c-463b-a13b-ca321d99e47a</source>
       <effectiveVersionSequence>470</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>84547609-55c5-4737-b712-33bf218d3f8e</id>
+        
         <source>b0841187-54b2-4ecb-b140-8362b467976d</source>
         <type xsi:nil="true" />
         <value>Arusha CC</value>
@@ -1242,7 +1233,7 @@
       </component>
     </name>
     <tag>
-      <id>72215199-dd30-4e73-889f-db24376d910e</id>
+      
       <creationTime>2016-07-22T02:37:52.3970000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1255,7 +1246,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>4bede6f2-d49d-436e-b12c-7f411a6c70fc</id>
+    
     <creationTime>2016-07-22T02:38:31.2770000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1266,13 +1257,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>23a6ef7a-ec83-4458-aabc-72568ec9f255</id>
+      
       <source>4bede6f2-d49d-436e-b12c-7f411a6c70fc</source>
       <effectiveVersionSequence>797</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.LO.7.16.2</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1282,13 +1273,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>3277d820-952b-4498-a256-c3ad58e742d1</id>
+      
       <source>4bede6f2-d49d-436e-b12c-7f411a6c70fc</source>
       <effectiveVersionSequence>797</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16433</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1298,7 +1289,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>9a71b411-dc5e-449e-981a-88c97ba9e16f</id>
+      
       <source>4bede6f2-d49d-436e-b12c-7f411a6c70fc</source>
       <effectiveVersionSequence>797</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1307,12 +1298,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>19f10676-03cc-40cf-a2d5-ca10459b4985</id>
+      
       <source>4bede6f2-d49d-436e-b12c-7f411a6c70fc</source>
       <effectiveVersionSequence>797</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1320,13 +1311,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>2eb99d81-9aee-4b98-a369-accf726306f1</id>
+      
       <source>4bede6f2-d49d-436e-b12c-7f411a6c70fc</source>
       <effectiveVersionSequence>797</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>83a91da5-b5fb-4465-9afb-5093a1d22534</id>
+        
         <source>2eb99d81-9aee-4b98-a369-accf726306f1</source>
         <type xsi:nil="true" />
         <value>Irkaswa</value>
@@ -1334,7 +1325,7 @@
       </component>
     </name>
     <tag>
-      <id>1648d79d-0091-46cb-a901-babfe45d8dbd</id>
+      
       <creationTime>2016-07-22T02:38:31.3700000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1347,7 +1338,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>e7b7ef55-b65d-47a6-8d81-f453b551df42</id>
+    
     <creationTime>2016-07-22T02:37:13.8400000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1358,13 +1349,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>ec1b1a34-9d1f-4a9f-8521-ef8d265ba333</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>15296</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -1374,13 +1365,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>6c9f9a79-4458-454f-badf-f8eee35f02d2</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:7B8CD0F1-5AF3-312B-94E0-1F327BF32E57</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1390,7 +1381,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>28497775-5427-4a80-a1ef-6a1c5a72a927</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1399,12 +1390,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>831d16dc-5085-4b55-8023-1cdb959fcd34</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1412,12 +1403,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>303773b2-6467-4712-b4cb-459e9a514141</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1425,12 +1416,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>7235505d-dd9e-4406-a1d5-48621f147308</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1438,12 +1429,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>c0b2b5fc-892b-4e5e-ac30-e56c069e5a92</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1451,13 +1442,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>91325dba-88c5-401b-9060-04c1af85b11a</id>
+      
       <source>e7b7ef55-b65d-47a6-8d81-f453b551df42</source>
       <effectiveVersionSequence>165</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>b8f286f2-421c-47ab-9aeb-42db12c7da93</id>
+        
         <source>91325dba-88c5-401b-9060-04c1af85b11a</source>
         <type xsi:nil="true" />
         <value>Irkepusi Dispensary</value>
@@ -1465,7 +1456,7 @@
       </component>
     </name>
     <tag>
-      <id>f18d6164-ed1d-4def-a6c8-cb9a188b6893</id>
+      
       <creationTime>2016-07-22T02:37:13.9430000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1478,7 +1469,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>cbe0f29e-edf9-403a-b29d-473d3746cac1</id>
+    
     <creationTime>2016-07-22T02:36:53.8900000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1489,13 +1480,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>e500c6a4-6f34-4c41-a9dc-865fe3dca675</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:32B5CBCF-5BDB-3837-936D-32EC5DE887CD</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1505,13 +1496,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>212b9e10-c0b4-419d-8c0b-a439bb7bad96</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>12678</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -1521,7 +1512,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>d8ab7c4f-a9c2-4c4e-9414-e71cb9c9ca8e</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1530,12 +1521,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>3b94334b-cc88-4317-a62a-34698d2398c9</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1543,12 +1534,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>b0c5533d-8c52-4768-8c1d-9852ca1db3ee</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1556,12 +1547,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>fb4b8887-669b-4a7d-bc93-e5627282af2d</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1569,12 +1560,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>3500983c-7bb0-4fa8-8e26-f84907bdc69e</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1582,13 +1573,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>1358a388-7807-4e4e-b5ce-6547654ffda3</id>
+      
       <source>cbe0f29e-edf9-403a-b29d-473d3746cac1</source>
       <effectiveVersionSequence>16</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>c353cfc2-235f-46df-9b03-b60d7f26fbe8</id>
+        
         <source>1358a388-7807-4e4e-b5ce-6547654ffda3</source>
         <type xsi:nil="true" />
         <value>Kam Medical Health Centre</value>
@@ -1596,7 +1587,7 @@
       </component>
     </name>
     <tag>
-      <id>6cbb9016-3c3d-480f-910a-a400677ab1bf</id>
+      
       <creationTime>2016-07-22T02:36:54.0170000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1609,7 +1600,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>f105f6f9-0002-49a8-831c-b2068c03baed</id>
+    
     <creationTime>2016-07-22T02:38:00.7630000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1620,13 +1611,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>c8027b29-3f1d-4e34-8eea-c3760583b505</id>
+      
       <source>f105f6f9-0002-49a8-831c-b2068c03baed</source>
       <effectiveVersionSequence>541</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16167</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1636,13 +1627,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>83cb03f4-47bd-435e-ad93-fd3aa3a9c806</id>
+      
       <source>f105f6f9-0002-49a8-831c-b2068c03baed</source>
       <effectiveVersionSequence>541</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.17.11</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1652,7 +1643,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>76107278-2d60-43cb-8ccc-7f86af507762</id>
+      
       <source>f105f6f9-0002-49a8-831c-b2068c03baed</source>
       <effectiveVersionSequence>541</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1661,12 +1652,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>40929c35-46c1-47df-b497-008c18fd6f1f</id>
+      
       <source>f105f6f9-0002-49a8-831c-b2068c03baed</source>
       <effectiveVersionSequence>541</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1674,13 +1665,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>2324b823-4edf-41cd-9f4e-69d71141de05</id>
+      
       <source>f105f6f9-0002-49a8-831c-b2068c03baed</source>
       <effectiveVersionSequence>541</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>e9161d99-bee6-4e12-b9e6-a553c619c33f</id>
+        
         <source>2324b823-4edf-41cd-9f4e-69d71141de05</source>
         <type xsi:nil="true" />
         <value>Olmatejo A</value>
@@ -1688,7 +1679,7 @@
       </component>
     </name>
     <tag>
-      <id>f66a5ef7-d5de-4918-b0d4-34f5ed4b0f02</id>
+      
       <creationTime>2016-07-22T02:38:00.8530000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1701,7 +1692,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>5add7992-dd5e-42b0-bb32-092bb08ccca3</id>
+    
     <creationTime>2016-07-22T02:37:02.1770000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1712,13 +1703,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>02fc3802-5067-4ef5-969c-20c27d8de3c4</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>13755</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -1728,13 +1719,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>5896a53c-fc0b-48cb-8d0f-2e2f3300dde5</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:F2646364-38E8-3E7B-BE23-D0DC1BEB75FD</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1744,7 +1735,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>070e3454-8d5b-40c0-81d2-2011ae449e0c</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1753,12 +1744,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>bf861a37-8895-4fea-85ed-6868a80a8fa7</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1766,12 +1757,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>2963bcb7-d0d9-4357-bfae-d9b53d37fadd</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1779,12 +1770,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>a0043832-d143-407d-9d01-e474728eab3a</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1792,12 +1783,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>e2a5e2eb-6909-4e83-b3e2-f380d40da716</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1805,13 +1796,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>e15f7f0f-2a67-46ef-b047-f129337b629d</id>
+      
       <source>5add7992-dd5e-42b0-bb32-092bb08ccca3</source>
       <effectiveVersionSequence>75</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>6acef3d0-c6c4-4efe-a87c-b042bb225cfd</id>
+        
         <source>e15f7f0f-2a67-46ef-b047-f129337b629d</source>
         <type xsi:nil="true" />
         <value>Samaria    Dispensary</value>
@@ -1819,7 +1810,7 @@
       </component>
     </name>
     <tag>
-      <id>3a353937-4be7-4a21-9759-cfed54d7515c</id>
+      
       <creationTime>2016-07-22T02:37:02.2870000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1832,7 +1823,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>e73b019d-2888-439d-9e1c-ca9881824b50</id>
+    
     <creationTime>2016-07-22T02:37:38.7600000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1843,13 +1834,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>c78ef452-a622-4e7e-ab7f-e5a01ac3dc17</typeConcept>
     <identifier>
-      <id>7506451a-aa9f-457c-9b15-bfc81dd59b1a</id>
+      
       <source>e73b019d-2888-439d-9e1c-ca9881824b50</source>
       <effectiveVersionSequence>357</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16521</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1859,13 +1850,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>3bd7da8e-3f35-430c-b315-ef5280f6e5bb</id>
+      
       <source>e73b019d-2888-439d-9e1c-ca9881824b50</source>
       <effectiveVersionSequence>357</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.NO</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1875,7 +1866,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>ea436c4e-7e9e-46fd-b41b-e2ed7a65530a</id>
+      
       <source>e73b019d-2888-439d-9e1c-ca9881824b50</source>
       <effectiveVersionSequence>357</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1884,12 +1875,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>445782d1-82a1-455c-a619-77f8aa1547b4</id>
+      
       <source>e73b019d-2888-439d-9e1c-ca9881824b50</source>
       <effectiveVersionSequence>357</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1897,13 +1888,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>e77e1c8a-95d0-4cc7-9905-0be65d320ad5</id>
+      
       <source>e73b019d-2888-439d-9e1c-ca9881824b50</source>
       <effectiveVersionSequence>357</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>516b09da-aa19-477c-b90e-e36296b88f67</id>
+        
         <source>e77e1c8a-95d0-4cc7-9905-0be65d320ad5</source>
         <type xsi:nil="true" />
         <value>Ngorongoro District</value>
@@ -1911,7 +1902,7 @@
       </component>
     </name>
     <tag>
-      <id>2323b5a0-a553-4faa-aa7a-c90212709282</id>
+      
       <creationTime>2016-07-22T02:37:38.8630000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -1924,7 +1915,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>5e845689-9036-4e5a-9e55-8a83f495759c</id>
+    
     <creationTime>2016-07-22T02:38:33.9600000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -1935,13 +1926,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>1d6be371-aa46-44c7-9468-271655ecb043</id>
+      
       <source>5e845689-9036-4e5a-9e55-8a83f495759c</source>
       <effectiveVersionSequence>819</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16475</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -1951,13 +1942,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>babdaa6b-e796-477a-9ba9-533331a3dc8e</id>
+      
       <source>5e845689-9036-4e5a-9e55-8a83f495759c</source>
       <effectiveVersionSequence>819</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.MN.1.13</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -1967,7 +1958,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>52c531c4-2cad-4c30-a74c-58f53168ddcf</id>
+      
       <source>5e845689-9036-4e5a-9e55-8a83f495759c</source>
       <effectiveVersionSequence>819</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -1976,12 +1967,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>a85fee09-17c0-4b7e-9ab8-a3056c0b9fea</id>
+      
       <source>5e845689-9036-4e5a-9e55-8a83f495759c</source>
       <effectiveVersionSequence>819</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -1989,13 +1980,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>7ad467eb-9427-4257-8f08-10476f6604f0</id>
+      
       <source>5e845689-9036-4e5a-9e55-8a83f495759c</source>
       <effectiveVersionSequence>819</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>73bef813-a760-4c8b-8f69-9a1cc9ce2854</id>
+        
         <source>7ad467eb-9427-4257-8f08-10476f6604f0</source>
         <type xsi:nil="true" />
         <value>Meserani</value>
@@ -2003,7 +1994,7 @@
       </component>
     </name>
     <tag>
-      <id>089061b3-91a8-45c3-9f40-910861ac12e3</id>
+      
       <creationTime>2016-07-22T02:38:34.0500000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2016,7 +2007,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</id>
+    
     <creationTime>2016-07-22T02:38:06.9800000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2027,13 +2018,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>575c0109-726e-43e5-b112-1d8949a22321</id>
+      
       <source>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</source>
       <effectiveVersionSequence>594</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16234</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -2043,13 +2034,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>5555992a-abb3-4542-a10b-1e5c58ec633b</id>
+      
       <source>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</source>
       <effectiveVersionSequence>594</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.8.7</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2059,7 +2050,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>3b97a7fc-acf3-464e-8a53-063bc1415a04</id>
+      
       <source>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</source>
       <effectiveVersionSequence>594</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2068,12 +2059,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>84903e0e-9ef7-4760-951d-25daa031a56c</id>
+      
       <source>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</source>
       <effectiveVersionSequence>594</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2081,13 +2072,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>3ea46edf-cd3e-4d9c-8051-ba92905f539b</id>
+      
       <source>5f4ae33e-e1be-4e66-ba74-59c2747e16eb</source>
       <effectiveVersionSequence>594</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>2e19972a-f638-454c-bf2b-77b90cc58f43</id>
+        
         <source>3ea46edf-cd3e-4d9c-8051-ba92905f539b</source>
         <type xsi:nil="true" />
         <value>Ilikirouwa</value>
@@ -2095,7 +2086,7 @@
       </component>
     </name>
     <tag>
-      <id>718f3928-7e24-4b96-aa22-158fe156f24e</id>
+      
       <creationTime>2016-07-22T02:38:07.0730000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2108,7 +2099,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>2881520f-5a1e-4a82-afa2-baeef9192a37</id>
+    
     <creationTime>2016-07-22T02:37:07.9800000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2119,13 +2110,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>8330275f-947f-435a-b9b1-395be9efa96d</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:9BDB31DE-4360-3D91-8CF4-9073A051D746</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2135,13 +2126,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>c6d4fa8d-132b-42c3-b6d8-946bf0d0efa8</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>15057</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -2151,7 +2142,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>b880d3cc-dce4-4644-a9c1-471691652290</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2216,12 +2207,12 @@
       <inversionInd>true</inversionInd>
     </relationship>
     <extension>
-      <id>3351c378-9ec4-4715-bed3-32665110fcf3</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2229,12 +2220,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>5a63b033-d423-4190-9aa7-e6a4b1a9e1cb</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2242,12 +2233,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>4242f7b7-c15b-4af5-bd90-f492152041a8</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2255,12 +2246,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>8f11a784-32d7-43ce-a9d4-fb50bb22c675</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2268,13 +2259,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>46bf365e-b00c-4da1-b6e6-2f2d7247321a</id>
+      
       <source>2881520f-5a1e-4a82-afa2-baeef9192a37</source>
       <effectiveVersionSequence>120</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>e5f1153b-6290-4e17-80c8-f4bf9c8df921</id>
+        
         <source>46bf365e-b00c-4da1-b6e6-2f2d7247321a</source>
         <type xsi:nil="true" />
         <value>Cannan Dispensary</value>
@@ -2282,7 +2273,7 @@
       </component>
     </name>
     <tag>
-      <id>a1322cf5-bca9-47a2-8528-8f08daf61df8</id>
+      
       <creationTime>2016-07-22T02:37:08.0830000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2295,7 +2286,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>8d325e1c-7aef-49e6-83d4-cd721586c75c</id>
+    
     <creationTime>2016-07-22T02:38:23.7330000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2306,13 +2297,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>6e5913ec-7641-4f58-8daf-02256813b192</id>
+      
       <source>8d325e1c-7aef-49e6-83d4-cd721586c75c</source>
       <effectiveVersionSequence>734</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16368</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -2322,13 +2313,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>dfc7b6e6-9aba-4455-9af5-eda36837b4ec</id>
+      
       <source>8d325e1c-7aef-49e6-83d4-cd721586c75c</source>
       <effectiveVersionSequence>734</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.KR.4.13.3</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2338,7 +2329,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>8bdf9453-1cdb-4a93-8b50-b632c7ffa3c4</id>
+      
       <source>8d325e1c-7aef-49e6-83d4-cd721586c75c</source>
       <effectiveVersionSequence>734</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2347,12 +2338,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>c2e4ed2e-7de9-4e39-8a60-4b921958e4c6</id>
+      
       <source>8d325e1c-7aef-49e6-83d4-cd721586c75c</source>
       <effectiveVersionSequence>734</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2360,13 +2351,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>e65e30c5-00b8-4435-99cd-7d5661a51da3</id>
+      
       <source>8d325e1c-7aef-49e6-83d4-cd721586c75c</source>
       <effectiveVersionSequence>734</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>bc7e1f8e-100f-4cb7-a102-5582b25d7c24</id>
+        
         <source>e65e30c5-00b8-4435-99cd-7d5661a51da3</source>
         <type xsi:nil="true" />
         <value>Slahhamo</value>
@@ -2374,7 +2365,7 @@
       </component>
     </name>
     <tag>
-      <id>4c07bfdb-e236-4bca-a619-5d1b2dd5f7c0</id>
+      
       <creationTime>2016-07-22T02:38:23.8200000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2387,7 +2378,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</id>
+    
     <creationTime>2016-07-22T02:37:22.3030000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2398,13 +2389,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>779b6a1d-2468-4d08-911d-59c206462fde</typeConcept>
     <identifier>
-      <id>f1d83b9f-657b-4ef4-aa68-b454cb526611</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>urn:uuid:91B64BC6-48B0-347F-B355-809F5074C34E</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2414,13 +2405,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>d325620b-9ac2-4a81-8c6f-f7802a95f85f</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>17486</value>
       <authority>
-        <id>2f3cbfc1-212e-44b3-9f53-e740d47d5261</id>
+        
         <creationTime>2016-07-22T02:36:51.0870000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Facility Identifiers</name>
@@ -2430,7 +2421,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>a966bd2c-084c-40b2-ae94-ceb6c3d712a5</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2439,12 +2430,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>bdb3ae90-5ec0-405b-9082-9ac8038125e0</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2452,12 +2443,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>2986242b-6578-4638-b028-9cb838ed59cb</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>afce6d7b-3503-4653-aa8e-dee173c7b9ff</id>
+        
         <creationTime>2016-07-22T02:36:51.2100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2465,12 +2456,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>74906a34-5ed0-47d4-bc55-d6ec2d8b5874</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>f1528cd4-2df5-4d69-8780-2f54dcb1e09a</id>
+        
         <creationTime>2016-07-22T02:36:51.2300000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.DecimalExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2478,12 +2469,12 @@
       </extensionType>
     </extension>
     <extension>
-      <id>bdf1dc8c-4c0b-4c5a-b822-f3d0f03cc2ef</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>1023868f-20c1-491b-9474-588cedddecb9</id>
+        
         <creationTime>2016-07-22T02:36:51.2230000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2491,13 +2482,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>4347fdaa-874d-4a57-9353-383c758d60b3</id>
+      
       <source>7cf543e2-c0a4-4f55-9ad5-babb2315eec8</source>
       <effectiveVersionSequence>229</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>de47b54f-9409-4706-aff8-a45f6f70901b</id>
+        
         <source>4347fdaa-874d-4a57-9353-383c758d60b3</source>
         <type xsi:nil="true" />
         <value>Momela ANAPA Dispensary</value>
@@ -2505,7 +2496,7 @@
       </component>
     </name>
     <tag>
-      <id>defc4138-ef22-45e1-a32c-e4d36968dce0</id>
+      
       <creationTime>2016-07-22T02:37:22.4100000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2518,7 +2509,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>39c04ef3-0798-4e64-8cd4-a344d8c4a338</id>
+    
     <creationTime>2016-07-22T02:38:39.2800000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2529,13 +2520,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>366f8d77-4967-4463-a476-10ccb5dfd307</id>
+      
       <source>39c04ef3-0798-4e64-8cd4-a344d8c4a338</source>
       <effectiveVersionSequence>863</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.MN.1.6.2</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2545,13 +2536,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>f97296f4-2e63-479d-939a-8873b352f03c</id>
+      
       <source>39c04ef3-0798-4e64-8cd4-a344d8c4a338</source>
       <effectiveVersionSequence>863</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16505</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -2561,7 +2552,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>122070bc-27be-4f31-a1c6-992e24c43be3</id>
+      
       <source>39c04ef3-0798-4e64-8cd4-a344d8c4a338</source>
       <effectiveVersionSequence>863</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2570,12 +2561,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>448556c5-bc65-475e-8304-ede397fac655</id>
+      
       <source>39c04ef3-0798-4e64-8cd4-a344d8c4a338</source>
       <effectiveVersionSequence>863</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2583,13 +2574,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>407df839-86c0-4c71-9ab6-03bc3963698a</id>
+      
       <source>39c04ef3-0798-4e64-8cd4-a344d8c4a338</source>
       <effectiveVersionSequence>863</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>d02641bf-4031-43c6-8e92-926232fa7b69</id>
+        
         <source>407df839-86c0-4c71-9ab6-03bc3963698a</source>
         <type xsi:nil="true" />
         <value>Moita Kilorit</value>
@@ -2597,7 +2588,7 @@
       </component>
     </name>
     <tag>
-      <id>65eb4d16-2876-4123-94ba-85c8cdf48611</id>
+      
       <creationTime>2016-07-22T02:38:39.3830000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2610,7 +2601,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>14ca419b-303e-4846-97c9-c9e7376c1258</id>
+    
     <creationTime>2016-07-22T02:37:51.5730000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2621,13 +2612,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>f71a0dd2-a013-4ae8-a695-7b5b337af0ba</id>
+      
       <source>14ca419b-303e-4846-97c9-c9e7376c1258</source>
       <effectiveVersionSequence>464</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16108</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -2637,13 +2628,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>f80eb54b-7216-4d7c-ad76-7bbd2d26ba9c</id>
+      
       <source>14ca419b-303e-4846-97c9-c9e7376c1258</source>
       <effectiveVersionSequence>464</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AM.2.9.5</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2653,7 +2644,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>08d446e7-4747-4deb-b20b-3f97511c7004</id>
+      
       <source>14ca419b-303e-4846-97c9-c9e7376c1258</source>
       <effectiveVersionSequence>464</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2662,12 +2653,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>ae34a8c3-b38f-49f2-9478-a9b2bfcb44ed</id>
+      
       <source>14ca419b-303e-4846-97c9-c9e7376c1258</source>
       <effectiveVersionSequence>464</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2675,13 +2666,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>fca5defe-4737-49c5-9dd8-0becffa677a9</id>
+      
       <source>14ca419b-303e-4846-97c9-c9e7376c1258</source>
       <effectiveVersionSequence>464</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>b42512e4-233e-4f19-830a-f55dadb6ccf4</id>
+        
         <source>fca5defe-4737-49c5-9dd8-0becffa677a9</source>
         <type xsi:nil="true" />
         <value>Valeska</value>
@@ -2689,7 +2680,7 @@
       </component>
     </name>
     <tag>
-      <id>1b734199-ba70-4557-8f32-86dd7b073341</id>
+      
       <creationTime>2016-07-22T02:37:51.6670000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2702,7 +2693,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Place">
-    <id>d8f23240-2ce1-4824-ae92-a34d1af75c55</id>
+    
     <creationTime>2016-07-22T02:37:55.9930000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2713,13 +2704,13 @@
     <creationAct xsi:nil="true" />
     <typeConcept>a683d3c9-a0b5-405e-8898-2a9011eec994</typeConcept>
     <identifier>
-      <id>17608f37-9d1b-4aa4-aaae-6577e9256832</id>
+      
       <source>d8f23240-2ce1-4824-ae92-a34d1af75c55</source>
       <effectiveVersionSequence>501</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>16116</value>
       <authority>
-        <id>c68a9a99-a416-4413-9360-e60f2592ee7a</id>
+        
         <creationTime>2016-07-22T02:37:37.8000000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>TIIS Place Identifiers</name>
@@ -2729,13 +2720,13 @@
       </authority>
     </identifier>
     <identifier>
-      <id>c692a4c8-23f4-474c-8e49-77025c9f5dc7</id>
+      
       <source>d8f23240-2ce1-4824-ae92-a34d1af75c55</source>
       <effectiveVersionSequence>501</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <value>TZ.NT.AS.AS.3.10.10</value>
       <authority>
-        <id>a5ce08b0-4edd-44f2-a732-116435fed5cc</id>
+        
         <creationTime>2016-07-22T02:36:51.1100000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <name>Facility Register Identifiers</name>
@@ -2745,7 +2736,7 @@
       </authority>
     </identifier>
     <relationship>
-      <id>58d76448-91b1-463d-bcf7-f9075501b896</id>
+      
       <source>d8f23240-2ce1-4824-ae92-a34d1af75c55</source>
       <effectiveVersionSequence>501</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2754,12 +2745,12 @@
       <inversionInd>false</inversionInd>
     </relationship>
     <extension>
-      <id>4e374ab6-6525-411a-9470-beaf1c33bc54</id>
+      
       <source>d8f23240-2ce1-4824-ae92-a34d1af75c55</source>
       <effectiveVersionSequence>501</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <extensionType>
-        <id>528b4d4c-8587-4e40-ac6e-7c52c0eeaa63</id>
+        
         <creationTime>2016-07-22T02:36:51.1770000+00:00</creationTime>
         <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
         <handlerClass>OpenIZ.Core.Extensions.BooleanExtensionHandler, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</handlerClass>
@@ -2767,13 +2758,13 @@
       </extensionType>
     </extension>
     <name>
-      <id>04c19a4e-1317-4d09-a29c-59c94875553b</id>
+      
       <source>d8f23240-2ce1-4824-ae92-a34d1af75c55</source>
       <effectiveVersionSequence>501</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
       <use>1ec9583a-b019-4baa-b856-b99caf368656</use>
       <component>
-        <id>d0dbb858-fd8a-4821-8dec-39e89ecad072</id>
+        
         <source>04c19a4e-1317-4d09-a29c-59c94875553b</source>
         <type xsi:nil="true" />
         <value>Olnjavutian</value>
@@ -2781,7 +2772,7 @@
       </component>
     </name>
     <tag>
-      <id>76803cbb-fada-4a46-8f9d-c2f62e914fa3</id>
+      
       <creationTime>2016-07-22T02:37:56.0830000+00:00</creationTime>
       <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
       <key>http://openiz.org/tags/contrib/importedData</key>
@@ -2794,7 +2785,7 @@
     <lng xsi:nil="true" />
   </item>
   <item xsi:type="Concept">
-    <id>7dd9e23a-791f-4784-b19a-45a4328c2990</id>
+    
     <creationTime>2016-07-22T02:36:50.5630000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2805,7 +2796,7 @@
     <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
     <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
     <name>
-      <id>d7bf9e26-7e7e-4952-a0dd-a6886ae2feaa</id>
+      
       <source>7dd9e23a-791f-4784-b19a-45a4328c2990</source>
       <effectiveVersionSequence>557</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />
@@ -2815,7 +2806,7 @@
     </name>
   </item>
   <item xsi:type="Concept">
-    <id>c78ef452-a622-4e7e-ab7f-e5a01ac3dc17</id>
+    
     <creationTime>2016-07-22T02:36:50.5470000+00:00</creationTime>
     <createdBy>fadca076-3690-4a6e-af9e-f1cd68e8c7e8</createdBy>
     <previousVersion xsi:nil="true" />
@@ -2826,7 +2817,7 @@
     <statusConcept>c8064cbd-fa06-4530-b430-1a52f1530c27</statusConcept>
     <conceptClass>0d6b3439-c9be-4480-af39-eeb457c052d0</conceptClass>
     <name>
-      <id>3cc3ecf5-5ad8-40ad-823b-d704c56a2a16</id>
+      
       <source>c78ef452-a622-4e7e-ab7f-e5a01ac3dc17</source>
       <effectiveVersionSequence>556</effectiveVersionSequence>
       <obsoleteVersionSequence xsi:nil="true" />

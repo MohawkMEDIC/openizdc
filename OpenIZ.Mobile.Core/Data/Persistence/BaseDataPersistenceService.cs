@@ -25,6 +25,7 @@ using SQLite.Net;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -71,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			domainObject.UpdatedTime = DateTime.Now;
 			context.Update(domainObject);
 
-			return data;
+            return data;
 		}
 
         /// <summary>

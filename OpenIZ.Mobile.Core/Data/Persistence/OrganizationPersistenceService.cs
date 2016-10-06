@@ -18,6 +18,7 @@
  * Date: 2016-6-28
  */
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
 using System;
@@ -40,8 +41,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Organization ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var organization = dataInstance as DbOrganization;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
+            var iddat = dataInstance as DbVersionedData;
+            var organization = dataInstance as DbOrganization ?? context.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context, loadFast);
             retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;

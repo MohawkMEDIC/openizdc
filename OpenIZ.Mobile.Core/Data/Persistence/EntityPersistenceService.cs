@@ -257,6 +257,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             byte[] entityUuid = retVal.Key.Value.ToByteArray();
 
+
+            // Set appropriate versioning 
+            retVal.PreviousVersion = new Entity()
+            {
+                ClassConcept = retVal.ClassConcept,
+                Key = retVal.Key,
+                VersionKey = retVal.PreviousVersionKey,
+                CreationTime = (DateTimeOffset)retVal.CreationTime,
+                CreatedByKey = retVal.CreatedByKey
+            };
+            retVal.CreationTime = DateTimeOffset.Now;
+            retVal.CreatedByKey = data.CreatedByKey == Guid.Empty || data.CreatedByKey == null ? base.CurrentUserUuid(context) : data.CreatedByKey;
+
+
             // Identifiers
             if (data.Identifiers != null)
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
