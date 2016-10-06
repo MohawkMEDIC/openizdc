@@ -85,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance as DbAct;
-            switch (new Guid(dbAct.ClassConceptUuid).ToString())
+            switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {
                 case ControlAct:
                     return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
@@ -93,7 +93,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Condition:
                 case Observation:
-                    var dbObs = context.Table<DbObservation>().First(o => o.Uuid == dbAct.Uuid);
+                    var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).First();
                     switch(dbObs.ValueType)
                     {
                         case "ST":
@@ -131,8 +131,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the act into the database
         /// </summary>
-        public override Act Insert(SQLiteConnectionWithLock context, Act data)
+        internal Act InsertInternal(SQLiteConnectionWithLock context, Act data)
         {
+            
             data.ClassConcept?.EnsureExists(context);
             data.MoodConcept?.EnsureExists(context);
             data.ReasonConcept?.EnsureExists(context);
@@ -196,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public override Act Update(SQLiteConnectionWithLock context, Act data)
+        internal Act UpdateInternal(SQLiteConnectionWithLock context, Act data)
         {
             data.ClassConcept?.EnsureExists(context);
             data.MoodConcept?.EnsureExists(context);
@@ -277,10 +278,60 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// Obsolete the act
         /// </summary>
         /// <param name="context"></param>
-        public override Act Obsolete(SQLiteConnectionWithLock context, Act data)
+        internal Act ObsoleteInternal(SQLiteConnectionWithLock context, Act data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);
         }
+
+        /// <summary>
+        /// Insert the specified act
+        /// </summary>
+        public override Act Insert(SQLiteConnectionWithLock context, Act data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case ControlAct:
+                    return new ControlActPersistenceService().Insert(context, data as ControlAct);
+                case SubstanceAdministration:
+                    return new SubstanceAdministrationPersistenceService().Insert(context, data as SubstanceAdministration);
+                case Condition:
+                case Observation:
+                    switch (data.GetType().Name)
+                    {
+                        case "TextObservation":
+                            return new TextObservationPersistenceService().Insert(context, data as TextObservation);
+                        case "CodedObservation":
+                            return new CodedObservationPersistenceService().Insert(context, data as CodedObservation);
+                        case "QuantityObservation":
+                            return new QuantityObservationPersistenceService().Insert(context, data as QuantityObservation);
+                        default:
+                            return this.InsertInternal(context, data);
+                    }
+                case Encounter:
+                    return new EncounterPersistenceService().Insert(context, data as PatientEncounter);
+                default:
+                    return this.InsertInternal(context, data);
+
+            }
+            
+        }
+
+        /// <summary>
+        /// Update the act
+        /// </summary>
+        public override Act Update(SQLiteConnectionWithLock context, Act data)
+        {
+            return this.UpdateInternal(context, data);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public override Act Obsolete(SQLiteConnectionWithLock context, Act data)
+        {
+            return this.ObsoleteInternal(context, data);
+        }
+
     }
 }

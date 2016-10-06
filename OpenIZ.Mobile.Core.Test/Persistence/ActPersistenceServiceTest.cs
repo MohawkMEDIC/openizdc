@@ -397,5 +397,36 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
             // Query: Give me exactly act 10294 created by TIIS
             base.DoTestQuery(o => o.Identifiers.Where(guard => guard.Authority.DomainName == "TIIS").Any(i => i.Value == "10294"), underTest.Key);
         }
+
+        /// <summary>
+        /// Test persistence of a generic act.
+        /// </summary>
+        [TestMethod]
+        public void TestPersistGenericAct()
+        {
+            var underTest = new QuantityObservation()
+            {
+                MoodConceptKey = ActMoodKeys.Eventoccurrence,
+                ActTime = DateTimeOffset.Now,
+                InterpretationConcept = new Concept()
+                {
+                    Mnemonic = "N"
+                },
+                TypeConcept = new Concept()
+                {
+                    Mnemonic = "VitalSigns-Weight"
+                },
+                Value = (decimal)1.2,
+                UnitOfMeasure = new Concept()
+                {
+                    Mnemonic = "kg"
+                }
+            };
+
+            var afterTest = base.DoTestInsert(underTest) as QuantityObservation;
+            Assert.IsNotNull(afterTest.InterpretationConcept);
+            Assert.IsNotNull(afterTest.UnitOfMeasure);
+            Assert.AreEqual((decimal)1.2, afterTest.Value);
+        }
     }
 }
