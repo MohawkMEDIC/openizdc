@@ -34,8 +34,29 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
+            
+            var inserted = base.Insert(context, data);
 
-            return base.Insert(context, data);
+            // Not pure observation
+            if (data.GetType() != typeof(Observation))
+            {
+                var dbobservation = new DbObservation()
+                {
+                    InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray(),
+                    Uuid = inserted.Key?.ToByteArray()
+                };
+                // Value type
+                if (data is QuantityObservation)
+                    dbobservation.ValueType = "PQ";
+                else if (data is TextObservation)
+                    dbobservation.ValueType = "ST";
+                else if (data is CodedObservation)
+                    dbobservation.ValueType = "CD";
+
+                // Persist
+                context.Insert(dbobservation);
+            }
+            return inserted;
         }
 
         /// <summary>
@@ -46,7 +67,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
 
-            return base.Update(context, data);
+            var updated = base.Update(context, data);
+
+            // Not pure observation
+            if (data.GetType() != typeof(Observation))
+            {
+                var dbobservation = new DbObservation()
+                {
+                    InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray(),
+                    Uuid = updated.Key?.ToByteArray()
+                };
+                context.Update(dbobservation);
+            }
+            return updated;
         }
     }
 
