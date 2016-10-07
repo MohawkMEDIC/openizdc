@@ -296,11 +296,23 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             {
                 // Gets the specified alert messages
                 NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+				var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+
+				List<string> key = null;
+
+				if (query.ContainsKey("id") && query.TryGetValue("id", out key))
+				{
+					var id = key?.FirstOrDefault();
+
+					return new List<AlertMessage> { alertService.Get(Guid.Parse(id)) };
+				}
+
                 var predicate = QueryExpressionParser.BuildLinqExpression<AlertMessage>(query);
                 int offset = query.ContainsKey("_offset") ? Int32.Parse(query["_offset"][0]) : 0,
                     count = query.ContainsKey("_count") ? Int32.Parse(query["_count"][0]) : 100;
 
-                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                
 
 				int totalCount = 0;
 

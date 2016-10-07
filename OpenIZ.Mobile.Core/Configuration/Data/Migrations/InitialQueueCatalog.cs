@@ -79,7 +79,6 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 					new LocalAlertService()?.Save(new AlertMessage()
 					{
 						Body = Strings.locale_welcomeMessageBody,
-						CreatedBy = securityRepository.GetUser(ApplicationContext.Current.Principal?.Identity),
 						From = "OpenIZ Team",
 						Flags = AlertMessageFlags.None,
 						Subject = Strings.locale_welcomeMessageSubject,
