@@ -92,7 +92,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			if (search.ContainsKey("id"))
 			{
 				// Force load from DB
-				MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));
+				MemoryCache.Current.RemoveObject(typeof(Act), Guid.Parse(search["id"].FirstOrDefault()));
 				var actId = Guid.Parse(search["id"].FirstOrDefault());
 				var act = actRepositoryService.Get<Act>(actId, Guid.Empty);
 				act = act.LoadDisplayProperties().LoadImmediateRelations();
