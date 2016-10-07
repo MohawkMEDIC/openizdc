@@ -78,20 +78,41 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         }
 
 		/// <summary>
-		/// Gets a list of patient encounters.
+		/// Gets a list of acts.
 		/// </summary>
-		/// <returns>Returns a list of patient encounters.</returns>
+		/// <returns>Returns a list of acts.</returns>
 		[RestOperation(Method = "GET", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Bundle GetAct()
 		{
-			var patientEncounterService = ApplicationContext.Current.GetService<IActRepositoryService>();
+			var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
 			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
+			if (search.ContainsKey("id"))
+			{
+				// Force load from DB
+				MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));
+				var actId = Guid.Parse(search["id"].FirstOrDefault());
+				var act = actRepositoryService.Get<Act>(actId, Guid.Empty);
+				act = act.LoadDisplayProperties().LoadImmediateRelations();
+
+				Bundle bundle = new Bundle();
+
+				if (act != null)
+				{
+					bundle.Count = 1;
+					bundle.Item = new List<IdentifiedData> { act };
+					bundle.Reconstitute();
+					bundle.TotalResults = 1;
+				}
+
+				return bundle;
+			}
+
 			int totalResults = 0;
 
-			var results = patientEncounterService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
+			var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
 			return new Bundle
 			{
@@ -250,14 +271,40 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Provider>(search);
+			var providerRepositoryService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
 
-            this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-            var patientService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
+			if (search.ContainsKey("id"))
+			{
+				// Force load from DB
+				MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));
+
+				var entityId = Guid.Parse(search["id"].FirstOrDefault());
+				var provider = providerRepositoryService.Get(entityId, Guid.Empty);
+
+				provider = provider.LoadDisplayProperties().LoadImmediateRelations();
+
+				var bundle = new Bundle();
+
+				if (provider != null)
+				{
+					bundle.Count = 1;
+					bundle.Item = new List<IdentifiedData> { provider };
+					bundle.Reconstitute();
+					bundle.TotalResults = 1;
+				}
+
+				return bundle;
+			}
+
+			this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
+            
             int totalResults = 0,
                 offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                 count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-            var retVal = patientService.Find(predicate, offset, count, out totalResults);
+
+            var retVal = providerRepositoryService.Find(predicate, offset, count, out totalResults);
 
             // Serialize the response
             return new Bundle()
