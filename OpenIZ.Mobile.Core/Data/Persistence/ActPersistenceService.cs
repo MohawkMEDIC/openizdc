@@ -93,7 +93,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Condition:
                 case Observation:
-                    var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).First();
+		            var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
+
+		            if (dbObs == null)
+		            {
+						return base.ToModelInstance(dataInstance, context, loadFast);
+					}
+
                     switch(dbObs.ValueType)
                     {
                         case "ST":
