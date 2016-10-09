@@ -101,9 +101,9 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 				if (act != null)
 				{
+					act.Relationships = act.Relationships.OrderByDescending(a => a.TargetAct.CreationTime).ToList();
 					bundle.Count = 1;
 					bundle.Item = new List<IdentifiedData> { act };
-					bundle.Reconstitute();
 					bundle.TotalResults = 1;
 				}
 
@@ -114,10 +114,13 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 
 			var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
+			results = results.Select(a => a.LoadDisplayProperties().LoadImmediateRelations());
+			results.Select(a => a).ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
+
 			return new Bundle
 			{
 				Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
-				Item = results.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList(),
+				Item = results.OfType<IdentifiedData>().ToList(),
 				Offset = 0,
 				TotalResults = totalResults
 			};
@@ -315,20 +318,43 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetManufacturedMaterial()
         {
-			Bundle bundle = new Bundle();
+			var bundle = new Bundle();
 
 			try
 			{
 				var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 				var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
+				var manufacturedMaterialService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+
+				if (search.ContainsKey("id"))
+				{
+					// Force load from DB
+					MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), Guid.Parse(search["id"].FirstOrDefault()));
+
+					var manufacturedMaterialId = Guid.Parse(search["id"].FirstOrDefault());
+					var manufacturedMaterial = manufacturedMaterialService.GetManufacturedMaterial(manufacturedMaterialId, Guid.Empty);
+
+					manufacturedMaterial = manufacturedMaterial.LoadDisplayProperties().LoadImmediateRelations();
+
+					if (manufacturedMaterial != null)
+					{
+						bundle.Count = 1;
+						bundle.Item = new List<IdentifiedData> { manufacturedMaterial };
+						bundle.Reconstitute();
+						bundle.TotalResults = 1;
+					}
+
+					return bundle;
+				}
 
 				this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-				var patientService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+				
 				int totalResults = 0,
 					offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
 					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-				var manufacturedMaterials = patientService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
+
+				var manufacturedMaterials = manufacturedMaterialService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
 
 				// Serialize the response
 				bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
@@ -339,7 +365,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 			catch (Exception e)
 			{
 #if DEBUG
-				this.m_tracer.TraceError("{0}", e.StackTrace);
+				this.m_tracer.TraceError("{0}", e);
 #endif
 				this.m_tracer.TraceError("{0}", e.Message);
 			}
