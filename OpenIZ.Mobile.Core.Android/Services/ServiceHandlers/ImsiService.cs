@@ -267,54 +267,44 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <returns>Returns a list of providers.</returns>
         [RestOperation(Method = "GET", UriPath = "/Provider" ,FaultProvider = nameof(ImsiFault))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public Bundle GetProvider()
+        public IdentifiedData GetProvider()
         {
+
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-            var predicate = QueryExpressionParser.BuildLinqExpression<Provider>(search);
-			var providerRepositoryService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
+            var providerService = ApplicationContext.Current.GetService<IProviderRepositoryService>();
 
-
-			if (search.ContainsKey("id"))
-			{
-				// Force load from DB
-				MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));
-
-				var entityId = Guid.Parse(search["id"].FirstOrDefault());
-				var provider = providerRepositoryService.Get(entityId, Guid.Empty);
-
-				provider = provider.LoadDisplayProperties().LoadImmediateRelations();
-
-				var bundle = new Bundle();
-
-				if (provider != null)
-				{
-					bundle.Count = 1;
-					bundle.Item = new List<IdentifiedData> { provider };
-					bundle.Reconstitute();
-					bundle.TotalResults = 1;
-				}
-
-				return bundle;
-			}
-
-			this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
-
-            
-            int totalResults = 0,
-                offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-                count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-
-            var retVal = providerRepositoryService.Find(predicate, offset, count, out totalResults);
-
-            // Serialize the response
-            return new Bundle()
+            if (search.ContainsKey("_id"))
             {
-                Item = retVal.OfType<IdentifiedData>().ToList(),
-                Offset = offset,
-                Count = count,
-                TotalResults = totalResults
-            };
+                // Force load from DB
+                MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
+                var provider = providerService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                provider = provider.LoadDisplayProperties().LoadImmediateRelations();
+                // Ensure expanded
+                //JniUtil.ExpandProperties(patient, search);
+                return provider;
+            }
+            else
+            {
+                var predicate = QueryExpressionParser.BuildLinqExpression<Provider>(search);
 
+                int totalResults = 0,
+                  offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                  count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+
+
+                this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+                
+                var retVal = providerService.Find(predicate, offset, count, out totalResults);
+
+                // Serialize the response
+                return new Bundle()
+                {
+                    Item = retVal.OfType<IdentifiedData>().ToList(),
+                    Offset = offset,
+                    Count = count,
+                    TotalResults = totalResults
+                };
+            }
         }
 
         /// <summary>
@@ -495,10 +485,42 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <returns>Returns the user profile of the current user.</returns>
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		[RestOperation(UriPath = "/UserEntity", Method = "GET")]
-		public UserEntity GetUserProfile()
+		public IdentifiedData GetUserEntity()
 		{
-			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			return securityRepositoryService.GetUserEntity(ApplicationContext.Current.Principal.Identity).LoadDisplayProperties();
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var securityService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+            if (search.ContainsKey("_id"))
+            {
+                // Force load from DB
+                MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
+                var provider = securityService.GetUserEntity(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                provider = provider.LoadDisplayProperties().LoadImmediateRelations();
+                // Ensure expanded
+                //JniUtil.ExpandProperties(patient, search);
+                return provider;
+            }
+            else
+            {
+                var predicate = QueryExpressionParser.BuildLinqExpression<UserEntity>(search);
+
+                int totalResults = 0,
+                  offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                  count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+
+                this.m_tracer.TraceVerbose("Searching User Entity : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+
+                var retVal = securityService.FindUserEntity(predicate, offset, count, out totalResults);
+
+                // Serialize the response
+                return new Bundle()
+                {
+                    Item = retVal.OfType<IdentifiedData>().ToList(),
+                    Offset = offset,
+                    Count = count,
+                    TotalResults = totalResults
+                };
+            }
 		}
 
 		/// <summary>
@@ -519,14 +541,12 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
 		/// <param name="user">The users modified profile information.</param>
 		/// <returns>Returns the users updated profile.</returns>
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		[RestOperation(UriPath = "/UserEntity", Method = "POST")]
-		public UserEntity SaveUserProfile([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
+		[RestOperation(UriPath = "/UserEntity", Method = "PUT")]
+		public UserEntity UpdateUserEntity([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
 		{
-			//IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-			var userEntity = securityRepositoryService.GetUser(ApplicationContext.Current.Principal.Identity);
-            if (userEntity != null && !user.SecurityUserKey.HasValue)
-                user.SecurityUserKey = userEntity.Key;  
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            //IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			return securityRepositoryService.SaveUserEntity(user);
 		}
 

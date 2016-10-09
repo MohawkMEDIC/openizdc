@@ -322,7 +322,31 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override Act Update(SQLiteConnectionWithLock context, Act data)
         {
-            return this.UpdateInternal(context, data);
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case ControlAct:
+                    return new ControlActPersistenceService().Update(context, data as ControlAct);
+                case SubstanceAdministration:
+                    return new SubstanceAdministrationPersistenceService().Update(context, data as SubstanceAdministration);
+                case Condition:
+                case Observation:
+                    switch (data.GetType().Name)
+                    {
+                        case "TextObservation":
+                            return new TextObservationPersistenceService().Update(context, data as TextObservation);
+                        case "CodedObservation":
+                            return new CodedObservationPersistenceService().Update(context, data as CodedObservation);
+                        case "QuantityObservation":
+                            return new QuantityObservationPersistenceService().Update(context, data as QuantityObservation);
+                        default:
+                            return this.UpdateInternal(context, data);
+                    }
+                case Encounter:
+                    return new EncounterPersistenceService().Update(context, data as PatientEncounter);
+                default:
+                    return this.UpdateInternal(context, data);
+
+            }
         }
 
         /// <summary>

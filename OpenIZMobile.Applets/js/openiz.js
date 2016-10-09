@@ -1820,8 +1820,12 @@ var OpenIZ = OpenIZ || {
      * @summary Security repository class
      */
     UserEntity: {
+        /**
+         * @method
+         * @summary Updates the specified user entity asynchronously
+         */
         updateAsync: function (controlData) {
-            OpenIZ.Ims.post({
+            OpenIZ.Ims.put({
                 resource: "UserEntity",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,

@@ -1,9 +1,10 @@
 ﻿/// <reference path="../../js/openiz-model.js"/>
 /// <reference path="../../js/openiz.js"/>
-layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
+layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
     $scope.saveProfile = function (userEntity) {
 
         OpenIZ.App.showWait();
+
         // Fix the type of telecom
         var telKey = Object.keys(userEntity.telecom)[0];
         userEntity.telecom.$other = userEntity.telecom[telKey];
@@ -11,6 +12,8 @@ layoutApp.controller('UserProfileController', ['$scope', function ($scope) {
         
         // When we update the facility we clear the model properties
         userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel = null;
+        userEntity.securityUser = $rootScope.session.user.id;
+        userEntity.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
         // Update async
         OpenIZ.UserEntity.updateAsync({
