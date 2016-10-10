@@ -39,8 +39,10 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
         [ClassInitialize]
         public static void ClassSetup(TestContext context)
         {
-            (ApplicationContext.Current as TestApplicationContext).UnitTestContext = context;
-        }
+			ApplicationContext.Current = new TestApplicationContext();
+
+			((TestApplicationContext)ApplicationContext.Current).UnitTestContext = context;
+		}
 
         /// <summary>
         /// Test the persistence of a person

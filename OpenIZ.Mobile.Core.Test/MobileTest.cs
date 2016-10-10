@@ -17,9 +17,10 @@
  * User: justi
  * Date: 2016-6-14
  */
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace OpenIZ.Mobile.Core.Test.Persistence
+namespace OpenIZ.Mobile.Core.Test
 {
     /// <summary>
     /// Represents a simple mobile test which sets up context
@@ -28,13 +29,12 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
     [DeploymentItem("OpenIZ.sqlite")]
     public abstract class MobileTest
     {
+	    [ClassInitialize]
+	    public static void ClassSetup(TestContext context)
+	    {
+			ApplicationContext.Current = new TestApplicationContext();
 
-        /// <summary>
-        /// Mobile test
-        /// </summary>
-        public MobileTest()
-        {
-            ApplicationContext.Current = new TestApplicationContext();
-        }
+			((TestApplicationContext)ApplicationContext.Current).UnitTestContext = context;
+		}
     }
 }

@@ -35,7 +35,6 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
     /// </summary>
     public class PersistenceTest<TModel> : MobileTest where TModel : IdentifiedData
     {
-
         /// <summary>
         /// Test the insertion of a valid security user
         /// </summary>

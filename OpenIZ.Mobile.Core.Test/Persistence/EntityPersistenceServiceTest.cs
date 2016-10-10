@@ -37,13 +37,6 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
     [TestClass]
     public class EntityPersistenceServiceTest : PersistenceTest<Entity>
     {
-
-        [ClassInitialize]
-        public static void ClassSetup(TestContext context)
-        {
-            (ApplicationContext.Current as TestApplicationContext).UnitTestContext = context;
-        }
-
         /// <summary>
         /// Test the insertion of an anonymous entity
         /// </summary>
