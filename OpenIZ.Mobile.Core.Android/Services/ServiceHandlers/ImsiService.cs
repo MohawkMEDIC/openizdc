@@ -385,7 +385,6 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
             var retVal = JsonViewModelSerializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
             retVal.LoadImmediateRelations();
-
             // Delayload
             return retVal;
         }

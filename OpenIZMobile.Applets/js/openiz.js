@@ -697,8 +697,12 @@ var OpenIZ = OpenIZ || {
                 url += "&actTime=>" + controlData.minDate.toISOString();
             if (controlData.maxDate !== undefined)
                 url += "&actTime=<" + controlData.maxDate.toISOString();
+            if (controlData.onDate !== undefined)
+                url += "&startTime=<" + controlData.onDate.toISOString() + "&stopTime=>" + controlData.onDate.toISOString();
             if (controlData.classConcept !== undefined)
                 url += "&classConcept=" + controlData.classConcept;
+            if (controlData.moodConcept !== undefined)
+                url += "&moodConcept=" + controlData.moodConcept;
             console.info("Generating care plan...");
             $.ajax({
                 method: 'POST',
