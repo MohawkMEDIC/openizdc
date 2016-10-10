@@ -54,12 +54,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of patients which match the query.</returns>
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			return persistenceService.Query(predicate);
+			return this.persistenceService.Query(predicate);
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of patients which match the query.</returns>
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
@@ -88,7 +88,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a patient.</returns>
 		public Patient Get(Guid id, Guid versionId)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
@@ -103,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the inserted patient.</returns>
 		public Patient Insert(Patient p)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
@@ -111,7 +111,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			p = this.Validate(p);
 
 			// Persist patient
-			var patient = persistenceService.Insert(p);
+			var patient = this.persistenceService.Insert(p);
 
 			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 
@@ -136,12 +136,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the obsoleted patient.</returns>
 		public Patient Obsolete(Guid key)
 		{
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			var result = persistenceService.Obsolete(new Patient() { Key = key });
+			var result = this.persistenceService.Obsolete(new Patient() { Key = key });
 
 			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
 
@@ -155,9 +155,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the saved patient.</returns>
 		public Patient Save(Patient p)
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-
-			if (persistenceService == null)
+			if (this.persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
@@ -168,13 +166,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			try
 			{
-				patient = persistenceService.Update(p);
+				patient = this.persistenceService.Update(p);
 
 				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Update);
 			}
 			catch (KeyNotFoundException)
 			{
-				patient = persistenceService.Insert(p);
+				patient = this.persistenceService.Insert(p);
 
 				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 			}
