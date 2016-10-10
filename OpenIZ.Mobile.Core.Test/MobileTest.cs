@@ -28,9 +28,12 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
     [DeploymentItem("OpenIZ.sqlite")]
     public abstract class MobileTest
     {
-	    static MobileTest()
+	    [ClassInitialize]
+	    public static void ClassSetup(TestContext context)
 	    {
-		    ApplicationContext.Current = new TestApplicationContext();
+			ApplicationContext.Current = new TestApplicationContext();
+
+			((TestApplicationContext)ApplicationContext.Current).UnitTestContext = context;
 		}
     }
 }
