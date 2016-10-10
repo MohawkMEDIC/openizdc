@@ -131,7 +131,7 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
         /// </summary>
         /// <returns>Returns an entity.</returns>
         [RestOperation(Method = "GET", UriPath = "/Entity", FaultProvider = nameof(ImsiFault))]
-        //[return: RestMessage(RestMessageFormat.SimpleJson)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetEntity()
         {
             var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
@@ -211,9 +211,8 @@ namespace OpenIZ.Mobile.Core.Android.Services.ServiceHandlers
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 patient = patient.LoadDisplayProperties().LoadImmediateRelations();
-				// Ensure expanded
-				//JniUtil.ExpandProperties(patient, search);
-                return patient;
+
+	            return patient;
             }
             else
             {
