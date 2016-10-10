@@ -416,14 +416,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
             }
             else
             {
-				string languageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-
-				if (languageCode == null)
-				{
-					languageCode = "en";
-				}
-
-				var content = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, languageCode);
+	            var content = AndroidApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
 
                 response.OutputStream.Write(content, 0, content.Length);
             }
