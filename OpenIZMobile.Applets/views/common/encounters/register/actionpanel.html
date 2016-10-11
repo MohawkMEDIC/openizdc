@@ -1,5 +1,4 @@
 ﻿<div class="panel panel-info oiz-encounter-action-panel" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-    <oiz:script>~/controllers/common/encounters/register/actionpanel.js</oiz:script>
     <div class="panel-heading"><span class="panel-title">{{ 'locale.encounters.actionsPerformed.title' | i18n }}</span></div>
     <table class="panel-body table table-striped table-responsive">
         <tr ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747'">

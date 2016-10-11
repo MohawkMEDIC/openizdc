@@ -284,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
             totalResults = retVal.Count;
-			return retVal.Select(o=>this.CacheConvert(o, context, count > 1)).ToList();
+			return retVal.Select(o=>this.CacheConvert(o, context, count != 1)).ToList();
 		}
 
 

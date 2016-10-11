@@ -9,6 +9,32 @@ angular.element(document).ready(function () {
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
 
+
+        /** 
+        * Add sub-encounter sub-encounter
+        */
+        scope.addSubEncounter = scope.addSubEncounter || function (bind, templateName) {
+            OpenIZ.CarePlan.getActTemplateAsync({
+                templateId: templateName,
+                continueWith: function (d) {
+                    bind.push({
+                        _created: true,
+                        _enabled: true,
+                        targetModel: d
+                    });
+                    scope.$apply();
+                }
+            });
+
+        };
+
+        /** 
+         * Delete sub-encounter
+         */
+        scope.delSubEncounter = function (bind, index) {
+            bind.splice(index, 1);
+        };
+
         // Encounter 
         scope.validateAct = scope.validateAct || function (act) {
 

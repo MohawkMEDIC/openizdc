@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.8192">
+  <info id="org.openiz.core" version="0.6.7.7081">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -329,22 +329,23 @@ angular.element(document).ready(function () {
 });
 </contentText>
   </asset>
-  <asset name="controllers/common/encounters/register/actionpanel.js" mimeType="text/javascript">
+  <asset name="controllers/common/encounters/register/encounter.js" mimeType="text/javascript">
     <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/js/openiz-model.js"/&gt;
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
 
 angular.element(document).ready(function () {
-    $('.oiz-encounter-action-panel').each(function (i, e) {
+    $('.oiz-encounter-entry').each(function (i, e) {
 
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
 
+
         /** 
         * Add sub-encounter sub-encounter
         */
-        scope.addSubEncounter = scope.addSubEncounter || function (bind) {
+        scope.addSubEncounter = scope.addSubEncounter || function (bind, templateName) {
             OpenIZ.CarePlan.getActTemplateAsync({
                 templateId: templateName,
                 continueWith: function (d) {
@@ -362,23 +363,9 @@ angular.element(document).ready(function () {
         /** 
          * Delete sub-encounter
          */
-        $scope.delSubEncounter = function (bind, index) {
+        scope.delSubEncounter = function (bind, index) {
             bind.splice(index, 1);
         };
-    });
-});</contentText>
-  </asset>
-  <asset name="controllers/common/encounters/register/encounter.js" mimeType="text/javascript">
-    <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
-/// &lt;reference path="~/js/openiz-model.js"/&gt;
-/// &lt;reference path="~/lib/angular.min.js"/&gt;
-/// &lt;reference path="~/lib/jquery.min.js"/&gt;
-
-angular.element(document).ready(function () {
-    $('.oiz-encounter-entry').each(function (i, e) {
-
-        // Get the current scope that we're in
-        var scope = angular.element(e).scope();
 
         // Encounter 
         scope.validateAct = scope.validateAct || function (act) {
@@ -1698,17 +1685,18 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
 
-layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $rootScope) {
-
-
+layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $rootScope)
+{
     // Get the patient 
     OpenIZ.Patient.findAsync({
         query: { _id: OpenIZ.urlParams['patientId'], _count: 1, _all: true },
-        continueWith: function (data) {
+        continueWith: function (data)
+        {
             $scope.patient = data;
 
             // Set multiple birth text
-            switch (data.multipleBirthOrder) {
+            switch (data.multipleBirthOrder)
+            {
                 case 1:
                     $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.first');
                     break;
@@ -1722,46 +1710,26 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $ro
                     $scope.patient.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.unknown');
                     break;
             };
-            console.log($scope.patient);
-            getActs(data);
+
             $scope.$apply();
         },
-        onException: function (ex) {
+        onException: function (ex)
+        {
             OpenIZ.App.hideWait();
             if (typeof (ex) == "string")
+            {
                 alert(ex);
+            }
             else if (ex.message != undefined)
+            {
                 alert("" + ex.message + " - " + ex.details);
+            }
             else
+            {
                 alert(ex);
+            }
         }
     });
-
-    function getActs(data) {
-        var today = new Date();
-        today.setYear(today.getFullYear()+1);
-        for (var i = 0; i &lt; $scope.patient.participation.RecordTarget.length; i++) {
-            if ($scope.patient.participation.RecordTarget[i].actModel.startTime &lt; today &amp;&amp; $scope.patient.participation.RecordTarget[i].actModel.typeConceptModel.name.en!='BODY WEIGHT (MEASURED)') {
-                getAct(i);
-            }
-        }
-    }
-    function getAct(index) {
-        OpenIZ.Ims.get({
-            resource: "Act",
-            query: "id=" + $scope.patient.participation.RecordTarget[index].act,
-            continueWith: function (acts) {
-                //$scope.patient.participation.RecordTarget[i].vaccineName = acts.item[0].participation.Product.playerModel.name.Assigned.component.$other.value;
-                if(acts!=null){
-                   $scope.patient.participation.RecordTarget[index].vaccineName = acts.item[0].participation.Product.playerModel.name.Assigned.component.$other.value;
-                }
-            },
-            onException: function (ex) {
-                console.log(ex);
-            }
-        });
-    }
-
 }]);</contentText>
   </asset>
   <asset name="controllers/layouts/root.js" mimeType="text/javascript">
@@ -14870,7 +14838,6 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <asset name="views/common/encounters/register/actionpanel.html" mimeType="text/html">
     <contentHtml>
-      <script>~/controllers/common/encounters/register/actionpanel.js</script>
       <content>
         <div class="panel panel-info oiz-encounter-action-panel" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="panel-heading">
@@ -17519,12 +17486,12 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/templates/act.substanceadmin.immunization.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.actModel._overdue}">
           <div class="row">
             <label class="control-label col-xs-12 col-sm-2">
             {{ 'locale.encounters.immunization.title' | i18n }} {{ act.actModel.participation.Product.playerModel.name.Assigned | oizEntityName }}{{act.actModel.doseSequence}}
-        </label>
-            <div class="col-xs-12 col-sm-10">
+            <span ng-if="act.actModel._overdue" class="label-danger">{{ 'locale.encounters.overdue' | i18n }}</span></label>
+            <div class="col-xs-12 col-sm-10" ng-if="!act.actModel._overdue">
               <div class="input-group">
                 <span class="input-group-addon">
                   <input type="checkbox" ng-model="act._enabled" checked="checked" value="1" />
@@ -17549,6 +17516,15 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </select>
               </div>
             </div>
+            <div class="col-xs-12 col-sm-10" ng-if="act.actModel._overdue">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" ng-model="act._enabled" checked="checked" value="1" />
+                </span>
+                <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
+                <input ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['izdate_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['izdate_' + act.actModel.id].$invalid}" ng-disabled="!act._enabled" name="izdate_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.actTime" type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
+              </div>
+            </div>
           </div>
           <div class="row form-group">
             <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid">
@@ -17569,6 +17545,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     </contentHtml>
   </asset>
   <strings lang="en">
+    <string key="locale.encounters.overdue">Overdue</string>
     <string key="locale.action.submit">Submit</string>
     <string key="locale.action.delete">Delete</string>
     <string key="locale.action.acknowledge">Acknowledge</string>

@@ -79,6 +79,9 @@
   </menuItem>
   <strings lang="en">
 
+    <!-- Encounters -->
+    <string key="locale.encounters.overdue">Overdue</string>
+    
     <!-- Actions -->
     <string key="locale.action.submit">Submit</string>
     <string key="locale.action.delete">Delete</string>
