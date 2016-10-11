@@ -4,7 +4,7 @@
     "mnemonic": "Act.PatientEncounter.Checkin"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "0D6B3439-C9BE-4480-AF39-EEB457C052D0",
+  "classConcept": "54B52119-1709-4098-8911-5DF6D6C84140",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
   "typeConcept": "54b52119-1709-4098-8911-5df6d6c84140",
   "actTime": "{{now}}",
