@@ -33,10 +33,11 @@ using Android.Webkit;
 using Java.Interop;
 using Newtonsoft.Json;
 using System.Security.Principal;
-using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Xamarin.Security;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.Security;
+using OpenIZ.Mobile.Core.Xamarin;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -69,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public void Abandon()
         {
-            AndroidApplicationContext.Current.SetPrincipal(null);
+            XamarinApplicationContext.Current.SetPrincipal(null);
         }
 
         /// <summary>

@@ -84,7 +84,7 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
 
-                    if(controlData.continueWith !== undefined)
+                    if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr);
 
                     if (controlData.finally !== undefined)
@@ -131,7 +131,7 @@ var OpenIZ = OpenIZ || {
                     if (controlData.continueWith !== undefined)
                         controlData.continueWith(xhr);
 
-                    if(controlData.finally !== undefined)
+                    if (controlData.finally !== undefined)
                         controlData.finally();
                 },
                 error: function (data) {
@@ -165,13 +165,13 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Log an exception to the console
          */
-        logException : function(e) {
+        logException: function (e) {
             console.warn(e);
         },
         /** 
          * @summary Render the manufactured material
          */
-        renderManufacturedMaterial : function(scope) {
+        renderManufacturedMaterial: function (scope) {
             var name = OpenIZ.Util.renderName(scope.name.OfficialRecord);
             return name + "(LN#: " + scope.lotNumber + ")";
         },
@@ -300,8 +300,8 @@ var OpenIZ = OpenIZ || {
                              null
                          ));
 
-                    if(controlData.finally !== undefined)
-                        controlData.finally(); 
+                     if (controlData.finally !== undefined)
+                         controlData.finally();
                  },
                  error: function (data) {
                      var error = data.responseJSON;
@@ -373,9 +373,9 @@ var OpenIZ = OpenIZ || {
                             data,
                             null
                         ));
-            }).always(function() { 
-                if(controlData.finally !== undefined)
-                    controlData.finally(); 
+            }).always(function () {
+                if (controlData.finally !== undefined)
+                    controlData.finally();
             });
 
         },
@@ -413,7 +413,7 @@ var OpenIZ = OpenIZ || {
      * @summary Represents functions for interacting with the protocol service
      * @class
      */
-    CarePlan : {
+    CarePlan: {
         /**
          * @summary Generate a care plan for the specified patient
          */
@@ -434,7 +434,7 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
                     console.info("Retrieved care plan...");
-                   // console.info(JSON.stringify(xhr));
+                    // console.info(JSON.stringify(xhr));
                     controlData.continueWith(xhr);
                     if (controlData.finally !== undefined)
                         controlData.finally();
@@ -464,7 +464,7 @@ var OpenIZ = OpenIZ || {
         getEntityTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Entity/Template",
-                query: { "templateId" : controlData.templateId },
+                query: { "templateId": controlData.templateId },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally
@@ -473,7 +473,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Get an empty template object asynchronously
          */
-        getActTemplateAsync : function (controlData) {
+        getActTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Act/Template",
                 query: { "templateId": controlData.templateId },
@@ -492,7 +492,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Resolves the specified template
          */
-        resolveTemplate : function(templateId) {
+        resolveTemplate: function (templateId) {
             return OpenIZApplicationService.GetTemplateForm(templateId);
         },
         /**
@@ -534,9 +534,9 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Returns whether the internet is available
          */
-        networkAvailable: function() {
+        networkAvailable: function () {
             try { return OpenIZApplicationService.GetNetworkState(); }
-            catch (e) { return false;}
+            catch (e) { return false; }
         },
         /**
          * @summary Hide the waiting panel
@@ -551,7 +551,10 @@ var OpenIZ = OpenIZ || {
          * @return {String} The service class which implements the specified contract
          */
         getService: function (serviceName) {
-            return OpenIZApplicationService.GetService(serviceName);
+            for (var s in OpenIZ.Configuration.$configuration.application.service)
+                if (OpenIZ.Configuration.$configuration.application.service[s].lastIndexOf(serviceName) > 0)
+                    return OpenIZ.Configuration.$configuration.application.service[s];
+            return null;
         },
         /** 
          * @summary Gets the current version of the OpenIZ host
@@ -1212,7 +1215,7 @@ var OpenIZ = OpenIZ || {
         /**
          * @summmary Find the provider asynchronously
          */
-        findProviderAsync : function(controlData) {
+        findProviderAsync: function (controlData) {
             OpenIZ.Ims.get({
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
@@ -1273,6 +1276,50 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     Configuration: {
+        $configuration : null,
+        /** 
+         * @summary Get the configuration file in an async manner
+         * @method
+         * @return {Object} The complete configuration object
+         */
+        getConfigurationAsync: function (controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+            // Perform auth request
+            $.getJSON('/__config/all', null, function (data) {
+                
+                if (data != null && data.error !== undefined)
+                    controlData.onException(new OpenIZModel.Exception(data.error),
+                        data.error_description,
+                        null
+                    );
+                else if (data != null) {
+                    OpenIZ.Configuration.$configuration = data;
+                    controlData.continueWith(data);
+                }
+                else
+                    controlData.onException(new OpenIZModel.Exception("err_general",
+                        data,
+                        null
+                    ));
+            }).error(function (data) {
+                var error = data.responseJSON;
+                if (error != null && error.error !== undefined) // oauth 2 error
+                    controlData.onException(new OpenIZModel.Exception(error.error,
+                            error.error_description,
+                            null
+                        ));
+
+                else // unknown error
+                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                            data,
+                            null
+                        ));
+            }).always(function () {
+                if (controlData.finally !== undefined)
+                    controlData.finally();
+            });
+
+        },
         /**
          * @summary Gets the specified appplication setting
          * @method
@@ -1281,8 +1328,10 @@ var OpenIZ = OpenIZ || {
          */
         getApplicationSetting: function (key) {
             try {
-                return OpenIZConfigurationService.GetApplicationSetting(key);
-
+                for (var s in OpenIZ.Configuration.$configuration.application.setting)
+                    if (OpenIZ.Configuration.$configuration.application.setting[s].key == key)
+                        return OpenIZ.Configuration.$configuration.application.setting[s].value;
+                return null;
             }
             catch (e) {
                 throw new OpenIZModel.Exception(e.message, e.detail, e);
@@ -1296,7 +1345,12 @@ var OpenIZ = OpenIZ || {
          */
         setApplicationSetting: function (key, value) {
             try {
-                OpenIZConfigurationService.SetApplicationSetting(key, value);
+                for (var s in OpenIZ.Configuration.$configuration.application.setting)
+                    if (OpenIZ.Configuration.$configuration.application.setting[s].key == key) {
+                        OpenIZ.Configuration.$configuration.application.setting[s].value = value;
+                        return;
+                    }
+                OpenIZ.Configuration.$configuration.application.setting.push({ key: key, value: value });
             }
             catch (e) {
                 throw new OpenIZModel.Exception(e.message, e.detail, e);
@@ -1309,7 +1363,7 @@ var OpenIZ = OpenIZ || {
        */
         getRealm: function () {
             try {
-                return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+                return OpenIZ.Configuration.$configuration.realmName;
             }
             catch (e) {
                 console.error(e);
@@ -1324,7 +1378,7 @@ var OpenIZ = OpenIZ || {
         */
         getSection: function (sectionName) {
             try {
-                return JSON.parse(OpenIZConfigurationService.GetSection(sectionName));
+                return OpenIZ.Configuration.$configuration[sectionName];
             }
             catch (e) {
                 console.error(e);
@@ -1338,9 +1392,56 @@ var OpenIZ = OpenIZ || {
         * @memberof OpenIZ.Configuration
         * @method
         */
-        joinRealm: function (address, deviceName) {
+        joinRealmAsync: function (controlData) {
             try {
-                return OpenIZConfigurationService.JoinRealm(address, deviceName);
+                // Perform auth request
+                $.ajax(
+                 {
+                     method: 'POST',
+                     url: '/__config/realm',
+                     data: {
+                         realmUri: controlData.domain,
+                         deviceName: controlData.deviceName
+                     },
+                     dataType: "json",
+                     contentType: 'application/x-www-urlform-encoded',
+                     success: function (xhr, data) {
+                         if (data != null && data.error !== undefined)
+                             controlData.onException(new OpenIZModel.Exception(data.error),
+                                 data.error_description,
+                                 null
+                             );
+                         else if (data != null) {
+                             OpenIZ.Configuration.$configuration = xhr;
+                             controlData.continueWith(xhr);
+                         }
+                         else
+                             controlData.onException(new OpenIZModel.Exception("err_general",
+                                 data,
+                                 null
+                             ));
+
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+                     },
+                     error: function (data) {
+                         var error = data.responseJSON;
+                         if (error != null && error.error !== undefined) // config error
+                             controlData.onException(new OpenIZModel.Exception(error.error,
+                                     error.error_description,
+                                     null
+                                 ));
+
+                         else // unknown error
+                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                     data,
+                                     null
+                                 ));
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+
+                     }
+                 });
             }
             catch (e) {
                 console.error(e);
@@ -1373,15 +1474,53 @@ var OpenIZ = OpenIZ || {
         * @param {String} configuration.enableForgotPassword true|false Whether users can reset their password
         * @returns true if the save operation was successful
         */
-        save: function (configuration) {
+        saveAsync: function (controlData) {
             try {
-                if (OpenIZConfigurationService.Save(JSON.stringify(configuration))) {
-                    OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted");
-                    return true;
-                }
-                else
-                    OpenIZ.App.toast("Saving configuration failed");
-                return false;
+                // Perform auth request
+                $.ajax(
+                 {
+                     method: 'POST',
+                     url: '/__config/all',
+                     data: JSON.stringify(controlData.data),
+                     dataType: "json",
+                     contentType: 'application/json',
+                     success: function (xhr, data) {
+                         if (data != null && data.error !== undefined)
+                             controlData.onException(new OpenIZModel.Exception(data.error),
+                                 data.error_description,
+                                 null
+                             );
+                         else if (data != null) {
+                             OpenIZ.Configuration.$configuration = xhr;
+                             controlData.continueWith(xhr);
+                         }
+                         else
+                             controlData.onException(new OpenIZModel.Exception("err_general",
+                                 data,
+                                 null
+                             ));
+
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+                     },
+                     error: function (data) {
+                         var error = data.responseJSON;
+                         if (error != null && error.error !== undefined) // config error
+                             controlData.onException(new OpenIZModel.Exception(error.error,
+                                     error.error_description,
+                                     null
+                                 ));
+
+                         else // unknown error
+                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                     data,
+                                     null
+                                 ));
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+
+                     }
+                 });
             }
             catch (e) {
                 console.error(e);
@@ -1428,10 +1567,9 @@ var OpenIZ = OpenIZ || {
             // TODO: Implement
         }
     },
-    
+
     Security: {
-        changePassword: function (username, existing, password, confirmation)
-        {
+        changePassword: function (username, existing, password, confirmation) {
             try {
                 OpenIZUserService.ChangePassword(username, existing, password, confirmation);
                 OpenIZ.App.toast("Password changed successfully");
@@ -1442,8 +1580,7 @@ var OpenIZ = OpenIZ || {
             OpenIZ.App.toast("Unable to change password");
             return false;
         },
-        updateUser: function(user)
-        {
+        updateUser: function (user) {
             try {
                 OpenIZUserService.Save(JSON.stringify(user));
                 OpenIZ.App.toast("Profile settings updated");

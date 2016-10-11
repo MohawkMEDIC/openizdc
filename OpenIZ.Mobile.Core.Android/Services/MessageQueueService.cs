@@ -22,20 +22,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Diagnostics;
 using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using System.Threading;
-using OpenIZ.Mobile.Core.Synchronization;
-using OpenIZ.Mobile.Core.Android.Threading;
-using OpenIZ.Core.Model;
-using OpenIZ.Mobile.Core.Services;
-using OpenIZ.Mobile.Core.Synchronization.Model;
-using System.Net;
-using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Services
 {

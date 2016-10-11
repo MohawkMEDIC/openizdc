@@ -24,33 +24,34 @@ using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Configuration;
 using Android.Content.Res;
-using OpenIZ.Mobile.Core.Android.Http;
-using OpenIZ.Mobile.Core.Android.Diagnostics;
+using OpenIZ.Mobile.Core.Xamarin.Http;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Diagnostics;
 using System.Security.Cryptography;
 using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
-using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Xamarin.Security;
 using OpenIZ.Mobile.Core.Data;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using AndroidOS = Android.OS;
-using OpenIZ.Mobile.Core.Android.Services;
-using OpenIZ.Mobile.Core.Android.Threading;
+using OpenIZ.Mobile.Core.Xamarin.Services;
+using OpenIZ.Mobile.Core.Xamarin.Threading;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Mobile.Core.Android.Net;
+using OpenIZ.Mobile.Core.Xamarin.Configuration;
+using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
 	/// <summary>
 	/// Configuration manager for the application
 	/// </summary>
-	public class ConfigurationManager
+	public class ConfigurationManager : IConfigurationManager
 	{
 
 		private const int PROVIDER_RSA_FULL = 1;
@@ -132,13 +133,13 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalSecurityService).AssemblyQualifiedName,
                     typeof(LocalMaterialService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
-                    typeof(NetworkInformationService).AssemblyQualifiedName,
+                    typeof(AndroidNetworkInformationService).AssemblyQualifiedName,
 					typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
-                    typeof(AndroidClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName
 				},
                 Cache = new CacheConfiguration()
@@ -229,7 +230,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 		/// <summary>
 		/// Load the configuration
 		/// </summary>
-		internal void Load()
+		public void Load()
 		{
 			// Configuration exists?
 			if (this.IsConfigured)
