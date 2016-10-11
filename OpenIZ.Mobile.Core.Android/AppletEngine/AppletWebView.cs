@@ -41,7 +41,7 @@ using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
 using System.Security;
 using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Xamarin.Security;
 using A = Android;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
