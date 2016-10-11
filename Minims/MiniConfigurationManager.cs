@@ -4,6 +4,8 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Protocol;
+using OpenIZ.Mobile.Core.Search;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
@@ -69,8 +71,12 @@ namespace Minims
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS", "OpenIZ.sqlite")
                     },
                     new ConnectionString () {
+                        Name = "openIzSearch",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS","OpenIZ.ftsearch.sqlite")
+                    },
+                    new ConnectionString () {
                         Name = "openIzQueue",
-                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS", "MessageQueue.sqlite")
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS","MessageQueue.sqlite")
                     },
                 }
             };
@@ -85,8 +91,8 @@ namespace Minims
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "org.openiz.core",
-                AuthenticationAsset = "/org/openiz/core/views/security/login.html"
+                StartupAsset = "tz.timr.applet",
+                AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
             };
 
             // Protocol 
@@ -107,18 +113,24 @@ namespace Minims
                     typeof(LocalPlaceService).AssemblyQualifiedName,
                     typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
+                    typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
+                    typeof(LocalOrganizationService).AssemblyQualifiedName,
                     typeof(LocalRoleProviderService).AssemblyQualifiedName,
                     typeof(LocalSecurityService).AssemblyQualifiedName,
                     typeof(LocalMaterialService).AssemblyQualifiedName,
+                    typeof(LocalBatchService).AssemblyQualifiedName,
+                    typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
+                    typeof(ProtocolWatchService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
-                    typeof(StaticClinicalProtocolRepositoryService).AssemblyQualifiedName,
-                    typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName
+                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
+                    typeof(SearchIndexService).AssemblyQualifiedName,
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -140,7 +152,7 @@ namespace Minims
 
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = String.Format("TEST-{0}", macAddress).Replace(" ", "")
+                DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", "")
             };
 
             // Device key
@@ -161,25 +173,31 @@ namespace Minims
                     new TraceWriterConfiguration () {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new ConsoleTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
                     },
                     new TraceWriterConfiguration() {
                         Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
                         InitializationData = "OpenIZ",
                         TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                    },
+                    new TraceWriterConfiguration() {
+                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        InitializationData = "OpenIZ",
+                        TraceWriter = new ConsoleTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
                     }
                 }
             };
 #else
-			DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection () {
-				TraceWriter = new List<TraceWriterConfiguration> () {
-					new TraceWriterConfiguration () {
-						Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
-						InitializationData = "OpenIZ",
-						TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-					}
-				}
-			};
+            DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection()
+            {
+                TraceWriter = new List<TraceWriterConfiguration>() {
+                    new TraceWriterConfiguration () {
+                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        InitializationData = "OpenIZ",
+                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                    }
+                }
+            };
 #endif
             retVal.Sections.Add(appletSection);
             retVal.Sections.Add(dataSection);

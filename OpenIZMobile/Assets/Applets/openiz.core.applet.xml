@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.7081">
+  <info id="org.openiz.core" version="0.6.7.4164">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -1949,68 +1949,88 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function 
 
 layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
-    $scope.config = {
-        security: OpenIZ.Configuration.getSection("SecurityConfigurationSection"),
-        realmName: OpenIZ.Configuration.getRealm(),
-        data: OpenIZ.Configuration.getSection("DataConfigurationSection"),
-        applet: OpenIZ.Configuration.getSection("AppletConfigurationSection"),
-        application: OpenIZ.Configuration.getSection("ApplicationConfigurationSection"),
-        log: OpenIZ.Configuration.getSection("DiagnosticsConfigurationSection"),
-        network: OpenIZ.Configuration.getSection("ServiceClientConfigurationSection") || {}
-    };
+    OpenIZ.App.showWait();
+    OpenIZ.Configuration.getConfigurationAsync({
+        continueWith: function (config) {
+            $scope.config = config;
+            $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
+            $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
+            $scope.ui = {
+                dataCollapsed: true,
+                securityCollapsed: true
+            };
 
-    $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
-    $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
-    $scope.ui = {
-        dataCollapsed: true,
-        securityCollapsed: true
-    };
+            $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?
+            //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
+            $scope.config.data.sync = {
+                event: [],
+                enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
+                pollInterval: OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")
+            };
+            $scope.config.log.mode = $scope.config.log.trace[0].filter || "Warning";
+            $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
 
-    $scope.config.data.mode = "sync"; //OpenIZ.App.getService("SynchronizationManagerService") == null ?
-        //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
-    $scope.config.data.sync = {
-        event: [],
-        enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
-        pollInterval: OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")
-    };
-    $scope.config.log.mode = $scope.config.log.trace[0].filter || "Warning";
-    $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
-
-    $scope.config.security.offline = {
-        enable: false
-    };
+            $scope.config.security.offline = {
+                enable: false
+            };
+            $scope.$apply();
+        },
+        onException : function(error) {
+            if(error.message != null)
+                alert(error.message);
+            else
+                alert(error);
+        },
+        finally: function () {
+            OpenIZ.App.hideWait();
+        }
+    });
+    
+    
     $scope.master = {};
 
     // leave realm
     $scope.leaveRealm = function (realm) {
         if (confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm")))
-            OpenIZ.Configuration.leaveRealm(realm);
+            OpenIZ.Configuration.leaveRealmAsync();
     };
 
     // join realm
     $scope.joinRealm = function (realm) {
-        if (OpenIZ.Configuration.joinRealm(realm.domain, realm.deviceName))
-            alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+        OpenIZ.App.showWait();
+        OpenIZ.Configuration.joinRealmAsync({
+            domain: realm.domain,
+            deviceName: realm.deviceName,
+            continueWith: function (data) {
+                $scope.config.realmName = data.realmName;
+                alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+            },
+            finally: function () {
+                OpenIZ.App.hideWait();
+            }
+        });
     };
 
     // Save config
     $scope.save = function (config) {
-        if (OpenIZ.Configuration.getRealm() == null)
+        
+        if ($scope.config.realmName == null)
             alert(OpenIZ.Localization.getString("locale.settings.error.noRealm"));
-        else if (OpenIZ.Configuration.save(config))
-            OpenIZ.App.close();
+        else {
+            OpenIZ.App.showWait();
+            OpenIZ.Configuration.saveAsync({
+                data: config,
+                continueWith: function () {
+                    OpenIZ.App.close();
+                }
+            });
+        }
     };
-
-    $scope.reset = function () {
-        $scope.user = angular.copy($scope.master);
-    };
-
-    $scope.reset();
 }]);
 </contentText>
   </asset>
   <asset name="controllers/settings/settings.min.js" mimeType="text/javascript">
-    <contentText>layoutApp.controller("SettingsController",["$scope",function(n){n.config={security:OpenIZ.Configuration.getSection("SecurityConfigurationSection"),realmName:OpenIZ.Configuration.getRealm(),data:OpenIZ.Configuration.getSection("DataConfigurationSection"),applet:OpenIZ.Configuration.getSection("AppletConfigurationSection"),application:OpenIZ.Configuration.getSection("ApplicationConfigurationSection"),log:OpenIZ.Configuration.getSection("DiagnosticsConfigurationSection"),network:OpenIZ.Configuration.getSection("ServiceClientConfigurationSection")||{}};n.config.network.useProxy=n.config.network.proxyAddress!=null;n.config.network.proxyAddress=n.config.network.proxyAddress||null;n.ui={dataCollapsed:!0,securityCollapsed:!0};n.config.data.mode="sync";n.config.data.sync={event:[],enablePoll:OpenIZ.App.getService("ImsiPollingService")!=null,pollInterval:OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")};n.config.log.mode=n.config.log.trace[0].filter||"Warning";n.config.security.hasher=OpenIZ.App.getService("IPasswordHashingService")||"SHA256PasswordHasher";n.config.security.offline={enable:!1};n.master={};n.leaveRealm=function(n){confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm"))&amp;&amp;OpenIZ.Configuration.leaveRealm(n)};n.joinRealm=function(n){OpenIZ.Configuration.joinRealm(n.domain,n.deviceName)&amp;&amp;alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"))};n.save=function(n){OpenIZ.Configuration.getRealm()==null?alert(OpenIZ.Localization.getString("locale.settings.error.noRealm")):OpenIZ.Configuration.save(n)&amp;&amp;OpenIZ.App.close()};n.reset=function(){n.user=angular.copy(n.master)};n.reset()}]);</contentText>
+    <contentText>layoutApp.controller("SettingsController",["$scope",function(n){OpenIZ.App.showWait();OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.config=t;n.config.network.useProxy=n.config.network.proxyAddress!=null;n.config.network.proxyAddress=n.config.network.proxyAddress||null;n.ui={dataCollapsed:!0,securityCollapsed:!0};n.config.data.mode="sync";n.config.data.sync={event:[],enablePoll:OpenIZ.App.getService("ImsiPollingService")!=null,pollInterval:OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")};n.config.log.mode=n.config.log.trace[0].filter||"Warning";n.config.security.hasher=OpenIZ.App.getService("IPasswordHashingService")||"SHA256PasswordHasher";n.config.security.offline={enable:!1};n.$apply()},onException:function(n){n.message!=null?alert(n.message):alert(n)},"finally":function(){OpenIZ.App.hideWait()}});n.master={};n.leaveRealm=function(){confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm"))&amp;&amp;OpenIZ.Configuration.leaveRealmAsync()};n.joinRealm=function(t){OpenIZ.App.showWait();OpenIZ.Configuration.joinRealmAsync({domain:t.domain,deviceName:t.deviceName,continueWith:function(t){n.config.realmName=t.realmName;alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"))},"finally":function(){OpenIZ.App.hideWait()}})};n.save=function(t){n.config.realmName==null?alert(OpenIZ.Localization.getString("locale.settings.error.noRealm")):(OpenIZ.App.showWait(),OpenIZ.Configuration.saveAsync({data:t,continueWith:function(){OpenIZ.App.close()}}))}}]);</contentText>
   </asset>
   <asset name="css/bootstrap-tokenfield.min.css" mimeType="text/css">
     <contentText>/*!
@@ -4639,7 +4659,10 @@ var OpenIZ = OpenIZ || {
          * @return {String} The service class which implements the specified contract
          */
         getService: function (serviceName) {
-            return OpenIZApplicationService.GetService(serviceName);
+            for (var s in OpenIZ.Configuration.$configuration.application.service)
+                if (OpenIZ.Configuration.$configuration.application.service[s].lastIndexOf(serviceName) &gt; 0)
+                    return OpenIZ.Configuration.$configuration.application.service[s];
+            return null;
         },
         /** 
          * @summary Gets the current version of the OpenIZ host
@@ -5416,6 +5439,50 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     Configuration: {
+        $configuration : null,
+        /** 
+         * @summary Get the configuration file in an async manner
+         * @method
+         * @return {Object} The complete configuration object
+         */
+        getConfigurationAsync: function (controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+            // Perform auth request
+            $.getJSON('/__config/all', null, function (data) {
+                
+                if (data != null &amp;&amp; data.error !== undefined)
+                    controlData.onException(new OpenIZModel.Exception(data.error),
+                        data.error_description,
+                        null
+                    );
+                else if (data != null) {
+                    OpenIZ.Configuration.$configuration = data;
+                    controlData.continueWith(data);
+                }
+                else
+                    controlData.onException(new OpenIZModel.Exception("err_general",
+                        data,
+                        null
+                    ));
+            }).error(function (data) {
+                var error = data.responseJSON;
+                if (error != null &amp;&amp; error.error !== undefined) // oauth 2 error
+                    controlData.onException(new OpenIZModel.Exception(error.error,
+                            error.error_description,
+                            null
+                        ));
+
+                else // unknown error
+                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                            data,
+                            null
+                        ));
+            }).always(function () {
+                if (controlData.finally !== undefined)
+                    controlData.finally();
+            });
+
+        },
         /**
          * @summary Gets the specified appplication setting
          * @method
@@ -5424,8 +5491,10 @@ var OpenIZ = OpenIZ || {
          */
         getApplicationSetting: function (key) {
             try {
-                return OpenIZConfigurationService.GetApplicationSetting(key);
-
+                for (var s in OpenIZ.Configuration.$configuration.application.setting)
+                    if (OpenIZ.Configuration.$configuration.application.setting[s].key == key)
+                        return OpenIZ.Configuration.$configuration.application.setting[s].value;
+                return null;
             }
             catch (e) {
                 throw new OpenIZModel.Exception(e.message, e.detail, e);
@@ -5439,7 +5508,12 @@ var OpenIZ = OpenIZ || {
          */
         setApplicationSetting: function (key, value) {
             try {
-                OpenIZConfigurationService.SetApplicationSetting(key, value);
+                for (var s in OpenIZ.Configuration.$configuration.application.setting)
+                    if (OpenIZ.Configuration.$configuration.application.setting[s].key == key) {
+                        OpenIZ.Configuration.$configuration.application.setting[s].value = value;
+                        return;
+                    }
+                OpenIZ.Configuration.$configuration.application.setting.push({ key: key, value: value });
             }
             catch (e) {
                 throw new OpenIZModel.Exception(e.message, e.detail, e);
@@ -5452,7 +5526,7 @@ var OpenIZ = OpenIZ || {
        */
         getRealm: function () {
             try {
-                return OpenIZ.Configuration.getSection("SecurityConfigurationSection").domain;
+                return OpenIZ.Configuration.$configuration.realmName;
             }
             catch (e) {
                 console.error(e);
@@ -5467,7 +5541,7 @@ var OpenIZ = OpenIZ || {
         */
         getSection: function (sectionName) {
             try {
-                return JSON.parse(OpenIZConfigurationService.GetSection(sectionName));
+                return OpenIZ.Configuration.$configuration[sectionName];
             }
             catch (e) {
                 console.error(e);
@@ -5481,9 +5555,56 @@ var OpenIZ = OpenIZ || {
         * @memberof OpenIZ.Configuration
         * @method
         */
-        joinRealm: function (address, deviceName) {
+        joinRealmAsync: function (controlData) {
             try {
-                return OpenIZConfigurationService.JoinRealm(address, deviceName);
+                // Perform auth request
+                $.ajax(
+                 {
+                     method: 'POST',
+                     url: '/__config/realm',
+                     data: {
+                         realmUri: controlData.domain,
+                         deviceName: controlData.deviceName
+                     },
+                     dataType: "json",
+                     contentType: 'application/x-www-urlform-encoded',
+                     success: function (xhr, data) {
+                         if (data != null &amp;&amp; data.error !== undefined)
+                             controlData.onException(new OpenIZModel.Exception(data.error),
+                                 data.error_description,
+                                 null
+                             );
+                         else if (data != null) {
+                             OpenIZ.Configuration.$configuration = xhr;
+                             controlData.continueWith(xhr);
+                         }
+                         else
+                             controlData.onException(new OpenIZModel.Exception("err_general",
+                                 data,
+                                 null
+                             ));
+
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+                     },
+                     error: function (data) {
+                         var error = data.responseJSON;
+                         if (error != null &amp;&amp; error.error !== undefined) // config error
+                             controlData.onException(new OpenIZModel.Exception(error.error,
+                                     error.error_description,
+                                     null
+                                 ));
+
+                         else // unknown error
+                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                     data,
+                                     null
+                                 ));
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+
+                     }
+                 });
             }
             catch (e) {
                 console.error(e);
@@ -5516,15 +5637,53 @@ var OpenIZ = OpenIZ || {
         * @param {String} configuration.enableForgotPassword true|false Whether users can reset their password
         * @returns true if the save operation was successful
         */
-        save: function (configuration) {
+        saveAsync: function (controlData) {
             try {
-                if (OpenIZConfigurationService.Save(JSON.stringify(configuration))) {
-                    OpenIZ.App.toast("Changes will take effect when OpenIZ is restarted");
-                    return true;
-                }
-                else
-                    OpenIZ.App.toast("Saving configuration failed");
-                return false;
+                // Perform auth request
+                $.ajax(
+                 {
+                     method: 'POST',
+                     url: '/__config/all',
+                     data: JSON.stringify(controlData.data),
+                     dataType: "json",
+                     contentType: 'application/json',
+                     success: function (xhr, data) {
+                         if (data != null &amp;&amp; data.error !== undefined)
+                             controlData.onException(new OpenIZModel.Exception(data.error),
+                                 data.error_description,
+                                 null
+                             );
+                         else if (data != null) {
+                             OpenIZ.Configuration.$configuration = xhr;
+                             controlData.continueWith(xhr);
+                         }
+                         else
+                             controlData.onException(new OpenIZModel.Exception("err_general",
+                                 data,
+                                 null
+                             ));
+
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+                     },
+                     error: function (data) {
+                         var error = data.responseJSON;
+                         if (error != null &amp;&amp; error.error !== undefined) // config error
+                             controlData.onException(new OpenIZModel.Exception(error.error,
+                                     error.error_description,
+                                     null
+                                 ));
+
+                         else // unknown error
+                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                     data,
+                                     null
+                                 ));
+                         if (controlData.finally !== undefined)
+                             controlData.finally();
+
+                     }
+                 });
             }
             catch (e) {
                 console.error(e);
@@ -14592,13 +14751,19 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   </asset>
   <asset name="templates/act.observation.weight.json" mimeType="text/javascript">
     <contentText>{
-  "$type": "PatientEncounter",
+  "$type": "QuantityObservation",
   "template": {
     "mnemonic": "Act.Observation.Weight"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
+  "typeConceptModel": {
+    "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
+    "mnemonic": "VitalSign-Weight"
+  },
   "actTime": "{{now}}",
+  "value": 0,
+  "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796",
   "participation": {
     "Location": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
@@ -14618,40 +14783,6 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
       "player": ""
     }
-  },
-  "relationship": {
-    "HasSubject": {
-      "targetModel": {
-        "$type": "QuantityObservation",
-        "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
-        "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-        "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-        "actTime": "{{now}}",
-        "typeConceptModel": {
-          "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
-          "mnemonic": "VitalSign-Weight"
-        },
-        "value": 0,
-        "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796",
-        "participation": {
-          "Location": {
-            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
-            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-            "player": "{{facilityId}}"
-          },
-          "Authororiginator": {
-            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
-            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-            "player": "{{userId}}"
-          },
-          "RecordTarget": {
-            "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
-            "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-            "player": ""
-          }
-        }
-      }
-    }
   }
 }</contentText>
   </asset>
@@ -14662,7 +14793,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     "mnemonic": "Act.PatientEncounter.Checkin"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "0D6B3439-C9BE-4480-AF39-EEB457C052D0",
+  "classConcept": "54B52119-1709-4098-8911-5DF6D6C84140",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
   "typeConcept": "54b52119-1709-4098-8911-5df6d6c84140",
   "actTime": "{{now}}",

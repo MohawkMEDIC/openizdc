@@ -11,3 +11,7 @@ OpenIZApplicationService.GetStatus = function () {
 OpenIZApplicationService.ShowToast = function (string) {
     console.info("TOAST: " + string);
 }
+
+OpenIZApplicationService.GetOnlineState = function () {
+    return true;
+}

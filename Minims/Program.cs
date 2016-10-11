@@ -17,10 +17,15 @@ namespace Minims
         static void Main(string[] args)
         {
 
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MINIMS");
+            String[] directory = {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MINIMS"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MINIMS")
+            };
 
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory);
+            foreach(var dir in directory)
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
             // Start up!!!
             var consoleArgs = new ParameterParser<ConsoleParameters>().Parse(args);
 

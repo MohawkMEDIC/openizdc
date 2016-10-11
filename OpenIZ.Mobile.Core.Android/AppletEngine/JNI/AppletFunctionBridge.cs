@@ -39,6 +39,7 @@ using OpenIZ.Mobile.Core.Configuration;
 using System.Globalization;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -99,8 +100,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <param name="context">Context.</param>
         public AppletFunctionBridge(Context context, AppletWebView view)
         {
-            if(AndroidApplicationContext.Current.AndroidApplication != null)
-                ZXing.Mobile.MobileBarcodeScanner.Initialize(AndroidApplicationContext.Current.AndroidApplication);
+            if((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication != null)
+                ZXing.Mobile.MobileBarcodeScanner.Initialize((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication);
             ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
             this.m_context = context;
             this.m_view = view;

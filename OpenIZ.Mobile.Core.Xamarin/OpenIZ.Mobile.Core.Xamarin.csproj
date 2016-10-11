@@ -40,11 +40,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Alert">
+      <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
@@ -76,6 +82,7 @@
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
+    <Compile Include="Services\Model\ErrorResult.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />

@@ -88,7 +88,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             public ApplicationInfo() : base(AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(o => o.DefinedTypes.Any(t => t.Name == "SplashActivity")) ?? typeof(OpenIZConfiguration).Assembly)
             {
                 this.OpenIZ = new VersionInfo(typeof(OpenIZ.Mobile.Core.ApplicationContext).Assembly);
-                this.Applets = AndroidApplicationContext.Current.LoadedApplets.Select(o => o.Info).ToList();
+                this.Applets = XamarinApplicationContext.Current.LoadedApplets.Select(o => o.Info).ToList();
                 this.Assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(o => new VersionInfo(o)).ToList();
                 this.Configuration = ApplicationContext.Current.Configuration;
                 this.EnvironmentInfo = new EnvironmentInfo()

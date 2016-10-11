@@ -18,11 +18,11 @@ using System.Linq;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Services;
-using OpenIZ.Mobile.Core.Android.AppletEngine.JNI;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Model.Interfaces;
-using OpenIZ.Mobile.Core.Android.Services.Model;
 using System.Linq.Expressions;
+using OpenIZ.Mobile.Core.Extensions;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {

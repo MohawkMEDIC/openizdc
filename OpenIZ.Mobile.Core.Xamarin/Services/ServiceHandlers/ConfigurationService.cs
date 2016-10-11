@@ -14,6 +14,7 @@ using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Xamarin.Http;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
@@ -116,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             // Demand the appropriate policy
             new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessClientAdministrativeFunction).Demand();
-
+           
 
             // Data mode
             switch (optionObject["data"]["mode"].Value<String>())
@@ -200,8 +201,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
-
-
+            
             return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration) ;
         }
 

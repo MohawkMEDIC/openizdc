@@ -1,6 +1,6 @@
-﻿using System;
+﻿using OpenIZ.Core.Diagnostics;
+using System;
 using System.Diagnostics.Tracing;
-using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace Minims
 {

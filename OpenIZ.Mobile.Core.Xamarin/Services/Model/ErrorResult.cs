@@ -22,15 +22,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Newtonsoft.Json;
 
-namespace OpenIZ.Mobile.Core.Android.Services.Model
+namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 {
 	/// <summary>
 	/// General IMSI error result

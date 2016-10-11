@@ -19,8 +19,8 @@
  */
 using System;
 using System.Diagnostics.Tracing;
-using OpenIZ.Mobile.Core.Diagnostics;
 using System.Diagnostics;
+using OpenIZ.Core.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Test
 {

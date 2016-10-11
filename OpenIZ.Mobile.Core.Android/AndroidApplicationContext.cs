@@ -34,6 +34,7 @@ using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin;
 using System;
 using System.Diagnostics.Tracing;
 using System.IO;
@@ -43,13 +44,14 @@ using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Xml.Serialization;
 using A = Android;
+using OpenIZ.Mobile.Core.Xamarin.Configuration;
 
 namespace OpenIZ.Mobile.Core.Android
 {
 	/// <summary>
 	/// Represents an application context for Xamarin Android
 	/// </summary>
-	public class AndroidApplicationContext : ApplicationContext
+	public class AndroidApplicationContext : XamarinApplicationContext
 	{
 		// The application
 		private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication()
@@ -64,9 +66,6 @@ namespace OpenIZ.Mobile.Core.Android
 
 		// Configuration manager
 		private ConfigurationManager m_configurationManager;
-
-		// The tracer
-		private Tracer m_tracer;
 
 		/// <summary>
 		/// Static CTOR bind to global handlers to log errors
@@ -102,36 +101,7 @@ namespace OpenIZ.Mobile.Core.Android
 		/// </summary>
 		public static event EventHandler NoConfiguration;
 
-		/// <summary>
-		/// Gets the current application context
-		/// </summary>
-		/// <value>The current.</value>
-		public static AndroidApplicationContext Current { get { return ApplicationContext.Current as AndroidApplicationContext; } }
-
-		/// <summary>
-		/// Gets the configuration manager.
-		/// </summary>
-		/// <value>The configuration manager.</value>
-		public ConfigurationManager ConfigurationManager
-		{
-			get
-			{
-				return this.m_configurationManager;
-			}
-		}
-
-		/// <summary>
-		/// Get the registered applets
-		/// </summary>
-		/// <value>The registered applets.</value>
-		public AppletCollection LoadedApplets
-		{
-			get
-			{
-				return this.m_applets;
-			}
-		}
-
+		
 		/// <summary>
 		/// Start the application context
 		/// </summary>
@@ -217,7 +187,7 @@ namespace OpenIZ.Mobile.Core.Android
 					{
 						retVal.ConfigurationManager.Save();
 					}
-
+                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 					// Start daemons
 					retVal.Start();
 
@@ -250,7 +220,7 @@ namespace OpenIZ.Mobile.Core.Android
 				retVal.Context = context;
 				retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
 
-				retVal.m_configurationManager = new ConfigurationManager(ConfigurationManager.GetDefaultConfiguration());
+				retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
 				retVal.Principal = new ClaimsPrincipal(new ClaimsIdentity("SYSTEM", true, new Claim[] {
 					new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
 				}));
@@ -265,32 +235,11 @@ namespace OpenIZ.Mobile.Core.Android
 				return false;
 			}
 		}
-
-		/// <summary>
-		/// Explicitly authenticate the specified user as the domain context
-		/// </summary>
-		public void Authenticate(String userName, String password)
-		{
-			var identityService = this.GetService<IIdentityProviderService>();
-			this.Principal = identityService.Authenticate(userName, password);
-			if (this.Principal == null)
-				throw new SecurityException(Strings.err_login_invalidusername);
-		}
-
-		/// <summary>
-		/// Get applet by id
-		/// </summary>
-		/// <returns>The applet.</returns>
-		/// <param name="id">Identifier.</param>
-		public AppletManifest GetApplet(String id)
-		{
-			return this.m_applets.FirstOrDefault(o => o.Info.Id == id);
-		}
-
+        
 		/// <summary>
 		/// Install an applet
 		/// </summary>
-		public void InstallApplet(AppletPackage package, bool isUpgrade = false)
+		public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
 		{
 			// Desearialize an prep for install
 			var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
@@ -405,33 +354,6 @@ namespace OpenIZ.Mobile.Core.Android
 		}
 
 		/// <summary>
-		/// Install protocol
-		/// </summary>
-		public void InstallProtocol(IClinicalProtocol pdf)
-		{
-			try
-			{
-				this.GetService<IClinicalProtocolRepositoryService>().InsertProtocol(pdf.GetProtcolData());
-			}
-			catch (Exception e)
-			{
-				this.m_tracer.TraceError("Error installing protocol {0}: {1}", pdf.Id, e);
-				throw;
-			}
-		}
-
-		/// <summary>
-		/// Register applet
-		/// </summary>
-		/// <param name="applet">Applet.</param>
-		public void LoadApplet(AppletManifest applet)
-		{
-			if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
-				this.m_applets.DefaultApplet = applet;
-			this.m_applets.Add(applet);
-		}
-
-		/// <summary>
 		/// Save the configuration
 		/// </summary>
 		public override void SaveConfiguration()
@@ -439,26 +361,6 @@ namespace OpenIZ.Mobile.Core.Android
 			this.m_configurationManager.Save();
 		}
 
-		/// <summary>
-		/// Verifies the manifest against it's recorded signature
-		/// </summary>
-		/// <returns><c>true</c>, if manifest was verifyed, <c>false</c> otherwise.</returns>
-		/// <param name="manifest">Manifest.</param>
-		public bool VerifyManifest(AppletManifest manifest, AppletName configuredInfo)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Sets the current principal
-		/// </summary>
-		internal void SetPrincipal(IPrincipal p)
-		{
-			if (p != null && !p.Identity.IsAuthenticated)
-				throw new InvalidOperationException(Strings.err_unauthenticated_principal);
-			else
-				this.Principal = p;
-		}
 
 		#region implemented abstract members of ApplicationContext
 
@@ -513,11 +415,22 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 
-		/// <summary>
-		/// Get applet asset
-		/// </summary>
-		internal byte[] GetAppletAssetFile(AppletAsset navigateAsset)
-		{
+        /// <summary>
+        /// Get the configuration manager
+        /// </summary>
+        public override IConfigurationManager ConfigurationManager
+        {
+            get
+            {
+                return this.m_configurationManager;
+            }
+        }
+
+        /// <summary>
+        /// Resolve asset
+        /// </summary>
+        public override object ResolveAppletAsset(AppletAsset navigateAsset)
+        {
 			String itmPath = System.IO.Path.Combine(
 										ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
 										"assets",

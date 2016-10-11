@@ -199,6 +199,10 @@ namespace Minims
                 try
                 {
                     retVal.ConfigurationManager.Load();
+                    retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
+                    {
+                        TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
+                    });
                     // Set master application context
                     ApplicationContext.Current = retVal;
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
@@ -265,9 +269,7 @@ namespace Minims
 
                     // Start daemons
                     retVal.Start();
-
-                    // Load protocols
-                    retVal.GetService<ICarePlanService>().Initialize();
+                    
                 }
                 catch (Exception e)
                 {
@@ -496,6 +498,14 @@ namespace Minims
         public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Save configuration
+        /// </summary>
+        public override void SaveConfiguration()
+        {
+            this.m_configurationManager.Save();
         }
     }
 }
