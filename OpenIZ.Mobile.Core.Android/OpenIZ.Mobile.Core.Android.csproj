@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Diagnostics\" />
+    <Folder Include="Http\" />
     <Folder Include="Net\" />
   </ItemGroup>
 </Project>

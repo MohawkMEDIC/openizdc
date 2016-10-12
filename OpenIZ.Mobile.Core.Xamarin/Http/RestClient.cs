@@ -32,6 +32,9 @@ using System.IO;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.EntityLoader;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -139,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         else
                             requestObj.Headers.Add(hdr.Key, hdr.Value);
                     }
-
+                
                 // Body was provided?
                 try
                 {
@@ -151,6 +154,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         // GET Stream, 
                         Stream requestStream = null;
                         Exception requestException = null;
+                        
+                        //requestStream = requestObj.GetRequestStream();
                         var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
                         {
                             if (r.IsFaulted)
@@ -158,7 +163,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             else
                                 requestStream = r.Result;
                         });
-                        if (!requestTask.Wait(this.Description.Endpoint[0].Timeout)) throw new TimeoutException();
+
+                        if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
+                        {
+                            throw new TimeoutException();
+                        }
                         else if (requestException != null) throw requestException;
 
                         if (contentType == null)
@@ -188,7 +197,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         else
                             response = r.Result as HttpWebResponse;
                     });
-                    if (!responseTask.Wait(this.Description.Endpoint[0].Timeout)) throw new TimeoutException();
+                    if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
+                        throw new TimeoutException();
                     else if (responseError != null)
                     {
                         if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)

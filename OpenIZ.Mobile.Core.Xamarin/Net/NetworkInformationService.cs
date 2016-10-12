@@ -38,7 +38,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
     {
 
         // Net available
-        private bool m_networkAvailable = false;
+        private bool m_networkAvailable = true;
 
         /// <summary>
         /// Network availability changed

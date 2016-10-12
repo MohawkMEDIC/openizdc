@@ -56,9 +56,9 @@ namespace Minims
         // The application
         private static readonly OpenIZ.Core.Model.Security.SecurityApplication c_application = new OpenIZ.Core.Model.Security.SecurityApplication()
         {
-            ApplicationSecret = "C5B645B7D30A4E7E81A1C3D8B0E28F4C",
-            Key = Guid.Parse("5248ea19-369d-4071-8947-413310872b7e"),
-            Name = "org.openiz.openiz_mobile"
+            ApplicationSecret = "A1CF054D04D04CD1897E114A904E328D",
+            Key = Guid.Parse("4C5A581C-A6EE-4267-9231-B0D3D50CC08A"),
+            Name = "org.openiz.minims"
         };
 
         // Applet bas directory
@@ -95,11 +95,7 @@ namespace Minims
         {
             get
             {
-                return new SecurityApplication()
-                {
-                    Name = "TESTIMSServer",
-                    Key = Guid.NewGuid()
-                };
+                return c_application;
             }
         }
 
@@ -199,10 +195,6 @@ namespace Minims
                 try
                 {
                     retVal.ConfigurationManager.Load();
-                    retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
-                    {
-                        TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
-                    });
                     // Set master application context
                     ApplicationContext.Current = retVal;
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
@@ -264,6 +256,10 @@ namespace Minims
                         retVal.ConfigurationManager.Save();
                     }
                     retVal.LoadedApplets.CachePages = false;
+                    retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
+                    {
+                        TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
+                    });
 
                     retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 

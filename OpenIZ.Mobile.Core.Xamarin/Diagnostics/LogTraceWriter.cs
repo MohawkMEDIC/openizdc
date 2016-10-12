@@ -51,19 +51,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
 			String msg = String.Format ("{0}:{1}", source, format);
 			switch (level) {
 				case EventLevel.Error:
-					Trace.TraceError(this.m_sourceName, msg, args);
+					Trace.TraceError(msg, args);
 					break;
 				case EventLevel.Informational:
-                    Trace.TraceInformation (this.m_sourceName, msg, args);
+                    Trace.TraceInformation (msg, args);
 					break;
 				case EventLevel.Critical:
-                    Trace.TraceError (this.m_sourceName, msg, args);
+                    Trace.TraceError (msg, args);
 					break;
 				case EventLevel.Verbose:
-                    Trace.TraceInformation (this.m_sourceName, msg, args);
+                    Trace.TraceInformation (msg, args);
 					break;
 				case EventLevel.Warning:
-                    Trace.TraceWarning (this.m_sourceName, msg, args);
+                    Trace.TraceWarning (msg, args);
 					break;
 			
 			}
