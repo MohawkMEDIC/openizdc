@@ -35,6 +35,7 @@ angular.element(document).ready(function () {
                 });
 
                 // Record target
+                
                 for (var ptcpt in newValue.RecordTarget) {
 
                     var acts = [];
@@ -49,9 +50,8 @@ angular.element(document).ready(function () {
                     for (var act in acts) {
 
                         var model = acts[act].actModel || acts[act].targetModel;
-
                         // Ignore anything except substance admins
-                        if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel==undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                             continue;
 
                         var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
