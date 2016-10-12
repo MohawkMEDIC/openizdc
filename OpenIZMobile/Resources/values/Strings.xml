@@ -19,11 +19,11 @@
  - Date: 2016-6-14
  -->
 <resources>
-	<string name="app_name">OpenIZ Mobile</string>
+	<string name="app_name">TImR Mobile</string>
 	<string name="user_name">User Name</string>
 	<string name="password">Password</string>
 	<string name="login">Login</string>
-	<string name="login_title">OpenIZ Login</string>
+	<string name="login_title">TImR Login</string>
 	<string name="startup">Starting Up</string>
 	<string name="needs_setup">We need to set some things up</string>
 	<string name="installing_applets">Installing </string>
@@ -32,10 +32,10 @@
      
   <!-- Errors -->
 	<!-- Setup screen -->
-	<string name="setup_title">Welcome to OpenIZ!</string>
-	<string name="setup_subTitle">Before you can use OpenIZ you need to configure it. First, you\'ll need to join this app to an OpenIZ and setup some security controls.</string>
+	<string name="setup_title">Welcome to TImR!</string>
+	<string name="setup_subTitle">Before you can use TImR you need to configure it. First, you\'ll need to join this app to an TImR and setup some security controls.</string>
 	<string name="setup_title_sec">Security</string>
-	<string name="setup_subTitle_sec">In order for this applet to function, it first must be joined to an OpenIZ Realm. A realm is an application cluster which stores data, security settings, etc.</string>
+	<string name="setup_subTitle_sec">In order for this applet to function, it first must be joined to an TImR Realm. A realm is an application cluster which stores data, security settings, etc.</string>
 	<string name="setup_title_app">Application</string>
 	<string name="setup_subTitle_app">Specify application behaviors related to synchronization, offline mode, etc.</string>
 	<string name="setup_title_lnf">Look &amp; Feel</string>
@@ -49,11 +49,11 @@
   <string name="leaveRealm">Are you sure you want to leave this realm? All local data will be erased!</string>
 	<!-- Activity Titles -->
 	<string name="activity_login">Login</string>
-	<string name="activity_setup">Setup OpenIZ</string>
+	<string name="activity_setup">Setup TImR</string>
 	<!-- Errors -->
 	<string name="err_general">Oops! Something went wrong!</string>
 	<string name="err_applet_not_found">Oops! Looks like there is something wrong with that applet!</string> 
-	<string name="err_startup">A serious error occurred during startup. OpenIZ Mobile cannot continue. Please reference the following error code when seeking help:</string>
+	<string name="err_startup">A serious error occurred during startup. TImR Mobile cannot continue. Please reference the following error code when seeking help:</string>
 	<string name="err_login">Login error: </string>
 	<string name="err_login_invalidusername">Invalid username/password</string>
 	<string name="err_exception">An unexpected error occurred</string>

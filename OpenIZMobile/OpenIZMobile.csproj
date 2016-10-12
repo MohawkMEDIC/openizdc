@@ -186,6 +186,24 @@
     <AndroidResource Include="Resources\drawable\icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.pcv13.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.rota.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.bcg.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.dtp.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.mr.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.opv.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.weight.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -198,27 +216,6 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidEnvironment Include="environment.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.pcv13.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.rota.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.other.weight.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.bcg.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.dtp.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.mr.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\org.openiz.protocol.iz.who.opv.xml" />
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.4164">
+  <info id="org.openiz.core" version="0.6.7.7957">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -1738,16 +1738,21 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $ro
 /// &lt;reference path="~/js/openiz.js"/&gt;
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
-    $rootScope.system = {};
-    $rootScope.system.config = {};
-    $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
+    OpenIZ.Configuration.getConfigurationAsync({
+        continueWith: function (config) {
+            $rootScope.system = {};
+            $rootScope.system.config = config;
+            $rootScope.$apply();
+        }
+    })
+
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
         loadTime: new Date(),
         maxEventTime: new Date(), // Dislike Javascript
         minEventTime: new Date(), // quite a bit
         locale: OpenIZ.Localization.getLocale(),
-        onlineState : OpenIZ.App.getOnlineState()
+        onlineState: OpenIZ.App.getOnlineState()
     };
 
     setInterval(function () {
@@ -1836,7 +1841,7 @@ angular.element(document).ready(function () {
 </contentText>
   </asset>
   <asset name="controllers/layouts/root.min.js" mimeType="text/javascript">
-    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize","ngRoute"]).run(function(n){n.system={};n.system.config={};n.system.config.realmName=OpenIZ.Configuration.getRealm();n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t!=null&amp;&amp;t.entity!=null&amp;&amp;(t.entity.telecom=t.entity.telecom||{},Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""}));n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);layoutApp.service("queryUrlParameterService",[function(){function n(){for(var t=window.location.href,i=/[\?|\&amp;]([^=]+)\=([^&amp;]+)/g,n={};(match=i.exec(t))!=null;)n[match[1]]=match[2];return n}return{getUrlParameters:n}}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
+    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize","ngRoute"]).run(function(n){OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.system={};n.system.config=t;n.$apply()}});n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:new Date,minEventTime:new Date,locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);n.page.maxEventTime.setDate(n.page.maxEventTime.getDate()+1);n.page.minEventTime.setDate(n.page.minEventTime.getDate()-1);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t!=null&amp;&amp;t.entity!=null&amp;&amp;(t.entity.telecom=t.entity.telecom||{},Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""}));n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);layoutApp.service("queryUrlParameterService",[function(){function n(){for(var t=window.location.href,i=/[\?|\&amp;]([^=]+)\=([^&amp;]+)/g,n={};(match=i.exec(t))!=null;)n[match[1]]=match[2];return n}return{getUrlParameters:n}}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
   </asset>
   <asset name="controllers/settings/password.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;

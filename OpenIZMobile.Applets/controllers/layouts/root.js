@@ -3,16 +3,21 @@
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
-    $rootScope.system = {};
-    $rootScope.system.config = {};
-    $rootScope.system.config.realmName = OpenIZ.Configuration.getRealm();
+    OpenIZ.Configuration.getConfigurationAsync({
+        continueWith: function (config) {
+            $rootScope.system = {};
+            $rootScope.system.config = config;
+            $rootScope.$apply();
+        }
+    })
+
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
         loadTime: new Date(),
         maxEventTime: new Date(), // Dislike Javascript
         minEventTime: new Date(), // quite a bit
         locale: OpenIZ.Localization.getLocale(),
-        onlineState : OpenIZ.App.getOnlineState()
+        onlineState: OpenIZ.App.getOnlineState()
     };
 
     setInterval(function () {

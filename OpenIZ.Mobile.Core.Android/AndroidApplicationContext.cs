@@ -226,6 +226,7 @@ namespace OpenIZ.Mobile.Core.Android
 				}));
 				ApplicationContext.Current = retVal;
 				retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
+                retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 				retVal.Start();
 				return true;
 			}
