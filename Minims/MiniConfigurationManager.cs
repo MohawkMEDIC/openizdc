@@ -237,8 +237,7 @@ namespace Minims
                 {
                     this.m_configuration = OpenIZConfiguration.Load(fs);
                 }
-
-
+            
         }
 
 
