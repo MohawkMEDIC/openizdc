@@ -12,3 +12,7 @@ OpenIZApplicationService.ShowToast = function (string) {
 OpenIZApplicationService.GetOnlineState = function () {
     return true;
 }
+
+OpenIZApplicationService.BarcodeScan = function () {
+    return OpenIZApplicationService.NewGuid().substring(0, 8);
+}

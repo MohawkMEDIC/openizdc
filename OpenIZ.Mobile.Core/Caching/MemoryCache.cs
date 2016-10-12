@@ -403,7 +403,16 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         public void HandlePostPersistenceEvent(Object data)
         {
-            this.AddUpdateEntry(data);
+            var idData = data as IIdentifiedEntity;
+            var objData = data.GetType();
+            Dictionary<Guid, CacheEntry> cache = null;
+            if (this.m_entryTable.TryGetValue(objData, out cache))
+            {
+                Guid key = idData?.Key ?? Guid.Empty;
+                if (cache.ContainsKey(key))
+                    lock (this.m_lock)
+                        cache.Remove(key);
+            }
         }
 
         /// <summary>

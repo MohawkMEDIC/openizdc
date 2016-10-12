@@ -44,6 +44,8 @@ using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using System.Xml.Linq;
 using System.Reflection;
 using System.Globalization;
+using OpenIZ.Protocol.Xml;
+using OpenIZ.Protocol.Xml.Model;
 
 namespace Minims
 {
@@ -265,6 +267,18 @@ namespace Minims
 
                     retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
+                    // Load clinical protocols
+                    retVal.m_tracer.TraceInfo("Loading clinical protocols..");
+                    foreach (var dir in consoleParms.ProtocolDirectory)
+                        foreach (var f in Directory.GetFiles(dir))
+                        {
+                            retVal.m_tracer.TraceVerbose("Installing {0}...", f);
+                            using (var stream = File.OpenRead(f))
+                            {
+                                var pd = ProtocolDefinition.Load(stream);
+                                retVal.InstallProtocol(new XmlClinicalProtocol(pd));
+                            }
+                        }
                     // Start daemons
                     retVal.Start();
                     
@@ -497,6 +511,7 @@ namespace Minims
                 // Write the generated shims
                 using (TextWriter tw = new StreamWriter(response, Encoding.ASCII, 1024, true))
                 {
+                    tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
                     // Version
                     tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
                     tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
@@ -507,6 +522,15 @@ namespace Minims
                     }
                     tw.WriteLine("\t}");
                     tw.WriteLine("}");
+
+                    tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
+                    tw.WriteLine("OpenIZApplicationService._UUIDS = [");
+                    for (int i = 0; i < 30; i++)
+                        tw.WriteLine("\t'{0}',", Guid.NewGuid());
+                    tw.WriteLine("\t''];");
+
+                    tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
+
                 }
                 // Read the static shim
                 using (Stream shim = typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js"))
