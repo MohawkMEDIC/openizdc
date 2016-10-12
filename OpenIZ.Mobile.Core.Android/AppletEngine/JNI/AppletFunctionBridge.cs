@@ -40,6 +40,7 @@ using System.Globalization;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -55,38 +56,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
         private KeyValuePair<String, float> m_applicationStatus;
 
-        /// <summary>
-        /// Menu information
-        /// </summary>
-        [JsonObject]
-        private class MenuInformation
-        {
 
-
-            /// <summary>
-            /// Get or sets the menu
-            /// </summary>
-            [JsonProperty("menu")]
-            public List<MenuInformation> Menu { get; set; }
-
-            /// <summary>
-            /// Icon text
-            /// </summary>
-            [JsonProperty("icon")]
-            public String Icon { get; set; }
-
-            /// <summary>
-            /// Text for the menu item
-            /// </summary>
-            [JsonProperty("text")]
-            public String Text { get; set; }
-
-            /// <summary>
-            /// Action
-            /// </summary>
-            [JsonProperty("action")]
-            public String Action { get; set; }
-        }
 
         // Context
         private Context m_context;

@@ -289,6 +289,47 @@ var OpenIZ = OpenIZ || {
      */
     Util: {
         /**
+         * @summary Perform a simple get
+         * @method
+         * @memberof OpenIZ.Util
+         */
+        simpleGet : function(url, controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+            // Perform auth request
+            $.getJSON(url, null, function (data) {
+
+                if (data != null && data.error !== undefined)
+                    controlData.onException(new OpenIZModel.Exception(data.error),
+                        data.error_description,
+                        null
+                    );
+                else if (data != null) {
+                    controlData.continueWith(data);
+                }
+                else
+                    controlData.onException(new OpenIZModel.Exception("err_general",
+                        data,
+                        null
+                    ));
+            }).error(function (data) {
+                var error = data.responseJSON;
+                if (error != null && error.error !== undefined) //  error
+                    controlData.onException(new OpenIZModel.Exception(error.error,
+                            error.error_description,
+                            null
+                        ));
+
+                else // unknown error
+                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                            data,
+                            null
+                        ));
+            }).always(function () {
+                if (controlData.finally !== undefined)
+                    controlData.finally();
+            });
+        },
+        /**
          * @summary Render address for display
          */
         renderAddress: function (entity) {
@@ -924,6 +965,16 @@ var OpenIZ = OpenIZ || {
                 console.error(e);
                 //throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"), e.message, e);
             }
+        },
+        /**  
+         * @summary Get the menus async
+         * @method
+         * @memberof OpenIZ.App
+         * @returns {Object} Representing menu items the current user has access to
+         */
+        getMenusAsync: function(controlData) {
+            OpenIZ.Util.simpleGet("/__app/menu", controlData);
+
         },
         /**
          * @summary Uses the device camera to scan a barcode from the device
@@ -1658,40 +1709,13 @@ var OpenIZ = OpenIZ || {
          * @return {Object} The complete configuration object
          */
         getConfigurationAsync: function (controlData) {
-            controlData.onException = controlData.onException || OpenIZ.Util.logException;
-            // Perform auth request
-            $.getJSON('/__config/all', null, function (data) {
-                
-                if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.error),
-                        data.error_description,
-                        null
-                    );
-                else if (data != null) {
+            OpenIZ.Util.simpleGet('/__config/all', {
+                continueWith: function (data) {
                     OpenIZ.Configuration.$configuration = data;
                     controlData.continueWith(data);
-                }
-                else
-                    controlData.onException(new OpenIZModel.Exception("err_general",
-                        data,
-                        null
-                    ));
-            }).error(function (data) {
-                var error = data.responseJSON;
-                if (error != null && error.error !== undefined) // oauth 2 error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
-                            error.error_description,
-                            null
-                        ));
-
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                            data,
-                            null
-                        ));
-            }).always(function () {
-                if (controlData.finally !== undefined)
-                    controlData.finally();
+                },
+                onException: controlData.onException,
+                finally: controlData.finally
             });
 
         },

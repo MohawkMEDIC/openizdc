@@ -42,6 +42,8 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using System.Xml.Linq;
+using System.Reflection;
+using System.Globalization;
 
 namespace Minims
 {
@@ -456,6 +458,9 @@ namespace Minims
                 htmlAsset.Html = xe;
                 return htmlAsset;
             }
+            //else if(navigateAsset.MimeType == "text/javascript" ||
+            //    navigateAsset.MimeType == "text/css" ||
+            //    navigateAsset.MimeType == "application/json")
             else
             {
                 using (MemoryStream response = new MemoryStream())
@@ -470,22 +475,55 @@ namespace Minims
                     }
 
                     if (navigateAsset.Name.Contains("/openiz.js"))
-                        using (Stream shim = typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js"))
-                        {
-                            br = 8092;
-                            // HACK: Skip BOM
-                            shim.Seek(3, SeekOrigin.Begin);
-                            while (br == 8092)
-                            {
-                                br = shim.Read(buffer, 0, 8092);
-                                response.Write(buffer, 0, br);
-                            }
-                        }
-
+                    {
+                        byte[] shim = this.GetShimMethods();
+                        response.Write(shim, 0, shim.Length);
+                    }
                     return response.ToArray();
                 }
             }
 
+        }
+
+        /// <summary>
+        /// Get the SHIM methods
+        /// </summary>
+        /// <returns></returns>
+        private byte[] GetShimMethods()
+        {
+            // Load the default SHIM
+            using (MemoryStream response = new MemoryStream())
+            {
+                // Write the generated shims
+                using (TextWriter tw = new StreamWriter(response, Encoding.ASCII, 1024, true))
+                {
+                    // Version
+                    tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+                    tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
+                    tw.WriteLine("\tswitch(key) {");
+                    foreach(var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
+                    {
+                        tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'","\\'"));
+                    }
+                    tw.WriteLine("\t}");
+                    tw.WriteLine("}");
+                }
+                // Read the static shim
+                using (Stream shim = typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js"))
+                {
+                    int br = 8092;
+                    byte[] buffer = new byte[8092];
+                    // HACK: Skip BOM
+                    shim.Seek(3, SeekOrigin.Begin);
+                    while (br == 8092)
+                    {
+                        br = shim.Read(buffer, 0, 8092);
+                        response.Write(buffer, 0, br);
+                    }
+                }
+
+                return response.ToArray();
+            }
         }
 
         /// <summary>

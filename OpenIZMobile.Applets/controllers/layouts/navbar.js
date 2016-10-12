@@ -6,7 +6,13 @@
 layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', function ($scope, $interval, $rootScope) {
 
     // Add menu items
-    $scope.menuItems = OpenIZ.App.getMenus();
+    OpenIZ.App.getMenusAsync({
+        continueWith: function (menus) {
+            $scope.menuItems = menus;
+            $scope.$applyAsync();
+        }
+    });
+    
     
     // Perform a logout of the session
     $scope.logout = $scope.logout || function () {

@@ -15,6 +15,8 @@ using System.Reflection;
 using OpenIZ.Mobile.Core.Configuration;
 using System.IO;
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using System.Globalization;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -262,6 +264,68 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
+
+        /// <summary>
+        /// Get menu information
+        /// </summary>
+        [RestOperation(UriPath = "/menu", Method = "GET")]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public List<MenuInformation> GetMenus()
+        {
+            try
+            {
+
+                // Cannot have menus if not logged in
+                if (ApplicationContext.Current.Principal == null) return null;
+
+                var rootMenus = XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
+                List<MenuInformation> retVal = new List<MenuInformation>();
+
+                // Create menus
+                foreach (var mnu in rootMenus)
+                    this.ProcessMenuItem(mnu, retVal);
+                retVal.RemoveAll(o => o.Action == null && o.Menu?.Count == 0);
+
+
+                return retVal;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error retrieving menus: {0}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Process menu item
+        /// </summary>
+        private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
+        {
+            // TODO: Demand permission
+            if (menu.Launcher != null &&
+                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                return;
+
+            // Get text for menu item
+            string menuText = menu.GetText(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+            var existing = retVal.Find(o => o.Text == menuText && o.Icon == menu.Icon);
+            if (existing == null)
+            {
+                existing = new MenuInformation()
+                {
+                    Action = menu.Launcher,
+                    Icon = menu.Icon,
+                    Text = menuText
+                };
+                retVal.Add(existing);
+            }
+            if (menu.Menus.Count > 0)
+            {
+                existing.Menu = new List<MenuInformation>();
+                foreach (var child in menu.Menus)
+                    this.ProcessMenuItem(child, existing.Menu);
+            }
+        }
 
         /// <summary>
         /// Get the alerts from the service

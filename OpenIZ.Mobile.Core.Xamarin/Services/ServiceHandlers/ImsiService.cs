@@ -32,6 +32,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     [RestService("/__ims")]
     public class ImsiService
     {
+
+        // UTF8 BOM
+        private readonly String c_utf8bom = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+
         // Tracer 
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 
@@ -422,6 +426,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 templateBytes = XamarinApplicationContext.Current.ResolveAppletAsset(XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(template.Definition)) as byte[];
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
+
+            if (templateString.StartsWith(c_utf8bom))
+                templateString = templateString.Remove(0, c_utf8bom.Length);
+
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             var securityUser = securityRepo?.GetUser(ApplicationContext.Current.Principal.Identity);
