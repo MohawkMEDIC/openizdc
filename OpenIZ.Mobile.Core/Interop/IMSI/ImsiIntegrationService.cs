@@ -128,8 +128,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
 			var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
-			method.MakeGenericMethod(new Type[] { data.GetType() });
-			method.Invoke(this, new object[] { data });
+			method = method.MakeGenericMethod(new Type[] { data.GetType() });
+			method.Invoke(client, new object[] { data });
 		}
 
 		/// <summary>
