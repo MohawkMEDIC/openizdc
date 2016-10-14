@@ -21,7 +21,8 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+{
 
     var params = queryParameterService.getUrlParameters();
 
@@ -34,11 +35,13 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
     OpenIZ.Ims.get({
         query: query,
         resource: "ManufacturedMaterial",
-        continueWith: function (data) {
+        continueWith: function (data)
+        {
 
             console.log(data);
 
-            if (data.item !== undefined) {
+            if (data.item !== undefined)
+            {
                 manufacturedMaterial = data.item[0];
                 $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
                 $scope.lotNumber = manufacturedMaterial.lotNumber;
@@ -46,18 +49,20 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
             }
         },
-        onException: function (ex) {
+        onException: function (ex)
+        {
             console.log(ex);
         }
     });
 
-    $scope.adjustStock = function () {
-
+    $scope.adjustStock = function ()
+    {
         OpenIZ.App.showWait();
 
         OpenIZ.Act.getActTemplateAsync({
             templateId: "Act.AdjustStock",
-            continueWith: function (data) {
+            continueWith: function (data)
+            {
                 var act = data;
                 console.log(data);
                 data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
@@ -67,15 +72,29 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 OpenIZ.Ims.post({
                     resource: "Act",
                     data: data,
-                    continueWith: function (act) {
+                    continueWith: function (act)
+                    {
                         console.log(act);
+                        window.location.href = "searchstock.html";
+
+                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateSuccessful"));
                     },
-                    onException: function(ex){
+                    onException: function (ex)
+                    {
                         console.log(ex);
-                }
-                })
-                OpenIZ.App.hideWait();
-            }
+
+                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateUnSuccessful"));
+                    },
+                    finally: function()
+                    {
+                        OpenIZ.App.hideWait();
+                    }
+                });
+            },
+            onException: function(ex)
+            {
+                console.log(ex);
+            },
         });
 
     };
