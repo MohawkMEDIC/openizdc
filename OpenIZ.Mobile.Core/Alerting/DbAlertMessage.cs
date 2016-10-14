@@ -42,7 +42,8 @@ namespace OpenIZ.Mobile.Core.Alerting
         {
             return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags)
             {
-                Key = new Guid(this.Id)
+                Key = new Guid(this.Id),
+				CreationTime = this.TimeStamp
             };
         }
 
