@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		public Credentials GetCredentials (IRestClient context)
 		{
 			// return this application's credentials
-			return new OAuthTokenServiceCredentials (ApplicationContext.Current.Principal);
+			return new OAuthTokenServiceCredentials (AuthenticationContext.Current.Principal);
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		public Credentials Authenticate (IRestClient context)
 		{
 			// return this application's credentials
-			return new OAuthTokenServiceCredentials (ApplicationContext.Current.Principal);
+			return new OAuthTokenServiceCredentials (AuthenticationContext.Current.Principal);
 		}
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         public Credentials GetCredentials(IPrincipal principal)
         {
             // return this application's credentials
-            return new OAuthTokenServiceCredentials(ApplicationContext.Current.Principal);
+            return new OAuthTokenServiceCredentials(AuthenticationContext.Current.Principal);
         }
         #endregion
     }

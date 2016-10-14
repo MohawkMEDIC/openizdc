@@ -35,11 +35,12 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Network interface ctor
         /// </summary>
-        public NetworkInterfaceInfo(String name, String macAddress, bool isActive)
+        public NetworkInterfaceInfo(String name, String macAddress, bool isActive, String manufacturer)
         {
             this.Name = name;
             this.MacAddress = macAddress;
             this.IsActive = isActive;
+            this.Manufacturer = manufacturer;
         }
 
         /// <summary>
@@ -56,6 +57,11 @@ namespace OpenIZ.Mobile.Core.Services
         /// Indicates whether the interface is connected
         /// </summary>
         public bool IsActive { get; private set; }
+
+        /// <summary>
+        /// Manufacturer
+        /// </summary>
+        public String Manufacturer { get; private set; }
     }
 
 	/// <summary>

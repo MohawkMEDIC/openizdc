@@ -68,8 +68,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 				else if (!String.IsNullOrEmpty(options.IfNoneMatch))
 					e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
 			};
-			if (options.Credentials != null)
-				client.Client.Credentials = options.Credentials;
+			client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 			if (options.Timeout.HasValue)
 				client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
 
@@ -106,10 +105,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 				else if (!String.IsNullOrEmpty(options.IfNoneMatch))
 					e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
 			};
-			if (options.Credentials != null)
-				client.Client.Credentials = options.Credentials;
+            client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 
-			var retVal = client.Get<TModel>(key, versionKey);
+            var retVal = client.Get<TModel>(key, versionKey);
 
 			if (retVal is Bundle)
 			{
@@ -127,7 +125,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		public void Insert(IdentifiedData data)
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-			var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
+            client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+
+            var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
 			method = method.MakeGenericMethod(new Type[] { data.GetType() });
 			method.Invoke(client, new object[] { data });
 		}
@@ -141,8 +141,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 			var restClient = ApplicationContext.Current.GetRestClient("imsi");
 
 			ImsiServiceClient client = new ImsiServiceClient(restClient);
+            client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 
-			var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
+            var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
 
 			return networkInformationService.IsNetworkAvailable;
 		}
@@ -154,7 +155,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		public void Obsolete(IdentifiedData data)
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-			var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
+			client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+            var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
 			method.MakeGenericMethod(new Type[] { data.GetType() });
 			method.Invoke(this, new object[] { data });
 		}
@@ -166,7 +168,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		public void Update(IdentifiedData data)
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-			var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
+			client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+            var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
 			method.MakeGenericMethod(new Type[] { data.GetType() });
 			method.Invoke(this, new object[] { data });
 		}

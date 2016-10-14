@@ -63,7 +63,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient CreatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToInsert)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-
             return repository.Insert(patientToInsert);
         }
         
@@ -432,7 +431,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-            var securityUser = securityRepo?.GetUser(ApplicationContext.Current.Principal.Identity);
+            var securityUser = securityRepo?.GetUser(AuthenticationContext.Current.Principal.Identity);
             var userEntity = securityRepo?.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
             templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
                 .Replace("{{uuid}}", Guid.NewGuid().ToString())

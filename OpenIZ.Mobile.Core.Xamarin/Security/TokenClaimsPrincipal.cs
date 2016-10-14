@@ -35,6 +35,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 	public class TokenClaimsPrincipal : ClaimsPrincipal
 	{
 
+        
+
 		// Claim map
 		private readonly Dictionary<String, String> claimMap = new Dictionary<string, string>() {
 			{ "unique_name", ClaimsIdentity.DefaultNameClaimType },
@@ -93,12 +95,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 				// TODO: Verify signature
 			} else if (((String)headers ["alg"]).StartsWith ("HS")) {
 				var keyId = headers ["keyid"].Value<Int32>();
-				if (keyId > this.m_configuration.TokenSymmetricSecrets.Count)
+                if (keyId > this.m_configuration?.TokenSymmetricSecrets?.Count && !TokenValidationManager.OnSymmetricKeyValidationCallback(this, keyId, body["iss"].Value<String>()))
 					throw new SecurityTokenException (SecurityTokenExceptionType.KeyNotFound, "Symmetric key not found");
 				// TODO: Verfiy signature
 			} 
-				
-
 			
 			// Parse the jwt
 			List<Claim> claims = new List<Claim>();

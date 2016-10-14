@@ -51,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Security
 		{
 			// Demand local admin
 			var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-			if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+			if (pdp.GetPolicyOutcome(principal ?? AuthenticationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
 				throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
 			var conn = this.CreateConnection();
@@ -101,7 +101,7 @@ namespace OpenIZ.Mobile.Core.Security
 			// Demand local admin
 			var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
 
-			if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+			if (pdp.GetPolicyOutcome(principal ?? AuthenticationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
 			{
 				throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 			}
@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Security
 		{
 			// Demand local admin
 			var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
-			if (pdp.GetPolicyOutcome(principal ?? ApplicationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+			if (pdp.GetPolicyOutcome(principal ?? AuthenticationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
 				throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
 
 			var conn = this.CreateConnection();

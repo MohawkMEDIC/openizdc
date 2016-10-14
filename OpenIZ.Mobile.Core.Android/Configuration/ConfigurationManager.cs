@@ -153,6 +153,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,
+                    typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
@@ -167,8 +168,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     MaxPressureAge = new TimeSpan(0, 2, 0).Ticks
                 }
             };
-
-
 
             // Security configuration
             var wlan = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o => o.NetworkInterfaceType == NetworkInterfaceType.Ethernet && o.Description.StartsWith("wlan"));

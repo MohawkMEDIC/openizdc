@@ -95,6 +95,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
+
 	}
 
 }

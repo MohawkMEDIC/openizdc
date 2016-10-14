@@ -136,11 +136,10 @@ namespace Minims
                 retVal.SetProgress("Run setup", 0);
 
                 retVal.m_configurationManager = new MiniConfigurationManager(MiniConfigurationManager.GetDefaultConfiguration());
-                retVal.Principal = new ClaimsPrincipal(new ClaimsIdentity("SYSTEM", true, new Claim[] {
-                    new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
-                }));
+               
                 ApplicationContext.Current = retVal;
                 retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext));
+                retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
                 retVal.SetProgress("Loading configuration", 0.2f);
                 // Load all user-downloaded applets in the data directory
@@ -513,6 +512,7 @@ namespace Minims
                 {
                     tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
                     // Version
+                    tw.WriteLine("OpenIZSessionService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
                     tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
                     tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
                     tw.WriteLine("\tswitch(key) {");

@@ -56,6 +56,9 @@ namespace OpenIZ.Mobile.Core
 	public abstract class ApplicationContext : IServiceProvider
 	{
 
+        // Execution uuid
+        private static Guid s_executionUuid = Guid.NewGuid();
+
 		// Context singleton
 		private static ApplicationContext s_context;
 
@@ -100,6 +103,7 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		public ApplicationContext ()
 		{
+            this.ThreadDefaultPrincipal = AuthenticationContext.AnonymousPrincipal;
 		}
 
 		#region IServiceProvider implementation
@@ -180,11 +184,6 @@ namespace OpenIZ.Mobile.Core
 		/// <value>The role provider service.</value>
 		public IRoleProviderService RoleProviderService { get { return this.GetService(typeof(IRoleProviderService)) as IRoleProviderService; } }
 		/// <summary>
-		/// Gets or sets the principal.
-		/// </summary>
-		/// <value>The principal.</value>
-		public IPrincipal Principal { get; protected set; }
-		/// <summary>
 		/// Gets the configuration.
 		/// </summary>
 		/// <value>The configuration.</value>
@@ -199,7 +198,14 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The device.</value>
 		public abstract SecurityDevice Device { get; }
-
+        /// <summary>
+        /// Execution UUID
+        /// </summary>
+        public virtual Guid ExecutionUuid { get { return s_executionUuid; } }
+        /// <summary>
+        /// Gets the default thread principal
+        /// </summary>
+        public IPrincipal ThreadDefaultPrincipal { get; protected set; }
         /// <summary>
         /// Start the daemon services
         /// </summary>

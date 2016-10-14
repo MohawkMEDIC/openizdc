@@ -91,7 +91,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		{
 			this.m_isUnrestricted = state == PermissionState.Unrestricted;
 			this.m_policyId = policyId;
-			this.m_principal = ApplicationContext.Current.Principal;
+			this.m_principal = AuthenticationContext.Current.Principal;
 		}
 
 		/// <summary>
