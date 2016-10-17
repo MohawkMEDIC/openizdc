@@ -16,6 +16,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         onException: function (ex)
         {
             OpenIZ.App.hideWait();
+
             if (typeof (ex) == "string")
                 alert(ex);
             else if (ex.message != undefined)
@@ -26,6 +27,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         continueWith: function (data)
         {
             $scope.alert = data[0];
+            console.log($scope.alert);
             $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
             $scope.$apply();
         }
@@ -34,6 +36,8 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
     $scope.deleteAlert = function (alert)
     {
         alert.flags = 2;
+
+        $scope.alert.creationTime = $scope.alert.time;
 
         OpenIZ.App.saveAlertAsync({
             data: alert,
@@ -54,12 +58,14 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         });
     };
 
-    $scope.updateAlert = function (alert)
+    $scope.updateAlert = function ()
     {
-        alert.flags = 2;
+        $scope.alert.flags = 2;
+
+        $scope.alert.creationTime = $scope.alert.time;
 
         OpenIZ.App.saveAlertAsync({
-            data: alert,
+            data: $scope.alert,
             continueWith: function (data)
             {
                 OpenIZ.App.showWait();
