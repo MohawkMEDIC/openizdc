@@ -82,6 +82,7 @@
     <Compile Include="Data\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
+    <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Extensions\ModelExtensions.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
     <Compile Include="Protocol\ProtocolWatchService.cs" />

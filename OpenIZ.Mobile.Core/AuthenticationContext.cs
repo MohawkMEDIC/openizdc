@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Security;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,8 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         public AuthenticationContext(SessionInfo session)
         {
+            if (session.Expiry < DateTime.Now)
+                throw new SessionExpiredException(session);
             this.m_principal = session.Principal;
             this.Session = session;
         }

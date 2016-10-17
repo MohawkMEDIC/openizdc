@@ -82,10 +82,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if(!authRequest.ContainsKey("scope"))
                     MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", retVal.Key.ToString())
                     {
-                        Expires = retVal.Expiry,
-                        HttpOnly = false,
+                        
+                        HttpOnly = true,
                         Secure = true,
-                        Path ="/"
+                        Path ="/",
+                        Domain = MiniImsServer.CurrentContext.Request.Url.Host
                     });
                 return retVal;
             }
