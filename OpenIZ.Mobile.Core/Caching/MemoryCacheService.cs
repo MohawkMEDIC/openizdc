@@ -91,6 +91,17 @@ namespace OpenIZ.Mobile.Core.Caching
             {
                 this.m_mappingHandler = (o, e) =>
                 {
+                    var obj = MemoryCache.Current.TryGetEntry(e.ObjectType, e.Key);
+                    if(obj != null)
+                    {
+                        var cVer = obj as IVersionedEntity;
+                        var dVer = e.ModelObject as IVersionedEntity;
+                        if (cVer?.VersionSequence >= dVer?.VersionSequence) // Cache is older than this item
+                        {
+                            e.ModelObject = obj as IdentifiedData;
+                            e.Cancel = true;
+                        }
+                    }
                     this.GetOrUpdateCacheItem(e);
                 };
 

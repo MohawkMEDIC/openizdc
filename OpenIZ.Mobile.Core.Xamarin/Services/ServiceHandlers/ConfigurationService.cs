@@ -370,14 +370,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             DeviceSecret = Guid.NewGuid().ToString()
                         });
 
-                        // Now create device entity
-                        var newDeviceEntity = ApplicationContext.Current.GetService<IDataPersistenceService<DeviceEntity>>().Insert(new DeviceEntity()
-                        {
-                            SecurityDevice = newDevice,
-                            StatusConceptKey = StatusKeys.Active,
-                            ManufacturedModelName = Environment.MachineName,
-                            OperatingSystemName = Environment.OSVersion.ToString(),
-                        });
+                        //// Now create device entity
+                        //var newDeviceEntity = ApplicationContext.Current.GetService<IDataPersistenceService<DeviceEntity>>().Insert(new DeviceEntity()
+                        //{
+                        //    SecurityDevice = newDevice,
+                        //    StatusConceptKey = StatusKeys.Active,
+                        //    ManufacturedModelName = Environment.MachineName,
+                        //    OperatingSystemName = Environment.OSVersion.ToString(),
+                        //});
                     }
                     else
                         ; // TODO: Update

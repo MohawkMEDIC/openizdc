@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.7248">
+  <info id="org.openiz.core" version="0.6.7.5398">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -192,6 +192,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         onException: function (ex)
         {
             OpenIZ.App.hideWait();
+
             if (typeof (ex) == "string")
                 alert(ex);
             else if (ex.message != undefined)
@@ -202,6 +203,7 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         continueWith: function (data)
         {
             $scope.alert = data[0];
+            console.log($scope.alert);
             $scope.alert.body = $scope.alert.body.replace("\n", "&lt;br/&gt;");
             $scope.$apply();
         }
@@ -210,6 +212,8 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
     $scope.deleteAlert = function (alert)
     {
         alert.flags = 2;
+
+        $scope.alert.creationTime = $scope.alert.time;
 
         OpenIZ.App.saveAlertAsync({
             data: alert,
@@ -230,12 +234,14 @@ layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
         });
     };
 
-    $scope.updateAlert = function (alert)
+    $scope.updateAlert = function ()
     {
-        alert.flags = 2;
+        $scope.alert.flags = 2;
+
+        $scope.alert.creationTime = $scope.alert.time;
 
         OpenIZ.App.saveAlertAsync({
-            data: alert,
+            data: $scope.alert,
             continueWith: function (data)
             {
                 OpenIZ.App.showWait();
@@ -293,6 +299,7 @@ angular.element(document).ready(function () {
                 });
 
                 // Record target
+                
                 for (var ptcpt in newValue.RecordTarget) {
 
                     var acts = [];
@@ -307,9 +314,8 @@ angular.element(document).ready(function () {
                     for (var act in acts) {
 
                         var model = acts[act].actModel || acts[act].targetModel;
-
                         // Ignore anything except substance admins
-                        if (model.$type != 'SubstanceAdministration' || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel==undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' &amp;&amp; model.typeConceptModel.mnemonic != 'Immunization' &amp;&amp; model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                             continue;
 
                         var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
@@ -385,6 +391,56 @@ angular.element(document).ready(function () {
     });
 });
 </contentText>
+  </asset>
+  <asset name="controllers/common/modal/authenticate.js" mimeType="text/javascript">
+    <contentText>/// &lt;reference path="~/js/openiz-model.js"/&gt;
+
+/// &lt;reference path="~/js/openiz.js"/&gt;
+/// &lt;reference path="~/lib/angular.min.js"/&gt;
+/// &lt;reference path="~/lib/jquery.min.js"/&gt;
+/// &lt;reference path="~/lib/bootstrap.min.js"/&gt;
+layoutApp.controller('AuthenticationDialogController', ['$scope', function ($scope) {
+
+    $scope.authenticate = function (form) {
+        if(!form.$valid) 
+        {
+            alert(OpenIZ.Localization.getString('locale.error.login.invalid'));
+            return;
+        }
+
+        // Do an authentication that is not session binding
+        OpenIZ.Authentication.loginAsync({
+            userName: $scope.username,
+            password: $scope.password,
+            scope: "/elevation",
+            continueWith: function(session) {
+                if (session == null) {
+                    alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                }
+                else {
+                    OpenIZ.Authentication.$elevationCredentials = {
+                        userName : $scope.username,
+                        password : $scope.password,
+                        $enabled : true,
+                        continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith
+                    };
+                    OpenIZ.Authentication.hideElevationDialog();
+                    if(OpenIZ.Authentication.$elevationCredentials.continueWith != null)
+                        OpenIZ.Authentication.$elevationCredentials.continueWith();
+                }
+            },
+            onException: function(error) {
+                if(error.error != null)
+                    alert(error.error);
+                else if(error.message != null)
+                    alert(error.message);
+                else
+                    alert(error);
+            }
+        })
+    }
+    
+}]);</contentText>
   </asset>
   <asset name="controllers/common/patients/register/demographics.js" mimeType="text/javascript">
     <contentText>/// &lt;refernece path="~/js/openiz.js"/&gt;
@@ -642,7 +698,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
         if (username !== undefined)
         {
             OpenIZ.Authentication.getUserAsync({
-                data: {
+                query: {
                     userName: username
                 },
                 continueWith: function(data)
@@ -691,7 +747,7 @@ angular.element(document).ready(function () {
                     if (session == null) {
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
-                    else
+                    else if(OpenIZ.urlParams["returnUrl"] != null)
                         window.location = OpenIZ.urlParams["returnUrl"];
                 },
                 onException: function (ex) {
@@ -712,7 +768,7 @@ angular.element(document).ready(function () {
 });</contentText>
   </asset>
   <asset name="controllers/common/security/login.min.js" mimeType="text/javascript">
-    <contentText>angular.element(document).ready(function(){$("form.form-login").each(function(n,t){var i=angular.element(t).scope();i.login=i.login||function(n,t,i){if(!n.$valid){alert(OpenIZ.Localization.getString("locale.security.login.invalid"));return}OpenIZ.App.showWait();OpenIZ.Authentication.loginAsync({userName:t,password:i,continueWith:function(n){n==null?alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant")):window.location=OpenIZ.urlParams.returnUrl},onException:function(n){OpenIZ.App.hideWait();typeof n=="string"?alert(n):n.message!=undefined?alert(""+n.message+" - "+n.details):alert(n)}})}})});</contentText>
+    <contentText>angular.element(document).ready(function(){$("form.form-login").each(function(n,t){var i=angular.element(t).scope();i.login=i.login||function(n,t,i){if(!n.$valid){alert(OpenIZ.Localization.getString("locale.security.login.invalid"));return}OpenIZ.App.showWait();OpenIZ.Authentication.loginAsync({userName:t,password:i,continueWith:function(n){n==null?alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant")):OpenIZ.urlParams.returnUrl!=null&amp;&amp;(window.location=OpenIZ.urlParams.returnUrl)},onException:function(n){OpenIZ.App.hideWait();typeof n=="string"?alert(n):n.message!=undefined?alert(""+n.message+" - "+n.details):alert(n)}})}})});</contentText>
   </asset>
   <asset name="controllers/common/stock/adjuststock.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
@@ -738,7 +794,8 @@ angular.element(document).ready(function () {
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService) {
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+{
 
     var params = queryParameterService.getUrlParameters();
 
@@ -751,11 +808,13 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
     OpenIZ.Ims.get({
         query: query,
         resource: "ManufacturedMaterial",
-        continueWith: function (data) {
+        continueWith: function (data)
+        {
 
             console.log(data);
 
-            if (data.item !== undefined) {
+            if (data.item !== undefined)
+            {
                 manufacturedMaterial = data.item[0];
                 $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
                 $scope.lotNumber = manufacturedMaterial.lotNumber;
@@ -763,18 +822,20 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
             }
         },
-        onException: function (ex) {
+        onException: function (ex)
+        {
             console.log(ex);
         }
     });
 
-    $scope.adjustStock = function () {
-
+    $scope.adjustStock = function ()
+    {
         OpenIZ.App.showWait();
 
         OpenIZ.Act.getActTemplateAsync({
             templateId: "Act.AdjustStock",
-            continueWith: function (data) {
+            continueWith: function (data)
+            {
                 var act = data;
                 console.log(data);
                 data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
@@ -784,15 +845,29 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 OpenIZ.Ims.post({
                     resource: "Act",
                     data: data,
-                    continueWith: function (act) {
+                    continueWith: function (act)
+                    {
                         console.log(act);
+                        window.location.href = "searchstock.html";
+
+                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateSuccessful"));
                     },
-                    onException: function(ex){
+                    onException: function (ex)
+                    {
                         console.log(ex);
-                }
-                })
-                OpenIZ.App.hideWait();
-            }
+
+                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateUnSuccessful"));
+                    },
+                    finally: function()
+                    {
+                        OpenIZ.App.hideWait();
+                    }
+                });
+            },
+            onException: function(ex)
+            {
+                console.log(ex);
+            },
         });
 
     };
@@ -2009,17 +2084,22 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     // join realm
     $scope.joinRealm = function (realm) {
         OpenIZ.App.showWait();
-        OpenIZ.Configuration.joinRealmAsync({
-            domain: realm.domain,
-            deviceName: realm.deviceName,
-            continueWith: function (data) {
-                $scope.config.realmName = data.realmName;
-                alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
-            },
-            finally: function () {
-                OpenIZ.App.hideWait();
-            }
-        });
+
+        var doJoin = function () {
+            OpenIZ.Configuration.joinRealmAsync({
+                domain: realm.domain,
+                deviceName: realm.deviceName,
+                continueWith: function (data) {
+                    $scope.config.realmName = data.realmName;
+                    alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait();
+                }
+            });
+        };
+        OpenIZ.Authentication.$elevationCredentials.continueWith = doJoin;
+        doJoin();
     };
 
     // Save config
@@ -2041,7 +2121,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 </contentText>
   </asset>
   <asset name="controllers/settings/settings.min.js" mimeType="text/javascript">
-    <contentText>layoutApp.controller("SettingsController",["$scope",function(n){OpenIZ.App.showWait();OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.config=t;n.config.network.useProxy=n.config.network.proxyAddress!=null;n.config.network.proxyAddress=n.config.network.proxyAddress||null;n.ui={dataCollapsed:!0,securityCollapsed:!0};n.config.data.mode="sync";n.config.data.sync={event:[],enablePoll:OpenIZ.App.getService("ImsiPollingService")!=null,pollInterval:OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")};n.config.log.mode=n.config.log.trace[0].filter||"Warning";n.config.security.hasher=OpenIZ.App.getService("IPasswordHashingService")||"SHA256PasswordHasher";n.config.security.offline={enable:!1};n.$apply()},onException:function(n){n.message!=null?alert(n.message):alert(n)},"finally":function(){OpenIZ.App.hideWait()}});n.master={};n.leaveRealm=function(){confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm"))&amp;&amp;OpenIZ.Configuration.leaveRealmAsync()};n.joinRealm=function(t){OpenIZ.App.showWait();OpenIZ.Configuration.joinRealmAsync({domain:t.domain,deviceName:t.deviceName,continueWith:function(t){n.config.realmName=t.realmName;alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"))},"finally":function(){OpenIZ.App.hideWait()}})};n.save=function(t){n.config.realmName==null?alert(OpenIZ.Localization.getString("locale.settings.error.noRealm")):(OpenIZ.App.showWait(),OpenIZ.Configuration.saveAsync({data:t,continueWith:function(){OpenIZ.App.close()}}))}}]);</contentText>
+    <contentText>layoutApp.controller("SettingsController",["$scope",function(n){OpenIZ.App.showWait();OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.config=t;n.config.network.useProxy=n.config.network.proxyAddress!=null;n.config.network.proxyAddress=n.config.network.proxyAddress||null;n.ui={dataCollapsed:!0,securityCollapsed:!0};n.config.data.mode="sync";n.config.data.sync={event:[],enablePoll:OpenIZ.App.getService("ImsiPollingService")!=null,pollInterval:OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")};n.config.log.mode=n.config.log.trace[0].filter||"Warning";n.config.security.hasher=OpenIZ.App.getService("IPasswordHashingService")||"SHA256PasswordHasher";n.config.security.offline={enable:!1};n.$apply()},onException:function(n){n.message!=null?alert(n.message):alert(n)},"finally":function(){OpenIZ.App.hideWait()}});n.master={};n.leaveRealm=function(){confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm"))&amp;&amp;OpenIZ.Configuration.leaveRealmAsync()};n.joinRealm=function(t){OpenIZ.App.showWait();var i=function(){OpenIZ.Configuration.joinRealmAsync({domain:t.domain,deviceName:t.deviceName,continueWith:function(t){n.config.realmName=t.realmName;alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"))},"finally":function(){OpenIZ.App.hideWait()}})};OpenIZ.Authentication.$elevationCredentials.continueWith=i;i()};n.save=function(t){n.config.realmName==null?alert(OpenIZ.Localization.getString("locale.settings.error.noRealm")):(OpenIZ.App.showWait(),OpenIZ.Configuration.saveAsync({data:t,continueWith:function(){OpenIZ.App.close()}}))}}]);</contentText>
   </asset>
   <asset name="css/bootstrap-tokenfield.min.css" mimeType="text/css">
     <contentText>/*!
@@ -3823,21 +3903,8 @@ angular.module('openiz', [])
 
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
 // SHIM
-var OpenIZApplicationService = window.OpenIZApplicationService || {
-    GetLocale: function () { return 'en'; },
-    GetStrings: function () { return '[]'; },
-    GetTemplateForm: function (templateId) {
-        switch (templateId) {
-            case "Act.Observation.Weight":
-                return "/org.openiz.core/views/templates/act.observation.weight.html";
-            case "Act.SubstanceAdmin.Immunization":
-                return "/org.openiz.core/views/templates/act.substanceadmin.immunization.html";
-            default:
-                return "../templates/" + templateId + ".html";
-
-        }
-    }
-};
+var OpenIZApplicationService = window.OpenIZApplicationService || {};
+var OpenIZSessionService = window.OpenIZApplicationService || {};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -4264,7 +4331,26 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     Authentication: {
-
+        /**
+         * @summary Credentials to use for elevation in lieu of the current session
+         */
+        $elevationCredentials: {},
+        /**
+         * @summary Show an elevation dialog
+         * @method
+         * @memberof OpenIZ.Authentication
+         */
+        showElevationDialog : function() {
+            $("#authenticationDialog").modal('show');
+        },
+        /** 
+         * @summary Hide the elevation dialog
+         * @method
+         * @memberof OpenIZ.Authentication
+         */
+        hideElevationDialog : function() {
+            $("#authenticationDialog").modal('hide');
+        },
         /**
          * @summary Perform a login operation asynchronously
          * @memberof OpenIZ.Authentication
@@ -4289,7 +4375,8 @@ var OpenIZ = OpenIZ || {
                  data: {
                      username: controlData.userName,
                      password: controlData.password,
-                     grant_type: 'password'
+                     grant_type: 'password',
+                     scope: controlData.scope
                  },
                  dataType: "json",
                  contentType: 'application/x-www-urlform-encoded',
@@ -4399,7 +4486,7 @@ var OpenIZ = OpenIZ || {
         getSessionAsync: function (controlData) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
             // Perform auth request
-            $.getJSON('/__auth/get_session', null, function (data) {
+            $.getJSON('/__auth/get_session', controlData.query, function (data) {
                 if (data != null &amp;&amp; data.error !== undefined)
                     controlData.onException(new OpenIZModel.Exception(data.error),
                         data.error_description,
@@ -4469,9 +4556,9 @@ var OpenIZ = OpenIZ || {
         getUserAsync: function(controlData) {
             $.ajax(
             {
-                method: "POST",
+                method: "GET",
                 url: "/__auth/get_user",
-                data: controlData.data,
+                data: controlData.query,
                 contentType: "application/json; charset=UTF-8",
                 success: function (xhr, data)
                 {
@@ -5613,7 +5700,7 @@ var OpenIZ = OpenIZ || {
                              OpenIZ.Configuration.$configuration = xhr;
                              controlData.continueWith(xhr);
                          }
-                         else
+                         else if(controlData.onException != null)
                              controlData.onException(new OpenIZModel.Exception("err_general",
                                  data,
                                  null
@@ -5630,7 +5717,7 @@ var OpenIZ = OpenIZ || {
                                      null
                                  ));
 
-                         else // unknown error
+                         else if(controlData.onException != null) // unknown error
                              controlData.onException(new OpenIZModel.Exception("err_general" + error,
                                      data,
                                      null
@@ -5808,7 +5895,21 @@ var OpenIZ = OpenIZ || {
 $.ajaxSetup({
     cache: false, converters: {
         'text json': $.parseJSON
+    },
+    beforeSend: function (data, settings) {
+        if (OpenIZ.Authentication.$elevationCredentials.$enabled) {
+            data.setRequestHeader("Authorization", "BASIC " +
+                btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
+        }
+        data.setRequestHeader("X-OIZMagic", OpenIZSessionService.GetMagic());
     }
+});
+
+$(document).ajaxError(function (e, data, setting, err) {
+    if (data.status == 401 || data.status == 403)
+        OpenIZ.Authentication.showElevationDialog();
+    else
+        throw new OpenIZModel.Exception("err_request", err, null);
 });
 
 // Parameters
@@ -5827,7 +5928,7 @@ $.ajaxSetup({
 </contentText>
   </asset>
   <asset name="js/openiz.min.js" mimeType="text/javascript">
-    <contentText>var OpenIZApplicationService=window.OpenIZApplicationService||{GetLocale:function(){return"en"},GetStrings:function(){return"[]"},GetTemplateForm:function(n){switch(n){case"Act.Observation.Weight":return"/org.openiz.core/views/templates/act.observation.weight.html";case"Act.SubstanceAdmin.Immunization":return"/org.openiz.core/views/templates/act.substanceadmin.immunization.html";default:return"../templates/"+n+".html"}}},OpenIZ=OpenIZ||{urlParams:{},Act:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Act",continueWith:n.continueWith,onException:n.onException,data:n.data})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},put:function(n){$.ajax({method:"PUT",url:"/__ims/"+n.resource+"?_id="+n.id+"&amp;_versionId="+n.versionId,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Stock:{calculateQPeriod:function(n,t){return n/12*t},calculateSReserve:function(n,t){return n*t},calculateSMax:function(n,t){return n+t},calculateSReorder:function(n,t,i,r){return n+t*i/r},calculateQOrder:function(n,t,i,r,u){return n-t+i*r/u},calculateQNeeded:function(n,t,i,r){return n+t-(i+r)},calculateAll:function(n,t,i,r,u){var f={};return f.qPeriod=OpenIZ.Stock.calculateQPeriod(n,t),f.sReserve=OpenIZ.Stock.calculateSReserve(f.qPeriod,i),f.sMax=OpenIZ.Stock.calculateSMax(f.qPeriod,f.sReserve),f.sReorder=OpenIZ.Stock.calculateSReorder(f.sReserve,f.qPeriod,r,t),f.qOrder=OpenIZ.Stock.calculateQOrder(f.sMax,u,f.qPeriod,r,t),f}},Util:{simpleGet:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.getJSON(n,null,function(n){if(n!=null&amp;&amp;n.error!==undefined)t.onException(new OpenIZModel.Exception(n.error),n.error_description,null);else if(n!=null)t.continueWith(n);else t.onException(new OpenIZModel.Exception("err_general",n,null))}).error(function(n){var i=n.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)t.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else t.onException(new OpenIZModel.Exception("err_general"+i,n,null))}).always(function(){t.finally!==undefined&amp;&amp;t.finally()})},renderAddress:function(n){if(n!==undefined){var t=n.component!==undefined?n:n.address!==undefined?n.address.Direct||n.address.HomeAddress:n.Direct||n.HomeAddress,i="";return t.component.AdditionalLocator&amp;&amp;(i+=t.component.AdditionalLocator+", "),t.component.StreetAddressLine&amp;&amp;(i+=t.component.StreetAddressLine+", "),t.component.City&amp;&amp;(i+=t.component.City+", "),t.component.County!=null&amp;&amp;(i+=t.component.County+", "),t.component.State!=null&amp;&amp;(i+=t.component.State+", "),t.component.Country!=null&amp;&amp;(i+=t.component.Country+", "),i.substring(0,i.length-2)}},renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getSessionAsync:function(n){n.onException=n.onException||OpenIZ.Util.logException;$.getJSON("/__auth/get_session",null,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",t,null))}).error(function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}).always(function(){n.finally!==undefined&amp;&amp;n.finally()})},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(){},getUserAsync:function(n){$.ajax({method:"POST",url:"/__auth/get_user",data:n.data,contentType:"application/json; charset=UTF-8",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.onDate!==undefined&amp;&amp;(t+="&amp;startTime=&lt;"+n.onDate.toISOString()+"&amp;stopTime=&gt;"+n.onDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);n.moodConcept!==undefined&amp;&amp;(t+="&amp;moodConcept="+n.moodConcept);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException!==undefined)if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},App:{newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){$.getJSON("/__app/info",null,function(t){n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()})},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){for(var t in OpenIZ.Configuration.$configuration.application.service)if(OpenIZ.Configuration.$configuration.application.service[t].lastIndexOf(n)&gt;0)return OpenIZ.Configuration.$configuration.application.service[t];return null},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},getMenusAsync:function(n){OpenIZ.Util.simpleGet("/__app/menu",n)},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},saveAlertAsync:function(n){$.ajax({method:"POST",url:"/__app/alerts",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Place:{findAsync:function(n){OpenIZ.Ims.get({resource:"Place",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Configuration:{$configuration:null,getConfigurationAsync:function(n){OpenIZ.Util.simpleGet("/__config/all",{continueWith:function(t){OpenIZ.Configuration.$configuration=t;n.continueWith(t)},onException:n.onException,"finally":n.finally})},getApplicationSetting:function(n){try{for(var i in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[i].key==n)return OpenIZ.Configuration.$configuration.application.setting[i].value;return null}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{for(var r in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[r].key==n){OpenIZ.Configuration.$configuration.application.setting[r].value=t;return}OpenIZ.Configuration.$configuration.application.setting.push({key:n,value:t})}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.$configuration.realmName}catch(n){console.error(n)}},getSection:function(n){try{return OpenIZ.Configuration.$configuration[n]}catch(t){console.error(t)}},joinRealmAsync:function(n){try{$.ajax({method:"POST",url:"/__config/realm",data:{realmUri:n.domain,deviceName:n.deviceName},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}catch(t){console.error(t)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},saveAsync:function(n){try{$.ajax({method:"POST",url:"/__config/all",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},ManufacturedMaterial:{getManufacturedMaterials:function(n){OpenIZ.Ims.get({resource:"ManufacturedMaterial",continueWith:n.continueWith,onException:n.onException,query:n.query})}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.put({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON}});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();</contentText>
+    <contentText>var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionService=window.OpenIZApplicationService||{},OpenIZ=OpenIZ||{urlParams:{},Act:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Act",continueWith:n.continueWith,onException:n.onException,data:n.data})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},put:function(n){$.ajax({method:"PUT",url:"/__ims/"+n.resource+"?_id="+n.id+"&amp;_versionId="+n.versionId,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Stock:{calculateQPeriod:function(n,t){return n/12*t},calculateSReserve:function(n,t){return n*t},calculateSMax:function(n,t){return n+t},calculateSReorder:function(n,t,i,r){return n+t*i/r},calculateQOrder:function(n,t,i,r,u){return n-t+i*r/u},calculateQNeeded:function(n,t,i,r){return n+t-(i+r)},calculateAll:function(n,t,i,r,u){var f={};return f.qPeriod=OpenIZ.Stock.calculateQPeriod(n,t),f.sReserve=OpenIZ.Stock.calculateSReserve(f.qPeriod,i),f.sMax=OpenIZ.Stock.calculateSMax(f.qPeriod,f.sReserve),f.sReorder=OpenIZ.Stock.calculateSReorder(f.sReserve,f.qPeriod,r,t),f.qOrder=OpenIZ.Stock.calculateQOrder(f.sMax,u,f.qPeriod,r,t),f}},Util:{simpleGet:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.getJSON(n,null,function(n){if(n!=null&amp;&amp;n.error!==undefined)t.onException(new OpenIZModel.Exception(n.error),n.error_description,null);else if(n!=null)t.continueWith(n);else t.onException(new OpenIZModel.Exception("err_general",n,null))}).error(function(n){var i=n.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)t.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else t.onException(new OpenIZModel.Exception("err_general"+i,n,null))}).always(function(){t.finally!==undefined&amp;&amp;t.finally()})},renderAddress:function(n){if(n!==undefined){var t=n.component!==undefined?n:n.address!==undefined?n.address.Direct||n.address.HomeAddress:n.Direct||n.HomeAddress,i="";return t.component.AdditionalLocator&amp;&amp;(i+=t.component.AdditionalLocator+", "),t.component.StreetAddressLine&amp;&amp;(i+=t.component.StreetAddressLine+", "),t.component.City&amp;&amp;(i+=t.component.City+", "),t.component.County!=null&amp;&amp;(i+=t.component.County+", "),t.component.State!=null&amp;&amp;(i+=t.component.State+", "),t.component.Country!=null&amp;&amp;(i+=t.component.Country+", "),i.substring(0,i.length-2)}},renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n())}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i)}},0)}},Authentication:{$elevationCredentials:{},showElevationDialog:function(){$("#authenticationDialog").modal("show")},hideElevationDialog:function(){$("#authenticationDialog").modal("hide")},loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:"password",scope:n.scope},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getSessionAsync:function(n){n.onException=n.onException||OpenIZ.Util.logException;$.getJSON("/__auth/get_session",n.query,function(t){if(t!=null&amp;&amp;t.error!==undefined)n.onException(new OpenIZModel.Exception(t.error),t.error_description,null);else if(t!=null)n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",t,null))}).error(function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))}).always(function(){n.finally!==undefined&amp;&amp;n.finally()})},abandonSession:function(){try{return OpenIZSessionService.Abandon(),!0}catch(n){return console.error(n),!1}},refreshSessionAsync:function(){},getUserAsync:function(n){$.ajax({method:"GET",url:"/__auth/get_user",data:n.query,contentType:"application/json; charset=UTF-8",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)n.continueWith(i);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.onDate!==undefined&amp;&amp;(t+="&amp;startTime=&lt;"+n.onDate.toISOString()+"&amp;stopTime=&gt;"+n.onDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);n.moodConcept!==undefined&amp;&amp;(t+="&amp;moodConcept="+n.moodConcept);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException!==undefined)if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})},getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally})}},App:{newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){$.getJSON("/__app/info",null,function(t){n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()})},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){for(var t in OpenIZ.Configuration.$configuration.application.service)if(OpenIZ.Configuration.$configuration.application.service[t].lastIndexOf(n)&gt;0)return OpenIZ.Configuration.$configuration.application.service[t];return null},getVersion:function(){return OpenIZApplicationService.GetVersion()},getLogFiles:function(){return JSON.parse(OpenIZApplicationService.GetLogFiles())},sendLog:function(n){OpenIZApplicationService.SendLog(n)},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenus:function(){try{var n=OpenIZApplicationService.GetMenus();if(n==null)return{};if(n.lastIndexOf("err",0)==0)throw n;else return JSON.parse(n)}catch(t){console.error(t)}},getMenusAsync:function(n){OpenIZ.Util.simpleGet("/__app/menu",n)},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){$.getJSON("/__app/alerts",n.query,function(t){n.continueWith(t)}).fail(function(t){var i=t.responseJSON;if(n.onException===undefined||i==null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null))})},saveAlertAsync:function(n){$.ajax({method:"POST",url:"/__app/alerts",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t);n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConcept(n.query,n.offset,n.count):{}},n)},findConcept:function(n,t,i){var r;try{return r=OpenIZConceptService.SearchConcept(n,t,i),r==null?null:new OpenIZModel.Bundle(JSON.parse(r))}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),u.message,u);}},findConceptSetAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return n.query!=""?OpenIZ.Concept.findConceptSet(n.query,n.offset,n.count):{}},n)},findConceptSet:function(n,t,i){var r,f,e;try{if(r=OpenIZConceptService.SearchConceptSet(n,t,i),r==null||r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),e=new OpenIZModel.Bundle(f),e}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"),u.message,u);}},getConceptAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Concept.getConcept(n.id)},n)},getConcept:function(n){try{var i=OpenIZ.Concept.findConcept("_expand=name&amp;_expand=classConcept&amp;_expand=statusConcept&amp;id="+n,0,1);return i.length==0?null:i.first("Concept")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"),t.message,t);}}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},find:function(n,t,i){var r,f;try{if(r=OpenIZPatientService.Search(n,t,i),r.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(r,null,null);else return f=JSON.parse(r),new OpenIZModel.Bundle(f)}catch(u){console.error(u);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"),u.message,u);}},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data})},insert:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);var r=JSON.stringify(n),t=OpenIZPatientService.Insert(r);if(t.lastIndexOf("err",0)==0)throw new OpenIZModel.Exception(OpenIZ.Localization.getString(t));else return new OpenIZModel.Patient(JSON.parse(t))}catch(i){console.error(i);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"),i.message,i);}},updateAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.update(n.patient)},n)},update:function(n){try{if(n.$type!="Patient")throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"),typeof n,null);else if(n.id==null)throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"),typeof n,null);var i=JSON.stringify(n);return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(i)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"),t.message,t);}},obsoleteAsync:function(n){OpenIZ.Util.startTaskAsync(function(){return OpenIZ.Patient.obsolete(n.patientId)},n)},obsolete:function(n){try{return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(n)))}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"),t.message,t);}},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,query:{id:n.patientId}})},get:function(n){try{var i=OpenIZ.Patient.find("_all=true&amp;id="+n,0,1);return i.length==0?null:i.first("Patient")}catch(t){console.error(t);throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"),t.message,t);}}},Place:{findAsync:function(n){OpenIZ.Ims.get({resource:"Place",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Configuration:{$configuration:null,getConfigurationAsync:function(n){OpenIZ.Util.simpleGet("/__config/all",{continueWith:function(t){OpenIZ.Configuration.$configuration=t;n.continueWith(t)},onException:n.onException,"finally":n.finally})},getApplicationSetting:function(n){try{for(var i in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[i].key==n)return OpenIZ.Configuration.$configuration.application.setting[i].value;return null}catch(t){throw new OpenIZModel.Exception(t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{for(var r in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[r].key==n){OpenIZ.Configuration.$configuration.application.setting[r].value=t;return}OpenIZ.Configuration.$configuration.application.setting.push({key:n,value:t})}catch(i){throw new OpenIZModel.Exception(i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.$configuration.realmName}catch(n){console.error(n)}},getSection:function(n){try{return OpenIZ.Configuration.$configuration[n]}catch(t){console.error(t)}},joinRealmAsync:function(n){try{$.ajax({method:"POST",url:"/__config/realm",data:{realmUri:n.domain,deviceName:n.deviceName},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t);else if(n.onException!=null)n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else if(n.onException!=null)n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}catch(t){console.error(t)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},saveAsync:function(n){try{$.ajax({method:"POST",url:"/__config/all",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error),i.error_description,null);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t);else n.onException(new OpenIZModel.Exception("err_general",i,null));n.finally!==undefined&amp;&amp;n.finally()},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.error,i.error_description,null));else n.onException(new OpenIZModel.Exception("err_general"+i,t,null));n.finally!==undefined&amp;&amp;n.finally()}})}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},ManufacturedMaterial:{getManufacturedMaterials:function(n){OpenIZ.Ims.get({resource:"ManufacturedMaterial",continueWith:n.continueWith,onException:n.onException,query:n.query})}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.put({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON},beforeSend:function(n){OpenIZ.Authentication.$elevationCredentials.$enabled&amp;&amp;n.setRequestHeader("Authorization","BASIC "+btoa(OpenIZ.Authentication.$elevationCredentials.userName+":"+OpenIZ.Authentication.$elevationCredentials.password));n.setRequestHeader("X-OIZMagic",OpenIZSessionService.GetMagic())}});$(document).ajaxError(function(n,t,i,r){if(t.status==401||t.status==403)OpenIZ.Authentication.showElevationDialog();else throw new OpenIZModel.Exception("err_request",r,null);});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();</contentText>
   </asset>
   <asset name="layouts/minimal.html" mimeType="text/html">
     <contentHtml>
@@ -6082,6 +6183,7 @@ $.ajaxSetup({
           </head>
           <body>
             <!-- #include virtual="content" -->
+            <!--#include virtual="/org.openiz.core/views/common/modal/authenticate.html"-->
             <!--#include virtual="/org.openiz.core/views/common/modal/wait.html"-->
             <div id="initialBlock" class="modal-backdrop fade in">
             </div>
@@ -14934,7 +15036,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </span>
                         {{ 'locale.action.delete' | i18n }}
                     </button>
-                <button class="btn-primary btn btn-lg" ng-click="updateAlert(alert)">
+                <button class="btn-primary btn btn-lg" ng-click="updateAlert()">
                   <span class="glyphicon glyphicon-ok">
                   </span>
                         {{ 'locale.action.acknowledge' | i18n }}
@@ -15123,6 +15225,36 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
           <div class="panel-body" ng-include="OpenIZ.App.resolveTemplate(encounter.template.mnemonic)">
           </div>
         </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
+  <asset name="views/common/modal/authenticate.html" mimeType="text/html">
+    <contentHtml>
+      <script>~/controllers/common/modal/authenticate.js</script>
+      <content>
+        <div class="modal fade" id="authenticationDialog" ng-controller="AuthenticationDialogController" tabindex="-1" role="dialog" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <form ng-submit="authenticate(masterForm)" name="masterForm" novalidate="novalidate">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">X</span>
+                  </button>
+                  <h4 class="modal-title">{{ 'locale.security.authenticateHeader' | i18n }} - {{ $root.system.config.realmName }}</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="container-fluid">
+                    <!--#include virtual="~/views/common/security/authenticate.html"-->
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
+                  <button type="submit" class="btn btn-primary">{{ 'locale.security.login.button.login' | i18n }}</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </content>
     </contentHtml>
   </asset>
@@ -15949,6 +16081,32 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       </content>
     </contentHtml>
   </asset>
+  <asset name="views/common/security/authenticate.html" mimeType="text/html">
+    <contentHtml>
+      <content>
+        <fieldset class="form-horizontal form-group" xmlns="http://www.w3.org/1999/xhtml">
+          <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
+            <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
+            <div class="col-xs-9">
+              <div class="input-group">
+                <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
+            <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
+            <div class="col-xs-9">
+              <div class="input-group">
+                <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
+                <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </content>
+    </contentHtml>
+  </asset>
   <asset name="views/common/security/forgotpassword.html" mimeType="text/html">
     <contentHtml>
       <title lang="en">{{ 'locale.security.forgotPassword.title' | i18n }}</title>
@@ -15986,27 +16144,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <script>/org.openiz.core/controllers/common/security/login.js</script>
       <content>
         <form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)" xmlns:openiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml">
-          <fieldset class="form-horizontal form-group">
-            <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
-            <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
-              <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
-              <div class="col-xs-9">
-                <div class="input-group">
-                  <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
-                  <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
-                </div>
-              </div>
-            </div>
-            <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
-              <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
-              <div class="col-xs-9">
-                <div class="input-group">
-                  <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
-                  <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
-                </div>
-              </div>
-            </div>
-          </fieldset>
+          <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
+          <!--#include virtual="~/views/common/security/authenticate.html"-->
           <div class="row">
             <div class="col-xs-12">
               <div class="btn-group pull-right">
@@ -16958,35 +17097,6 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       </content>
     </contentHtml>
   </asset>
-  <asset name="views/security/partials/login.html" mimeType="text/html">
-    <contentHtml>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
-          <h1>{{ 'locale.login.header' | i18n }} OpenIZ ({{config.realmName}})</h1>
-          <hr />
-          <button class="btnprimary btn" ng-click="setLocale('en')">EN</button>
-          <button class="btndefault btn" ng-click="setLocale('fr')">FR</button>
-          <hr />
-          <form novalidate="novalidate">
-            <div class="container">
-              <div class="inputgroup">
-                <span class="inputgroupaddon">{{ 'locale.login.username' | i18n }}:</span>
-                <input ng-model="username" type="text" ng-required="true" placeholder="User Name" class="formcontrol" name="username" id="username" />
-              </div>
-              <div class="inputgroup">
-                <span class="inputgroupaddon">{{ 'locale.login.password' | i18n }}:</span>
-                <input ng-model="password" type="password" ng-required="true" class="formcontrol" name="password" id="password" />
-              </div>
-              <div class="btngroup pullright">
-                <button class="btnprimary btn" ng-click="login(username, password)" ng-disabled="username == null || password == null">
-                    {{ 'locale.login.doLogin' | i18n }} <span class="glyphicon glyphicon-login"></span></button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
   <asset name="views/settings/index.html" mimeType="text/html">
     <demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</demand>
     <contentHtml>
@@ -17055,49 +17165,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </div>
                 <div class="panel-collapse collapse" id="dataBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#dataBodyIndicator">
                   <div class="panel-body">
-                    <div class="container-fluid">
-                      <div class="row">
-                        <div class="col-md-2 col-xs-2">
-                          <img src="~/img/appbar.database.png" alt="database" class="left" />
-                        </div>
-                        <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                          <em>{{ 'locale.settings.dataDescription' | i18n }}</em>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <span class="control-label col-sm-2">{{ 'locale.settings.dataMode' | i18n }}</span>
-                      <div class="col-sm-10">
-                        <select class="form-control" ng-model="config.data.mode">
-                          <option value="sync">Synchronized</option>
-                          <option value="online">Online Only</option>
-                          <option value="offline">Offline Only</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group" ng-if="config.data.mode == 'sync'">
-                      <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}:</label>
-                      <div class="col-sm-10">
-                        <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
-                          <option value="onstart">On Startup</option>
-                          <option value="onclose">On Close</option>
-                          <option value="oncommit">On Commit</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group" ng-if="config.data.mode == 'sync'">
-                      <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}:</label>
-                      <div class="col-sm-10">
-                        <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
-                          <option value="1">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
-                          <option value="5">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
-                          <option value="15">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
-                          <option value="30">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
-                          <option value="0">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
-                          <option value="-1">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
-                        </select>
-                      </div>
-                    </div>
+                    <!--#include virtual="~/views/settings/tabs/data.html"-->
                   </div>
                 </div>
               </div>
@@ -17112,33 +17180,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </div>
                 <div class="panel-collapse collapse" id="logBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#logBodyIndicator">
                   <div class="panel-body">
-                    <div class="container-fluid">
-                      <div class="row">
-                        <div class="col-md-2 col-xs-2">
-                          <img src="~/img/appbar.book.list.png" alt="log" class="left" />
-                        </div>
-                        <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                          <em>{{ 'locale.settings.logDescription' | i18n }}</em>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="control-label col-sm-2">{{ 'locale.settings.logMode' | i18n }}</label>
-                      <div class="col-sm-10">
-                        <select class="form-control" ng-model="config.log.mode">
-                          <optgroup label="Debugging">
-                            <option value="LogAlways">{{ 'locale.settings.log.always' | i18n }}</option>
-                            <option value="Information">{{ 'locale.settings.log.informational' | i18n }}</option>
-                            <option value="Verbose">{{ 'locale.settings.log.verbose' | i18n }}</option>
-                          </optgroup>
-                          <optgroup label="Production">
-                            <option value="Critical">{{ 'locale.settings.log.critical' | i18n }}</option>
-                            <option value="Error">{{ 'locale.settings.log.error' | i18n }}</option>
-                            <option value="Warning">{{ 'locale.settings.log.warning' | i18n }}</option>
-                          </optgroup>
-                        </select>
-                      </div>
-                    </div>
+                    <!--#include virtual="~/views/settings/tabs/log.html"-->
                   </div>
                 </div>
               </div>
@@ -17153,41 +17195,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </div>
                 <div class="panel-collapse collapse" id="securityBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#securityBodyIndicator">
                   <div class="panel-body">
-                    <div class="container-fluid">
-                      <div class="row">
-                        <div class="col-md-2 col-xs-2">
-                          <img src="~/img/appbar.shield.png" alt="log" class="left" />
-                        </div>
-                        <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                          <em>{{ 'locale.settings.securityDescription' | i18n }}</em>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label class="control-label col-sm-2">{{ 'locale.settings.passwordFormat' | i18n }}</label>
-                      <div class="col-sm-10">
-                        <select class="form-control" ng-model="config.security.hasher">
-                          <option value="SHA256PasswordHasher">{{ 'locale.settings.security.sha256' | i18n }}</option>
-                          <option value="SHA1PasswordHasher">{{ 'locale.settings.security.sha1' | i18n }}</option>
-                          <option value="PlainTextPasswordHasher">{{ 'locale.settings.security.plain' | i18n }}</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-sm-2">
-                      </div>
-                      <div class="col-sm-10">
-                        <div class="checkbox">
-                          <label>
-                            <input name="offlineAuthenticationInput" type="checkbox" ng-model="config.security.offline.enable" /> 
-                                        {{ 'locale.settings.allowLocalAuth' | i18n }} 
-                                        - 
-                                        <em>
-                                        {{ 'locale.settings.allowLocalAuthDescription' | i18n}}
-                                        </em></label>
-                        </div>
-                      </div>
-                    </div>
+                    <!--#include virtual="~/views/settings/tabs/security.html"-->
                   </div>
                 </div>
               </div>
@@ -17202,37 +17210,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                 </div>
                 <div class="panel-collapse collapse" id="networkBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#networkBodyIndicator">
                   <div class="panel-body">
-                    <div class="container-fluid">
-                      <div class="row">
-                        <div class="col-md-2 col-xs-2">
-                          <img src="~/img/appbar.network.png" alt="log" class="left" />
-                        </div>
-                        <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                          <em>{{ 'locale.settings.networkDescription' | i18n }}</em>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-sm-2">
-                      </div>
-                      <div class="col-sm-10">
-                        <div class="checkbox">
-                          <label>
-                            <input name="useProxy" type="checkbox" ng-model="config.network.useProxy" />
-                                        {{ 'locale.settings.useProxy' | i18n }}
-                                        -
-                                        <em>
-                                            {{ 'locale.settings.useProxyDescription' | i18n}}
-                                        </em></label>
-                        </div>
-                      </div>
-                    </div>
-                    <div ng-if="config.network.useProxy" class="form-group">
-                      <label class="control-label col-sm-2">{{ 'locale.settings.proxyAddress' | i18n }}</label>
-                      <div class="col-sm-10">
-                        <input type="url" class="form-control" ng-model="config.network.proxyAddress" placeholder="{{ 'locale.settings.proxyAddressPlaceHolder' | i18n }}" />
-                      </div>
-                    </div>
+                    <!--#include virtual="~/views/settings/tabs/network.html"-->
                   </div>
                 </div>
               </div>
@@ -17327,7 +17305,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/settings/tabs/data.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-2 col-xs-2">
@@ -17378,7 +17356,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/settings/tabs/log.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-2 col-xs-2">
@@ -17413,7 +17391,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/settings/tabs/network.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-2 col-xs-2">
@@ -17565,7 +17543,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/settings/tabs/security.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="container-fluid">
             <div class="row">
               <div class="col-md-2 col-xs-2">

@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Attributes;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -119,7 +120,7 @@ namespace OpenIZ.Mobile.Core.Security
         /// <summary>
         /// Gets the principal of the session
         /// </summary>
-        [JsonIgnore]
+        [JsonIgnore, DataIgnore]
         public IPrincipal Principal { get; private set; }
 
         /// <summary>

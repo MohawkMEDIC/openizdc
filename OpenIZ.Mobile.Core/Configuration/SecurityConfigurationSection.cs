@@ -95,8 +95,12 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
-
-	}
+        /// <summary>
+        /// Gets or sets teh device certificate
+        /// </summary>
+        [XmlElement("deviceCertificate")]
+        public ServiceCertificateConfiguration DeviceCertificate { get; set; }
+    }
 
 }
 

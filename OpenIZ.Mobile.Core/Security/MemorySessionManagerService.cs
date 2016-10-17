@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Security
         {
             SessionInfo ses = null;
             if (!this.m_session.TryGetValue(sessionId, out ses))
-                throw new SecurityException(Strings.locale_sessionError);
+                return null;
             return ses;
         }
 

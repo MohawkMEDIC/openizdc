@@ -23,6 +23,7 @@ using OpenIZ.Core.Model.Interfaces;
 using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using OpenIZ.Mobile.Core.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -45,6 +46,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <param name="actToInsert">The act to be inserted.</param>
 		/// <returns>Returns the inserted act.</returns>
 		[RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
 		{
@@ -59,6 +61,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <param name="patientToInsert">The patient to be inserted.</param>
 		/// <returns>Returns the inserted patient.</returns>
 		[RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Patient CreatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToInsert)
         {
@@ -72,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <param name="bundleToInsert">The bundle to be inserted.</param>
 		/// <returns>Returns the inserted bundle.</returns>
         [RestOperation(Method = "POST", UriPath = "/Bundle", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle CreateBundle([RestMessage(RestMessageFormat.SimpleJson)]Bundle bundleToInsert)
         {
@@ -85,7 +89,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		/// <returns>Returns a list of acts.</returns>
 		[RestOperation(Method = "GET", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Bundle GetAct()
 		{
 			var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
@@ -134,6 +139,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         /// <returns>Returns an entity.</returns>
         [RestOperation(Method = "GET", UriPath = "/Entity", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetEntity()
         {
@@ -202,6 +208,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		/// <returns>Returns the patient.</returns>
         [RestOperation(Method = "GET", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetPatient()
         {
@@ -271,6 +278,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		/// <returns>Returns a list of providers.</returns>
         [RestOperation(Method = "GET", UriPath = "/Provider" ,FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetProvider()
         {
@@ -317,6 +325,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		/// <returns>Returns a list of manufactured materials.</returns>
         [RestOperation(Method = "GET", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetManufacturedMaterial()
         {
@@ -379,6 +388,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get a template
         /// </summary>
         [RestOperation(Method = "GET", UriPath = "/Act/Template", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Act GetActTemplate()
         {
@@ -395,6 +405,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get a template
         /// </summary>
         [RestOperation(Method = "GET", UriPath = "/Entity/Template", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Entity GetEntityTemplate()
         {
@@ -426,8 +437,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
 
-            if (templateString.StartsWith(c_utf8bom))
-                templateString = templateString.Remove(0, c_utf8bom.Length);
+            //if (templateString.StartsWith(c_utf8bom))
+            //    templateString = templateString.Remove(0, c_utf8bom.Length);
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -447,6 +458,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get a patient
         /// </summary>
         [RestOperation(Method = "GET", UriPath = "/Empty/Patient", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Patient GetEmptyPatient()
         {
@@ -516,7 +528,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <returns>Returns the user profile of the current user.</returns>
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		[RestOperation(UriPath = "/UserEntity", Method = "GET")]
-		public IdentifiedData GetUserEntity()
+        [Demand(PolicyIdentifiers.Login)]
+        public IdentifiedData GetUserEntity()
 		{
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var securityService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -573,7 +586,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <returns>Returns the users updated profile.</returns>
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		[RestOperation(UriPath = "/UserEntity", Method = "PUT")]
-		public UserEntity UpdateUserEntity([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
+        [Demand(PolicyIdentifiers.Login)]
+        public UserEntity UpdateUserEntity([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
 		{
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
@@ -620,7 +634,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <param name="act">The act to update.</param>
 		/// <returns>Returns the updated act.</returns>
 		[RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
 		public Act UpdateAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
 		{
 			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
@@ -653,7 +668,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
 		/// <returns>Returns the updated manufactured material.</returns>
 		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
 		public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)
 		{
 			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);

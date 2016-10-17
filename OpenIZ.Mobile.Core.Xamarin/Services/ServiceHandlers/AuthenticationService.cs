@@ -83,7 +83,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", retVal.Key.ToString())
                     {
                         Expires = retVal.Expiry,
-                        HttpOnly = true
+                        HttpOnly = false,
+                        Secure = true,
+                        Path ="/"
                     });
                 return retVal;
             }

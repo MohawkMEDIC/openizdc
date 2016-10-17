@@ -203,8 +203,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     var cookie = request.Cookies["_s"];
                     if (!cookie.Expired)
                     {
-                        var session = ApplicationContext.Current.GetService<ISessionManagerService>();
-                        AuthenticationContext.Current = new AuthenticationContext(session.Get(Guid.Parse(cookie.Value)));
+                        var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
+                        var session = smgr.Get(Guid.Parse(cookie.Value));
+                        if (session != null)
+                            AuthenticationContext.Current = new AuthenticationContext(session);
                     }
                 }
 

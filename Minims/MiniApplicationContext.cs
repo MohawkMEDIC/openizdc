@@ -471,82 +471,57 @@ namespace Minims
                 htmlAsset.Html = xe;
                 return htmlAsset;
             }
-            //else if(navigateAsset.MimeType == "text/javascript" ||
-            //    navigateAsset.MimeType == "text/css" ||
-            //    navigateAsset.MimeType == "application/json")
-            else
+            else if (navigateAsset.MimeType == "text/javascript" ||
+                navigateAsset.MimeType == "text/css" ||
+                navigateAsset.MimeType == "application/json" ||
+                navigateAsset.MimeType == "text/xml")
             {
-                using (MemoryStream response = new MemoryStream())
-                using (var fs = File.OpenRead(itmPath))
-                {
-                    int br = 8092;
-                    byte[] buffer = new byte[8092];
-                    while (br == 8092)
-                    {
-                        br = fs.Read(buffer, 0, 8092);
-                        response.Write(buffer, 0, br);
-                    }
-
-                    if (navigateAsset.Name.Contains("/openiz.js"))
-                    {
-                        byte[] shim = this.GetShimMethods();
-                        response.Write(shim, 0, shim.Length);
-                    }
-                    return response.ToArray();
-                }
+                var script = File.ReadAllText(itmPath);
+                if(itmPath.Contains("openiz.js"))
+                    script += this.GetShimMethods();
+                return script;
             }
-
+            else
+                return File.ReadAllBytes(itmPath);
         }
 
         /// <summary>
         /// Get the SHIM methods
         /// </summary>
         /// <returns></returns>
-        private byte[] GetShimMethods()
+        private String GetShimMethods()
         {
             // Load the default SHIM
-            using (MemoryStream response = new MemoryStream())
+            // Write the generated shims
+            using (StringWriter tw = new StringWriter())
             {
-                // Write the generated shims
-                using (TextWriter tw = new StreamWriter(response, Encoding.ASCII, 1024, true))
+                tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
+                // Version
+                tw.WriteLine("OpenIZSessionService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
+                tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
+                tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
+                tw.WriteLine("\tswitch(key) {");
+                foreach (var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
                 {
-                    tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
-                    // Version
-                    tw.WriteLine("OpenIZSessionService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
-                    tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-                    tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
-                    tw.WriteLine("\tswitch(key) {");
-                    foreach(var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
-                    {
-                        tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'","\\'"));
-                    }
-                    tw.WriteLine("\t}");
-                    tw.WriteLine("}");
-
-                    tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
-                    tw.WriteLine("OpenIZApplicationService._UUIDS = [");
-                    for (int i = 0; i < 30; i++)
-                        tw.WriteLine("\t'{0}',", Guid.NewGuid());
-                    tw.WriteLine("\t''];");
-
-                    tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
-
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'", "\\'"));
                 }
+                tw.WriteLine("\t}");
+                tw.WriteLine("}");
+
+                tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
+                tw.WriteLine("OpenIZApplicationService._UUIDS = [");
+                for (int i = 0; i < 30; i++)
+                    tw.WriteLine("\t'{0}',", Guid.NewGuid());
+                tw.WriteLine("\t''];");
+
+                tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
+
+
                 // Read the static shim
-                using (Stream shim = typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js"))
-                {
-                    int br = 8092;
-                    byte[] buffer = new byte[8092];
-                    // HACK: Skip BOM
-                    shim.Seek(3, SeekOrigin.Begin);
-                    while (br == 8092)
-                    {
-                        br = shim.Read(buffer, 0, 8092);
-                        response.Write(buffer, 0, br);
-                    }
-                }
+                using (StreamReader shim = new StreamReader(typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js")))
+                    tw.Write(shim.ReadToEnd());
 
-                return response.ToArray();
+                return tw.ToString();
             }
         }
 
