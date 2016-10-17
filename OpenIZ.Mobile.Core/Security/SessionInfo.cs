@@ -33,35 +33,37 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Attributes;
 
-namespace OpenIZ.Mobile.Core.Xamarin.Security
+namespace OpenIZ.Mobile.Core.Security
 {
     /// <summary>
     /// Session information
     /// </summary>
     [JsonObject]
-    public class SessionInformation : IdentifiedData
+    public class SessionInfo : IdentifiedData
     {
         /// <summary>
         /// Default ctor
         /// </summary>
-        public SessionInformation()
+        public SessionInfo()
         {
             this.Key = Guid.NewGuid();
         }
 
         // The tracer
-        private Tracer m_tracer = Tracer.GetTracer(typeof(SessionInformation));
+        private Tracer m_tracer = Tracer.GetTracer(typeof(SessionInfo));
 
         /// <summary>
         /// Create the session object from the principal
         /// </summary>
-        public SessionInformation(IPrincipal principal)
+        public SessionInfo(IPrincipal principal)
         {
             this.UserName = principal.Identity.Name;
             this.IsAuthenticated = principal.Identity.IsAuthenticated;
             this.AuthenticationType = principal.Identity.AuthenticationType;
-            if (principal is TokenClaimsPrincipal)
+            this.Principal = principal;
+            if (principal is ClaimsPrincipal)
                 this.Token = principal.ToString();
 
             // Expiry / etc
@@ -104,7 +106,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         }
                     };
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting extended session information: {0}", e);
             }
@@ -114,6 +116,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Gets the principal of the session
+        /// </summary>
+        [JsonIgnore, DataIgnore]
+        public IPrincipal Principal { get; private set; }
 
         /// <summary>
         /// Gets the user entity

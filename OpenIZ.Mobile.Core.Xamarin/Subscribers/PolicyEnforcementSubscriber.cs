@@ -137,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Subscribers
                 DataQueryResultEventArgs<TData> dqre = e as DataQueryResultEventArgs<TData>;
                 // Filter dataset
                 if(dqre != null)
-                    dqre.Results = dqre.Results.Where(i => ApplicationContext.Current.PolicyDecisionService.GetPolicyDecision(ApplicationContext.Current.Principal, i) == OpenIZ.Core.Model.Security.PolicyGrantType.Grant);
+                    dqre.Results = dqre.Results.Where(i => ApplicationContext.Current.PolicyDecisionService.GetPolicyDecision(AuthenticationContext.Current.Principal, i) == OpenIZ.Core.Model.Security.PolicyGrantType.Grant);
             };
         }
 

@@ -219,11 +219,9 @@ namespace OpenIZ.Mobile.Core.Android
 				var retVal = new AndroidApplicationContext();
 				retVal.Context = context;
 				retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
+                retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
-				retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
-				retVal.Principal = new ClaimsPrincipal(new ClaimsIdentity("SYSTEM", true, new Claim[] {
-					new Claim(ClaimTypes.OpenIzGrantedPolicyClaim, PolicyIdentifiers.AccessClientAdministrativeFunction)
-				}));
+                retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
 				ApplicationContext.Current = retVal;
 				retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
                 retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;

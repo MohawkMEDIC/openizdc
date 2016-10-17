@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		/// <param name="context">Context.</param>
 		public Credentials GetCredentials (IRestClient context)
 		{
-            return this.GetCredentials(ApplicationContext.Current.Principal);
+            return this.GetCredentials(AuthenticationContext.Current.Principal);
 		}
 
 		/// <summary>
@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		{
 
             // TODO: Determine why we're reauthenticating... if it is an expired token we'll need to get the refresh token
-            var tokenCredentials = ApplicationContext.Current.Principal as TokenClaimsPrincipal;
+            var tokenCredentials = AuthenticationContext.Current.Principal as TokenClaimsPrincipal;
             if (tokenCredentials != null)
             {
                 var expiryTime = DateTime.MinValue;
@@ -63,8 +63,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     expiryTime < DateTime.Now)
                 {
                     var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
-                    var principal = idp.Authenticate(ApplicationContext.Current.Principal, null);   // Force a re-issue
-                    XamarinApplicationContext.Current.SetPrincipal(principal);
+                    var principal = idp.Authenticate(AuthenticationContext.Current.Principal, null);   // Force a re-issue
+                    AuthenticationContext.Current = new AuthenticationContext(principal);
+                    //XamarinApplicationContext.Current.SetDefaultPrincipal(principal);
                 }
                 else if (expiryTime > DateTime.Now) // Token is good?
                     return this.GetCredentials(context);
@@ -89,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
             {
                 // We need a token claims principal
                 // TODO: Re-authenticate this user against the ACS
-                return new TokenCredentials(ApplicationContext.Current.Principal);
+                return new TokenCredentials(AuthenticationContext.Current.Principal);
             }
         }
         #endregion

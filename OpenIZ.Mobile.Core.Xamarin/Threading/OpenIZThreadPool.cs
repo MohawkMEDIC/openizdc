@@ -216,6 +216,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         private void DoWorkItem(WorkItem state)
         {
             this.m_tracer.TraceVerbose("Starting task on {0} ---> {1}", Thread.CurrentThread.Name, state.Callback.Target.ToString());
+            AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.ThreadDefaultPrincipal) ?? new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
             var worker = (WorkItem)state;
             try { worker.Callback(worker.State); }
             catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }

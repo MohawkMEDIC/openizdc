@@ -128,6 +128,7 @@ namespace Minims
                     typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
+                    typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,

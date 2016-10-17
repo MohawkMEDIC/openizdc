@@ -44,7 +44,11 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="isAuthenticated">If set to <c>true</c> is authenticated.</param>
 		public ClaimsIdentity (String userName, bool isAuthenticated, IEnumerable<Claim> claims)
 		{
-			this.m_claims = new List<Claim> (claims);
+            if (claims != null)
+                this.m_claims = new List<Claim>(claims);
+            else
+                this.m_claims = new List<Security.Claim>();
+
 			if(!this.m_claims.Exists(o=>o.Type == DefaultNameClaimType))
 				this.m_claims.Add(new Claim(DefaultNameClaimType, userName));
 			this.IsAuthenticated = isAuthenticated;

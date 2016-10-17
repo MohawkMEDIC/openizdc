@@ -29,6 +29,8 @@ namespace OpenIZMobile
 			global::OpenIZ.Mobile.Core.Android.Resource.Id.contentFrame = global::OpenIZMobile.Resource.Id.contentFrame;
 			global::OpenIZ.Mobile.Core.Android.Resource.Layout.zxingscanneractivitylayout = global::OpenIZMobile.Resource.Layout.zxingscanneractivitylayout;
 			global::OpenIZ.Mobile.Core.Android.Resource.Layout.zxingscannerfragmentlayout = global::OpenIZMobile.Resource.Layout.zxingscannerfragmentlayout;
+			global::OpenIZ.Mobile.Core.Android.Resource.String.ApplicationName = global::OpenIZMobile.Resource.String.ApplicationName;
+			global::OpenIZ.Mobile.Core.Android.Resource.String.Hello = global::OpenIZMobile.Resource.String.Hello;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.applet_confirm_close = global::OpenIZMobile.Resource.String.applet_confirm_close;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.cancel = global::OpenIZMobile.Resource.String.cancel;
 			global::OpenIZ.Mobile.Core.Android.Resource.String.confirm = global::OpenIZMobile.Resource.String.confirm;

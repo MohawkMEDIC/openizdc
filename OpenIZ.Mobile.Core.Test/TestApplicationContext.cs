@@ -163,7 +163,6 @@ namespace OpenIZ.Mobile.Core.Test
                         // Set the entity source
                         EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
-                        this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
                         this.Start();
                     }
                     catch (Exception e)

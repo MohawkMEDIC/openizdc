@@ -109,11 +109,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         /// <summary>
         /// Gets all available interfaces
         /// </summary>
-        public IEnumerable<NetworkInterfaceInfo> GetInterfaces()
+        public virtual IEnumerable<NetworkInterfaceInfo> GetInterfaces()
         {
      
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
-                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up
+                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, o.Description
             ));
 
         }

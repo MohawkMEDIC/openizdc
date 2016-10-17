@@ -26,7 +26,7 @@ angular.element(document).ready(function () {
                     if (session == null) {
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
-                    else
+                    else if(OpenIZ.urlParams["returnUrl"] != null)
                         window.location = OpenIZ.urlParams["returnUrl"];
                 },
                 onException: function (ex) {

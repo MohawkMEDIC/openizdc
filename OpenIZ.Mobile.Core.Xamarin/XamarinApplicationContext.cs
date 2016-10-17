@@ -86,17 +86,6 @@ namespace OpenIZ.Mobile.Core.Xamarin
         }
 
         /// <summary>
-        /// Sets the current principal
-        /// </summary>
-        public void SetPrincipal(IPrincipal p)
-        {
-            if (p != null && !p.Identity.IsAuthenticated)
-                throw new InvalidOperationException(Strings.err_unauthenticated_principal);
-            else
-                this.Principal = p;
-        }
-
-        /// <summary>
         /// Get applet by id
         /// </summary>
         /// <returns>The applet.</returns>
@@ -149,9 +138,10 @@ namespace OpenIZ.Mobile.Core.Xamarin
 		public void Authenticate(String userName, String password)
 		{
 			var identityService = this.GetService<IIdentityProviderService>();
-			this.Principal = identityService.Authenticate(userName, password);
-			if(this.Principal == null)
-				throw new SecurityException(Strings.err_login_invalidusername);
+            var principal = identityService.Authenticate(userName, password);
+            if (principal == null)
+                throw new SecurityException(Strings.err_login_invalidusername);
+            AuthenticationContext.Current = new AuthenticationContext(principal);
 		}
 
 		#region implemented abstract members of ApplicationContext

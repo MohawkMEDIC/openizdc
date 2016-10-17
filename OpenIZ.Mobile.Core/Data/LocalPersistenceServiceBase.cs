@@ -478,9 +478,9 @@ namespace OpenIZ.Mobile.Core.Data
         /// <returns>The user UUID.</returns>
         protected Guid CurrentUserUuid(SQLiteConnectionWithLock context)
         {
-            if (ApplicationContext.Current.Principal == null)
+            if (AuthenticationContext.Current.Principal == null)
                 return Guid.Empty;
-            String name = ApplicationContext.Current.Principal.Identity.Name;
+            String name = AuthenticationContext.Current.Principal.Identity.Name;
             var securityUser = context.Table<DbSecurityUser>().Where(o => o.UserName == name).ToList().SingleOrDefault();
             if (securityUser == null)
             {

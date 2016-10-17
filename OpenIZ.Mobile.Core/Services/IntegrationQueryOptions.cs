@@ -32,11 +32,6 @@ namespace OpenIZ.Mobile.Core.Services
 	public class IntegrationQueryOptions
 	{
 		/// <summary>
-		/// Gets or sets the credentials
-		/// </summary>
-		public Credentials Credentials { get; set; }
-
-		/// <summary>
 		/// Gets or sets the If-Modified-Since header
 		/// </summary>
 		public DateTime? IfModifiedSince { get; set; }

@@ -40,8 +40,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
         private IThreadPoolService m_threadPool;
         // Network service
         private IIntegrationService m_integrationService;
-        // Device principal 
-        private IPrincipal m_devicePrincipal;
         // Network information service
         private INetworkInformationService m_networkInfoService;
 
@@ -127,7 +125,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (totalResults > 0)
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                            alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
+                            alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
                     }
 
@@ -172,11 +170,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
+                var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
                 // TODO: Clean this up - Login as device account
-                if (this.m_devicePrincipal == null ||
-                    DateTime.Parse((this.m_devicePrincipal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
-                    this.m_devicePrincipal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate("administrator", "Mohawk123");
-                var credentials = ApplicationContext.Current.Configuration.GetServiceDescription("imsi").Binding.Security.CredentialProvider.GetCredentials(this.m_devicePrincipal);
+                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
+                    DateTime.Parse((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
+                    AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
 
                 // Get last modified date
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
@@ -191,7 +189,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     float perc = i / (float)result.TotalResults;
                     
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
+                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 10000 });
                     // Queue the act of queueing
                     if (result != null)
                     {
@@ -213,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal?.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
 
                 return 0;
             }

@@ -136,6 +136,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error establishing session:.
+        /// </summary>
+        internal static string locale_sessionError {
+            get {
+                return ResourceManager.GetString("locale_sessionError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deploying Data.
         /// </summary>
         internal static string locale_setting_deploy {
