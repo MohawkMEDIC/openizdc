@@ -38,7 +38,6 @@ layoutApp.controller('GtinManagementController', ['$scope', function ($scope)
 			query: query,
 			continueWith: function (data)
 			{
-				console.log(data);
 
 				if (data.item !== undefined)
 				{

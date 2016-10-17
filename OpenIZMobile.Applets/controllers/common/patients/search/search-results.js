@@ -149,7 +149,6 @@ $(document).ready(function () {
         * @summary Starts an encounter for a patient.
         */
         scope.startEncounter = function (patient) {
-            console.log(patient);
 
             scope.act.participation.RecordTarget.player = patient.id;
 
@@ -157,7 +156,6 @@ $(document).ready(function () {
                 resource: "Act",
                 data: scope.act,
                 continueWith: function (data) {
-                    console.log(data);
                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.patient.queue.success"));
                 },
                 onException: function (error) {
