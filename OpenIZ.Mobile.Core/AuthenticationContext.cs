@@ -109,7 +109,7 @@ namespace OpenIZ.Mobile.Core
         public AuthenticationContext(SessionInfo session)
         {
             if (session.Expiry < DateTime.Now)
-                throw new SessionExpiredException(session);
+                throw new SessionExpiredException();
             this.m_principal = session.Principal;
             this.Session = session;
         }
