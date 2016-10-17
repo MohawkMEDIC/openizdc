@@ -43,7 +43,6 @@ layoutApp.controller('OrderController', ['$scope', function ($scope) {
         resource: "Act",
         continueWith: function (data)
         {
-            console.log(data);
 
             if (data.item !== undefined)
             {
@@ -65,7 +64,6 @@ layoutApp.controller('OrderController', ['$scope', function ($scope) {
             query: searchQuery,
             resource: "Act",
             continueWith: function (data) {
-                console.log(data);
 
                 if (data.item !== undefined) {
                     for (var i = 0; i < data.item.length; i++) {

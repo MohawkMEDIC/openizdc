@@ -36,7 +36,6 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
         resource: "ManufacturedMaterial",
         continueWith: function (data) {
 
-            console.log(data);
 
             if (data.item !== undefined) {
                 manufacturedMaterial = data.item[0];
@@ -59,7 +58,6 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
             templateId: "Act.AdjustStock",
             continueWith: function (data) {
                 var act = data;
-                console.log(data);
                 data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
                 data.participation.Consumable.actModel.value = $scope.quantity;
                 data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
@@ -68,7 +66,6 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                     resource: "Act",
                     data: data,
                     continueWith: function (act) {
-                        console.log(act);
                     },
                     onException: function(ex){
                         console.log(ex);

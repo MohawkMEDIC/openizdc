@@ -36,8 +36,6 @@ layoutApp.controller('CountStockController', ['$scope', 'queryUrlParameterServic
         resource: "ManufacturedMaterial",
         continueWith: function (data) {
 
-            console.log(data);
-
             if (data.item !== undefined) {
                 manufacturedMaterial = data.item[0];
                 $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
@@ -58,7 +56,6 @@ layoutApp.controller('CountStockController', ['$scope', 'queryUrlParameterServic
             templateId: "Act.CountStock",
             continueWith: function (data) {
                 var act = data;
-                console.log(data);
                 data.participation.Consumable.actModel.value = $scope.quantity;
                 data.participation.Consumable.playerModel.id = params.id;
                 data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
@@ -66,7 +63,6 @@ layoutApp.controller('CountStockController', ['$scope', 'queryUrlParameterServic
                     resource: "Act",
                     data: data,
                     continueWith: function (act) {
-                        console.log(act);
                     },
                     onException: function(ex){
                         console.log(ex);

@@ -38,8 +38,6 @@ layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
             resource: "ManufacturedMaterial",
             continueWith: function (data) {
 
-                console.log(data);
-
                 if (data.item !== undefined) {
                     for (var i = 0; i < data.item.length; i++) {
                         $scope.vaccines.push(data.item[i]);

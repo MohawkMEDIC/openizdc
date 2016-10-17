@@ -35,7 +35,6 @@ layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService'
 		continueWith: function (data)
 		{
 
-			console.log(data);
 
 			if (data.item !== undefined)
 			{

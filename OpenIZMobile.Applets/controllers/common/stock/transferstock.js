@@ -89,7 +89,6 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope)
 
 	$scope.lotNumberChanged = function ()
 	{
-		console.log($scope.lotNumber);
 
 		if ($scope.lotNumber !== undefined && $scope.lotNumber !== null && $scope.lotNumber !== "")
 		{
@@ -106,7 +105,6 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope)
 			data: $scope.act,
 			continueWith: function (data)
 			{
-				console.log(data);
 			},
 			onException: function (ex)
 			{
