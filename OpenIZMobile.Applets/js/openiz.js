@@ -62,7 +62,7 @@ var OpenIZ = OpenIZ || {
     urlParams: {},
 
     /**
-     * @summary Provides operations for managing acts.
+     * @summary Provides operations for managing {@link OpenIZModel.Act} instances.
      * @memberof OpenIZ
      * @static
      * @class
@@ -146,6 +146,7 @@ var OpenIZ = OpenIZ || {
 
     /**
      * @summary Interoperation with the IMS
+     * @see OpenIZModel
      * @static
      * @class
      * @memberof OpenIZ
@@ -362,6 +363,7 @@ var OpenIZ = OpenIZ || {
     },
     /**
      * @summary Stock Functions
+     * @description In particular stock actions comprise a series of calculations
      * @memberof OpenIZ
      * @static
      * @class
@@ -647,6 +649,7 @@ var OpenIZ = OpenIZ || {
 
     /** 
     * @summary The authentication section is used to interface with OpenIZ's authentication sub-systems including session management information, etc.
+    * @see OpenIZModel.SecurityUser
      * @static
      * @class
     * @memberof OpenIZ
@@ -881,6 +884,8 @@ var OpenIZ = OpenIZ || {
     },
     /** 
      * @summary Represents functions for interacting with the protocol service
+     * @see OpenIZModel.Patient
+     * @see OpenIZModel.Act
      * @static
      * @class
      * @memberof OpenIZ
@@ -1378,7 +1383,7 @@ var OpenIZ = OpenIZ || {
     },
 
     /**
-     * @summary Represents functions related to the concept dictionary
+     * @summary Represents functions related to the concept dictionary in particular those dealing with {@link OpenIZModel.Concept}, and {@link OpenIZModel.ConceptSet}s
      * @static
      * @class
      * @memberof OpenIZ
@@ -1397,6 +1402,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
          * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Concept
          * @example
          * OpenIZ.Concept.findConceptAsync({
          *      query: { "mnemonic":"Female" },
@@ -1427,6 +1433,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
          * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.ConceptSet
          * @example
          * OpenIZ.Concept.findConceptSetAsync({
          *      query: { "member.mnemonic":"Female" },
@@ -1446,7 +1453,7 @@ var OpenIZ = OpenIZ || {
     },
 
     /**
-     * @summary Represents a series of functions for submitting bundles
+     * @summary Represents a series of functions for submitting {@link OpenIZModel.Bundle} instances
      * @static
      * @class
      * @memberof OpenIZ
@@ -1471,7 +1478,7 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
-     * @summary Represents a series of functions related to patients
+     * @summary Represents a series of functions related to {@link OpenIZModel.Patient} instances
      * @static
      * @class
      * @memberof OpenIZ
@@ -1490,6 +1497,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
          * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
          */
         findAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1510,6 +1518,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {object} controlData.data The patient data to be inserted into the IMS
          * @see {OpenIZ.IMS.post}
+         * @see OpenIZModel.Patient
          */
         insertAsync: function (controlData) {
             OpenIZ.Ims.post({
@@ -1530,6 +1539,7 @@ var OpenIZ = OpenIZ || {
          * @param {object} controlData.data The patient data to be inserted into the IMS
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
          * @see {OpenIZ.IMS.put}
+         * @see OpenIZModel.Patient
          */
         updateAsync: function (controlData) {
             OpenIZ.Ims.put({
@@ -1551,6 +1561,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
          * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Patient
          */
         obsoleteAsync: function (controlData) {
             OpenIZ.Ims.delete({
@@ -1571,6 +1582,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {uuid} controlData.id The identifier of the patient that is to be updated
          * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
          */
         getAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1587,7 +1599,7 @@ var OpenIZ = OpenIZ || {
 
 
     /**
-     * @summary Place functions
+     * @summary Provides a series of utility functions for interacting with {@link OpenIZModel.Place} instances
      * @static
      * @class
      * @memberof OpenIZ
@@ -1605,6 +1617,7 @@ var OpenIZ = OpenIZ || {
          * @param {int} controlData.query._count The limit of results to return from the ims
          * @param {int} controlData.query._offset The offset of the search result window
          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @see OpenIZModel.Place
          */
         findAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1668,7 +1681,7 @@ var OpenIZ = OpenIZ || {
     /**
      * @static
      * @class
-     * @summary Provides functions for managing provider objects on the IMS
+     * @summary Provides functions for managing {@link OpenIZModel.Provider} objects on the IMS
      * @memberof OpenIZ
      */
     Provider: {
@@ -1744,7 +1757,15 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
-     * @summary Entity class for interacting with entities
+     * @summary Entity class for interacting with {@link OpenIZModel.Entity} instances and derivatives
+     * @see OpenIZModel.Entity
+     * @see OpenIZModel.Person
+     * @see OpenIZModel.Place
+     * @see OpenIZModel.Material
+     * @see OpenIZModel.ManufacturedMaterial
+     * @see OpenIZModel.Patient
+     * @see OpenIZModel.UserEntity
+     * @see OpenIZModel.Provider
      * @static
      * @class
      * @memberof OpenIZ
@@ -2062,7 +2083,7 @@ var OpenIZ = OpenIZ || {
     /**
      * @static
      * @class
-     * @summary Manufactured material methods
+     * @summary Provides utility functions for interacting with {@link OpenIZModel.ManufacturedMaterial} instances
      * @memberOf OpenIZ.ManufacturedMaterial
      */
     ManufacturedMaterial:
@@ -2099,7 +2120,7 @@ var OpenIZ = OpenIZ || {
     /**
      * @static
      * @class
-     * @summary Security repository class
+     * @summary Provides utilities for interacting with {@link OpenIZModel.UserEntity} classes
      * @memberof OpenIZ
      */
     UserEntity: {
