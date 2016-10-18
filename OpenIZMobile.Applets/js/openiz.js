@@ -1255,7 +1255,7 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.App
          */
         getAlertsAsync: function (controlData) {
-            OpenIZ.Util.simpleGet(controlData);
+            OpenIZ.Util.simpleGet('/__app/alerts', controlData);
         },
         /**
          * @summary Save an alert asynchronously

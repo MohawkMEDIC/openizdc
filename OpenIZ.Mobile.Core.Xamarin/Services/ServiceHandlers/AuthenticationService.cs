@@ -121,7 +121,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             if (query.ContainsKey("_id"))
                 return sessionService.Get(Guid.Parse(query["_id"][0]));
-            else
+            else 
 				return AuthenticationContext.Current.Session;
 		}
 
