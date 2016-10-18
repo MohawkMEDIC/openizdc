@@ -25,7 +25,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 // SHIM
 var OpenIZApplicationService = window.OpenIZApplicationService || {};
-var OpenIZSessionService = window.OpenIZApplicationService || {};
+var OpenIZSessionService = window.OpenIZSessionService || {};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -644,15 +644,43 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.Authentication
          * @method
          */
-        abandonSession: function () {
-            try {
-                OpenIZSessionService.Abandon();
-                return true;
-            }
-            catch (ex) {
-                console.error(ex);
-                return false;
-            }
+        abandonSession: function (controlData) {
+            $.ajax(
+            {
+                method: "POST",
+                url: "/__auth/abandon",
+                dataType: "json",
+                contentType: 'application/x-www-urlform-encoded',
+                success: function (xhr, data)
+                {
+                    controlData.continueWith(data);
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+                },
+                error: function (data)
+                {
+                    var error = data.responseJSON;
+
+                    if (error != null && error.error !== undefined)
+                    {
+                        // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                    }
+                    else
+                    {
+                        // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                    }
+
+                    if (controlData.finally !== undefined)
+                    {
+                        controlData.finally();
+                    }
+                }
+            });
         },
         /** 
          * @summary Refreshes the current session asynchronously
