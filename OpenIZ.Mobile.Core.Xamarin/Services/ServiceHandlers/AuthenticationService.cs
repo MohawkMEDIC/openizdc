@@ -31,6 +31,8 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Security;
 using System.Globalization;
+using OpenIZ.Mobile.Core.Security;
+using System.Net;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -47,39 +49,45 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <returns></returns>
 		[RestOperation(Method = "POST", UriPath = "/authenticate", FaultProvider = nameof(AuthenticationFault))]
 		[return: RestMessage(RestMessageFormat.Json)]
-		public SessionInformation Authenticate([RestMessage(RestMessageFormat.FormData)] NameValueCollection authRequest)
+		public SessionInfo Authenticate([RestMessage(RestMessageFormat.FormData)] NameValueCollection authRequest)
 		{
+
+            ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
+            SessionInfo retVal = null;
 
             switch (authRequest["grant_type"][0])
             {
                 case "password":
-                    XamarinApplicationContext.Current.Authenticate(authRequest["username"].FirstOrDefault().ToLower(), authRequest["password"].FirstOrDefault());
+                    retVal = sessionService.Authenticate(authRequest["username"].FirstOrDefault().ToLower(), authRequest["password"].FirstOrDefault());
                     break;
                 case "refresh":
-                    var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
-                    var principal = idp.Authenticate(ApplicationContext.Current.Principal, null); // Force a re-issue
-                    XamarinApplicationContext.Current.SetPrincipal(principal);
+                    retVal = sessionService.Refresh(AuthenticationContext.Current.Session, null); // Force a re-issue
                     break;
             }
 
-			// Authenticated?
-			if (ApplicationContext.Current.Principal == null)
+			if (retVal == null)
 			{
 				throw new SecurityException();
 			}
             else
             {
-                var retVal = new SessionInformation(ApplicationContext.Current.Principal);
-
 				var lanugageCode = retVal?.UserEntity?.LanguageCommunication?.FirstOrDefault(o => o.IsPreferred)?.LanguageCode;
 
 				CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(CultureInfo.DefaultThreadCurrentUICulture?.TwoLetterISOLanguageName ?? "en");
 
 				if (lanugageCode != null)
-				{
 					CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(lanugageCode);
-				}
 
+                // Set the session 
+                if(!authRequest.ContainsKey("scope"))
+                    MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", retVal.Key.ToString())
+                    {
+                        
+                        HttpOnly = true,
+                        Secure = true,
+                        Path ="/",
+                        Domain = MiniImsServer.CurrentContext.Request.Url.Host
+                    });
                 return retVal;
             }
         }
@@ -106,12 +114,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// <returns></returns>
 		[RestOperation(Method = "GET", UriPath = "/get_session")]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public SessionInformation GetSession()
+		public SessionInfo GetSession()
 		{
-			if (ApplicationContext.Current.Principal == null)
-				return null;
-			else
-				return new SessionInformation(ApplicationContext.Current.Principal);
+            NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
+
+            if (query.ContainsKey("_id"))
+                return sessionService.Get(Guid.Parse(query["_id"][0]));
+            else
+				return AuthenticationContext.Current.Session;
 		}
 
 		/// <summary>
@@ -119,26 +130,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		/// <param name="username">The username of the user to be retrieved.</param>
 		/// <returns>Returns the user.</returns>
-		[RestOperation(Method = "POST", UriPath = "/get_user")]
+		[RestOperation(Method = "GET", UriPath = "/get_user")]
 		[return: RestMessage(RestMessageFormat.Json)]
-		public SecurityUser GetUser([RestMessage(RestMessageFormat.Json)] SecurityUser securityUser)
+		public SecurityUser GetUser()
 		{
-			// this is used for the forgot password functionality
-			// need to find a way to stop people from simply searching users via username...
-
-			if (securityUser.UserName == null)
-			{
-				return null;
-			}
+            // this is used for the forgot password functionality
+            // need to find a way to stop people from simply searching users via username...
+            NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var predicate = QueryExpressionParser.BuildLinqExpression<SecurityUser>(query);
 
 			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-			var user = securityRepositoryService.FindUsers(u => u.UserName == securityUser.UserName).FirstOrDefault();
-
-			if (user == null)
-			{
-				return null;
-			}
+			var user = securityRepositoryService.FindUsers(predicate).FirstOrDefault();
 
 			return user;
 		}
@@ -148,11 +151,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		[RestOperation(Method = "POST", UriPath = "/passwd", FaultProvider = nameof(AuthenticationFault))]
         [return: RestMessage(RestMessageFormat.Json)]
-        public SessionInformation SetPassword([RestMessage(RestMessageFormat.FormData)]NameValueCollection controlData)
+        public SessionInfo SetPassword([RestMessage(RestMessageFormat.FormData)]NameValueCollection controlData)
         {
             var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            idp.ChangePassword(controlData["username"].FirstOrDefault().ToLower(), controlData["password"].FirstOrDefault(), ApplicationContext.Current.Principal);
-            return new SessionInformation(ApplicationContext.Current.Principal);
+            idp.ChangePassword(controlData["username"].FirstOrDefault().ToLower(), controlData["password"].FirstOrDefault(), AuthenticationContext.Current.Principal);
+            return AuthenticationContext.Current.Session;
         }
     }
 }

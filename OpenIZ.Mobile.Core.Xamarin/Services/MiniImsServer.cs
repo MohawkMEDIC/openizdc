@@ -197,13 +197,49 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 MiniImsServer.CurrentContext = context;
 
-               
+                // Session cookie?
+                if (request.Cookies["_s"] != null)
+                {
+                    var cookie = request.Cookies["_s"];
+                    if (!cookie.Expired)
+                    {
+                        var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
+                        var session = smgr.Get(Guid.Parse(cookie.Value));
+                        if (session != null)
+                            AuthenticationContext.Current = new AuthenticationContext(session);
+                    }
+                }
+
+                // Authorization header
+                if (request.Headers["Authorization"] != null)
+                {
+                    var authHeader = request.Headers["Authorization"].Split(' ');
+                    switch (authHeader[0].ToLowerInvariant()) // Type / scheme
+                    {
+                        case "basic":
+                            {
+                                var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
+                                var authString = Encoding.UTF8.GetString(Convert.FromBase64String(authHeader[1])).Split(':');
+                                var principal = idp.Authenticate(authString[0], authString[1]);
+                                if (principal == null)
+                                    throw new UnauthorizedAccessException();
+                                else
+                                    AuthenticationContext.Current = new AuthenticationContext(principal);
+                                break;
+                            }
+                    }
+                } 
 
                 // Attempt to find a service which implements the path
                 var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
                 InvokationInformation invoke = null;
                 if (this.m_services.TryGetValue(rootPath, out invoke))
                 {
+
+                    // Services require magic
+                    if (request.Headers["X-OIZMagic"] == null ||
+                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString())
+                        throw new UnauthorizedAccessException();
 
                     this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
                     // Get the method information 
@@ -212,6 +248,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                     try
                     {
+                        // Method demand?
+                        var demand = invoke.Method.GetCustomAttributes<DemandAttribute>();
+                        foreach (var itm in demand)
+                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm.PolicyId).Demand();
+
+                        // Invoke method
                         if (parmInfo.Length == 0)
                             result = invoke.Method.Invoke(invoke.BindObject, new object[] { });
                         else
@@ -236,7 +278,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     }
                     catch(TargetInvocationException e) {
                         this.m_tracer.TraceError("Error executing service request: {0}", e);
-                        if (invoke.FaultProvider != null)
+                        if (e.InnerException is UnauthorizedAccessException)
+                            throw e.InnerException;
+                        else if (invoke.FaultProvider != null)
                         {
                             response.StatusCode = 500;
                             result = invoke.FaultProvider.Invoke(invoke.BindObject, new object[] { e.InnerException });
@@ -295,7 +339,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 }
                 else
                     this.HandleAssetRenderRequest(request, response);
-
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -309,7 +352,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             catch (SecurityException ex)
             {
                 this.m_tracer.TraceError(ex.ToString());
-                if (ApplicationContext.Current.Principal == null)
+                if (AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
                 {
                     string redirectLocation = String.Format("{0}?returnUrl={1}",
                         XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset

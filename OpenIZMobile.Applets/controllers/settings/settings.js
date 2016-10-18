@@ -53,17 +53,22 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     // join realm
     $scope.joinRealm = function (realm) {
         OpenIZ.App.showWait();
-        OpenIZ.Configuration.joinRealmAsync({
-            domain: realm.domain,
-            deviceName: realm.deviceName,
-            continueWith: function (data) {
-                $scope.config.realmName = data.realmName;
-                alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
-            },
-            finally: function () {
-                OpenIZ.App.hideWait();
-            }
-        });
+
+        var doJoin = function () {
+            OpenIZ.Configuration.joinRealmAsync({
+                domain: realm.domain,
+                deviceName: realm.deviceName,
+                continueWith: function (data) {
+                    $scope.config.realmName = data.realmName;
+                    alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait();
+                }
+            });
+        };
+        OpenIZ.Authentication.$elevationCredentials.continueWith = doJoin;
+        doJoin();
     };
 
     // Save config

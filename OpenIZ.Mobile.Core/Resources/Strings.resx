@@ -143,6 +143,12 @@
   <data name="locale_indexing" xml:space="preserve">
     <value>Constructing Freetext Index</value>
   </data>
+  <data name="locale_sessionError" xml:space="preserve">
+    <value>Error establishing session:</value>
+  </data>
+  <data name="locale_session_expired" xml:space="preserve">
+    <value>Session is expired</value>
+  </data>
   <data name="locale_setting_deploy" xml:space="preserve">
     <value>Deploying Data</value>
   </data>

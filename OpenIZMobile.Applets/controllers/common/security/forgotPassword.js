@@ -7,7 +7,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
         if (username !== undefined)
         {
             OpenIZ.Authentication.getUserAsync({
-                data: {
+                query: {
                     userName: username
                 },
                 continueWith: function(data)

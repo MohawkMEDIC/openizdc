@@ -1,27 +1,8 @@
 ﻿<form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)" xmlns:openiz="http://openiz.org/applet"
       xmlns="http://www.w3.org/1999/xhtml">
     <openiz:script>/org.openiz.core/controllers/common/security/login.js</openiz:script>
-    <fieldset class="form-horizontal form-group">
-        <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
-        <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
-            <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
-            <div class="col-xs-9">
-                <div class="input-group">
-                    <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
-                    <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
-            <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
-            <div class="col-xs-9">
-                <div class="input-group">
-                    <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
-                    <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
-                </div>
-            </div>
-        </div>
-    </fieldset>
+    <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
+    <!-- #include virtual="~/views/common/security/authenticate.html" -->
     <div class="row">
         <div class="col-xs-12">
             <div class="btn-group pull-right">

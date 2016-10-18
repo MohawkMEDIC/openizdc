@@ -30,7 +30,6 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
         query: $scope.orderQuery,
         continueWith: function(data)
         {
-            console.log(data);
         },
         onException: function(ex)
         {
@@ -47,13 +46,11 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
         resource: "ManufacturedMaterial",
         query: lowStockQuery,
         continueWith: function (data) {
-            console.log("DATA" + data);
 
             if (data.item !== undefined)
             {
                 for (var i = 0; i < data.item.length; i++) {
                     $scope.lowStock.push(data.item[i]);
-                    console.log(data.item[i])
                     
                 }
             }

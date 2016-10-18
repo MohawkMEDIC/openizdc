@@ -87,7 +87,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
             if (principal is ClaimsPrincipal)
                 scope = (principal as ClaimsPrincipal).Claims.FirstOrDefault(o => o.Type == ClaimTypes.OpenIzScopeClaim)?.Value ?? scope;
             else
-                scope = ApplicationContext.Current.GetRestClient("imsi").Description.Endpoint[0].Address;
+                scope = ApplicationContext.Current.GetRestClient("imsi")?.Description.Endpoint[0].Address ??
+                    ApplicationContext.Current.GetRestClient("ami")?.Description.Endpoint[0].Address ??
+                    "*";
 
             // Authenticate
             IPrincipal retVal = null;
@@ -146,11 +148,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     // Create a security user and ensure they exist!
                     var localRp = new LocalRoleProviderService();
                     var localPip = new LocalPolicyInformationService();
-                    var localUser = localIdp.GetIdentity(principal.Identity.Name);
+                    IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null; 
 
                     // We have a match! Lets make sure we cache this data
                     // TODO: Clean this up
-                    if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal)
+                    if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal && 
+                        XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
                     {
                         ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
                         var amiPip = new AmiPolicyInformationService(cprincipal);
@@ -299,7 +302,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 		/// <param name="password">The new password of the user.</param>
         public void ChangePassword(string userName, string password)
         {
-			this.ChangePassword(userName, password, ApplicationContext.Current.Principal);
+			this.ChangePassword(userName, password, AuthenticationContext.Current.Principal);
         }
 
         /// <summary>

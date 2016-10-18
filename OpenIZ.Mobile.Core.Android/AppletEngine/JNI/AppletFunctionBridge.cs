@@ -231,10 +231,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
 
                 // Cannot have menus if not logged in
-                if (ApplicationContext.Current.Principal == null) return null;
+                if (AuthenticationContext.Current.Principal == null) return null;
 
                 string cached = null;
-                if (this.m_cachedMenus.TryGetValue(ApplicationContext.Current.Principal, out cached))
+                if (this.m_cachedMenus.TryGetValue(AuthenticationContext.Current.Principal, out cached))
                     return cached;
 
                 var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
@@ -248,7 +248,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
                 cached = JniUtil.ToJson(retVal);
                 lock (this.m_cachedMenus)
-                    this.m_cachedMenus.Add(ApplicationContext.Current.Principal, cached);
+                    this.m_cachedMenus.Add(AuthenticationContext.Current.Principal, cached);
                 return cached;
             }
             catch (Exception e)
@@ -274,7 +274,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             // TODO: Demand permission
             if (menu.Launcher != null &&
-                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item

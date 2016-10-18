@@ -152,7 +152,7 @@ namespace OpenIZ.Mobile.Core.Alerting
 						if (existingAlert == null)
 						{
 							msg.Id = Guid.NewGuid().ToByteArray();
-							msg.CreatedBy = ApplicationContext.Current.Principal?.Identity?.Name;
+							msg.CreatedBy = AuthenticationContext.Current.Principal?.Identity?.Name;
 							conn.Insert(msg);
 						}
 						else

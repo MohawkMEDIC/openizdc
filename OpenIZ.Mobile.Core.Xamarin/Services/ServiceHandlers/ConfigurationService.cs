@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Http.Description;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -22,6 +23,9 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Mobile.Core.Interop;
+using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -112,12 +116,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Save configuration
         /// </summary>
         [RestOperation(UriPath = "/all", Method = "POST", FaultProvider = nameof(ConfigurationFaultProvider))]
+        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
         [return: RestMessage(RestMessageFormat.Json)]
         public ConfigurationViewModel SaveConfiguration([RestMessage(RestMessageFormat.Json)]JObject optionObject)
         {
-            // Demand the appropriate policy
-            new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessClientAdministrativeFunction).Demand();
-           
+            // Clean up join realm stuff
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(OAuthIdentityProvider).AssemblyQualifiedName);
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(AmiPolicyInformationService).AssemblyQualifiedName);
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(ImsiPersistenceService).AssemblyQualifiedName);
 
             // Data mode
             switch (optionObject["data"]["mode"].Value<String>())
@@ -210,6 +216,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         /// <param name="realmData"></param>
         [RestOperation(UriPath = "/realm", Method = "POST", FaultProvider = nameof(ConfigurationFaultProvider))]
+        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
         [return: RestMessage(RestMessageFormat.Json)]
         public ConfigurationViewModel JoinRealm([RestMessage(RestMessageFormat.FormData)]NameValueCollection realmData)
         {
@@ -217,14 +224,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
-            // Demand policy
+            // Stage 1 - Demand access admin policy
             try
             {
-                if (XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
-                    new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
+                new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
 
-
-                // Configure the stuff to the appropriate realm info
+                // We're allowed to access server admin!!!! Yay!!!
+                // We're goin to conigure the realm settings now (all of them)
                 var serviceClientSection = XamarinApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
                 if (serviceClientSection == null)
                 {
@@ -236,8 +242,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 }
 
                 // TODO: Actually contact the AMI for this information
-
-
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName = deviceName;
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().Domain = realmUri;
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenAlgorithms = new System.Collections.Generic.List<string>() {
@@ -245,7 +249,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     "HS256"
                 };
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
-
 
                 String imsiUri = String.Format("http://{0}:8080/imsi", realmUri),
                     oauthUri = String.Format("http://{0}:8080/auth", realmUri),
@@ -316,13 +319,147 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     Name = "acs"
                 });
 
-                return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
+                ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
+                ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Guid.NewGuid().ToString().Replace("-", "");
 
+                // Create the necessary device user
+                try
+                {
+                    AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                    // Create application user
+                    var role = amiClient.GetRoles(o=>o.Name == "SYNCHRONIZERS").CollectionItem.First();
+
+                    // Does the user actually exist?
+                    var existingClient = amiClient.GetUsers(o => o.UserName == deviceName);
+                    if (existingClient.CollectionItem.Count > 0)
+                    {
+                        amiClient.UpdateUser(existingClient.CollectionItem.First().UserId.Value, new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo()
+                        {
+                            Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
+                            UserName = deviceName
+                        });
+                    }
+                    else
+                        // Create user
+                        amiClient.CreateUser(new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo(new OpenIZ.Core.Model.Security.SecurityUser()
+                        {
+                            UserName = deviceName,
+                            Key = Guid.NewGuid(),
+                            UserClass = UserClassKeys.ApplictionUser, 
+                            SecurityHash = Guid.NewGuid().ToString()
+                        })
+                        {
+                            Roles = new List<OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo>()
+                            {
+                                role
+                            },
+                            Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
+                        });
+
+                    // TODO: Generate the CSR
+                    
+                    // Lookup sync role
+                    var existingDevice = amiClient.GetDevices(o => o.Name == deviceName);
+                    if (existingDevice.CollectionItem.Count == 0)
+                    {
+                        // Create device
+                        var newDevice = amiClient.CreateDevice(new OpenIZ.Core.Model.Security.SecurityDevice()
+                        {
+                            Name = deviceName,
+                            DeviceSecret = Guid.NewGuid().ToString()
+                        });
+
+                        //// Now create device entity
+                        //var newDeviceEntity = ApplicationContext.Current.GetService<IDataPersistenceService<DeviceEntity>>().Insert(new DeviceEntity()
+                        //{
+                        //    SecurityDevice = newDevice,
+                        //    StatusConceptKey = StatusKeys.Active,
+                        //    ManufacturedModelName = Environment.MachineName,
+                        //    OperatingSystemName = Environment.OSVersion.ToString(),
+                        //});
+                    }
+                    else
+                        ; // TODO: Update
+                }
+                catch(Exception e)
+                {
+                    this.m_tracer.TraceError("Error registering device account: {0}", e);
+                    throw;
+                }
+                return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
             }
-            catch (PolicyViolationException e)
+            catch(PolicyViolationException ex)
             {
-                // TODO: Login permission
-                this.m_tracer.TraceError("Error joining realm: {0}", e);
+                this.m_tracer.TraceWarning("Policy violation exception on {0}. Will attempt again", ex.Demanded);
+                // Only configure the minimum to contact the realm for authentication to continue
+                var serviceClientSection = XamarinApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
+                if (serviceClientSection == null)
+                {
+                    serviceClientSection = new ServiceClientConfigurationSection()
+                    {
+                        RestClientType = typeof(RestClient)
+                    };
+                    XamarinApplicationContext.Current.Configuration.Sections.Add(serviceClientSection);
+                }
+
+                // TODO: Actually contact the AMI for this information
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName = deviceName;
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().Domain = realmUri;
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenAlgorithms = new System.Collections.Generic.List<string>() {
+                    "RS256",
+                    "HS256"
+                };
+                
+                String oauthUri = String.Format("http://{0}:8080/auth", realmUri),
+                                        amiUri = String.Format("http://{0}:8080/ami", realmUri);
+
+                // Parse ACS URI
+                serviceClientSection.Client.Add(new ServiceClientDescription()
+                {
+                    Binding = new ServiceClientBinding()
+                    {
+                        Security = new ServiceClientSecurity()
+                        {
+                            AuthRealm = realmUri,
+                            Mode = SecurityScheme.Bearer,
+                            CredentialProvider = new TokenCredentialProvider(),
+                            PreemptiveAuthentication = true
+                        },
+                        Optimize = false
+                    },
+                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
+                        new ServiceClientEndpoint() {
+                            Address = amiUri
+                        }
+                    },
+                    Name = "ami"
+                });
+
+                // Parse ACS URI
+                serviceClientSection.Client.Add(new ServiceClientDescription()
+                {
+                    Binding = new ServiceClientBinding()
+                    {
+                        Security = new ServiceClientSecurity()
+                        {
+                            AuthRealm = realmUri,
+                            Mode = SecurityScheme.Basic,
+                            CredentialProvider = new OAuth2CredentialProvider()
+                        },
+                        Optimize = false
+                    },
+                    Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
+                        new ServiceClientEndpoint() {
+                            Address = oauthUri
+                        }
+                    },
+                    Name = "acs"
+                });
+
+                ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new OAuthIdentityProvider());
+
+                throw new UnauthorizedAccessException();
             }
             catch (Exception e)
             {

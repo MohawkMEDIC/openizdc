@@ -36,7 +36,7 @@ namespace Minims
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
             }
-            Console.WriteLine("[{0}] {1} : {2}", level, source, String.Format(format, args));
+            Console.WriteLine("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args));
         }
     }
 }

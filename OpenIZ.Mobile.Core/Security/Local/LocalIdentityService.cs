@@ -195,7 +195,7 @@ namespace OpenIZ.Mobile.Core.Security
 		/// <param name="password"></param>
 		public void ChangePassword(string userName, string password)
 		{
-			this.ChangePassword(userName, password, ApplicationContext.Current.Principal);
+			this.ChangePassword(userName, password, AuthenticationContext.Current.Principal);
 		}
 
 		/// <summary>
@@ -218,7 +218,7 @@ namespace OpenIZ.Mobile.Core.Security
 				PasswordHash = hash.ComputeHash(password),
 				SecurityHash = Guid.NewGuid().ToString(),
 				CreationTime = DateTime.Now,
-				CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == ApplicationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
+				CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
 				UserName = userName,
 				Key = sid
 			};

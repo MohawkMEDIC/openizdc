@@ -29,21 +29,8 @@
 
 /// <reference path="~/lib/jquery.min.js"/>
 // SHIM
-var OpenIZApplicationService = window.OpenIZApplicationService || {
-    GetLocale: function () { return 'en'; },
-    GetStrings: function () { return '[]'; },
-    GetTemplateForm: function (templateId) {
-        switch (templateId) {
-            case "Act.Observation.Weight":
-                return "/org.openiz.core/views/templates/act.observation.weight.html";
-            case "Act.SubstanceAdmin.Immunization":
-                return "/org.openiz.core/views/templates/act.substanceadmin.immunization.html";
-            default:
-                return "../templates/" + templateId + ".html";
-
-        }
-    }
-};
+var OpenIZApplicationService = window.OpenIZApplicationService || {};
+var OpenIZSessionService = window.OpenIZApplicationService || {};
 
 /**
  * @callback OpenIZ~continueWith
@@ -665,7 +652,26 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     Authentication: {
-
+        /**
+         * @summary Credentials to use for elevation in lieu of the current session
+         */
+        $elevationCredentials: {},
+        /**
+         * @summary Show an elevation dialog
+         * @method
+         * @memberof OpenIZ.Authentication
+         */
+        showElevationDialog : function() {
+            $("#authenticationDialog").modal('show');
+        },
+        /** 
+         * @summary Hide the elevation dialog
+         * @method
+         * @memberof OpenIZ.Authentication
+         */
+        hideElevationDialog : function() {
+            $("#authenticationDialog").modal('hide');
+        },
         /**
          * @summary Perform a login operation asynchronously
          * @memberof OpenIZ.Authentication
@@ -695,7 +701,8 @@ var OpenIZ = OpenIZ || {
                  data: {
                      username: controlData.userName,
                      password: controlData.password,
-                     grant_type: 'password'
+                     grant_type: 'password',
+                     scope: controlData.scope
                  },
                  dataType: "json",
                  contentType: 'application/x-www-urlform-encoded',
@@ -1899,7 +1906,7 @@ var OpenIZ = OpenIZ || {
                              OpenIZ.Configuration.$configuration = xhr;
                              controlData.continueWith(xhr);
                          }
-                         else
+                         else if(controlData.onException != null)
                              controlData.onException(new OpenIZModel.Exception("err_general",
                                  data,
                                  null
@@ -1916,7 +1923,7 @@ var OpenIZ = OpenIZ || {
                                      null
                                  ));
 
-                         else // unknown error
+                         else if(controlData.onException != null) // unknown error
                              controlData.onException(new OpenIZModel.Exception("err_general" + error,
                                      data,
                                      null
@@ -2124,7 +2131,21 @@ var OpenIZ = OpenIZ || {
 $.ajaxSetup({
     cache: false, converters: {
         'text json': $.parseJSON
+    },
+    beforeSend: function (data, settings) {
+        if (OpenIZ.Authentication.$elevationCredentials.$enabled) {
+            data.setRequestHeader("Authorization", "BASIC " +
+                btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
+        }
+        data.setRequestHeader("X-OIZMagic", OpenIZSessionService.GetMagic());
     }
+});
+
+$(document).ajaxError(function (e, data, setting, err) {
+    if (data.status == 401 || data.status == 403)
+        OpenIZ.Authentication.showElevationDialog();
+    else
+        throw new OpenIZModel.Exception("err_request", err, null);
 });
 
 // Parameters

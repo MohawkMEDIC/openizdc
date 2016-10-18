@@ -82,6 +82,8 @@
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
+    <Compile Include="Security\TokenValidationManager.cs" />
+    <Compile Include="Services\Attributes\DemandAttribute.cs" />
     <Compile Include="Services\Model\ErrorResult.cs" />
     <Compile Include="Services\Model\MenuInformation.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="Security\OAuthTokenServiceCredentials.cs" />
     <Compile Include="Security\PasswordHashers.cs" />
     <Compile Include="Security\PolicyPermissionAttribute.cs" />
-    <Compile Include="Security\SessionInformation.cs" />
     <Compile Include="Security\SystemPrincipal.cs" />
     <Compile Include="Security\TokenClaimsPrincipal.cs" />
     <Compile Include="Security\TokenCredentialProvider.cs" />
