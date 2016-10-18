@@ -190,9 +190,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
 #if DEBUG
                 new TraceWriterConfiguration () {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        Filter = System.Diagnostics.Tracing.EventLevel.Critical,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.Critical, "OpenIZ")
                     },
 #endif
                 new TraceWriterConfiguration()

@@ -74,7 +74,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model.AMI">
+    <Reference Include="OpenIZ.Core.Model.AMI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Messaging.AMI.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
