@@ -25,6 +25,121 @@
  * @namespace
  */
 var OpenIZModel = OpenIZModel || {
+
+    /**
+    * @summary Keys for the setting of a mood for an act.
+    * @class
+    * @property {String} Appointment: 'C46EEE70-5612-473F-8D24-595EA15C9C39',
+    * @property {String} AppointmentRequest: '0395F357-6821-4562-8192-49AC3C94F548',
+    * @property {String} Definition: '3B14A426-6337-4F2A-B83B-E6BE7DBCD5A5',
+    * @property {String} EventOccurrence: 'EC74541F-87C4-4327-A4B9-97F325501747',
+    * @property {String} Goal: '13925967-E748-4DD6-B562-1E1DA3DDFB06',
+    * @property {String} Intent: '099BCC5E-8E2F-4D50-B509-9F9D5BBEB58E',
+    * @property {String} Promise: 'B389DEDF-BE61-456B-AA70-786E1A5A69E0',
+    * @property {String} Propose: 'ACF7BAF2-221F-4BC2-8116-CEB5165BE079',
+    * @property {String} Request: 'E658CA72-3B6A-4099-AB6E-7CF6861A5B61'
+    */
+    ActMoodKeys:
+    {
+        Appointment: 'C46EEE70-5612-473F-8D24-595EA15C9C39',
+        AppointmentRequest: '0395F357-6821-4562-8192-49AC3C94F548',
+        Definition: '3B14A426-6337-4F2A-B83B-E6BE7DBCD5A5',
+        EventOccurrence: 'EC74541F-87C4-4327-A4B9-97F325501747',
+        Goal: '13925967-E748-4DD6-B562-1E1DA3DDFB06',
+        Intent: '099BCC5E-8E2F-4D50-B509-9F9D5BBEB58E',
+        Promise: 'B389DEDF-BE61-456B-AA70-786E1A5A69E0',
+        Propose: 'ACF7BAF2-221F-4BC2-8116-CEB5165BE079',
+        Request: 'E658CA72-3B6A-4099-AB6E-7CF6861A5B61'
+    },
+    /**
+    * @summary Address use component keys
+    * @class
+    */
+    AddressComponentKeys:
+    {
+        BuildingNumberSuffix: "B2DBF05C-584D-46DB-8CBF-026A6EA30D81",
+        PostBox: "2047F216-F41E-4CFB-A024-05D4D3DE52F5",
+        UnitIdentifier: "908C09DF-81FE-45AC-9233-0881A278A401",
+        AddressLine: "4F342D28-8850-4DAF-8BCA-0B44A255F7ED",
+        DeliveryAddressLine: "F6139B21-3A36-4A3F-B498-0C661F06DF59",
+        Precinct: "ACAFE0F2-E209-43BB-8633-3665FD7C90BA",
+        CensusTract: "4B3A347C-28FA-4560-A1A9-3795C9DB3D3B",
+        DeliveryModeIdentifier: "08BD6027-47EB-43DE-8454-59B7A5D00A3E",
+        DeliveryInstallationArea: "EC9D5AB8-3BE1-448F-9346-6A08253F9DEA",
+        DeliveryMode: "12608636-910D-4BAC-B849-7F999DE20332",
+        BuildingNumber: "F3C86E99-8AFC-4947-9DD8-86412A34B1C7",
+        Delimiter: "4C6B9519-A493-44A9-80E6-32D85109B04B",
+        County: "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5",
+        PostalCode: "78A47122-F9BF-450F-A93F-90A103C5F1E8",
+        CareOf: "8C89A89E-08C5-4374-87F9-ADB3C9261DF6",
+        StreetName: "0432D671-ABC3-4249-872C-AFD5274C2298",
+        StreetType: "121953F6-0465-41DE-8F7A-B0E08204C771",
+        StreetAddressLine: "F69DCFA8-DF18-403B-9217-C59680BAD99E",
+        UnitDesignator: "B18E71CB-203C-4640-83F0-CC86DEBBBBC0",
+        Country: "48B2FFB3-07DB-47BA-AD73-FC8FB8502471",
+        StreetNameBase: "37C7DBC8-4AC6-464A-AF65-D65FCBA60238",
+        Direction: "1F678716-AB8F-4856-9F76-D82FE3165C22",
+        City: "05B85461-578B-4988-BCA6-E3E94BE9DB76",
+        State: "8CF4B0B0-84E5-4122-85FE-6AFA8240C218",
+        DeliveryInstallationType: "684FB800-145C-47C5-98C5-E7AA53802B69",
+        AdditionalLocator: "D2312B8E-BDFB-4012-9397-F14336F8D206",
+        DeliveryInstallationQualifier: "78FB6EED-6549-4F22-AB3E-F3696DA050BC",
+        BuildingNumberNumeric: "3258B4D6-E4DC-43E6-9F29-FD8423A2AE12"
+    },
+    /**
+    * @summary Name use keys
+    * @class
+    * @property {String} License 48075D19-7B29-4CA5-9C73-0CBD31248446
+    * @property {String} Alphabetic 71D1C07C-6EE6-4240-8A95-19F96583512E
+    * @property {String} Religious 15207687-5290-4672-A7DF-2880A23DCBB5
+    * @property {String} Artist 4A7BF199-F33B-42F9-8B99-32433EA67BD7
+    * @property {String} Phonetic 2B085D38-3308-4664-9F89-48D8EF4DABA7
+    * @property {String} Indigenous A3FB2A05-5EBE-47AE-AFD0-4C1B22336090
+    * @property {String} Soundex E5794E3B-3025-436F-9417-5886FEEAD55A
+    * @property {String} Assigned A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1
+    * @property {String} Search 87964BFF-E442-481D-9749-69B2A84A1FBE
+    * @property {String} Ideographic 09000479-4672-44F8-BB4A-72FB25F7356A
+    * @property {String} Pseudonym C31564EF-CA8D-4528-85A8-88245FCEF344
+    * @property {String} MaidenName 0674C1C8-963A-4658-AFF9-8CDCD308FA68
+    * @property {String} Legal EFFE122D-8D30-491D-805D-ADDCB4466C35
+    * @property {String} OfficialRecord 1EC9583A-B019-4BAA-B856-B99CAF368656
+    * @property {String} Syllabic B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF
+    * @property {String} Anonymous 95E6843A-26FF-4046-B6F4-EB440D4B85F7
+    */
+    NameUseKeys:
+    {
+        License: "48075D19-7B29-4CA5-9C73-0CBD31248446",
+        Alphabetic: "71D1C07C-6EE6-4240-8A95-19F96583512E",
+        Religious: "15207687-5290-4672-A7DF-2880A23DCBB5",
+        Artist: "4A7BF199-F33B-42F9-8B99-32433EA67BD7",
+        Phonetic: "2B085D38-3308-4664-9F89-48D8EF4DABA7",
+        Indigenous: "A3FB2A05-5EBE-47AE-AFD0-4C1B22336090",
+        Soundex: "E5794E3B-3025-436F-9417-5886FEEAD55A",
+        Assigned: "A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1",
+        Search: "87964BFF-E442-481D-9749-69B2A84A1FBE",
+        Ideographic: "09000479-4672-44F8-BB4A-72FB25F7356A",
+        Pseudonym: "C31564EF-CA8D-4528-85A8-88245FCEF344",
+        MaidenName: "0674C1C8-963A-4658-AFF9-8CDCD308FA68",
+        Legal: "EFFE122D-8D30-491D-805D-addcb4466c35",
+        OfficialRecord: "1EC9583A-B019-4BAA-B856-B99CAF368656",
+        Syllabic: "B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF",
+        Anonymous: "95E6843A-26FF-4046-B6F4-EB440D4B85F7"
+    },
+    /**
+    * @summary Status concept keys
+    * @class
+    * @property {String} 
+    * @property {String} New Object is 'new' meaning no business rules have been executed and the object needs review
+    * @property {String} Obsolete Object is obsolete (no longer active)
+    * @property {String} Nullfied Object was created in error
+    * @property {String} Active Object is active
+    */
+    StatusConceptKeys: {
+        New: "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+        Obsolete: "BDEF5F90-5497-4F26-956C-8F818CCE2BD2",
+        Nullfied: "CD4AA3C4-02D5-4CC9-9088-EF8F31E321C5",
+        Active: "C8064CBD-FA06-4530-B430-1A52F1530C27"
+    },
     // OpenIZ.Core.Model.BaseEntityData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**
      * @class
@@ -3823,5 +3938,24 @@ var OpenIZModel = OpenIZModel || {
             this.id = copyData.id;
             this.$type = copyData.$type;
         }
-    },  // SubstanceAdministration 
+    }, // SubstanceAdministration 
+
+    /**
+    * @class
+    * @summary Represents a simple exception class
+    * @constructor
+    * @property {String} message Informational message about the exception
+    * @property {Object} details Any detail / diagnostic information
+    * @property {OpenIZModel#Exception} caused_by The cause of the exception
+    * @param {String} message Informational message about the exception
+    * @param {Object} detail Any detail / diagnostic information
+    * @param {OpenIZModel#Exception} cause The cause of the exception
+    */
+    Exception : function (message, detail, cause) {
+        _self = this;
+
+        this.message = message;
+        this.details = detail;
+        this.caused_by = cause;
+    }
 } // OpenIZModel
