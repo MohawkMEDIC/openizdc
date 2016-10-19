@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Security
     /// <summary>
     /// Session information
     /// </summary>
-    [JsonObject]
+    [JsonObject("SessionInfo")]
     public class SessionInfo : IdentifiedData
     {
         /// <summary>

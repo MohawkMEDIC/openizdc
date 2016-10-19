@@ -87,24 +87,24 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Now we want to load the relationships inversed!
             retVal.LoadAssociations(context);
-            if (!loadFast)
-            {
-                foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
-                    itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
-                retVal.Relationships.RemoveAll(o => o.InversionIndicator);
-                retVal.Relationships.AddRange(
-                    context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
-                    {
-                        SourceEntityKey = new Guid(o.EntityUuid),
-                        InversionIndicator = true
-                    })
-                );
-                retVal.Participations = new List<ActParticipation>(context.Table<DbActParticipation>().Where(o => o.EntityUuid == dbInstance.Uuid).ToList().Select(o => new ActParticipation(new Guid(o.ParticipationRoleUuid), retVal)
-                {
-                    ActKey = new Guid(o.ActUuid),
-                    Key = o.Key
-                }));
-            }
+            //if (!loadFast)
+            //{
+            //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
+            //        itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
+            //    retVal.Relationships.RemoveAll(o => o.InversionIndicator);
+            //    retVal.Relationships.AddRange(
+            //        context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
+            //        {
+            //            SourceEntityKey = new Guid(o.EntityUuid),
+            //            InversionIndicator = true
+            //        })
+            //    );
+            //    retVal.Participations = new List<ActParticipation>(context.Table<DbActParticipation>().Where(o => o.EntityUuid == dbInstance.Uuid).ToList().Select(o => new ActParticipation(new Guid(o.ParticipationRoleUuid), retVal)
+            //    {
+            //        ActKey = new Guid(o.ActUuid),
+            //        Key = o.Key
+            //    }));
+            //}
 
             return retVal;
         }

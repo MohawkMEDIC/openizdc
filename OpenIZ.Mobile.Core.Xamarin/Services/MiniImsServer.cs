@@ -41,6 +41,7 @@ using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Core.Applets.ViewModel;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Applets.ViewModel.Description;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -49,6 +50,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
     /// </summary>
     public class MiniImsServer : IDaemonService
     {
+
+        // Default view model
+        private ViewModelDescription m_defaultViewModel;
 
         // Current context
         [ThreadStatic]
@@ -91,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
                 this.m_listener = new HttpListener();
-
+                this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
                 // Scan for services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                     try
@@ -320,7 +324,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 {
                                     using (StreamWriter sw = new StreamWriter(response.OutputStream))
                                     {
-                                        sw.Write(JsonViewModelSerializer.Serialize((result as IdentifiedData).GetLocked()));
+                                        sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData, this.m_defaultViewModel));
                                     }
                                 }
                                 else if(result != null)
@@ -429,7 +433,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 					}
 				}           
             }
-#if DEBUG
+#if !DEBUG
             response.AddHeader("Cache-Control", "no-cache");
 #endif
 

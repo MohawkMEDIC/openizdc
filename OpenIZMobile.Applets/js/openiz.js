@@ -25,7 +25,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 // SHIM
 var OpenIZApplicationService = window.OpenIZApplicationService || {};
-var OpenIZSessionService = window.OpenIZApplicationService || {};
+var OpenIZSessionService = window.OpenIZSessionService || {};
 
 /**
  * @summary OpenIZ Javascript binding class.
@@ -452,6 +452,10 @@ var OpenIZ = OpenIZ || {
     * @class
     */
     Authentication: {
+        /** 
+         * @summary Cached session
+         */
+        $session : null,
         /**
          * @summary Credentials to use for elevation in lieu of the current session
          */
@@ -507,8 +511,10 @@ var OpenIZ = OpenIZ || {
                              data.error_description,
                              null
                          );
-                     else if (data != null)
+                     else if (data != null) {
                          controlData.continueWith(data);
+                         OpenIZ.Authentication.$session = data;
+                     }
                      else
                          controlData.onException(new OpenIZModel.Exception("err_general",
                              data,
@@ -613,8 +619,10 @@ var OpenIZ = OpenIZ || {
                         data.error_description,
                         null
                     );
-                else if (data != null)
+                else if (data != null) {
+                    OpenIZ.Authentication.$session = data;
                     controlData.continueWith(data);
+                }
                 else
                     controlData.onException(new OpenIZModel.Exception("err_general",
                         data,
@@ -2027,8 +2035,9 @@ $.ajaxSetup({
 });
 
 $(document).ajaxError(function (e, data, setting, err) {
-    if (data.status == 401 || data.status == 403)
+    if ((data.status == 401 || data.status == 403) && OpenIZ.Authentication.$session != null ) {
         OpenIZ.Authentication.showElevationDialog();
+    }
     else
         throw new OpenIZModel.Exception("err_request", err, null);
 });

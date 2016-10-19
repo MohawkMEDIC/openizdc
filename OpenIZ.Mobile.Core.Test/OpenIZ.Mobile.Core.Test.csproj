@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenIZ.Core.Applets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
@@ -83,6 +87,7 @@
     <Compile Include="SHA256PasswordHasher.cs" />
     <Compile Include="TestApplicationContext.cs" />
     <Compile Include="TestTraceWriter.cs" />
+    <Compile Include="ViewModel\ViewModelDelayLoadTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
@@ -93,6 +98,7 @@
   <ItemGroup>
     <EmbeddedResource Include="IMSI\TroublesomePlaceBundle.xml" />
     <Content Include="Data\OpenIZData.sql" />
+    <EmbeddedResource Include="Resources\ViewModel.xml" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -105,6 +111,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

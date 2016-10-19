@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewModel xmlns="http://openiz.org/model/view" name="default">
+  
+  <!-- BASE TYPES -->
+  <type type="EntityAddress" all="true">
+    <property name="component" all="false" classifier="*">
+      <property name="value" all="false"/>
+    </property>
+  </type>
+  <type type="EntityIdentifier" all="true"/>
+  <type type="EntityName" all="true">
+    <property name="component" all="false" classifier="*">
+      <property name="value" all="false"/>
+    </property>
+  </type>
+  <type type="EntityTelecomAddress" all="true"/>
+  <type type="EntityNote" all="true"/>
+  <type type="EntityTag" all="true"/>
+  <type type="EntityExtension" all="true"/>
+  <type type="ActIdentifier" all="true"/>
+  <type type="ActNote" all="true"/>
+  <type type="ActExtension" all="true"/>
+  <type type="ActTag" all="true"/>
+ 
+  <!-- ACT -->
+  <type type="Act" all="true">
+    <property name="relationship" classifier="*" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="playerModel" all="true"/>
+    </property>
+    <property name="participation" classifier="RecordTarget" all="true">
+      <property name="playerModel" all="true">
+        <property name="participation" classifier="RecordTarget" all="false"/>
+        <property name="participation" classifier="*" all="true"/>
+      </property>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="playerModel" all="true"/>
+    </property>
+  </type>
+  
+  <!-- PLACE -->
+  <type type="Place" all="true">
+    <property name="relationship" classifier="Parent" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" all="true"/>
+  </type>
+
+  <type type="Bundle" all="true">
+    <property name="item" all="true"/>
+  </type>
+  
+  <!-- ENTITY FALLBACK -->
+  <type type="Entity" all="true">
+    <property name="relationship" all="true" classifier="*">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="actModel" all="true">
+      </property>
+    </property>
+  </type>
+</ViewModel>

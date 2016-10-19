@@ -276,7 +276,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
 
                 // Cannot have menus if not logged in
-                if (AuthenticationContext.Current.Principal == null) return null;
+                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated) return null;
 
                 var rootMenus = XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();

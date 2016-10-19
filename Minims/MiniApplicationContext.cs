@@ -166,7 +166,7 @@ namespace Minims
                         retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletDir, e.ToString());
                         throw;
                     }
-                retVal.LoadedApplets.CachePages = false;
+                retVal.LoadedApplets.CachePages = true;
                 retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                 retVal.Start();
@@ -278,6 +278,11 @@ namespace Minims
                                 retVal.InstallProtocol(new XmlClinicalProtocol(pd));
                             }
                         }
+                    // Set the tracer writers for the PCL goodness!
+                    foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
+                    {
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
+                    }
                     // Start daemons
                     retVal.Start();
                     
