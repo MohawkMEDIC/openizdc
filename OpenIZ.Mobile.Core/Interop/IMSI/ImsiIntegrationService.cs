@@ -125,11 +125,15 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		public void Insert(IdentifiedData data)
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-            client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 
-            var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
-			method = method.MakeGenericMethod(new Type[] { data.GetType() });
-			method.Invoke(client, new object[] { data });
+			if (AuthenticationContext.Current.Principal != AuthenticationContext.AnonymousPrincipal)
+			{
+				client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+
+				var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
+				method = method.MakeGenericMethod(new Type[] { data.GetType() });
+				method.Invoke(client, new object[] { data });
+			}
 		}
 
 		/// <summary>
