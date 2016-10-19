@@ -23,7 +23,7 @@
 
 layoutApp.controller('OrderController', ['$scope', function ($scope) {
 
-    $scope.summaryQuery = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
+    $scope.summaryQuery = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
 
     $scope.orders = [{
             orderNo: 1234,

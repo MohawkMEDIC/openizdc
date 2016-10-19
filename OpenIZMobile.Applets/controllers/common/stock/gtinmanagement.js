@@ -30,7 +30,7 @@ layoutApp.controller('GtinManagementController', ['$scope', function ($scope)
 
 		$("#gtin-search-loading-bar").show();
 
-		var query = "identifier.value=~" + $scope.gtin + "&lotNumber=!null&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=25"
+		var query = "identifier.value=~" + $scope.gtin + "&lotNumber=!null&statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&_count=25"
 
 		$scope.stock = [];
 

@@ -301,14 +301,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				}
 			};
 
-			// startup
-			AsyncCallback startup = (iar) =>
+			ApplicationContext.Current.Started += (o, e) =>
 			{
-				this.ExhaustOutboundQueue();
-				this.ExhaustInboundQueue();
-			};
+				// startup
+				AsyncCallback startup = (iar) =>
+				{
+					this.ExhaustOutboundQueue();
+					this.ExhaustInboundQueue();
+				};
 
-			startup.BeginInvoke(null, null, null);
+				startup.BeginInvoke(null, null, null);
+			};
 
 
 			this.Started?.Invoke(this, EventArgs.Empty);

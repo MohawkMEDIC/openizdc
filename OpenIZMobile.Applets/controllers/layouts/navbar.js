@@ -15,10 +15,21 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
     
     
     // Perform a logout of the session
-    $scope.logout = $scope.logout || function () {
-        if (confirm(OpenIZ.Localization.getString('locale.layout.navbar.logout.confirm'))) {
-            OpenIZ.Authentication.abandonSession();
-            window.location.reload();
+    $scope.logout = $scope.logout || function ()
+    {
+        if (confirm(OpenIZ.Localization.getString('locale.layout.navbar.logout.confirm')))
+        {
+            OpenIZ.Authentication.abandonSession({
+                continueWith: function(data)
+                {
+                    console.log(data);
+                    window.location.href = "/tz.timr.applet/views/security/login.html";
+                },
+                onException: function(ex)
+                {
+                    console.log(ex);
+                }
+            });
         }
     };
 

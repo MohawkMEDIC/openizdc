@@ -1,6 +1,11 @@
 /// <reference path="openiz-model.js"/>
 /// <reference path="~/lib/select2.min.js"/>
 
+/**
+ * @version 0.6.12 - Dalhouse
+ * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
+ * @license Apache 2.0
+ */
 /*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  * 
@@ -28,6 +33,20 @@ var OpenIZApplicationService = window.OpenIZApplicationService || {};
 var OpenIZSessionService = window.OpenIZSessionService || {};
 
 /**
+ * @callback OpenIZ~continueWith
+ * @summary The function call which is called whenever an asynchronous operation completes successfully
+ * @param {Object} data The result data from the asynchronous callback
+ */
+/**
+ * @callback OpenIZ~onException
+ * @summary The exception handling callback whenever an asynchronous operation does not complete successfully
+ * @param {OpenIZModel#Exception} exception The exception which was thrown as a result of the operation.
+ */
+/**
+ * @callback OpenIZ~finally
+ * @summary The callback which is always executed from an asynchronous call regardless of whehter the operation was successful or not
+ */
+/**
  * @summary OpenIZ Javascript binding class.
  *
  * @description The purpose of this object is to facilitate and organize OpenIZ applet integration with the backing  * OpenIZ container. For example, to allow an applet to get the current on/offline status, or authenticate a user.
@@ -43,20 +62,48 @@ var OpenIZ = OpenIZ || {
     urlParams: {},
 
     /**
-     * @summary Provides operations for managing acts.
+     * @summary Provides operations for managing {@link OpenIZModel.Act} instances.
+     * @memberof OpenIZ
+     * @static
      * @class
      */
     Act: {
-
+        /**
+          * @summary Perform a search of acts asynchronously
+          * @memberof OpenIZ.Act
+          * @method
+          * @param {Object} controlData An object containing search, offset, count and callback data
+          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+          * @param {object} controlData.query The query filters to apply to the search
+          * @param {int} controlData.query._count The limit of results to return from the ims
+          * @param {int} controlData.query._offset The offset of the search result window
+          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+          * @see {OpenIZ.IMS.get}
+          */
+        findAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                query: controlData.query
+            });
+        },
         /**
          * @summary Performs a patient insert asynchronously
          * @memberof OpenIZ.Act
          * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData The data which is used to control the call
+         * @see {OpenIZ.Ims.post}
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.Act} controlData.data The data which is to be inserted on the IMS
          * @example
          * OpenIZ.Act.insertAsync({
-         *      patient: new OpenIZModel.Act(...),
+         *      data: new OpenIZModel.Act(...),
          *      continueWith: function(result) { // Do something with result },
          *      onException: function(ex) { // Handle exception }
          * });
@@ -70,8 +117,22 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-        * @summary Get an empty template object asynchronously
-        */
+         * @summary Get an empty act template object asynchronously. See the OpenIZ documentation for more information about templates
+         * @method
+         * @memberof OpenIZ.CarePlan
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.templateId The identifier of the template which to retrieve. Templates should be registered with the application manifest
+         * @example
+         * OpenIZ.Act.getActTemplateAsync({
+         *      templateId: "Act.SubstanceAdmin.Immunization", 
+         *      continueWith: function(template) {
+         *          $scope.act = template;
+         *      }
+         * });
+         */
         getActTemplateAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Act/Template",
@@ -85,16 +146,22 @@ var OpenIZ = OpenIZ || {
 
     /**
      * @summary Interoperation with the IMS
+     * @see OpenIZModel
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Ims: {
         /**
          * @summary Post data to the IMS
-         * @param {Object} control Control data for the async method
-         * @param {String} control.resource The resource to post
-         * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
-         * @param {Function} control.onException A callback method to be called when the operation throws an exception
-         * @param {Object} data The post data (IMSI resource) to be posted
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.data The IMSI resource data to be posted to the IMS
+         * @method
          */
         post: function (controlData) {
             $.ajax({
@@ -140,12 +207,17 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-        * @summary Post data to the IMS
-        * @param {Object} control Control data for the async method
-        * @param {String} control.resource The resource to post
-        * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
-        * @param {Function} control.onException A callback method to be called when the operation throws an exception
-        * @param {Object} data The post data (IMSI resource) to be posted
+         * @summary Put (Update) data in the IMS
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {uuid} controlData.id The identifier of the resource to be updated
+         * @param {uuid} controlData.versionId The version identifier of the resource to be updated
+         * @param {object} controlData.data The IMSI resource data to be posted to the IMS
+         * @method
         */
         put: function (controlData) {
             $.ajax({
@@ -192,11 +264,17 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Get data from the IMS
-         * @param {Object} control Control data for the async method
-         * @param {String} control.resource The resource to post
-         * @param {Function} control.continueWith A callback method to be called when the operation completes successfully
-         * @param {Function} control.onException A callback method to be called when the operation throws an exception
-         * @param {Object} query The query data (IMSI resource) to be posted
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.query The IMSI query (see documentation for structure) to execute
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @method
          */
         get: function (controlData) {
             $.ajax({
@@ -234,33 +312,126 @@ var OpenIZ = OpenIZ || {
 
                 }
             });
+        },
+        /**
+         * @summary Deletes data from the IMS
+         * @memberof OpenIZ.Ims
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.resource The IMSI resource id to be posted to
+         * @param {object} controlData.id The identifier of the object to delete from the IMS 
+         * @method
+         */
+        delete: function (controlData) {
+            $.ajax({
+                method: 'DELETE',
+                url: "/__ims/" + controlData.resource,
+                data: { "_id": controlData.id },
+                accept: 'application/json',
+                contentType: 'application/json',
+                success: function (xhr, data) {
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === undefined)
+                        console.error(error);
+                    else if (error != undefined && error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    // Do finally
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+
+                }
+            });
         }
     },
     /**
      * @summary Stock Functions
+     * @description In particular stock actions comprise a series of calculations
+     * @memberof OpenIZ
+     * @static
      * @class
      */
-
     Stock: {
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @param {int} qYear TODO
+         * @param {int} pSupply TODO
+         * @return TODO
+         */
         calculateQPeriod: function (qYear, pSupply) {
             return qYear / 12 * pSupply;
         },
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
         calculateSReserve: function (qPeriod, reservePercent) {
-            return qPeriod*reservePercent;
+            return qPeriod * reservePercent;
         },
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
         calculateSMax: function (qPeriod, sReserve) {
             return qPeriod + sReserve;
         },
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
         calculateSReorder: function (sReserve, qPeriod, lTime, pSupply) {
-            return sReserve + qPeriod*lTime/pSupply;
+            return sReserve + qPeriod * lTime / pSupply;
         },
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
         calculateQOrder: function (sMax, sAvailable, qPeriod, lTime, pSupply) {
-            return sMax - sAvailable + qPeriod * lTime/pSupply;
+            return sMax - sAvailable + qPeriod * lTime / pSupply;
         },
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
         calculateQNeeded: function (sStart, qRecieved, sEnd, sLost) {
-            return (sStart+qRecieved) - (sEnd+sLost);
+            return (sStart + qRecieved) - (sEnd + sLost);
         },
-        calculateAll: function(qYear, pSupply, reservePercent, lTime, sAvailable) {
+        /**
+         * @summary TODO:
+         * @method
+         * @memberof OpenIZ.Stock
+         * @return TODO
+         */
+        calculateAll: function (qYear, pSupply, reservePercent, lTime, sAvailable) {
             var object = {};
             object.qPeriod = OpenIZ.Stock.calculateQPeriod(qYear, pSupply);
             object.sReserve = OpenIZ.Stock.calculateSReserve(object.qPeriod, reservePercent);
@@ -271,19 +442,27 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
-     * @summary Utility functions
+     * @summary Utility functions which assist in the writing of other OpenIZ functions
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Util: {
         /**
-         * @summary Perform a simple get
+         * @summary Perform a simple get not necessarily against the IMS
          * @method
-         * @memberof OpenIZ.Util
+         * @memberof OpenIZ.Util   
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} url The URL from which to retrieve 
+         * @param {object} controlData.query The query to be included
          */
-        simpleGet : function(url, controlData) {
+        simpleGet: function (url, controlData) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
             // Perform auth request
-            $.getJSON(url, null, function (data) {
+            $.getJSON(url, controlData.query, function (data) {
 
                 if (data != null && data.error !== undefined)
                     controlData.onException(new OpenIZModel.Exception(data.error),
@@ -318,11 +497,15 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Render address for display
+         * @method
+         * @memberof OpenIZ.Util
+         * @param {OpenIZModel.EntityAddress} entity The addres of the entity or the entity itself to render the address of
+         * @return {string} The address formatted as an appropriate string for simple formatting
          */
         renderAddress: function (entity) {
             if (entity === undefined) return;
 
-            var address = entity.component !== undefined ? entity : 
+            var address = entity.component !== undefined ? entity :
                 entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress) :
                 (entity.Direct || entity.HomeAddress);
             var retVal = "";
@@ -341,9 +524,13 @@ var OpenIZ = OpenIZ || {
             return retVal.substring(0, retVal.length - 2);
         },
         /**
-         * @summary Render act
+         * @summary Render act as a simple string
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.Act} act The act to render as a simple string
+         * @return {string} The rendered string 
          */
-        renderAct : function(act) {
+        renderAct: function (act) {
             switch (act.$type) {
                 case "SubstanceAdministration":
                     return OpenIZ.Localization.getString("locale.encounters.administer") +
@@ -359,19 +546,30 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Log an exception to the console
+         * @method
+         * @memberof OpenIZ.Util
+         * @param {OpenIZModel.Exception} e The exception to be logged to the console
          */
         logException: function (e) {
             console.warn(e);
         },
         /** 
-         * @summary Render the manufactured material
+         * @summary Render a manufactured material as a simple string
+         * @method
+         * @memberof OpenIZ.Util
+         * @param {OpenIZModel.ManufacturedMaterial} material The material which is to be rendered as a string
+         * @return {string} The material rendered as a string in format "<<name>> [LN# <<ln>>]"
          */
-        renderManufacturedMaterial : function(scope) {
-            var name = OpenIZ.Util.renderName(scope.name.OfficialRecord || scope.name.Assigned);
-            return name + "[LN#: " + scope.lotNumber + "]";
+        renderManufacturedMaterial: function (material) {
+            var name = OpenIZ.Util.renderName(material.name.OfficialRecord || material.name.Assigned);
+            return name + "[LN#: " + material.lotNumber + "]";
         },
         /** 
-         * @summary Renders the person
+         * @summary Renders a name as a simple string
+         * @method
+         * @meberof OpenIZ.Util
+         * @param {OpenIZModel.EntityName} entityName The entity name to be rendered in the appropriate format
+         * @return {string} The rendered entity name
          */
         renderName: function (entityName) {
             if (entityName === null || entityName === undefined)
@@ -412,6 +610,7 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.Util
          * @method
          * @param {String} date The date to be formatted
+         * @return {string} A DATE as an ISO String only
          */
         toDateInputString: function (date) {
             return date.toISOString().substring(0, 10);
@@ -431,6 +630,7 @@ var OpenIZ = OpenIZ || {
          *      continueWith: function(result) { console.info("Result of doSomeSynchronousWork() = " + result); },
          *      onException: function(ex) { console.error("doSomeSynchronousWork threw exception " + ex); }
          * });
+         * @deprecated
          */
         startTaskAsync: function (syncFn, controlData) {
             return setTimeout(function () {
@@ -449,7 +649,10 @@ var OpenIZ = OpenIZ || {
 
     /** 
     * @summary The authentication section is used to interface with OpenIZ's authentication sub-systems including session management information, etc.
-    * @class
+    * @see OpenIZModel.SecurityUser
+     * @static
+     * @class
+    * @memberof OpenIZ
     */
     Authentication: {
         /** 
@@ -480,9 +683,14 @@ var OpenIZ = OpenIZ || {
          * @summary Perform a login operation asynchronously
          * @memberof OpenIZ.Authentication
          * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData Data which controls the task
-         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @see {OpenIZ.Util.simpleGet}
+         * @param {string} controlData.userName The username to use when authenticating
+         * @param {string} controlData.password The password of the user to authenticate with
+         * @param {string} controlData.scope The scope to append to the OAUTH request
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @example
          * OpenIZ.Authentication.loginAsync({
          *      userName: "bob",
@@ -544,11 +752,15 @@ var OpenIZ = OpenIZ || {
              });
         },
         /**
-         * @summary Set password asynchronously
+         * @summary Set password for the specified user asynchronously
          * @memberof OpenIZ.Authentication
          * @method
-         * @param {Object} controlData The control data for the task
-         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {object} controlData The data which controls the asynchronous process
+         * @param {string} controlData.userName The name of the user to set the password of
+         * @param {string} controlData.password The password to set
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @example
          *  OpenIZ.Authentication.setPasswordAsync({
          *      userName : "bob",
@@ -605,104 +817,35 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-        * @summary Gets the current session from the client host
+        * @summary Gets the current session 
         * @memberof OpenIZ.Authentication
         * @method
-        * @returns An instance of Session representing the current session
+        * @param {object} controlData The data which controls the asynchronous process
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        * @returns {OpenIZModel.SessionInfo} An instance of Session representing the current session
         */
         getSessionAsync: function (controlData) {
-            controlData.onException = controlData.onException || OpenIZ.Util.logException;
-            // Perform auth request
-            $.getJSON('/__auth/get_session', controlData.query, function (data) {
-                if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.error),
-                        data.error_description,
-                        null
-                    );
-                else if (data != null) {
-                    OpenIZ.Authentication.$session = data;
-                    controlData.continueWith(data);
-                }
-                else
-                    controlData.onException(new OpenIZModel.Exception("err_general",
-                        data,
-                        null
-                    ));
-            }).error(function (data) {
-                var error = data.responseJSON;
-                if (error != null && error.error !== undefined) // oauth 2 error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
-                            error.error_description,
-                            null
-                        ));
-
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                            data,
-                            null
-                        ));
-            }).always(function () {
-                if (controlData.finally !== undefined)
-                    controlData.finally();
-            });
-
+            OpenIZ.Util.simpleGet('/__auth/get_session', controlData);
         },
         /**
          * @summary Destroys the current session
          * @memberof OpenIZ.Authentication
          * @method
-         */
-        abandonSession: function () {
-            try {
-                OpenIZSessionService.Abandon();
-                return true;
-            }
-            catch (ex) {
-                console.error(ex);
-                return false;
-            }
-        },
-        /** 
-         * @summary Refreshes the current session asynchronously
          * @memberof OpenIZ.Authentication
-         * @method
-         * @param {Object} controlData Task control data
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @example
-         * OpenIZ.Authentication.refreshSessionAsync({
-         *      continueWith: function(r) { // do something with result },
-         *      onException: function(ex) { // handle exception }
-         * });
+         * @return {bool} Whether the session was successfully abandoned
          */
-        refreshSessionAsync: function (controlData) {
-        },
-
-        /**
-        * @summary Finds a user by username.
-        * @memberof OpenIZ.Authentication
-        * @method
-        */
-        getUserAsync: function(controlData) {
+        abandonSession: function (controlData) {
             $.ajax(
             {
-                method: "GET",
-                url: "/__auth/get_user",
-                data: controlData.query,
-                contentType: "application/json; charset=UTF-8",
+                method: "POST",
+                url: "/__auth/abandon",
+                dataType: "json",
+                contentType: 'application/x-www-urlform-encoded',
                 success: function (xhr, data)
                 {
-                    if (data != null && data.error !== undefined)
-                    {
-                        controlData.onException(new OpenIZModel.Exception(data.error), data.error_description, null);
-                    }
-                    else if (data != null)
-                    {
-                        controlData.continueWith(data);
-                    }
-                    else
-                    {
-                        controlData.onException(new OpenIZModel.Exception("err_general", data, null));
-                    }
+                    controlData.continueWith(data);
 
                     if (controlData.finally !== undefined)
                     {
@@ -728,24 +871,97 @@ var OpenIZ = OpenIZ || {
                     {
                         controlData.finally();
                     }
-
                 }
+            });
+        },
+        /** 
+         * @summary Refreshes the current session asynchronously
+         * @memberof OpenIZ.Authentication
+         * @method
+         * @param {Object} controlData Task control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @example
+         * OpenIZ.Authentication.refreshSessionAsync({
+         *      continueWith: function(r) { // do something with result },
+         *      onException: function(ex) { // handle exception }
+         * });
+         */
+        refreshSessionAsync: function (controlData) {
+        },
+
+        /**
+        * @summary Performs a query against the UserEntity
+        * @memberof OpenIZ.Authentication
+        * @param {Object} controlData Task control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        * @param {object} controlData.query The query object which represents the filters for the object
+        * @param {int} controlData.query._count The limit of results to return from the ims
+        * @param {int} controlData.query._offset The offset of the search result window
+        * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+        * @method
+        * @see {OpenIZ.Ims.get}
+        */
+        getUserAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "UserEntity",
+                query: controlData.query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
             });
         },
     },
     /** 
      * @summary Represents functions for interacting with the protocol service
+     * @see OpenIZModel.Patient
+     * @see OpenIZModel.Act
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     CarePlan: {
         /**
-         * @summary Interprets the observation 
+         * @summary Interprets the observation, setting the interpretationConcept property of the observation
+         * @param {OpenIZModel.Observation} obs The observation which is to be interpretation
+         * @param {string} ruleSet The rule set to be applied for the clinical decision
+         * @memberof OpenIZ.CarePlan
+         * @method
          */
-        interpretObservation : function(obs, ruleSet) {
+        interpretObservation: function (obs, ruleSet) {
             obs.interpretationConcept = '41d42abf-17ad-4144-bf97-ec3fd907f57d';
         },
         /**
          * @summary Generate a care plan for the specified patient
+         * @memberof OpenIZ.CarePlan
+         * @method
+         * @param {object} controlData The data which controls the asynchronous operation
+         * @param {date} controlData.minDate If the care plan result is to be filtered, then the lower bound of the care plan to retrieve
+         * @param {date} controlData.maxDate If the care plan result is to be filtered on an upper bound then the care plan to retrieve
+         * @param {date} controlData.onDate Specifies the care plan service only return those objects where the proposed action should occur on the specified date
+         * @param {uuid} controlData.classConcept Specifies the classification of acts which should be returned
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
+         * @example
+         * OpenIZ.CarePlan.getCarePlanAsync({
+         *     maxDate: new Date(), // Only retrieve objects that should have already occurred
+         *     classConcept: "932A3C7E-AD77-450A-8A1F-030FC2855450", // Only retrieve substance administrations
+         *     data: { // Manually construct a patient to pass
+         *          dateOfBirth: new Date(), // The patient was born today
+         *          genderConceptModel: { mnemonic: "Male" }, // the patient is a male
+         *      },
+         *      continueWith: function(careplan) {
+         *          alert("There are " + careplan.participation.RecordTarget.length + " proposed objects");
+         *      },
+         *      onException: function(ex) {
+         *          alert(ex.message);
+         *      }
+         * });
          */
         getCarePlanAsync: function (controlData) {
             var url = "/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";
@@ -757,8 +973,6 @@ var OpenIZ = OpenIZ || {
                 url += "&startTime=<" + controlData.onDate.toISOString() + "&stopTime=>" + controlData.onDate.toISOString();
             if (controlData.classConcept !== undefined)
                 url += "&classConcept=" + controlData.classConcept;
-            if (controlData.moodConcept !== undefined)
-                url += "&moodConcept=" + controlData.moodConcept;
             console.info("Generating care plan...");
             $.ajax({
                 method: 'POST',
@@ -776,103 +990,122 @@ var OpenIZ = OpenIZ || {
                 error: function (data) {
                     var error = data.responseJSON;
 
-                    if (controlData.onException !== undefined)
-                    {
+                    if (controlData.onException !== undefined) {
                         if (error.error !== undefined) // error
                         {
                             controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
                         }
-                        else
-                        {
+                        else {
                             // unknown error
                             controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
                         }
                     }
-                    if (controlData.finally !== undefined)
-                    {
+                    if (controlData.finally !== undefined) {
                         controlData.finally();
                     }
                 }
             });
         },
         /**
-         * @summary Get an empty template object asynchronously
+         * @summary Get an empty entity template object asynchronously. See the OpenIZ documentation for more information about templates
+         * @method
+         * @memberof OpenIZ.CarePlan
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.templateId The identifier of the template which to retrieve. Templates should be registered with the application manifest
+         * @example
+         * OpenIZ.CarePlan.getEntityTemplateAsync({
+         *      templateId: "Entity.Patient.Baby", 
+         *      continueWith: function(template) {
+         *          $scope.act = template;
+         *      }
+         * });
+         * @deprecated
          */
         getEntityTemplateAsync: function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "Entity/Template",
-                query: { "templateId": controlData.templateId },
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                finally: controlData.finally
-            });
+            OpenIZ.Entity.getEntityTemplateAsync(controlData);
         },
         /**
-         * @summary Get an empty template object asynchronously
+         * @summary Get an empty act template object asynchronously. See the OpenIZ documentation for more information about templates
+         * @method
+         * @memberof OpenIZ.CarePlan
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.templateId The identifier of the template which to retrieve. Templates should be registered with the application manifest
+         * @example
+         * OpenIZ.CarePlan.getActTemplateAsync({
+         *      templateId: "Act.SubstanceAdmin.Immunization", 
+         *      continueWith: function(template) {
+         *          $scope.act = template;
+         *      }
+         * });
+         * @deprecated
          */
         getActTemplateAsync: function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "Act/Template",
-                query: { "templateId": controlData.templateId },
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                finally: controlData.finally
-            });
+            OpenIZ.Act.getActTemplateAsync(controlData);
         }
     },
     /**
     * @summary Represents application specific functions for interoperating with the mobile application itself
-    * @class
+     * @static
+     * @class
+    * @memberof OpenIZ
     */
     App: {
         /**
-         * @summary Create new guid
+         * @remarks Because JavaScript lacks native UUID generation, this function calls a JNI method to generate a new UUID which can be appended to IMS objects
+         * @return {uuid} A newly generated uuid
+         * @method
+         * @memberof OpenIZ.App
          */
         newGuid: function () {
             return OpenIZApplicationService.NewGuid();
         },
         /**
          * @summary Get application information data using typical async information parameters
+         * @method
+         * @memberof OpenIZ.App
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @see {OpenIZModel.ApplicationInfo}
          */
-        getInfoAsync : function(controlData) {
-            $.getJSON('/__app/info', null, function (e) { controlData.continueWith(e); if (controlData.finally !== undefined) controlData.finally(); }).
-                fail(function (data) {
-                    var error = data.responseJSON;
-                    if (controlData.onException === undefined || error == null)
-                        console.error(error);
-                    else if (error.error !== undefined) // structured error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
-                                error.error_description,
-                                null
-                            ));
-                    else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                                data,
-                                null
-                            ));
-
-                    if (controlData.finally !== undefined)
-                        controlData.finally();
-                });
+        getInfoAsync: function (controlData) {
+            OpenIZ.Util.simpleGet('/__app/info', controlData);
         },
         /**
          * @summary Get the online state of the application
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} Indicator whether the application is online.
+         * @deprecated
          */
         getOnlineState: function () {
             return OpenIZApplicationService.GetOnlineState();
         },
         /**
          * @summary Indicates whether the status dialog is shown
+         * @memberof OpenIZ.App
          */
         statusShown: false,
         /**
          * @summary Resolves the specified template
+         * @param {string} templateId The identifier of the template to resolve
+         * @return {string} The URL of the form template which is to be used to capture data for the specified template
          */
         resolveTemplate: function (templateId) {
             return OpenIZApplicationService.GetTemplateForm(templateId);
         },
         /**
-         * @summary Update the status of the 
+         * @summary Update the status of the status dialog
+         * @private
+         * @method
+         * @memberof OpenIZ.App
          */
         updateStatus: function () {
 
@@ -894,6 +1127,8 @@ var OpenIZ = OpenIZ || {
         /**
          * @summary Show the alert panel
          * @param {String} textStr The text on the alert panel to show
+         * @method
+         * @memberof OpenIZ.App
          */
         showWait: function (textStr) {
 
@@ -909,6 +1144,9 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Returns whether the internet is available
+         * @method
+         * @memberof OpenIZ.App
+         * @return {bool} An indicator whether the application environment has access to the internet
          */
         networkAvailable: function () {
             try { return OpenIZApplicationService.GetNetworkState(); }
@@ -916,6 +1154,8 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Hide the waiting panel
+         * @method
+         * @memberof OpenIZ.App
          */
         hideWait: function () {
             OpenIZ.App.statusShown = false;
@@ -923,6 +1163,8 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Gets the specified service implementation in memory
+         * @method
+         * @memberof OpenIZ.App
          * @param {String} serviceName The name of the service 
          * @return {String} The service class which implements the specified contract
          */
@@ -934,60 +1176,33 @@ var OpenIZ = OpenIZ || {
         },
         /** 
          * @summary Gets the current version of the OpenIZ host
+         * @method
+         * @memberof OpenIZ.App
+         * @return {String} The version code of the hosting environment
          */
         getVersion: function () {
             return OpenIZApplicationService.GetVersion();
         },
         /**
-         * @summary Get a list of all log files
-         */
-        getLogFiles: function () {
-            return JSON.parse(OpenIZApplicationService.GetLogFiles());
-        },
-        /**
-         * @summary Get a list of all log files
-         */
-        sendLog: function (logId) {
-            OpenIZApplicationService.SendLog(logId);
-        },
-        /**
-         * @summary Gets the currebt asset title
+         * @summary Gets the current asset title
          * @memberof OpenIZ.App
          * @method
-         * @returns {String} The title of the applet
+         * @returns {string} The title of the applet
          */
         getCurrentAssetTitle: function () {
             return $(document).find("title").text();
-        },
-        /**
-         * @summary Get the application menu items that the user has access to
-         * @memberof OpenIZ.App
-         * @method
-         * @returns {Object} Representing the menu items the user has access to
-         */
-        getMenus: function () {
-            try {
-
-                var data = OpenIZApplicationService.GetMenus();
-                if (data == null)
-                    return {};
-                else if (data.lastIndexOf("err", 0) == 0)
-                    throw data;
-                else
-                    return JSON.parse(data)
-            }
-            catch (e) {
-                console.error(e);
-                //throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_menus"), e.message, e);
-            }
         },
         /**  
          * @summary Get the menus async
          * @method
          * @memberof OpenIZ.App
+         * @param {object} controlData The data which controls the operation of the asynchronous operation
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @returns {Object} Representing menu items the current user has access to
          */
-        getMenusAsync: function(controlData) {
+        getMenusAsync: function (controlData) {
             OpenIZ.Util.simpleGet("/__app/menu", controlData);
 
         },
@@ -995,7 +1210,7 @@ var OpenIZ = OpenIZ || {
          * @summary Uses the device camera to scan a barcode from the device
          * @memberof OpenIZ.App
          * @method
-         * @returns The value of the barcode detected by the scanner
+         * @returns {string} The value of the barcode detected by the scanner
          */
         scanBarcode: function () {
             try {
@@ -1009,7 +1224,7 @@ var OpenIZ = OpenIZ || {
             }
         },
         /**
-         *@summary  Navigate backward, even if the back functionality crosses applets
+         * @summary  Navigate backward, even if the back functionality crosses applets
          * @memberof OpenIZ.App
          * @method
          */
@@ -1052,9 +1267,10 @@ var OpenIZ = OpenIZ || {
          * @summary Navigates to the specified applet passing any context variables to it via "context"
          * @param {String} appletId The ID of the applet to be navigated
          * @param {Object} context Any context variables to be passed to the applet
-          * @memberof OpenIZ.App
+         * @memberof OpenIZ.App
          * @method
-        */
+         * @deprecated
+         */
         navigateApplet: function (appletId, context) {
             try {
                 OpenIZApplicationService.Navigate(appletId, JSON.stringify(context));
@@ -1065,30 +1281,29 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Queries for the specified alert
-         * @param {Object} queryData The alert query to pass
+         * @param {object} controlData The data which controls the operation of the asynchronous operation
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query to be executed against the alerts service
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @method
+         * @memberof OpenIZ.App
          */
         getAlertsAsync: function (controlData) {
-            // Perform auth request
-            $.getJSON('/__app/alerts', controlData.query, function (e) { controlData.continueWith(e); }).
-                fail(function (data) {
-                    var error = data.responseJSON;
-                    if (controlData.onException === undefined || error == null)
-                        console.error(error);
-                    else if (error.error !== undefined) // structured error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
-                                error.error_description,
-                                null
-                            ));
-                    else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
-                                data,
-                                null
-                            ));
-                });
+            OpenIZ.Util.simpleGet('/__app/alerts', controlData);
         },
         /**
-         * @summary Send an asynchronous alert
-         * @param {Object} alertData The alert data
+         * @summary Save an alert asynchronously
+         * @method
+         * @memberof OpenIZ.App
+         * @param {object} controlData The data which controls the operation of the asynchronous operation
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZModel.Alert} controlData.data The alert data to be posted to the alerts service
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          */
         saveAlertAsync: function (controlData) {
             $.ajax({
@@ -1137,7 +1352,9 @@ var OpenIZ = OpenIZ || {
 
     /**
      * @summary Represents functions related to the localization of applets
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Localization: {
         /**
@@ -1199,158 +1416,90 @@ var OpenIZ = OpenIZ || {
     },
 
     /**
-     * @summary Represents functions related to the concept dictionary
+     * @summary Represents functions related to the concept dictionary in particular those dealing with {@link OpenIZModel.Concept}, and {@link OpenIZModel.ConceptSet}s
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Concept: {
         /**
          * @summary Perform a search asynchronously
          * @memberof OpenIZ.Concept
          * @method
-         * @param {Object} searchData An object containing search, offset, count and callback data
-         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Concept
          * @example
          * OpenIZ.Concept.findConceptAsync({
-         *      query: "mnemonic=Female&_expand=name",
-         *      offset: 0,
-         *      count: 0,
+         *      query: { "mnemonic":"Female" },
          *      continueWith: function(result) { // do something with result },
          *      onException: function(ex) { // handle exception }
          *  });
          */
         findConceptAsync: function (controlData) {
 
-            // Perform async operation
-            OpenIZ.Util.startTaskAsync(function () {
-                var result = {};
-                if (controlData.query != "")
-                    return OpenIZ.Concept.findConcept(controlData.query, controlData.offset, controlData.count);
-                return result;
-            }, controlData);
+            OpenIZ.Ims.get({
+                resource: "Concept",
+                query: controlData.query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
         },
         /**
-         * @summary Searches the concept source 
+         * @summary Perform a search of concept sets asynchronously
          * @memberof OpenIZ.Concept
          * @method
-         * @param {String} imsiQuery The IMSI formatted query
-         * @param {Numeric} offset The offset of the search result set
-         * @param {Numeric} count The total requested numer in the result set
-         * @param {Boolean} returnBundle When true, return a bundle
-         * @returns {OpenIZModel.Bundle} The matching bundle containing the results of the query
-         */
-        findConcept: function (imsiQuery, offset, count) {
-            try {
-                var data = OpenIZConceptService.SearchConcept(imsiQuery, offset, count);
-
-                if (data == null)
-                    return null;
-                else {
-                    var retVal = new OpenIZModel.Bundle(JSON.parse(data));
-                    return retVal;
-                }
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"), e.message, e);
-
-            }
-        },
-        /**
-         * @summary Finds the specified concept in an asynchronous manner
-         * @memberof OpenIZ.Concept
-         * @method
-         * @param {Object} controlData The data to control the function
-         * @see {OpenIZ.Util.this.startTaskAsync}
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.ConceptSet
          * @example
-         *  OpenIZ.Concept.findConceptSetAsync({
-         *      query: "mnemonic=ActClass",
-         *      offset: 0,
-         *      count: -1,
-         *      continueWith: function(d) { // Do something with result },
+         * OpenIZ.Concept.findConceptSetAsync({
+         *      query: { "member.mnemonic":"Female" },
+         *      continueWith: function(result) { // do something with result },
          *      onException: function(ex) { // handle exception }
-         * });
+         *  });
          */
         findConceptSetAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                if (controlData.query != "")
-                    return OpenIZ.Concept.findConceptSet(controlData.query, controlData.offset, controlData.count);
-                return {};
-            }, controlData);
-        },
-        /**
-         * @summary Searches the specified values of concepts from the concept set.
-         * @memberof OpenIZ.Concept
-         * @method
-         * @param {String} setMnemonic The name of the concept set to retrieve (Ex: AdministrativeGender)
-         * @returns {OpenIZModel.Bundle} The matching bundle containing the results of the query
-         * @param {Numeric} offset The offset of the search result set
-         * @param {Numeric} count The total requested numer in the result set
-         */
-        findConceptSet: function (imsiQuery, offset, count) {
-            try {
-                var data = OpenIZConceptService.SearchConceptSet(imsiQuery, offset, count);
-                if (data == null || data.lastIndexOf("err", 0) == 0)
-                    throw new OpenIZModel.Exception(data, null, null);
-                else {
-                    var results = JSON.parse(data);
-
-                    var retVal = new OpenIZModel.Bundle(results);
-                    return retVal;
-                }
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept_set"), e.message, e);
-            }
-        },
-        /**
-         * @summary Gets the specified concept in an asynchronouns manner
-         * @memberof OpenIZ.Concept
-         * @method
-         * @param {Object} controlData The control data for the retrieve
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @example
-         * OpenIZ.Concept.getConceptAsync({
-         *      id: "<<UUID>>",
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Do something on exception }
-         * });
-         */
-        getConceptAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Concept.getConcept(controlData.id);
-            }, controlData);
-        },
-        /**
-         * @summary Gets the specified concept with the specified identifier
-         * @memberof OpenIZ.Concept
-         * @method
-         * @param {String} conceptId The identifier of the concept to retreive
-         * @returns {OpenIZModel.Concept} The concept which has the specified identifier
-         */
-        getConcept: function (conceptId) {
-            try {
-                var results = OpenIZ.Concept.findConcept("_expand=name&_expand=classConcept&_expand=statusConcept&id=" + conceptId, 0, 1);
-
-                if (results.length == 0)
-                    return null;
-                else
-                    return results.first("Concept");
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_concept"), e.message, e);
-            }
+            OpenIZ.Ims.get({
+                resource: "ConceptSet",
+                query: controlData.query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
         }
     },
 
     /**
-     * @summary Represents a series of functions for submitting bundles
+     * @summary Represents a series of functions for submitting {@link OpenIZModel.Bundle} instances
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Bundle: {
         /**
          * @summary Insert the bundle asynchronously
+         * @memberof OpenIZ.Bundle
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          */
         insertAsync: function (controlData) {
             OpenIZ.Ims.post({
@@ -1362,24 +1511,26 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
-     * @summary Represents a series of functions related to patients
+     * @summary Represents a series of functions related to {@link OpenIZModel.Patient} instances
+     * @static
      * @class
+     * @memberof OpenIZ
      */
     Patient: {
         /**
-         * @summary Perform a patient search asynchronously
+         * @summary Perform a search of patients asynchronously
          * @memberof OpenIZ.Patient
          * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData The data to control the query
-         * @example
-         * OpenIZ.Patient.findAsync({
-         *      query: "name[Legal].component[Family].value=Smith&name[Legal].component[Given].value=John",
-         *      offset: 0,
-         *      count: -1,
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Do something on exception }
-         * });
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
          */
         findAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1391,45 +1542,16 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-         * @summary Query the OpenIZ data store for patients matching the specified query string. The query string should be
-         * an IMS query format string like name[L].part[FAM].value=Smith&name[L].part[GIV].value=John
+         * @summary Asynchronously insert a patient object into the IMS
          * @memberof OpenIZ.Patient
          * @method
-         * @param {String} searchString The IMSI search string to be searched
-         * @param {Numeric} offset The offset of the search result set
-         * @param {Numeric} count The total requested numer in the result set
-         * @returns {OpenIZModel.Bundle} A bundle of {OpenIZModel.Patient} classes which represent the search results.
-         */
-        find: function (searchString, offset, count) {
-            try {
-                var data = OpenIZPatientService.Search(searchString, offset, count);
-                if (data.lastIndexOf("err", 0) == 0)
-                    throw new OpenIZModel.Exception(data, null, null);
-                else {
-                    var results = JSON.parse(data);
-
-                    // Convert the IMSI patient data to a nicer javascript format
-                    return new OpenIZModel.Bundle(results);
-                }
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_search_patient"), e.message, e);
-
-            }
-        },
-        /**
-         * @summary Performs a patient insert asynchronously
-         * @memberof OpenIZ.Patient
-         * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData The data which is used to control the call
-         * @example
-         * OpenIZ.Patient.insertAsync({
-         *      patient: new OpenIZModel.Patient(...),
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Handle exception }
-         * });
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.data The patient data to be inserted into the IMS
+         * @see {OpenIZ.IMS.post}
+         * @see OpenIZModel.Patient
          */
         insertAsync: function (controlData) {
             OpenIZ.Ims.post({
@@ -1440,162 +1562,97 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-         * @summary Register a patient in the IMS system returning the registered patient data
+         * @summary Asynchronously updates a patient object in the IMS
          * @memberof OpenIZ.Patient
          * @method
-         * @param {OpenIZModel.Patient} patient The patient to be insterted
-         * @throw Exception if the patient is already registered
-         * @returns {OpenIZModel.Patient} The registered patient data
-         */
-        insert: function (patient) {
-            try {
-                if (patient["$type"] != "Patient")
-                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"), typeof (patient), null);
-                var imsiJson = JSON.stringify(patient);
-                var data = OpenIZPatientService.Insert(imsiJson);
-
-                if (data.lastIndexOf("err", 0) == 0)
-                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString(data));
-                else
-                    return new OpenIZModel.Patient(JSON.parse(data));
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_insert_patient"), e.message, e);
-            }
-        },
-        /**
-         * @summary Performs a patient update asynchronously
-         * @memberof OpenIZ.Patient
-         * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData The data which is used to control the call
-         * @example
-         * OpenIZ.Patient.updateAsync({
-         *      patient: new OpenIZModel.Patient(...),
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Handle exception }
-         * });
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.data The patient data to be inserted into the IMS
+         * @param {uuid} controlData.id The identifier of the patient that is to be updated
+         * @see {OpenIZ.IMS.put}
+         * @see OpenIZModel.Patient
          */
         updateAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Patient.update(controlData.patient);
-            }, controlData);
+            OpenIZ.Ims.put({
+                resource: "Patient",
+                data: controlData.data,
+                id: controlData.id,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
         },
         /**
-         * @summary Updates the specified patient instance with the specified data
+         * @summary Asynchronously deletes a patient object in the IMS
          * @memberof OpenIZ.Patient
          * @method
-         * @param {OpenIZModel.Patient} patient The patient to be updated, including their primary identifier key
-         * @throw Exception if the patient does not exist
-         * @returns {OpenIZModel.Patient} The updated patient data
-         */
-        update: function (patient) {
-            try {
-                if (patient["$type"] != "Patient")
-                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_invalid_argument"), typeof (patient), null);
-                else if (patient.id == null)
-                    throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_no_key"), typeof (patient), null);
-
-                var imsiJson = JSON.stringify(patient);
-                return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Update(imsiJson)));
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_update_patient"), e.message, e);
-
-            }
-        },
-        /**
-         * @summary Performs a patient update asynchronously
-         * @memberof OpenIZ.Patient
-         * @method
-         * @see {OpenIZ.Util.this.startTaskAsync}
-         * @param {Object} controlData The data which is used to control the call
-         * @example
-         * OpenIZ.Patient.obsoleteAsync({
-         *      patientId: <<GUID>>, 
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Handle exception }
-         * });
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the patient that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Patient
          */
         obsoleteAsync: function (controlData) {
-            OpenIZ.Util.startTaskAsync(function () {
-                return OpenIZ.Patient.obsolete(controlData.patientId);
-            }, controlData);
-        },
-        /**
-         * @summary Obsoletes the specified patient instance in the IMS data
-         * @memberof OpenIZ.Patient
-         * @method
-         * @param {String} patientId The unique identifier of the patient to be obsoleted
-         * @throw Exception if the patient does not exist
-         * @returns The obsoleted patient instance
-         */
-        obsolete: function (patientId) {
-            try {
-                return new OpenIZModel.Patient(JSON.parse(OpenIZPatientService.Obsolete(patientId)));
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_obsolete_patient"), e.message, e);
-            }
+            OpenIZ.Ims.delete({
+                resource: "Patient",
+                id: controlData.id,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
         },
         /**
          * @summary Performs a patient get asynchronously
-         * @param {Object} controlData The data which is used to control the call
          * @memberof OpenIZ.Patient
-         * @see {OpenIZ.Util.this.startTaskAsync}
          * @method
-         * @example
-         * OpenIZ.Patient.getAsync({
-         *      patientId:<<GUID>>,
-         *      continueWith: function(result) { // Do something with result },
-         *      onException: function(ex) { // Handle exception }
-         * });
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the patient that is to be updated
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
          */
         getAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Patient",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
+                finally: controlData.finally,
                 query: {
-                    id: controlData.patientId
+                    _id: controlData.patientId
                 }
             });
         },
-        /** 
-         * @summary Retrieves the specified patient instance from the IMS datastore
-         * @memberof OpenIZ.Patient
-         * @method
-         * @param {String} patientId The unique identifier of the patient to be retrieved
-         * @returns {OpenIZModel.Patient} The retrieved patient instance if exists, null if not found
-         */
-        get: function (patientId) {
-            try {
-                var results = OpenIZ.Patient.find("_all=true&id=" + patientId, 0, 1);
-
-                if (results.length == 0)
-                    return null;
-                else
-                    return results.first("Patient");
-            }
-            catch (e) {
-                console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_get_patient"), e.message, e);
-            }
-        }
     },
 
 
     /**
-     * @summary Place functions
+     * @summary Provides a series of utility functions for interacting with {@link OpenIZModel.Place} instances
+     * @static
+     * @class
+     * @memberof OpenIZ
      */
     Place: {
         /**
-         * @summary Find places async
+         * @summary Perform an asynchronous search on the place resource
+         * @method
+         * @memberof OpenIZ.Place
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @see OpenIZModel.Place
          */
-        findAsync : function(controlData) {
+        findAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "Place",
                 continueWith: controlData.continueWith,
@@ -1606,8 +1663,10 @@ var OpenIZ = OpenIZ || {
         },
         /**
          * @summary Bind a place filter to a select box
-         * @param {Element} target The element to be bound to
-         * @param {String} filter The filter to show (to be added to the current name filter)
+         * @param {HTMLElement} target The element to be bound to
+         * @param {object} filter Of the objects to be shown (additional to be added to the current name filter)
+         * @method
+         * @memberof OpenIZ.Place
          */
         bindSelect: function (target, filter) {
             $(target).select2({
@@ -1652,9 +1711,25 @@ var OpenIZ = OpenIZ || {
             });
         }
     },
+    /**
+     * @static
+     * @class
+     * @summary Provides functions for managing {@link OpenIZModel.Provider} objects on the IMS
+     * @memberof OpenIZ
+     */
     Provider: {
         /**
-         * @summmary Find the provider asynchronously
+         * @summary Perform an asynchronous search on the provider resource
+         * @method
+         * @memberof OpenIZ.Provider
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
          */
         findProviderAsync: function (controlData) {
             OpenIZ.Ims.get({
@@ -1666,9 +1741,11 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-         * @summary Bind a Person filter to a select box
-         * @param {Element} target The element to be bound to
-         * @param {String} filter The filter to show (to be added to the current name filter)
+         * @summary Bind a provider filter to a select box
+         * @param {HTMLElement} target The element to be bound to
+         * @param {object} filter Of the objects to be shown (additional to be added to the current name filter)
+         * @method
+         * @memberof OpenIZ.Provider
          */
         bindSelect: function (target, filter) {
             $(target).select2({
@@ -1713,14 +1790,64 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @summary Entity class for interacting with {@link OpenIZModel.Entity} instances and derivatives
+     * @see OpenIZModel.Entity
+     * @see OpenIZModel.Person
+     * @see OpenIZModel.Place
+     * @see OpenIZModel.Material
+     * @see OpenIZModel.ManufacturedMaterial
+     * @see OpenIZModel.Patient
+     * @see OpenIZModel.UserEntity
+     * @see OpenIZModel.Provider
+     * @static
+     * @class
+     * @memberof OpenIZ
+     */
+    Entity: {
+        /**
+         * @summary Get an empty entity template object asynchronously. See the OpenIZ documentation for more information about templates
+         * @method
+         * @memberof OpenIZ.Entity
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} controlData.templateId The identifier of the template which to retrieve. Templates should be registered with the application manifest
+         * @example
+         * OpenIZ.CarePlan.getEntityTemplateAsync({
+         *      templateId: "Entity.Patient.Baby", 
+         *      continueWith: function(template) {
+         *          $scope.act = template;
+         *      }
+         * });
+         */
+        getEntityTemplateAsync: function (controlData) {
+            OpenIZ.Ims.get({
+                resource: "Entity/Template",
+                query: { "templateId": controlData.templateId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
+    },
+    /**
     * @summary The configuration property is used to segregate the functions related to configuration of the main OpenIZ system including realm, updating configuration, etc.
-    * @class
+     * @static
+     * @class
+    * @memberof OpenIZ
+    * @property {object} $configuration Cached configuration used for synchronous calls
     */
     Configuration: {
-        $configuration : null,
+        $configuration: null,
         /** 
          * @summary Get the configuration file in an async manner
          * @method
+         * @memberof OpenIZ.Configuration
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @return {Object} The complete configuration object
          */
         getConfigurationAsync: function (controlData) {
@@ -1752,7 +1879,7 @@ var OpenIZ = OpenIZ || {
             }
         },
         /**
-         * @summary Gets the specified appplication setting
+         * @summary Gets the specified appplication setting. This method does not save the setting, merely sets it in the local configuration
          * @method
          * @param {String} key The key of the application setting to retrieve
          * @return {String} The setting value
@@ -1786,7 +1913,7 @@ var OpenIZ = OpenIZ || {
         /**
         * @summary Gets the specified OpenIZ configuration section name. 
         * @returns A JSON object representing the configuration data for the particular section
-        * @param {Object} sectionName The name of the section which should be retrieved.
+        * @param {string} sectionName The name of the section which should be retrieved.
         * @memberof OpenIZ.Configuration
         * @method
         */
@@ -1801,8 +1928,12 @@ var OpenIZ = OpenIZ || {
         /**
         * @summary Joins the current client to the specified realm. The backing container is responsible for performing all steps in terms of generating a client certificate, sending it to the realm auth service, etc.
         * @returns True if the specified realm was joined successfully
-        * @param {String} address The address root of the realm. Example: demo.openiz.org
-        * @param {String} deviceName A unique name for the device which is being joined
+        * @param {object} controlData An object containing search, offset, count and callback data
+        * @param {string} controlData.address The address root of the realm. Example: demo.openiz.org
+        * @param {string} controlData.deviceName A unique name for the device which is being joined
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
         * @memberof OpenIZ.Configuration
         * @method
         */
@@ -1879,13 +2010,14 @@ var OpenIZ = OpenIZ || {
         },
         /**
         * @summary Instructs the container to save the specified configuration object to the local configuration file/source.
+        * @param {object} controlData An object containing search, offset, count and callback data
+        * @param {string} controlData.address The address root of the realm. Example: demo.openiz.org
+        * @param {string} controlData.deviceName A unique name for the device which is being joined
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
         * @memberof OpenIZ.Configuration
         * @method
-        * @param {Object} configuration The configuration data
-        * @param {String} configuration.retention all|local|none - The retention policy of all data in realm, local data only to tablet, or no offline data
-        * @param {String} configuration.authentication  online|offline The authentication policy of either must be online or offline allowed
-        * @param {String} configuration.subscribe Represents subscription queries which should be used to determine what should be in the outbox
-        * @param {String} configuration.enableForgotPassword true|false Whether users can reset their password
         * @returns true if the save operation was successful
         */
         saveAsync: function (controlData) {
@@ -1982,13 +2114,34 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @static
      * @class
-     * @summary Manufactured material class
+     * @summary Provides utility functions for interacting with {@link OpenIZModel.ManufacturedMaterial} instances
+     * @memberOf OpenIZ.ManufacturedMaterial
      */
     ManufacturedMaterial:
     {
-        getManufacturedMaterials: function (controlData)
-        {
+        /**
+         * @deprecated
+         * @see OpenIZ.ManufacturedMaterial.getManufacturedMaterialsAsync
+         */
+        getManufacturedMaterials: function (controlData) {
+            OpenIZ.ManufacturedMaterial.getManufacturedMaterialAsync(controlData);
+        },
+        /**
+         * @summary Get manufactured materials from the IMS 
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.query The query filters to apply to the search
+         * @param {int} controlData.query._count The limit of results to return from the ims
+         * @param {int} controlData.query._offset The offset of the search result window
+         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+         * @memberof OpenIZ.ManufacturedMaterial
+         * @method
+         */
+        getManufacturedMaterialAsync: function (controlData) {
             OpenIZ.Ims.get({
                 resource: "ManufacturedMaterial",
                 continueWith: controlData.continueWith,
@@ -1998,13 +2151,21 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @static
      * @class
-     * @summary Security repository class
+     * @summary Provides utilities for interacting with {@link OpenIZModel.UserEntity} classes
+     * @memberof OpenIZ
      */
     UserEntity: {
         /**
+         * @summary Updates the specified user entity in the IMS in an asynchronous manner
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.UserEntity} controlData.data The user entity which is to be updated in the IMS service
+         * @memberof OpenIZ.UserEntity
          * @method
-         * @summary Updates the specified user entity asynchronously
          */
         updateAsync: function (controlData) {
             OpenIZ.Ims.put({

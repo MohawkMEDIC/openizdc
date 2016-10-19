@@ -91,20 +91,7 @@ namespace OpenIZ.Mobile.Core.Security
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
                 var securityUser = userService.GetUser(principal.Identity);
                 this.SecurityUser = securityUser;
-                this.UserEntity = userService.GetUserEntity(principal.Identity) ??
-                    new UserEntity()
-                    {
-                        SecurityUserKey = securityUser.Key,
-                        LanguageCommunication = new List<PersonLanguageCommunication>() { new PersonLanguageCommunication(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, true) },
-                        Telecoms = new List<EntityTelecomAddress>()
-                        {
-                        new EntityTelecomAddress(TelecomAddressUseKeys.Public, securityUser.Email ?? securityUser.PhoneNumber)
-                        },
-                        Names = new List<EntityName>()
-                        {
-                        new EntityName() { NameUseKey =  NameUseKeys.OfficialRecord, Component = new List<EntityNameComponent>() { new EntityNameComponent(NameComponentKeys.Given, securityUser.UserName) } }
-                        }
-                    };
+
             }
             catch (Exception e)
             {
@@ -127,7 +114,39 @@ namespace OpenIZ.Mobile.Core.Security
         /// Gets the user entity
         /// </summary>
         [JsonProperty("entity")]
-        public UserEntity UserEntity { get; set; }
+        public UserEntity UserEntity
+        {
+            get
+            {
+                // HACK: Find a better way
+                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+                UserEntity entity = null;
+                try
+                {
+                    entity = userService.GetUserEntity(this.Principal.Identity);
+
+
+                    if (entity == null)
+                        entity = new UserEntity()
+                        {
+                            SecurityUserKey = this.SecurityUser.Key,
+                            LanguageCommunication = new List<PersonLanguageCommunication>() { new PersonLanguageCommunication(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, true) },
+                            Telecoms = new List<EntityTelecomAddress>()
+                    {
+                                            new EntityTelecomAddress(TelecomAddressUseKeys.Public, this.SecurityUser.Email ?? this.SecurityUser.PhoneNumber)
+                    },
+                            Names = new List<EntityName>()
+                    {
+                                            new EntityName() { NameUseKey =  NameUseKeys.OfficialRecord, Component = new List<EntityNameComponent>() { new EntityNameComponent(NameComponentKeys.Given, this.SecurityUser.UserName) } }
+                    }
+                        };
+                    return entity;
+                }
+                catch { return null; }
+
+            }
+        }
 
         /// <summary>
         /// Gets or sets the security user information
