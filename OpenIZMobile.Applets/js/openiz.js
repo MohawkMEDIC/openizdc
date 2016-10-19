@@ -1019,7 +1019,7 @@ var OpenIZ = OpenIZ || {
          * @deprecated
          */
         getEntityTemplateAsync: function (controlData) {
-            OpenIZ.Entity.getActTemplateAsync(controlData);
+            OpenIZ.Entity.getEntityTemplateAsync(controlData);
         },
         /**
          * @summary Get an empty act template object asynchronously. See the OpenIZ documentation for more information about templates

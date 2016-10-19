@@ -43,6 +43,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     public class AuthenticationService
     {
 		/// <summary>
+		/// Abandons the users session.
+		/// </summary>
+		/// <returns>Returns an empty session.</returns>
+		[RestOperation(Method = "POST", UriPath = "/abandon", FaultProvider = nameof(AuthenticationFault))]
+		public SessionInfo Abandon()
+		{
+			var cookie = MiniImsServer.CurrentContext.Request.Cookies["_s"];
+
+			var value = Guid.Empty;
+
+			if (cookie != null && Guid.TryParse(cookie.Value, out value))
+			{
+				ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
+
+				return sessionService.Delete(value);
+			}
+
+			return new SessionInfo();
+		}
+
+		/// <summary>
 		/// Authenticate the user returning the session if successful
 		/// </summary>
 		/// <param name="authRequest"></param>

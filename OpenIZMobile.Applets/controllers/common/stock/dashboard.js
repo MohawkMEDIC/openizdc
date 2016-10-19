@@ -23,7 +23,7 @@
 
 layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
 
-    $scope.orderQuery = "moodConcept=" + OpenIZModel.ActMoodKeys.EventOccurrence + "&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
+    $scope.orderQuery = "moodConcept=EC74541F-87C4-4327-A4B9-97F325501747&classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
 
     OpenIZ.Ims.get({
         resource: "Act",
@@ -40,7 +40,7 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
     $scope.lowStock = [];
 
     // TODO: add facility id here
-    var lowStockQuery = "lotNumber=!null&quantity=<5&statusConcept=" + OpenIZModel.StatusConceptKeys.Active + "&_count=5";
+    var lowStockQuery = "lotNumber=!null&quantity=<5&statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&_count=5";
 
     OpenIZ.Ims.get({
         resource: "ManufacturedMaterial",

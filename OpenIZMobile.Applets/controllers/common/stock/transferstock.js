@@ -39,7 +39,7 @@ layoutApp.controller('TransferStockController', ['$scope', function ($scope)
 
 	function loadVaccines(lotNumber)
 	{
-		var vaccineQuery = "statusConcept=" + OpenIZModel.StatusConceptKeys.Active;
+	    var vaccineQuery = "statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27";
 
 		if (lotNumber !== undefined && lotNumber !== null && lotNumber !== "")
 		{
