@@ -34,6 +34,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenIZ.Core.Services;
+using System.Collections;
+using OpenIZ.Core.Model.Collection;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -365,7 +367,9 @@ namespace OpenIZ.Mobile.Core.Caching
             // We want to subscribe when this object is changed so we can keep the cache fresh
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(t);
             var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
+            var pqeArgType = typeof(DataQueryEventArgsBase<>).MakeGenericType(t);
             var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
+            var qevtHdlrType = typeof(EventHandler<>).MakeGenericType(pqeArgType);
             var svcInstance = ApplicationContext.Current.GetService(idpType);
 
             if (svcInstance != null)
@@ -378,11 +382,15 @@ namespace OpenIZ.Mobile.Core.Caching
                 var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
                 var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
 
+                eventParm = Expression.Parameter(pqeArgType, "e");
+                var queryEventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Results")), typeof(IEnumerable));
+                var queryInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostQueryEvent", new Type[] { typeof(IEnumerable) }), queryEventData), senderParm, eventParm).Compile();
 
                 // Bind to events
                 idpType.GetRuntimeEvent("Inserted").AddEventHandler(svcInstance, insertInstanceDelegate);
                 idpType.GetRuntimeEvent("Updated").AddEventHandler(svcInstance, updateInstanceDelegate);
                 idpType.GetRuntimeEvent("Obsoleted").AddEventHandler(svcInstance, obsoleteInstanceDelegate);
+                idpType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queryInstanceDelegate);
             }
 
 
@@ -399,19 +407,45 @@ namespace OpenIZ.Mobile.Core.Caching
         }
 
         /// <summary>
+        /// Handle post query event
+        /// </summary>
+        public void HandlePostQueryEvent(IEnumerable results)
+        {
+            foreach (var data in results)
+            {
+                this.AddUpdateEntry(data);
+            }
+        }
+
+        /// <summary>
         /// Persistence event handler
         /// </summary>
         public void HandlePostPersistenceEvent(Object data)
         {
-            var idData = data as IIdentifiedEntity;
-            var objData = data.GetType();
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objData, out cache))
+            // Bundles are special cases.
+            if (data is Bundle)
             {
-                Guid key = idData?.Key ?? Guid.Empty;
-                if (cache.ContainsKey(key))
-                    lock (this.m_lock)
-                        cache.Remove(key);
+                foreach (var itm in (data as Bundle).Item)
+                    HandlePostPersistenceEvent(itm);
+            }
+            else
+            {
+
+                var idData = data as IIdentifiedEntity;
+                var objData = data.GetType();
+
+                Dictionary<Guid, CacheEntry> cache = null;
+                if (this.m_entryTable.TryGetValue(objData, out cache))
+                {
+                    Guid key = idData?.Key ?? Guid.Empty;
+                    if (cache.ContainsKey(key))
+                        lock (this.m_lock)
+                        {
+                            cache[key].Data = data;
+                            cache[key].LastUpdateTime = DateTime.Now.Ticks;
+                        }
+                    //cache.Remove(key);
+                }
             }
         }
 

@@ -84,7 +84,9 @@
     <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />
+    <Compile Include="Services\Model\ApplicationInfo.cs" />
     <Compile Include="Services\Model\ErrorResult.cs" />
+    <Compile Include="Services\Model\LogInfo.cs" />
     <Compile Include="Services\Model\MenuInformation.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
@@ -125,14 +127,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ViewModel.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Strings.sw.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ViewModel.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

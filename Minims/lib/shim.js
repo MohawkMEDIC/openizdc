@@ -16,3 +16,8 @@ OpenIZApplicationService.GetOnlineState = function () {
 OpenIZApplicationService.BarcodeScan = function () {
     return OpenIZApplicationService.NewGuid().substring(0, 8);
 }
+
+OpenIZApplicationService.Close = function () {
+    alert("You need to restart the MiniIMS service for the changes to take effect");
+    window.close();
+}

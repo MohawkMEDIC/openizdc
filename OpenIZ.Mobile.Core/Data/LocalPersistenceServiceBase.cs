@@ -362,7 +362,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
                 catch (NotSupportedException e)
                 {
-                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0} ({1})", typeof(TData).Name, e);
+                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
 
                     // Build dictionary
                     var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query);

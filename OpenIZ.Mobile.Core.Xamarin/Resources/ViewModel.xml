@@ -1,34 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ViewModel xmlns="http://openiz.org/model/view" name="default">
-
-  <type type="SessionInfo" all="true">
+﻿<ViewModel xmlns="http://openiz.org/model/view">
+  
+  <!-- Base types -->
+  <type type="IdentifiedData" all="true"/>
+  <type type="EntityName" all="true">
+    <property name="component" classifier="*" all="true"/>
   </type>
-
-  <type type="ErrorResult" all="true">
+  <type type="EntityAddress" all="true">
+    <property name="component" classifier="*" all="true"/>
+  </type>
+  <type type="Bundle" all="true">
+    <property name="item" all="true"/>
   </type>
   
-  <!-- BASE TYPE -->
-  <type type="EntityAddress" all="true">
-    <property name="component" all="false" classifier="*">
-      <property name="value" all="false"/>
+  <!-- Entity Information -->
+  <type type="Entity" all="true">
+    <property name="relationship" classifier="*" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="targetAct" all="true"/>
     </property>
   </type>
-  <type type="EntityIdentifier" all="true"/>
-  <type type="EntityName" all="true">
-    <property name="component" all="false" classifier="*">
-      <property name="value" all="false"/>
-    </property>
-  </type>
-  <type type="EntityTelecomAddress" all="true"/>
-  <type type="EntityNote" all="true"/>
-  <type type="EntityTag" all="true"/>
-  <type type="EntityExtension" all="true"/>
-  <type type="ActIdentifier" all="true"/>
-  <type type="ActNote" all="true"/>
-  <type type="ActExtension" all="true"/>
-  <type type="ActTag" all="true"/>
- 
-  <!-- ACT -->
+  
+  <!-- Act Information -->
   <type type="Act" all="true">
     <property name="relationship" classifier="*" all="true">
       <property name="targetModel" all="true"/>
@@ -36,19 +30,10 @@
     <property name="participation" classifier="*" all="true">
       <property name="playerModel" all="true"/>
     </property>
-    <property name="participation" classifier="RecordTarget" all="true">
-      <property name="playerModel" all="true">
-        <property name="participation" classifier="RecordTarget" all="false"/>
-        <property name="participation" classifier="*" all="true"/>
-      </property>
-    </property>
   </type>
   
-  <!-- PLACE -->
-  <type type="Place" all="true">
-    <property name="relationship" classifier="Parent" all="true">
-      <property name="targetModel" all="true"/>
-    </property>
-    <property name="participation" all="true"/>
+  <!-- Session information -->
+  <type type="SessionInfo" all="true">
+    <property name="entity" all="true"/>
   </type>
 </ViewModel>

@@ -87,7 +87,6 @@
     <Compile Include="SHA256PasswordHasher.cs" />
     <Compile Include="TestApplicationContext.cs" />
     <Compile Include="TestTraceWriter.cs" />
-    <Compile Include="ViewModel\ViewModelDelayLoadTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">

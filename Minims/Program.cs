@@ -70,8 +70,8 @@ namespace Minims
                 Process pi = Process.Start("http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html");
 
             }
-            Console.WriteLine("Press any key to close...");
-            Console.ReadKey();
+            Console.WriteLine("Press [Enter] key to close...");
+            Console.ReadLine();
         }
     }
 }

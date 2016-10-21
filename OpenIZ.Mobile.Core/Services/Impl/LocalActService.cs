@@ -111,9 +111,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-			var currentUserEntity = userService.GetUserEntity(AuthenticationContext.Current.Principal.Identity);
+			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
 
-			if (!data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+			if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
 			{
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
 			}

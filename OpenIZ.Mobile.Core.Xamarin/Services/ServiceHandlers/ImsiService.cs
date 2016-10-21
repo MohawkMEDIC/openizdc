@@ -262,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 }
 
                 // Serialize the response
-                var itms = retVal.OfType<Patient>().Select(o=>o.LoadDisplayProperties());
+                var itms = retVal.OfType<Patient>().Select(o=>o.LoadDisplayProperties().LoadImmediateRelations());
                 return new Bundle()
                     {
                         Item = itms.OfType<IdentifiedData>().ToList(),
@@ -600,13 +600,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// </summary>
 		[RestOperation(Method = "GET", UriPath = "/Place", FaultProvider = nameof(ImsiFault))]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public IdentifiedData SearchPlace()
+		public IdentifiedData GetPlace()
 		{
 			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 			var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
 			if (search.ContainsKey("_id"))
-				return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+				return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty).LoadDisplayProperties().LoadImmediateRelations();
 			else
 			{
 				var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
@@ -617,10 +617,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 				var retVal = placeService.Find(predicate, offset, count, out totalResults);
 
-				// Serialize the response
-				return new Bundle()
+                // Serialize the response
+                var itms = retVal.OfType<Place>().Select(o => o.LoadDisplayProperties().LoadImmediateRelations());
+
+                return new Bundle()
 				{
-					Item = retVal.OfType<IdentifiedData>().ToList(),
+					Item = itms.OfType<IdentifiedData>().ToList(),
 					Offset = offset,
 					Count = count,
 					TotalResults = totalResults

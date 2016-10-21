@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TEntityType : Entity, new()
         {
-            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
+            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.IsInTransaction);
             
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
@@ -87,6 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Now we want to load the relationships inversed!
             retVal.LoadAssociations(context);
+            
             //if (!loadFast)
             //{
             //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
@@ -106,6 +107,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             //    }));
             //}
 
+   
             return retVal;
         }
 

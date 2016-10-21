@@ -4,6 +4,9 @@
 
 layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
+    if (OpenIZ.Authentication.$session == null)
+        OpenIZ.Authentication.$session = {};
+
     OpenIZ.App.showWait();
     OpenIZ.Configuration.getConfigurationAsync({
         continueWith: function (config) {
@@ -52,9 +55,10 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
     // join realm
     $scope.joinRealm = function (realm) {
-        OpenIZ.App.showWait();
 
         var doJoin = function () {
+            OpenIZ.App.showWait();
+
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,

@@ -947,6 +947,7 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
+         * @param {string} controlData.query The additional query parameters which should be passed to the forecaster
          * @example
          * OpenIZ.CarePlan.getCarePlanAsync({
          *     maxDate: new Date(), // Only retrieve objects that should have already occurred
@@ -973,6 +974,8 @@ var OpenIZ = OpenIZ || {
                 url += "&startTime=<" + controlData.onDate.toISOString() + "&stopTime=>" + controlData.onDate.toISOString();
             if (controlData.classConcept !== undefined)
                 url += "&classConcept=" + controlData.classConcept;
+            if (controlData.query !== undefined)
+                url += "&" + controlData.query;
             console.info("Generating care plan...");
             $.ajax({
                 method: 'POST',

@@ -433,7 +433,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 					}
 				}           
             }
-#if !DEBUG
+#if DEBUG
             response.AddHeader("Cache-Control", "no-cache");
 #endif
 

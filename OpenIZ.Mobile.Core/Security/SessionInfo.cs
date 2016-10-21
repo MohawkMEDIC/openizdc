@@ -34,15 +34,20 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Security
 {
     /// <summary>
     /// Session information
     /// </summary>
-    [JsonObject("SessionInfo")]
+    [JsonObject("SessionInfo"), XmlType("SessionInfo", Namespace = "http://openiz.org/model")]
     public class SessionInfo : IdentifiedData
     {
+
+        // The entity 
+        private UserEntity m_entity;
+
         /// <summary>
         /// Default ctor
         /// </summary>
@@ -118,6 +123,9 @@ namespace OpenIZ.Mobile.Core.Security
         {
             get
             {
+                if (this.m_entity != null)
+                    return this.m_entity;
+
                 // HACK: Find a better way
                 var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
@@ -126,21 +134,22 @@ namespace OpenIZ.Mobile.Core.Security
                 {
                     entity = userService.GetUserEntity(this.Principal.Identity);
 
-
                     if (entity == null)
                         entity = new UserEntity()
                         {
                             SecurityUserKey = this.SecurityUser.Key,
                             LanguageCommunication = new List<PersonLanguageCommunication>() { new PersonLanguageCommunication(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, true) },
                             Telecoms = new List<EntityTelecomAddress>()
-                    {
-                                            new EntityTelecomAddress(TelecomAddressUseKeys.Public, this.SecurityUser.Email ?? this.SecurityUser.PhoneNumber)
-                    },
+                            {
+                                                    new EntityTelecomAddress(TelecomAddressUseKeys.Public, this.SecurityUser.Email ?? this.SecurityUser.PhoneNumber)
+                            },
                             Names = new List<EntityName>()
-                    {
-                                            new EntityName() { NameUseKey =  NameUseKeys.OfficialRecord, Component = new List<EntityNameComponent>() { new EntityNameComponent(NameComponentKeys.Given, this.SecurityUser.UserName) } }
-                    }
+                            {
+                                                    new EntityName() { NameUseKey =  NameUseKeys.OfficialRecord, Component = new List<EntityNameComponent>() { new EntityNameComponent(NameComponentKeys.Given, this.SecurityUser.UserName) } }
+                            }
                         };
+                    else
+                        this.m_entity = entity;
                     return entity;
                 }
                 catch { return null; }

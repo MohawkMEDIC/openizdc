@@ -93,7 +93,7 @@
               },
              
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
-              "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "Immunization" },
+              "typeConceptModel": { "id" : "6E7A3521-2967-4C0A-80EC-6C5C197B2178", "mnemonic" : "Immunization" },
 				      "doseSequence": 1,
               "doseQuantity" : 1.0,
               "doseUnitModel" : {

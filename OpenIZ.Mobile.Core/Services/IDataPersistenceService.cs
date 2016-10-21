@@ -50,6 +50,21 @@ namespace OpenIZ.Mobile.Core.Services
         /// </summary>
         public int? Count { get; set; }
 
+
+        /// <summary>
+        /// Gets the total amount of results
+        /// </summary>
+        public int TotalResults { get; set; }
+
+        /// <summary>
+        /// Gets or sets the results.
+        /// </summary>
+        /// <value>The results.</value>
+        public IEnumerable<TData> Results
+        {
+            get;
+            set;
+        }
     }
 
 	/// <summary>
@@ -68,15 +83,7 @@ namespace OpenIZ.Mobile.Core.Services
 
         }
 
-        /// <summary>
-        /// Gets or sets the results.
-        /// </summary>
-        /// <value>The results.</value>
-        public IEnumerable<TData> Results {
-			get;
-			set;
-		}
-
+       
 		/// <summary>
 		/// Gets or sets the query.
 		/// </summary>
@@ -85,11 +92,7 @@ namespace OpenIZ.Mobile.Core.Services
 			get;
 			set;
 		}
-        
-        /// <summary>
-        /// Gets the total results of the result set
-        /// </summary>
-        public int TotalResults { get; set; }
+
     }
 
 	/// <summary>
@@ -169,20 +172,6 @@ namespace OpenIZ.Mobile.Core.Services
             set;
         }
 
-        /// <summary>
-        /// Gets the total amount of results
-        /// </summary>
-        public int TotalResults { get; set; }
-
-        /// <summary>
-        /// Gets or sets the results.
-        /// </summary>
-        /// <value>The results.</value>
-        public IEnumerable<TData> Results
-        {
-            get;
-            set;
-        }
     }
 
     /// <summary>

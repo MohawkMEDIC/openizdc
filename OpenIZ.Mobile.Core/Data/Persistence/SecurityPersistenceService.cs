@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in retVal.Roles)
             {
                 var ruuid = itm.Key.Value.ToByteArray();
-                itm.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == ruuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o, null)).ToList();
+                itm.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == ruuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
             }
             return retVal;
         }
@@ -110,7 +110,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbRole = dataInstance as DbSecurityRole;
-            retVal.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o, null)).ToList();
+            retVal.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
 
             retVal.Users = context.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user_role.role_id = ?", dbRole.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityUser, SecurityUser>(o)).ToList();
             return retVal;
@@ -167,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbDevice = dataInstance as DbSecurityDevice;
-            retVal.Policies = context.Table<DbSecurityDevicePolicy>().Where(o=>o.DeviceId == dbDevice.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o, null)).ToList();
+            retVal.Policies = context.Table<DbSecurityDevicePolicy>().Where(o=>o.DeviceId == dbDevice.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o)).ToList();
             return retVal;
         }
 
@@ -224,7 +224,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbApplication = dataInstance as DbSecurityApplication;
-            retVal.Policies = context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == dbApplication.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o, null)).ToList();
+            retVal.Policies = context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == dbApplication.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o)).ToList();
             return retVal;
         }
 

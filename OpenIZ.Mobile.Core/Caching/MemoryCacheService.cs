@@ -96,13 +96,13 @@ namespace OpenIZ.Mobile.Core.Caching
                     {
                         var cVer = obj as IVersionedEntity;
                         var dVer = e.ModelObject as IVersionedEntity;
-                        if (cVer?.VersionSequence >= dVer?.VersionSequence) // Cache is older than this item
+                        if (cVer?.VersionSequence <= dVer?.VersionSequence) // Cache is older than this item
                         {
                             e.ModelObject = obj as IdentifiedData;
                             e.Cancel = true;
                         }
                     }
-                    this.GetOrUpdateCacheItem(e);
+                    //this.GetOrUpdateCacheItem(e);
                 };
 
                 // Handles when an item is no longer being mapped
