@@ -148,9 +148,5 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Strings.sw.resx" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Diagnostics\" />
-    <Folder Include="Http\" />
-    <Folder Include="Net\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
