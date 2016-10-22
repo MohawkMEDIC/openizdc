@@ -128,12 +128,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 				};
 		}
 
-		/// <summary>
-		/// Authenticate the user returning the session if successful
-		/// </summary>
-		/// <param name="authRequest"></param>
-		/// <returns></returns>
-		[RestOperation(Method = "GET", UriPath = "/get_session")]
+
+        /// <summary>
+        /// Authenticate the user returning the session if successful
+        /// </summary>
+        /// <param name="authRequest"></param>
+        /// <returns></returns>
+        [RestOperation(Method = "GET", UriPath = "/get_session")]
 		[return: RestMessage(RestMessageFormat.SimpleJson)]
 		public SessionInfo GetSession()
 		{

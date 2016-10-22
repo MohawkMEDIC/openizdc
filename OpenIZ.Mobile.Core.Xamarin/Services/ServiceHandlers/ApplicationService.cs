@@ -17,6 +17,7 @@ using System.IO;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Globalization;
+using OpenIZ.Mobile.Core.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -37,6 +38,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get menu information
         /// </summary>
         [RestOperation(UriPath = "/menu", Method = "GET")]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.Json)]
         public List<MenuInformation> GetMenus()
         {
@@ -95,6 +97,63 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             }
         }
 
+
+        /// <summary>
+        /// Handle a fault
+        /// </summary>
+        public ErrorResult ApplicationServiceFault(Exception e)
+        {
+            return new ErrorResult()
+            {
+                Error = e.Message,
+                ErrorDescription = e.InnerException?.Message
+            };
+        }
+
+        /// <summary>
+        /// Get the specified log file
+        /// </summary>
+        [RestOperation(UriPath = "/log", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        public List<LogInfo> GetLogs()
+        {
+            var query = MiniImsServer.CurrentContext.Request.QueryString;
+            if (query["_id"] != null)
+            {
+                var logFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", query["_id"]);
+                var logFile = new FileInfo(logFileName);
+                LogInfo retVal = new LogInfo()
+                {
+                    Id = Path.GetFileName(logFileName),
+                    FileDescription = Path.GetFileName(logFileName),
+                    FileName = logFile.FullName,
+                    LastWriteDate = logFile.LastWriteTime,
+                    FileSize = logFile.Length,
+                    Content = File.ReadAllText(logFileName)
+                };
+                return new List<LogInfo>() { retVal };
+            }
+            else
+            {
+                var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
+                List<LogInfo> retVal = new List<LogInfo>();
+                foreach (var itm in Directory.GetFiles(logDir))
+                {
+                    var logFile = new FileInfo(itm);
+                    retVal.Add(new LogInfo()
+                    {
+                        Id = Path.GetFileName(itm),
+                        FileDescription = Path.GetFileName(itm),
+                        FileName = logFile.FullName,
+                        LastWriteDate = logFile.LastWriteTime,
+                        FileSize = logFile.Length
+                    });
+                }
+                return retVal;
+            }
+
+        }
+
         /// <summary>
         /// Get the alerts from the service
         /// </summary>
@@ -123,28 +182,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Gets the specified alert messages
                 NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-				var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 
-				List<string> key = null;
+                List<string> key = null;
 
-				if (query.ContainsKey("id") && query.TryGetValue("id", out key))
-				{
-					var id = key?.FirstOrDefault();
+                if (query.ContainsKey("id") && query.TryGetValue("id", out key))
+                {
+                    var id = key?.FirstOrDefault();
 
-					return new List<AlertMessage> { alertService.Get(Guid.Parse(id)) };
-				}
+                    return new List<AlertMessage> { alertService.Get(Guid.Parse(id)) };
+                }
 
                 var predicate = QueryExpressionParser.BuildLinqExpression<AlertMessage>(query);
                 int offset = query.ContainsKey("_offset") ? Int32.Parse(query["_offset"][0]) : 0,
                     count = query.ContainsKey("_count") ? Int32.Parse(query["_count"][0]) : 100;
 
-                
 
-				int totalCount = 0;
+
+                int totalCount = 0;
 
                 return alertService.Find(predicate, offset, count, out totalCount).ToList();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Could not retrieve alerts {0}...", e);
                 throw;

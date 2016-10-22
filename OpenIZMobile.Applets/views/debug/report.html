@@ -1,4 +1,56 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
     <oiz:script>~/controllers/debug/report.js</oiz:script>
     <oiz:title>Bug Report</oiz:title>
+    <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+    <h3>{{ 'locale.debug.bugReport' | i18n }}</h3>
+    <oiz:script>/org.openiz.core/controllers/settings/password.js</oiz:script>
+    <div class="alert alert-warning" ng-if="!$root.page.onlineState">
+        {{ 'locale.action.onlineOnly' | i18n }}
+    </div>
+    <form class="form" ng-submit="submitBugReport()" name="masterForm">
+        <fieldset class="form-horizontal form-group">
+            <div class="form-group" ng-class="{ 'has-error': (masterForm.submitter.$touched||masterForm.$submitted) &amp;&amp; masterForm.submitter.$invalid }">
+                <label class="col-xs-2 control-label" for="submitter">{{ 'locale.debug.reporter' | i18n }}</label>
+                <div class="col-xs-10">
+                    <select style="width:100%; height:100%" id="submitter" name="submitter" class="form-control" ng-model="report.createdBy" oiz-entitysearch="UserEntity">
+                        <option selected="selected" value="{{report.createdBy}}">{{report.createdByModel.name.OfficialRecord | oizEntityName }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" ng-class="{ 'has-error': (masterForm.note.$touched||masterForm.$submitted) &amp;&amp; masterForm.note.$invalid }">
+                <label class="col-xs-2 control-label" for="note">{{ 'locale.debug.reproduction' | i18n }}</label>
+                <div class="col-xs-10">
+                    <textarea class="form-control" rows="8" name="note" ng-model="report.note" required="required" placeholder="{{ 'locale.debug.reproductionPlaceholder' | i18n }}"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="checkbox col-xs-10 col-xs-offset-2">
+                    <input type="checkbox" name="sendLogs" ng-model="report._sendLogs" checked="checked" />
+                    {{ 'locale.debug.sendLogs' | i18n }}
+                </label>
+            </div>
+        </fieldset>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="pull-right btn-group">
+                    <button type="button" class="btn btn-lg btn-danger" ng-click="close()">
+                        <span>
+                            <span class="glyphicon glyphicon-remove">
+                            </span>
+                            {{ 'locale.action.cancel' | i18n }}
+                        </span>
+                    </button>
+                    <div class="btn-group">
+                        <button ng-disabled="!$root.page.onlineState" type="submit" class="btn btn-lg btn-primary">
+                            <span>
+                                <span class="glyphicon glyphicon-ok">
+                                </span>
+                                {{ 'locale.debug.submit' | i18n }}
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>

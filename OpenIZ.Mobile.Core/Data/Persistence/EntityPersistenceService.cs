@@ -87,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Now we want to load the relationships inversed!
             retVal.LoadAssociations(context);
-            
+
             //if (!loadFast)
             //{
             //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
@@ -107,7 +107,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             //    }));
             //}
 
-   
+
             return retVal;
         }
 

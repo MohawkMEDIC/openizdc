@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient CreatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToInsert)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-            return repository.Insert(patientToInsert);
+            return repository.Insert(patientToInsert).GetLocked() as Patient;
         }
         
         /// <summary>
@@ -221,7 +221,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 patient = patient.LoadDisplayProperties().LoadImmediateRelations();
-
 	            return patient;
             }
             else

@@ -42,6 +42,7 @@ using OpenIZ.Core.Applets.ViewModel;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.ViewModel.Description;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -197,6 +198,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             HttpListenerContext context = state as HttpListenerContext;
             var request = context.Request;
             var response = context.Response;
+
+#if DEBUG
+            Stopwatch perfTimer = new Stopwatch();
+            perfTimer.Start();
+#endif
+
             try
             {
                 MiniImsServer.CurrentContext = context;
@@ -237,6 +244,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // Attempt to find a service which implements the path
                 var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
                 InvokationInformation invoke = null;
+
                 if (this.m_services.TryGetValue(rootPath, out invoke))
                 {
 
@@ -246,6 +254,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         throw new UnauthorizedAccessException();
 
                     this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
+
+
                     // Get the method information 
                     var parmInfo = invoke.Method.GetParameters();
                     object result = null;
@@ -322,9 +332,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 response.ContentType = "application/json";
                                 if (result is IdentifiedData)
                                 {
+
                                     using (StreamWriter sw = new StreamWriter(response.OutputStream))
                                     {
-                                        sw.Write(JsonViewModelSerializer.Serialize(result as IdentifiedData, this.m_defaultViewModel));
+#if DEBUG
+                                        Stopwatch serializerWatch = new Stopwatch();
+                                        serializerWatch.Start();
+#endif
+                                        JsonViewModelSerializer.Serialize(sw, result as IdentifiedData, this.m_defaultViewModel);
+#if DEBUG
+                                        serializerWatch.Stop();
+                                        this.m_tracer.TraceVerbose("PERF: Serializer >>>> {0} took {1}", result, serializerWatch.ElapsedMilliseconds);
+#endif
                                     }
                                 }
                                 else if(result != null)
@@ -394,6 +413,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 try
                 {
+#if DEBUG
+                    perfTimer.Stop();
+                    this.m_tracer.TraceVerbose("PERF : MiniIMS >>>> {0} took {1} ms to service", request.Url, perfTimer.ElapsedMilliseconds);
+#endif 
                     response.Close();
                 }
                 catch { }

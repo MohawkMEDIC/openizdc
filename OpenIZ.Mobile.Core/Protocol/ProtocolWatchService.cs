@@ -63,7 +63,9 @@ namespace OpenIZ.Mobile.Core.Protocol
                         {
                             // We want to make sure the care plan contains everything in the protocols as possible
                             var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
-                            var acts = cpService.CreateCarePlan(s as Patient);
+                            var patient = (s as Patient).Clone() as Patient;
+                            patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
+                            var acts = cpService.CreateCarePlan(patient);
 
                             // There were some acts proposed
                             if (acts.Count() > 0)
@@ -75,6 +77,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                 };
                                 actService.Insert(batch);
                             }
+
                         }, e.Data);
                     };
             };

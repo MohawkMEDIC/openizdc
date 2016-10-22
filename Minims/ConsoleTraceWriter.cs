@@ -24,7 +24,10 @@ namespace Minims
             switch(level)
             {
                 case EventLevel.Verbose:
-                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    if (format.Contains("PERF"))
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    else
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                     break;
                 case EventLevel.Informational:
                     Console.ForegroundColor = ConsoleColor.Cyan;

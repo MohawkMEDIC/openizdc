@@ -1,3 +1,23 @@
 ﻿<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-
+    <fieldset class="form-horizontal form-group">
+        <div class="form-group">
+            <label for="logFile" class="control-label">{{ 'locale.about.logFile' | i18n }}</label>
+            <select ng-model="logid" class="form-control" ng-change="loadLogContents()">
+                <option ng-repeat="log in about.logInfo" value="{{log.id}}">{{log.description}} - {{log.size / 1024 | number: 2}} kb (Last written: {{log.lastWrite | date: 'yyyy-MMM-dd HH:mm'}})</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="logSize" class="control-label">{{ 'locale.about.logSize' | i18n }}</label>
+            <select class="form-control" ng-model="logLength" ng-change="loadLogContents()">
+                <option selected="selected" value="1024">1 kb {{ 'locale.common.of' | i18n }} {{ log.size / 1024 | number: 2}} kb</option>
+                <option value="131072">128 kb {{ 'locale.common.of' | i18n }} {{ log.size / 1024 | number: 2}} kb</option>
+                <option value="524288">512 kb {{ 'locale.common.of' | i18n }} {{ log.size / 1024 | number: 2}} kb</option>
+                <option value="1048576">1 MB {{ 'locale.common.of' | i18n }} {{ log.size / 1048576 | number: 2}} MB</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="logFile" class="control-label">{{ 'locale.about.logContents' | i18n }}</label>
+            <pre style="height:60%; max-height:60%; overflow-y:scroll">{{log.text}}</pre>
+        </div>
+    </fieldset>
 </div>

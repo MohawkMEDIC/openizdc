@@ -11,13 +11,14 @@ using System.Threading.Tasks;
 using System.Reflection;
 using OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 {
     /// <summary>
     /// Application version information
     /// </summary>
-    [JsonObject]
+    [JsonObject("VersionInfo"), XmlType(nameof(VersionInfo), Namespace = "http://openiz.org/model/mobile")]
     public class VersionInfo
     {
         public VersionInfo()
@@ -40,34 +41,34 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         }
 
 
-        [JsonProperty("version")]
+        [JsonProperty("version"), XmlAttribute("version")]
         public String Version { get; set; }
-        [JsonProperty("infoVersion")]
+        [JsonProperty("infoVersion"), XmlAttribute("infoVersion")]
         public String InformationalVersion { get; set; }
-        [JsonProperty("copyright")]
+        [JsonProperty("copyright"), XmlElement("copyright")]
         public String Copyright { get; set; }
 
-        [JsonProperty("company")]
+        [JsonProperty("company"), XmlElement("company")]
         public String Company { get; set; }
 
-        [JsonProperty("product")]
+        [JsonProperty("product"), XmlElement("product")]
         public String Product { get; set; }
         /// <summary>
         /// Gets or sets the name
         /// </summary>
-        [JsonProperty("name")]
+        [JsonProperty("name"), XmlElement("name")]
         public String Name { get; set; }
         /// <summary>
         /// Gets or sets the informational value
         /// </summary>
-        [JsonProperty("info")]
+        [JsonProperty("info"), XmlElement("info")]
         public String Info { get; set; }
     }
 
     /// <summary>
     /// Application information
     /// </summary>
-    [JsonObject]
+    [JsonObject("ApplicationInfo"), XmlType(nameof(ApplicationInfo), Namespace = "http://openiz.org/model/mobile")]
     public class ApplicationInfo : VersionInfo
     {
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
@@ -124,43 +125,43 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         /// <summary>
         /// Environment information
         /// </summary>
-        [JsonProperty("environment")]
+        [JsonProperty("environment"), XmlElement("environment")]
         public EnvironmentInfo EnvironmentInfo { get; set; }
 
         /// <summary>
         /// Open IZ information
         /// </summary>
-        [JsonProperty("openiz")]
+        [JsonProperty("openiz"), XmlElement("openiz")]
         public VersionInfo OpenIZ { get; set; }
 
         /// <summary>
         /// Gets or sets the assemblies
         /// </summary>
-        [JsonProperty("assembly")]
+        [JsonProperty("assembly"), XmlElement("assembly")]
         public List<VersionInfo> Assemblies { get; set; }
 
         /// <summary>
         /// Gets or sets the applets
         /// </summary>
-        [JsonProperty("applet")]
+        [JsonProperty("applet"), XmlElement("applet")]
         public List<AppletInfo> Applets { get; set; }
 
         /// <summary>
         /// Gets or sets file info
         /// </summary>
-        [JsonProperty("fileInfo")]
+        [JsonProperty("fileInfo"), XmlElement("fileInfo")]
         public List<RuntimeFileInfo> FileInfo { get; set; }
 
         /// <summary>
         /// Gets the sync info
         /// </summary>
-        [JsonProperty("syncInfo")]
+        [JsonProperty("syncInfo"), XmlElement("syncInfo")]
         public List<RemoteSyncInfo> SyncInfo { get; set; }
 
         /// <summary>
         /// Configuration
         /// </summary>
-        [JsonProperty("config")]
+        [JsonProperty("config"), XmlElement("config")]
         public OpenIZConfiguration Configuration { get; set; }
 
 
@@ -169,85 +170,85 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
     /// <summary>
     /// Environment information
     /// </summary>
-    [JsonObject]
+    [JsonObject("EnvironmentInfo"), XmlType(nameof(EnvironmentInfo), Namespace = "http://openiz.org/model/mobile")]
     public class EnvironmentInfo
     {
         /// <summary>
         /// Is platform 64 bit
         /// </summary>
-        [JsonProperty("is64bit")]
+        [JsonProperty("is64bit"), XmlAttribute("is64Bit")]
         public bool Is64Bit { get; internal set; }
         /// <summary>
         /// OS Version
         /// </summary>
-        [JsonProperty("osVersion")]
+        [JsonProperty("osVersion"), XmlAttribute("osVersion")]
         public String OSVersion { get; internal set; }
         /// <summary>
         /// CPU count
         /// </summary>
-        [JsonProperty("processorCount")]
+        [JsonProperty("processorCount"), XmlAttribute("processorCount")]
         public int ProcessorCount { get; internal set; }
         /// <summary>
         /// Used memory
         /// </summary>
-        [JsonProperty("usedMem")]
+        [JsonProperty("usedMem"), XmlElement("mem")]
         public long UsedMemory { get; internal set; }
         /// <summary>
         /// Version
         /// </summary>
-        [JsonProperty("version")]
+        [JsonProperty("version"), XmlElement("version")]
         public String Version { get; internal set; }
     }
 
     /// <summary>
     /// Remote sync info
     /// </summary>
-    [JsonObject]
+    [JsonObject("RemoteSyncInfo"), XmlType(nameof(RemoteSyncInfo), Namespace = "http://openiz.org/model/mobile")]
     public class RemoteSyncInfo
     {
-        [JsonProperty("resource")]
+        [JsonProperty("resource"), XmlAttribute("resource")]
         public String ResourceName { get; set; }
 
-        [JsonProperty("etag")]
+        [JsonProperty("etag"), XmlAttribute("etag")]
         public String Etag { get; set; }
 
-        [JsonProperty("lastSync")]
+        [JsonProperty("lastSync"), XmlAttribute("lastSync")]
         public DateTime LastSync { get; set; }
         /// <summary>
         /// Filter used to sync
         /// </summary>
-        [JsonProperty("filter")]
+        [JsonProperty("filter"), XmlText]
         public String Filter { get; set; }
     }
 
     /// <summary>
     /// Runtime file inforamtion
     /// </summary>
-    [JsonObject]
-    public class RuntimeFileInfo
+    [JsonObject("RuntimeFileInfo"), XmlType(nameof(RuntimeFileInfo), Namespace = "http://openiz.org/model/mobile")]
+    public class RuntimeFileInfo 
     {
         /// <summary>
         /// Gets or sets the file name
         /// </summary>
-        [JsonProperty("file")]
+        [JsonProperty("file"), XmlAttribute("file")]
         public String FileName { get; set; }
 
         /// <summary>
         /// Description
         /// </summary>
-        [JsonProperty("description")]
+        [JsonProperty("description"), XmlElement("description")]
         public String FileDescription { get; set; }
 
         /// <summary>
         /// Size of the file
         /// </summary>
-        [JsonProperty("size")]
+        [JsonProperty("size"), XmlAttribute("size")]
         public long FileSize { get; set; }
 
         /// <summary>
         /// Last write date
         /// </summary>
-        [JsonProperty("lastWrite")]
+        [JsonProperty("lastWrite"), XmlAttribute("lastWrite")]
         public DateTime LastWriteDate { get; set; }
     }
 

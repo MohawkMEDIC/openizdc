@@ -299,6 +299,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="key">Key.</param>
         public TData Get(Guid key)
         {
+            if(key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;

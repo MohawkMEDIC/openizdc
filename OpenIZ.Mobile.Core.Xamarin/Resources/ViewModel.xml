@@ -21,11 +21,26 @@
       <property name="targetAct" all="true"/>
     </property>
   </type>
+
+  <type type="Place" all="true">
+    <property name="relationship" classifier="Parent" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="relationship" classifier="*" all="true">
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="targetAct" all="true"/>
+    </property>
+  </type>
+
+
   
   <!-- Act Information -->
   <type type="Act" all="true">
     <property name="relationship" classifier="*" all="true">
       <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="RecordTarget" all="false">
     </property>
     <property name="participation" classifier="*" all="true">
       <property name="playerModel" all="true"/>

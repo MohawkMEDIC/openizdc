@@ -25,7 +25,7 @@
 
     <div class="form-group">
         <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-        <div class="col-xs-4" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+        <div class="col-xs-10" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
             <div class="input-group">
                 <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon">
@@ -40,6 +40,8 @@
             </div>
             <p ng-show="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
         </div>
+    </div>
+    <div class="form-group">
         <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
         <div class="col-xs-4"  ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
             <div class="input-group" >
