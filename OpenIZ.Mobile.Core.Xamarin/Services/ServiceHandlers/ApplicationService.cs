@@ -18,6 +18,11 @@ using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Globalization;
 using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
+using OpenIZ.Messaging.AMI.Client;
+using OpenIZ.Mobile.Core.Interop;
+using OpenIZ.Core.Model.AMI.Diagnostics;
+using System.IO.Compression;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -35,9 +40,60 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
 
         /// <summary>
+        /// Submits a bug report via the AMI interface
+        /// </summary>
+        [RestOperation(UriPath = "/bug", Method = "POST", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.Login)]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public DiagnosticReport PostBugReport([RestMessage(RestMessageFormat.Json)] BugReport report)
+        {
+            report.ApplicationInfo = new ApplicationInfo();
+
+            if (report.IncludeData)
+            {
+                var logConfig = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.FirstOrDefault(o => o.TraceWriter.GetType() == typeof(FileTraceWriter));
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using(GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+                        ApplicationContext.Current.Configuration.Save(gz);
+
+                    report.Attachments = new List<DiagnosticAttachmentInfo>() {
+                        this.CreateGZipLogAttachment(logConfig.InitializationData + ".log"),
+                        this.CreateGZipLogAttachment(logConfig.InitializationData + ".log.001", true),
+                        new DiagnosticBinaryAttachment() { Content = ms.ToArray(), FileDescription = "OpenIZ.config.gz", FileName = "OpenIZ.config.gz", Id = "config" }
+                    };
+
+                }
+            }
+
+            // submit
+            AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+            try
+            {
+                return amiClient.SubmitDiagnosticReport(new DiagnosticReport()
+                {
+                    ApplicationInfo = (report.ApplicationInfo as ApplicationInfo)?.ToDiagnosticReport(),
+                    CreatedBy = report.CreatedBy,
+                    CreatedByKey = report.CreatedByKey,
+                    CreationTime = DateTime.Now,
+                    Attachments = report.Attachments,
+                    Note = report.Note,
+                    Submitter = AuthenticationContext.Current.Session.UserEntity
+                });
+
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error filing bug report: {0}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get menu information
         /// </summary>
-        [RestOperation(UriPath = "/menu", Method = "GET")]
+        [RestOperation(UriPath = "/menu", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
         [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.Json)]
         public List<MenuInformation> GetMenus()
@@ -115,32 +171,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         [RestOperation(UriPath = "/log", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
         [Demand(PolicyIdentifiers.Login)]
-        public List<LogInfo> GetLogs()
+        public List<DiagnosticTextAttachment> GetLogs()
         {
             var query = MiniImsServer.CurrentContext.Request.QueryString;
             if (query["_id"] != null)
             {
-                var logFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", query["_id"]);
-                var logFile = new FileInfo(logFileName);
-                LogInfo retVal = new LogInfo()
-                {
-                    Id = Path.GetFileName(logFileName),
-                    FileDescription = Path.GetFileName(logFileName),
-                    FileName = logFile.FullName,
-                    LastWriteDate = logFile.LastWriteTime,
-                    FileSize = logFile.Length,
-                    Content = File.ReadAllText(logFileName)
-                };
-                return new List<LogInfo>() { retVal };
+                return new List<DiagnosticTextAttachment>() { this.CreateLogAttachment(query["_id"]) };
             }
             else
             {
                 var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log");
-                List<LogInfo> retVal = new List<LogInfo>();
+                List<DiagnosticTextAttachment> retVal = new List<DiagnosticTextAttachment>();
                 foreach (var itm in Directory.GetFiles(logDir))
                 {
                     var logFile = new FileInfo(itm);
-                    retVal.Add(new LogInfo()
+                    retVal.Add(new DiagnosticTextAttachment()
                     {
                         Id = Path.GetFileName(itm),
                         FileDescription = Path.GetFileName(itm),
@@ -154,6 +199,66 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         }
 
+        /// <summary>
+        /// Create full log information
+        /// </summary>
+        private DiagnosticTextAttachment CreateLogAttachment(string logFileId)
+        {
+            var logFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", logFileId);
+            if (!File.Exists(logFileName))
+                return null;
+            var logFile = new FileInfo(logFileName);
+            DiagnosticTextAttachment retVal = new DiagnosticTextAttachment()
+            {
+                Id = Path.GetFileName(logFileName),
+                FileDescription = Path.GetFileName(logFileName),
+                FileName = logFile.FullName,
+                LastWriteDate = logFile.LastWriteTime,
+                FileSize = logFile.Length,
+                Content = File.ReadAllText(logFileName)
+            };
+            return retVal;
+        }
+
+        /// <summary>
+        /// Create full log information
+        /// </summary>
+        private DiagnosticBinaryAttachment CreateGZipLogAttachment(string logFileId, bool truncate = false)
+        {
+            var logFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", logFileId);
+            if (!File.Exists(logFileName))
+                return null;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (GZipStream gz = new GZipStream(ms, CompressionMode.Compress))
+                {
+                    using (FileStream fs = File.OpenRead(logFileName))
+                    {
+                        if (truncate)
+                            fs.Seek(fs.Length - 8096, SeekOrigin.Begin);
+                        int br = 8096;
+                        byte[] buffer = new byte[8096];
+                        while (br == 8096)
+                        {
+                            br = fs.Read(buffer, 0, 8096);
+                            gz.Write(buffer, 0, br);
+                        }
+                    }
+                }
+                var logFile = new FileInfo(logFileName);
+                DiagnosticBinaryAttachment retVal = new DiagnosticBinaryAttachment()
+                {
+                    Id = Path.GetFileName(logFileName),
+                    FileDescription = Path.GetFileName(logFileName) + ".gz",
+                    FileName = logFile.FullName + ".gz",
+                    LastWriteDate = logFile.LastWriteTime,
+                    FileSize = logFile.Length,
+                    Content = ms.ToArray()
+                };
+                return retVal;
+            }
+        }
         /// <summary>
         /// Get the alerts from the service
         /// </summary>

@@ -64,9 +64,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 			{
 				if (options == null) return;
 				else if (options.IfModifiedSince.HasValue)
-					e.AdditionalHeaders.Add(HttpRequestHeader.IfModifiedSince, options.IfModifiedSince.Value.ToString());
+					e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options.IfModifiedSince.Value.ToString();
 				else if (!String.IsNullOrEmpty(options.IfNoneMatch))
-					e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
+					e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options.IfNoneMatch;
 			};
 			client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 			if (options.Timeout.HasValue)
@@ -101,9 +101,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 			{
 				if (options == null) return;
 				else if (options.IfModifiedSince.HasValue)
-					e.AdditionalHeaders.Add(HttpRequestHeader.IfModifiedSince, options.IfModifiedSince.Value.ToString());
+					e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince]= options.IfModifiedSince.Value.ToString();
 				else if (!String.IsNullOrEmpty(options.IfNoneMatch))
-					e.AdditionalHeaders.Add(HttpRequestHeader.IfNoneMatch, options.IfNoneMatch);
+					e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch]= options.IfNoneMatch;
 			};
             client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
 

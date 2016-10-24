@@ -320,11 +320,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
                         {
                             case RestMessageFormat.Raw:
-                                byte[] buffer = new byte[2048];
-                                int br = 2048;
-                                while (br == 2048)
+                                byte[] buffer = new byte[8096];
+                                int br = 8096;
+                                while (br == 8096)
                                 {
-                                    br = (result as Stream).Read(buffer, 0, 2048);
+                                    br = (result as Stream).Read(buffer, 0, 8096);
                                     response.OutputStream.Write(buffer, 0, br);
                                 }
                                 break;

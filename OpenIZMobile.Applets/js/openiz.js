@@ -449,6 +449,55 @@ var OpenIZ = OpenIZ || {
      */
     Util: {
         /**
+         * @summary Perform a simple post of JSON data to the backend
+         * @method
+         * @memberof
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} url The URL from which to post to 
+         * @param {object} controlData.data The query to be posted as JSON
+         */
+        simplePost: function (url, controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+
+            $.ajax({
+                method: 'POST',
+                url: url,
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.error,
+                                error.error_description,
+                                null
+                            ));
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                                data,
+                                null
+                            ));
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally();
+                }
+            });
+        },
+        /**
          * @summary Perform a simple get not necessarily against the IMS
          * @method
          * @memberof OpenIZ.Util   
@@ -1059,6 +1108,19 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
+        /**
+         * @summary Submits a bug report asynchronously
+         * @method
+         * @memberof OpenIZ.App
+         * @param {object} controlData The data which controls the asynchronous operation.
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZData.BugReport} controlData.data The bug report to submit
+         */
+        submitBugReportAsync: function (controlData) {
+            OpenIZ.Util.simplePost('/__app/bug', controlData);
+        },
         /**
          * @summary Gets log information from the IMS service
          * @method

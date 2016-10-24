@@ -73,7 +73,7 @@ namespace BrainBug
             try
             {
                 Console.WriteLine("Extracting {0}...", parameters.BackupFile);
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[8096];
                 using (FileStream ins = File.OpenRead(parameters.BackupFile))
                 {
                     ins.Read(buffer, 0, 24);
@@ -83,10 +83,10 @@ namespace BrainBug
                     {
                         using (ZLibNet.ZLibStream df = new ZLibNet.ZLibStream(ins, ZLibNet.CompressionMode.Decompress))
                         {
-                            int br = 1024;
-                            while (br == 1024)
+                            int br = 8096;
+                            while (br == 8096)
                             {
-                                br = df.Read(buffer, 0, 1024);
+                                br = df.Read(buffer, 0, 8096);
                                 outs.Write(buffer, 0, br);
                             }
                         }

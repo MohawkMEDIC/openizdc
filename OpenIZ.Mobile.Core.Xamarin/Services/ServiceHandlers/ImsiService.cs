@@ -24,6 +24,7 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using OpenIZ.Mobile.Core.Security;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -573,8 +574,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		{
 			return new ErrorResult()
 			{
-				Error = e.Message,
-				ErrorDescription = e.InnerException?.Message
+				Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
+				ErrorDescription = e.InnerException?.ToString()
 			};
 		}
 

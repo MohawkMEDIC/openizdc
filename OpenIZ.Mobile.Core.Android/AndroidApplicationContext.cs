@@ -438,11 +438,11 @@ namespace OpenIZ.Mobile.Core.Android
 			using (MemoryStream response = new MemoryStream())
 			using (var fs = File.OpenRead(itmPath))
 			{
-				int br = 8092;
-				byte[] buffer = new byte[8092];
-				while (br == 8092)
+				int br = 8096;
+				byte[] buffer = new byte[8096];
+				while (br == 8096)
 				{
-					br = fs.Read(buffer, 0, 8092);
+					br = fs.Read(buffer, 0, 8096);
 					response.Write(buffer, 0, br);
 				}
 				return response.ToArray();

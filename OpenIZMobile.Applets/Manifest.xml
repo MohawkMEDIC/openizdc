@@ -102,6 +102,7 @@
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.unknown">Unknown</string>
+    <string key="locale.common.invalidForm">Form submission is invalid</string>
     <string key="locale.dialog.wait.text">Please wait</string>
 
     <!-- Login -->
@@ -269,7 +270,8 @@
     <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
     <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
     <string key="locale.debug.submit">Send Report</string>
-    
+    <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
+    <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
     <string key="locale.about.tabs.versions">Version Information</string>
     <string key="locale.about.tabs.log">Log Files</string>
     <string key="locale.about.tabs.runtime">Environment</string>

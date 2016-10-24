@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Linq;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Http;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -73,6 +74,8 @@ namespace OpenIZ.Mobile.Core
 
         // Fired when application wishes to show progress of some sort
         public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
+
+
         /// <summary>
         /// Fired when the application is starting
         /// </summary>

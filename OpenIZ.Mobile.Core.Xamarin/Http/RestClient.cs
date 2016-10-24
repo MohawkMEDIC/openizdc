@@ -113,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, Dictionary<HttpRequestHeader, String> additionalHeaders, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, TBody body, params KeyValuePair<string, object>[] query)
         {
 
             if (String.IsNullOrEmpty(method))
@@ -135,14 +135,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                 // Additional headers
                 if (additionalHeaders != null)
-                    foreach (var hdr in additionalHeaders)
+                    foreach (var hdr in additionalHeaders.AllKeys)
                     {
-                        if (hdr.Key == HttpRequestHeader.IfModifiedSince)
-                            requestObj.IfModifiedSince = DateTime.Parse(hdr.Value);
+                        if (hdr == "If-Modified-Since")
+                            requestObj.IfModifiedSince = DateTime.Parse(additionalHeaders[hdr]);
                         else
-                            requestObj.Headers.Add(hdr.Key, hdr.Value);
+                            requestObj.Headers.Add(hdr, additionalHeaders[hdr]);
                     }
-                
+
                 // Body was provided?
                 try
                 {
@@ -154,93 +154,109 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         // GET Stream, 
                         Stream requestStream = null;
                         Exception requestException = null;
-                        
-                        //requestStream = requestObj.GetRequestStream();
-                        var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
+
+                        try
                         {
-                            if (r.IsFaulted)
-                                requestException = r.Exception.InnerExceptions.First();
+                            //requestStream = requestObj.GetRequestStream();
+                            var requestTask = requestObj.GetRequestStreamAsync().ContinueWith(r =>
+                            {
+                                if (r.IsFaulted)
+                                    requestException = r.Exception.InnerExceptions.First();
+                                else
+                                    requestStream = r.Result;
+                            });
+
+                            if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
+                            {
+                                throw new TimeoutException();
+                            }
+                            else if (requestException != null) throw requestException;
+
+                            if (contentType == null)
+                                throw new ArgumentNullException(nameof(contentType));
+
+                            serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
+                            (body as IdentifiedData)?.SetDelayLoad(false);
+                            // Serialize and compress with deflate
+                            if (this.Description.Binding.Optimize)
+                            {
+                                requestObj.Headers.Add("Content-Encoding", "deflate");
+                                using (var df = new DeflateStream(requestStream, CompressionMode.Compress))
+                                    serializer.Serialize(df, body);
+                            }
                             else
-                                requestStream = r.Result;
-                        });
-
-                        if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
-                        {
-                            throw new TimeoutException();
+                                serializer.Serialize(requestStream, body);
                         }
-                        else if (requestException != null) throw requestException;
-
-                        if (contentType == null)
-                            throw new ArgumentNullException(nameof(contentType));
-
-                        serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
-                        (body as IdentifiedData)?.SetDelayLoad(false);
-                        // Serialize and compress with deflate
-                        if (this.Description.Binding.Optimize)
+                        finally
                         {
-                            requestObj.Headers.Add("Content-Encoding", "deflate");
-                            using (var df = new DeflateStream(requestStream, CompressionMode.Compress))
-                                serializer.Serialize(df, body);
+                            if (requestStream != null)
+                                requestStream.Dispose();
                         }
-                        else
-                            serializer.Serialize(requestStream, body);
-
                     }
 
                     // Response
                     HttpWebResponse response = null;
                     Exception responseError = null;
 
-                    var responseTask = requestObj.GetResponseAsync().ContinueWith(r => {
-                        if (r.IsFaulted)
-                            responseError = r.Exception.InnerExceptions.First();
-                        else
-                            response = r.Result as HttpWebResponse;
-                    });
-                    if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
-                        throw new TimeoutException();
-                    else if (responseError != null)
+                    try
                     {
-                        if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+                        var responseTask = requestObj.GetResponseAsync().ContinueWith(r =>
+                        {
+                            if (r.IsFaulted)
+                                responseError = r.Exception.InnerExceptions.First();
+                            else
+                                response = r.Result as HttpWebResponse;
+                        });
+                        if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
+                            throw new TimeoutException();
+                        else if (responseError != null)
+                        {
+                            if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+                                return default(TResult);
+                            else
+                                throw responseError;
+                        }
+
+                        var validationResult = this.ValidateResponse(response);
+                        if (validationResult != ServiceClientErrorType.Valid)
+                        {
+                            this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
+                            throw new WebException(Strings.err_response_failed_validation, null, WebExceptionStatus.Success, response);
+                        }
+                        // De-serialize
+                        var responseContentType = response.ContentType;
+                        if (responseContentType.Contains(";"))
+                            responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+
+                        if (response.StatusCode == HttpStatusCode.NotModified)
                             return default(TResult);
-                        else
-                            throw responseError;
-                    }
+                        serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
 
-                    var validationResult = this.ValidateResponse(response);
-                    if (validationResult != ServiceClientErrorType.Valid)
-                    {
-                        this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
-                        throw new WebException(Strings.err_response_failed_validation, null, WebExceptionStatus.Success, response);
-                    }
-                    // De-serialize
-                    var responseContentType = response.ContentType;
-                    if (responseContentType.Contains(";"))
-                        responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
-
-                    if (response.StatusCode == HttpStatusCode.NotModified)
-                        return default(TResult);
-                    serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
-
-                    TResult retVal = default(TResult);
-                    // Compression?
-                    switch (response.Headers[HttpResponseHeader.ContentEncoding])
-                    {
-                        case "deflate":
-                            using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                retVal = (TResult)serializer.DeSerialize(df);
-                            break;
-                        case "gzip":
-                            using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                retVal = (TResult)serializer.DeSerialize(df);
-                            break;
-                        default:
-                            retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
-                            break;
-                    }
+                        TResult retVal = default(TResult);
+                        // Compression?
+                        switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                        {
+                            case "deflate":
+                                using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                    retVal = (TResult)serializer.DeSerialize(df);
+                                break;
+                            case "gzip":
+                                using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                    retVal = (TResult)serializer.DeSerialize(df);
+                                break;
+                            default:
+                                retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
+                                break;
+                        }
 
                     (retVal as IdentifiedData)?.SetDelayLoad(true);
-                    return retVal;
+                        return retVal;
+                    }
+                    finally
+                    {
+                        if (response != null)
+                            response.Dispose();
+                    }
                 }
                 catch(TimeoutException e)
                 {
