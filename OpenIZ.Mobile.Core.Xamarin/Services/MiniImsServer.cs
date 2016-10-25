@@ -43,6 +43,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.ViewModel.Description;
 using System.Diagnostics;
+using OpenIZ.Mobile.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -217,7 +218,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
-                            AuthenticationContext.Current = new AuthenticationContext(session);
+                            try
+                            {
+                                AuthenticationContext.Current = new AuthenticationContext(session);
+                            }
+                            catch(SessionExpiredException)
+                            {
+                                this.m_tracer.TraceWarning("Session {0} expired will attempt refresh", session.Key);
+                                ApplicationContext.Current.IdentityProviderService.Authenticate(session.Principal, null);
+                            }
                     }
                 }
 
