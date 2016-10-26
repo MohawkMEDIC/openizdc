@@ -13,7 +13,7 @@
                 <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control"/>
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(authority, identifier)">
-                        <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
+                        <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
                     <button class="btn btn-default" type="button" ng-if="addIdentifier" ng-click="addIdentifier()">
                         <span class="glyphicon glyphicon-plus"></span> 

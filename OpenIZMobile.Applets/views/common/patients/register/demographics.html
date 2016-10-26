@@ -1,7 +1,7 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="oiz-demographics"
      xmlns:bind="http://openiz.org/applet/binding">
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+        <label class="col-xs-2 control-label ng-cloak" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
         <div class="col-xs-10">
             <div class="input-group">
                 <input type="text" name="givenName" id="givenName" class="tagEntry form-control" aria-describedby="givenNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Given" />
@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+        <label class="col-xs-2 control-label ng-cloak" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
         <div class="col-xs-10">
             <div class="input-group">
                 <input type="text" name="familyName" id="familyName" class="tagEntry form-control" aria-describedby="familyNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Family" />
@@ -24,13 +24,13 @@
     </div>
 
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+        <label class="col-xs-2 control-label ng-cloak" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
         <div class="col-xs-10" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
             <div class="input-group">
                 <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon">
                     <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
-                    <label for="approximateDob">
+                    <label for="approximateDob" class="ng-cloak">
                         {{ 'locale.patient.demographic.dob.fuzzy' | i18n }}
                     </label>
                 </span>
@@ -42,7 +42,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+        <label class="col-xs-2 control-label ng-cloak" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
         <div class="col-xs-4"  ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
             <div class="input-group" >
                 <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
@@ -52,7 +52,7 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.gender' | i18n }}</p>
+            <p ng-show="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>
 
