@@ -69,6 +69,57 @@ var OpenIZ = OpenIZ || {
      */
     Act: {
         /**
+         * @summary Creates a fulfillment relationship act
+         * @description This method creates a new act which fulfills the specified act
+         * @param {OpenIZModel.Act} act The act which the new act should fulfill
+         */
+        createFulfillment: function(act) {
+
+            var fulfills = new OpenIZModel.Act();
+
+            // Clone act
+            switch (act.$type) {
+                case "SubstanceAdministration":
+                    fulfills = new OpenIZModel.SubstanceAdministration(act);
+                    break;
+                case "Observation":
+                    fulfills = new OpenIZModel.Observation(act);
+                    break;
+                case "QuantityObservation":
+                    fulfills = new OpenIZModel.QuantityObservation(act);
+                    break;
+                case "CodedObservation":
+                    fulfills = new OpenIZModel.CodedObservation(act);
+                    break;
+                case "TextObservation":
+                    fulfills = new OpenIZModel.TextObservation(act);
+                    break;
+                case "PatientEncounter":
+                    fulfills = new OpenIZModel.PatientEncounter(act);
+                    break;
+                case "ControlAct":
+                    fulfills = new OpenIZModel.ControlAct(act);
+                    break;
+                default:
+                    break;
+            }
+
+            // Re-assign the identifier
+            fulfills.id = OpenIZ.App.newGuid();
+            fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
+            fulfills.creationTime = new Date();
+            fulfills.actTime = new Date();
+            fulfills.createdBy = fulfills.createdByModel = null;
+            fulfills.statusConcept = OpenIZModel.StatusKeys.Active;
+            fulfills.etag = null;
+
+            // Add fulfillment relationship
+            fulfills.relationship = fulfills.relationship || {};
+            fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
+            fulfills.relationship.Fulfills.target = act.id;
+
+        },
+        /**
           * @summary Perform a search of acts asynchronously
           * @memberof OpenIZ.Act
           * @method

@@ -85,6 +85,7 @@ Association : function(copyData) {
 	this.$type = copyData.$type;
 	this.etag = copyData.etag;
 	}
+
 },  // Association 
 // OpenIZ.Core.Model.IdentifiedData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
 /**
@@ -9134,3 +9135,4 @@ Exception : function (message, detail, cause) {
     this.caused_by = cause;
 
 }} // OpenIZModel
+
