@@ -35,6 +35,7 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -114,6 +115,12 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         [JsonIgnore, DataIgnore]
         public IPrincipal Principal { get; private set; }
+
+        /// <summary>
+        /// Clear the set cache
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void ClearCached() { this.m_entity = null; }
 
         /// <summary>
         /// Gets the user entity

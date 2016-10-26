@@ -190,13 +190,13 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === null)
                         console.error(error);
                     else if (error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
 
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -246,13 +246,13 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === null)
                         console.error(error);
                     else if (error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
 
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -296,12 +296,12 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === undefined)
                         console.error(error);
                     else if (error != undefined && error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -343,12 +343,12 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === undefined)
                         console.error(error);
                     else if (error != undefined && error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -481,13 +481,13 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === null)
                         console.error(error);
                     else if (error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
 
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -514,7 +514,7 @@ var OpenIZ = OpenIZ || {
             $.getJSON(url, controlData.query, function (data) {
 
                 if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.error),
+                    controlData.onException(new OpenIZModel.Exception(data.type, data.error),
                         data.error_description,
                         null
                     );
@@ -522,20 +522,20 @@ var OpenIZ = OpenIZ || {
                     controlData.continueWith(data);
                 }
                 else
-                    controlData.onException(new OpenIZModel.Exception("err_general",
+                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                         data,
                         null
                     ));
             }).error(function (data) {
                 var error = data.responseJSON;
                 if (error != null && error.error !== undefined) //  error
-                    controlData.onException(new OpenIZModel.Exception(error.error,
+                    controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                             error.error_description,
                             null
                         ));
 
                 else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                             data,
                             null
                         ));
@@ -764,7 +764,7 @@ var OpenIZ = OpenIZ || {
                  contentType: 'application/x-www-urlform-encoded',
                  success: function (xhr, data) {
                      if (data != null && data.error !== undefined)
-                         controlData.onException(new OpenIZModel.Exception(data.error),
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error),
                              data.error_description,
                              null
                          );
@@ -773,7 +773,7 @@ var OpenIZ = OpenIZ || {
                          OpenIZ.Authentication.$session = data;
                      }
                      else
-                         controlData.onException(new OpenIZModel.Exception("err_general",
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                              data,
                              null
                          ));
@@ -784,13 +784,13 @@ var OpenIZ = OpenIZ || {
                  error: function (data) {
                      var error = data.responseJSON;
                      if (error != null && error.error !== undefined) // oauth 2 error
-                         controlData.onException(new OpenIZModel.Exception(error.error,
+                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                  error.error_description,
                                  null
                              ));
 
                      else // unknown error
-                         controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                  data,
                                  null
                              ));
@@ -831,14 +831,14 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (xhr, data) {
                     if (data != null && data.error !== undefined)
-                        controlData.onException(new OpenIZModel.Exception(data.error),
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error),
                             data.error_description,
                             null
                         );
                     else if (data != null)
                         controlData.continueWith(data);
                     else
-                        controlData.onException(new OpenIZModel.Exception("err_general",
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                             data,
                             null
                         ));
@@ -849,13 +849,13 @@ var OpenIZ = OpenIZ || {
                 error: function (data) {
                     var error = data.responseJSON;
                     if (error != null && error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
 
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -908,12 +908,12 @@ var OpenIZ = OpenIZ || {
                     if (error != null && error.error !== undefined)
                     {
                         // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null));
                     }
                     else
                     {
                         // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null));
                     }
 
                     if (controlData.finally !== undefined)
@@ -1045,11 +1045,11 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException !== undefined) {
                         if (error.error !== undefined) // error
                         {
-                            controlData.onException(new OpenIZModel.Exception(error.error, error.error_description, null));
+                            controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null));
                         }
                         else {
                             // unknown error
-                            controlData.onException(new OpenIZModel.Exception("err_general" + error, data, null));
+                            controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null));
                         }
                     }
                     if (controlData.finally !== undefined) {
@@ -1299,7 +1299,7 @@ var OpenIZ = OpenIZ || {
             }
             catch (e) {
                 console.error(e);
-                throw new OpenIZModel.Exception(OpenIZ.Localization.getString("err_scan_barcode"), e.message, e);
+                throw new OpenIZModel.Exception("Exception", OpenIZ.Localization.getString("err_scan_barcode"), e.message, e);
             }
         },
         /**
@@ -1411,13 +1411,13 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException === null)
                         console.error(error);
                     else if (error.error !== undefined) // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.error,
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
                             ));
 
                     else // unknown error
-                        controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
                             ));
@@ -1488,7 +1488,7 @@ var OpenIZ = OpenIZ || {
             }
             catch (e) {
                 console.error(e);
-                throw new OpenIZModel.Exception("Error getting string list", e.message, e);
+                throw new OpenIZModel.Exception("Exception", "Error getting string list", e.message, e);
             }
 
         }
@@ -1954,7 +1954,7 @@ var OpenIZ = OpenIZ || {
                 return null;
             }
             catch (e) {
-                throw new OpenIZModel.Exception(e.message, e.detail, e);
+                throw new OpenIZModel.Exception("Exception", e.message, e.detail, e);
             }
         },
         /**
@@ -1973,7 +1973,7 @@ var OpenIZ = OpenIZ || {
                 OpenIZ.Configuration.$configuration.application.setting.push({ key: key, value: value });
             }
             catch (e) {
-                throw new OpenIZModel.Exception(e.message, e.detail, e);
+                throw new OpenIZModel.Exception("Exception", e.message, e.detail, e);
             }
         },
         /**
@@ -2025,13 +2025,14 @@ var OpenIZ = OpenIZ || {
                      url: '/__config/realm',
                      data: {
                          realmUri: controlData.domain,
-                         deviceName: controlData.deviceName
+                         deviceName: controlData.deviceName,
+                         force: controlData.force
                      },
                      dataType: "json",
                      contentType: 'application/x-www-urlform-encoded',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.error),
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error),
                                  data.error_description,
                                  null
                              );
@@ -2040,7 +2041,7 @@ var OpenIZ = OpenIZ || {
                              controlData.continueWith(xhr);
                          }
                          else if(controlData.onException != null)
-                             controlData.onException(new OpenIZModel.Exception("err_general",
+                             controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                                  data,
                                  null
                              ));
@@ -2051,13 +2052,13 @@ var OpenIZ = OpenIZ || {
                      error: function (data) {
                          var error = data.responseJSON;
                          if (error != null && error.error !== undefined) // config error
-                             controlData.onException(new OpenIZModel.Exception(error.error,
+                             controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
                                      null
                                  ));
 
                          else if(controlData.onException != null) // unknown error
-                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                             controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                      data,
                                      null
                                  ));
@@ -2111,7 +2112,7 @@ var OpenIZ = OpenIZ || {
                      contentType: 'application/json',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.error),
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error),
                                  data.error_description,
                                  null
                              );
@@ -2120,7 +2121,7 @@ var OpenIZ = OpenIZ || {
                              controlData.continueWith(xhr);
                          }
                          else
-                             controlData.onException(new OpenIZModel.Exception("err_general",
+                             controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                                  data,
                                  null
                              ));
@@ -2131,13 +2132,13 @@ var OpenIZ = OpenIZ || {
                      error: function (data) {
                          var error = data.responseJSON;
                          if (error != null && error.error !== undefined) // config error
-                             controlData.onException(new OpenIZModel.Exception(error.error,
+                             controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
                                      null
                                  ));
 
                          else // unknown error
-                             controlData.onException(new OpenIZModel.Exception("err_general" + error,
+                             controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                      data,
                                      null
                                  ));
@@ -2279,7 +2280,7 @@ $(document).ajaxError(function (e, data, setting, err) {
         OpenIZ.Authentication.showElevationDialog();
     }
     else
-        throw new OpenIZModel.Exception("err_request", err, null);
+        throw new OpenIZModel.Exception("Exception", "err_request", err, null);
 });
 
 // Parameters

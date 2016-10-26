@@ -162,7 +162,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return new ErrorResult()
             {
                 Error = e.Message,
-                ErrorDescription = e.InnerException?.Message
+                ErrorDescription = e.InnerException?.Message,
+                ErrorType = e.GetType().Name
             };
         }
 
@@ -235,7 +236,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 {
                     using (FileStream fs = File.OpenRead(logFileName))
                     {
-                        if (truncate)
+                        if (truncate && fs.Length > 8096)
                             fs.Seek(fs.Length - 8096, SeekOrigin.Begin);
                         int br = 8096;
                         byte[] buffer = new byte[8096];

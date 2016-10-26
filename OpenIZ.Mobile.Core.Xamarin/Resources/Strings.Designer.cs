@@ -79,6 +79,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Device has already been registered..
+        /// </summary>
+        internal static string err_duplicate_deviceName {
+            get {
+                return ResourceManager.GetString("err_duplicate_deviceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Package is already installed.
         /// </summary>
         internal static string err_duplicate_package_name {
