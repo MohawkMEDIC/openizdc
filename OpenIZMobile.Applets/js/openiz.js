@@ -112,6 +112,7 @@ var OpenIZ = OpenIZ || {
             fulfills.createdBy = fulfills.createdByModel = null;
             fulfills.statusConcept = OpenIZModel.StatusKeys.Active;
             fulfills.etag = null;
+            fulfills.startTime = fulfills.stopTime = null;
 
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
