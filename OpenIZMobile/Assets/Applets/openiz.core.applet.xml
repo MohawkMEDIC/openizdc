@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.7.8509">
+  <info id="org.openiz.core" version="0.6.7.8384">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -1749,7 +1749,7 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
         OpenIZ.App.submitBugReportAsync({
             data: $scope.report,
             continueWith: function (data) {
-                $scope.id = data.id;
+                $scope.report = data;
                 $scope.$apply();
             },
             onException: function (error) {
@@ -25921,8 +25921,17 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </form>
           <div class="alert alert-success" ng-if="report.id">
-        {{ 'locale.debug.reportSubmitted' | i18n }}
-    </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                {{ 'locale.debug.reportSubmitted' | i18n }}
+            </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center">
+                {{ 'locale.debug.reportTicketId' | i18n }}
+                <span class="label-success"><strong>{{ report.ticketId }}</strong></span></div>
+            </div>
+          </div>
         </div>
       </content>
     </contentHtml>
@@ -26897,6 +26906,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
     <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
     <string key="locale.debug.submit">Send Report</string>
+    <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
+    <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
     <string key="locale.about.tabs.versions">Version Information</string>
     <string key="locale.about.tabs.log">Log Files</string>
     <string key="locale.about.tabs.runtime">Environment</string>

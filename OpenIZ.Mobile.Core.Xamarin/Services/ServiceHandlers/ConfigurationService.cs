@@ -26,6 +26,8 @@ using System.Threading.Tasks;
 using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Entities;
+using System.Data;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -227,6 +229,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Stage 1 - Demand access admin policy
             try
             {
+
                 new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
 
                 // We're allowed to access server admin!!!! Yay!!!
@@ -330,15 +333,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     // Create application user
                     var role = amiClient.GetRoles(o=>o.Name == "SYNCHRONIZERS").CollectionItem.First();
 
+
                     // Does the user actually exist?
                     var existingClient = amiClient.GetUsers(o => o.UserName == deviceName);
                     if (existingClient.CollectionItem.Count > 0)
                     {
-                        amiClient.UpdateUser(existingClient.CollectionItem.First().UserId.Value, new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo()
-                        {
-                            Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
-                            UserName = deviceName
-                        });
+                        if (!realmData.ContainsKey("force") || !Boolean.Parse(realmData["force"][0]))
+                            throw new DuplicateNameException(Strings.err_duplicate_deviceName);
+                        else
+                            amiClient.UpdateUser(existingClient.CollectionItem.First().UserId.Value, new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo()
+                            {
+                                Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
+                                UserName = deviceName
+                            });
                     }
                     else
                         // Create user
@@ -464,7 +471,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error joining context: {0}", e);
-
+                throw;
             }
             return null;
         }
@@ -477,7 +484,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return new ErrorResult()
             {
                 Error = e.Message,
-                ErrorDescription = e.InnerException?.Message
+                ErrorDescription = e.InnerException?.Message,
+                ErrorType = e.GetType().Name
             };
         }
     }

@@ -575,8 +575,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 			return new ErrorResult()
 			{
 				Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
-				ErrorDescription = e.InnerException?.ToString()
-			};
+				ErrorDescription = e.InnerException?.ToString(),
+                ErrorType = e.GetType().Name
+            };
 		}
 
 		/// <summary>
@@ -591,6 +592,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		{
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            AuthenticationContext.Current?.Session?.ClearCached();
             //IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			return securityRepositoryService.SaveUserEntity(user);
 		}

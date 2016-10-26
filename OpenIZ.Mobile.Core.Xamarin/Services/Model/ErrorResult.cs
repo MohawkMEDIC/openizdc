@@ -32,7 +32,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 	[JsonObject]
 	public class ErrorResult
 	{
-		[JsonProperty("error")]
+        [JsonProperty("type")]
+        public String ErrorType { get; set; }
+        [JsonProperty("error")]
 		public String Error { get; set; }
 		[JsonProperty("error_description")]
 		public String ErrorDescription { get; set; }

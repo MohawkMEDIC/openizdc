@@ -123,6 +123,9 @@
   <data name="err_certificate_not_found" xml:space="preserve">
     <value>The specified security certificate was not found</value>
   </data>
+  <data name="err_duplicate_deviceName" xml:space="preserve">
+    <value>Device has already been registered.</value>
+  </data>
   <data name="err_duplicate_package_name" xml:space="preserve">
     <value>Package is already installed</value>
   </data>

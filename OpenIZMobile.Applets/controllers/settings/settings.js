@@ -56,15 +56,27 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     // join realm
     $scope.joinRealm = function (realm) {
 
-        var doJoin = function () {
+        var doJoin = function (force) {
             OpenIZ.App.showWait();
 
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,
+                force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
                     alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+                },
+                onException: function (error) {
+                    if (error.type == 'DuplicateNameException')
+                        if (confirm(OpenIZ.Localization.getString('locale.settings.status.duplicateName')))
+                            doJoin(true);
+                        else {
+                            if (error.message != null)
+                                alert(error.message);
+                            else
+                                alert(error);
+                        }
                 },
                 finally: function () {
                     OpenIZ.App.hideWait();

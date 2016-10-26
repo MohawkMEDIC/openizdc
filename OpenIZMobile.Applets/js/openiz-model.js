@@ -85,7 +85,6 @@ var OpenIZModel = OpenIZModel || {
             this.$type = copyData.$type;
             this.etag = copyData.etag;
         }
-
     },  // Association 
     // OpenIZ.Core.Model.IdentifiedData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
     /**
@@ -9127,13 +9126,13 @@ var OpenIZModel = OpenIZModel || {
          * @param {Object} detail Any detail / diagnostic information
          * @param {OpenIZModel#Exception} cause The cause of the exception
          */
-    Exception: function (message, detail, cause) {
+    Exception: function (type, message, detail, cause) {
         _self = this;
 
+        this.type = type;
         this.message = message;
         this.details = detail;
         this.caused_by = cause;
 
     }
 } // OpenIZModel
-

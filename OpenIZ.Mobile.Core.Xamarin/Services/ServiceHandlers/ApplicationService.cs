@@ -162,7 +162,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return new ErrorResult()
             {
                 Error = e.Message,
-                ErrorDescription = e.InnerException?.Message
+                ErrorDescription = e.InnerException?.Message,
+                ErrorType = e.GetType().Name
             };
         }
 
