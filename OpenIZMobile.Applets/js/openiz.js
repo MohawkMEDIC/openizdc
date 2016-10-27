@@ -107,10 +107,12 @@ var OpenIZ = OpenIZ || {
             // Re-assign the identifier
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
+            fulfills.moodConceptModel = null;
             fulfills.creationTime = new Date();
             fulfills.actTime = new Date();
             fulfills.createdBy = fulfills.createdByModel = null;
             fulfills.statusConcept = OpenIZModel.StatusKeys.Active;
+            fulfills.statusConceptModel = null;
             fulfills.etag = null;
             fulfills.startTime = fulfills.stopTime = null;
 
@@ -118,7 +120,7 @@ var OpenIZ = OpenIZ || {
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
             fulfills.relationship.Fulfills.target = act.id;
-
+            return fulfills;
         },
         /**
           * @summary Perform a search of acts asynchronously
