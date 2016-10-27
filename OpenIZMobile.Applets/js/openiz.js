@@ -1044,10 +1044,10 @@ var OpenIZ = OpenIZ || {
          * @param {date} controlData.maxDate If the care plan result is to be filtered on an upper bound then the care plan to retrieve
          * @param {date} controlData.onDate Specifies the care plan service only return those objects where the proposed action should occur on the specified date
          * @param {uuid} controlData.classConcept Specifies the classification of acts which should be returned
-         * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {OpenIZModel.Patient} controlData.data The seed data which should be passed to the forecasting engine in order to calculate the plan
          * @param {string} controlData.query The additional query parameters which should be passed to the forecaster
          * @example
          * OpenIZ.CarePlan.getCarePlanAsync({
@@ -2348,3 +2348,39 @@ $(document).ajaxError(function (e, data, setting, err) {
         OpenIZ.urlParams[decode(match[1])] = decode(match[2]);
 })();
 
+/**
+ * @method
+ * @summary Get the week of the year
+ */
+Date.prototype.getWeek = function () {
+    var oneJan = this.getFirstDayOfYear();
+    return Math.ceil((((this - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+}
+
+/** 
+ * @method
+ * @summary Get the first day of the year
+ */
+Date.prototype.getFirstDayOfYear = function () {
+    return new Date(this.getFullYear(), 0, 1);
+}
+
+/**
+ * @method 
+ * @summary Get the same day of the following week
+ */
+Date.prototype.asNextWeek = function () {
+    var retVal = this.getFirstDayOfYear();
+    retVal.setDate(retVal.getDate() + (new Date().getWeek() * 7));
+    return retVal;
+}
+
+/**
+ * @summary Gets the date on the next day
+ * @method
+ */
+Date.prototype.tomorrow = function () {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setDate(retVal.getDate() + 1);
+    return retVal;
+}
