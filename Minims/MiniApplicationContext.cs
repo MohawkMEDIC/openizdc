@@ -521,6 +521,14 @@ namespace Minims
 
                 tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
 
+                tw.WriteLine("OpenIZApplicationService.GetTemplateForm = function(templateId) {");
+                tw.WriteLine("\tswitch(templateId) {");
+                foreach(var itm in this.LoadedApplets.SelectMany(o=>o.Templates))
+                {
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Mnemonic.ToLowerInvariant(), itm.Form);
+                }
+                tw.WriteLine("\t}");
+                tw.WriteLine("}");
 
                 // Read the static shim
                 using (StreamReader shim = new StreamReader(typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js")))

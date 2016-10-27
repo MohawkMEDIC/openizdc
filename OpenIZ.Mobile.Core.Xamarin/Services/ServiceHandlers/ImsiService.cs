@@ -41,27 +41,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         // Tracer 
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 
-		/// <summary>
-		/// Creates an act.
-		/// </summary>
-		/// <param name="actToInsert">The act to be inserted.</param>
-		/// <returns>Returns the inserted act.</returns>
-		[RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Creates an act.
+        /// </summary>
+        /// <param name="actToInsert">The act to be inserted.</param>
+        /// <returns>Returns the inserted act.</returns>
+        [RestOperation(Method = "POST", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.WriteClinicalData)]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
-		{
-			IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act CreateAct([RestMessage(RestMessageFormat.SimpleJson)]Act actToInsert)
+        {
+            IActRepositoryService actService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
-			return actService.Insert(actToInsert);
-		}
+            return actService.Insert(actToInsert);
+        }
 
-		/// <summary>
-		/// Creates a patient.
-		/// </summary>
-		/// <param name="patientToInsert">The patient to be inserted.</param>
-		/// <returns>Returns the inserted patient.</returns>
-		[RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Creates a patient.
+        /// </summary>
+        /// <param name="patientToInsert">The patient to be inserted.</param>
+        /// <returns>Returns the inserted patient.</returns>
+        [RestOperation(Method = "POST", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.WriteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Patient CreatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToInsert)
@@ -69,12 +69,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
             return repository.Insert(patientToInsert).GetLocked() as Patient;
         }
-        
+
         /// <summary>
-		/// Creates a bundle.
-		/// </summary>
-		/// <param name="bundleToInsert">The bundle to be inserted.</param>
-		/// <returns>Returns the inserted bundle.</returns>
+        /// Creates a bundle.
+        /// </summary>
+        /// <param name="bundleToInsert">The bundle to be inserted.</param>
+        /// <returns>Returns the inserted bundle.</returns>
         [RestOperation(Method = "POST", UriPath = "/Bundle", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.WriteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
@@ -85,55 +85,46 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return bundleService.Insert(bundleToInsert);
         }
 
-		/// <summary>
-		/// Gets a list of acts.
-		/// </summary>
-		/// <returns>Returns a list of acts.</returns>
-		[RestOperation(Method = "GET", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.QueryClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-		public Bundle GetAct()
-		{
-			var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+        public IdentifiedData GetAct()
+        {
+            var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
-			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-			if (search.ContainsKey("id"))
-			{
-				// Force load from DB
-				MemoryCache.Current.RemoveObject(typeof(Act), Guid.Parse(search["id"].FirstOrDefault()));
-				var actId = Guid.Parse(search["id"].FirstOrDefault());
-				var act = actRepositoryService.Get<Act>(actId, Guid.Empty);
-				act = act.LoadDisplayProperties().LoadImmediateRelations();
+            if (search.ContainsKey("_id"))
+            {
+                // Force load from DB
+                MemoryCache.Current.RemoveObject(typeof(Act), Guid.Parse(search["_id"].FirstOrDefault()));
+                var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                act = act.LoadDisplayProperties().LoadImmediateRelations();
+                return act;
+            }
+            else
+            {
 
-				Bundle bundle = new Bundle();
+                int totalResults = 0;
 
-				if (act != null)
-				{
-					act.Relationships = act.Relationships.OrderByDescending(a => a.TargetAct.CreationTime).ToList();
-					bundle.Count = 1;
-					bundle.Item = new List<IdentifiedData> { act };
-					bundle.TotalResults = 1;
-				}
+                var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
 
-				return bundle;
-			}
+                results = results.Select(a => a.LoadDisplayProperties().LoadImmediateRelations());
+                results.Select(a => a).ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
 
-			int totalResults = 0;
-
-			var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
-
-			results = results.Select(a => a.LoadDisplayProperties().LoadImmediateRelations());
-			results.Select(a => a).ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
-
-			return new Bundle
-			{
-				Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
-				Item = results.OfType<IdentifiedData>().ToList(),
-				Offset = 0,
-				TotalResults = totalResults
-			};
-		}
+                return new Bundle
+                {
+                    Count = results.Count(x => x.GetType() == typeof(IdentifiedData)),
+                    Item = results.OfType<IdentifiedData>().ToList(),
+                    Offset = 0,
+                    TotalResults = totalResults
+                };
+            }
+        }
 
         /// <summary>
         /// Gets an entity
@@ -146,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-            
+
             if (search.ContainsKey("id"))
             {
                 // Force load from DB
@@ -222,7 +213,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 patient = patient.LoadDisplayProperties().LoadImmediateRelations();
-	            return patient;
+                return patient;
             }
             else
             {
@@ -248,8 +239,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     search.Remove("any");
                     search.Remove("any[]");
                 }
-                
-                if(search.Keys.Count(o=>!o.StartsWith("_")) > 0)
+
+                if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
                 {
                     var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
                     this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
@@ -262,14 +253,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 }
 
                 // Serialize the response
-                var itms = retVal.OfType<Patient>().Select(o=>o.LoadDisplayProperties().LoadImmediateRelations());
+                var itms = retVal.OfType<Patient>().Select(o => o.LoadDisplayProperties().LoadImmediateRelations());
                 return new Bundle()
-                    {
-                        Item = itms.OfType<IdentifiedData>().ToList(),
-                        Offset = offset,
-                        Count = itms.Count(),
-                        TotalResults = totalResults
-                    };
+                {
+                    Item = itms.OfType<IdentifiedData>().ToList(),
+                    Offset = offset,
+                    Count = itms.Count(),
+                    TotalResults = totalResults
+                };
             }
         }
 
@@ -277,7 +268,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 		/// Gets providers.
 		/// </summary>
 		/// <returns>Returns a list of providers.</returns>
-        [RestOperation(Method = "GET", UriPath = "/Provider" ,FaultProvider = nameof(ImsiFault))]
+        [RestOperation(Method = "GET", UriPath = "/Provider", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.QueryClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetProvider()
@@ -306,7 +297,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
 
                 this.m_tracer.TraceVerbose("Searching Providers : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
-                
+
                 var retVal = providerService.Find(predicate, offset, count, out totalResults);
 
                 // Serialize the response
@@ -329,59 +320,59 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public Bundle GetManufacturedMaterial()
         {
-			var bundle = new Bundle();
+            var bundle = new Bundle();
 
-			try
-			{
-				var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-				var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
-				var manufacturedMaterialService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+            try
+            {
+                var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+                var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
+                var manufacturedMaterialService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 
-				if (search.ContainsKey("id"))
-				{
-					// Force load from DB
-					MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), Guid.Parse(search["id"].FirstOrDefault()));
+                if (search.ContainsKey("id"))
+                {
+                    // Force load from DB
+                    MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), Guid.Parse(search["id"].FirstOrDefault()));
 
-					var manufacturedMaterialId = Guid.Parse(search["id"].FirstOrDefault());
-					var manufacturedMaterial = manufacturedMaterialService.GetManufacturedMaterial(manufacturedMaterialId, Guid.Empty);
+                    var manufacturedMaterialId = Guid.Parse(search["id"].FirstOrDefault());
+                    var manufacturedMaterial = manufacturedMaterialService.GetManufacturedMaterial(manufacturedMaterialId, Guid.Empty);
 
-					manufacturedMaterial = manufacturedMaterial.LoadDisplayProperties().LoadImmediateRelations();
+                    manufacturedMaterial = manufacturedMaterial.LoadDisplayProperties().LoadImmediateRelations();
 
-					if (manufacturedMaterial != null)
-					{
-						bundle.Count = 1;
-						bundle.Item = new List<IdentifiedData> { manufacturedMaterial };
-						bundle.Reconstitute();
-						bundle.TotalResults = 1;
-					}
+                    if (manufacturedMaterial != null)
+                    {
+                        bundle.Count = 1;
+                        bundle.Item = new List<IdentifiedData> { manufacturedMaterial };
+                        bundle.Reconstitute();
+                        bundle.TotalResults = 1;
+                    }
 
-					return bundle;
-				}
+                    return bundle;
+                }
 
-				this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+                this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-				
-				int totalResults = 0,
-					offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-				var manufacturedMaterials = manufacturedMaterialService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
+                int totalResults = 0,
+                    offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                    count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-				// Serialize the response
-				bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
-				bundle.Item = manufacturedMaterials.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList();
-				bundle.Offset = offset;
-				bundle.TotalResults = totalResults;
-			}
-			catch (Exception e)
-			{
+                var manufacturedMaterials = manufacturedMaterialService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
+
+                // Serialize the response
+                bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
+                bundle.Item = manufacturedMaterials.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList();
+                bundle.Offset = offset;
+                bundle.TotalResults = totalResults;
+            }
+            catch (Exception e)
+            {
 #if DEBUG
-				this.m_tracer.TraceError("{0}", e);
+                this.m_tracer.TraceError("{0}", e);
 #endif
-				this.m_tracer.TraceError("{0}", e.Message);
-			}
+                this.m_tracer.TraceError("{0}", e.Message);
+            }
 
-			return bundle;
+            return bundle;
         }
 
         /// <summary>
@@ -522,15 +513,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return retVal;
         }
 
-		/// <summary>
-		/// Gets the user profile of the current user.
-		/// </summary>
-		/// <returns>Returns the user profile of the current user.</returns>
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		[RestOperation(UriPath = "/UserEntity", Method = "GET")]
+        /// <summary>
+        /// Gets the user profile of the current user.
+        /// </summary>
+        /// <returns>Returns the user profile of the current user.</returns>
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        [RestOperation(UriPath = "/UserEntity", Method = "GET")]
         [Demand(PolicyIdentifiers.Login)]
         public IdentifiedData GetUserEntity()
-		{
+        {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var securityService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
@@ -565,141 +556,141 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     TotalResults = totalResults
                 };
             }
-		}
+        }
 
-		/// <summary>
-		/// Handle a fault
-		/// </summary>
-		public ErrorResult ImsiFault(Exception e)
-		{
-			return new ErrorResult()
-			{
-				Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
-				ErrorDescription = e.InnerException?.ToString(),
+        /// <summary>
+        /// Handle a fault
+        /// </summary>
+        public ErrorResult ImsiFault(Exception e)
+        {
+            return new ErrorResult()
+            {
+                Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
+                ErrorDescription = e.InnerException?.ToString(),
                 ErrorType = e.GetType().Name
             };
-		}
+        }
 
-		/// <summary>
-		/// Saves the user profile.
-		/// </summary>
-		/// <param name="user">The users modified profile information.</param>
-		/// <returns>Returns the users updated profile.</returns>
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		[RestOperation(UriPath = "/UserEntity", Method = "PUT")]
+        /// <summary>
+        /// Saves the user profile.
+        /// </summary>
+        /// <param name="user">The users modified profile information.</param>
+        /// <returns>Returns the users updated profile.</returns>
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        [RestOperation(UriPath = "/UserEntity", Method = "PUT")]
         [Demand(PolicyIdentifiers.Login)]
         public UserEntity UpdateUserEntity([RestMessage(RestMessageFormat.SimpleJson)] UserEntity user)
-		{
+        {
             var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             AuthenticationContext.Current?.Session?.ClearCached();
             //IDataPersistenceService<UserEntity> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
-			return securityRepositoryService.SaveUserEntity(user);
-		}
+            return securityRepositoryService.SaveUserEntity(user);
+        }
 
-		/// <summary>
-		/// Search places
-		/// </summary>
-		[RestOperation(Method = "GET", UriPath = "/Place", FaultProvider = nameof(ImsiFault))]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public IdentifiedData GetPlace()
-		{
-			var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-			var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
+        /// <summary>
+        /// Search places
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/Place", FaultProvider = nameof(ImsiFault))]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetPlace()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
-			if (search.ContainsKey("_id"))
-				return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty).LoadDisplayProperties().LoadImmediateRelations();
-			else
-			{
-				var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
-				this.m_tracer.TraceVerbose("Searching Places : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
+            if (search.ContainsKey("_id"))
+                return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty).LoadDisplayProperties().LoadImmediateRelations();
+            else
+            {
+                var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
+                this.m_tracer.TraceVerbose("Searching Places : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-				int totalResults = 0,
-					offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-					count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-				var retVal = placeService.Find(predicate, offset, count, out totalResults);
+                int totalResults = 0,
+                    offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                    count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+                var retVal = placeService.Find(predicate, offset, count, out totalResults);
 
                 // Serialize the response
                 var itms = retVal.OfType<Place>().Select(o => o.LoadDisplayProperties().LoadImmediateRelations());
 
                 return new Bundle()
-				{
-					Item = itms.OfType<IdentifiedData>().ToList(),
-					Offset = offset,
-					Count = count,
-					TotalResults = totalResults
-				};
-			}
-		}
+                {
+                    Item = itms.OfType<IdentifiedData>().ToList(),
+                    Offset = offset,
+                    Count = count,
+                    TotalResults = totalResults
+                };
+            }
+        }
 
-		/// <summary>
-		/// Updates an act.
-		/// </summary>
-		/// <param name="act">The act to update.</param>
-		/// <returns>Returns the updated act.</returns>
-		[RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Updates an act.
+        /// </summary>
+        /// <param name="act">The act to update.</param>
+        /// <returns>Returns the updated act.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.WriteClinicalData)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-		public Act UpdateAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
-		{
-			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+        public Act UpdateAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+        {
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-			Guid actKey = Guid.Empty;
-			Guid actVersionKey = Guid.Empty;
+            Guid actKey = Guid.Empty;
+            Guid actVersionKey = Guid.Empty;
 
-			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
-			{
-				if (act.Key == actKey && act.VersionKey == actVersionKey)
-				{
-					var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+            {
+                if (act.Key == actKey && act.VersionKey == actVersionKey)
+                {
+                    var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
 
-					return actRepositoryService.Save(act);
-				}
-				else
-				{
-					throw new ArgumentException("Act not found");
-				}
-			}
-			else
-			{
-				throw new ArgumentException("Act not found");
-			}
-		}
+                    return actRepositoryService.Save(act);
+                }
+                else
+                {
+                    throw new ArgumentException("Act not found");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Act not found");
+            }
+        }
 
-		/// <summary>
-		/// Updates a manufactured material.
-		/// </summary>
-		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
-		/// <returns>Returns the updated manufactured material.</returns>
-		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+        /// <summary>
+        /// Updates a manufactured material.
+        /// </summary>
+        /// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
+        /// <returns>Returns the updated manufactured material.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-		public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)
-		{
-			var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+        public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)
+        {
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-			Guid manufacturedMaterialKey = Guid.Empty;
-			Guid manufacturedMaterialVersionKey = Guid.Empty;
+            Guid manufacturedMaterialKey = Guid.Empty;
+            Guid manufacturedMaterialVersionKey = Guid.Empty;
 
-			if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out manufacturedMaterialKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out manufacturedMaterialVersionKey))
-			{
-				if (manufacturedMaterial.Key == manufacturedMaterialKey && manufacturedMaterial.VersionKey == manufacturedMaterialVersionKey)
-				{
-					var manufacturedMaterialRepositoryService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out manufacturedMaterialKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out manufacturedMaterialVersionKey))
+            {
+                if (manufacturedMaterial.Key == manufacturedMaterialKey && manufacturedMaterial.VersionKey == manufacturedMaterialVersionKey)
+                {
+                    var manufacturedMaterialRepositoryService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 
-					return manufacturedMaterialRepositoryService.SaveManufacturedMaterial(manufacturedMaterial);
-				}
-				else
-				{
-					throw new ArgumentException("Manufactured Material not found");
-				}
-			}
-			else
-			{
-				throw new ArgumentException("Manufactured Material not found");
-			}
-		}
-	}
+                    return manufacturedMaterialRepositoryService.SaveManufacturedMaterial(manufacturedMaterial);
+                }
+                else
+                {
+                    throw new ArgumentException("Manufactured Material not found");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Manufactured Material not found");
+            }
+        }
+    }
 
     /// <summary>
     /// Key comparion
