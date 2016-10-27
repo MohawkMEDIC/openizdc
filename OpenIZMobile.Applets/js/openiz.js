@@ -2328,11 +2328,11 @@ $.ajaxSetup({
 });
 
 $(document).ajaxError(function (e, data, setting, err) {
-    if ((data.status == 401 || data.status == 403) && OpenIZ.Authentication.$session != null ) {
+    if ((data.status == 401 || data.status == 403) && OpenIZ.Authentication.$session != null) {
         OpenIZ.Authentication.showElevationDialog();
     }
     else
-        throw new OpenIZModel.Exception("Exception", "err_request", err, null);
+        console.warn(new OpenIZModel.Exception("Exception", "err_request", err, null));
 });
 
 // Parameters
