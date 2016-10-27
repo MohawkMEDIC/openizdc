@@ -28,12 +28,16 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
     var stockChart = new Chart(ctx, {
         type: 'bar',
         options: {
+            
             scales: {
                 yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
+                }],
+                xAxes: [{
+                    categoryPercentage: 0.6
                 }]
+            },
+            legend: {
+                display: false
             }
         },
         data: {
@@ -49,28 +53,35 @@ layoutApp.controller('LowStockController', ['$scope', function ($scope) {
         continueWith: function (data) {
 
             if (data.item !== undefined) {
+                var chartData = [];
                 for (var i = 0; i < data.item.length; i++) {
 
                     var vaccine = data.item[i];
-
-                    stockChart.data.labels.push(vaccine.name.Assigned.component.$other.value.split("(")[0]);
-                    stockChart.data.datasets.push({
-                        label: vaccine.name.Assigned.component.$other.value.split("(")[0],
-                        data: [],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                        ]
-                    });
+                    var vaccineName = vaccine.name.Assigned.component.$other.value.split("(")[0];
+                    stockChart.data.labels.push(vaccineName);
+                    chartData.push(vaccine.quantity + 1); //HACK 
                 }
 
-                // HACK
-                for (var j = 0; j < stockChart.data.datasets.length; j++) {
-                    stockChart.data.datasets[j].data[j] = data.item[j].quantity + 1;
-                }
+                stockChart.data.datasets.push({
+                    label: OpenIZ.Localization.getString("locale.stock.vaccines.title"),
+                    data:chartData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                });
 
                 stockChart.update(1, true);
             }

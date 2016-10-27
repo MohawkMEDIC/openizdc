@@ -23,6 +23,7 @@
              
               "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
               "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
+              "statusConceptModel" : { "id" : "c8064cbd-fa06-4530-b430-1a52f1530c27", "mnemonic" : "ACTIVE" },
               "typeConceptModel" : {
                 "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
                 "mnemonic":"VitalSign-Weight"
