@@ -211,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             throw new TimeoutException();
                         else if (responseError != null)
                         {
-                            if (((responseError as WebException)?.Response as HttpWebResponse).StatusCode == HttpStatusCode.NotModified)
+                            if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
                                 return default(TResult);
                             else
                                 throw responseError;

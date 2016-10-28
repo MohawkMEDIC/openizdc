@@ -47,17 +47,17 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.BaseEntityData} copyData Copy constructor (if present)
      */
     BaseEntityData: function (copyData) {
+        this.$type = 'BaseEntityData';
         if (copyData) {
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
         }
     },  // BaseEntityData 
     // OpenIZ.Core.Model.Association`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -77,13 +77,13 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Association} copyData Copy constructor (if present)
      */
     Association: function (copyData) {
+        this.$type = 'Association';
         if (copyData) {
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
         }
     },  // Association 
     // OpenIZ.Core.Model.IdentifiedData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -100,11 +100,11 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.IdentifiedData} copyData Copy constructor (if present)
      */
     IdentifiedData: function (copyData) {
+        this.$type = 'IdentifiedData';
         if (copyData) {
-            this.id = copyData.id;
-            this.$type = copyData.$type;
-            this.modifiedOn = copyData.modifiedOn;
             this.etag = copyData.etag;
+            this.modifiedOn = copyData.modifiedOn;
+            this.id = copyData.id;
         }
     },  // IdentifiedData 
     // OpenIZ.Core.Model.NonVersionedEntityData, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -129,19 +129,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
     NonVersionedEntityData: function (copyData) {
+        this.$type = 'NonVersionedEntityData';
         if (copyData) {
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
         }
     },  // NonVersionedEntityData 
     // OpenIZ.Core.Model.VersionedAssociation`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -163,15 +163,15 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.VersionedAssociation} copyData Copy constructor (if present)
      */
     VersionedAssociation: function (copyData) {
+        this.$type = 'VersionedAssociation';
         if (copyData) {
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
         }
     },  // VersionedAssociation 
     // OpenIZ.Core.Model.VersionedEntityData`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -199,21 +199,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.VersionedEntityData} copyData Copy constructor (if present)
      */
     VersionedEntityData: function (copyData) {
+        this.$type = 'VersionedEntityData';
         if (copyData) {
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
         }
     },  // VersionedEntityData 
     // OpenIZ.Core.Model.Security.SecurityApplication, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -240,21 +240,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SecurityApplication} copyData Copy constructor (if present)
      */
     SecurityApplication: function (copyData) {
+        this.$type = 'SecurityApplication';
         if (copyData) {
-            this.applicationSecret = copyData.applicationSecret;
-            this.name = copyData.name;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.name = copyData.name;
+            this.applicationSecret = copyData.applicationSecret;
         }
     },  // SecurityApplication 
     // OpenIZ.Core.Model.Security.SecurityDevice, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -281,21 +281,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SecurityDevice} copyData Copy constructor (if present)
      */
     SecurityDevice: function (copyData) {
+        this.$type = 'SecurityDevice';
         if (copyData) {
-            this.deviceSecret = copyData.deviceSecret;
-            this.name = copyData.name;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.name = copyData.name;
+            this.deviceSecret = copyData.deviceSecret;
         }
     },  // SecurityDevice 
     // OpenIZ.Core.Model.Security.SecurityEntity, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -320,19 +320,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
     NonVersionedEntityData: function (copyData) {
+        this.$type = 'NonVersionedEntityData';
         if (copyData) {
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
         }
     },  // NonVersionedEntityData 
     // OpenIZ.Core.Model.Security.SecurityPolicy, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -360,22 +360,22 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SecurityPolicy} copyData Copy constructor (if present)
      */
     SecurityPolicy: function (copyData) {
+        this.$type = 'SecurityPolicy';
         if (copyData) {
-            this.handler = copyData.handler;
-            this.name = copyData.name;
-            this.oid = copyData.oid;
-            this.isPublic = copyData.isPublic;
-            this.canOverride = copyData.canOverride;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.canOverride = copyData.canOverride;
+            this.isPublic = copyData.isPublic;
+            this.oid = copyData.oid;
+            this.name = copyData.name;
+            this.handler = copyData.handler;
         }
     },  // SecurityPolicy 
     // OpenIZ.Core.Model.Security.SecurityPolicyInstance, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -394,13 +394,13 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SecurityPolicyInstance} copyData Copy constructor (if present)
      */
     SecurityPolicyInstance: function (copyData) {
+        this.$type = 'SecurityPolicyInstance';
         if (copyData) {
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
         }
     },  // SecurityPolicyInstance 
     // OpenIZ.Core.Model.Security.SecurityRole, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -427,21 +427,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.NonVersionedEntityData} copyData Copy constructor (if present)
      */
     NonVersionedEntityData: function (copyData) {
+        this.$type = 'NonVersionedEntityData';
         if (copyData) {
-            this.name = copyData.name;
-            this.description = copyData.description;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.description = copyData.description;
+            this.name = copyData.name;
         }
     },  // NonVersionedEntityData 
     // OpenIZ.Core.Model.Security.SecurityUser, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -479,32 +479,32 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SecurityUser} copyData Copy constructor (if present)
      */
     SecurityUser: function (copyData) {
+        this.$type = 'SecurityUser';
         if (copyData) {
-            this.email = copyData.email;
-            this.emailConfirmed = copyData.emailConfirmed;
-            this.invalidLoginAttempts = copyData.invalidLoginAttempts;
-            this.lockout = copyData.lockout;
-            this.passwordHash = copyData.passwordHash;
-            this.securityStamp = copyData.securityStamp;
-            this.twoFactorEnabled = copyData.twoFactorEnabled;
-            this.userName = copyData.userName;
-            this.photo = copyData.photo;
-            this.lastLoginTime = copyData.lastLoginTime;
-            this.phoneNumber = copyData.phoneNumber;
-            this.phoneNumberConfirmed = copyData.phoneNumberConfirmed;
-            this.userClass = copyData.userClass;
-            this.etag = copyData.etag;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.etag = copyData.etag;
+            this.userClass = copyData.userClass;
+            this.phoneNumberConfirmed = copyData.phoneNumberConfirmed;
+            this.phoneNumber = copyData.phoneNumber;
+            this.lastLoginTime = copyData.lastLoginTime;
+            this.photo = copyData.photo;
+            this.userName = copyData.userName;
+            this.twoFactorEnabled = copyData.twoFactorEnabled;
+            this.securityStamp = copyData.securityStamp;
+            this.passwordHash = copyData.passwordHash;
+            this.lockout = copyData.lockout;
+            this.invalidLoginAttempts = copyData.invalidLoginAttempts;
+            this.emailConfirmed = copyData.emailConfirmed;
+            this.email = copyData.email;
         }
     },  // SecurityUser 
     // OpenIZ.Core.Model.Roles.Patient, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -813,49 +813,49 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Patient} copyData Copy constructor (if present)
      */
     Patient: function (copyData) {
+        this.$type = 'Patient';
         if (copyData) {
-            this.deceasedDate = copyData.deceasedDate;
-            this.deceasedDatePrecision = copyData.deceasedDatePrecision;
-            this.multipleBirthOrder = copyData.multipleBirthOrder;
-            this.genderConcept = copyData.genderConcept;
-            this.genderConceptModel = copyData.genderConceptModel;
-            this.dateOfBirth = copyData.dateOfBirth;
-            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
-            this.language = copyData.language;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.language = copyData.language;
+            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
+            this.dateOfBirth = copyData.dateOfBirth;
+            this.genderConceptModel = copyData.genderConceptModel;
+            this.genderConcept = copyData.genderConcept;
+            this.multipleBirthOrder = copyData.multipleBirthOrder;
+            this.deceasedDatePrecision = copyData.deceasedDatePrecision;
+            this.deceasedDate = copyData.deceasedDate;
         }
     },  // Patient 
     // OpenIZ.Core.Model.Roles.Provider, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -1161,46 +1161,46 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Provider} copyData Copy constructor (if present)
      */
     Provider: function (copyData) {
+        this.$type = 'Provider';
         if (copyData) {
-            this.providerSpecialty = copyData.providerSpecialty;
-            this.providerSpecialtyModel = copyData.providerSpecialtyModel;
-            this.dateOfBirth = copyData.dateOfBirth;
-            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
-            this.language = copyData.language;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.language = copyData.language;
+            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
+            this.dateOfBirth = copyData.dateOfBirth;
+            this.providerSpecialtyModel = copyData.providerSpecialtyModel;
+            this.providerSpecialty = copyData.providerSpecialty;
         }
     },  // Provider 
     // OpenIZ.Core.Model.Entities.UserEntity, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -1506,46 +1506,46 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.UserEntity} copyData Copy constructor (if present)
      */
     UserEntity: function (copyData) {
+        this.$type = 'UserEntity';
         if (copyData) {
-            this.securityUser = copyData.securityUser;
-            this.securityUserModel = copyData.securityUserModel;
-            this.dateOfBirth = copyData.dateOfBirth;
-            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
-            this.language = copyData.language;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.language = copyData.language;
+            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
+            this.dateOfBirth = copyData.dateOfBirth;
+            this.securityUserModel = copyData.securityUserModel;
+            this.securityUser = copyData.securityUser;
         }
     },  // UserEntity 
     // OpenIZ.Core.Model.Entities.ApplicationEntity, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -1851,46 +1851,46 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ApplicationEntity} copyData Copy constructor (if present)
      */
     ApplicationEntity: function (copyData) {
+        this.$type = 'ApplicationEntity';
         if (copyData) {
-            this.securityApplication = copyData.securityApplication;
-            this.securityApplicationModel = copyData.securityApplicationModel;
-            this.softwareName = copyData.softwareName;
-            this.versionName = copyData.versionName;
-            this.vendorName = copyData.vendorName;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.vendorName = copyData.vendorName;
+            this.versionName = copyData.versionName;
+            this.softwareName = copyData.softwareName;
+            this.securityApplicationModel = copyData.securityApplicationModel;
+            this.securityApplication = copyData.securityApplication;
         }
     },  // ApplicationEntity 
     // OpenIZ.Core.Model.Entities.DeviceEntity, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2195,45 +2195,45 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.DeviceEntity} copyData Copy constructor (if present)
      */
     DeviceEntity: function (copyData) {
+        this.$type = 'DeviceEntity';
         if (copyData) {
-            this.securityDevice = copyData.securityDevice;
-            this.securityDeviceModel = copyData.securityDeviceModel;
-            this.manufacturerModelName = copyData.manufacturerModelName;
-            this.operatingSystemName = copyData.operatingSystemName;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.operatingSystemName = copyData.operatingSystemName;
+            this.manufacturerModelName = copyData.manufacturerModelName;
+            this.securityDeviceModel = copyData.securityDeviceModel;
+            this.securityDevice = copyData.securityDevice;
         }
     },  // DeviceEntity 
     // OpenIZ.Core.Model.Entities.Entity, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2534,41 +2534,41 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Entity} copyData Copy constructor (if present)
      */
     Entity: function (copyData) {
+        this.$type = 'Entity';
         if (copyData) {
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
         }
     },  // Entity 
     // OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2621,18 +2621,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityAddress} copyData Copy constructor (if present)
      */
     EntityAddress: function (copyData) {
+        this.$type = 'EntityAddress';
         if (copyData) {
-            this.use = copyData.use;
-            this.useModel = copyData.useModel;
-            this.component = copyData.component;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.component = copyData.component;
+            this.useModel = copyData.useModel;
+            this.use = copyData.use;
         }
     },  // EntityAddress 
     // OpenIZ.Core.Model.Entities.EntityAddressComponent, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2654,16 +2654,16 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.AddressComponent} copyData Copy constructor (if present)
      */
     AddressComponent: function (copyData) {
+        this.$type = 'AddressComponent';
         if (copyData) {
-            this.type = copyData.type;
-            this.typeModel = copyData.typeModel;
-            this.value = copyData.value;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.value = copyData.value;
+            this.typeModel = copyData.typeModel;
+            this.type = copyData.type;
         }
     },  // AddressComponent 
     // OpenIZ.Core.Model.Entities.EntityName, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2694,18 +2694,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityName} copyData Copy constructor (if present)
      */
     EntityName: function (copyData) {
+        this.$type = 'EntityName';
         if (copyData) {
-            this.use = copyData.use;
-            this.useModel = copyData.useModel;
-            this.component = copyData.component;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.component = copyData.component;
+            this.useModel = copyData.useModel;
+            this.use = copyData.use;
         }
     },  // EntityName 
     // OpenIZ.Core.Model.Entities.EntityNameComponent, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2730,19 +2730,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityNameComponent} copyData Copy constructor (if present)
      */
     EntityNameComponent: function (copyData) {
+        this.$type = 'EntityNameComponent';
         if (copyData) {
-            this.phoneticCode = copyData.phoneticCode;
-            this.type = copyData.type;
-            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
-            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
-            this.typeModel = copyData.typeModel;
-            this.value = copyData.value;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.value = copyData.value;
+            this.typeModel = copyData.typeModel;
+            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
+            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
+            this.type = copyData.type;
+            this.phoneticCode = copyData.phoneticCode;
         }
     },  // EntityNameComponent 
     // OpenIZ.Core.Model.Entities.EntityRelationship, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2771,23 +2771,23 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityRelationship} copyData Copy constructor (if present)
      */
     EntityRelationship: function (copyData) {
+        this.$type = 'EntityRelationship';
         if (copyData) {
-            this.target = copyData.target;
-            this.holder = copyData.holder;
-            this.holderModel = copyData.holderModel;
-            this.targetModel = copyData.targetModel;
-            this.relationshipType = copyData.relationshipType;
-            this.inversionInd = copyData.inversionInd;
-            this.relationshipTypeModel = copyData.relationshipTypeModel;
-            this.quantity = copyData.quantity;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.quantity = copyData.quantity;
+            this.relationshipTypeModel = copyData.relationshipTypeModel;
+            this.inversionInd = copyData.inversionInd;
+            this.relationshipType = copyData.relationshipType;
+            this.targetModel = copyData.targetModel;
+            this.holderModel = copyData.holderModel;
+            this.holder = copyData.holder;
+            this.target = copyData.target;
         }
     },  // EntityRelationship 
     // OpenIZ.Core.Model.Entities.EntityTelecomAddress, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2811,18 +2811,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityTelecomAddress} copyData Copy constructor (if present)
      */
     EntityTelecomAddress: function (copyData) {
+        this.$type = 'EntityTelecomAddress';
         if (copyData) {
-            this.use = copyData.use;
-            this.useModel = copyData.useModel;
-            this.value = copyData.value;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.value = copyData.value;
+            this.useModel = copyData.useModel;
+            this.use = copyData.use;
         }
     },  // EntityTelecomAddress 
     // OpenIZ.Core.Model.Entities.GenericComponentValues`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -2845,16 +2845,16 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.GenericComponentValues} copyData Copy constructor (if present)
      */
     GenericComponentValues: function (copyData) {
+        this.$type = 'GenericComponentValues';
         if (copyData) {
-            this.type = copyData.type;
-            this.typeModel = copyData.typeModel;
-            this.value = copyData.value;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.value = copyData.value;
+            this.typeModel = copyData.typeModel;
+            this.type = copyData.type;
         }
     },  // GenericComponentValues 
     // OpenIZ.Core.Model.Entities.ManufacturedMaterial, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -3163,49 +3163,49 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ManufacturedMaterial} copyData Copy constructor (if present)
      */
     ManufacturedMaterial: function (copyData) {
+        this.$type = 'ManufacturedMaterial';
         if (copyData) {
-            this.lotNumber = copyData.lotNumber;
-            this.quantity = copyData.quantity;
-            this.formConcept = copyData.formConcept;
-            this.quantityConcept = copyData.quantityConcept;
-            this.formConceptModel = copyData.formConceptModel;
-            this.quantityConceptModel = copyData.quantityConceptModel;
-            this.expiryDate = copyData.expiryDate;
-            this.isAdministrative = copyData.isAdministrative;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.isAdministrative = copyData.isAdministrative;
+            this.expiryDate = copyData.expiryDate;
+            this.quantityConceptModel = copyData.quantityConceptModel;
+            this.formConceptModel = copyData.formConceptModel;
+            this.quantityConcept = copyData.quantityConcept;
+            this.formConcept = copyData.formConcept;
+            this.quantity = copyData.quantity;
+            this.lotNumber = copyData.lotNumber;
         }
     },  // ManufacturedMaterial 
     // OpenIZ.Core.Model.Entities.Material, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -3513,48 +3513,48 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Material} copyData Copy constructor (if present)
      */
     Material: function (copyData) {
+        this.$type = 'Material';
         if (copyData) {
-            this.quantity = copyData.quantity;
-            this.formConcept = copyData.formConcept;
-            this.quantityConcept = copyData.quantityConcept;
-            this.formConceptModel = copyData.formConceptModel;
-            this.quantityConceptModel = copyData.quantityConceptModel;
-            this.expiryDate = copyData.expiryDate;
-            this.isAdministrative = copyData.isAdministrative;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.isAdministrative = copyData.isAdministrative;
+            this.expiryDate = copyData.expiryDate;
+            this.quantityConceptModel = copyData.quantityConceptModel;
+            this.formConceptModel = copyData.formConceptModel;
+            this.quantityConcept = copyData.quantityConcept;
+            this.formConcept = copyData.formConcept;
+            this.quantity = copyData.quantity;
         }
     },  // Material 
     // OpenIZ.Core.Model.Entities.Organization, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -3857,43 +3857,43 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Organization} copyData Copy constructor (if present)
      */
     Organization: function (copyData) {
+        this.$type = 'Organization';
         if (copyData) {
-            this.industryConcept = copyData.industryConcept;
-            this.industryConceptModel = copyData.industryConceptModel;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.industryConceptModel = copyData.industryConceptModel;
+            this.industryConcept = copyData.industryConcept;
         }
     },  // Organization 
     // OpenIZ.Core.Model.Entities.Person, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4197,44 +4197,44 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Person} copyData Copy constructor (if present)
      */
     Person: function (copyData) {
+        this.$type = 'Person';
         if (copyData) {
-            this.dateOfBirth = copyData.dateOfBirth;
-            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
-            this.language = copyData.language;
-            this.template = copyData.template;
-            this.classConcept = copyData.classConcept;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.classConcept = copyData.classConcept;
+            this.template = copyData.template;
+            this.language = copyData.language;
+            this.dateOfBirthPrecision = copyData.dateOfBirthPrecision;
+            this.dateOfBirth = copyData.dateOfBirth;
         }
     },  // Person 
     // OpenIZ.Core.Model.Entities.PersonLanguageCommunication, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4257,17 +4257,17 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.PersonLanguageCommunication} copyData Copy constructor (if present)
      */
     PersonLanguageCommunication: function (copyData) {
+        this.$type = 'PersonLanguageCommunication';
         if (copyData) {
-            this.languageCode = copyData.languageCode;
-            this.isPreferred = copyData.isPreferred;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.isPreferred = copyData.isPreferred;
+            this.languageCode = copyData.languageCode;
         }
     },  // PersonLanguageCommunication 
     // OpenIZ.Core.Model.Entities.Place, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4572,45 +4572,45 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Place} copyData Copy constructor (if present)
      */
     Place: function (copyData) {
+        this.$type = 'Place';
         if (copyData) {
-            this.classConcept = copyData.classConcept;
-            this.isMobile = copyData.isMobile;
-            this.lat = copyData.lat;
-            this.lng = copyData.lng;
-            this.service = copyData.service;
-            this.template = copyData.template;
-            this.determinerConcept = copyData.determinerConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.creationAct = copyData.creationAct;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.determinerConceptModel = copyData.determinerConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.creationActModel = copyData.creationActModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.telecom = copyData.telecom;
-            this.extension = copyData.extension;
-            this.name = copyData.name;
-            this.address = copyData.address;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.address = copyData.address;
+            this.name = copyData.name;
+            this.extension = copyData.extension;
+            this.telecom = copyData.telecom;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.creationActModel = copyData.creationActModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.determinerConceptModel = copyData.determinerConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.creationAct = copyData.creationAct;
+            this.statusConcept = copyData.statusConcept;
+            this.determinerConcept = copyData.determinerConcept;
+            this.template = copyData.template;
+            this.service = copyData.service;
+            this.lng = copyData.lng;
+            this.lat = copyData.lat;
+            this.isMobile = copyData.isMobile;
+            this.classConcept = copyData.classConcept;
         }
     },  // Place 
     // OpenIZ.Core.Model.Entities.PlaceService, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4634,18 +4634,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.PlaceService} copyData Copy constructor (if present)
      */
     PlaceService: function (copyData) {
+        this.$type = 'PlaceService';
         if (copyData) {
-            this.serviceSchedule = copyData.serviceSchedule;
-            this.serviceConcept = copyData.serviceConcept;
-            this.serviceConceptModel = copyData.serviceConceptModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.serviceConceptModel = copyData.serviceConceptModel;
+            this.serviceConcept = copyData.serviceConcept;
+            this.serviceSchedule = copyData.serviceSchedule;
         }
     },  // PlaceService 
     // OpenIZ.Core.Model.DataTypes.AssigningAuthority, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4677,25 +4677,25 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.AssigningAuthority} copyData Copy constructor (if present)
      */
     AssigningAuthority: function (copyData) {
+        this.$type = 'AssigningAuthority';
         if (copyData) {
-            this.name = copyData.name;
-            this.domainName = copyData.domainName;
-            this.description = copyData.description;
-            this.oid = copyData.oid;
-            this.url = copyData.url;
-            this.scope = copyData.scope;
-            this.assigningDevice = copyData.assigningDevice;
-            this.scopeModel = copyData.scopeModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.scopeModel = copyData.scopeModel;
+            this.assigningDevice = copyData.assigningDevice;
+            this.scope = copyData.scope;
+            this.url = copyData.url;
+            this.oid = copyData.oid;
+            this.description = copyData.description;
+            this.domainName = copyData.domainName;
+            this.name = copyData.name;
         }
     },  // AssigningAuthority 
     // OpenIZ.Core.Model.DataTypes.CodeSystem, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4727,26 +4727,26 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.CodeSystem} copyData Copy constructor (if present)
      */
     CodeSystem: function (copyData) {
+        this.$type = 'CodeSystem';
         if (copyData) {
-            this.name = copyData.name;
-            this.oid = copyData.oid;
-            this.authority = copyData.authority;
-            this.obsoletionReason = copyData.obsoletionReason;
-            this.url = copyData.url;
-            this.version = copyData.version;
-            this.description = copyData.description;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.description = copyData.description;
+            this.version = copyData.version;
+            this.url = copyData.url;
+            this.obsoletionReason = copyData.obsoletionReason;
+            this.authority = copyData.authority;
+            this.oid = copyData.oid;
+            this.name = copyData.name;
         }
     },  // CodeSystem 
     // OpenIZ.Core.Model.DataTypes.Concept, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4792,32 +4792,32 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Concept} copyData Copy constructor (if present)
      */
     Concept: function (copyData) {
+        this.$type = 'Concept';
         if (copyData) {
-            this.isReadonly = copyData.isReadonly;
-            this.mnemonic = copyData.mnemonic;
-            this.statusConcept = copyData.statusConcept;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.relationship = copyData.relationship;
-            this.conceptClass = copyData.conceptClass;
-            this.conceptClassModel = copyData.conceptClassModel;
-            this.referenceTerm = copyData.referenceTerm;
-            this.name = copyData.name;
-            this.conceptSet = copyData.conceptSet;
-            this.conceptSetModel = copyData.conceptSetModel;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.conceptSetModel = copyData.conceptSetModel;
+            this.conceptSet = copyData.conceptSet;
+            this.name = copyData.name;
+            this.referenceTerm = copyData.referenceTerm;
+            this.conceptClassModel = copyData.conceptClassModel;
+            this.conceptClass = copyData.conceptClass;
+            this.relationship = copyData.relationship;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.statusConcept = copyData.statusConcept;
+            this.mnemonic = copyData.mnemonic;
+            this.isReadonly = copyData.isReadonly;
         }
     },  // Concept 
     // OpenIZ.Core.Model.DataTypes.ConceptClass, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4844,21 +4844,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptClass} copyData Copy constructor (if present)
      */
     ConceptClass: function (copyData) {
+        this.$type = 'ConceptClass';
         if (copyData) {
-            this.name = copyData.name;
-            this.mnemonic = copyData.mnemonic;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.mnemonic = copyData.mnemonic;
+            this.name = copyData.name;
         }
     },  // ConceptClass 
     // OpenIZ.Core.Model.DataTypes.ConceptName, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4884,20 +4884,20 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptName} copyData Copy constructor (if present)
      */
     ConceptName: function (copyData) {
+        this.$type = 'ConceptName';
         if (copyData) {
-            this.language = copyData.language;
-            this.value = copyData.value;
-            this.phoneticCode = copyData.phoneticCode;
-            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
-            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
+            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
+            this.phoneticCode = copyData.phoneticCode;
+            this.value = copyData.value;
+            this.language = copyData.language;
         }
     },  // ConceptName 
     // OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4922,19 +4922,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptReferenceTerm} copyData Copy constructor (if present)
      */
     ConceptReferenceTerm: function (copyData) {
+        this.$type = 'ConceptReferenceTerm';
         if (copyData) {
-            this.term = copyData.term;
-            this.termModel = copyData.termModel;
-            this.relationshipType = copyData.relationshipType;
-            this.relationshipTypeModel = copyData.relationshipTypeModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.relationshipTypeModel = copyData.relationshipTypeModel;
+            this.relationshipType = copyData.relationshipType;
+            this.termModel = copyData.termModel;
+            this.term = copyData.term;
         }
     },  // ConceptReferenceTerm 
     // OpenIZ.Core.Model.DataTypes.ConceptRelationship, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4959,19 +4959,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptRelationship} copyData Copy constructor (if present)
      */
     ConceptRelationship: function (copyData) {
+        this.$type = 'ConceptRelationship';
         if (copyData) {
-            this.targetConcept = copyData.targetConcept;
-            this.targetConceptModel = copyData.targetConceptModel;
-            this.relationshipType = copyData.relationshipType;
-            this.relationshipTypeModel = copyData.relationshipTypeModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.relationshipTypeModel = copyData.relationshipTypeModel;
+            this.relationshipType = copyData.relationshipType;
+            this.targetConceptModel = copyData.targetConceptModel;
+            this.targetConcept = copyData.targetConcept;
         }
     },  // ConceptRelationship 
     // OpenIZ.Core.Model.DataTypes.ConceptRelationshipType, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -4998,21 +4998,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptRelationshipType} copyData Copy constructor (if present)
      */
     ConceptRelationshipType: function (copyData) {
+        this.$type = 'ConceptRelationshipType';
         if (copyData) {
-            this.name = copyData.name;
-            this.mnemonic = copyData.mnemonic;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.mnemonic = copyData.mnemonic;
+            this.name = copyData.name;
         }
     },  // ConceptRelationshipType 
     // OpenIZ.Core.Model.DataTypes.ConceptSet, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5040,22 +5040,22 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ConceptSet} copyData Copy constructor (if present)
      */
     ConceptSet: function (copyData) {
+        this.$type = 'ConceptSet';
         if (copyData) {
-            this.name = copyData.name;
-            this.mnemonic = copyData.mnemonic;
-            this.oid = copyData.oid;
-            this.url = copyData.url;
-            this.concept = copyData.concept;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.concept = copyData.concept;
+            this.url = copyData.url;
+            this.oid = copyData.oid;
+            this.mnemonic = copyData.mnemonic;
+            this.name = copyData.name;
         }
     },  // ConceptSet 
     // OpenIZ.Core.Model.DataTypes.Extension`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5079,17 +5079,17 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Extension} copyData Copy constructor (if present)
      */
     Extension: function (copyData) {
+        this.$type = 'Extension';
         if (copyData) {
-            this.value = copyData.value;
-            this.extensionType = copyData.extensionType;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.extensionType = copyData.extensionType;
+            this.value = copyData.value;
         }
     },  // Extension 
     // OpenIZ.Core.Model.DataTypes.EntityExtension, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5112,17 +5112,17 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityExtension} copyData Copy constructor (if present)
      */
     EntityExtension: function (copyData) {
+        this.$type = 'EntityExtension';
         if (copyData) {
-            this.value = copyData.value;
-            this.extensionType = copyData.extensionType;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.extensionType = copyData.extensionType;
+            this.value = copyData.value;
         }
     },  // EntityExtension 
     // OpenIZ.Core.Model.DataTypes.ActExtension, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5145,17 +5145,17 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActExtension} copyData Copy constructor (if present)
      */
     ActExtension: function (copyData) {
+        this.$type = 'ActExtension';
         if (copyData) {
-            this.value = copyData.value;
-            this.extensionType = copyData.extensionType;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.extensionType = copyData.extensionType;
+            this.value = copyData.value;
         }
     },  // ActExtension 
     // OpenIZ.Core.Model.DataTypes.ExtensionType, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5182,21 +5182,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ExtensionType} copyData Copy constructor (if present)
      */
     ExtensionType: function (copyData) {
+        this.$type = 'ExtensionType';
         if (copyData) {
-            this.handlerClass = copyData.handlerClass;
-            this.name = copyData.name;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.name = copyData.name;
+            this.handlerClass = copyData.handlerClass;
         }
     },  // ExtensionType 
     // OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5220,18 +5220,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityIdentifier} copyData Copy constructor (if present)
      */
     EntityIdentifier: function (copyData) {
+        this.$type = 'EntityIdentifier';
         if (copyData) {
-            this.value = copyData.value;
-            this.type = copyData.type;
-            this.authority = copyData.authority;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authority = copyData.authority;
+            this.type = copyData.type;
+            this.value = copyData.value;
         }
     },  // EntityIdentifier 
     // OpenIZ.Core.Model.DataTypes.ActIdentifier, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5255,18 +5255,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActIdentifier} copyData Copy constructor (if present)
      */
     ActIdentifier: function (copyData) {
+        this.$type = 'ActIdentifier';
         if (copyData) {
-            this.value = copyData.value;
-            this.type = copyData.type;
-            this.authority = copyData.authority;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authority = copyData.authority;
+            this.type = copyData.type;
+            this.value = copyData.value;
         }
     },  // ActIdentifier 
     // OpenIZ.Core.Model.DataTypes.IdentifierBase`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5291,18 +5291,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.IdentifierBase} copyData Copy constructor (if present)
      */
     IdentifierBase: function (copyData) {
+        this.$type = 'IdentifierBase';
         if (copyData) {
-            this.value = copyData.value;
-            this.type = copyData.type;
-            this.authority = copyData.authority;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authority = copyData.authority;
+            this.type = copyData.type;
+            this.value = copyData.value;
         }
     },  // IdentifierBase 
     // OpenIZ.Core.Model.DataTypes.IdentifierType, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5329,21 +5329,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.IdentifierType} copyData Copy constructor (if present)
      */
     IdentifierType: function (copyData) {
+        this.$type = 'IdentifierType';
         if (copyData) {
-            this.scopeConcept = copyData.scopeConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.scopeConceptModel = copyData.scopeConceptModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.scopeConceptModel = copyData.scopeConceptModel;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.scopeConcept = copyData.scopeConcept;
         }
     },  // IdentifierType 
     // OpenIZ.Core.Model.DataTypes.Note`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5368,18 +5368,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Note} copyData Copy constructor (if present)
      */
     Note: function (copyData) {
+        this.$type = 'Note';
         if (copyData) {
-            this.text = copyData.text;
-            this.author = copyData.author;
-            this.authorModel = copyData.authorModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authorModel = copyData.authorModel;
+            this.author = copyData.author;
+            this.text = copyData.text;
         }
     },  // Note 
     // OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5403,18 +5403,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityNote} copyData Copy constructor (if present)
      */
     EntityNote: function (copyData) {
+        this.$type = 'EntityNote';
         if (copyData) {
-            this.text = copyData.text;
-            this.author = copyData.author;
-            this.authorModel = copyData.authorModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authorModel = copyData.authorModel;
+            this.author = copyData.author;
+            this.text = copyData.text;
         }
     },  // EntityNote 
     // OpenIZ.Core.Model.DataTypes.ActNote, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5438,18 +5438,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActNote} copyData Copy constructor (if present)
      */
     ActNote: function (copyData) {
+        this.$type = 'ActNote';
         if (copyData) {
-            this.text = copyData.text;
-            this.author = copyData.author;
-            this.authorModel = copyData.authorModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.authorModel = copyData.authorModel;
+            this.author = copyData.author;
+            this.text = copyData.text;
         }
     },  // ActNote 
     // OpenIZ.Core.Model.DataTypes.PhoneticAlgorithm, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5476,21 +5476,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.PhoneticAlgorithm} copyData Copy constructor (if present)
      */
     PhoneticAlgorithm: function (copyData) {
+        this.$type = 'PhoneticAlgorithm';
         if (copyData) {
-            this.name = copyData.name;
-            this.handler = copyData.handler;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.handler = copyData.handler;
+            this.name = copyData.name;
         }
     },  // PhoneticAlgorithm 
     // OpenIZ.Core.Model.DataTypes.ReferenceTerm, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5520,23 +5520,23 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ReferenceTerm} copyData Copy constructor (if present)
      */
     ReferenceTerm: function (copyData) {
+        this.$type = 'ReferenceTerm';
         if (copyData) {
-            this.mnemonic = copyData.mnemonic;
-            this.codeSystemModel = copyData.codeSystemModel;
-            this.codeSystem = copyData.codeSystem;
-            this.name = copyData.name;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.name = copyData.name;
+            this.codeSystem = copyData.codeSystem;
+            this.codeSystemModel = copyData.codeSystemModel;
+            this.mnemonic = copyData.mnemonic;
         }
     },  // ReferenceTerm 
     // OpenIZ.Core.Model.DataTypes.ReferenceTermName, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5564,22 +5564,22 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ReferenceTermName} copyData Copy constructor (if present)
      */
     ReferenceTermName: function (copyData) {
+        this.$type = 'ReferenceTermName';
         if (copyData) {
-            this.language = copyData.language;
-            this.value = copyData.value;
-            this.phoneticCode = copyData.phoneticCode;
-            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
-            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.phoneticAlgorithmModel = copyData.phoneticAlgorithmModel;
+            this.phoneticAlgorithm = copyData.phoneticAlgorithm;
+            this.phoneticCode = copyData.phoneticCode;
+            this.value = copyData.value;
+            this.language = copyData.language;
         }
     },  // ReferenceTermName 
     // OpenIZ.Core.Model.DataTypes.Tag`1, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5607,21 +5607,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Tag} copyData Copy constructor (if present)
      */
     Tag: function (copyData) {
+        this.$type = 'Tag';
         if (copyData) {
-            this.key = copyData.key;
-            this.value = copyData.value;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.value = copyData.value;
+            this.key = copyData.key;
         }
     },  // Tag 
     // OpenIZ.Core.Model.DataTypes.EntityTag, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5648,21 +5648,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.EntityTag} copyData Copy constructor (if present)
      */
     EntityTag: function (copyData) {
+        this.$type = 'EntityTag';
         if (copyData) {
-            this.key = copyData.key;
-            this.value = copyData.value;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.value = copyData.value;
+            this.key = copyData.key;
         }
     },  // EntityTag 
     // OpenIZ.Core.Model.DataTypes.ActTag, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5689,21 +5689,21 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActTag} copyData Copy constructor (if present)
      */
     ActTag: function (copyData) {
+        this.$type = 'ActTag';
         if (copyData) {
-            this.key = copyData.key;
-            this.value = copyData.value;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.value = copyData.value;
+            this.key = copyData.key;
         }
     },  // ActTag 
     // OpenIZ.Core.Model.DataTypes.TemplateDefinition, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5732,23 +5732,23 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.TemplateDefinition} copyData Copy constructor (if present)
      */
     TemplateDefinition: function (copyData) {
+        this.$type = 'TemplateDefinition';
         if (copyData) {
-            this.mnemonic = copyData.mnemonic;
-            this.name = copyData.name;
-            this.oid = copyData.oid;
-            this.description = copyData.description;
-            this.updatedTime = copyData.updatedTime;
-            this.modifiedOn = copyData.modifiedOn;
-            this.updatedBy = copyData.updatedBy;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.updatedBy = copyData.updatedBy;
+            this.modifiedOn = copyData.modifiedOn;
+            this.updatedTime = copyData.updatedTime;
+            this.description = copyData.description;
+            this.oid = copyData.oid;
+            this.name = copyData.name;
+            this.mnemonic = copyData.mnemonic;
         }
     },  // TemplateDefinition 
     // OpenIZ.Core.Model.Collection.Bundle, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5770,16 +5770,16 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Bundle} copyData Copy constructor (if present)
      */
     Bundle: function (copyData) {
+        this.$type = 'Bundle';
         if (copyData) {
-            this.modifiedOn = copyData.modifiedOn;
-            this.item = copyData.item;
-            this.entry = copyData.entry;
-            this.offset = copyData.offset;
-            this.count = copyData.count;
-            this.totalResults = copyData.totalResults;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.totalResults = copyData.totalResults;
+            this.count = copyData.count;
+            this.offset = copyData.offset;
+            this.entry = copyData.entry;
+            this.item = copyData.item;
+            this.modifiedOn = copyData.modifiedOn;
         }
     },  // Bundle 
     // OpenIZ.Core.Model.Acts.Act, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5912,43 +5912,43 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Act} copyData Copy constructor (if present)
      */
     Act: function (copyData) {
+        this.$type = 'Act';
         if (copyData) {
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
         }
     },  // Act 
     // OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -5976,22 +5976,22 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActParticipation} copyData Copy constructor (if present)
      */
     ActParticipation: function (copyData) {
+        this.$type = 'ActParticipation';
         if (copyData) {
-            this.player = copyData.player;
-            this.participationRole = copyData.participationRole;
-            this.playerModel = copyData.playerModel;
-            this.participationRoleModel = copyData.participationRoleModel;
-            this.act = copyData.act;
-            this.actModel = copyData.actModel;
-            this.quantity = copyData.quantity;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.quantity = copyData.quantity;
+            this.actModel = copyData.actModel;
+            this.act = copyData.act;
+            this.participationRoleModel = copyData.participationRoleModel;
+            this.playerModel = copyData.playerModel;
+            this.participationRole = copyData.participationRole;
+            this.player = copyData.player;
         }
     },  // ActParticipation 
     // OpenIZ.Core.Model.Acts.ActProtocol, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6015,18 +6015,18 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActProtocol} copyData Copy constructor (if present)
      */
     ActProtocol: function (copyData) {
+        this.$type = 'ActProtocol';
         if (copyData) {
-            this.protocol = copyData.protocol;
-            this.protocolModel = copyData.protocolModel;
-            this.state = copyData.state;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.state = copyData.state;
+            this.protocolModel = copyData.protocolModel;
+            this.protocol = copyData.protocol;
         }
     },  // ActProtocol 
     // OpenIZ.Core.Model.Acts.ActRelationship, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6051,19 +6051,19 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ActRelationship} copyData Copy constructor (if present)
      */
     ActRelationship: function (copyData) {
+        this.$type = 'ActRelationship';
         if (copyData) {
-            this.target = copyData.target;
-            this.targetModel = copyData.targetModel;
-            this.relationshipType = copyData.relationshipType;
-            this.relationshipTypeModel = copyData.relationshipTypeModel;
-            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
-            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
-            this.modifiedOn = copyData.modifiedOn;
-            this.source = copyData.source;
-            this.sourceModel = copyData.sourceModel;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.sourceModel = copyData.sourceModel;
+            this.source = copyData.source;
+            this.modifiedOn = copyData.modifiedOn;
+            this.obsoleteVersionSequence = copyData.obsoleteVersionSequence;
+            this.effectiveVersionSequence = copyData.effectiveVersionSequence;
+            this.relationshipTypeModel = copyData.relationshipTypeModel;
+            this.relationshipType = copyData.relationshipType;
+            this.targetModel = copyData.targetModel;
+            this.target = copyData.target;
         }
     },  // ActRelationship 
     // OpenIZ.Core.Model.Acts.ControlAct, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6196,43 +6196,43 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.ControlAct} copyData Copy constructor (if present)
      */
     ControlAct: function (copyData) {
+        this.$type = 'ControlAct';
         if (copyData) {
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
         }
     },  // ControlAct 
     // OpenIZ.Core.Model.Acts.Observation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6368,45 +6368,45 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Observation} copyData Copy constructor (if present)
      */
     Observation: function (copyData) {
+        this.$type = 'Observation';
         if (copyData) {
-            this.interpretationConcept = copyData.interpretationConcept;
-            this.interpretationConceptModel = copyData.interpretationConceptModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.interpretationConceptModel = copyData.interpretationConceptModel;
+            this.interpretationConcept = copyData.interpretationConcept;
         }
     },  // Observation 
     // OpenIZ.Core.Model.Acts.QuantityObservation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6544,48 +6544,48 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.QuantityObservation} copyData Copy constructor (if present)
      */
     QuantityObservation: function (copyData) {
+        this.$type = 'QuantityObservation';
         if (copyData) {
-            this.value = copyData.value;
-            this.unitOfMeasure = copyData.unitOfMeasure;
-            this.unitOfMeasureModel = copyData.unitOfMeasureModel;
-            this.interpretationConcept = copyData.interpretationConcept;
-            this.interpretationConceptModel = copyData.interpretationConceptModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.interpretationConceptModel = copyData.interpretationConceptModel;
+            this.interpretationConcept = copyData.interpretationConcept;
+            this.unitOfMeasureModel = copyData.unitOfMeasureModel;
+            this.unitOfMeasure = copyData.unitOfMeasure;
+            this.value = copyData.value;
         }
     },  // QuantityObservation 
     // OpenIZ.Core.Model.Acts.TextObservation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6721,46 +6721,46 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.TextObservation} copyData Copy constructor (if present)
      */
     TextObservation: function (copyData) {
+        this.$type = 'TextObservation';
         if (copyData) {
-            this.value = copyData.value;
-            this.interpretationConcept = copyData.interpretationConcept;
-            this.interpretationConceptModel = copyData.interpretationConceptModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.interpretationConceptModel = copyData.interpretationConceptModel;
+            this.interpretationConcept = copyData.interpretationConcept;
+            this.value = copyData.value;
         }
     },  // TextObservation 
     // OpenIZ.Core.Model.Acts.CodedObservation, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -6897,47 +6897,47 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.CodedObservation} copyData Copy constructor (if present)
      */
     CodedObservation: function (copyData) {
+        this.$type = 'CodedObservation';
         if (copyData) {
-            this.value = copyData.value;
-            this.valueModel = copyData.valueModel;
-            this.interpretationConcept = copyData.interpretationConcept;
-            this.interpretationConceptModel = copyData.interpretationConceptModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.interpretationConceptModel = copyData.interpretationConceptModel;
+            this.interpretationConcept = copyData.interpretationConcept;
+            this.valueModel = copyData.valueModel;
+            this.value = copyData.value;
         }
     },  // CodedObservation 
     // OpenIZ.Core.Model.Acts.PatientEncounter, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -7072,45 +7072,45 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.PatientEncounter} copyData Copy constructor (if present)
      */
     PatientEncounter: function (copyData) {
+        this.$type = 'PatientEncounter';
         if (copyData) {
-            this.dischargeDisposition = copyData.dischargeDisposition;
-            this.dischargeDispositionModel = copyData.dischargeDispositionModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.dischargeDispositionModel = copyData.dischargeDispositionModel;
+            this.dischargeDisposition = copyData.dischargeDisposition;
         }
     },  // PatientEncounter 
     // OpenIZ.Core.Model.Acts.Protocol, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -7136,20 +7136,20 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.Protocol} copyData Copy constructor (if present)
      */
     Protocol: function (copyData) {
+        this.$type = 'Protocol';
         if (copyData) {
-            this.name = copyData.name;
-            this.handlerClass = copyData.handlerClass;
-            this.definition = copyData.definition;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
-            this.id = copyData.id;
-            this.$type = copyData.$type;
             this.etag = copyData.etag;
+            this.id = copyData.id;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.definition = copyData.definition;
+            this.handlerClass = copyData.handlerClass;
+            this.name = copyData.name;
         }
     },  // Protocol 
     // OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
@@ -7290,51 +7290,51 @@ var OpenIZModel = OpenIZModel || {
      * @param {OpenIZModel.SubstanceAdministration} copyData Copy constructor (if present)
      */
     SubstanceAdministration: function (copyData) {
+        this.$type = 'SubstanceAdministration';
         if (copyData) {
-            this.route = copyData.route;
-            this.doseUnit = copyData.doseUnit;
-            this.routeModel = copyData.routeModel;
-            this.doseUnitModel = copyData.doseUnitModel;
-            this.doseQuantity = copyData.doseQuantity;
-            this.doseSequence = copyData.doseSequence;
-            this.site = copyData.site;
-            this.siteModel = copyData.siteModel;
-            this.isNegated = copyData.isNegated;
-            this.template = copyData.template;
-            this.actTime = copyData.actTime;
-            this.startTime = copyData.startTime;
-            this.stopTime = copyData.stopTime;
-            this.classConcept = copyData.classConcept;
-            this.moodConcept = copyData.moodConcept;
-            this.reasonConcept = copyData.reasonConcept;
-            this.statusConcept = copyData.statusConcept;
-            this.typeConcept = copyData.typeConcept;
-            this.classConceptModel = copyData.classConceptModel;
-            this.moodConceptModel = copyData.moodConceptModel;
-            this.reasonConceptModel = copyData.reasonConceptModel;
-            this.statusConceptModel = copyData.statusConceptModel;
-            this.typeConceptModel = copyData.typeConceptModel;
-            this.identifier = copyData.identifier;
-            this.relationship = copyData.relationship;
-            this.policy = copyData.policy;
-            this.extension = copyData.extension;
-            this.note = copyData.note;
-            this.tag = copyData.tag;
-            this.participation = copyData.participation;
-            this.etag = copyData.etag;
-            this.previousVersion = copyData.previousVersion;
-            this.previousVersionModel = copyData.previousVersionModel;
-            this.version = copyData.version;
-            this.sequence = copyData.sequence;
-            this.creationTime = copyData.creationTime;
-            this.obsoletionTime = copyData.obsoletionTime;
-            this.createdByModel = copyData.createdByModel;
-            this.modifiedOn = copyData.modifiedOn;
-            this.obsoletedByModel = copyData.obsoletedByModel;
-            this.createdBy = copyData.createdBy;
-            this.obsoletedBy = copyData.obsoletedBy;
             this.id = copyData.id;
-            this.$type = copyData.$type;
+            this.obsoletedBy = copyData.obsoletedBy;
+            this.createdBy = copyData.createdBy;
+            this.obsoletedByModel = copyData.obsoletedByModel;
+            this.modifiedOn = copyData.modifiedOn;
+            this.createdByModel = copyData.createdByModel;
+            this.obsoletionTime = copyData.obsoletionTime;
+            this.creationTime = copyData.creationTime;
+            this.sequence = copyData.sequence;
+            this.version = copyData.version;
+            this.previousVersionModel = copyData.previousVersionModel;
+            this.previousVersion = copyData.previousVersion;
+            this.etag = copyData.etag;
+            this.participation = copyData.participation;
+            this.tag = copyData.tag;
+            this.note = copyData.note;
+            this.extension = copyData.extension;
+            this.policy = copyData.policy;
+            this.relationship = copyData.relationship;
+            this.identifier = copyData.identifier;
+            this.typeConceptModel = copyData.typeConceptModel;
+            this.statusConceptModel = copyData.statusConceptModel;
+            this.reasonConceptModel = copyData.reasonConceptModel;
+            this.moodConceptModel = copyData.moodConceptModel;
+            this.classConceptModel = copyData.classConceptModel;
+            this.typeConcept = copyData.typeConcept;
+            this.statusConcept = copyData.statusConcept;
+            this.reasonConcept = copyData.reasonConcept;
+            this.moodConcept = copyData.moodConcept;
+            this.classConcept = copyData.classConcept;
+            this.stopTime = copyData.stopTime;
+            this.startTime = copyData.startTime;
+            this.actTime = copyData.actTime;
+            this.template = copyData.template;
+            this.isNegated = copyData.isNegated;
+            this.siteModel = copyData.siteModel;
+            this.site = copyData.site;
+            this.doseSequence = copyData.doseSequence;
+            this.doseQuantity = copyData.doseQuantity;
+            this.doseUnitModel = copyData.doseUnitModel;
+            this.routeModel = copyData.routeModel;
+            this.doseUnit = copyData.doseUnit;
+            this.route = copyData.route;
         }
     },  // SubstanceAdministration 
     // OpenIZ.Core.Model.Constants.UserClassKeys, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null

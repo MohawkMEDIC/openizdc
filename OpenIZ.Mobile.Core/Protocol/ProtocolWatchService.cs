@@ -1,5 +1,6 @@
 ﻿using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Services;
@@ -57,6 +58,7 @@ namespace OpenIZ.Mobile.Core.Protocol
             ApplicationContext.Current.Started += (ao, ae) => {
                 var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 if(persistence != null)
+                    // On new patient insertion
                     persistence.Inserted += (o, e) => {
 
                         ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((s) =>
@@ -64,6 +66,10 @@ namespace OpenIZ.Mobile.Core.Protocol
                             // We want to make sure the care plan contains everything in the protocols as possible
                             var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
                             var patient = (s as Patient).Clone() as Patient;
+
+                            if (patient.StatusConceptKey == StatusKeys.Active)
+                                return;// Business rules are already executed
+
                             patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
                             var acts = cpService.CreateCarePlan(patient);
 
@@ -76,6 +82,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     Item = acts.OfType<IdentifiedData>().ToList()
                                 };
                                 actService.Insert(batch);
+                                patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
+                                persistence.Update(patient);
                             }
 
                         }, e.Data);

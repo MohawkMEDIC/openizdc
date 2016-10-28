@@ -36,15 +36,18 @@ var OpenIZSessionService = window.OpenIZSessionService || {};
  * @callback OpenIZ~continueWith
  * @summary The function call which is called whenever an asynchronous operation completes successfully
  * @param {Object} data The result data from the asynchronous callback
+ * @param {Object} state State data which is to be passed to the async callback
  */
 /**
  * @callback OpenIZ~onException
  * @summary The exception handling callback whenever an asynchronous operation does not complete successfully
  * @param {OpenIZModel#Exception} exception The exception which was thrown as a result of the operation.
+ * @param {Object} state State data which is to be passed to the async callback
  */
 /**
  * @callback OpenIZ~finally
  * @summary The callback which is always executed from an asynchronous call regardless of whehter the operation was successful or not
+ * @param {Object} state State data which is to be passed to the async callback
  */
 /**
  * @summary OpenIZ Javascript binding class.
@@ -116,6 +119,7 @@ var OpenIZ = OpenIZ || {
             fulfills.etag = null;
             fulfills.startTime = fulfills.stopTime = null;
 
+            
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
@@ -142,7 +146,8 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
-                query: controlData.query
+                query: controlData.query,
+                state: controlData.state
             });
         },
         /**
@@ -167,7 +172,8 @@ var OpenIZ = OpenIZ || {
                 resource: "Act",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                data: controlData.data
+                data: controlData.data,
+                state: controlData.state
             });
         },
         /**
@@ -193,7 +199,8 @@ var OpenIZ = OpenIZ || {
                 query: { "templateId": controlData.templateId },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         }
     },
@@ -234,10 +241,10 @@ var OpenIZ = OpenIZ || {
                 success: function (xhr, data) {
 
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -247,16 +254,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 }
             });
         },
@@ -290,10 +297,10 @@ var OpenIZ = OpenIZ || {
                 success: function (xhr, data) {
 
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -303,16 +310,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 }
             });
         },
@@ -340,10 +347,10 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -353,16 +360,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     // Do finally
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
 
                 }
             });
@@ -387,10 +394,10 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/json',
                 success: function (xhr, data) {
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -400,16 +407,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     // Do finally
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
 
                 }
             });
@@ -502,6 +509,19 @@ var OpenIZ = OpenIZ || {
      * @memberof OpenIZ
      */
     Util: {
+        /** 
+         * @summary Renders the specified concept name
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.ConceptName} The concept name to be rendered
+         */
+        renderConceptName : function(name) {
+            if (typeof (name) == "String") return name;
+            else if (name[OpenIZ.Localization.getLocale()] != null)
+                return name[OpenIZ.Localization.getLocale()];
+            else 
+                return name[Object.keys(name)[0]];
+        },
         /**
          * @summary Perform a simple post of JSON data to the backend
          * @method
@@ -525,10 +545,10 @@ var OpenIZ = OpenIZ || {
                 success: function (xhr, data) {
 
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -538,16 +558,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 }
             });
         },
@@ -568,34 +588,32 @@ var OpenIZ = OpenIZ || {
             $.getJSON(url, controlData.query, function (data) {
 
                 if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.type, data.error),
-                        data.error_description,
-                        null
+                    controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                     );
                 else if (data != null) {
-                    controlData.continueWith(data);
+                    controlData.continueWith(data, controlData.state);
                 }
                 else
                     controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                         data,
                         null
-                    ));
+                    ), controlData.state);
             }).error(function (data) {
                 var error = data.responseJSON;
                 if (error != null && error.error !== undefined) //  error
                     controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                             error.error_description,
                             null
-                        ));
+                        ), controlData.state);
 
                 else // unknown error
                     controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                             data,
                             null
-                        ));
+                        ), controlData.state);
             }).always(function () {
                 if (controlData.finally !== undefined)
-                    controlData.finally();
+                    controlData.finally(controlData.state);
             });
         },
         /**
@@ -738,13 +756,13 @@ var OpenIZ = OpenIZ || {
         startTaskAsync: function (syncFn, controlData) {
             return setTimeout(function () {
                 try {
-                    controlData.continueWith(syncFn());
+                    controlData.continueWith(syncFn(), controlData.state);
                 }
                 catch (ex) {
                     if (controlData.onException === undefined)
                         console.error(ex);
                     else
-                        controlData.onException(ex);
+                        controlData.onException(ex, controlData.state);
                 }
             }, 0);
         }
@@ -818,22 +836,20 @@ var OpenIZ = OpenIZ || {
                  contentType: 'application/x-www-urlform-encoded',
                  success: function (xhr, data) {
                      if (data != null && data.error !== undefined)
-                         controlData.onException(new OpenIZModel.Exception(data.type, data.error),
-                             data.error_description,
-                             null
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                          );
                      else if (data != null) {
-                         controlData.continueWith(data);
+                         controlData.continueWith(data, controlData.state);
                          OpenIZ.Authentication.$session = data;
                      }
                      else
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                              data,
                              null
-                         ));
+                         ), controlData.state);
 
                      if (controlData.finally !== undefined)
-                         controlData.finally();
+                         controlData.finally(controlData.state);
                  },
                  error: function (data) {
                      var error = data.responseJSON;
@@ -841,15 +857,15 @@ var OpenIZ = OpenIZ || {
                          controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                  error.error_description,
                                  null
-                             ));
+                             ), controlData.state);
 
                      else // unknown error
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                  data,
                                  null
-                             ));
+                             ), controlData.state);
                      if (controlData.finally !== undefined)
-                         controlData.finally();
+                         controlData.finally(controlData.state);
 
                  }
              });
@@ -885,12 +901,10 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (xhr, data) {
                     if (data != null && data.error !== undefined)
-                        controlData.onException(new OpenIZModel.Exception(data.type, data.error),
-                            data.error_description,
-                            null
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                         );
                     else if (data != null)
-                        controlData.continueWith(data);
+                        controlData.continueWith(data, controlData.state);
                     else
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                             data,
@@ -898,7 +912,7 @@ var OpenIZ = OpenIZ || {
                         ));
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -906,15 +920,15 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
 
                 }
             });
@@ -948,11 +962,11 @@ var OpenIZ = OpenIZ || {
                 contentType: 'application/x-www-urlform-encoded',
                 success: function (xhr, data)
                 {
-                    controlData.continueWith(data);
+                    controlData.continueWith(data, controlData.state);
 
                     if (controlData.finally !== undefined)
                     {
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                     }
                 },
                 error: function (data)
@@ -962,17 +976,17 @@ var OpenIZ = OpenIZ || {
                     if (error != null && error.error !== undefined)
                     {
                         // oauth 2 error
-                        controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null));
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null), controlData.state);
                     }
                     else
                     {
                         // unknown error
-                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null));
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null), controlData.state);
                     }
 
                     if (controlData.finally !== undefined)
                     {
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                     }
                 }
             });
@@ -1014,7 +1028,8 @@ var OpenIZ = OpenIZ || {
                 query: controlData.query,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         },
     },
@@ -1089,9 +1104,9 @@ var OpenIZ = OpenIZ || {
                 success: function (xhr, data) {
                     console.info("Retrieved care plan...");
                     // console.info(JSON.stringify(xhr));
-                    controlData.continueWith(xhr);
+                    controlData.continueWith(xhr, controlData.state);
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -1099,15 +1114,15 @@ var OpenIZ = OpenIZ || {
                     if (controlData.onException !== undefined) {
                         if (error.error !== undefined) // error
                         {
-                            controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null));
+                            controlData.onException(new OpenIZModel.Exception(error.type, error.error, error.error_description, null), controlData.state);
                         }
                         else {
                             // unknown error
-                            controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null));
+                            controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error, data, null), controlData.state);
                         }
                     }
                     if (controlData.finally !== undefined) {
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                     }
                 }
             });
@@ -1455,10 +1470,10 @@ var OpenIZ = OpenIZ || {
                 success: function (xhr, data) {
 
                     if (controlData.continueWith !== undefined)
-                        controlData.continueWith(xhr);
+                        controlData.continueWith(xhr, controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 },
                 error: function (data) {
                     var error = data.responseJSON;
@@ -1468,16 +1483,16 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
-                            ));
+                            ), controlData.state);
 
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
                                 null
-                            ));
+                            ), controlData.state);
 
                     if (controlData.finally !== undefined)
-                        controlData.finally();
+                        controlData.finally(controlData.state);
                 }
             });
         }
@@ -1583,7 +1598,8 @@ var OpenIZ = OpenIZ || {
                 query: controlData.query,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         },
         /**
@@ -1613,7 +1629,8 @@ var OpenIZ = OpenIZ || {
                 query: controlData.query,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         }
     },
@@ -1639,7 +1656,8 @@ var OpenIZ = OpenIZ || {
                 resource: "Bundle",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                data: controlData.data
+                data: controlData.data,
+                state: controlData.state
             });
         }
     },
@@ -1671,7 +1689,8 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
-                query: controlData.query
+                query: controlData.query,
+                state: controlData.state
             });
         },
         /**
@@ -1691,7 +1710,8 @@ var OpenIZ = OpenIZ || {
                 resource: "Patient",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                data: controlData.data
+                data: controlData.data,
+                state: controlData.state
             });
         },
         /**
@@ -1714,7 +1734,8 @@ var OpenIZ = OpenIZ || {
                 id: controlData.id,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         },
         /**
@@ -1735,7 +1756,8 @@ var OpenIZ = OpenIZ || {
                 id: controlData.id,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         },
         /**
@@ -1757,8 +1779,9 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 query: {
-                    _id: controlData.patientId
-                }
+                    _id: controlData.id || controlData.patientId
+                },
+                state: controlData.state
             });
         },
     },
@@ -1791,7 +1814,8 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
-                query: controlData.query
+                query: controlData.query,
+                state: controlData.state
             });
         },
         /**
@@ -1870,7 +1894,8 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 resource: 'Provider',
-                query: controlData.query
+                query: controlData.query,
+                state: controlData.state
             });
         },
         /**
@@ -1960,7 +1985,8 @@ var OpenIZ = OpenIZ || {
                 query: { "templateId": controlData.templateId },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
         },
     },
@@ -1987,10 +2013,11 @@ var OpenIZ = OpenIZ || {
             OpenIZ.Util.simpleGet('/__config/all', {
                 continueWith: function (data) {
                     OpenIZ.Configuration.$configuration = data;
-                    controlData.continueWith(data);
+                    controlData.continueWith(data, controlData.state);
                 },
                 onException: controlData.onException,
-                finally: controlData.finally
+                finally: controlData.finally,
+                state: controlData.state
             });
 
         },
@@ -2086,22 +2113,20 @@ var OpenIZ = OpenIZ || {
                      contentType: 'application/x-www-urlform-encoded',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.type, data.error),
-                                 data.error_description,
-                                 null
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                              );
                          else if (data != null) {
                              OpenIZ.Configuration.$configuration = xhr;
-                             controlData.continueWith(xhr);
+                             controlData.continueWith(xhr, controlData.state);
                          }
                          else if(controlData.onException != null)
                              controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                                  data,
                                  null
-                             ));
+                             ), controlData.state);
 
                          if (controlData.finally !== undefined)
-                             controlData.finally();
+                             controlData.finally(controlData.state);
                      },
                      error: function (data) {
                          var error = data.responseJSON;
@@ -2109,15 +2134,15 @@ var OpenIZ = OpenIZ || {
                              controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
                                      null
-                                 ));
+                                 ), controlData.state);
 
                          else if(controlData.onException != null) // unknown error
                              controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                      data,
                                      null
-                                 ));
+                                 ), controlData.state);
                          if (controlData.finally !== undefined)
-                             controlData.finally();
+                             controlData.finally(controlData.state);
 
                      }
                  });
@@ -2166,22 +2191,20 @@ var OpenIZ = OpenIZ || {
                      contentType: 'application/json',
                      success: function (xhr, data) {
                          if (data != null && data.error !== undefined)
-                             controlData.onException(new OpenIZModel.Exception(data.type, data.error),
-                                 data.error_description,
-                                 null
+                             controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                              );
                          else if (data != null) {
                              OpenIZ.Configuration.$configuration = xhr;
-                             controlData.continueWith(xhr);
+                             controlData.continueWith(xhr, controlData.state);
                          }
                          else
                              controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                                  data,
                                  null
-                             ));
+                             ), controlData.state);
 
                          if (controlData.finally !== undefined)
-                             controlData.finally();
+                             controlData.finally(controlData.state);
                      },
                      error: function (data) {
                          var error = data.responseJSON;
@@ -2189,15 +2212,15 @@ var OpenIZ = OpenIZ || {
                              controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                      error.error_description,
                                      null
-                                 ));
+                                 ), controlData.state);
 
                          else // unknown error
                              controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                      data,
                                      null
-                                 ));
+                                 ), controlData.state);
                          if (controlData.finally !== undefined)
-                             controlData.finally();
+                             controlData.finally(controlData.state);
 
                      }
                  });
@@ -2280,7 +2303,8 @@ var OpenIZ = OpenIZ || {
                 resource: "ManufacturedMaterial",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                query: controlData.query
+                query: controlData.query,
+                state: controlData.state
             })
         }
     },
@@ -2306,7 +2330,8 @@ var OpenIZ = OpenIZ || {
                 resource: "UserEntity",
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
-                data: controlData.data
+                data: controlData.data,
+                state: controlData.state
             });
         }
     }

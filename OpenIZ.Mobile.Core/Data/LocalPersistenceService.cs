@@ -239,9 +239,9 @@ namespace OpenIZ.Mobile.Core.Data
         }
 
         /// <summary>
-        /// Ensure the specified object exists, insert it if it doesnt
+        /// Ensure the specified object exists
         /// </summary>
-        public static void EnsureExists(this IIdentifiedEntity me, SQLiteConnectionWithLock context)
+        public static TModel EnsureExists<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
         {
 
             // Me
@@ -294,6 +294,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                     if (vMe != null)
                         vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
+                    existing = inserted;
                 }
 
             }
@@ -302,6 +303,8 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Stop();
             s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
 #endif
+            return (TModel)existing;
+
         }
 
         ///// <summary>
@@ -357,6 +360,7 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null)
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
                 }
@@ -376,6 +380,7 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null)
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
 
@@ -406,10 +411,10 @@ namespace OpenIZ.Mobile.Core.Data
                     var instance = rp.GetValue(data);
                     if (instance != null)
                     {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        instance = ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if(instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
-
                 }
                 return base.Insert(context, data);
             }
@@ -429,6 +434,7 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null)
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
 
@@ -459,6 +465,8 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null)
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if (instance != null) rp.SetValue(data, instance);
+
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
 
@@ -481,6 +489,7 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null && rp.Name != "SourceEntity") // HACK: Prevent infinite loops on associtive entities
                     {
                         ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
 

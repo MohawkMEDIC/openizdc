@@ -57,7 +57,9 @@
     <Compile Include="Data\Model\Entities\DbUserEntity.cs" />
     <Compile Include="Data\Model\Extensibility\DbTemplateDefinition.cs" />
     <Compile Include="Data\Persistence\ActDerivedPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ActParticipationPersistenceService.cs" />
     <Compile Include="Data\Persistence\ActPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ActRelationshipPersistenceService.cs" />
     <Compile Include="Data\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\AuthorityPersistenceService.cs" />
     <Compile Include="Data\Persistence\BundlePersistenceService.cs" />

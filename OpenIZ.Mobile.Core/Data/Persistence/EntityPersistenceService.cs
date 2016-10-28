@@ -156,10 +156,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure FK exists
-            data.ClassConcept?.EnsureExists(context);
-            data.DeterminerConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
@@ -250,10 +250,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Entity Update(SQLiteConnectionWithLock context, Entity data)
         {
             // Esnure exists
-            data.ClassConcept?.EnsureExists(context);
-            data.DeterminerConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+
 
             var retVal = base.Update(context, data);
 

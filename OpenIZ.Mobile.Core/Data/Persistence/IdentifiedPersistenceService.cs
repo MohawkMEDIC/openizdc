@@ -295,16 +295,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
+
+            // Remove all empty associations (associations which are messy)
+            storage = storage.Where(o => !o.IsEmpty()).ToList();
+
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAssociation>>() as LocalPersistenceServiceBase<TAssociation>;
             if (persistenceService == null || !sourceKey.HasValue)
             {
                 this.m_tracer.TraceInfo("Missing persister for type {0}", typeof(TAssociation).Name);
                 return;
             }
+
             // Ensure the source key is set
             foreach (var itm in storage)
                 if (itm.SourceEntityKey == Guid.Empty || !itm.SourceEntityKey.HasValue)
                     itm.SourceEntityKey = sourceKey;
+                else if (itm.SourceEntityKey != sourceKey) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
+                {
+                    itm.SourceEntityKey = sourceKey;
+                    itm.Key = null;
+                }
 
             // Remove old
             var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));

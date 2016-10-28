@@ -20,11 +20,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override EntityRelationship Insert(SQLiteConnectionWithLock context, EntityRelationship data)
         {
-            data.TargetEntity?.EnsureExists(context);
+            
+            // Ensure we haven't already persisted this
+            if(data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
-            data.RelationshipType?.EnsureExists(context);
+            if(data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
-            return base.Insert(context, data);
+
+            byte[] target = data.TargetEntityKey.Value.ToByteArray(),
+                source = data.SourceEntityKey.Value.ToByteArray(),
+                typeKey = data.RelationshipTypeKey.Value.ToByteArray();
+
+            var existing = context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.EntityUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
+            if (existing == null)
+                return base.Insert(context, data);
+            else
+            {
+                data.Key = new Guid(existing.Uuid);
+                return data;
+            }
         }
 
         /// <summary>
@@ -32,10 +46,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override EntityRelationship Update(SQLiteConnectionWithLock context, EntityRelationship data)
         {
-            data.TargetEntity?.EnsureExists(context);
+            // Ensure we haven't already persisted this
+            if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
-            data.RelationshipType?.EnsureExists(context);
+            if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
+
             return base.Update(context, data);
         }
     }

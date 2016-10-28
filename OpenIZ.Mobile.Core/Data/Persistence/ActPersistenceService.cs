@@ -140,11 +140,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         internal Act InsertInternal(SQLiteConnectionWithLock context, Act data)
         {
             
-            data.ClassConcept?.EnsureExists(context);
-            data.MoodConcept?.EnsureExists(context);
-            data.ReasonConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if(data.MoodConcept != null) data.MoodConcept = data.MoodConcept.EnsureExists(context);
+            if(data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
+            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if(data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
