@@ -2,7 +2,7 @@
 /// <reference path="~/lib/select2.min.js"/>
 
 /**
- * @version 0.6.12 - Dalhouse
+ * @version 0.6.12 (Dalhouse)
  * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
