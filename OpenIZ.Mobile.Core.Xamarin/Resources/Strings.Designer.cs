@@ -133,6 +133,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password reset is not supported from this configuration.
+        /// </summary>
+        internal static string err_reset_not_supported {
+            get {
+                return ResourceManager.GetString("err_reset_not_supported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid response received from server.
         /// </summary>
         internal static string err_response_failed_validation {

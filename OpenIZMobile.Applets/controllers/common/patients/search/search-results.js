@@ -17,11 +17,30 @@ $(document).ready(function () {
             size: 10
         };
 
+        var updateResultEncounters = function () {
+            for (var i in scope.search.results.item) {
+                OpenIZ.Act.findAsync({
+                    query: {
+                        "classConcept": OpenIZModel.ActClassKeys.Encounter,
+                        "statusConcept": OpenIZModel.StatusKeys.Active,
+                        "moodConcept": OpenIZModel.ActMoodKeys.Eventoccurrence,
+                        "participation[RecordTarget].player": scope.search.results.item[i].id,
+                        "_count": 0
+                    },
+                    continueWith: function (result) {
+                        if (result != null)
+                            scope.search.results.item[i]._isInEncounter = result.totalResults > 0;
+                        scope.$apply();
+                    }
+                });
+            }
+        };
+
         /** 
          * @summary Advances to the next set of results
          */
-        scope.search.search = scope.search.search || function () {
-            OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
+        scope.search.search = scope.search.search || function (nonInteractive) {
+            if (!nonInteractive) OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
 
@@ -37,6 +56,7 @@ $(document).ready(function () {
                     };
                     for (var i = 0; i < scope.search.paging.total; i++)
                         scope.search.paging.pages[i] = i + 1;
+                    updateResultEncounters();
                     scope.$apply();
                 },
                 onException: function (e) {
@@ -66,6 +86,7 @@ $(document).ready(function () {
                 query: scope.search.query, 
                 continueWith: function (r) {
                     scope.search.results = r;
+                    updateResultEncounters();
                     scope.$apply();
                 },
                 onException: function (e) {
@@ -95,6 +116,7 @@ $(document).ready(function () {
                 query: scope.search.query,
                 continueWith: function (r) {
                     scope.search.results = r;
+                    updateResultEncounters();
                     scope.$apply();
                 },
                 onException: function (e) {
@@ -122,6 +144,7 @@ $(document).ready(function () {
                 query: scope.search.query,
                 continueWith: function (r) {
                     scope.search.results = r;
+                    updateResultEncounters();
                     scope.$apply();
                 },
                 onException: function (e) {
@@ -135,35 +158,13 @@ $(document).ready(function () {
 
         scope.act = { };
 
-        OpenIZ.Act.getActTemplateAsync({
-            templateId: "Act.PatientEncounter.Checkin",
-            continueWith: function (data) {
-                scope.act = data;
-            },
-            onException: function (ex) {
-                console.log(ex);
-            }
-        });
-
         /**
         * @summary Starts an encounter for a patient.
         */
         scope.startEncounter = function (patient) {
-
-            scope.act.participation.RecordTarget.player = patient.id;
-
-            OpenIZ.Ims.post({
-                resource: "Act",
-                data: scope.act,
-                continueWith: function (data) {
-                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.patient.queue.success"));
-                },
-                onException: function (error) {
-                    console.log(error);
-                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.patient.queue.error"));
-                }
-            });
+            scope.doStartEncounter(patient);
         };
+
 
     });
 });

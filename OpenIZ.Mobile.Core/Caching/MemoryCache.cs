@@ -36,6 +36,7 @@ using System.Threading.Tasks;
 using OpenIZ.Core.Services;
 using System.Collections;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -89,7 +90,10 @@ namespace OpenIZ.Mobile.Core.Caching
             typeof(Concept),
             typeof(AssigningAuthority),
             typeof(Place),
-            typeof(ConceptSet)
+            typeof(ConceptSet),
+            typeof(ConceptName),
+            typeof(SecurityUser),
+            typeof(UserEntity)
         };
 
         /// <summary>
@@ -166,10 +170,11 @@ namespace OpenIZ.Mobile.Core.Caching
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
                 Guid key = idData?.Key ?? Guid.Empty;
-                if (cache.ContainsKey(idData?.Key ?? Guid.Empty))
+                CacheEntry entry = null;
+
+                if (cache.TryGetValue(key, out entry))
                     lock (this.m_lock)
                     {
-                        var entry = cache[key];
                         entry.Data =  data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
@@ -178,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Caching
                         if (!cache.ContainsKey(key))
                         {
                             cache.Add(key, new CacheEntry(DateTime.Now, data));
-                            this.m_tracer.TraceInfo("Cache {0} is now {1} large", objData, cache.Count);
+                            this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
 
                         }
             }

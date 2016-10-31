@@ -141,6 +141,9 @@
   <data name="err_offline_use_cache_creds" xml:space="preserve">
     <value>The authentication server cannot be contacted. Use the credentials you last used to access this device</value>
   </data>
+  <data name="err_reset_not_supported" xml:space="preserve">
+    <value>Password reset is not supported from this configuration</value>
+  </data>
   <data name="err_response_failed_validation" xml:space="preserve">
     <value>Invalid response received from server</value>
   </data>

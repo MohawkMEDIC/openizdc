@@ -29,7 +29,11 @@
     <tbody>
         <tr ng-repeat="patient in search.results.item">
             <td>{{search.results.offset + 1 + $index}}</td>
-            <td>{{ ::patient.name.OfficialRecord | oizEntityName }}</td>
+            <td>{{ ::patient.name.OfficialRecord | oizEntityName }} 
+            <small ng-if="patient.relationship.Mother.targetModel">
+                <br />
+                {{ ::patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }} <span class="label label-primary">{{ 'locale.patient.relationship.mother' | i18n }}</span>
+            </small></td>
             <td>{{ ::patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.fuzzy' | i18n }}</span></td>
             <td>{{ ::patient.genderConceptModel.name[$root.page.locale] }}</td>
             <td>{{ ::patient.address.HomeAddress | oizEntityAddress }}</td>
@@ -45,8 +49,11 @@
                     <a class="btn btn-primary" href="./view.html?patientId={{::patient.id}}">
                         {{ 'locale.patient.action.view' | i18n }}<span class="glyphicon glyphicon-eye-open"></span>
                     </a>
-                    <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-class="{'btn-success':isInEncounter(patient)}">
+                    <a class="btn btn-primary" ng-click="startEncounter(patient)" ng-if="!patient._isInEncounter">
                         {{ 'locale.patient.action.startEncounter' | i18n }}
+                    </a>
+                    <a class="btn btn-success" ng-click="viewEncounter(patient)" ng-if="patient._isInEncounter">
+                        {{ 'locale.patient.action.viewEncounter' | i18n }}
                     </a>
                 </span>
             </td>

@@ -93,6 +93,8 @@
     <Compile Include="Search\Model\SearchTermEntity.cs" />
     <Compile Include="Search\SearchIndexService.cs" />
     <Compile Include="Security\MemorySessionManagerService.cs" />
+    <Compile Include="Security\ITwoFactorRequestService.cs" />
+    <Compile Include="Security\Remote\AmiTwoFactorRequestService.cs" />
     <Compile Include="Security\SessionInfo.cs" />
     <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />

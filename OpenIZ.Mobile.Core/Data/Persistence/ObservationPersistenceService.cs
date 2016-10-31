@@ -184,8 +184,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var iddat = dataInstance as DbVersionedData;
             var qObs = dataInstance as DbQuantityObservation ?? context.Table<DbQuantityObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbo = context.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(o => o.Uuid == qObs.Uuid).First();
+            var dbo = context.Table<DbObservation>().Where(o => o.Uuid == qObs.Uuid).First();
             return this.ToModelInstance(qObs, dba, dbo, context, loadFast);
         }
 

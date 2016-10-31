@@ -28,6 +28,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Entities;
 using System.Data;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using OpenIZ.Mobile.Core.Security.Remote;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -135,6 +136,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiPolicyInformationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiPersistenceService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiTwoFactorRequestService).AssemblyQualifiedName);
+
                     break;
                 case "offline":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
@@ -146,6 +149,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(QueueManagerService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(RemoteSynchronizationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiIntegrationService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiTwoFactorRequestService).AssemblyQualifiedName);
 
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
@@ -295,7 +299,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = amiUri
+                            Address = amiUri, Timeout = 10000
                         }
                     },
                     Name = "ami"
@@ -437,7 +441,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = amiUri
+                            Address = amiUri, Timeout = 10000
                         }
                     },
                     Name = "ami"

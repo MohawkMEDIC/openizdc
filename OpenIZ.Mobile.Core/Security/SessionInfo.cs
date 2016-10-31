@@ -141,7 +141,7 @@ namespace OpenIZ.Mobile.Core.Security
                 {
                     entity = userService.GetUserEntity(this.Principal.Identity);
 
-                    if (entity == null)
+                    if (entity == null && this.SecurityUser != null)
                         entity = new UserEntity()
                         {
                             SecurityUserKey = this.SecurityUser.Key,

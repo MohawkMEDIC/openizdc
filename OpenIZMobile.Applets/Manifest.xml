@@ -80,6 +80,9 @@
     
     <!-- Actions -->
     <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.next">Next</string>
+    <string key="locale.action.back">Back</string>
+    <string key="locale.action.done">Done</string>
     <string key="locale.action.delete">Delete</string>
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.cancel">Cancel</string>
@@ -110,6 +113,21 @@
     <string key="locale.security.login.button.forgotPassword">Forgot Password</string>
     <string key="locale.security.login.button.login">Login</string>
     <string key="locale.security.forgotPassword.title">Forgot Password</string>
+    <string key="locale.security.forgotPassword.userName">Username</string>
+    <string key="locale.security.forgotPassword.mechanism">Method</string>
+    <string key="locale.security.forgotPassword.challenge">Verify</string>
+    <string key="locale.security.forgotPassword.changePassword">Set Password</string>
+    <string key="locale.forgotPassword.userName.title">Enter Username</string>
+    <string key="locale.forgotPassword.userName.help">Enter the name of the user for which you wish to reset the password.</string>
+    <string key="locale.forgotPassword.userName.label">Username</string>
+    <string key="locale.forgotPassword.userName.placeholder">Username</string>
+    <string key="locale.forgotPassword.mechanism.title">Reset Method</string>
+    <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
+    <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
+    <string key="locale.forgotPassword.changePassword.title">Set Password</string>
+    <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
+    <string key="locale.forgotPassword.challenge.resend">Send</string>
+    <string key="locale.forgotPassword.challenge.response">A secret has been sent to you, enter the secret below. If you do not receive the secret you can press "send" to get a new secret sent to you.</string>
     <string key="locale.security.errors.usernameRequired">Please enter a username</string>
     <string key="locale.security.errors.passwordRequired">Please enter a password</string>
     <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
@@ -199,7 +217,7 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
-
+    <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
     <!-- Stock Management -->
     <string key="locale.stock.action.transfer">Transfer</string>
     <string key="locale.stock.action.count">Stock Count</string>

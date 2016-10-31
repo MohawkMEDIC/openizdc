@@ -84,6 +84,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context
                 );
 
+            if (retVal.ConceptSetsXml != null)
+                    foreach (var r in retVal.ConceptSetsXml)
+                    {
+                        context.Insert(new DbConceptSetConceptAssociation()
+                        {
+                            Uuid = Guid.NewGuid().ToByteArray(),
+                            ConceptSetUuid = r.ToByteArray(),
+                            ConceptUuid = retVal.Key.Value.ToByteArray()
+                        });
+                    }
+
             return retVal;
         }
 
@@ -108,6 +119,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context
                     );
 
+            // Wipe and re-associate
+            if (retVal.ConceptSetsXml != null && retVal.ConceptSetsXml.Count > 0)
+            {
+                context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptUuid == sourceKey);
+                foreach (var r in retVal.ConceptSetsXml)
+                {
+                    context.Insert(new DbConceptSetConceptAssociation()
+                    {
+                        Uuid = Guid.NewGuid().ToByteArray(),
+                        ConceptSetUuid = r.ToByteArray(),
+                        ConceptUuid = retVal.Key.Value.ToByteArray()
+                    });
+                }
+
+            }
             return retVal;
         }
 

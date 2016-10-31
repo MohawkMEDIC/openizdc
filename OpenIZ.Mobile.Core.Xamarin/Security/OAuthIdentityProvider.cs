@@ -67,11 +67,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         }
 
         /// <summary>
+        /// Perform authentication with specified password
+        /// </summary>
+        public System.Security.Principal.IPrincipal Authenticate(System.Security.Principal.IPrincipal principal, string password)
+        {
+            return this.Authenticate(principal, password, null);
+        }
+
+        /// <summary>
         /// Authenticate the user
         /// </summary>
         /// <param name="principal">Principal.</param>
         /// <param name="password">Password.</param>
-        public System.Security.Principal.IPrincipal Authenticate(System.Security.Principal.IPrincipal principal, string password)
+        public System.Security.Principal.IPrincipal Authenticate(System.Security.Principal.IPrincipal principal, string password, String tfaSecret)
         {
 
             AuthenticatingEventArgs e = new AuthenticatingEventArgs(principal.Identity.Name, password) { Principal = principal };
@@ -109,9 +117,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         request = new OAuthTokenRequest(principal.Identity.Name, password, scope);
                     else if (principal is TokenClaimsPrincipal)
                         request = new OAuthTokenRequest(principal as TokenClaimsPrincipal);
+                    else
+                        request = new OAuthTokenRequest(principal.Identity.Name, null, scope);
 
                     try
                     {
+                        if (!String.IsNullOrEmpty(tfaSecret))
+                            restClient.Requesting += (o, p) => p.AdditionalHeaders.Add("X-OpenIZ-TfaSecret", tfaSecret);
+
                         // Invoke
                         OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                         retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
@@ -148,7 +161,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     // Create a security user and ensure they exist!
                     var localRp = new LocalRoleProviderService();
                     var localPip = new LocalPolicyInformationService();
-                    IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null; 
 
                     // We have a match! Lets make sure we cache this data
                     // TODO: Clean this up
@@ -184,10 +196,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                         }
 
-                        if (localUser == null)
-                            localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
-                        else
-                            localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                        IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+                        try
+                        {
+                            if (localUser == null)
+                                localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
+                            else
+                                localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                        }
+                        catch(Exception ex)
+                        {
+                            this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
+                        }
+
                         // Add user to roles
                         // TODO: Remove users from specified roles?
                         localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
@@ -241,16 +262,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         /// </summary>
 		public System.Security.Principal.IPrincipal Authenticate(string userName, string password, string tfaSecret)
         {
-            throw new NotImplementedException();
+            return this.Authenticate(new GenericPrincipal(new GenericIdentity(userName), null), password, tfaSecret);
         }
 
-		/// <summary>
-		/// Changes the users password.
-		/// </summary>
-		/// <param name="userName">The username of the user.</param>
-		/// <param name="newPassword">The new password of the user.</param>
-		/// <param name="principal">The authentication principal (the user that is changing the password).</param>
-		public void ChangePassword(string userName, string newPassword, System.Security.Principal.IPrincipal principal)
+        /// <summary>
+        /// Changes the users password.
+        /// </summary>
+        /// <param name="userName">The username of the user.</param>
+        /// <param name="newPassword">The new password of the user.</param>
+        /// <param name="principal">The authentication principal (the user that is changing the password).</param>
+        public void ChangePassword(string userName, string newPassword, System.Security.Principal.IPrincipal principal)
         {
 
             try
@@ -267,16 +288,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 {
                     client.Client.Accept = "application/xml";
 
-                    // User service is null
-                    var securityUser = securityUserService.GetUser(principal.Identity);
-                    if (securityUser == null)
-                        throw new ArgumentException(string.Format("User {0} not found", userName));
+                    Guid userId = Guid.Empty;
+                    if (principal is ClaimsPrincipal)
+                    {
+                        var subjectClaim = (principal as ClaimsPrincipal).FindClaim(ClaimTypes.Sid);
+                        if (subjectClaim != null)
+                            userId = Guid.Parse(subjectClaim.Value);
+                    }
 
+                    // User ID not found - lookup
+                    if (userId == Guid.Empty)
+                    { 
+                        // User service is null
+                        var securityUser = securityUserService.GetUser(principal.Identity);
+                        if (securityUser == null)
+                        {
+                            var tuser = client.GetUsers(o => o.UserName == principal.Identity.Name).CollectionItem.FirstOrDefault();
+                            if (tuser == null)
+                                throw new ArgumentException(string.Format("User {0} not found", userName));
+                            else
+                                userId = tuser.UserId.Value;
+                        }
+                        else
+                            userId = securityUser.Key.Value;
+                    }
                     // Use the current configuration's credential provider
                     var user = new SecurityUserInfo()
                     {
-                        UserId = securityUser.Key,
-                        UserName = securityUser.UserName,
+                        UserId = userId,
+                        UserName = userName,
                         Password = newPassword
                     };
 

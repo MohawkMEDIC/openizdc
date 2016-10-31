@@ -72,6 +72,28 @@ var OpenIZ = OpenIZ || {
      */
     Act: {
         /**
+         * @summary Asynchronously deletes an encounter object in the IMS
+         * @memberof OpenIZ.Act
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the act that is to be updated
+         * @see {OpenIZ.IMS.delete}
+         * @see OpenIZModel.Act
+         */
+        obsoleteAsync: function(controlData) {
+            OpenIZ.Ims.delete({
+                resource: "Act",
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                id: controlData.id,
+                state: controlData.state
+            });
+        },
+        /**
          * @summary Creates a fulfillment relationship act
          * @description This method creates a new act which fulfills the specified act
          * @param {OpenIZModel.Act} act The act which the new act should fulfill
@@ -388,8 +410,7 @@ var OpenIZ = OpenIZ || {
         delete: function (controlData) {
             $.ajax({
                 method: 'DELETE',
-                url: "/__ims/" + controlData.resource,
-                data: { "_id": controlData.id },
+                url: "/__ims/" + controlData.resource + "?_id=" + controlData.id,
                 accept: 'application/json',
                 contentType: 'application/json',
                 success: function (xhr, data) {
@@ -784,6 +805,28 @@ var OpenIZ = OpenIZ || {
          * @summary Credentials to use for elevation in lieu of the current session
          */
         $elevationCredentials: {},
+        /** 
+         * @summary Send a TFA secret
+         * @method
+         * @memberof OpenIZ.Authentication
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         */
+        sendTfaSecretAsync : function(controlData) {
+            OpenIZ.Util.simplePost("/__auth/tfa", controlData);
+        },
+        /** 
+         * @summary Get the TFA mechanisms
+         * @method
+         * @memberof OpenIZ.Authentication
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         */
+        getTfaMechanisms : function(controlData) {
+            OpenIZ.Util.simpleGet("/__auth/tfa", controlData);
+        },
         /**
          * @summary Show an elevation dialog
          * @method
@@ -808,6 +851,7 @@ var OpenIZ = OpenIZ || {
          * @param {string} controlData.userName The username to use when authenticating
          * @param {string} controlData.password The password of the user to authenticate with
          * @param {string} controlData.scope The scope to append to the OAUTH request
+         * @param {string} controlData.tfaSecret The scope to append to the OAUTH request
          * @param {object} controlData The data which controls the asynchronous process
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
@@ -829,7 +873,8 @@ var OpenIZ = OpenIZ || {
                  data: {
                      username: controlData.userName,
                      password: controlData.password,
-                     grant_type: 'password',
+                     grant_type: controlData.tfaSecret != null ? 'tfa' : 'password',
+                     tfaSecret: controlData.tfaSecret,
                      scope: controlData.scope
                  },
                  dataType: "json",
@@ -2394,11 +2439,23 @@ Date.prototype.getFirstDayOfYear = function () {
 
 /**
  * @method 
- * @summary Get the same day of the following week
+ * @summary Get the first day of the following week
  */
-Date.prototype.asNextWeek = function () {
+Date.prototype.nextMonday = function () {
     var retVal = this.getFirstDayOfYear();
     retVal.setDate(retVal.getDate() + (new Date().getWeek() * 7));
+    return retVal;
+}
+
+
+/**
+ * @summary Gets the date on the next day
+ * @method
+ * @param {Number} days The number of days to add
+ */
+Date.prototype.addDays = function (days) {
+    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
+    retVal.setDate(retVal.getDate() + days);
     return retVal;
 }
 
@@ -2407,7 +2464,13 @@ Date.prototype.asNextWeek = function () {
  * @method
  */
 Date.prototype.tomorrow = function () {
-    var retVal = new Date(this.getFullYear(), this.getMonth(), this.getDate(), this.getHours(), this.getMinutes(), this.getSeconds(), this.getMilliseconds());
-    retVal.setDate(retVal.getDate() + 1);
-    return retVal;
+    return this.addDays(1);
+}
+
+/**
+ * @summary Gets the date on the previous day
+ * @method
+ */
+Date.prototype.yesterday = function () {
+    return this.addDays(-1);
 }

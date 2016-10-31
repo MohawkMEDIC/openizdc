@@ -68,6 +68,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
 
                 db.CreateTable<InboundQueueEntry>();
                 db.CreateTable<OutboundQueueEntry>();
+                db.CreateTable<OutboundAdminQueueEntry>();
                 db.CreateTable<DeadLetterQueueEntry>();
                 db.CreateTable<SynchronizationLogEntry>();
                 db.CreateTable<DbAlertMessage>();

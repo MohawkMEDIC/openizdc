@@ -70,6 +70,9 @@ namespace OpenIZ.Mobile.Core.Protocol
                             if (patient.StatusConceptKey == StatusKeys.Active)
                                 return;// Business rules are already executed
 
+                            patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
+                            persistence.Update(patient);
+
                             patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
                             var acts = cpService.CreateCarePlan(patient);
 
@@ -82,8 +85,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     Item = acts.OfType<IdentifiedData>().ToList()
                                 };
                                 actService.Insert(batch);
-                                patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
-                                persistence.Update(patient);
+
                             }
 
                         }, e.Data);

@@ -98,6 +98,73 @@
             Trace warning
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Event.NotificationEventArgs">
+            <summary>
+            Represents notification event arguments.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Event.NotificationEventArgs.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Event.NotificationEventArgs"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Event.NotificationEventArgs.#ctor(System.Object)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Event.NotificationEventArgs"/> class
+            with identified data.
+            </summary>
+            <param name="data">The raw request data.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Event.NotificationEventArgs.#ctor(OpenIZ.Core.Event.NotificationType)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Event.NotificationEventArgs"/> class
+            with a specific notification type.
+            </summary>
+            <param name="notificationType">The type of notification.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Event.NotificationEventArgs.#ctor(System.Object,OpenIZ.Core.Event.NotificationType)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Event.NotificationEventArgs"/> class
+            with identified data and a specific notification type.
+            </summary>
+            <param name="data">The raw request data.</param>
+            <param name="notificationType">The type of notification.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Event.NotificationEventArgs.Data">
+            <summary>
+            Gets or sets the data of the notification.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Event.NotificationEventArgs.NotificationType">
+            <summary>
+            Gets or sets the type of notification.
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Event.NotificationType">
+            <summary>
+            Represents a notification type.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Event.NotificationType.Create">
+            <summary>
+            Indicates a creation notification.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Event.NotificationType.DuplicatesResolved">
+            <summary>
+            Indicates a duplicates resolved notification.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Event.NotificationType.ReconciliationRequired">
+            <summary>
+            Indicates a reconciliation required notification.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Event.NotificationType.Update">
+            <summary>
+            Indicates an update notification.
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Http.Credentials">
             <summary>
             Represents a series of credentials which are used when accessing the mobile core
@@ -491,6 +558,56 @@
             De-serialize the body
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Http.MultipartAttachment">
+            <summary>
+            Represents a multipart attachment
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.MultipartAttachment.#ctor(System.Byte[],System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a new multipart attachment
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.MultipartAttachment.MimeType">
+            <summary>
+            Gets or sets the mime type of the attachment
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.MultipartAttachment.Name">
+            <summary>
+            Gets or sets the name of the attachment
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.MultipartAttachment.Data">
+            <summary>
+            Represents the data in the attachment
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Http.MultipartAttachment.UseFormEncoding">
+            <summary>
+            When true instructs the serializer to use form data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Http.MultipartBinarySerializer">
+            <summary>
+            Mutlipart binary serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.MultipartBinarySerializer.#ctor(System.String)">
+            <summary>
+            Gets the content type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.MultipartBinarySerializer.DeSerialize(System.IO.Stream)">
+            <summary>
+            De-serialize
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Http.MultipartBinarySerializer.Serialize(System.IO.Stream,System.Object)">
+            <summary>
+            Serialize
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Http.RestClientBase">
             <summary>
             Represents a simple rest client
@@ -575,7 +692,7 @@
             <param name="query"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Http.RestClientBase.InvokeInternal``2(System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.Net.HttpRequestHeader,System.String},``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+        <member name="M:OpenIZ.Core.Http.RestClientBase.InvokeInternal``2(System.String,System.String,System.String,System.Net.WebHeaderCollection,``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
             <summary>
             Invokes the specified method against the url provided
             </summary>
@@ -995,7 +1112,7 @@
             Gets the list of protocols which can be or should be used to create the care plans
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
             <summary>
             Create a care plam
             </summary>
@@ -1213,6 +1330,11 @@
         <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem``1(System.Guid)">
             <summary>
             Get the specified cache item
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem(System.Type,System.Guid)">
+            <summary>
+            Gets the specified cache item
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IEntityRepositoryService">
@@ -1471,6 +1593,29 @@
             <summary>
             Generate the phonetic code
             </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IClientRegistryNotificationService">
+            <summary>
+            Represents a client registry notification service.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IClientRegistryNotificationService.NotifyDuplicatesResolved(OpenIZ.Core.Event.NotificationEventArgs)">
+            <summary>
+            Notify that duplicates have been resolved.
+            </summary>
+            <param name="eventArgs">The notification event arguments.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IClientRegistryNotificationService.NotifyRegister(OpenIZ.Core.Event.NotificationEventArgs)">
+            <summary>
+            Notify that a registration occurred.
+            </summary>
+            <param name="eventArgs">The notification event arguments.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IClientRegistryNotificationService.NotifyUpdate(OpenIZ.Core.Event.NotificationEventArgs)">
+            <summary>
+            Notify that an update occurred.
+            </summary>
+            <param name="eventArgs">The notification event arguments.</param>
         </member>
         <member name="T:OpenIZ.Core.Services.IOrganizationRepositoryService">
             <summary>
@@ -1808,6 +1953,11 @@
             <param name="query">The query to use to match the users.</param>
             <returns>Returns a list of users.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.GetUser(System.String)">
+            <summary>
+            Get a user by user name
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Services.ISecurityRepositoryService.FindUsers(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Security.SecurityUser,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Gets a list of users based on a query.
@@ -2012,17 +2162,12 @@
             Constructs the aggregate care planner
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.#ctor(System.Boolean)">
-            <summary>
-            Simple care plan services
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Protocol.SimpleCarePlanService.Protocols">
             <summary>
             Gets the protocols
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
             <summary>
             Create a care plan
             </summary>

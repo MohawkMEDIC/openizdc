@@ -76,5 +76,11 @@
     "inputFiles": [
       "js/openiz-ng.js"
     ]
+  },
+  {
+    "outputFileName": "lib/bootstrap-wizard.min.js",
+    "inputFiles": [
+      "lib/bootstrap-wizard.js"
+    ]
   }
 ]

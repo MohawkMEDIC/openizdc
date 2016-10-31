@@ -109,11 +109,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             else
             {
 
-                int totalResults = 0;
+                int totalResults = 0,
+                       offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                       count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-                var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search), 0, null, out totalResults);
+                var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
 
-                results = results.Select(a => a.LoadDisplayProperties().LoadImmediateRelations());
+                results = results.Select(a => a.LoadDisplayProperties()); //.LoadImmediateRelations());
                 results.Select(a => a).ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
 
                 return new Bundle
@@ -124,6 +126,32 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     TotalResults = totalResults
                 };
             }
+        }
+
+        /// <summary>
+        /// Deletes the act
+        /// </summary>
+        [RestOperation(Method = "DELETE", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.DeleteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act DeleteAct()
+        {
+            var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            if (search.ContainsKey("_id"))
+            {
+                // Force load from DB
+                var keyid = Guid.Parse(search["_id"].FirstOrDefault());
+                MemoryCache.Current.RemoveObject(typeof(Act), keyid);
+                var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                if (act == null) throw new KeyNotFoundException();
+
+                return actRepositoryService.Obsolete<Act>(keyid);
+            }
+            else
+                throw new ArgumentNullException("_id");
         }
 
         /// <summary>
@@ -138,7 +166,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
-            if (search.ContainsKey("id"))
+            if (search.ContainsKey("_id"))
             {
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["id"].FirstOrDefault()));

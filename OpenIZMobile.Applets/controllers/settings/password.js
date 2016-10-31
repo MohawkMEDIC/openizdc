@@ -8,6 +8,8 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
         // Are we even online?
         if (!$rootScope.page.onlineState)
             alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+        else if(password != confirmation) 
+            alert(OpenIZ.Localization.getString("locale.settings.passwordNoMatch"));
         else {
             
             OpenIZ.App.showWait();

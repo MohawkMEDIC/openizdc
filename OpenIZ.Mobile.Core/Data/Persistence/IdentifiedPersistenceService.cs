@@ -259,10 +259,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             sb.Remove(sb.Length - 4, 4);
             sb.Append(") ");
 
-            if (count > 0)
+            // First get total results before we reduce the result-set size
+            totalResults = context.ExecuteScalar<Int32>(String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray());
+            if (count >= 0)
                 sb.AppendFormat("LIMIT {0} ", count);
             if (offset > 0)
-                sb.AppendFormat("OFFSET {0}", count);
+                sb.AppendFormat("OFFSET {0}", offset);
 
             sb.Append(";");
 
@@ -283,7 +285,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             sw.Stop();
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
-            totalResults = retVal.Count;
+            //totalResults = retVal.Count;
 			return retVal.Select(o=>this.CacheConvert(o, context, count != 1)).ToList();
 		}
 

@@ -80,7 +80,10 @@ select entity.*,
 		rel_entity_name_comp.phoneticCode as relationship_target_name_component_phoneticCode,
 		rel_entity_name_comp.phoneticAlgorithm as relationship_target_name_component_phoneticAlgorithm,
 		entity_telecom.use as telecom_use,
-		entity_telecom.value as telecom_value
+		entity_telecom.value as telecom_value,
+		rel_entity_telecom.use as relationship_target_telecom_use,
+		rel_entity_telecom.value as relationship_target_telecom_value,
+		rel_entity_identifier.value as relationship_target_identifier_value
 	from entity inner join concept as class on (class.uuid = entity.classConcept)
 		inner join concept as determiner on (determiner.uuid = entity.determinerConcept)
 		left join concept as type on (type.uuid = entity.typeConcept)
@@ -107,8 +110,8 @@ select entity.*,
 		left join entity as rel_entity on (rel_entity.uuid = er.target)
 		left join entity_name as rel_entity_name on (rel_entity.uuid = rel_entity_name.entity_uuid)
 		left join entity_name_comp as rel_entity_name_comp on (rel_entity_name.uuid = rel_entity_name_comp.name_uuid)
-		left join entity_telecom as rel_entity_telecom on (rel_entity_telecom.entity_uuid = rel_entity.uuid);
-		
+		left join entity_telecom as rel_entity_telecom on (rel_entity_telecom.entity_uuid = rel_entity.uuid)
+		left join entity_identifier as rel_entity_identifier on (rel_entity_identifier.entity_uuid = rel_entity.uuid);
 -- PERSON VIEW
 create view if not exists sqp_Person as
 select person.*,
@@ -162,7 +165,10 @@ select person.*,
 		entity.relationship_target_name_component_phoneticCode,
 		entity.relationship_target_name_component_phoneticAlgorithm,
 		entity.telecom_use,
-		entity.telecom_value
+		entity.telecom_value,
+		entity.relationship_target_telecom_use,
+		entity.relationship_target_telecom_value,
+		entity.relationship_target_identifier_value
 	from person inner join sqp_Entity as entity on (person.uuid = entity.uuid)
 		where entity.classConcept IN (X'46A8E29DF2DDBC4E902E84508C5089EA', X'D8FE046B64C19C46910BF824C2BDA4F0');
 	
@@ -222,7 +228,9 @@ create view if not exists sqp_Patient as
 		entity.relationship_target_name_component_value,
 		entity.relationship_target_name_component_phoneticCode,
 		entity.relationship_target_name_component_phoneticAlgorithm,
-
+		entity.relationship_target_telecom_use,
+		entity.relationship_target_telecom_value,
+		entity.relationship_target_identifier_value,
 		entity.telecom_use,
 		entity.telecom_value
 	from patient inner join sqp_Entity as entity on (patient.uuid = entity.uuid)

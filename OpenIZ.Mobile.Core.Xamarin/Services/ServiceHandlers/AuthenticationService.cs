@@ -33,6 +33,11 @@ using OpenIZ.Core.Model.Security;
 using System.Globalization;
 using OpenIZ.Mobile.Core.Security;
 using System.Net;
+using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Messaging.AMI.Client;
+using OpenIZ.Mobile.Core.Interop;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -42,6 +47,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     [RestService("/__auth")]
     public class AuthenticationService
     {
+
+        // Get tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(AuthenticationService));
+
 		/// <summary>
 		/// Abandons the users session.
 		/// </summary>
@@ -63,6 +72,52 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 			return new SessionInfo();
 		}
 
+        /// <summary>
+        /// Gets the TFA authentication mechanisms
+        /// </summary>
+        [RestOperation(Method = "POST", UriPath = "/tfa", FaultProvider = nameof(AuthenticationFault))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public bool SendTfaSecret([RestMessage(RestMessageFormat.Json)]TfaRequestInfo resetInfo)
+        {
+            try
+            {
+                var resetService = ApplicationContext.Current.GetService<ITwoFactorRequestService>();
+                if (resetService == null)
+                    throw new InvalidOperationException(Strings.err_reset_not_supported);
+                resetService.SendVerificationCode(resetInfo.ResetMechanism, resetInfo.Verification, resetInfo.UserName, resetInfo.Purpose);
+                return true;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting sending secret: {0}", e);
+                throw;
+            }
+
+
+        }
+        /// <summary>
+        /// Gets the TFA authentication mechanisms
+        /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/tfa", FaultProvider = nameof(AuthenticationFault))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public List<TfaMechanismInfo> GetTfaMechanisms()
+        {
+            try
+            {
+                var resetService = ApplicationContext.Current.GetService<ITwoFactorRequestService>();
+                if (resetService == null)
+                    throw new InvalidOperationException(Strings.err_reset_not_supported);
+                return resetService.GetResetMechanisms();
+                
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting TFA mechanisms: {0}", e);
+                throw;
+            }
+
+        }
+
 		/// <summary>
 		/// Authenticate the user returning the session if successful
 		/// </summary>
@@ -76,13 +131,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
             SessionInfo retVal = null;
 
+            List<String> usernameColl = null,
+                tfaSecretColl = null,
+                passwordColl = null;
+            authRequest.TryGetValue("username", out usernameColl);
+            authRequest.TryGetValue("password", out passwordColl);
+            authRequest.TryGetValue("tfaSecret", out tfaSecretColl);
+
+            String username = usernameColl?.FirstOrDefault().ToLower(),
+                password = passwordColl?.FirstOrDefault(),
+                tfaSecret = tfaSecretColl?.FirstOrDefault();
+
             switch (authRequest["grant_type"][0])
             {
                 case "password":
-                    retVal = sessionService.Authenticate(authRequest["username"].FirstOrDefault().ToLower(), authRequest["password"].FirstOrDefault());
+                    retVal = sessionService.Authenticate(username, password);
                     break;
                 case "refresh":
                     retVal = sessionService.Refresh(AuthenticationContext.Current.Session, null); // Force a re-issue
+                    break;
+                case "tfa":
+                    retVal = sessionService.Authenticate(username, password, tfaSecret);
                     break;
             }
 

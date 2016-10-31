@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,12 +22,25 @@ namespace OpenIZ.Mobile.Core.Security
         private Dictionary<Guid, SessionInfo> m_session = new Dictionary<Guid, SessionInfo>();
 
         /// <summary>
-        /// Authenticate the user and establish a sessions
+        /// Authentication with the user and establish a session
         /// </summary>
         public SessionInfo Authenticate(string userName, string password)
         {
+            return this.Authenticate(userName, password, null);
+        }
+
+        /// <summary>
+        /// Authenticate the user and establish a sessions
+        /// </summary>
+        public SessionInfo Authenticate(string userName, string password, string tfaSecret)
+        {
             var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
-            var principal = idp.Authenticate(userName, password);
+            IPrincipal principal = null;
+            if (String.IsNullOrEmpty(tfaSecret))
+                principal = idp.Authenticate(userName, password);
+            else
+                principal = idp.Authenticate(userName, password, tfaSecret);
+
             if (principal == null)
                 throw new SecurityException(Strings.locale_sessionError);
             else

@@ -12,6 +12,11 @@
     <property name="item" all="true"/>
   </type>
   
+  <!-- Concepts -->
+  <type type="Concept" all="true">
+    <property name="name" behavior="always" all="true"/>
+  </type>
+  
   <!-- Entity Information -->
   <type type="Entity" all="true">
     <property name="relationship" classifier="*" all="true">
@@ -33,19 +38,28 @@
     </property>
   </type>
 
-
-  
   <!-- Act Information -->
   <type type="Act" all="true">
     <property name="relationship" classifier="*" all="true">
-      <property name="targetModel" all="true"/>
+      <property name="targetModel" all="true" behavior="always">
+        <property name="participation" classifier="RecordTarget" all="false">
+        </property>
+        <property name="participation" classifier="Product" all="true">
+          <property name="playerModel" all="true" behavior="always"/>
+        </property>
+        <property name="participation" classifier="*" all="true">
+          <property name="playerModel" all="true"/>
+        </property>
+      </property>
     </property>
     <property name="participation" classifier="RecordTarget" all="false">
     </property>
     <property name="participation" classifier="*" all="true">
-      <property name="playerModel" all="true"/>
+      <property name="playerModel" all="true">
+      </property>
     </property>
   </type>
+
   
   <!-- Session information -->
   <type type="SessionInfo" all="true">

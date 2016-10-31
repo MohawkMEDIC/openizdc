@@ -14,8 +14,8 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).ru
     $rootScope.page = {
         title: OpenIZ.App.getCurrentAssetTitle(),
         loadTime: new Date(),
-        maxEventTime: new Date(), // Dislike Javascript
-        minEventTime: new Date(), // quite a bit
+        maxEventTime: new Date().tomorrow(), // Dislike Javascript
+        minEventTime: new Date().yesterday(), // quite a bit
         locale: OpenIZ.Localization.getLocale(),
         onlineState: OpenIZ.App.getOnlineState()
     };
@@ -25,8 +25,6 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).ru
         $rootScope.$applyAsync();
     }, 10000);
 
-    $rootScope.page.maxEventTime.setDate($rootScope.page.maxEventTime.getDate() + 1); // <-- This is why
-    $rootScope.page.minEventTime.setDate($rootScope.page.minEventTime.getDate() - 1); // why I can't call addDays or something?
 
     // Get current session
     OpenIZ.Authentication.getSessionAsync({

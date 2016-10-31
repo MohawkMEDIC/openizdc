@@ -19,6 +19,11 @@ namespace OpenIZ.Mobile.Core.Services
         SessionInfo Authenticate(String userName, String password);
 
         /// <summary>
+        /// Authenticates the specified username/password/tfasecret pair
+        /// </summary>
+        SessionInfo Authenticate(String userName, String password, String tfaSecret);
+
+        /// <summary>
         /// Refreshes the specified session
         /// </summary>
         /// <param name="principal"></param>

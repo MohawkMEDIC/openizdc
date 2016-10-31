@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Anonymous identity
         /// </summary>
-        private static readonly IPrincipal s_anonymous = new ClaimsPrincipal(new ClaimsIdentity("ANONYMOUS", true, null));
+        private static readonly IPrincipal s_anonymous = new ClaimsPrincipal(new ClaimsIdentity("ANONYMOUS", false, null));
 
         /// <summary>
         /// Gets the anonymous principal

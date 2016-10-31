@@ -17,7 +17,7 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
         OpenIZ.Authentication.loginAsync({
             userName: $scope.username,
             password: $scope.password,
-            scope: "/elevation",
+            scope: "elevation",
             continueWith: function(session) {
                 if (session == null) {
                     alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));

@@ -1,15 +1,18 @@
-﻿<form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)" xmlns:openiz="http://openiz.org/applet"
+﻿<div xmlns:openiz="http://openiz.org/applet"
       xmlns="http://www.w3.org/1999/xhtml">
     <openiz:script>/org.openiz.core/controllers/common/security/login.js</openiz:script>
     <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
-    <!-- #include virtual="~/views/common/security/authenticate.html" -->
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="btn-group pull-right">
-                <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
-                <a class="btn btn-lg btn-warning" href="~/views/common/security/forgotPassword.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
-                <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
+    <!-- #include virtual="~/views/common/security/forgotPassword.html" -->
+    <form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)">
+        <!-- #include virtual="~/views/common/security/authenticate.html" -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group pull-right">
+                    <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
+                    <button type="button" class="btn btn-lg btn-warning" ng-click="showPasswordReset()">{{ 'locale.security.login.button.forgotPassword' | i18n }}</button>
+                    <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>

@@ -11,6 +11,10 @@ angular.element(document).ready(function () {
         // Get the current scope that we're in
         var scope = angular.element(e).scope();
 
+        scope.showPasswordReset = scope.showPasswordReset || function () {
+            $('#passwordResetDialog').modal('show');
+        };
+
         scope.login = scope.login || function (form, username, password) {
 
             if (!form.$valid)

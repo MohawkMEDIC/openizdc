@@ -18,6 +18,7 @@
  * Date: 2016-7-8
  */
 
+using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
@@ -254,10 +255,22 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return pers.Get(userId);
 		}
 
-		/// <summary>
-		/// Get the specified user based on identity
-		/// </summary>
-		public SecurityUser GetUser(IIdentity identity)
+        /// <summary>
+        /// Get the specified user
+        /// </summary>
+        public SecurityUser GetUser(string userName)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing persistence service");
+            int tr = 0;
+            return pers.Query(u=>u.UserName == userName, 0, 1, out tr).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Get the specified user based on identity
+        /// </summary>
+        public SecurityUser GetUser(IIdentity identity)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 			if (pers == null)
@@ -394,20 +407,40 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service not found");
+            UserEntity retVal = userEntity;
 			try
 			{
-				return persistence.Update(userEntity);
+				retVal = persistence.Update(userEntity);
 			}
 			catch
 			{
-				return persistence.Insert(userEntity);
+				retVal = persistence.Insert(userEntity);
 			}
-		}
 
-		/// <summary>
-		/// Unlock the specified user
-		/// </summary>
-		public void UnlockUser(Guid userId)
+            // We should update that user as well
+            if (userEntity.SecurityUserKey.HasValue)
+            {
+                var user = this.GetUser(userEntity.SecurityUserKey.Value);
+                if(userEntity.Telecoms.Count > 0)
+                {
+                    var cellPhone = userEntity.Telecoms.FirstOrDefault(o => o.AddressUseKey == TelecomAddressUseKeys.MobileContact);
+                    var email = userEntity.Telecoms.FirstOrDefault(o => o.Value?.Contains("@") == true);
+                    if (cellPhone != null)
+                        user.PhoneNumber = cellPhone.Value;
+                    if (email != null)
+                        user.Email = email.Value;
+                }
+                this.SaveUser(user);
+                retVal.SecurityUser = user;
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        /// Unlock the specified user
+        /// </summary>
+        public void UnlockUser(Guid userId)
 		{
 			var iids = ApplicationContext.Current.GetService<IIdentityProviderService>();
 			if (iids == null)

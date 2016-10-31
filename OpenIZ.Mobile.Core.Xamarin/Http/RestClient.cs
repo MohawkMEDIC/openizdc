@@ -172,7 +172,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             }
                             else if (requestException != null) throw requestException;
 
-                            if (contentType == null)
+                            if (contentType == null && typeof(TResult) != typeof(Object) )
                                 throw new ArgumentNullException(nameof(contentType));
 
                             serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
@@ -225,6 +225,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         }
                         // De-serialize
                         var responseContentType = response.ContentType;
+                        if (String.IsNullOrEmpty(responseContentType))
+                            return default(TResult);
+
                         if (responseContentType.Contains(";"))
                             responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
 
