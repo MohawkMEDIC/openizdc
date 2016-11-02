@@ -292,6 +292,11 @@
             Refreshes the model to force reload from underlying model
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.IsEmpty">
+            <summary>
+            Empty?
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ControlAct">
             <summary>
             Represents an act which indicates why data was created/changed
@@ -490,6 +495,21 @@
         <member name="T:OpenIZ.Core.Model.Attributes.AutoLoadAttribute">
             <summary>
             Auto load attribute
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Attributes.BindingAttribute">
+            <summary>
+            Binding attributes to suggest what values can be used in a property
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Attributes.BindingAttribute.#ctor(System.Type)">
+            <summary>
+            Binding attribute
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Attributes.BindingAttribute.Binding">
+            <summary>
+            Gets or sets the type binding
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Attributes.ClassifierAttribute">
@@ -1461,9 +1481,114 @@
             Name component type keys
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Delimiter">
+            <summary>
+            The name component represents a delimeter in a name such as hyphen or space
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Family">
+            <summary>
+            The name component represents the surname
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Given">
+            <summary>
+            The name component represents the given name
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Prefix">
+            <summary>
+            The name component represents the prefix such as Von or Van
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Suffix">
+            <summary>
+            The name component represents a suffix such as III or Esq.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameComponentKeys.Title">
+            <summary>
+            The name component represents a formal title like Mr, Dr, Capt.
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.NameUseKeys">
             <summary>
             Name use keys
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Alphabetic">
+            <summary>
+            The name used is an alphabetic representation of the name (ex: romaji in Japanese)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Anonymous">
+            <summary>
+            The name is an anonymous name for the object (not the real name but a name used for care delivery)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Artist">
+            <summary>
+            The name represents an artist name or stage name
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Assigned">
+            <summary>
+            The name represents an assigned name (given or bestowed by an authority)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Ideographic">
+            <summary>
+            THe name represents an ideographic representation of the name
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Indigenous">
+            <summary>
+            The name is an indigenous name or tribal name for the patient
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Legal">
+            <summary>
+            The name represents the current legal name of an object (such as a corporate name)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.License">
+            <summary>
+            The name represents a name as displayed on a license or known to a license authority
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.MaidenName">
+            <summary>
+            THe name is a maiden name (name of a patient before marriage)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.OfficialRecord">
+            <summary>
+            The name as it appears on an official record
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Phonetic">
+            <summary>
+            The name represents a phonetic representation of a name such as a SOUNDEX code
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Pseudonym">
+            <summary>
+            The name is a pseudonym for the object or an synonym name
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Religious">
+            <summary>
+            The name is to be used for religious purposes (such as baptismal name)
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Search">
+            <summary>
+            The name is to be used in the performing of matches only
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.NameUseKeys.Soundex">
+            <summary>
+            The name represents the computed soundex code of a name
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.NullReasonKeys">
@@ -1752,6 +1877,11 @@
             Gets concept sets to which this concept is a member
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Concept.ToString">
+            <summary>
+            Override string
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ConceptClass">
             <summary>
             Identifies a classification for a concept
@@ -1932,9 +2062,14 @@
             Represents a base entity extension
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtensionValue">
+        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtensionValueXml">
             <summary>
             Gets or sets the value of the extension
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtesionValue">
+            <summary>
+            Gets or sets the ignore value
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtensionDisplay">
@@ -2005,6 +2140,11 @@
         <member name="P:OpenIZ.Core.Model.DataTypes.ExtensionType.ExtensionHandler">
             <summary>
             Gets or sets the extension handler
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.ExtensionType.ExtensionHandlerInstance">
+            <summary>
+            Extension handler instance
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.ExtensionType.ExtensionHandlerXml">
@@ -2632,6 +2772,11 @@
             Default ctor
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityAddressComponent.ComponentTypeKey">
+            <summary>
+            Gets or sets the component type key
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityName">
             <summary>
             Represents a name for an entity
@@ -2711,6 +2856,11 @@
         <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticCode">
             <summary>
             Gets or sets the phonetic code of the reference term
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.ComponentTypeKey">
+            <summary>
+            Gets or sets the component type key
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticAlgorithmKey">
@@ -3129,6 +3279,11 @@
             Gets the specified relations
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.EntityLoader.EntitySource.DummyEntitySource.GetRelations``1(System.Nullable{System.Guid})">
+            <summary>
+            Gets the specified relations
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.EntityLoader.EntitySource.DummyEntitySource.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
             <summary>
             Query 
@@ -3185,6 +3340,11 @@
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.EntityLoader.IEntitySourceProvider.GetRelations``1(System.Nullable{System.Guid},System.Nullable{System.Decimal})">
+            <summary>
+            Get relationships
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.EntityLoader.IEntitySourceProvider.GetRelations``1(System.Nullable{System.Guid})">
             <summary>
             Get relationships
             </summary>
@@ -3739,7 +3899,7 @@
             Map model instance
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapDomainInstance``2(``0,System.Collections.Generic.HashSet{System.Guid})">
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapDomainInstance``2(``0,System.Boolean,System.Collections.Generic.HashSet{System.Guid})">
             <summary>
             Map model instance
             </summary>
@@ -4008,7 +4168,7 @@
             Build a LINQ expression
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Collections.Generic.Dictionary{System.String,System.Delegate})">
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionParser.BuildLinqExpression``1(OpenIZ.Core.Model.Query.NameValueCollection,System.String,System.Collections.Generic.Dictionary{System.String,System.Delegate},System.Boolean)">
             <summary>
             Build LINQ expression
             </summary>
@@ -4016,6 +4176,11 @@
         <member name="T:OpenIZ.Core.Model.Reflection.ReflectionUtil">
             <summary>
             Reflection tools
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.StripGeneric(System.Type)">
+            <summary>
+            Strips list
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.StripNullable(System.Type)">
