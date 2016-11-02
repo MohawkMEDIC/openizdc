@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
 			Assert.AreEqual(ActClassKeys.CareProvision, afterInsert.ClassConcept.Key);
 			Assert.AreEqual(1, underTest.Extensions.Count);
 			Assert.AreEqual(ActClassKeys.CareProvision, underTest.Extensions[0].ExtensionTypeKey);
-			Assert.AreEqual(23, underTest.Extensions[0].ExtensionValue[1]);
+			Assert.AreEqual(23, underTest.Extensions[0].ExtensionValueXml[1]);
 		}
 
 		/// <summary>

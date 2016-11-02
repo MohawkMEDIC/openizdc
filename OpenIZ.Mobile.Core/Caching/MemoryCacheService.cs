@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Caching
                  try
                  {
                      this.m_tracer.TraceInfo("Loading concept dictionary ...");
-                     ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
+                     //ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
                      ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>().Query(q => true);
                      ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Query(q => true);
                      // Seed cache

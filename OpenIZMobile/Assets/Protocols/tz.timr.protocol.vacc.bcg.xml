@@ -37,7 +37,7 @@
                 "mnemonic": 'Site-LeftArm'
               },
 				      "participation": {
-					      "Product": {
+					      "Product": [{
                   "playerModel" : {
                     "$type" : "Material",
                     "id" : "ED144BD2-A334-40A2-9A8F-B767A1397D07",
@@ -58,7 +58,7 @@
 							        }
 						        }
                   }
-					      }
+					      }]
 				      }
 			      }
           ]]>

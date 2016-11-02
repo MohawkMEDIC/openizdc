@@ -25,6 +25,7 @@ using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using OpenIZ.Mobile.Core.Security;
 using System.Reflection;
+using OpenIZ.Core.Applets.ViewModel.Json;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -41,7 +42,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         // Tracer 
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiService));
 
-       
+        // View model serliazer
+        private JsonViewModelSerializer m_serializer = new JsonViewModelSerializer();
         
         /// <summary>
         /// Creates a bundle.
@@ -248,7 +250,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var templateString = this.GetTemplateString();
             // Load the data from the template string
-            var retVal = JsonViewModelSerializer.DeSerialize<Act>(templateString);
+            var retVal = this.m_serializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
             retVal.LoadImmediateRelations();
             // Delayload
@@ -265,7 +267,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var templateString = this.GetTemplateString();
             // Load the data from the template string
-            var retVal = JsonViewModelSerializer.DeSerialize<Entity>(templateString);
+            var retVal = this.m_serializer.DeSerialize<Entity>(templateString);
             retVal.Key = Guid.NewGuid();
             retVal.LoadImmediateRelations();
             //retVal.SetDelayLoad(true);
