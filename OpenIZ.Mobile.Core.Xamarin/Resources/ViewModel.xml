@@ -2,7 +2,6 @@
 
   <!-- Base types -->
   <type type="IdentifiedData" all="true">
-    <property name="version" behavior="never"/>
     <property name="etag" behavior="never"/>
   </type>
   
@@ -32,7 +31,6 @@
     <property name="conceptClassModel" behavior="never"/>
     <property name="conceptSet" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
-    <property name="version" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     
@@ -43,7 +41,6 @@
     
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
-    <property name="version" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -94,7 +91,6 @@
     
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
-    <property name="version" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     
