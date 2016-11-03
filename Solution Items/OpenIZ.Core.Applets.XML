@@ -4,9 +4,24 @@
         <name>OpenIZ.Core.Applets</name>
     </assembly>
     <members>
+        <member name="T:OpenIZ.Core.Applets.AssetContentResolver">
+            <summary>
+            Represents a asset content resolver
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.AppletCollection">
             <summary>
             Represents a collection of applets
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.AppletCollection.CachePages">
+            <summary>
+            Gets or sets whether caching is enabled
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.AppletCollection.Resolver">
+            <summary>
+            Asset content resolver called when asset content is null
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Applets.AppletCollection.#ctor">
@@ -124,6 +139,11 @@
         <member name="M:OpenIZ.Core.Applets.AppletCollection.GetInjectionHeaders(OpenIZ.Core.Applets.Model.AppletAsset)">
             <summary>
             Injection for HTML headers
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.AppletCollection.XElementEquityComparer">
+            <summary>
+            Xelement comparer
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Applets.BindingExpressionVisitor">
@@ -745,50 +765,536 @@
             Header element
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer">
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.ClassifierModelDescription">
             <summary>
-            View model class for Applets turns the core business model objects into
-            a more sane, flat model to be given to applets as JSON
-            </summary>
-            <remarks>
-            This file needs a bath because it stinks... AKA: Clean it up
-            </remarks>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.Serialize(OpenIZ.Core.Model.IdentifiedData)">
-            <summary>
-            Serializes the specified internal data 
-            </summary>
-            <remarks>
-            Rules: 
-                - Keys are serialized as JSON object property
-                - Delay load are also expanded to keynameModel which is the model
-                - Collections are expanded to classifier class model[classifier] = value
-            </remarks>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.DeSerialize``1(System.String)">
-            <summary>
-            Parses the specified json string into <typeparamref name="TModel"/>
+            View model description for classifiers
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.DeSerializeInternal(Newtonsoft.Json.JsonReader,System.Type)">
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.ClassifierModelDescription.Classifier">
             <summary>
-            Perform the work of de-serializing
+            Gets or sets the classifier which should be included
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.PreparePropertyCache(System.Type)">
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.SerializationBehaviorType">
             <summary>
-            Prepares the property caches
-            </summary>
-            <param name="serialziationType"></param>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.SerializeInternal(OpenIZ.Core.Model.IdentifiedData,Newtonsoft.Json.JsonWriter,System.Collections.Generic.HashSet{System.Guid})">
-            <summary>
-            Serialize the specified object
+            Serialization behavior type
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.JsonViewModelSerializer.GetClassifierObj(System.Object,OpenIZ.Core.Model.Attributes.ClassifierAttribute)">
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription">
+            <summary>
+            Property container description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.GetName">
+            <summary>
+            Gets the name of the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.#ctor">
+            <summary>
+            Type model description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.Parent">
+            <summary>
+            Property container description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.Properties">
+            <summary>
+            Identifies the properties to be included
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.All">
+            <summary>
+            Whether to retrieve all children
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription">
+            <summary>
+            Property model description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription.Initialize(OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription)">
+            <summary>
+            Initialize the parent structure
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription.Name">
+            <summary>
+            The property of the model
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription.Classifier">
+            <summary>
+            Gets or ssets the where classifiers
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription.Action">
+            <summary>
+            Seriallization behavior
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription.GetName">
+            <summary>
+            Get name 
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription">
+            <summary>
+            Represents a refined message model
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.#ctor">
+            <summary>
+            Defaut ctor
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Name">
+            <summary>
+            Gets or sets the name of the view model description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Model">
+            <summary>
+            Represents the models which are to be defined in the model
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Load(System.IO.Stream)">
+            <summary>
+            Load the specified view model description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Initialize">
+            <summary>
+            Initialize
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.Type)">
+            <summary>
+            Find description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.String,OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription)">
+            <summary>
+            Find description
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Description.TypeModelDescription">
+            <summary>
+            Represents model descriptions
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.TypeModelDescription.Initialize">
+            <summary>
+            Initialize the type mode description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.TypeModelDescription.TypeName">
+            <summary>
+            Name of the type to be loaded
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.TypeModelDescription.GetName">
+            <summary>
+            Get the name of the container
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier">
+            <summary>
+            Represents a classifier which is responsible for taking a particular instance of type X
+            and determining the appropriate classification
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier.HandlesType">
+            <summary>
+            Gets the type this classifier handles
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier.Classify(System.Collections.IList)">
+            <summary>
+            Gets the appropriate classifier for the specified data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Re-compose the classified data 
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.IViewModelTypeFormatter">
+            <summary>
+            Represents the view model type formatter
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.IViewModelTypeFormatter.HandlesType">
+            <summary>
+            Gets or sets the type that the serializer handles
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter">
+            <summary>
+            Represents a view model type formatter that is for writing/reading to JSON streams
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter.Serialize(Newtonsoft.Json.JsonWriter,OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            Serialize specified object <paramref name="o"/> onto writer <paramref name="w"/> in context <paramref name="context"/>
+            </summary>
+            <param name="w">The writer to write data to</param>
+            <param name="o">The object to be graphed</param>
+            <param name="context">The current serialization context</param>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter.Deserialize(Newtonsoft.Json.JsonReader,System.Type,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            Parses the specified object from the reader
+            </summary>
+            <param name="r">The reader type</param>
+            <param name="context">The current parse context</param>
+            <param name="asType">The type which is being constructed</param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter.FromSimpleValue(System.Object)">
+            <summary>
+            Convert from simple value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.IJsonViewModelTypeFormatter.GetSimpleValue(System.Object)">
+            <summary>
+            Gets the simple value
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier">
+            <summary>
+            Represents a simple reflection based classifier
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.#ctor(System.Type)">
+            <summary>
+            Creates a new reflection based classifier
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.HandlesType">
+            <summary>
+            Gets the type this handles
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.Classify(System.Collections.IList)">
+            <summary>
+            Classify the specified data element
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Perform a re-classification of values
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.GetClassifierObj(System.Object,OpenIZ.Core.Model.Attributes.ClassifierAttribute)">
             <summary>
             Get classifier object
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter">
+            <summary>
+            Represents the JSON Reflection fallback serializer
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.m_type">
+            <summary>
+            Type of alue
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.#ctor(System.Type)">
+            <summary>
+            Represents a JSON reflection formatter
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.HandlesType">
+            <summary>
+            Gets the type that this formatter handles
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.#ctor">
+            <summary>
+            JSON reflection type formatter
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyInfo(System.Type)">
+            <summary>
+            Get property information for the specified type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo)">
+            <summary>
+            Get property name
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.Serialize(Newtonsoft.Json.JsonWriter,OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            Serialize the specified object to the wire
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.Deserialize(Newtonsoft.Json.JsonReader,System.Type,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            De-serialize the specified object from the class
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetSimpleValue(System.Object)">
+            <summary>
+            Get the simple value of the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.FromSimpleValue(System.Object)">
+            <summary>
+            Get an object value from a simple value
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext">
+            <summary>
+            Represents a JSON serialization context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer,System.Object)">
+            <summary>
+            Creates a new JSON Serialization context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            Creates a new JSON serialization context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext.JsonContext">
+            <summary>
+            Gets the Context as a JSON serializer
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext.JsonParent">
+            <summary>
+            Gets the JSON parent context
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer">
+            <summary>
+            Represents a JSON view model serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.#ctor">
+            <summary>
+            Creates a json view model serializer
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.ViewModel">
+            <summary>
+            Gets or sets the view model definition for this view model serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.DeSerialize``1(System.IO.Stream)">
+            <summary>
+            De-serializes the specified object from the stream
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.DeSerialize``1(System.String)">
+            <summary>
+            De-serialize data from the string
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.DeSerialize(System.IO.Stream,System.Type)">
+            <summary>
+            De-serializes the data from the stream as the specified type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.DeSerialize(System.IO.TextReader,System.Type)">
+            <summary>
+            De-serializes data from the reader as specified type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.ReadElementUtil(Newtonsoft.Json.JsonReader,System.Type,OpenIZ.Core.Applets.ViewModel.Json.JsonSerializationContext)">
+            <summary>
+            Read the specified element
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadRelated(System.Type,System.Guid)">
+            <summary>
+            Load related object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadCollection(System.Type,System.Guid)">
+            <summary>
+            Load collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadCollection``1(System.Guid)">
+            <summary>
+            Delay loads the specified collection association
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadRelated``1(System.Guid)">
+            <summary>
+            Load the related information
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.WritePropertyUtil(Newtonsoft.Json.JsonWriter,System.String,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
+            <summary>
+            Write property utility
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.GetClassifier(System.Type)">
+            <summary>
+            Gets the appropriate classifier for the specified type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.WriteSimpleProperty(Newtonsoft.Json.JsonWriter,System.String,System.Object)">
+            <summary>
+            Write a simple property
+            </summary>
+            <param name="propertyName">The name of the JSON property</param>
+            <param name="value">The value of the JSON property</param>
+            <param name="w">The value of the property</param>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.GetFormatter(System.Type)">
+            <summary>
+            Get the specified formatter
+            </summary>
+            <param name="type">The type to retrieve the formatter for</param>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadSerializerAssembly(System.Reflection.Assembly)">
+            <summary>
+            Load the specified serializer assembly
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.Serialize(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize object to string
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.Serialize(System.IO.Stream,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize the specified data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.Serialize(System.IO.TextWriter,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize to the specified text writer
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer">
+            <summary>
+            Represents a view model serializer instance
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.ViewModel">
+            <summary>
+            Gets or sets the view model definition of the view model serlializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.LoadSerializerAssembly(System.Reflection.Assembly)">
+            <summary>
+            Loads all instance of serializers (pre-compiled) from the specified assembly
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.Serialize(System.IO.Stream,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serializes the object <paramref name="data"/> onto stream <paramref name="s"/>
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.DeSerialize``1(System.IO.Stream)">
+            <summary>
+            De-serializes the specified object from the stream
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.DeSerialize(System.IO.Stream,System.Type)">
+            <summary>
+            De-serialize the specified stream to type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.LoadCollection``1(System.Guid)">
+            <summary>
+            Loads the associations for the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.LoadRelated``1(System.Guid)">
+            <summary>
+            Loads the specified related object
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.SerializationContext">
+            <summary>
+            Represents a serialization context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object)">
+            <summary>
+            Gets the serialization context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
+            <summary>
+            Gets the serialization context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.PropertyName">
+            <summary>
+            Gets the name of the element
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.Context">
+            <summary>
+            Gets the view model serializer in context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.ElementDescription">
+            <summary>
+            Gets or sets the view model description of the current element
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.ViewModelDescription">
+            <summary>
+            Gets or sets the root view model description
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.Parent">
+            <summary>
+            Gets the parent of the current serialization context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.Instance">
+            <summary>
+            Gets or sets the instance value
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.Root">
+            <summary>
+            Gets the root context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ShouldForceLoad(System.String)">
+            <summary>
+            Returns true when child property information should be force loaded
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.ObjectId">
+            <summary>
+            Gets the current object identifier (from a JSON property perspective
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.LoadedProperties">
+            <summary>
+            Loaded properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.GetParentObjectId(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Gets the object id of the specified object from the parent instance if it exists 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ShouldSerialize(System.String)">
+            <summary>
+            Returns true if the object should be serialized based on the data at hand
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ToString">
+            <summary>
+            Property string
             </summary>
         </member>
     </members>

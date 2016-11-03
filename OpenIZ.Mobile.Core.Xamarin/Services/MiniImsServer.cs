@@ -44,6 +44,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.ViewModel.Description;
 using System.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Core.Applets.ViewModel.Json;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -55,6 +56,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
         // Default view model
         private ViewModelDescription m_defaultViewModel;
+
+        // JSON View model serializer
+        private JsonViewModelSerializer m_serializer;
 
         // Current context
         [ThreadStatic]
@@ -98,6 +102,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
+                this.m_serializer = new JsonViewModelSerializer();
+                this.m_serializer.ViewModel = this.m_defaultViewModel;
+
                 // Scan for services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                     try
@@ -285,8 +292,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             {
                                 using (StreamReader sr = new StreamReader(request.InputStream))
                                 {
-                                    var dserMethod = typeof(JsonViewModelSerializer).GetMethod("DeSerialize").MakeGenericMethod(new Type[] { parmInfo[0].ParameterType });
-                                    var pValue = dserMethod.Invoke(null, new object[] { sr.ReadToEnd() });
+                                    var pValue = this.m_serializer.DeSerialize(sr, parmInfo[0].ParameterType);
                                     result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
                                 }
                             }
@@ -348,7 +354,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         Stopwatch serializerWatch = new Stopwatch();
                                         serializerWatch.Start();
 #endif
-                                        JsonViewModelSerializer.Serialize(sw, result as IdentifiedData, this.m_defaultViewModel);
+                                        this.m_serializer.Serialize(sw, result as IdentifiedData);
 #if DEBUG
                                         serializerWatch.Stop();
                                         this.m_tracer.TraceVerbose("PERF: Serializer >>>> {0} took {1}", result, serializerWatch.ElapsedMilliseconds);

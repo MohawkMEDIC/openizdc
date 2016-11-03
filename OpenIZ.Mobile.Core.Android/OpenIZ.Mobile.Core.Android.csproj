@@ -94,9 +94,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppletEngine\JNI\PatientFunctionBridge.cs" />
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
-    <Compile Include="AppletEngine\JNI\UserServiceBridge.cs" />
     <Compile Include="Services\MessageQueueService.cs" />
     <Compile Include="Services\AndroidNetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -112,7 +110,6 @@
     </Compile>
     <Compile Include="AndroidApplicationContext.cs" />
     <Compile Include="AppletEngine\JNI\ConfigurationServiceBridge.cs" />
-    <Compile Include="AppletEngine\JNI\ConceptServiceBridge.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
   </ItemGroup>
   <ItemGroup>

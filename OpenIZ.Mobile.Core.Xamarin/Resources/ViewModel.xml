@@ -1,65 +1,123 @@
 ﻿<ViewModel xmlns="http://openiz.org/model/view">
-  
+
   <!-- Base types -->
-  <type type="IdentifiedData" all="true"/>
+  <type type="IdentifiedData" all="true">
+    <property name="etag" behavior="never"/>
+  </type>
+  
   <type type="EntityName" all="true">
-    <property name="component" classifier="*" all="true"/>
+    <property name="source" behavior="never"/>
+    <property name="component" all="true">
+      <property name="*" all="true"/>
+    </property>
   </type>
   <type type="EntityAddress" all="true">
-    <property name="component" classifier="*" all="true"/>
+    <property name="source" behavior="never"/>
+    <property name="component" all="true">
+      <property name="*" all="true"/>
+    </property>
+  </type>
+  <type type="EntityIdentifier" all="true">
+    <property name="source" behavior="never"/>
   </type>
   <type type="Bundle" all="true">
     <property name="item" all="true"/>
   </type>
-  
+
   <!-- Concepts -->
   <type type="Concept" all="true">
     <property name="name" behavior="always" all="true"/>
+    <property name="conceptClass" behavior="never"/>
+    <property name="conceptClassModel" behavior="never"/>
+    <property name="conceptSet" behavior="never"/>
+    <property name="statusConceptModel" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    
   </type>
-  
+
   <!-- Entity Information -->
   <type type="Entity" all="true">
-    <property name="relationship" classifier="*" all="true">
-      <property name="targetModel" all="true"/>
+    
+    <property name="classConceptModel" behavior="never"/>
+    <property name="classConcept" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    <property name="determinerConceptModel" behavior="never"/>
+    
+    <property name="relationship" all="true">
+      <property name="*" all="true">
+        <property name="targetModel" all="true"/>
+        <property name="relationshipTypeModel" behavior="never"/>
+      </property>
     </property>
-    <property name="participation" classifier="*" all="true">
-      <property name="targetAct" all="true"/>
+    <property name="participation" all="true">
+      <property name="*" all="true">
+        <property name="targetAct" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+      </property>
     </property>
   </type>
 
   <type type="Place" all="true">
-    <property name="relationship" classifier="Parent" all="true">
-      <property name="targetModel" all="true"/>
+    
+    <property name="classConceptModel" behavior="never"/>
+    <property name="classConcept" behavior="never"/>
+    <property name="determinerConceptModel" behavior="never"/>
+    <property name="determinerConcept" behavior="never"/>
+
+    <property name="relationship" all="true">
+      <property name="Parent" all="true">
+        <property name="targetModel" all="true">
+          <property name="relationship" all="true">
+            <property name="Parent" behavior="never" all="false"/>
+          </property>
+        </property>
+      </property>
+      <property name="*" all="true">
+        <property name="source" behavior="never"/>
+        <property name="holder" behavior="never"/>
+      </property>
     </property>
-    <property name="relationship" classifier="*" all="true">
-    </property>
-    <property name="participation" classifier="*" all="true">
-      <property name="targetAct" all="true"/>
+    <property name="participation" all="true">
+      <property name="*" all="true">
+        <property name="targetAct" all="true"/>
+      </property>
     </property>
   </type>
 
   <!-- Act Information -->
   <type type="Act" all="true">
-    <property name="relationship" classifier="*" all="true">
-      <property name="targetModel" all="true" behavior="always">
-        <property name="participation" classifier="RecordTarget" all="false">
-        </property>
-        <property name="participation" classifier="Product" all="true">
-          <property name="playerModel" all="true" behavior="always"/>
-        </property>
-        <property name="participation" classifier="*" all="true">
-          <property name="playerModel" all="true"/>
+    
+    <property name="classConceptModel" behavior="never"/>
+    <property name="classConcept" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    
+    <property name="relationship" all="true">
+      <property name="*" all="true">
+        <property name="relationshipTypeModel" behavior="never"/>
+
+        <!-- Act.relationship[*].targetModel.{RecordTarget,Location,AuthorOriginator} are not included -->
+        <property name="targetModel" all="true" behavior="always">
+          <property name="participation" all="true">
+            <property name="RecordTarget" all="false"/>
+            <property name="Location" all="false"/>
+            <property name="AuthorOriginator" all="false"/>
+            <property name="*" all="true">
+              <property name="playerModel" all="true"/>
+            </property>
+          </property>
         </property>
       </property>
     </property>
-    <property name="participation" classifier="RecordTarget" all="false">
-    </property>
-    <property name="participation" classifier="*" all="true">
-      <property name="playerModel" all="true">
+    <property name="participation" all="true">
+      <property name="*" all="true">
+        <property name="playerModel" all="true">
+        </property>
       </property>
     </property>
   </type>
-
   
   <!-- Session information -->
   <type type="SessionInfo" all="true">
