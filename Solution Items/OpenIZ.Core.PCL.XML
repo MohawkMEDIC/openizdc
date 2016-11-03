@@ -1337,6 +1337,11 @@
             Gets the specified cache item
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.Add(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Adds the specified item to the cache
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.IEntityRepositoryService">
             <summary>
             Represents an entity repository service.
