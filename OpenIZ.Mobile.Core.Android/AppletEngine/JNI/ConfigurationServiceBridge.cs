@@ -197,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 if (AndroidApplicationContext.Current.ConfigurationManager.IsConfigured)
-                    new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
+                    new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.UnrestrictedAdministration).Demand();
 
 
                 // Configure the stuff to the appropriate realm info
