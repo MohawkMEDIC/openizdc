@@ -27,7 +27,7 @@
         <label class="col-xs-2 control-label ng-cloak" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
         <div class="col-xs-10" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
             <div class="input-group">
-                <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" ng-model-options="{ allowInvalid: true }" max="{{$root.page.loadTime | date: 'YYYY-MM-DD'}}" />
+                <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon">
                     <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
                     <label for="approximateDob" class="ng-cloak">

@@ -57,7 +57,6 @@ angular.element(document).ready(function () {
 
                             var model = acts[act].actModel || acts[act].targetModel;
                             // Ignore anything except substance admins
-                            console.log(model);
                             if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
                                 continue;
                             if (model.participation.Product === undefined || model.participation.Product === null) {
