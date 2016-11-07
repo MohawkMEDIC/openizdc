@@ -270,7 +270,7 @@ namespace OpenIZ.Mobile.Core.Data
             if (existing != null)
             {
                 // Exists but is an old version
-                if (vMe?.VersionKey != null && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
+                if (vMe?.VersionKey.GetValueOrDefault() != Guid.Empty && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
                 {
                     // Update method
                     var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 2);
