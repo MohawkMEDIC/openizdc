@@ -124,7 +124,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         {
                                             BindObject = instance,
                                             Method = mi,
-                                            FaultProvider = faultMethod
+                                            FaultProvider = faultMethod,
+                                            Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o=>o.PolicyId).ToList(),
+                                            Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null
                                         });
 
                             }
@@ -265,8 +267,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 {
 
                     // Services require magic
-                    if (request.Headers["X-OIZMagic"] == null ||
-                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString())
+                    if (!invoke.Anonymous && (request.Headers["X-OIZMagic"] == null ||
+                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString()))
                         throw new UnauthorizedAccessException();
 
                     this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
@@ -279,9 +281,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     try
                     {
                         // Method demand?
-                        var demand = invoke.Method.GetCustomAttributes<DemandAttribute>();
-                        foreach (var itm in demand)
-                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm.PolicyId).Demand();
+                        foreach (var itm in invoke.Demand)
+                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm).Demand();
 
                         // Invoke method
                         if (parmInfo.Length == 0)
@@ -335,12 +336,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
                         {
                             case RestMessageFormat.Raw:
-                                byte[] buffer = new byte[8096];
-                                int br = 8096;
-                                while (br == 8096)
+                                if (result is Stream)
+                                    (result as Stream).CopyTo(response.OutputStream);
+                                else
                                 {
-                                    br = (result as Stream).Read(buffer, 0, 8096);
-                                    response.OutputStream.Write(buffer, 0, br);
+                                    var br = result as Byte[];
+                                    response.OutputStream.Write(br, 0, br.Length);
                                 }
                                 break;
                             case RestMessageFormat.SimpleJson:
@@ -510,11 +511,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private class InvokationInformation
         {
+            /// <summary>
+            /// Allow anonymous access
+            /// </summary>
+            public bool Anonymous { get; internal set; }
 
             /// <summary>
             /// Bind object
             /// </summary>
             public Object BindObject { get; set; }
+
+            /// <summary>
+            /// Gets the demand for the overall object
+            /// </summary>
+            public List<String> Demand { get; internal set; }
 
             /// <summary>
             /// Fault provider

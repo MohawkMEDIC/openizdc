@@ -1,7 +1,13 @@
-﻿<div ng-controller="ReportBugController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <oiz:script>~/controllers/debug/report.js</oiz:script>
-    <oiz:title>Bug Report</oiz:title>
-    <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+    <oiz:state name="org-openiz-core.debug.bug">
+        <oiz:url>/report</oiz:url>
+        <oiz:view name="debug-bug">
+            <oiz:controller>ReportBugController</oiz:controller>
+            <oiz:title>Bug Report</oiz:title>
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+        </oiz:view>
+    </oiz:state>
     <h3>{{ 'locale.debug.bugReport' | i18n }}</h3>
     <oiz:script>/org.openiz.core/controllers/settings/password.js</oiz:script>
     <div class="alert alert-warning" ng-if="!$root.page.onlineState">

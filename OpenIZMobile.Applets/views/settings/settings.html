@@ -1,10 +1,15 @@
-﻿<div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
-     openiz:layout="/org.openiz.core/layouts/minimal.html">
-    <openiz:title lang="en">Initial Settings</openiz:title>
-    <openiz:title lang="fr"></openiz:title>
-    <openiz:title lang="sw"></openiz:title>
+﻿<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
     <openiz:script>/org.openiz.core/controllers/settings/settings.js</openiz:script>
-    <openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</openiz:demand>
+    <openiz:state name="org-openiz-core.settings">
+        <openiz:url>/settings</openiz:url>
+        <openiz:view>
+            <openiz:controller>SettingsController</openiz:controller>
+            <!--<openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.10</openiz:demand>-->
+            <openiz:title lang="en">Initial Settings</openiz:title>
+            <openiz:title lang="fr"></openiz:title>
+            <openiz:title lang="sw"></openiz:title>
+        </openiz:view>
+    </openiz:state>
     
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active"><a href="#dataBody" data-toggle="tab">{{ 'locale.settings.dataTitle' | i18n }}</a></li>

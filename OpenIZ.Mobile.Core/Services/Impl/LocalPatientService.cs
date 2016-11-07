@@ -25,6 +25,7 @@ using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
@@ -110,8 +111,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			p = this.Validate(p);
 
+            var bre = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
+            bre?.BeforeInsert(p);
+
 			// Persist patient
 			var patient = this.persistenceService.Insert(p);
+            bre?.AfterInsert(p);
 
 			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 
@@ -198,6 +203,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the validated patient.</returns>
 		public Patient Validate(Patient p)
 		{
+            var details = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>()?.Validate(p);
+            //if(details.Any(d=>d.Priority == DetectedIssuePriorityType.Error))
+            //    throw new OpenIZ.Core.Exceptions.De
+
 			p = p.Clean() as Patient; // clean up messy data
 
 			// Generate temporary identifier
