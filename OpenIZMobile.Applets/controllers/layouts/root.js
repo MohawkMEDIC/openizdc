@@ -2,7 +2,7 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute']).run(function ($rootScope) {
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute', "xeditable"]).run(function ($rootScope) {
     OpenIZ.Configuration.getConfigurationAsync({
         continueWith: function (config) {
             $rootScope.system = {};
