@@ -20,12 +20,15 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="LowStockController">
     <oiz:script>/org.openiz.core/controllers/common/stock/lowstock.js</oiz:script>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" ng-init="collapseStatus.lowStockOpen = true" ng-click="collapseStatus.lowStockOpen = !collapseStatus.lowStockOpen">
         <div class="panel panel-heading">
-            {{ 'locale.stock.lowstock.title' | i18n }}
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-target="#lowStockChartCollapse">{{ 'locale.stock.lowstock.title' | i18n }}</a>
+                <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.lowStockOpen, 'glyphicon-chevron-right': !collapseStatus.lowStockOpen}"></i>
+            </h4>
         </div>
-        <div class="panel panel-body">
-            <div>
+        <div id="lowStockChartCollapse" class="panel-collapse collapse in">
+            <div class="panel panel-body">
                 <canvas id="lowStockChart"></canvas>
             </div>
         </div>

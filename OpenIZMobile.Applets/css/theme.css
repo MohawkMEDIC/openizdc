@@ -63,25 +63,52 @@ a.not-active {
 
 .input-group label { margin-bottom: 0px; }
 
-.navbar-inverse .navbar-nav > li > a {
-     color: #FFFFFF;
-     padding-top:7px;
-     padding-bottom:6px;
-
+/**navbar*/
+.navbar-inverse {
+  background-image: -webkit-linear-gradient(top, #118FE2 0%, #007FD1 100%);
+  background-image:      -o-linear-gradient(top, #118FE2 0%, #007FD1 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(#007FD1));
+  background-image:         linear-gradient(to bottom, #118FE2 0%, #007FD1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#118FE2', endColorstr='#007FD122', GradientType=0);
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+  background-repeat: repeat-x;
+  border-radius: 0;
+  background-color: #007FD1;
+  border-color: #007FD1;
+  margin-bottom: 0;
 }
 
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .active > a {
+  background-image: -webkit-linear-gradient(top, #007FD1 0%, #007FD1 100%);
+  background-image:      -o-linear-gradient(top, #007FD1 0%, #007FD1 100%);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#007FD1), to(#007FD1));
+  background-image:         linear-gradient(to bottom, #007FD1 0%, #007FD1 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#007FD1', endColorstr='#007FD1', GradientType=0);
+  background-repeat: repeat-x;
+  -webkit-box-shadow: inset 0 3px 9px rgba(0, 0, 0, .25);
+          box-shadow: inset 0 3px 9px rgba(0, 0, 0, .25);
+}
 
-/** Select 2 for group-lg */
-/*.form-control {
-    height: 46px;
-    padding: 10px 16px;
-    font-size: 18px;
-    line-height: 1.3333;
-    border-radius: 6px;
-}*/
+@media (max-width: 767px) {
+    .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
+        color: #FFFFFF;
+    }
+    .dropdown-menu .navbar-icon {
+        filter:invert(100%);
+        -webkit-filter:invert(100%);
+        -moz-filter: invert(100%);
+        -ms-filter: invert(100%);
+    }
+}
+.navbar-inverse .navbar-nav > li > a {
+     color: #FFFFFF;
+     padding: 7px 10px 6px 6px;
 
+}
 .navbar-inverse .navbar-brand { 
   color:#ffffff;
+  padding-top: 16px;
 }
 
 .navbar-inverse .navbar-nav > li > a > .navbar-icon {
@@ -89,7 +116,6 @@ a.not-active {
     -webkit-filter:invert(100%);
     -moz-filter: invert(100%);
     -ms-filter: invert(100%);
-
 }
 
 .navbar-icon {
@@ -97,11 +123,52 @@ a.not-active {
     width: 38px;
     vertical-align:middle;
 }
+
+/**Panels*/
+.panel-default > .panel-heading{
+    background: #3BA2E4;
+    color: white;
+    font-size: 17px;
+    padding: 20px;
+    border-radius: 0;
+    border: none;
+    background-image: none !important;
+    position:relative;
+}
+
+.panel-chevron{
+    right: 20px;
+    position: absolute;
+    top: 20px;
+}
+.panel{
+    margin: 0;
+}
+
+.panel-default{
+    margin-top:20px;
+}
+
+.panel-group .panel+.panel {
+    margin-top: 20px;
+}
+
+.panel-title{
+    font-size:17px;
+}
+
+.panel-title a{
+    text-decoration:none;
+    display: block;
+}
+
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
 
-
+body{
+    background: #f6f8ff;
+}
 .panel-default > .patient-panel {
     background-color: #007FD1;
     color: #fff;
@@ -141,8 +208,26 @@ a.not-active {
     padding-bottom: 9px;
 }
 
+.navbar-brand-img {
+    position: absolute;
+    left: 15px;
+    top: 9px;
+    border-right: 3px solid white;
+    padding-right: 10px;
+}
+.navbar-brand-text{
+    font-size: 18px;
+    font-weight: 600;
+    padding-left: 55px;
+}
 
 
+.header-dock{
+    background: #007FD1;
+    color: whitesmoke;
+    padding: 20px 0px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
+}
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -506,27 +591,6 @@ fieldset[disabled] .btn-danger.active {
 .navbar-brand,
 .navbar-nav > li > a {
   text-shadow: 0 1px 0 rgba(255, 255, 255, .25);
-}
-.navbar-inverse {
-  background-image: -webkit-linear-gradient(top, #3c3c3c 0%, #222 100%);
-  background-image:      -o-linear-gradient(top, #3c3c3c 0%, #222 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#3c3c3c), to(#222));
-  background-image:         linear-gradient(to bottom, #3c3c3c 0%, #222 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3c3c3c', endColorstr='#ff222222', GradientType=0);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
-  background-repeat: repeat-x;
-  border-radius: 4px;
-}
-.navbar-inverse .navbar-nav > .open > a,
-.navbar-inverse .navbar-nav > .active > a {
-  background-image: -webkit-linear-gradient(top, #080808 0%, #0f0f0f 100%);
-  background-image:      -o-linear-gradient(top, #080808 0%, #0f0f0f 100%);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#080808), to(#0f0f0f));
-  background-image:         linear-gradient(to bottom, #080808 0%, #0f0f0f 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff080808', endColorstr='#ff0f0f0f', GradientType=0);
-  background-repeat: repeat-x;
-  -webkit-box-shadow: inset 0 3px 9px rgba(0, 0, 0, .25);
-          box-shadow: inset 0 3px 9px rgba(0, 0, 0, .25);
 }
 .navbar-inverse .navbar-brand,
 .navbar-inverse .navbar-nav > li > a {
