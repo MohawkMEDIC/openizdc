@@ -66,12 +66,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                             // We want to make sure the care plan contains everything in the protocols as possible
                             var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
                             var patient = (s as Patient).Clone() as Patient;
-
+                            // Force a deep load of the patient
                             if (patient.StatusConceptKey == StatusKeys.Active)
                                 return;// Business rules are already executed
 
                             patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
                             persistence.Update(patient);
+                            patient.SetDelayLoad(true);
 
                             patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
                             var acts = cpService.CreateCarePlan(patient);

@@ -22,6 +22,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using System.IO;
 using System.Diagnostics.Tracing;
 using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
 {
@@ -79,12 +80,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
 		/// <param name="args">Arguments.</param>
 		protected override void WriteTrace (System.Diagnostics.Tracing.EventLevel level, string source, string format, params object[] args)
 		{
-			lock (s_syncObject)
-				using (TextWriter tw = File.AppendText (this.m_logFile)) {
-					tw.Write ("{0} [{1}] [{2:o}]:", source, level, DateTime.Now);
-					tw.WriteLine (format, args);
-				}
-		}
+
+            Action doLog = () =>
+            {
+                lock (s_syncObject)
+                    using (TextWriter tw = File.AppendText(this.m_logFile))
+                    {
+                        tw.Write("{0} [{1}] [{2:o}]:", source, level, DateTime.Now);
+                        tw.WriteLine(format, args);
+                    }
+            };
+            doLog.BeginInvoke(null, null);
+
+        }
 		#endregion
 	}
 }

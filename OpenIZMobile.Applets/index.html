@@ -4,7 +4,6 @@
     <oiz:title lang="fr">Bienvennue a OpenIZ DC!</oiz:title>
     <oiz:title lang="sw">Karibu a OpenIZ DC!</oiz:title>
     <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
-
     <h1>OpenIZ Disconnected Client</h1>
     <p>The disconnected client is installed on your device. Unfortunately it is a whitelabel application so out of the box it is pretty boring!</p>
     <h2>Installed Menu Items</h2>
@@ -29,9 +28,6 @@
     <script type="text/javascript">
         // <![CDATA[
         layoutApp.controller('IndexController', ['$scope', function ($scope) {
-            $scope.sys = {
-                menuItems: OpenIZ.App.getMenus()
-            };
         }]);
         // ]]>
     </script>

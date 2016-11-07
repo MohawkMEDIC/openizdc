@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.12.2435">
+  <info id="org.openiz.core" version="0.6.12.2083">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -164,9 +164,6 @@
           <script type="text/javascript">
         // <![CDATA[
         layoutApp.controller('IndexController', ['$scope', function ($scope) {
-            $scope.sys = {
-                menuItems: OpenIZ.App.getMenus()
-            };
         }]);
         // ]]></script>
         </div>
@@ -39329,7 +39326,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     "Authororiginator": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
       "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-      "player": "{{userId}}"
+      "player": "{{userEntityId}}"
     },
     "RecordTarget": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
