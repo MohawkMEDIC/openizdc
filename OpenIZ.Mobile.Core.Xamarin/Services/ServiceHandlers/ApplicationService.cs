@@ -128,8 +128,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
-            if (menu.Launcher != null &&
-                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+            if (menu.Asset != null &&
+                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item
@@ -139,7 +139,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 existing = new MenuInformation()
                 {
-                    Action = menu.Launcher,
+                    Action = menu.Launch,
                     Icon = menu.Icon,
                     Text = menuText
                 };

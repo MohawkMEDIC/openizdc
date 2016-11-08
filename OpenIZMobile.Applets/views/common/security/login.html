@@ -3,7 +3,7 @@
     <openiz:script>/org.openiz.core/controllers/common/security/login.js</openiz:script>
     <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
     <!-- #include virtual="~/views/common/security/forgotPassword.html" -->
-    <form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(loginForm, username, password)">
+    <form ng-controller="LoginPartController" novalidate="novalidate" name="loginForm" class="form" ng-submit="login(loginForm, username, password)">
         <!-- #include virtual="~/views/common/security/authenticate.html" -->
         <div class="row">
             <div class="col-xs-12">

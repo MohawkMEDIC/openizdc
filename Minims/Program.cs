@@ -67,7 +67,7 @@ namespace Minims
             else
             {
                 var appletConfig = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                Process pi = Process.Start("http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html");
+                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/index.html#/");
 
             }
             Console.WriteLine("Press [Enter] key to close...");

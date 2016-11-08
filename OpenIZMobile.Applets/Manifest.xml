@@ -56,19 +56,15 @@
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
     <text>Development Tools</text>
-    <menuItem launch="/org.openiz.core/views/debug/report.html">
+    <menuItem asset="/org.openiz.core/views/debug/report.html" launch="#/core/report">
       <icon>/org.openiz.core/img/appbar.bug.png</icon>
       <text>Bug Report</text>
     </menuItem>
-    <menuItem launch="/org.openiz.core/views/debug/about.html">
+    <menuItem asset="/org.openiz.core/views/debug/about.html" launch="#/core/about">
       <icon>/org.openiz.core/img/appbar.futurama.bender.png</icon>
       <text>Debug Information</text>
     </menuItem>
-    <menuItem launch="/org.openiz.core/views/debug/feedback.html">
-      <icon>/org.openiz.core/img/appbar.lightbulb.hue.on.png</icon>
-      <text>Suggestion Box</text>
-    </menuItem>
-    <menuItem launch="/org.openiz.core/views/settings/settings.html">
+    <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
       <icon>/org.openiz.core/img/appbar.settings.png</icon>
       <text>Suggestion Box</text>
     </menuItem>

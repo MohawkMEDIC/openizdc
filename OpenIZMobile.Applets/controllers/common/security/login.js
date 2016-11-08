@@ -5,17 +5,14 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/bootstrap.min.js"/>
 
-angular.element(document).ready(function () {
-    $('form.form-login').each(function (k, e) {
-        
+layoutApp.controller('LoginPartController', ['$scope', '$window', function ($scope, $window) {
         // Get the current scope that we're in
-        var scope = angular.element(e).scope();
 
-        scope.showPasswordReset = scope.showPasswordReset || function () {
+        $scope.showPasswordReset = $scope.showPasswordReset || function () {
             $('#passwordResetDialog').modal('show');
         };
 
-        scope.login = scope.login || function (form, username, password) {
+        $scope.login = $scope.login || function (form, username, password) {
 
             if (!form.$valid)
             {
@@ -30,8 +27,8 @@ angular.element(document).ready(function () {
                     if (session == null) {
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
-                    else if(OpenIZ.urlParams["returnUrl"] != null)
-                        window.location = OpenIZ.urlParams["returnUrl"];
+                    else
+                        $window.location.reload();
                 },
                 onException: function (ex) {
                     OpenIZ.App.hideWait();
@@ -47,5 +44,5 @@ angular.element(document).ready(function () {
             });
         }; // scope.login
 
-    });
-});
+        
+}]);
