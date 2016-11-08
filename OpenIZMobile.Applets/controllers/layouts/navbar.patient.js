@@ -12,7 +12,6 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $ro
         continueWith: function (data)
         {
             $scope.patient = data;
-
             // Set multiple birth text
             switch (data.multipleBirthOrder)
             {

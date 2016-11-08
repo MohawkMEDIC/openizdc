@@ -270,7 +270,7 @@ namespace OpenIZ.Mobile.Core.Data
             if (existing != null)
             {
                 // Exists but is an old version
-                if (vMe?.VersionKey != null && (existing as IVersionedEntity)?.VersionKey.GetValueOrDefault() != vMe?.VersionKey.GetValueOrDefault())
+                if (vMe?.VersionKey.GetValueOrDefault() != Guid.Empty && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
                 {
                     throw new InvalidOperationException("Cannot update child object, ensure you are using the most up to date copy before persisting");
                 }

@@ -20,12 +20,17 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="OrderSummaryController">
     <oiz:script>~/controllers/common/stock/ordersummary.js</oiz:script>
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" ng-init="collapseStatus.orderSummaryOpen = true" ng-click="collapseStatus.orderSummaryOpen = !collapseStatus.orderSummaryOpen">
         <div class="panel panel-heading">
-            {{ 'locale.stock.ordersummary.title' | i18n }}
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-target="#orderSummaryCollapse">{{ 'locale.stock.ordersummary.title' | i18n }}</a>
+                <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.orderSummaryOpen, 'glyphicon-chevron-right': !collapseStatus.orderSummaryOpen}"></i>
+            </h4>
         </div>
-        <div class="panel panel-body">
-            <canvas id="orderSummaryChart"></canvas>
+        <div id="orderSummaryCollapse" class="panel-collapse collapse in">
+            <div class="panel panel-body">
+                <canvas id="orderSummaryChart"></canvas>
+            </div>
         </div>
     </div>
 </div>

@@ -66,28 +66,29 @@ namespace OpenIZ.Mobile.Core.Protocol
                             // We want to make sure the care plan contains everything in the protocols as possible
                             var cpService = ApplicationContext.Current.GetService<ICarePlanService>();
                             var patient = (s as Patient).Clone() as Patient;
+                            // Force a deep load of the patient
+                            if (patient.StatusConceptKey == StatusKeys.Active)
+                                return;// Business rules are already executed
 
-                            if (patient.StatusConceptKey == StatusKeys.New)
+                            patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
+                            persistence.Update(patient);
+                            patient.SetDelayLoad(true);
+
+                            patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
+                            var acts = cpService.CreateCarePlan(patient);
+
+                            // There were some acts proposed
+                            if (acts.Count() > 0)
                             {
-
-                                patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
-                                persistence.Update(patient);
-                                patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
-                                patient.SetDelayLoad(true);
-                                var acts = cpService.CreateCarePlan(patient);
-
-                                // There were some acts proposed
-                                if (acts.Count() > 0)
+                                var actService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
+                                Bundle batch = new Bundle()
                                 {
-                                    var actService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
-                                    Bundle batch = new Bundle()
-                                    {
-                                        Item = acts.OfType<IdentifiedData>().ToList()
-                                    };
-                                    actService.Insert(batch);
+                                    Item = acts.OfType<IdentifiedData>().ToList()
+                                };
+                                actService.Insert(batch);
 
-                                }
                             }
+
                         }, e.Data);
                     };
             };

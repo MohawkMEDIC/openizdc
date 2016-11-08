@@ -293,7 +293,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(IEnumerable<TAssociation> existing, IEnumerable<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(IEnumerable<TAssociation> existing, IEnumerable<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext, bool inversionInd = false)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
@@ -312,7 +312,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in storage)
                 if (itm.SourceEntityKey == Guid.Empty || !itm.SourceEntityKey.HasValue)
                     itm.SourceEntityKey = sourceKey;
-                else if (itm.SourceEntityKey != sourceKey) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
+                else if (!inversionInd && itm.SourceEntityKey != sourceKey) // ODD!!! This looks like a copy / paste job from a down-level serializer fix it
                 {
                     itm.SourceEntityKey = sourceKey;
                     itm.Key = null;

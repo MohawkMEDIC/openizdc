@@ -234,7 +234,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             try
             {
 
-                new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
+                new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.UnrestrictedAdministration).Demand();
 
                 // We're allowed to access server admin!!!! Yay!!!
                 // We're goin to conigure the realm settings now (all of them)

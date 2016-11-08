@@ -356,7 +356,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     existing,
                     data.Participations,
                     retVal.Key,
-                    context);
+                    context, 
+                    true);
             }
           
 
