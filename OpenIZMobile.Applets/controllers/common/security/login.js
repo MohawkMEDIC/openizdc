@@ -34,15 +34,15 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     OpenIZ.App.hideWait();
 
 
-                    if (typeof (ex) == "string")
-                        alert(ex);
-                    else if (ex.message != undefined)
-                        alert("" + ex.message + " - " + ex.details);
-                    else
-                        alert(ex);
-                }
-            });
-        }; // scope.login
+                if (typeof (ex) == "string")
+                    alert(ex);
+                else if (ex.message != undefined)
+                    alert("" + ex.message + " - " + ex.details);
+                else
+                    alert(ex);
+            }
+        });
+    }; // scope.login
 
         
 }]);
