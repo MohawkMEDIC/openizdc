@@ -2,14 +2,17 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute', 'ui.router'])
-    .config(['$compileProvider', '$stateProvider', function ($compileProvider, $stateProvider) {
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
+    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 
         OpenIZ.UserInterface.states.forEach(function (state) {
             $stateProvider.state(state);
         });
+
+        $urlRouterProvider.otherwise('/core/login');
+
     }])
     .run(function ($rootScope) {
         OpenIZ.Configuration.getConfigurationAsync({
