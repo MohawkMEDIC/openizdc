@@ -1,5 +1,6 @@
 ﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group"
+          ng-controller="PatientIdentifiersController">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
     <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
         <div class="col-xs-3">

@@ -72,8 +72,8 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                                 patient.StatusConceptKey = StatusKeys.Active;// Mark patient as active
                                 persistence.Update(patient);
-
                                 patient.Participations = new List<OpenIZ.Core.Model.Acts.ActParticipation>((s as Patient).Participations);
+                                patient.SetDelayLoad(true);
                                 var acts = cpService.CreateCarePlan(patient);
 
                                 // There were some acts proposed

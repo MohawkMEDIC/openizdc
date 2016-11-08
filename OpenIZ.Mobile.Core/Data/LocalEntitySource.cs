@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Get versioned relationships for the object
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
+        public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey, decimal? sourceVersionSequence) where TObject : IdentifiedData, IVersionedAssociation, new()
         {
             return this.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
         }
@@ -72,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Get versioned relationships for the object
         /// </summary>
-        public List<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
+        public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
         {
             return this.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
         }

@@ -293,7 +293,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(List<TAssociation> existing, List<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(IEnumerable<TAssociation> existing, IEnumerable<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {
@@ -319,7 +319,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 }
 
             // Remove old
-            var obsoleteRecords = existing.Where(o => !storage.Exists(ecn => ecn.Key == o.Key));
+            var obsoleteRecords = existing.Where(o => !storage.Any(ecn => ecn.Key == o.Key));
             foreach (var del in obsoleteRecords)
                 persistenceService.Obsolete(dataContext, del);
 

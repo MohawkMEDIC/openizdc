@@ -63,7 +63,15 @@ var OpenIZ = OpenIZ || {
      * @summary URL Parameters
      */
     urlParams: {},
+    /** 
+     * @summary Provides a mechanism for user interface interaction with OpenIZ
+     * @class
+     * @static
+     * @memberof OpenIZ
+     */
+    UserInterface : {
 
+    },
     /**
      * @summary Provides operations for managing {@link OpenIZModel.Act} instances.
      * @memberof OpenIZ
