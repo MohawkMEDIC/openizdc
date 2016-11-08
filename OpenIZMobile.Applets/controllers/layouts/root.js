@@ -11,7 +11,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
             $stateProvider.state(state);
         });
 
-        $urlRouterProvider.otherwise('/core/login');
+        //$urlRouterProvider.otherwise('/');
 
     }])
     .run(function ($rootScope) {
