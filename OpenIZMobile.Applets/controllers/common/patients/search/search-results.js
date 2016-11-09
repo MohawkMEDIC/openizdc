@@ -3,11 +3,10 @@
 /// <reference path="~/lib/angular.min.js"/>
 
 // Document ready, bind search results to their related contexts
-$(document).ready(function () {
-    $('table.oiz-patient-results').each(function (i,e) {
+layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Get the current scope that we're in
-        var scope = angular.element(e).scope();
+        var scope = $scope;
 
         // If the current scope does not have required values bind them
         scope.search = scope.search || {};
@@ -40,6 +39,7 @@ $(document).ready(function () {
          * @summary Advances to the next set of results
          */
         scope.search.search = scope.search.search || function (nonInteractive) {
+            console.log("hihihih");
             if (!nonInteractive) OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
@@ -165,6 +165,4 @@ $(document).ready(function () {
             scope.doStartEncounter(patient);
         };
 
-
-    });
-});
+}]);
