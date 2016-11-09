@@ -20,9 +20,9 @@
 
 <div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <oiz:script>/org.openiz.core/controllers/alerts/view.js</oiz:script>
-    <oiz:state name="org-openiz-core.alert.view">
-        <oiz:url>/{alertId}</oiz:url>
-        <oiz:view name="alert-view">
+    <oiz:state name="org-openiz-core.alert">
+        <oiz:url>/alert/{alertId}</oiz:url>
+        <oiz:view>
             <oiz:controller>ViewAlertController</oiz:controller>
             <oiz:title>Alert</oiz:title>
         </oiz:view>

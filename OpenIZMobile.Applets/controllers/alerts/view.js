@@ -5,12 +5,12 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/controllers/layouts/navbar.js"/>
 
-layoutApp.controller('ViewAlertController', ['$scope', function ($scope)
+layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function ($scope, $stateParams)
 {
 
     OpenIZ.App.getAlertsAsync({
         query: {
-            id: OpenIZ.urlParams["alertId"],
+            id: $stateParams.alertId,
             _count: 1
         },
         onException: function (ex)

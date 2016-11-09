@@ -17,11 +17,18 @@
  - User: khannan
  - Date: 2016-9-8
 -->
-<div xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/navbar.html" xmlns:bind="http://openiz.org/applet/binding" ng-controller="GtinManagementController" xmlns:oiz="http://openiz.org/applet">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:bind="http://openiz.org/applet/binding" xmlns:oiz="http://openiz.org/applet">
     <oiz:script>~/controllers/common/stock/gtinmanagement.js</oiz:script>
     <oiz:title lang="en">GTIN Management</oiz:title>
     <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
-
+    <oiz:state name="org-openiz-core.gtinmanagement">
+        <oiz:url>/stock/gtinmanagement</oiz:url>
+        <oiz:view>
+            <oiz:controller>GtinManagementController</oiz:controller>
+            <oiz:title lang="en">GTIN Management</oiz:title>
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+        </oiz:view>
+    </oiz:state>
     <div class="row">
         <div class="col-xs-12">
             <div class="panel panel-default">
