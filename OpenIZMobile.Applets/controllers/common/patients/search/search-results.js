@@ -39,7 +39,6 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
          * @summary Advances to the next set of results
          */
         scope.search.search = scope.search.search || function (nonInteractive) {
-            console.log("hihihih");
             if (!nonInteractive) OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
