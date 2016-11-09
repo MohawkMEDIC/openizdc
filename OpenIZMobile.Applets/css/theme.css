@@ -1,6 +1,71 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
+
+
+fieldset{
+    margin-right:30px;
+}
+.patient-panel small { color: #fff }
+
+.btn-default{
+    background: #ccd4e0;
+    border: none;
+    height: 52px;
+}
+.form-horizontal .control-label {
+    padding: 7px 0 0 0;
+}
+.tokenfield .token{
+    height: 32px;
+    padding-left: 3px;
+    border: 1px solid #0887d9;
+    background-color: white;
+}
+
+.tokenfield .token-input{
+    margin-bottom: 0;
+    height: initial;
+}
+
+.input-group .form-control{
+    border-radius: 0;
+    background: #ebeff5;
+    border: none;
+    padding: 12px 10px;
+    font-size: 20px;
+    height:52px;
+}
+
+.tokenfield .token .close{
+    opacity: 0.3;
+    color: #0d8bde;
+    padding-right: 6px;
+}
+.page-header, .page-header h3 { 
+  margin-top:0px; 
+  padding:0px;
+  font-size:1.2em;
+  color: #666;
+}
+.has-error .form-control {
+    border:1px solid #843534;
+}
+.select2-container--default .select2-selection--single {
+    border-radius: 0;
+    background: #ebeff5;
+    border: none;
+    padding: 12px 10px;
+    font-size: 20px;
+    height: 52px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 10px;
+    right: 20px;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-width: 10px 8px 0 8px;
+}
 .input-group { width:100%; }
 .input-group .form-control:last-child {
     border-radius: 4px;
@@ -139,7 +204,7 @@ a.not-active {
 .panel-chevron{
     right: 20px;
     position: absolute;
-    top: 20px;
+    top: 26px;
 }
 .panel{
     margin: 0;
@@ -155,6 +220,7 @@ a.not-active {
 
 .panel-title{
     font-size:17px;
+    line-height: inherit;
 }
 
 .panel-title a{
