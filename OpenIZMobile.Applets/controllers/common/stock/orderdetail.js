@@ -31,7 +31,6 @@ layoutApp.controller('OrderDetailController', ['$scope', function ($scope) {
         orderStatus: "Requested"
     };
     $scope.orderItems = [];
-    OpenIZ.Ims.
     OpenIZ.Ims.get({
         query: $scope.query,
         resource: "Act",

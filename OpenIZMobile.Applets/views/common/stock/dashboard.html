@@ -67,10 +67,10 @@
                             <td>{{ stock.expiryDate | date: 'dd-MM-yyyy' }}</td>
                             <td>{{ stock.quantity }}</td>
                             <td>
-                                <a class="btn btn-primary" ng-href="adjust.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.adjust' | i18n }}</a>
+                                <a class="btn btn-primary" ui-sref="org-openiz-core.adjust({vaccineId: stock.id, vaccineVersion: stock.version})">{{ 'locale.stock.action.adjust' | i18n }}</a>
                             </td>
                             <td>
-                                <a class="btn btn-primary" ng-href="order.html?id&#61;{{stock.id}}&amp;version&#61;{{stock.version}}">{{ 'locale.stock.action.order' | i18n }}</a>
+                                <a class="btn btn-primary" ui-sref="org-openiz-core.order">{{ 'locale.stock.action.order' | i18n }}</a>
                             </td>
                         </tr>
                     </tbody>

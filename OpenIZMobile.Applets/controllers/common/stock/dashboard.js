@@ -53,6 +53,7 @@ layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
                     $scope.lowStock.push(data.item[i]);
                     
                 }
+                $scope.$digest();
             }
         },
         onException: function (ex) {
