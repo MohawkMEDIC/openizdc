@@ -21,12 +21,10 @@
  * Date: 2016-9-10
  */
 
-layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', '$stateParams', function ($scope, queryParameterService, $stateParams)
 {
 
-    var params = queryParameterService.getUrlParameters();
-
-    var query = "id=" + params.id;
+    var query = "id=" + $stateParams.vaccineId;
 
     var manufacturedMaterial = null;
 
@@ -47,6 +45,7 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 $scope.lotNumber = manufacturedMaterial.lotNumber;
                 $scope.expiryDate = manufacturedMaterial.expiryDate;
                 $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
+                $scope.$digest();
             }
         },
         onException: function (ex)
@@ -68,7 +67,7 @@ layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterServi
                 data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
                 data.participation.Consumable.actModel.value = $scope.quantity;
                 data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
-                data.participation.Consumable.playerModel.id = params.id;
+                data.participation.Consumable.playerModel.id = $stateParams.vaccineId;
                 OpenIZ.Ims.post({
                     resource: "Act",
                     data: data,
