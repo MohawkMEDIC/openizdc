@@ -58,7 +58,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px">
-                            <a style="padding-left:0px" href="/org.openiz.core/views/alerts/view.html?alertId={{msg.id}}">
+                            <a style="padding-left:0px" ui-sref="org-openiz-core.alert({alertId: msg.id})" >
                                 <div style="padding-left:0px" class="container-fluid">
                                     <div class="col-xs-2">
                                         <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
@@ -86,7 +86,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
-                            <a href="/org.openiz.core/views/settings/preferences.html">
+                            <a ui-sref="org-openiz-core.preferences">
                                 <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | i18n }}
                             </a>
                         </li>

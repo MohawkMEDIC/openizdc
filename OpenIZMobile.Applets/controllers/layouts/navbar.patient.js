@@ -4,11 +4,11 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $rootScope)
+layoutApp.controller('PatientLayoutController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams)
 {
     // Get the patient 
     OpenIZ.Patient.findAsync({
-        query: { _id: OpenIZ.urlParams['patientId'], _count: 1, _all: true },
+        query: { _id: $stateParams.patientId, _count: 1, _all: true },
         continueWith: function (data)
         {
             $scope.patient = data;

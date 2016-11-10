@@ -118,8 +118,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "tz.timr.applet",
-                AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
+                StartupAsset = "org.openiz.org",
+                AuthenticationAsset = "/tz.timr.applet/views/security/login.html"
             };
 
             // Protocol 

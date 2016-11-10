@@ -4,7 +4,6 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', function ($scope, $interval, $rootScope) {
-
     // Add menu items
     OpenIZ.App.getMenusAsync({
         continueWith: function (menus) {

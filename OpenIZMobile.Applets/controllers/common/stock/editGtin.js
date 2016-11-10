@@ -21,11 +21,11 @@
  * Date: 2016-9-16
  */
 
-layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService', function ($scope, queryParameterService)
+layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService', '$stateParams', function ($scope, queryParameterService, $stateParams)
 {
 	var params = queryParameterService.getUrlParameters();
 
-	var query = "id=" + params.id;
+	var query = "id=" + $stateParams.vaccineId;
 
 	var manufacturedMaterial = null;
 
@@ -44,6 +44,7 @@ layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService'
 				$scope.lotNumber = manufacturedMaterial.lotNumber;
 				$scope.expiryDate = manufacturedMaterial.expiryDate;
 				$scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
+				$scope.$digest();
 			}
 		},
 		onException: function (ex)
@@ -57,8 +58,8 @@ layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService'
 	    manufacturedMaterial.identifier.GTIN.value = $scope.gtin;
 
 	    OpenIZ.Ims.put({
-	        id: params.id,
-	        versionId: params.version,
+	        id: $stateParams.vaccineId,
+	        versionId: $stateParams.vaccineVersion,
 	        data: manufacturedMaterial,
 	        resource: "ManufacturedMaterial",
 	        continueWith: function (data)
