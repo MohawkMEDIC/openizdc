@@ -2,8 +2,8 @@
           xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
 
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
-        <div class="col-xs-10">
+        <label class="col-xs-3 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}</label>
+        <div class="col-xs-9">
             <div class="input-group">
                 <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" />
                 <span class="input-group-btn">
@@ -13,8 +13,8 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
-        <div class="col-xs-10">
+        <label class="col-xs-3 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}</label>
+        <div class="col-xs-9">
             <div class="input-group">
                 <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
@@ -24,14 +24,15 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
+        <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
                 <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
                         bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"></select>
+                <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-5">
             <div class="input-group">
                 <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
                 <span class="input-group-btn">
@@ -44,14 +45,15 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
+        <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
                 <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
                         bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
-            </div>
+                <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-5">
             <div class="input-group">
                 <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
