@@ -131,16 +131,16 @@ angular.module('openiz', [])
                 function tagFormatter(viewValue)
                 {
                     if (typeof (viewValue) === Array)
-                        return viewValue.join(viewView)
+                        return viewValue.join(viewValue)
                     return viewValue;
                 }
 
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (ovalue != nvalue &&
+                    if (ovalue != nvalue ||
                         // HACK: For SPA
-                        $(element).attr('has-bound')) {
+                        !$(element).attr('has-bound')) {
                         $(element).attr('has-bound', true);
                         $(element).trigger('change');
                     }
