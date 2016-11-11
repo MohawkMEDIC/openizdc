@@ -103,10 +103,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         /// <summary>
         /// Token request for refresh
         /// </summary>
-        public OAuthTokenRequest(TokenClaimsPrincipal current)
+        public OAuthTokenRequest(TokenClaimsPrincipal current, String scope)
         {
             this.GrantType = "refresh_token";
             this.RefreshToken = current.RefreshToken;
+            this.Scope = scope;
         }
 
         /// <summary>

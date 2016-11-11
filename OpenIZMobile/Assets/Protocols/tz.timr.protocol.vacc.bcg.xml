@@ -16,7 +16,7 @@
             {
 				      "$type": "SubstanceAdministration",
               template: {
-                  mnemonic: "Act.SubstanceAdmin.Immunization"
+                  mnemonic: "act.substanceadmin.immunization"
               },
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
               "typeConceptModel": { "id" : "F3BE6B88-BC8F-4263-A779-86F21EA10A47", "mnemonic" : "InitialImmunization" },

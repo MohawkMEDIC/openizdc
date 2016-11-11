@@ -36,6 +36,7 @@ using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using System.Text;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Security
 {
@@ -116,14 +117,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     if (!String.IsNullOrEmpty(password))
                         request = new OAuthTokenRequest(principal.Identity.Name, password, scope);
                     else if (principal is TokenClaimsPrincipal)
-                        request = new OAuthTokenRequest(principal as TokenClaimsPrincipal);
+                        request = new OAuthTokenRequest(principal as TokenClaimsPrincipal, scope);
                     else
                         request = new OAuthTokenRequest(principal.Identity.Name, null, scope);
 
                     try
                     {
-                        if (!String.IsNullOrEmpty(tfaSecret))
-                            restClient.Requesting += (o, p) => p.AdditionalHeaders.Add("X-OpenIZ-TfaSecret", tfaSecret);
+                        restClient.Requesting += (o, p) =>
+                        {
+                            p.AdditionalHeaders.Add("X-OpenIZClient-Claim", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}={1}", ClaimTypes.OpenIzScopeClaim, scope))));
+                            if (!String.IsNullOrEmpty(tfaSecret))
+                                p.AdditionalHeaders.Add("X-OpenIZ-TfaSecret", tfaSecret);
+                        };
 
                         // Invoke
                         OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);

@@ -19,7 +19,7 @@
             {
 				      "$type": "SubstanceAdministration",
               template: {
-                  mnemonic: "Act.SubstanceAdmin.Immunization"
+                  mnemonic: "act.substanceadmin.immunization"
               },
              
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
@@ -92,7 +92,7 @@
            {
 				      "$type": "SubstanceAdministration",
               template: {
-                  mnemonic: "Act.SubstanceAdmin.Immunization"
+                  mnemonic: "act.substanceadmin.immunization"
               },
              
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },
@@ -164,7 +164,7 @@
             {
 				      "$type": "SubstanceAdministration",
               template: {
-                  mnemonic: "Act.SubstanceAdmin.Immunization"
+                  mnemonic: "act.substanceadmin.immunization"
               },
              
 				      "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },

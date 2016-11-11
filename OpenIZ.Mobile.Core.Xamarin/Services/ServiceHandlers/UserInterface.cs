@@ -1,4 +1,5 @@
 ﻿using OpenIZ.Core.Applets.Model;
+using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;

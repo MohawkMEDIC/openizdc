@@ -234,7 +234,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             catch(SessionExpiredException)
                             {
                                 this.m_tracer.TraceWarning("Session {0} expired will attempt refresh", session.Key);
-                                ApplicationContext.Current.IdentityProviderService.Authenticate(session.Principal, null);
+                                AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.IdentityProviderService.Authenticate(session.Principal, null));
                             }
                     }
                 }
@@ -306,17 +306,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         }
                         response.StatusCode = 200;
                     }
-                    catch(TargetInvocationException e) {
-                        this.m_tracer.TraceError("Error executing service request: {0}", e);
-                        if (e.InnerException is UnauthorizedAccessException)
-                            throw e.InnerException;
-                        else if (invoke.FaultProvider != null)
-                        {
-                            response.StatusCode = 500;
-                            result = invoke.FaultProvider.Invoke(invoke.BindObject, new object[] { e.InnerException });
-                        }
-                        else
-                            throw e.InnerException;
+                    catch(Exception e)
+                    {
+                        result = this.HandleServiceException(e, invoke, response);
+                        if (result == null)
+                            throw;
                     }
 
                     // Serialize the response
@@ -442,11 +436,36 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
         }
 
-		/// <summary>
-		/// Handles the process of rendering an asset.
-		/// </summary>
-		/// <param name="request">The HTTP request.</param>
-		/// <param name="response">The HTTP response.</param>
+        /// <summary>
+        /// Handles a service exception
+        /// </summary>
+        private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
+        {
+
+            response.StatusCode = 500;
+            if(e is SecurityException)
+            {
+                response.StatusCode = 401;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if (e is UnauthorizedAccessException)
+            {
+                response.StatusCode = 403;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if (e is TargetInvocationException) 
+                return this.HandleServiceException(e.InnerException, invoke, response);
+            else
+            {
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e.InnerException });
+            }
+        }
+
+        /// <summary>
+        /// Handles the process of rendering an asset.
+        /// </summary>
+        /// <param name="request">The HTTP request.</param>
+        /// <param name="response">The HTTP response.</param>
         private void HandleAssetRenderRequest(HttpListenerRequest request, HttpListenerResponse response)
 		{
             // Try to demand policy 

@@ -61,9 +61,6 @@ namespace OpenIZ.Mobile.Core.Android
 			Name = "org.openiz.openiz_mobile"
 		};
 
-		// Applets
-		private AppletCollection m_applets = new AppletCollection();
-
 		// Configuration manager
 		private ConfigurationManager m_configurationManager;
 
@@ -261,9 +258,9 @@ namespace OpenIZ.Mobile.Core.Android
 						throw new InvalidOperationException(Strings.err_duplicate_package_name);
 
 					// Unload the loaded applet version
-					var existingApplet = this.m_applets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
+					var existingApplet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
 					if (existingApplet != null)
-						this.m_applets.Remove(existingApplet);
+						this.LoadedApplets.Remove(existingApplet);
 					appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
 				}
 

@@ -25,30 +25,30 @@
   </info>
   <startup>~/index.html</startup>
   
-  <template mnemonic="Act.SubstanceAdmin.Immunization">
+  <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.0</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
   
   
-  <template mnemonic="Act.TransferStock">
+  <template mnemonic="act.transferstock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
   
-  <template mnemonic="Act.Observation.Weight">
+  <template mnemonic="act.observation.weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.0</oid>
     <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
   </template>
 
-  <template mnemonic="Act.AdjustStock">
+  <template mnemonic="act.adjuststock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
     <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
   </template>
 
-  <template mnemonic="Act.CountStock">
+  <template mnemonic="act.countstock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
     <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>

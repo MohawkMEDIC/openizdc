@@ -20,7 +20,7 @@
           {
 				      "$type": "SubstanceAdministration",
               template: {
-                  mnemonic: "Act.SubstanceAdmin.Supplement"
+                  mnemonic: "act.substanceadmin.supplement"
               },
               
               "moodConceptModel": { "id" : "ACF7BAF2-221F-4BC2-8116-CEB5165BE079", "mnemonic" : "PROPOSE" },

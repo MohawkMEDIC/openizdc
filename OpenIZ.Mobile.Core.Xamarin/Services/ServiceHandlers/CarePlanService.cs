@@ -12,6 +12,7 @@ using OpenIZ.Core.Model.Acts;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using System.Collections.Generic;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -29,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         [RestOperation(UriPath = "/patient", Method = "POST", FaultProvider = nameof(CarePlanFaultProvider))]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public Patient CreatePlan([RestMessage(RestMessageFormat.SimpleJson)]Patient p)
+        public Bundle CreatePlan([RestMessage(RestMessageFormat.SimpleJson)]Patient p)
         {
             // Additional instructions?
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
@@ -38,18 +39,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var protocolService = ApplicationContext.Current.GetService<ICarePlanService>();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var plan = protocolService.CreateCarePlan(p);
+            var plan = new List<Act>(protocolService.CreateCarePlan(p));
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
             // Instructions?
             if (search.Count > 0)
             {
                 var pred = predicate.Compile();
-                p.Participations.RemoveAll(o => !pred(o.Act));
+                plan.RemoveAll(o => !pred(o));
             }
 
-            //return new Bundle() { Item = plan.OfType<IdentifiedData>().ToList() };
-            return p;
+            return new Bundle() { Item = plan.OfType<IdentifiedData>().ToList() };
+            //return plan;
         }
 
         /// <summary>

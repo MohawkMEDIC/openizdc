@@ -60,26 +60,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 			List<Claim> claims = new List<Claim> () {
 			};
 
-			// Additional claims?
-			if (this.Principal is ClaimsPrincipal) {
-				claims.AddRange ((this.Principal as ClaimsPrincipal).Claims);
-			}
+			//// Additional claims?
+			//if (this.Principal is ClaimsPrincipal) {
+			//	claims.AddRange ((this.Principal as ClaimsPrincipal).Claims);
+			//}
 
 			// Build the claim string
-			StringBuilder claimString = new StringBuilder();
-			foreach (var c in claims) {
-				claimString.AppendFormat ("{0},", 
-					Convert.ToBase64String (Encoding.UTF8.GetBytes (String.Format ("{0}={1}", c.Type, c.Value))));
-			}
-			if(claimString.Length > 0)
-				claimString.Remove (claimString.Length - 1, 1);
+			//StringBuilder claimString = new StringBuilder();
+			//foreach (var c in claims) {
+			//	claimString.AppendFormat ("{0},", 
+			//		Convert.ToBase64String (Encoding.UTF8.GetBytes (String.Format ("{0}={1}", c.Type, c.Value))));
+			//}
+			//if(claimString.Length > 0)
+			//	claimString.Remove (claimString.Length - 1, 1);
 			
 			// Add authenticat header
 			var retVal = new System.Collections.Generic.Dictionary<string, string> () {
 				{ "Authorization", String.Format("BASIC {0}", Convert.ToBase64String(Encoding.UTF8.GetBytes(appAuthString))) }
 			};
-			if (claimString.Length > 0)
-				retVal.Add ("X-OpenIZClient-Claim", claimString.ToString ());
+			//if (claimString.Length > 0)
+			//	retVal.Add ("X-OpenIZClient-Claim", claimString.ToString ());
 				
 			return retVal;
 		}

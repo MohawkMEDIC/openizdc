@@ -149,11 +149,12 @@ var OpenIZ = OpenIZ || {
             fulfills.etag = null;
             fulfills.startTime = fulfills.stopTime = null;
 
-            
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
             fulfills.relationship.Fulfills.target = act.id;
+            fulfills._overdue = act.stopTime < new Date();
+
             return fulfills;
         },
         /**
@@ -285,7 +286,6 @@ var OpenIZ = OpenIZ || {
                                 error.error_description,
                                 null
                             ), controlData.state);
-
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
@@ -997,7 +997,15 @@ var OpenIZ = OpenIZ || {
         * @returns {OpenIZModel.SessionInfo} An instance of Session representing the current session
         */
         getSessionAsync: function (controlData) {
-            OpenIZ.Util.simpleGet('/__auth/get_session', controlData);
+            OpenIZ.Util.simpleGet('/__auth/get_session', {
+                continueWith: function (data) {
+                    OpenIZ.Authentication.$session = data;
+                    if (controlData.continueWith) controlData.continueWith(data);
+                },
+                finally: controlData.finally,
+                onException: controlData.onException,
+                state: controlData.state
+            });
         },
         /**
          * @summary Destroys the current session
@@ -1059,6 +1067,51 @@ var OpenIZ = OpenIZ || {
          * });
          */
         refreshSessionAsync: function (controlData) {
+            // Perform auth request
+            $.ajax(
+             {
+                 method: 'POST',
+                 url: '/__auth/authenticate',
+                 data: {
+                     grant_type: 'refresh'
+                 },
+                 dataType: "json",
+                 contentType: 'application/x-www-urlform-encoded',
+                 success: function (xhr, data) {
+                     if (data != null && data.error !== undefined)
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                         );
+                     else if (data != null) {
+                         controlData.continueWith(data, controlData.state);
+                         OpenIZ.Authentication.$session = data;
+                     }
+                     else
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
+                             data,
+                             null
+                         ), controlData.state);
+
+                     if (controlData.finally !== undefined)
+                         controlData.finally(controlData.state);
+                 },
+                 error: function (data) {
+                     var error = data.responseJSON;
+                     if (error != null && error.error !== undefined) // oauth 2 error
+                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                 error.error_description,
+                                 null
+                             ), controlData.state);
+
+                     else // unknown error
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                 data,
+                                 null
+                             ), controlData.state);
+                     if (controlData.finally !== undefined)
+                         controlData.finally(controlData.state);
+
+                 }
+             });
         },
 
         /**

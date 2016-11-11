@@ -18,7 +18,7 @@
             {
               "$type": "QuantityObservation",              
               "template": {
-                "mnemonic": "Act.Observation.Weight"
+                "mnemonic": "act.observation.weight"
               },
              
               "moodConcept": "ACF7BAF2-221F-4BC2-8116-CEB5165BE079",
