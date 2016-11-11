@@ -138,11 +138,12 @@ angular.module('openiz', [])
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (ovalue != nvalue ||
+                    if (typeof (ovalue) == "String" && ovalue != nvalue ||
+                        typeof(ovalue) === Array && ovalue.length != nvalue.length ||
                         // HACK: For SPA
-                        !$(element).attr('has-bound')) {
+                        $(element).attr('has-bound') === undefined) {
                         $(element).attr('has-bound', true);
-                        $(element).trigger('change');
+                        $(element).tokenfield('setTokens', nvalue);
                     }
                 });
 
