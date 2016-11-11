@@ -1,6 +1,10 @@
 ﻿/// <reference path="../../js/openiz-model.js"/>
+/// <reference path="~/lib/angular.min.js"/>
 /// <reference path="../../js/openiz.js"/>
 layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+    $scope.editObject = {};
+    angular.copy($rootScope.session, $scope.editObject);
+
     $scope.saveProfile = function (userEntity) {
 
         OpenIZ.App.showWait();
