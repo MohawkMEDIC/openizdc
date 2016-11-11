@@ -138,8 +138,7 @@ angular.module('openiz', [])
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (ovalue != nvalue &&
-                        ovalue === undefined)
+                    if (ovalue != nvalue)
                         $(element).trigger('change');
                 });
 
