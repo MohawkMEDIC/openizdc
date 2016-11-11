@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="col-xs-4 col-sm-4">
-            <select name="uom_{{act.actModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" ng-model="act.actModel.unitOfMeasure" class="col-xs-6 form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value"></select>
+            <select name="uom_{{act.actModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" ng-model="act.actModel.unitOfMeasure" class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value"></select>
         </div>
         <div class="col-xs-2 col-sm-2" style="vertical-align:middle" >
             <span class="label label-success" ng-if="act.actModel.interpretationConcept == '41d42abf-17ad-4144-bf97-ec3fd907f57d'"><span class="glyphicon glyphicon-ok"></span> {{ 'locale.encounter.interpretation.normal' | i18n }}</span>
