@@ -28,23 +28,53 @@ layoutApp.controller('DemographicSummaryController', ['$scope', function ($scope
     });
 
 
-   /* $scope.saveGiven = function () {
-        var controlData = {};
-        controlData.data = $scope.patient;
-        controlData.id = $scope.patient.id;
-        OpenIZ.Patient.updateAsync({
-            data: $scope.patient,
-            continueWith: function (e) {
-                console.log(e);
-            },
-            onException: TIMR.UserInterface.exceptionHandler,
-        });
-    };*/
+   $scope.saveGiven = function () {
+       console.log($scope.patient.address.HomeAddress);
+    };
+
+   $scope.saveFamily = function () {
+
+   };
+
+   $scope.saveFacility = function () {
+       var id = $scope.patient.relationship.DedicatedServiceDeliveryLocation.targetModel.id;
+       OpenIZ.Ims.get({
+           resource: "Place",
+           query: "id="+id,
+           continueWith: function (data) {
+               console.log(data);
+               $scope.patient.relationship.DedicatedServiceDeliveryLocation.targetModel = data.item[0];
+               console.log($scope.patient);
+           },
+           onException: function (e) {
+               console.log(e);
+           },
+       });
+   };
+
+   $scope.$watch('patient.address.HomeAddress', function (o, n) {
+       console.log($scope.patient);
+       OpenIZ.Place.findAsync({
+           query: { _id: $scope.patient.address.HomeAddress.villageId },
+           continueWith: function (data) {
+               console.log(data);
+               //$scope.patient.address.HomeAddress.component = data.address.Direct.component;
+           },
+           onException: function (ex) {
+               if (ex.error != null)
+                   alert(ex.error);
+               else
+                   alert(ex);
+           }
+       });
+
+   });
 
     $scope.showGender = function () {
         
         var selected = ($scope.genderOptions, { value: $scope.genderOptions });
         if ($scope.patient !== undefined) {
+            console.log($scope.patient);
             var newSelected = "";
             for (var i = 0; i < selected.value.length; i++) {
                 if ($scope.patient.genderConcept == selected.value[i].value) {
@@ -53,6 +83,15 @@ layoutApp.controller('DemographicSummaryController', ['$scope', function ($scope
             }
         }
         return "";
+    };
+
+    $scope.opened = {};
+
+    $scope.open = function ($event, elementOpened) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened[elementOpened] = !$scope.opened[elementOpened];
     };
 
 }]);

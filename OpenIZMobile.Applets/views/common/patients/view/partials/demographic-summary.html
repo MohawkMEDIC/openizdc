@@ -5,7 +5,7 @@
             {{ 'locale.patient.demographics.givenName' | i18n }}
         </label>
         <div class="col-sm-10 col-xs-12">
-            <a href="#" e-ng-model="patient.name.OfficialRecord.component.Given" e-ng-change="saveGiven()" editable-text="patient.name.OfficialRecord.component.Given" e-oiz-tag="oiz-tag">{{ patient.name.OfficialRecord.component.Given | oizEntityName }}</a>
+            {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
         </div>
     </div>
     <div class="row">
@@ -13,7 +13,7 @@
             {{ 'locale.patient.demographics.familyName' | i18n }}
         </label>
         <div class="col-sm-10 col-xs-12">
-            <a href="#" e-ng-model="patient.name.OfficialRecord.component.Family" editable-text="patient.name.OfficialRecord.component.Family" e-oiz-tag="oiz-tag">{{ patient.name.OfficialRecord.component.Family | oizEntityName }}</a>
+            {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
         </div>
     </div>
     <div class="row">
@@ -39,29 +39,25 @@
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.gender' | i18n }}
         </label>
-        <a href="#" id="genderSelect" editable-select="patient.gender" e-ng-model="patient.genderConcept" e-ng-options="s.value as s.text for s in genderOptions">
-            {{ showGender() }}
-        </a>
-            <div class="input-group" ng-hide="true">
-                <select name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
-                        aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
-                        bind:value="name[{{ locale }}].value"></select>
-            </div>
+        <div class="col-sm-2 col-xs-12">
+                {{ patient.genderConceptModel.name[$root.page.locale] }}
+        </div>
     </div>
     <div class="row">
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.facility' | i18n }}
         </label>
-        <a href="#" editable-select="patient.relationship.DedicatedServiceDeliveryLocation.name.OfficialRecord" e-ng-model="patient.relationship.DedicatedServiceDeliveryLocation.name.OfficialRecord" e-oiz-entitysearch="Place" e-data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-            Hi {{patient.relationship.DedicatedServiceDeliveryLocation.name.OfficialRecord}}
-        </a>
+        <div class="col-sm-2 col-xs-12">
+            {{patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord.component.$other.value}}
+        </div>
+
     </div>
     <div class="row">
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.domicile' | i18n }}
         </label>
-        <a href="#" editable-select="patient.address.HomeAddress" e-ng-model="patient.address.HomeAddress" e-oiz-entitysearch="Place" e-data-filter='{ "classConcept" :  "21ab7873-8ef3-4d78-9c19-4582b3c40631" }'>
-            {{ patient.address.HomeAddress | oizEntityAddress }}
-        </a>
+        <div class="col-sm-10 col-xs-12">
+                {{patient.address.HomeAddress.component.AdditionalLocator}}
+        </div>
     </div>
 </div>

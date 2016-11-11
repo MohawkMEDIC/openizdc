@@ -12,6 +12,10 @@ layoutApp.controller('PatientLayoutController', ['$scope', function ($scope, $ro
         continueWith: function (data)
         {
             $scope.patient = data;
+            
+            //HACK: For editable
+            if ($scope.patient.address != null && $scope.patient.address.HomeAddress)
+                $scope.patient.address.HomeAddress.villageId = "XXX";
             // Set multiple birth text
             switch (data.multipleBirthOrder)
             {
