@@ -15,6 +15,12 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', "
 
     }])
     .run(function ($rootScope) {
+
+        // HACK: Sometimes HASH is empty ... ugh... 
+        // Once we fix the panels and tabs in BS this can be removed
+        if (window.location.hash == "")
+            window.location.hash = "#/";
+
         OpenIZ.Configuration.getConfigurationAsync({
             continueWith: function (config) {
                 $rootScope.system = {};

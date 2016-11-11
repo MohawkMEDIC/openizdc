@@ -417,6 +417,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 500;
                 var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
                 var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
             finally
@@ -457,7 +458,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 return this.HandleServiceException(e.InnerException, invoke, response);
             else
             {
-                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e.InnerException });
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
         }
 

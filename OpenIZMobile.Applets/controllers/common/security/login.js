@@ -27,8 +27,11 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     if (session == null) {
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
-                    else
+                    else {
+                        if(window.location.hash == "")
+                            window.location.hash = "#/";
                         $window.location.reload();
+                    }
                 },
                 onException: function (ex) {
                     OpenIZ.App.hideWait();

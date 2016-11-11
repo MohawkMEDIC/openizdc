@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.12.6873">
+  <info id="org.openiz.core" version="0.6.12.5110">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -22,21 +22,21 @@
       <text>Suggestion Box</text>
     </menuItem>
   </menuItem>
-  <template mnemonic="Act.SubstanceAdmin.Immunization">
+  <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
-  <template mnemonic="Act.TransferStock">
+  <template mnemonic="act.transferstock">
     <definition>/org.openiz.core/templates/act.transferstock.json</definition>
   </template>
-  <template mnemonic="Act.Observation.Weight">
+  <template mnemonic="act.observation.weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
     <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
   </template>
-  <template mnemonic="Act.AdjustStock">
+  <template mnemonic="act.adjuststock">
     <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
   </template>
-  <template mnemonic="Act.CountStock">
+  <template mnemonic="act.countstock">
     <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>
   <asset name="bundleconfig.json" mimeType="text/javascript">
@@ -849,8 +849,11 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     if (session == null) {
                         alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
-                    else
+                    else {
+                        if(window.location.hash == "")
+                            window.location.hash = "#/";
                         $window.location.reload();
+                    }
                 },
                 onException: function (ex) {
                     OpenIZ.App.hideWait();
@@ -870,898 +873,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
 }]);</contentText>
   </asset>
   <asset name="controllers/common/security/login.min.js" mimeType="text/javascript">
-    <contentText>angular.element(document).ready(function(){$("form.form-login").each(function(n,t){var i=angular.element(t).scope();i.showPasswordReset=i.showPasswordReset||function(){$("#passwordResetDialog").modal("show")};i.login=i.login||function(n,t,i){if(!n.$valid){alert(OpenIZ.Localization.getString("locale.security.login.invalid"));return}OpenIZ.App.showWait();OpenIZ.Authentication.loginAsync({userName:t,password:i,continueWith:function(n){n==null?alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant")):OpenIZ.urlParams.returnUrl!=null&amp;&amp;(window.location=OpenIZ.urlParams.returnUrl)},onException:function(n){OpenIZ.App.hideWait();typeof n=="string"?alert(n):n.message!=undefined?alert(""+n.message+" - "+n.details):alert(n)}})}})});</contentText>
-  </asset>
-  <asset name="controllers/common/stock/adjuststock.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-10
- */
-
-layoutApp.controller('AdjustStockController', ['$scope', 'queryUrlParameterService', '$stateParams', function ($scope, queryParameterService, $stateParams)
-{
-
-    var query = "id=" + $stateParams.vaccineId;
-
-    var manufacturedMaterial = null;
-
-    $scope.dateRecorded = new Date();
-
-    OpenIZ.Ims.get({
-        query: query,
-        resource: "ManufacturedMaterial",
-        continueWith: function (data)
-        {
-
-            console.log(data);
-
-            if (data.item !== undefined)
-            {
-                manufacturedMaterial = data.item[0];
-                $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
-                $scope.lotNumber = manufacturedMaterial.lotNumber;
-                $scope.expiryDate = manufacturedMaterial.expiryDate;
-                $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
-                $scope.$digest();
-            }
-        },
-        onException: function (ex)
-        {
-            console.log(ex);
-        }
-    });
-
-    $scope.adjustStock = function ()
-    {
-        OpenIZ.App.showWait();
-
-        OpenIZ.Act.getActTemplateAsync({
-            templateId: "Act.AdjustStock",
-            continueWith: function (data)
-            {
-                var act = data;
-                console.log(data);
-                data.participation.Consumable.actModel.reasonConcept = $scope.adjustmentReason;
-                data.participation.Consumable.actModel.value = $scope.quantity;
-                data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
-                data.participation.Consumable.playerModel.id = $stateParams.vaccineId;
-                OpenIZ.Ims.post({
-                    resource: "Act",
-                    data: data,
-                    continueWith: function (act)
-                    {
-                        console.log(act);
-                        window.location.href = "searchstock.html";
-
-                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateSuccessful"));
-                    },
-                    onException: function (ex)
-                    {
-                        console.log(ex);
-
-                        OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.adjustStock.updateUnSuccessful"));
-                    },
-                    finally: function()
-                    {
-                        OpenIZ.App.hideWait();
-                    }
-                });
-            },
-            onException: function(ex)
-            {
-                console.log(ex);
-            },
-        });
-
-    };
-
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/countstock.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-10
- */
-
-layoutApp.controller('CountStockController', ['$scope', 'queryUrlParameterService', '$stateParams', function ($scope, queryParameterService, $stateParams) {
-
-    var params = queryParameterService.getUrlParameters();
-
-    var query = "id=" + $stateParams.vaccineId;
-
-    var manufacturedMaterial = null;
-
-    $scope.dateRecorded = new Date();
-
-    OpenIZ.Ims.get({
-        query: query,
-        resource: "ManufacturedMaterial",
-        continueWith: function (data) {
-
-            if (data.item !== undefined) {
-                manufacturedMaterial = data.item[0];
-                $scope.gtin = manufacturedMaterial.identifier.GTIN.value;
-                $scope.lotNumber = manufacturedMaterial.lotNumber;
-                $scope.expiryDate = manufacturedMaterial.expiryDate;
-                $scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
-                $scope.$digest();
-            }
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
-
-    $scope.countStock = function () {
-        OpenIZ.App.showWait();
-
-        OpenIZ.Act.getActTemplateAsync({
-            templateId: "Act.CountStock",
-            continueWith: function (data) {
-                var act = data;
-                data.participation.Consumable.actModel.value = $scope.quantity;
-                data.participation.Consumable.playerModel.id = $stateParams.vaccineId;
-                data.participation.Consumable.actModel.actTime = $scope.dateRecorded;
-                OpenIZ.Ims.post({
-                    resource: "Act",
-                    data: data,
-                    continueWith: function (act) {
-                    },
-                    onException: function(ex){
-                        console.log(ex);
-                }
-                })
-                OpenIZ.App.hideWait();
-            }
-        });
-
-
-    };
-
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/dashboard.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: justi
- * Date: 2016-7-19
- */
-
-layoutApp.controller('StockDashboardController', ['$scope', function ($scope) {
-
-    $scope.orderQuery = "moodConcept=EC74541F-87C4-4327-A4B9-97F325501747&amp;classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C";
-
-    OpenIZ.Ims.get({
-        resource: "Act",
-        query: $scope.orderQuery,
-        continueWith: function(data)
-        {
-        },
-        onException: function(ex)
-        {
-            console.log(ex);
-        }
-    });
-
-    $scope.lowStock = [];
-
-    // TODO: add facility id here
-    var lowStockQuery = "lotNumber=!null&amp;quantity=&lt;5&amp;statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&amp;_count=5";
-
-    OpenIZ.Ims.get({
-        resource: "ManufacturedMaterial",
-        query: lowStockQuery,
-        continueWith: function (data) {
-
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    $scope.lowStock.push(data.item[i]);
-                    
-                }
-                $scope.$digest();
-            }
-        },
-        onException: function (ex) {
-            console.log(ex);
-        }
-    });
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/editgtin.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-16
- */
-
-layoutApp.controller('EditGtinController', ['$scope', 'queryUrlParameterService', '$stateParams', function ($scope, queryParameterService, $stateParams)
-{
-	var params = queryParameterService.getUrlParameters();
-
-	var query = "id=" + $stateParams.vaccineId;
-
-	var manufacturedMaterial = null;
-
-	OpenIZ.Ims.get({
-		query: query,
-		resource: "ManufacturedMaterial",
-		continueWith: function (data)
-		{
-
-
-			if (data.item !== undefined)
-			{
-				manufacturedMaterial = data.item[0];
-
-				$scope.gtin = manufacturedMaterial.identifier.GTIN.value;
-				$scope.lotNumber = manufacturedMaterial.lotNumber;
-				$scope.expiryDate = manufacturedMaterial.expiryDate;
-				$scope.vaccine = manufacturedMaterial.name.Assigned.component.$other.value;
-				$scope.$digest();
-			}
-		},
-		onException: function (ex)
-		{
-			console.log(ex);
-		}
-	});
-
-	$scope.editGtin = function ()
-	{
-	    manufacturedMaterial.identifier.GTIN.value = $scope.gtin;
-
-	    OpenIZ.Ims.put({
-	        id: $stateParams.vaccineId,
-	        versionId: $stateParams.vaccineVersion,
-	        data: manufacturedMaterial,
-	        resource: "ManufacturedMaterial",
-	        continueWith: function (data)
-	        {
-	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateSuccessful"));
-
-	            window.location.href = "gtinmanagement.html";
-	        },
-	        onException: function (ex)
-	        {
-	            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.stock.updateUnsuccessful"));
-	        },
-	        finally: function ()
-	        {
-	            OpenIZ.App.hideWait();
-	        }
-	    });
-	};
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/gtinmanagement.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-10
- */
-
-layoutApp.controller('GtinManagementController', ['$scope', function ($scope)
-{
-	$("#gtin-search-loading-bar").hide();
-
-	$scope.search = function ()
-	{
-
-		$("#gtin-search-loading-bar").show();
-
-		var query = "identifier.value=~" + $scope.gtin + "&amp;lotNumber=!null&amp;statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&amp;_count=25"
-
-		$scope.stock = [];
-
-		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-			query: query,
-			continueWith: function (data)
-			{
-
-				if (data.item !== undefined)
-				{
-
-					for (var i = 0; i &lt; data.item.length; i++)
-					{
-						$scope.stock.push(data.item[i]);
-					}
-				}
-
-				$("#gtin-search-loading-bar").hide();
-			},
-			onException: function (ex)
-			{
-				console.log(ex);
-				$("#gtin-search-loading-bar").hide();
-			}
-		});
-	};
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/lowstock.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-8
- */
-
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-layoutApp.controller('LowStockController', ['$scope', function ($scope) {
-
-    var ctx = $('#lowStockChart');
-    var stockChart = new Chart(ctx, {
-        type: 'bar',
-        options: {
-            
-            scales: {
-                yAxes: [{
-                }],
-                xAxes: [{
-                    categoryPercentage: 0.6
-                }]
-            },
-            legend: {
-                display: false
-            }
-        },
-        data: {
-            labels: [],
-            datasets: []
-        }
-    });
-
-    var lowStockQuery = "lotNumber=!null&amp;quantity=&lt;5&amp;statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&amp;_count=5";
-
-    OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-        query: lowStockQuery,
-        continueWith: function (data) {
-
-            if (data.item !== undefined) {
-                var chartData = [];
-                for (var i = 0; i &lt; data.item.length; i++) {
-
-                    var vaccine = data.item[i];
-                    var vaccineName = vaccine.name.Assigned.component.$other.value.split("(")[0];
-                    stockChart.data.labels.push(vaccineName);
-                    chartData.push(vaccine.quantity + 1); //HACK 
-                }
-
-                stockChart.data.datasets.push({
-                    label: OpenIZ.Localization.getString("locale.stock.vaccines.title"),
-                    data:chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                });
-
-                stockChart.update(1, true);
-            }
-        },
-        onException: function (ex) {
-            console.log(ex);
-        },
-        finally: function()
-        {
-            stockChart.update();
-        }
-    });
-
-
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/order.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-10
- */
-
-layoutApp.controller('OrderController', ['$scope', function ($scope) {
-
-    $scope.summaryQuery = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
-
-    $scope.orders = [{
-            orderNo: 1234,
-            orderDate: "10/9/2016",
-            destinationHealthFacility: "Arusha Health Centre for Women",
-            orderStatus: "Requested"
-        },
-        {
-            orderNo: 5678,
-            orderDate: "11/9/2016",
-            destinationHealthFacility: "Arusha Laboratory Dispensary",
-            orderStatus: "Requested"
-        }];
-
-    OpenIZ.Ims.get({
-        query: $scope.summaryQuery,
-        resource: "Act",
-        continueWith: function (data)
-        {
-
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    //$scope.orders.push(data.item[i]);
-                }
-            }
-        },
-        onException: function(ex)
-        {
-            console.log(JSON.stringify(ex));
-        }
-    });
-
-    $scope.searchOrders = function () {
-        searchQuery = "identifier.value=" + $scope.orderNumber + "&amp;" + $scope.summaryQuery;
-
-        OpenIZ.Ims.get({
-            query: searchQuery,
-            resource: "Act",
-            continueWith: function (data) {
-
-                if (data.item !== undefined) {
-                    for (var i = 0; i &lt; data.item.length; i++) {
-                        //$scope.orders.push(data.item[i]);
-                    }
-                }
-            },
-            onException: function (ex) {
-                console.log(ex);
-            }
-        });
-    };
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/orderdetail.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-11
- */
-
-layoutApp.controller('OrderDetailController', ['$scope', function ($scope) {
-
-    $scope.query = "classConcept=A064984F-9847-4480-8BEA-DDDF64B3C77C&amp;statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27&amp;moodConcept=E658CA72-3B6A-4099-AB6E-7CF6861A5B61";
-    $scope.order = {
-        orderNo: 1234,
-        orderDate: "11/9/2016",
-        destinationHealthFacility: "Arusha Health Centre for Women",
-        orderStatus: "Requested"
-    };
-    $scope.orderItems = [];
-    OpenIZ.Ims.get({
-        query: $scope.query,
-        resource: "Act",
-        continueWith: function (data)
-        {
-            if (data.item !== undefined)
-            {
-                for (var i = 0; i &lt; data.item.length; i++) {
-                    //$scope.orderItems.push(data.item[i]);
-                }
-            }
-        },
-        onException: function(ex)
-        {
-            console.log(ex);
-        }
-    });
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/ordersummary.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-9
- */
-
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-layoutApp.controller('OrderSummaryController', ['$scope', function ($scope) {
-
-    var labels = [];
-    var data = [];
-    labels[0] = OpenIZ.Localization.getString("locale.stock.released");
-    labels[1] = OpenIZ.Localization.getString("locale.stock.cancelled");
-    labels[2] = OpenIZ.Localization.getString("locale.stock.requested");
-    labels[3] = OpenIZ.Localization.getString("locale.stock.shipped");
-    labels[4] = OpenIZ.Localization.getString("locale.stock.packed");
-    data[0] = 3;
-    data[1] = 4;
-    data[2] = 2;
-    data[3] = 6;
-    data[4] = 1;
-
-
-    var ctxOrders = document.getElementById("orderSummaryChart");
-    var myChart = new Chart(ctxOrders, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: OpenIZ.Localization.getString("locale.stock.stockStatusDoses"),
-                data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-    });
-
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/searchstock.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-15
- */
-
-layoutApp.controller('SearchStockController', ['$scope', function ($scope) {
-
-    $("#stock-search-loading-bar").hide();
-
-    $scope.vaccines = [];
-
-    $scope.searchStock = function () {
-
-        $("#stock-search-loading-bar").show();
-
-        var query = "name.component.value=~" + $scope.name;
-
-        OpenIZ.Ims.get({
-            query: query,
-            resource: "ManufacturedMaterial",
-            continueWith: function (data) {
-
-                if (data.item !== undefined) {
-                    for (var i = 0; i &lt; data.item.length; i++) {
-                        $scope.vaccines.push(data.item[i]);
-                    }
-                }
-
-                $("#stock-search-loading-bar").hide();
-            },
-            onException: function (ex) {
-                console.log(ex);
-                $("#stock-search-loading-bar").hide();
-            },
-            finally: function()
-            {
-                $("#stock-search-loading-bar").hide();
-            }
-        });
-    };
-
-}]);
-</contentText>
-  </asset>
-  <asset name="controllers/common/stock/transferstock.js" mimeType="text/javascript">
-    <contentText>/// &lt;reference path="../js/openiz-model.js"/&gt;
-/// &lt;reference path="../js/openiz.js"/&gt;
-
-/*
- * Copyright 2016 PATH International
- * Developed by Mohawk College of Applied Arts and Technology 
- *
- * Licensed under Creative Commons ShareAlike Attribution Version 4.0 (the "License"); 
- * you may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * https://creativecommons.org/licenses/by-sa/4.0/legalcode
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: khannan
- * Date: 2016-9-10
- */
-
-layoutApp.controller('TransferStockController', ['$scope', function ($scope)
-{
-	OpenIZ.Act.getActTemplateAsync({
-		templateId: "Act.TransferStock",
-		continueWith: function (e)
-		{
-			$scope.act = e;
-		},
-		onException: function (ex)
-		{
-			console.log(ex);
-		}
-	});
-
-	$scope.lotNumbers = [];
-
-	function loadVaccines(lotNumber)
-	{
-	    var vaccineQuery = "statusConcept=C8064CBD-FA06-4530-B430-1A52F1530C27";
-
-		if (lotNumber !== undefined &amp;&amp; lotNumber !== null &amp;&amp; lotNumber !== "")
-		{
-			vaccineQuery += "&amp;lotNumber=" + lotNumber;
-		}
-		else
-		{
-			vaccineQuery += "&amp;lotNumber=!null";
-		}
-
-		$scope.stock = [];
-
-		OpenIZ.ManufacturedMaterial.getManufacturedMaterials({
-			query: vaccineQuery,
-			continueWith: function (data)
-			{
-				if (data.item !== undefined)
-				{
-					for (var i = 0; i &lt; data.item.length; i++)
-					{
-						if (data.item[i].quantity !== 0)
-						{
-							$scope.stock.push(data.item[i]);
-						}
-
-						if (data.item[i].lotNumber !== undefined &amp;&amp; data.item[i].lotNumber !== null &amp;&amp; data.item[i].lotNumber !== "")
-						{
-							if ($scope.lotNumbers.indexOf(data.item[i].lotNumber) === -1)
-							{
-								$scope.lotNumbers.push(data.item[i].lotNumber);
-							}
-						}
-					}
-				}
-
-				$("#transfer-stock-loading-bar").hide();
-			},
-			onException: function (ex)
-			{
-				console.log(ex);
-				$("#transfer-stock-loading-bar").hide();
-			}
-		});
-	}
-
-	loadVaccines(undefined);
-
-	$scope.lotNumberChanged = function ()
-	{
-
-		if ($scope.lotNumber !== undefined &amp;&amp; $scope.lotNumber !== null &amp;&amp; $scope.lotNumber !== "")
-		{
-			$("#transfer-stock-loading-bar").show();
-
-			loadVaccines($scope.lotNumber.lotNumber);
-		}
-	};
-
-	$scope.transferStock = function ()
-	{
-		OpenIZ.Ims.post({
-			resource: "Act",
-			data: $scope.act,
-			continueWith: function (data)
-			{
-			},
-			onException: function (ex)
-			{
-				console.log(ex);
-			}
-		})
-	};
-}]);
-</contentText>
+    <contentText>layoutApp.controller("LoginPartController",["$scope","$window",function(n,t){n.showPasswordReset=n.showPasswordReset||function(){$("#passwordResetDialog").modal("show")};n.login=n.login||function(n,i,r){if(!n.$valid){alert(OpenIZ.Localization.getString("locale.security.login.invalid"));return}OpenIZ.App.showWait();OpenIZ.Authentication.loginAsync({userName:i,password:r,continueWith:function(n){n==null?alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant")):(window.location.hash==""&amp;&amp;(window.location.hash="#/"),t.location.reload())},onException:function(n){OpenIZ.App.hideWait();typeof n=="string"?alert(n):n.message!=undefined?alert(""+n.message+" - "+n.details):alert(n)}})}}]);</contentText>
   </asset>
   <asset name="controllers/debug/about.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="~/js/openiz.js"/&gt;
@@ -1879,7 +991,7 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
 /// &lt;reference path="~/js/openiz-model.js"/&gt;
 /// &lt;reference path="~/lib/angular.min.js"/&gt;
 /// &lt;reference path="~/lib/jquery.min.js"/&gt;
-layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', function ($scope, $interval, $rootScope) {
+layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', function ($scope, $interval, $rootScope, $window) {
     // Add menu items
     OpenIZ.App.getMenusAsync({
         continueWith: function (menus) {
@@ -1898,7 +1010,8 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
                 continueWith: function(data)
                 {
                     console.log(data);
-                    window.location.href = "/tz.timr.applet/views/security/login.html";
+                    window.location.hash = "#/";
+                    $window.location.reload();
                 },
                 onException: function(ex)
                 {
@@ -1911,7 +1024,8 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
     // Set locale
     $scope.setLocale = $scope.setLocale || function (locale) {
         OpenIZ.Localization.setLocale(locale);
-        window.location.reload();
+        window.location.hash = "#/";
+        $window.location.reload(true);
     };
 
     $scope.checkMessages = function () {
@@ -1936,7 +1050,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
 </contentText>
   </asset>
   <asset name="controllers/layouts/navbar.min.js" mimeType="text/javascript">
-    <contentText>layoutApp.controller("LayoutController",["$scope","$interval","$rootScope",function(n){OpenIZ.App.getMenusAsync({continueWith:function(t){n.menuItems=t;n.$applyAsync()}});n.logout=n.logout||function(){confirm(OpenIZ.Localization.getString("locale.layout.navbar.logout.confirm"))&amp;&amp;OpenIZ.Authentication.abandonSession({continueWith:function(n){console.log(n);window.location.href="/tz.timr.applet/views/security/login.html"},onException:function(n){console.log(n)}})};n.setLocale=n.setLocale||function(n){OpenIZ.Localization.setLocale(n);window.location.reload()};n.checkMessages=function(){OpenIZ.App.getAlertsAsync({query:{flags:"!2",_count:5},continueWith:function(t){(n.messages==null||t.length!=n.messages.length)&amp;&amp;(n.messages=t,n.$apply());setTimeout(n.checkMessages,3e4)}})};setTimeout(n.checkMessages,3e4);n.checkMessages()}]);</contentText>
+    <contentText>layoutApp.controller("LayoutController",["$scope","$interval","$rootScope","$window",function(n,t,i,r){OpenIZ.App.getMenusAsync({continueWith:function(t){n.menuItems=t;n.$applyAsync()}});n.logout=n.logout||function(){confirm(OpenIZ.Localization.getString("locale.layout.navbar.logout.confirm"))&amp;&amp;OpenIZ.Authentication.abandonSession({continueWith:function(n){console.log(n);window.location.hash="#/";r.location.reload()},onException:function(n){console.log(n)}})};n.setLocale=n.setLocale||function(n){OpenIZ.Localization.setLocale(n);window.location.hash="#/";r.location.reload(!0)};n.checkMessages=function(){OpenIZ.App.getAlertsAsync({query:{flags:"!2",_count:5},continueWith:function(t){(n.messages==null||t.length!=n.messages.length)&amp;&amp;(n.messages=t,n.$apply());setTimeout(n.checkMessages,3e4)}})};setTimeout(n.checkMessages,3e4);n.checkMessages()}]);</contentText>
   </asset>
   <asset name="controllers/layouts/navbar.patient.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="~/js/openiz.js"/&gt;
@@ -2009,6 +1123,12 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', "
 
     }])
     .run(function ($rootScope) {
+
+        // HACK: Sometimes HASH is empty ... ugh... 
+        // Once we fix the panels and tabs in BS this can be removed
+        if (window.location.hash == "")
+            window.location.hash = "#/";
+
         OpenIZ.Configuration.getConfigurationAsync({
             continueWith: function (config) {
                 $rootScope.system = {};
@@ -2106,7 +1226,7 @@ angular.element(document).ready(function () {
 </contentText>
   </asset>
   <asset name="controllers/layouts/root.min.js" mimeType="text/javascript">
-    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize","ngRoute"]).run(function(n){OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.system={};n.system.config=t;n.$apply()}});n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:(new Date).tomorrow(),minEventTime:(new Date).yesterday(),locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t!=null&amp;&amp;t.entity!=null&amp;&amp;(t.entity.telecom=t.entity.telecom||{},Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""}));n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.config(["$compileProvider",function(n){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/)}]);layoutApp.service("queryUrlParameterService",[function(){function n(){for(var t=window.location.href,i=/[\?|\&amp;]([^=]+)\=([^&amp;]+)/g,n={};(match=i.exec(t))!=null;)n[match[1]]=match[2];return n}return{getUrlParameters:n}}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
+    <contentText>var layoutApp=angular.module("layout",["openiz","ngSanitize","ui.router","xeditable"]).config(["$compileProvider","$stateProvider","$urlRouterProvider",function(n,t){n.aHrefSanitizationWhitelist(/^\s*(http|tel):/);n.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);OpenIZ.UserInterface.states.forEach(function(n){t.state(n)})}]).run(function(n){window.location.hash==""&amp;&amp;(window.location.hash="#/");OpenIZ.Configuration.getConfigurationAsync({continueWith:function(t){n.system={};n.system.config=t;n.$apply()}});n.$on("$stateChangeError",console.log.bind(console));n.page={title:OpenIZ.App.getCurrentAssetTitle(),loadTime:new Date,maxEventTime:(new Date).tomorrow(),minEventTime:(new Date).yesterday(),locale:OpenIZ.Localization.getLocale(),onlineState:OpenIZ.App.getOnlineState()};setInterval(function(){n.page.onlineState=OpenIZ.App.getOnlineState();n.$applyAsync()},1e4);OpenIZ.Authentication.getSessionAsync({continueWith:function(t){n.session=t;t!=null&amp;&amp;t.entity!=null&amp;&amp;(t.entity.telecom=t.entity.telecom||{},Object.keys(t.entity.telecom).length==0&amp;&amp;(t.entity.telecom.MobilePhone={value:""}));n.$apply()}});n.changeInputType=function(n,t){$(n).attr("type",t);$(n).attr("data-max-"+t)!=null&amp;&amp;$(n).attr("max",$(n).attr("data-max-"+t))};n.OpenIZ=OpenIZ});layoutApp.service("queryUrlParameterService",[function(){function n(){for(var t=window.location.href,i=/[\?|\&amp;]([^=]+)\=([^&amp;]+)/g,n={};(match=i.exec(t))!=null;)n[match[1]]=match[2];return n}return{getUrlParameters:n}}]);angular.element(document).ready(function(){$("[data-toggle=popover]").popover({container:"body"});$("[data-toggle=popover]").on("shown.bs.popover",function(){$("[data-toggle=popover]").not(this).popover("hide")});$("#initialBlock").remove();$("#waitModal").removeClass("in");$("#waitModal").removeAttr("style")});</contentText>
   </asset>
   <asset name="controllers/settings/password.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="../../js/openiz-model.js"/&gt;
@@ -14332,8 +13452,7 @@ angular.module('openiz', [])
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (ovalue != nvalue &amp;&amp;
-                        ovalue === undefined)
+                    if (ovalue != nvalue)
                         $(element).trigger('change');
                 });
 
@@ -14585,7 +13704,7 @@ angular.module('openiz', [])
     });</contentText>
   </asset>
   <asset name="js/openiz-ng.min.js" mimeType="text/javascript">
-    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n===undefined)return"";if(n.NID!==undefined)return n.NID.value;for(var t in n)return n[t].value}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).filter("oizEntityAddress",function(){return function(n){return OpenIZ.Util.renderAddress(n)}}).directive("oizTag",function(){return{require:"ngModel",link:function(n,t,i,r){function u(n){return String(n).split(",")}function f(n){return typeof n===Array?n.join(viewView):n}r.$parsers.unshift(u);r.$formatters.unshift(f);n.$watch(i.ngModel,function(n,i){i!=n&amp;&amp;i===undefined&amp;&amp;$(t).trigger("change")});$(t).tokenfield({delimiter:" ,",createTokensOnBlur:!0})}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var r=$(i).attr("oiz-entitysearch"),u=$(i).attr("data-filter"),t=$(i).attr("data-display"),f=$(i).attr("data-default"),e=$(i).attr("data-group-by"),o=$(i).attr("data-group-display"),n={};u!==undefined&amp;&amp;(n=JSON.parse(u));f!==undefined&amp;&amp;(n=JSON.parse(f));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:function(){return $(i[0]).attr("data-default-results")!=null?JSON.parse($(i[0]).attr("data-default-results")):$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}})},ajax:{url:"/__ims/"+r,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){var n,t,r,s,u,f;if($("option",i[0]).remove(),n=n.item||n,t={results:[]},e==null)return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})};for(r in n)try{s=eval("data[itm]."+e);u="";u=o!=null?eval(o):s;f=$.grep(t.results,function(n){return n.text==u});f.length==0?t.results.push({text:u,children:[n[r]]}):f[0].children.push(n[r])}catch(h){t.results.push(n[r])}return t},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){var i="",u;switch(r){case"UserEntity":case"Provider":i+="&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt;";break;case"Place":i+="&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt;"}return i+="&amp;nbsp;",t!=null?(u=n,i+=eval(t)):n.name!=null?i+=OpenIZ.Util.renderName(n.name.OfficialRecord):n.element!==undefined?i+=n.element.innerText:n.text!=""&amp;&amp;(i+=n.text),i},keepSearchResults:!0,templateResult:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
+    <contentText>angular.module("openiz",[]).provider("localize",function(){this.$get=["$rootScope","$filter",function(){var n={dictionary:OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),setLanguage:function(t){OpenIZ.Localization.getLocale()!=t&amp;&amp;(OpenIZ.Localization.setLocale(t),n.dictionary=OpenIZ.Localization.getStrings(t))},getString:function(t){var r=n.dictionary[t],i;return r!=null?r:(i=OpenIZ.Localization.getString(t),i==null)?t:i}};return n}]}).filter("i18n",["$rootScope","localize",function(n,t){var i=function(n){return t.getString(n)};return i.$stateful=!1,i}]).filter("oizEntityIdentifier",function(){return function(n){if(n===undefined)return"";if(n.NID!==undefined)return n.NID.value;for(var t in n)return n[t].value}}).filter("oizEntityName",function(){return function(n){return OpenIZ.Util.renderName(n)}}).filter("oizEntityAddress",function(){return function(n){return OpenIZ.Util.renderAddress(n)}}).directive("oizTag",function(){return{require:"ngModel",link:function(n,t,i,r){function u(n){return String(n).split(",")}function f(n){return typeof n===Array?n.join(viewView):n}r.$parsers.unshift(u);r.$formatters.unshift(f);n.$watch(i.ngModel,function(n,i){i!=n&amp;&amp;$(t).trigger("change")});$(t).tokenfield({delimiter:" ,",createTokensOnBlur:!0})}}}).directive("oizDatabind",function(n){return{link:function(t,i){n(function(){var s=$(i).attr("oiz-databind"),r=$(i).attr("data-filter"),u=$(i).attr("data-watch"),f=$(i).attr("data-watch-target"),e=$(i).attr("data-display"),n={},o;r!==undefined&amp;&amp;(n=JSON.parse(r));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";o=function(){$(i)[0].disabled=!0;OpenIZ.Ims.get({resource:s,query:n,"finally":function(){$(i)[0].disabled=!1},continueWith:function(n){var t=$(i)[0].options,r,u,f;$("option",i[0]).remove();t[t.length]=new Option(OpenIZ.Localization.getString("locale.common.unknown"));for(r in n.item)u=null,e!=null?(f=n.item[r],u=eval(e)):u=OpenIZ.Util.renderName(n.item[r].name.OfficialRecord),t[t.length]=new Option(u,n.item[r].id)}})};u!==null&amp;&amp;t.$watch(u,function(t){f!==null&amp;&amp;t!==undefined&amp;&amp;(n[f]=t);o()})})}}}).directive("oizEntitysearch",function(n){return{link:function(t,i){n(function(){var r=$(i).attr("oiz-entitysearch"),u=$(i).attr("data-filter"),t=$(i).attr("data-display"),f=$(i).attr("data-default"),e=$(i).attr("data-group-by"),o=$(i).attr("data-group-display"),n={};u!==undefined&amp;&amp;(n=JSON.parse(u));f!==undefined&amp;&amp;(n=JSON.parse(f));n.statusConcept="C8064CBD-FA06-4530-B430-1A52F1530C27";$(i).attr("style","width:100%; height:100%");$(i).select2({dataAdapter:$.fn.select2.amd.require("select2/data/extended-ajax"),defaultResults:function(){return $(i[0]).attr("data-default-results")!=null?JSON.parse($(i[0]).attr("data-default-results")):$.map($("option",i[0]),function(n){return{id:n.value,text:n.innerText}})},ajax:{url:"/__ims/"+r,dataType:"json",delay:500,method:"GET",data:function(t){return n["name.component.value"]="~"+t.term,n._count=5,n._offset=0,n},processResults:function(n){var n,t,r,s,u,f;if($("option",i[0]).remove(),n=n.item||n,t={results:[]},e==null)return{results:$.map(n,function(n){return n.text=n.text||(n.name!==undefined?OpenIZ.Util.renderName(n.name.OfficialRecord):""),n})};for(r in n)try{s=eval("data[itm]."+e);u="";u=o!=null?eval(o):s;f=$.grep(t.results,function(n){return n.text==u});f.length==0?t.results.push({text:u,children:[n[r]]}):f[0].children.push(n[r])}catch(h){t.results.push(n[r])}return t},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){var i="",u;switch(r){case"UserEntity":case"Provider":i+="&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt;";break;case"Place":i+="&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt;"}return i+="&amp;nbsp;",t!=null?(u=n,i+=eval(t)):n.name!=null?i+=OpenIZ.Util.renderName(n.name.OfficialRecord):n.element!==undefined?i+=n.element.innerText:n.text!=""&amp;&amp;(i+=n.text),i},keepSearchResults:!0,templateResult:function(n){if(t!=null){var i=n;return eval(t)}return n.name!=null&amp;&amp;n.typeConceptModel!=null&amp;&amp;n.typeConceptModel.name!=null?"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.name!=null?"&lt;div class='label label-default'&gt;"+n.$type+"&lt;\/div&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord):n.text}})})}}}).directive("oizCollapseindicator",function(){return{link:function(n,t){$(t).on("hide.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).removeClass("glyphicon-chevron-down");$(n).addClass("glyphicon-chevron-right")});$(t).on("show.bs.collapse",function(){var n=$(this).attr("data-oiz-chevron");$(n).addClass("glyphicon-chevron-down");$(n).removeClass("glyphicon-chevron-right")})}}});</contentText>
   </asset>
   <asset name="js/openiz.js" mimeType="text/javascript">
     <contentText>/// &lt;reference path="openiz-model.js"/&gt;
@@ -14739,11 +13858,12 @@ var OpenIZ = OpenIZ || {
             fulfills.etag = null;
             fulfills.startTime = fulfills.stopTime = null;
 
-            
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
             fulfills.relationship.Fulfills.target = act.id;
+            fulfills._overdue = act.stopTime &lt; new Date();
+
             return fulfills;
         },
         /**
@@ -14875,7 +13995,6 @@ var OpenIZ = OpenIZ || {
                                 error.error_description,
                                 null
                             ), controlData.state);
-
                     else // unknown error
                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                 data,
@@ -15587,7 +14706,15 @@ var OpenIZ = OpenIZ || {
         * @returns {OpenIZModel.SessionInfo} An instance of Session representing the current session
         */
         getSessionAsync: function (controlData) {
-            OpenIZ.Util.simpleGet('/__auth/get_session', controlData);
+            OpenIZ.Util.simpleGet('/__auth/get_session', {
+                continueWith: function (data) {
+                    OpenIZ.Authentication.$session = data;
+                    if (controlData.continueWith) controlData.continueWith(data);
+                },
+                finally: controlData.finally,
+                onException: controlData.onException,
+                state: controlData.state
+            });
         },
         /**
          * @summary Destroys the current session
@@ -15649,6 +14776,51 @@ var OpenIZ = OpenIZ || {
          * });
          */
         refreshSessionAsync: function (controlData) {
+            // Perform auth request
+            $.ajax(
+             {
+                 method: 'POST',
+                 url: '/__auth/authenticate',
+                 data: {
+                     grant_type: 'refresh'
+                 },
+                 dataType: "json",
+                 contentType: 'application/x-www-urlform-encoded',
+                 success: function (xhr, data) {
+                     if (data != null &amp;&amp; data.error !== undefined)
+                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                         );
+                     else if (data != null) {
+                         controlData.continueWith(data, controlData.state);
+                         OpenIZ.Authentication.$session = data;
+                     }
+                     else
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
+                             data,
+                             null
+                         ), controlData.state);
+
+                     if (controlData.finally !== undefined)
+                         controlData.finally(controlData.state);
+                 },
+                 error: function (data) {
+                     var error = data.responseJSON;
+                     if (error != null &amp;&amp; error.error !== undefined) // oauth 2 error
+                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                 error.error_description,
+                                 null
+                             ), controlData.state);
+
+                     else // unknown error
+                         controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                 data,
+                                 null
+                             ), controlData.state);
+                     if (controlData.finally !== undefined)
+                         controlData.finally(controlData.state);
+
+                 }
+             });
         },
 
         /**
@@ -17080,7 +16252,7 @@ Date.prototype.yesterday = function () {
  * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
-var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionService=window.OpenIZSessionService||{},OpenIZ=OpenIZ||{urlParams:{},Act:{obsoleteAsync:function(n){OpenIZ.Ims.delete({resource:"Act",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,id:n.id,state:n.state})},createFulfillment:function(n){var t=new OpenIZModel.Act;switch(n.$type){case"SubstanceAdministration":t=new OpenIZModel.SubstanceAdministration(n);break;case"Observation":t=new OpenIZModel.Observation(n);break;case"QuantityObservation":t=new OpenIZModel.QuantityObservation(n);break;case"CodedObservation":t=new OpenIZModel.CodedObservation(n);break;case"TextObservation":t=new OpenIZModel.TextObservation(n);break;case"PatientEncounter":t=new OpenIZModel.PatientEncounter(n);break;case"ControlAct":t=new OpenIZModel.ControlAct(n)}return t.id=OpenIZ.App.newGuid(),t.moodConcept=OpenIZModel.ActMoodKeys.Eventoccurrence,t.moodConceptModel=null,t.creationTime=new Date,t.actTime=new Date,t.createdBy=t.createdByModel=null,t.statusConcept=OpenIZModel.StatusKeys.Active,t.statusConceptModel=null,t.etag=null,t.startTime=t.stopTime=null,t.relationship=t.relationship||{},t.relationship.Fulfills=new OpenIZModel.ActRelationship,t.relationship.Fulfills.target=n.id,t},findAsync:function(n){OpenIZ.Ims.get({resource:"Act",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},insertAsync:function(n){OpenIZ.Ims.post({resource:"Act",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},put:function(n){$.ajax({method:"PUT",url:"/__ims/"+n.resource+"?_id="+n.id+"&amp;_versionId="+n.versionId,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},"delete":function(n){$.ajax({method:"DELETE",url:"/__ims/"+n.resource+"?_id="+n.id,accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}},Stock:{calculateQPeriod:function(n,t){return n/12*t},calculateSReserve:function(n,t){return n*t},calculateSMax:function(n,t){return n+t},calculateSReorder:function(n,t,i,r){return n+t*i/r},calculateQOrder:function(n,t,i,r,u){return n-t+i*r/u},calculateQNeeded:function(n,t,i,r){return n+t-(i+r)},calculateAll:function(n,t,i,r,u){var f={};return f.qPeriod=OpenIZ.Stock.calculateQPeriod(n,t),f.sReserve=OpenIZ.Stock.calculateSReserve(f.qPeriod,i),f.sMax=OpenIZ.Stock.calculateSMax(f.qPeriod,f.sReserve),f.sReorder=OpenIZ.Stock.calculateSReorder(f.sReserve,f.qPeriod,r,t),f.qOrder=OpenIZ.Stock.calculateQOrder(f.sMax,u,f.qPeriod,r,t),f}},Util:{renderConceptName:function(n){return typeof n=="String"?n:n[OpenIZ.Localization.getLocale()]!=null?n[OpenIZ.Localization.getLocale()]:n[Object.keys(n)[0]]},simplePost:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.ajax({method:"POST",url:n,data:JSON.stringify(t.data),dataType:"json",contentType:"application/json",success:function(n){t.continueWith!==undefined&amp;&amp;t.continueWith(n,t.state);t.finally!==undefined&amp;&amp;t.finally(t.state)},error:function(n){var i=n.responseJSON;if(t.onException===null)console.error(i);else if(i.error!==undefined)t.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general"+i,n,null),t.state);t.finally!==undefined&amp;&amp;t.finally(t.state)}})},simpleGet:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.getJSON(n,t.query,function(n){if(n!=null&amp;&amp;n.error!==undefined)t.onException(new OpenIZModel.Exception(n.type,n.error),t.state);else if(n!=null)t.continueWith(n,t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general",n,null),t.state)}).error(function(n){var i=n.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)t.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general"+i,n,null),t.state)}).always(function(){t.finally!==undefined&amp;&amp;t.finally(t.state)})},renderAddress:function(n){if(n!==undefined){var t=n.component!==undefined?n:n.address!==undefined?n.address.Direct||n.address.HomeAddress:n.Direct||n.HomeAddress,i="";return t.component.AdditionalLocator&amp;&amp;(i+=t.component.AdditionalLocator+", "),t.component.StreetAddressLine&amp;&amp;(i+=t.component.StreetAddressLine+", "),t.component.City&amp;&amp;(i+=t.component.City+", "),t.component.County!=null&amp;&amp;(i+=t.component.County+", "),t.component.State!=null&amp;&amp;(i+=t.component.State+", "),t.component.Country!=null&amp;&amp;(i+=t.component.Country+", "),i.substring(0,i.length-2)}},renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n(),t.state)}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i,t.state)}},0)}},Authentication:{$session:null,$elevationCredentials:{},sendTfaSecretAsync:function(n){OpenIZ.Util.simplePost("/__auth/tfa",n)},getTfaMechanisms:function(n){OpenIZ.Util.simpleGet("/__auth/tfa",n)},showElevationDialog:function(){$("#authenticationDialog").modal("show")},hideElevationDialog:function(){$("#authenticationDialog").modal("hide")},loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:n.tfaSecret!=null?"tfa":"password",tfaSecret:n.tfaSecret,scope:n.scope},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)n.continueWith(i,n.state),OpenIZ.Authentication.$session=i;else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)n.continueWith(i,n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null));n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},getSessionAsync:function(n){OpenIZ.Util.simpleGet("/__auth/get_session",n)},abandonSession:function(n){$.ajax({method:"POST",url:"/__auth/abandon",dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){n.continueWith(i,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},refreshSessionAsync:function(){},getUserAsync:function(n){OpenIZ.Ims.get({resource:"UserEntity",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.onDate!==undefined&amp;&amp;(t+="&amp;startTime=&lt;"+n.onDate.toISOString()+"&amp;stopTime=&gt;"+n.onDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);n.query!==undefined&amp;&amp;(t+="&amp;"+n.query);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException!==undefined)if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},getEntityTemplateAsync:function(n){OpenIZ.Entity.getEntityTemplateAsync(n)},getActTemplateAsync:function(n){OpenIZ.Act.getActTemplateAsync(n)}},App:{submitBugReportAsync:function(n){OpenIZ.Util.simplePost("/__app/bug",n)},getLogInfoAsync:function(n){return OpenIZ.Util.simpleGet("/__app/log",n)},newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){OpenIZ.Util.simpleGet("/__app/info",n)},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){for(var t in OpenIZ.Configuration.$configuration.application.service)if(OpenIZ.Configuration.$configuration.application.service[t].lastIndexOf(n)&gt;0)return OpenIZ.Configuration.$configuration.application.service[t];return null},getVersion:function(){return OpenIZApplicationService.GetVersion()},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenusAsync:function(n){OpenIZ.Util.simpleGet("/__app/menu",n)},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception("Exception",OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){OpenIZ.Util.simpleGet("/__app/alerts",n)},saveAlertAsync:function(n){$.ajax({method:"POST",url:"/__app/alerts",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Exception","Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Ims.get({resource:"Concept",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},findConceptSetAsync:function(n){OpenIZ.Ims.get({resource:"ConceptSet",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})},updateAsync:function(n){OpenIZ.Ims.put({resource:"Patient",data:n.data,id:n.id,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},obsoleteAsync:function(n){OpenIZ.Ims.delete({resource:"Patient",id:n.id,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:{_id:n.id||n.patientId},state:n.state})}},Place:{findAsync:function(n){OpenIZ.Ims.get({resource:"Place",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query,state:n.state})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Entity:{getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Configuration:{$configuration:null,getConfigurationAsync:function(n){OpenIZ.Util.simpleGet("/__config/all",{continueWith:function(t){OpenIZ.Configuration.$configuration=t;n.continueWith(t,n.state)},onException:n.onException,"finally":n.finally,state:n.state})},getApplicationSetting:function(n){try{for(var i in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[i].key==n)return OpenIZ.Configuration.$configuration.application.setting[i].value;return null}catch(t){throw new OpenIZModel.Exception("Exception",t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{for(var r in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[r].key==n){OpenIZ.Configuration.$configuration.application.setting[r].value=t;return}OpenIZ.Configuration.$configuration.application.setting.push({key:n,value:t})}catch(i){throw new OpenIZModel.Exception("Exception",i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.$configuration.realmName}catch(n){console.error(n)}},getSection:function(n){try{return OpenIZ.Configuration.$configuration[n]}catch(t){console.error(t)}},joinRealmAsync:function(n){try{$.ajax({method:"POST",url:"/__config/realm",data:{realmUri:n.domain,deviceName:n.deviceName,force:n.force},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t,n.state);else if(n.onException!=null)n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else if(n.onException!=null)n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}catch(t){console.error(t)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},saveAsync:function(n){try{$.ajax({method:"POST",url:"/__config/all",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t,n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},ManufacturedMaterial:{getManufacturedMaterials:function(n){OpenIZ.ManufacturedMaterial.getManufacturedMaterialAsync(n)},getManufacturedMaterialAsync:function(n){OpenIZ.Ims.get({resource:"ManufacturedMaterial",continueWith:n.continueWith,onException:n.onException,query:n.query,state:n.state})}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.put({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON},beforeSend:function(n){OpenIZ.Authentication.$elevationCredentials.$enabled&amp;&amp;n.setRequestHeader("Authorization","BASIC "+btoa(OpenIZ.Authentication.$elevationCredentials.userName+":"+OpenIZ.Authentication.$elevationCredentials.password));n.setRequestHeader("X-OIZMagic",OpenIZSessionService.GetMagic())}});$(document).ajaxError(function(n,t,i,r){(t.status==401||t.status==403)&amp;&amp;OpenIZ.Authentication.$session!=null?OpenIZ.Authentication.showElevationDialog():console.warn(new OpenIZModel.Exception("Exception","err_request",r,null))});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();Date.prototype.getWeek=function(){var n=this.getFirstDayOfYear();return Math.ceil(((this-n)/864e5+n.getDay()+1)/7)};Date.prototype.getFirstDayOfYear=function(){return new Date(this.getFullYear(),0,1)};Date.prototype.nextMonday=function(){var n=this.getFirstDayOfYear();return n.setDate(n.getDate()+(new Date).getWeek()*7),n};Date.prototype.addDays=function(n){var t=new Date(this.getFullYear(),this.getMonth(),this.getDate(),this.getHours(),this.getMinutes(),this.getSeconds(),this.getMilliseconds());return t.setDate(t.getDate()+n),t};Date.prototype.tomorrow=function(){return this.addDays(1)};Date.prototype.yesterday=function(){return this.addDays(-1)};</contentText>
+var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionService=window.OpenIZSessionService||{},OpenIZ=OpenIZ||{urlParams:{},UserInterface:{},Act:{obsoleteAsync:function(n){OpenIZ.Ims.delete({resource:"Act",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,id:n.id,state:n.state})},createFulfillment:function(n){var t=new OpenIZModel.Act;switch(n.$type){case"SubstanceAdministration":t=new OpenIZModel.SubstanceAdministration(n);break;case"Observation":t=new OpenIZModel.Observation(n);break;case"QuantityObservation":t=new OpenIZModel.QuantityObservation(n);break;case"CodedObservation":t=new OpenIZModel.CodedObservation(n);break;case"TextObservation":t=new OpenIZModel.TextObservation(n);break;case"PatientEncounter":t=new OpenIZModel.PatientEncounter(n);break;case"ControlAct":t=new OpenIZModel.ControlAct(n)}return t.id=OpenIZ.App.newGuid(),t.moodConcept=OpenIZModel.ActMoodKeys.Eventoccurrence,t.moodConceptModel=null,t.creationTime=new Date,t.actTime=new Date,t.createdBy=t.createdByModel=null,t.statusConcept=OpenIZModel.StatusKeys.Active,t.statusConceptModel=null,t.etag=null,t.startTime=t.stopTime=null,t.relationship=t.relationship||{},t.relationship.Fulfills=new OpenIZModel.ActRelationship,t.relationship.Fulfills.target=n.id,t._overdue=n.stopTime&lt;new Date,t},findAsync:function(n){OpenIZ.Ims.get({resource:"Act",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},insertAsync:function(n){OpenIZ.Ims.post({resource:"Act",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})},getActTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Act/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Ims:{post:function(n){$.ajax({method:"POST",url:"/__ims/"+n.resource,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},put:function(n){$.ajax({method:"PUT",url:"/__ims/"+n.resource+"?_id="+n.id+"&amp;_versionId="+n.versionId,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},get:function(n){$.ajax({method:"GET",url:"/__ims/"+n.resource,data:n.query,dataType:"json",accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},"delete":function(n){$.ajax({method:"DELETE",url:"/__ims/"+n.resource+"?_id="+n.id,accept:"application/json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===undefined)console.error(i);else if(i!=undefined&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}},Stock:{calculateQPeriod:function(n,t){return n/12*t},calculateSReserve:function(n,t){return n*t},calculateSMax:function(n,t){return n+t},calculateSReorder:function(n,t,i,r){return n+t*i/r},calculateQOrder:function(n,t,i,r,u){return n-t+i*r/u},calculateQNeeded:function(n,t,i,r){return n+t-(i+r)},calculateAll:function(n,t,i,r,u){var f={};return f.qPeriod=OpenIZ.Stock.calculateQPeriod(n,t),f.sReserve=OpenIZ.Stock.calculateSReserve(f.qPeriod,i),f.sMax=OpenIZ.Stock.calculateSMax(f.qPeriod,f.sReserve),f.sReorder=OpenIZ.Stock.calculateSReorder(f.sReserve,f.qPeriod,r,t),f.qOrder=OpenIZ.Stock.calculateQOrder(f.sMax,u,f.qPeriod,r,t),f}},Util:{renderConceptName:function(n){return typeof n=="String"?n:n[OpenIZ.Localization.getLocale()]!=null?n[OpenIZ.Localization.getLocale()]:n[Object.keys(n)[0]]},simplePost:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.ajax({method:"POST",url:n,data:JSON.stringify(t.data),dataType:"json",contentType:"application/json",success:function(n){t.continueWith!==undefined&amp;&amp;t.continueWith(n,t.state);t.finally!==undefined&amp;&amp;t.finally(t.state)},error:function(n){var i=n.responseJSON;if(t.onException===null)console.error(i);else if(i.error!==undefined)t.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general"+i,n,null),t.state);t.finally!==undefined&amp;&amp;t.finally(t.state)}})},simpleGet:function(n,t){t.onException=t.onException||OpenIZ.Util.logException;$.getJSON(n,t.query,function(n){if(n!=null&amp;&amp;n.error!==undefined)t.onException(new OpenIZModel.Exception(n.type,n.error),t.state);else if(n!=null)t.continueWith(n,t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general",n,null),t.state)}).error(function(n){var i=n.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)t.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),t.state);else t.onException(new OpenIZModel.Exception("Exception","err_general"+i,n,null),t.state)}).always(function(){t.finally!==undefined&amp;&amp;t.finally(t.state)})},renderAddress:function(n){if(n!==undefined){var t=n.component!==undefined?n:n.address!==undefined?n.address.Direct||n.address.HomeAddress:n.Direct||n.HomeAddress,i="";return t.component.AdditionalLocator&amp;&amp;(i+=t.component.AdditionalLocator+", "),t.component.StreetAddressLine&amp;&amp;(i+=t.component.StreetAddressLine+", "),t.component.City&amp;&amp;(i+=t.component.City+", "),t.component.County!=null&amp;&amp;(i+=t.component.County+", "),t.component.State!=null&amp;&amp;(i+=t.component.State+", "),t.component.Country!=null&amp;&amp;(i+=t.component.Country+", "),i.substring(0,i.length-2)}},renderAct:function(n){switch(n.$type){case"SubstanceAdministration":return OpenIZ.Localization.getString("locale.encounters.administer")+OpenIZ.Util.renderName(n.participation.Product.name.OfficialRecord);case"QuantityObservation":case"CodedObservation":case"TextObservation":return OpenIZ.Localization.getString("locale.encounters.observe")+n.typeConceptModel.name[OpenIZ.Localization.getLocale()];default:return""}},logException:function(n){console.warn(n)},renderManufacturedMaterial:function(n){var t=OpenIZ.Util.renderName(n.name.OfficialRecord||n.name.Assigned);return t+"[LN#: "+n.lotNumber+"]"},renderName:function(n){if(n===null||n===undefined)return"";if(n.join!==undefined)return n.join(" ");if(n.component!==undefined){var t="";return n.component.Given!==undefined&amp;&amp;(typeof n.component.Given=="string"?t+=n.component.Given:n.component.Given.join!==undefined&amp;&amp;(t+=n.component.Given.join(" ")),t+=" "),n.component.Family!==undefined&amp;&amp;(typeof n.component.Family=="string"?t+=n.component.Family:n.component.Family.join!==undefined&amp;&amp;(t+=n.component.Family.join(" "))),n.component.$other!==undefined&amp;&amp;(typeof n.component.$other=="string"?t+=n.component.$other:n.component.$other.join!==undefined?t+=n.component.$other.join(" "):n.component.$other.value!==undefined&amp;&amp;(t+=n.component.$other.value)),t}return n},toDateInputString:function(n){return n.toISOString().substring(0,10)},startTaskAsync:function(n,t){return setTimeout(function(){try{t.continueWith(n(),t.state)}catch(i){if(t.onException===undefined)console.error(i);else t.onException(i,t.state)}},0)}},Authentication:{$session:null,$elevationCredentials:{},sendTfaSecretAsync:function(n){OpenIZ.Util.simplePost("/__auth/tfa",n)},getTfaMechanisms:function(n){OpenIZ.Util.simpleGet("/__auth/tfa",n)},showElevationDialog:function(){$("#authenticationDialog").modal("show")},hideElevationDialog:function(){$("#authenticationDialog").modal("hide")},loginAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{username:n.userName,password:n.password,grant_type:n.tfaSecret!=null?"tfa":"password",tfaSecret:n.tfaSecret,scope:n.scope},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)n.continueWith(i,n.state),OpenIZ.Authentication.$session=i;else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},setPasswordAsync:function(n){$.ajax({method:"POST",url:"/__auth/passwd",data:{username:n.userName,password:n.password},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)n.continueWith(i,n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null));n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},getSessionAsync:function(n){OpenIZ.Util.simpleGet("/__auth/get_session",{continueWith:function(t){OpenIZ.Authentication.$session=t;n.continueWith&amp;&amp;n.continueWith(t)},"finally":n.finally,onException:n.onException,state:n.state})},abandonSession:function(n){$.ajax({method:"POST",url:"/__auth/abandon",dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){n.continueWith(i,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},refreshSessionAsync:function(n){$.ajax({method:"POST",url:"/__auth/authenticate",data:{grant_type:"refresh"},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)n.continueWith(i,n.state),OpenIZ.Authentication.$session=i;else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},getUserAsync:function(n){OpenIZ.Ims.get({resource:"UserEntity",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},CarePlan:{interpretObservation:function(n){n.interpretationConcept="41d42abf-17ad-4144-bf97-ec3fd907f57d"},getCarePlanAsync:function(n){console.log(n);var t="/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";n.minDate!==undefined&amp;&amp;(t+="&amp;actTime=&gt;"+n.minDate.toISOString());n.maxDate!==undefined&amp;&amp;(t+="&amp;actTime=&lt;"+n.maxDate.toISOString());n.onDate!==undefined&amp;&amp;(t+="&amp;startTime=&lt;"+n.onDate.toISOString()+"&amp;stopTime=&gt;"+n.onDate.toISOString());n.classConcept!==undefined&amp;&amp;(t+="&amp;classConcept="+n.classConcept);n.query!==undefined&amp;&amp;(t+="&amp;"+n.query);console.info("Generating care plan...");$.ajax({method:"POST",url:t,data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){console.info("Retrieved care plan...");n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException!==undefined)if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})},getEntityTemplateAsync:function(n){OpenIZ.Entity.getEntityTemplateAsync(n)},getActTemplateAsync:function(n){OpenIZ.Act.getActTemplateAsync(n)}},App:{submitBugReportAsync:function(n){OpenIZ.Util.simplePost("/__app/bug",n)},getLogInfoAsync:function(n){return OpenIZ.Util.simpleGet("/__app/log",n)},newGuid:function(){return OpenIZApplicationService.NewGuid()},getInfoAsync:function(n){OpenIZ.Util.simpleGet("/__app/info",n)},getOnlineState:function(){return OpenIZApplicationService.GetOnlineState()},statusShown:!1,resolveTemplate:function(n){return OpenIZApplicationService.GetTemplateForm(n)},updateStatus:function(){var n=JSON.parse(OpenIZApplicationService.GetStatus());n[1]&gt;0&amp;&amp;n[1]&lt;1?($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.background")+":"+n[0]),$("#waitProgressBar").attr("style","width:"+n[1]*100+"%")):($("#waitModalText").text(OpenIZ.Localization.getString("locale.dialog.wait.text")+":"+n[0]),$("#waitProgressBar").attr("style","width:100%"));OpenIZ.App.statusShown&amp;&amp;setTimeout(OpenIZ.App.updateStatus,1e3)},showWait:function(n){n!=null?$("#waitModalText").text(n):setTimeout(OpenIZ.App.updateStatus,6e3);OpenIZ.App.statusShown||($("#waitModal").modal({show:!0,backdrop:"static"}),OpenIZ.App.statusShown=!0)},networkAvailable:function(){try{return OpenIZApplicationService.GetNetworkState()}catch(n){return!1}},hideWait:function(){OpenIZ.App.statusShown=!1;$("#waitModal").modal("hide")},getService:function(n){for(var t in OpenIZ.Configuration.$configuration.application.service)if(OpenIZ.Configuration.$configuration.application.service[t].lastIndexOf(n)&gt;0)return OpenIZ.Configuration.$configuration.application.service[t];return null},getVersion:function(){return OpenIZApplicationService.GetVersion()},getCurrentAssetTitle:function(){return $(document).find("title").text()},getMenusAsync:function(n){OpenIZ.Util.simpleGet("/__app/menu",n)},scanBarcode:function(){try{var t=OpenIZApplicationService.BarcodeScan();return console.log("Barcode scan complete. Data: "+t),t}catch(n){console.error(n);throw new OpenIZModel.Exception("Exception",OpenIZ.Localization.getString("err_scan_barcode"),n.message,n);}},back:function(){try{var t=OpenIZApplicationService.Back()}catch(n){console.error(n)}},close:function(){try{var t=OpenIZApplicationService.Close()}catch(n){console.error(n)}},toast:function(n){try{var i=OpenIZApplicationService.ShowToast(n)}catch(t){console.error(t)}},navigateApplet:function(n,t){try{OpenIZApplicationService.Navigate(n,JSON.stringify(t))}catch(i){console.error(i)}},getAlertsAsync:function(n){OpenIZ.Util.simpleGet("/__app/alerts",n)},saveAlertAsync:function(n){$.ajax({method:"POST",url:"/__app/alerts",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t){n.continueWith!==undefined&amp;&amp;n.continueWith(t,n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(n.onException===null)console.error(i);else if(i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}},Localization:{getString:function(n){try{return OpenIZApplicationService.GetString(n)}catch(t){return console.error(t),n}},getLocale:function(){return(navigator.language||navigator.userLanguage).substring(0,2)},setLocale:function(n){return OpenIZApplicationService.SetLocale(n)},getStrings:function(n){try{var i=OpenIZApplicationService.GetStrings(n);return i==null?null:JSON.parse(i)}catch(t){console.error(t);throw new OpenIZModel.Exception("Exception","Error getting string list",t.message,t);}}},Concept:{findConceptAsync:function(n){OpenIZ.Ims.get({resource:"Concept",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},findConceptSetAsync:function(n){OpenIZ.Ims.get({resource:"ConceptSet",query:n.query,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Bundle:{insertAsync:function(n){OpenIZ.Ims.post({resource:"Bundle",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})}},Patient:{findAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},insertAsync:function(n){OpenIZ.Ims.post({resource:"Patient",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})},updateAsync:function(n){OpenIZ.Ims.put({resource:"Patient",data:n.data,id:n.id,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},obsoleteAsync:function(n){OpenIZ.Ims.delete({resource:"Patient",id:n.id,continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})},getAsync:function(n){OpenIZ.Ims.get({resource:"Patient",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:{_id:n.id||n.patientId},state:n.state})}},Place:{findAsync:function(n){OpenIZ.Ims.get({resource:"Place",continueWith:n.continueWith,onException:n.onException,"finally":n.finally,query:n.query,state:n.state})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Place",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:4,templateSelection:function(n){return n.name!=null?"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.name.OfficialRecord.component.$other.value:"&lt;span class='glyphicon glyphicon-map-marker'&gt;&lt;\/span&gt; "+n.text},templateResult:function(n){return n.text!=null?n.text:"&lt;div class='label label-default'&gt;"+n.typeConceptModel.name[OpenIZ.Localization.getLocale()]+"&lt;\/div&gt; "+n.name.OfficialRecord.component.$other.value}})}},Provider:{findProviderAsync:function(n){OpenIZ.Ims.get({continueWith:n.continueWith,onException:n.onException,"finally":n.finally,resource:"Provider",query:n.query,state:n.state})},bindSelect:function(n,t){$(n).select2({ajax:{url:"/__ims/Provider",dataType:"json",delay:500,method:"GET",data:function(n){return t["name.component.value"]="~"+n.term,t._count=5,t._offset=0,t},processResults:function(n,t){return t.page=t.page||0,{results:n.item,pagination:{more:n.offset+n.count&lt;n.total}}},cache:!0},escapeMarkup:function(n){return n},minimumInputLength:1,templateSelection:function(n){return n.text!=null?"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)},templateResult:function(n){return n.text!=null?n.text:"&lt;span class='glyphicon glyphicon-user'&gt;&lt;\/span&gt; "+OpenIZ.Util.renderName(n.name.OfficialRecord)}})}},Entity:{getEntityTemplateAsync:function(n){OpenIZ.Ims.get({resource:"Entity/Template",query:{templateId:n.templateId},continueWith:n.continueWith,onException:n.onException,"finally":n.finally,state:n.state})}},Configuration:{$configuration:null,getConfigurationAsync:function(n){OpenIZ.Util.simpleGet("/__config/all",{continueWith:function(t){OpenIZ.Configuration.$configuration=t;n.continueWith(t,n.state)},onException:n.onException,"finally":n.finally,state:n.state})},getApplicationSetting:function(n){try{for(var i in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[i].key==n)return OpenIZ.Configuration.$configuration.application.setting[i].value;return null}catch(t){throw new OpenIZModel.Exception("Exception",t.message,t.detail,t);}},setApplicationSetting:function(n,t){try{for(var r in OpenIZ.Configuration.$configuration.application.setting)if(OpenIZ.Configuration.$configuration.application.setting[r].key==n){OpenIZ.Configuration.$configuration.application.setting[r].value=t;return}OpenIZ.Configuration.$configuration.application.setting.push({key:n,value:t})}catch(i){throw new OpenIZModel.Exception("Exception",i.message,i.detail,i);}},getRealm:function(){try{return OpenIZ.Configuration.$configuration.realmName}catch(n){console.error(n)}},getSection:function(n){try{return OpenIZ.Configuration.$configuration[n]}catch(t){console.error(t)}},joinRealmAsync:function(n){try{$.ajax({method:"POST",url:"/__config/realm",data:{realmUri:n.domain,deviceName:n.deviceName,force:n.force},dataType:"json",contentType:"application/x-www-urlform-encoded",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t,n.state);else if(n.onException!=null)n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else if(n.onException!=null)n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}catch(t){console.error(t)}},leaveRealm:function(){try{return confirm("You are about to leave the realm "+configuration.realm.address+". Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?")?OpenIZConfigurationService.LeaveRealm():!1}catch(n){console.error(n)}},saveAsync:function(n){try{$.ajax({method:"POST",url:"/__config/all",data:JSON.stringify(n.data),dataType:"json",contentType:"application/json",success:function(t,i){if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error),n.state);else if(i!=null)OpenIZ.Configuration.$configuration=t,n.continueWith(t,n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general",i,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)},error:function(t){var i=t.responseJSON;if(i!=null&amp;&amp;i.error!==undefined)n.onException(new OpenIZModel.Exception(i.type,i.error,i.error_description,null),n.state);else n.onException(new OpenIZModel.Exception("Exception","err_general"+i,t,null),n.state);n.finally!==undefined&amp;&amp;n.finally(n.state)}})}catch(t){console.error(t)}},getAppletSettings:function(){},saveAppletSettings:function(){},getUserPreferences:function(){},saveUserPreferences:function(){}},ManufacturedMaterial:{getManufacturedMaterials:function(n){OpenIZ.ManufacturedMaterial.getManufacturedMaterialAsync(n)},getManufacturedMaterialAsync:function(n){OpenIZ.Ims.get({resource:"ManufacturedMaterial",continueWith:n.continueWith,onException:n.onException,query:n.query,state:n.state})}},UserEntity:{updateAsync:function(n){OpenIZ.Ims.put({resource:"UserEntity",continueWith:n.continueWith,onException:n.onException,data:n.data,state:n.state})}}};$.ajaxSetup({cache:!1,converters:{"text json":$.parseJSON},beforeSend:function(n){OpenIZ.Authentication.$elevationCredentials.$enabled&amp;&amp;n.setRequestHeader("Authorization","BASIC "+btoa(OpenIZ.Authentication.$elevationCredentials.userName+":"+OpenIZ.Authentication.$elevationCredentials.password));n.setRequestHeader("X-OIZMagic",OpenIZSessionService.GetMagic())}});$(document).ajaxError(function(n,t,i,r){(t.status==401||t.status==403)&amp;&amp;OpenIZ.Authentication.$session!=null?OpenIZ.Authentication.showElevationDialog():console.warn(new OpenIZModel.Exception("Exception","err_request",r,null))});(window.onpopstate=function(){var n,i=/\+/g,r=/([^&amp;=]+)=?([^&amp;]*)/g,t=function(n){return decodeURIComponent(n.replace(i," "))},u=window.location.search.substring(1);for(OpenIZ.urlParams={};n=r.exec(u);)OpenIZ.urlParams[t(n[1])]=t(n[2])})();Date.prototype.getWeek=function(){var n=this.getFirstDayOfYear();return Math.ceil(((this-n)/864e5+n.getDay()+1)/7)};Date.prototype.getFirstDayOfYear=function(){return new Date(this.getFullYear(),0,1)};Date.prototype.nextMonday=function(){var n=this.getFirstDayOfYear();return n.setDate(n.getDate()+(new Date).getWeek()*7),n};Date.prototype.addDays=function(n){var t=new Date(this.getFullYear(),this.getMonth(),this.getDate(),this.getHours(),this.getMinutes(),this.getSeconds(),this.getMilliseconds());return t.setDate(t.getDate()+n),t};Date.prototype.tomorrow=function(){return this.addDays(1)};Date.prototype.yesterday=function(){return this.addDays(-1)};</contentText>
   </asset>
   <asset name="js/readme.md" mimeType="application/octet-stream">
     <contentBin>77u/77u/VGhpcyBkb2N1bWVudGF0aW9uIHJlcHJlc2VudHMgdGhlIE9wZW5JWiBKYXZhU2NyaXB0IGJyaWRnZSBkb2N1bWVudGF0aW9uLiAgIA0KDQojIyBXaGF0IGlzIHRoZSBicmlkZ2U/ICAgDQogICAgICAgDQpQdXQgc2ltcGx5LCB0aGUgSmF2YVNjcmlwdCBicmlkZ2UgYWxsb3dzIE9wZW5JWiBhcHBsZXRzIHRvIGludGVyZmFjZSB3aXRoIHRoZWlyIGhvc3QgY29udGFpbmVyIHdpdGhvdXQgICANCmhhdmluZyB0byB3b3JyeSBhYm91dCB0aGUgaW1wbGVtZW50YXRpb24gb2YgdGhlIGhvc3QuIE9wZW5JWiBhcHBsZXRzIGluY2x1ZGUgb3Blbml6LmpzL29wZW5pei1tb2RlbC5qcyAgIA0KYW5kIHRoZXNlIGZpbGVzIGFsbG93IHRoZSBhcHBsZXQgdG8gaW50ZXJhY3Qgd2l0aCB0aGUgY29udGFpbmVyICYgSU1TSSBzZXJ2aWNlcy4gICANCg0KQ29udGFpbmVycyB3aWxsIGN1c3RvbWl6ZSB0aGUgb3Blbml6LmpzIGZpbGUgdG8gaW1scGVtZW50IHRoZSBiYXNpYyBPcGVuSVogaW50ZXJhY3Rpb24gY29udHJhY3RzLiBGb3IgICAgDQpleGFtcGxlLCBpZiB5b3UncmUgcnVubmluZyBhbiBhcHBsZXQgb24gaU9TIGluIHRoZSBkaXNjb25uZWN0ZWQgY2xpZW50LCB0aGUgaU9TIG9wZW5pei5qcyBmaWxlIHNlcnZlZCAgIA0KdG8geW91ciBhcHBsZXQgd2lsbCBpbnRlcmFjdCB3aXRoIFNhZmFyaSdzIGludGVncmF0aW9uLiBJZiB5b3UncmUgdXNpbmcgdGhlIGRlZmF1bHQgT3BlbklaIGRpc2Nvbm5lY3RlZCAgIA0KY2xpZW50IHdyaXR0ZW4gaW4gWGFtYXJpbiwgdGhlIG9wZW5pei5qcyBmaWxlIGludGVyYWN0cyB3aXRoIFhhbWFyaW4ncyBbSmF2YXNjcmlwdEludGVyZmFjZV0gY2xhc3Nlcy4gICANCg0KSGVscGZ1bCBsaW5rczogICANCg0KKiBbQXBwbGV0IFNjaGVtYV0oaHR0cDovL29wZW5pei5vcmcvYXJ0aWZhY3RzLzAuMXByZS9hcHBsZXQgIk9wZW5JWiBBcHBsZXQgU2NoZW1hIikgd2hpY2ggY29udGFpbnMgaW5mb3JtYXRpb24gYWJvdXQgdGhlIGZvcm1hdCBvZiBhcHBsZXRzICAgDQoqIFtJTVNJIFNjaGVtYV0oaHR0cDovL29wZW5pei5vcmcvYXJ0aWZhY3RzLzAuMXByZS9pbXNpICJJTVNJIFNjaGVtYSIpIHdoaWNoIGNvbnRhaW5zIGluZm9ybWF0aW9uIGFib3V0IHRoZSBmb3JtYXQgb2YgSU1TSSBvYmplY3RzICAgDQoqIFtPcGVuSVogRGlzY29ubmVjdGVkIENsaWVudF0oaHR0cDovL29wZW5pemRjLmNvZGVwbGV4LmNvbSAiT3BlbklaIFhhbWFyaW4gZGlzY29ubmVjdGVkIGNsaWVudCIpIHByb2plY3Qgb24gY29kZXBsZXguICAgDQoNCiMjIExpY2Vuc2UgICANCg0KVGhlIGJyaWRnZSBmaWxlcyBhcmUgcmVsZWFzZWQgdW5kZXIgdGhlIEFwYWNoZSAyLjAgbGljZW5zZS4gU3BlY2lmaWMgaW1wbGVtZW50YXRpb25zIG9mIHRoZSBicmlkZ2UgICANCm1heSBjYXJyeSBhIGRpZmZlcmVudCBsaWNlbnNlLiAgDQo=</contentBin>
@@ -42159,7 +41331,7 @@ angular.module('xeditable').factory('editableThemes', function() {
     <contentText>{
   "$type": "QuantityObservation",
   "template": {
-    "mnemonic": "Act.Observation.Weight"
+    "mnemonic": "act.observation.weight"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
@@ -42196,7 +41368,7 @@ angular.module('xeditable').factory('editableThemes', function() {
     <contentText>{
   "$type": "SubstanceAdministration",
   "template": {
-    "mnemonic": "Act.SubstanceAdmin.Immunization"
+    "mnemonic": "act.substanceadmin.immunization"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
   "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
@@ -42210,7 +41382,7 @@ angular.module('xeditable').factory('editableThemes', function() {
     <contentText>{
   "$type": "Act",
   "template": {
-    "mnemonic": "Act.TransferStock"
+    "mnemonic": "act.transferstock"
   },
   "moodConcept": "E658CA72-3B6A-4099-AB6E-7CF6861A5B61",
   "classConcept": "FFD8304A-43EC-4EBC-95FC-FB4A4F2338F0",
@@ -43506,782 +42678,6 @@ angular.module('xeditable').factory('editableThemes', function() {
       </content>
     </contentHtml>
   </asset>
-  <asset name="views/common/stock/adjust.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.1</demand>
-    <contentHtml>
-      <title lang="en">Adjust Stock</title>
-      <script>~/controllers/common/stock/adjuststock.js</script>
-      <view name="org-openiz-core.adjust" abstract="false">
-        <route>/stock/adjust/:vaccineId/:vaccineVersion</route>
-        <view abstract="false">
-          <title lang="en">Adjust Stock</title>
-          <controller>AdjustStockController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
-          <div class="panel panel-default">
-            <div class="panel panel-heading">
-            {{ 'locale.stock.adjustStock' | i18n }}
-        </div>
-            <div class="panel panel-body">
-              <form name="adjustStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="adjustStockForm.$valid &amp;&amp; adjustStock()">
-                <div class="form-group">
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="gtin" ng-model="gtin" class="form-control" readonly="readonly" />
-                  </div>
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
-                  </div>
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted) }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ $root.page.loadTime | date: 'dd-MM-yyyy' }}" name="dateRecorded" class="form-control" />
-                    <p ng-show="adjustStockForm.dateRecorded.$invalid &amp;&amp; (adjustStockForm.dateRecorded.$touched || adjustStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div ng-class="{ 'has-error' : adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched }">
-                    <label class="col-md-2 control-label">{{ 'locale.stock.adjustmentReason' | i18n }}</label>
-                    <div class="col-md-10">
-                      <select name="adjustmentReason" id="adjustmentReasonType" class="form-control" ng-model="adjustmentReason" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=StockReason">
-                      </select>
-                      <p ng-show="adjustStockForm.adjustmentReason.$invalid &amp;&amp; adjustStockForm.adjustmentReason.$touched" class="help-block text-danger">{{ 'locale.stock.errors.adjustmentReasonRequired' | i18n }}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : adjustStockForm.quantity.$invalid &amp;&amp; (adjustStockForm.quantity.$touched || adjustStockForm.$submitted) }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.quantity' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="number" name="quantity" ng-required="true" ng-model="quantity" class="form-control" />
-                    <p ng-show="adjustStockForm.quantity.$invalid &amp;&amp; (adjustStockForm.quantity.$touched || adjustStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/dashboard.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">Stock Overview</title>
-      <script>/org.openiz.core/lib/chart.min.js</script>
-      <script>~/controllers/common/stock/dashboard.js</script>
-      <style>~/css/theme.css</style>
-      <view name="org-openiz-core.dashboard" abstract="false">
-        <route>/stock/dashboard</route>
-        <view abstract="false">
-          <title lang="en">Stock Overview</title>
-          <controller>StockDashboardController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-          <div class="row">
-            <div class="col-xs-12">
-              <!--#include virtual="/org.openiz.core/views/common/stock/partials/lowstock.html"-->
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
-                </div>
-                <table class="panel-body table table-striped table-responsive">
-                  <thead>
-                    <tr>
-                      <th>{{ 'locale.stock.tableHeader.antigen' | i18n }}</th>
-                      <th>{{ 'locale.stock.tableHeader.expiry' | i18n }}</th>
-                      <th>{{ 'locale.stock.tableHeader.onHand' | i18n }}</th>
-                      <th>{{ 'locale.stock.tableHeader.action' | i18n }}</th>
-                      <th>
-                      </th>
-                      <th>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr ng-repeat="stock in lowStock">
-                      <td>
-                                {{ stock.name.Assigned | oizEntityName }}<br /><small>LN# {{ stock.lotNumber }}</small></td>
-                      <td>{{ stock.expiryDate | date: 'dd-MM-yyyy' }}</td>
-                      <td>{{ stock.quantity }}</td>
-                      <td>
-                        <a class="btn btn-primary" ui-sref="org-openiz-core.adjust({vaccineId: stock.id, vaccineVersion: stock.version})">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                      </td>
-                      <td>
-                        <a class="btn btn-primary" ui-sref="org-openiz-core.order">{{ 'locale.stock.action.order' | i18n }}</a>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/editgtin.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.1</demand>
-    <contentHtml>
-      <title lang="en">Edit GTIN</title>
-      <script>~/controllers/common/stock/editgtin.js</script>
-      <view name="org-openiz-core.edit" abstract="false">
-        <route>/stock/edit/:vaccineId/:vaccineVersion</route>
-        <view abstract="false">
-          <title lang="en">Edit GTIN</title>
-          <controller>EditGtinController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
-          <div class="panel panel-default">
-            <div class="panel panel-heading">
-            {{ 'locale.stock.editGtin' | i18n }}
-        </div>
-            <div class="panel panel-body">
-              <form name="editGtinForm" class="form-horizontal" novalidate="novalidate" ng-submit="editGtinForm.$valid &amp;&amp; editGtin()">
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="text" name="gtin" ng-model="gtin" class="form-control" ng-required="true" />
-                    <p ng-show="editGtinForm.gtin.$invalid &amp;&amp; editGtinForm.gtin.$touched" class="help-block text-danger">{{ 'locale.stock.errors.gtinRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/gtinmanagement.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">GTIN Management</title>
-      <title lang="en">GTIN Management</title>
-      <script>~/controllers/common/stock/gtinmanagement.js</script>
-      <view name="org-openiz-core.gtinmanagement" abstract="false">
-        <route>/stock/gtinmanagement</route>
-        <view abstract="false">
-          <title lang="en">GTIN Management</title>
-          <controller>GtinManagementController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:bind="http://openiz.org/applet/binding" xmlns:oiz="http://openiz.org/applet">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                        {{ 'locale.stock.searchGTIN' | i18n }}
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in">
-                  <div class="panel-body">
-                    <form name="searchGtinForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchGtinForm.$valid &amp;&amp; search()">
-                      <div class="form-group" ng-class="{ 'has-error' : searchGtinForm.gtin.$invalid &amp;&amp; searchGtinForm.gtin.$touched }">
-                        <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
-                        <div class="col-xs-7">
-                          <input type="text" name="gtin" ng-required="true" ng-model="gtin" class="form-control" />
-                          <p ng-show="searchGtinForm.gtin.$invalid &amp;&amp; searchGtinForm.gtin.$touched" class="help-block text-danger">{{ 'locale.stock.errors.gtinRequired' | i18n }}</p>
-                        </div>
-                        <div class="col-xs-3 pull-right">
-                          <button type="submit" class="btn btn-primary">{{ 'locale.action.search' | i18n }}</button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">{{ 'locale.stock.vaccines' | i18n }}</h4>
-                </div>
-                <div class="col-md-10">
-                  <table class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>
-                                    {{ 'locale.stock.vaccine' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.gtin' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.quantity' | i18n }}
-                                </th>
-                        <th>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="item in stock">
-                        <td>{{ item.name.Assigned | oizEntityName }}</td>
-                        <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>
-                          <a class="btn btn-warning" ui-sref="org-openiz-core.edit({ vaccineId:item.id, vaccineVersion:item.version })">{{ 'locale.action.edit' | i18n }}</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div id="gtin-search-loading-bar" class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                            {{ 'locale.dialog.wait.text' | i18n }}
-                        </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/order.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">Order Summary</title>
-      <script>/org.openiz.core/lib/chart.min.js</script>
-      <script>~/controllers/common/stock/order.js</script>
-      <view name="org-openiz-core.order" abstract="false">
-        <route>/stock/order</route>
-        <view abstract="false">
-          <title lang="en">Order Summary</title>
-          <controller>OrderController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-          <div class="row">
-            <div class="col-xs-6">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                        {{ 'locale.stock.stockorders.title' | i18n }}
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in">
-                  <div class="panel-body">
-                    <form name="searchOrdersForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchOrdersForm.$valid &amp;&amp; searchOrders()">
-                      <div class="form-group" ng-class="{ 'has-error' : searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched }">
-                        <label class="col-xs-3 control-label">{{ 'locale.stock.orderNumber' | i18n }}</label>
-                        <div class="col-xs-7">
-                          <input type="text" name="orderNumber" ng-required="true" ng-model="orderNumber" class="form-control" />
-                          <p ng-show="searchOrdersForm.orderNumber.$invalid &amp;&amp; searchOrdersForm.orderNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.orderNumberRequired' | i18n }}</p>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="col-xs-10">
-                          <button type="submit" class="btn btn-primary pull-right">
-                                        Search For Stock Orders
-                                    </button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-xs-6">
-              <!--#include virtual="/org.openiz.core/views/common/stock/partials/ordersummary.html"-->
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">{{ 'locale.stock.panelHeader' | i18n }}</h4>
-                </div>
-                <div class="panel panel-body">
-                  <table class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>{{ 'locale.stock.orderNo' | i18n }}</th>
-                        <th>{{ 'locale.stock.orderDate' | i18n }}</th>
-                        <th>{{ 'locale.stock.destinationHealthFacility' | i18n }}</th>
-                        <th>{{ 'locale.stock.orderStatus' | i18n }}</th>
-                        <th>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="order in orders">
-                        <td>{{ order.orderNo }}</td>
-                        <td>{{ order.orderDate }}</td>
-                        <td>{{ order.destinationHealthFacility }}</td>
-                        <td>{{ order.orderStatus }}</td>
-                        <td>
-                          <a class="btn btn-primary" ui-sref="org-openiz-core.orderdetail({orderId:''})">{{ 'locale.action.view' | i18n }}</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/orderdetail.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">Order Summary</title>
-      <script>/org.openiz.core/lib/chart.min.js</script>
-      <script>~/controllers/common/stock/orderdetail.js</script>
-      <view name="org-openiz-core.orderdetail" abstract="false">
-        <route>/stock/orderdetail/:orderId</route>
-        <view abstract="false">
-          <title lang="en">Order Summary</title>
-          <controller>OrderDetailController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-primary">
-                <div class="panel panel-heading">
-                    {{ 'locale.stock.order' | i18n }}
-                </div>
-                <div class="panel panel-body">
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderNo' | i18n }}</label>
-                    <span>{{ order.orderNo }}</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderDate' | i18n }}</label>
-                    <span>{{ order.orderDate }}</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.destinationHealthFacility' | i18n }}</label>
-                    <span>{{ order.destinationHealthFacility }}</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="col-xs-2 control-label">{{ 'locale.stock.orderStatus' | i18n }}</label>
-                    <span>{{ order.orderStatus }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">{{ 'locale.stock.orderDetails' | i18n }}</h4>
-                </div>
-                <div class="panel panel-body">
-                  <table class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>
-                                    {{ 'locale.stock.vaccine' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.gtin' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.currentLevel' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.quantity' | i18n }}
-                                </th>
-                        <th>
-                                    {{ 'locale.stock.unitOfMeasure' | i18n }}
-                                </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="detail in orderItems">
-                        <td>{{ item.name.Assigned | oizEntityName }}</td>
-                        <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                        <td>{{ item.quantity }}</td>
-                        <td>{{ item.quantityOrdered }}</td>
-                        <td>{{ item.unitOfMeasure }}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/searchstock.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">Search Stock</title>
-      <script>/org.openiz.core/lib/chart.min.js</script>
-      <script>~/controllers/common/stock/searchstock.js</script>
-      <view name="org-openiz-core.searchstock" abstract="false">
-        <route>/stock/searchstock</route>
-        <view abstract="false">
-          <title lang="en">Search Stock</title>
-          <controller>SearchStockController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                        {{ 'locale.stock.searchStock' | i18n }}
-                    </h3>
-                </div>
-                <div class="panel-collapse collapse in">
-                  <div class="panel-body">
-                    <form name="searchStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="searchStockForm.$valid &amp;&amp; searchStock()">
-                      <div class="form-group" ng-class="{ 'has-error' : searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched }">
-                        <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                        <div class="col-xs-7">
-                          <input type="text" name="orderNumber" ng-required="true" ng-model="name" class="form-control" />
-                          <p ng-show="searchStockForm.name.$invalid &amp;&amp; searchStockForm.name.$touched" class="help-block text-danger">{{ 'locale.stock.errors.vaccineRequired' | i18n }}</p>
-                        </div>
-                        <div class="col-xs-3 pull-right">
-                          <button type="submit" class="btn btn-primary">{{ 'locale.action.search' | i18n }}</button>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                  <h4 class="panel-title">{{ 'locale.stock.vaccines' | i18n }}</h4>
-                </div>
-                <div class="panel panel-body">
-                  <table class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>{{ 'locale.stock.vaccine' | i18n }}</th>
-                        <th>{{ 'locale.stock.lotNumber' | i18n }}</th>
-                        <th>{{ 'locale.stock.currentLevel' | i18n }}</th>
-                        <th>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="vaccine in vaccines">
-                        <td>{{ vaccine.name.Assigned | oizEntityName }}</td>
-                        <td>{{ vaccine.identifier | oizEntityIdentifier }}</td>
-                        <td>{{ vaccine.quantity }}</td>
-                        <td>
-                          <a class="btn btn-primary" ui-sref="org-openiz-core.adjust({vaccineId: vaccine.id, vaccineVersion: vaccine.version})">{{ 'locale.stock.action.adjust' | i18n }}</a>
-                          <a class="btn btn-primary" ui-sref="org-openiz-core.count({vaccineId: vaccine.id, vaccineVersion: vaccine.version})">{{ 'locale.stock.action.count' | i18n }}</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <div id="stock-search-loading-bar" class="progress">
-                    <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                            {{ 'locale.dialog.wait.text' | i18n }}
-                        </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/stockcount.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.2.1</demand>
-    <contentHtml>
-      <title lang="en">Stock Count</title>
-      <script>~/controllers/common/stock/countstock.js</script>
-      <view name="org-openiz-core.count" abstract="false">
-        <route>/stock/count/:vaccineId/:vaccineVersion</route>
-        <view abstract="false">
-          <title lang="en">Stock Count</title>
-          <controller>CountStockController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
-          <div class="panel panel-default">
-            <div class="panel panel-heading">
-            {{ 'locale.stock.countStock' | i18n }}
-        </div>
-            <div class="panel panel-body">
-              <form name="countStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="countStockForm.$valid &amp;&amp; countStock()">
-                <div class="form-group">
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.gtin' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="gtin" ng-model="gtin" class="form-control" readonly="readonly" />
-                  </div>
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="lotNumber" ng-model="lotNumber" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.vaccine' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="text" name="vaccine" ng-model="vaccine" class="form-control" readonly="readonly" />
-                  </div>
-                  <label class="col-xs-2 control-label">{{ 'locale.stock.expiryDate' | i18n }}</label>
-                  <div class="col-sm-4">
-                    <input type="date" name="expiryDate" ng-model="expiryDate" class="form-control" readonly="readonly" />
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : countStockForm.dateRecorded.$invalid &amp;&amp; (countStockForm.dateRecorded.$touched || countStockForm.$submitted) }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.dateRecorded' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="date" ng-required="true" ng-model="dateRecorded" max="{{ $root.page.loadTime | date: 'dd-MM-yyyy' }}" name="dateRecorded" class="form-control" />
-                    <p ng-show="countStockForm.dateRecorded.$invalid &amp;&amp; (countStockForm.dateRecorded.$touched || countStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.dateRecordedRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : countStockForm.count.$invalid &amp;&amp; (countStockForm.count.$touched || countStockForm.$submitted) }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.amount' | i18n }}</label>
-                  <div class="col-md-10">
-                    <input type="number" name="quantity" ng-required="true" ng-model="count" class="form-control" />
-                    <p ng-show="countStockForm.count.$invalid &amp;&amp; (countStockForm.count.$touched || countStockForm.$submitted)" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/transfer.html" mimeType="text/html">
-    <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
-    <contentHtml>
-      <title lang="en">Transfer Stock</title>
-      <script>~/controllers/common/stock/transferstock.js</script>
-      <view name="org-openiz-core.transfer" abstract="false">
-        <route>/stock/transfer</route>
-        <view abstract="false">
-          <title lang="en">Transfer Stock</title>
-          <controller>TransferStockController</controller>
-        </view>
-      </view>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
-          <div class="panel panel-default">
-            <div class="panel panel-heading">
-            {{ 'locale.stock.transferStock' | i18n }}
-        </div>
-            <div class="panel panel-body">
-              <form name="transferStockForm" class="form-horizontal" novalidate="novalidate" ng-submit="transferStockForm.$valid &amp;&amp; transferStock()" ng-controller="TransferStockController">
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.transferFromFacility' | i18n }}</label>
-                  <div class="col-md-10">
-                    <select class="form-control" name="fromFacility" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" disabled="disabled">
-                      <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : transferStockForm.toFacility.$invalid &amp;&amp; transferStockForm.toFacility.$touched }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.transferToFacility' | i18n }}</label>
-                  <div class="col-md-10">
-                    <select class="form-control" name="toFacility" ng-model="toFacility" oiz-entitysearch="Place" data-filter="{ &quot;classConcept&quot; :  &quot;FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C&quot; }">
-                      <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
-                    </select>
-                    <p ng-show="transferStockForm.toFacility.$invalid &amp;&amp; transferStockForm.toFacility.$touched" class="help-block text-danger">{{ 'locale.stock.errors.transferToFacilityRequired' | i18n }}</p>
-                  </div>
-                </div>
-                <div class="form-group" ng-class="{ 'has-error' : transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched }">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.lotNumber' | i18n }}</label>
-                  <div class="col-md-10">
-                    <div class="input-group">
-                      <select class="form-control" ng-options="lotNumber as lotNumber for lotNumber in lotNumbers track by lotNumber" name="lotNumber" ng-model="lotNumber" ng-change="lotNumberChanged()">
-                      </select>
-                      <p ng-show="transferStockForm.lotNumber.$invalid &amp;&amp; transferStockForm.lotNumber.$touched" class="help-block text-danger">{{ 'locale.stock.errors.lotNumberRequired' | i18n }}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-2 control-label">{{ 'locale.stock.vaccines.title' | i18n }}</label>
-                  <div class="col-md-10">
-                    <table class="table table-striped table-bordered">
-                      <thead>
-                        <tr>
-                          <th>
-                                        {{ 'locale.stock.vaccine' | i18n }}
-                                    </th>
-                          <th>
-                                        {{ 'locale.stock.gtin' | i18n }}
-                                    </th>
-                          <th>
-                                        {{ 'locale.stock.currentLevel' | i18n }}
-                                    </th>
-                          <th>
-                                        {{ 'locale.stock.quantity' | i18n }}
-                                    </th>
-                          <th>
-                                        {{ 'locale.stock.unitOfMeasure' | i18n }}
-                                    </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr ng-repeat="item in stock | filter:lotNumber">
-                          <td>{{ item.name.Assigned | oizEntityName }}</td>
-                          <td>{{ item.identifier | oizEntityIdentifier }}</td>
-                          <td>{{ item.quantity }}</td>
-                          <td>
-                            <div class="form-group" ng-class="{ 'has-error' : transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched }">
-                              <div class="col-md-10">
-                                <input type="number" name="quantity_{{ $index }}" ng-required="true" ng-model="quantity" class="form-control" />
-                                <p ng-show="transferStockForm.quantity.$invalid &amp;&amp; transferStockForm.quantity.$touched" class="help-block text-danger">{{ 'locale.stock.errors.quantityRequired' | i18n }}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td>
-                            <div ng-class="{ 'has-error' : transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched }">
-                              <div class="col-sm-4">
-                                <select name="unitOfMeasure_{{ $index }}" class="form-control" ng-model="unitOfMeasure" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=UnitOfMeasure">
-                                </select>
-                                <p ng-show="transferStockForm.unitOfMeasure.$invalid &amp;&amp; transferStockForm.unitOfMeasure.$touched" class="help-block text-danger">{{ 'locale.stock.errors.unitOfMeasureRequired' | i18n }}</p>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div id="transfer-stock-loading-bar" class="progress">
-                      <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-                                {{ 'locale.dialog.wait.text' | i18n }}
-                            </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <div class="col-md-offset-2 col-md-10">
-                    <a class="btn btn-danger" href="dashboard.html">{{ 'locale.action.cancel' | i18n }}</a>
-                    <input type="submit" value="{{ 'locale.action.save' | i18n }}" class="btn btn-primary" />
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/partials/lowstock.html" mimeType="text/html">
-    <contentHtml>
-      <script>/org.openiz.core/controllers/common/stock/lowstock.js</script>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="LowStockController">
-          <div class="panel panel-default" ng-init="collapseStatus.lowStockOpen = true" ng-click="collapseStatus.lowStockOpen = !collapseStatus.lowStockOpen">
-            <div class="panel panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-target="#lowStockChartCollapse">{{ 'locale.stock.lowstock.title' | i18n }}</a>
-                <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.lowStockOpen, 'glyphicon-chevron-right': !collapseStatus.lowStockOpen}">
-                </i>
-              </h4>
-            </div>
-            <div id="lowStockChartCollapse" class="panel-collapse collapse in">
-              <div class="panel panel-body">
-                <canvas id="lowStockChart">
-                </canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
-  <asset name="views/common/stock/partials/ordersummary.html" mimeType="text/html">
-    <contentHtml>
-      <script>~/controllers/common/stock/ordersummary.js</script>
-      <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" ng-controller="OrderSummaryController">
-          <div class="panel panel-default" ng-init="collapseStatus.orderSummaryOpen = true" ng-click="collapseStatus.orderSummaryOpen = !collapseStatus.orderSummaryOpen">
-            <div class="panel panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-target="#orderSummaryCollapse">{{ 'locale.stock.ordersummary.title' | i18n }}</a>
-                <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.orderSummaryOpen, 'glyphicon-chevron-right': !collapseStatus.orderSummaryOpen}">
-                </i>
-              </h4>
-            </div>
-            <div id="orderSummaryCollapse" class="panel-collapse collapse in">
-              <div class="panel panel-body">
-                <canvas id="orderSummaryChart">
-                </canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-      </content>
-    </contentHtml>
-  </asset>
   <asset name="views/debug/about.html" mimeType="text/html">
     <demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</demand>
     <contentHtml>
@@ -44607,6 +43003,8 @@ angular.module('xeditable').factory('editableThemes', function() {
           <hr />
           <p>{{ 'locale.error.500.description' | i18n }}
     <script type="text/javascript">document.write(window.location);</script></p>
+          <hr />
+          <pre>{{ exception }}</pre>
         </div>
       </content>
     </contentHtml>
@@ -45169,57 +43567,57 @@ angular.module('xeditable').factory('editableThemes', function() {
   <asset name="views/templates/act.substanceadmin.immunization.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.actModel._overdue}">
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}">
           <div class="row">
             <label class="control-label col-xs-12 col-sm-2">
-            {{ 'locale.encounters.immunization.title' | i18n }} {{ act.actModel.participation.Product.playerModel.name.Assigned | oizEntityName }}{{act.actModel.doseSequence}}
-            <span ng-if="act.actModel._overdue" class="label-danger">{{ 'locale.encounters.overdue' | i18n }}</span></label>
-            <div class="col-xs-12 col-sm-10" ng-if="!act.actModel._overdue">
+            {{ 'locale.encounters.immunization.title' | i18n }} {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}{{act.targetModel.doseSequence}}
+            <span ng-if="act.targetModel._overdue" class="label-danger">{{ 'locale.encounters.overdue' | i18n }}</span></label>
+            <div class="col-xs-12 col-sm-10" ng-if="!act.targetModel._overdue">
               <div class="input-group">
                 <span class="input-group-addon">
                   <input type="checkbox" ng-model="act._enabled" checked="checked" value="1" />
                 </span>
                 <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.immunizations.antigen' | i18n }}</span>
-                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
+                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['product_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.targetModel.id].$invalid}" ng-show="act._enabled &amp;&amp; act._created" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.antigen' | i18n }}</option>
                 </select>
                 <span class="input-group-addon" ng-show="act._enabled">{{ 'locale.encounters.immunizations.lot' | i18n }}</span>
-                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['consumable_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.actModel.id].$invalid}" ng-show="act._enabled" ng-required="act._enabled" name="consumable_{{act.actModel.id}}" class="form-control" ng-model="act.actModel.participation.Consumable.player" data-watch="act.actModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter="{ &quot;relationship[ManufacturedProduct].source&quot; : &quot;{{ act.actModel.participation.Product.player }}&quot;, &quot;expiryDate&quot; : &quot;&gt;{{ $root.page.loadTime | date: &quot;yyyy-MM-dd&quot; }}&quot; }" data-display="scope.lotNumber">
+                <select ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['consumable_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.targetModel.id].$invalid}" ng-show="act._enabled" ng-required="act._enabled" name="consumable_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.participation.Consumable.player" data-watch="act.targetModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter="{ &quot;relationship[ManufacturedProduct].source&quot; : &quot;{{ act.targetModel.participation.Product.player }}&quot;, &quot;expiryDate&quot; : &quot;&gt;{{ $root.page.loadTime | date: &quot;yyyy-MM-dd&quot; }}&quot; }" data-display="scope.lotNumber">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.lot' | i18n }}</option>
                 </select>
                 <span ng-show="act._enabled" class="input-group-addon">
                     {{ 'locale.encounters.immunizations.site' | i18n }}
                 </span>
-                <select ng-show="act._enabled" name="site_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.site" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=AdministrationSite">
+                <select ng-show="act._enabled" name="site_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.site" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=AdministrationSite">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.site' | i18n }}</option>
                 </select>
                 <span ng-if="!act._enabled" class="input-group-addon">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</span>
-                <select ng-if="!act._enabled" name="reason_{{act.actModel.id}}" ng-required="!act._enabled" ng-model="act.negationReason" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                <select ng-if="!act._enabled" name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.negationReason" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                   <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                 </select>
               </div>
             </div>
-            <div class="col-xs-12 col-sm-10" ng-if="act.actModel._overdue">
+            <div class="col-xs-12 col-sm-10" ng-if="act.targetModel._overdue">
               <div class="input-group">
                 <span class="input-group-addon">
                   <input type="checkbox" ng-model="act._enabled" checked="checked" value="1" />
                 </span>
                 <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
-                <input ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['izdate_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['izdate_' + act.actModel.id].$invalid}" ng-disabled="!act._enabled" name="izdate_{{act.actModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.actModel.actTime" type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
+                <input ng-class="{'has-error':act._enabled &amp;&amp; (masterForm['izdate_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['izdate_' + act.targetModel.id].$invalid}" ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
               </div>
             </div>
           </div>
           <div class="row form-group">
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['product_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['product_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['product_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingProduct' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['consumable_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['consumable_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['consumable_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['site_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['site_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['site_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['site_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}
         </div>
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="!act._enabled &amp;&amp; (masterForm['reason_' + act.actModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['reason_' + act.actModel.id].$invalid">
+            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="!act._enabled &amp;&amp; (masterForm['reason_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['reason_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
         </div>
           </div>

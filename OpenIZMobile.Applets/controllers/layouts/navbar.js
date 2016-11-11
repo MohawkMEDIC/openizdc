@@ -3,7 +3,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
-layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', function ($scope, $interval, $rootScope) {
+layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '$window', function ($scope, $interval, $rootScope, $window) {
     // Add menu items
     OpenIZ.App.getMenusAsync({
         continueWith: function (menus) {
@@ -22,7 +22,8 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
                 continueWith: function(data)
                 {
                     console.log(data);
-                    window.location.href = "/tz.timr.applet/views/security/login.html";
+                    window.location.hash = "#/";
+                    $window.location.reload();
                 },
                 onException: function(ex)
                 {
@@ -35,7 +36,8 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', f
     // Set locale
     $scope.setLocale = $scope.setLocale || function (locale) {
         OpenIZ.Localization.setLocale(locale);
-        window.location.reload();
+        window.location.hash = "#/";
+        $window.location.reload(true);
     };
 
     $scope.checkMessages = function () {
