@@ -259,6 +259,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             sb.Remove(sb.Length - 4, 4);
             sb.Append(") ");
 
+            if (typeof(DbBaseData).GetTypeInfo().IsAssignableFrom(typeof(TDomain).GetTypeInfo()))
+                sb.Append(" ORDER BY creationTime DESC ");
+            else
+                sb.Append(" ORDER BY uuid ASC ");
+
             // First get total results before we reduce the result-set size
             totalResults = context.ExecuteScalar<Int32>(String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray());
             if (count >= 0)

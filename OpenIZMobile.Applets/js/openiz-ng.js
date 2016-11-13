@@ -17,7 +17,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-18
+ * Date: 2016-7-30
  */
 
 /// <reference path="openiz.js"/>
@@ -138,12 +138,12 @@ angular.module('openiz', [])
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (typeof (ovalue) == "String" && ovalue != nvalue ||
-                        typeof(ovalue) === Array && ovalue.length != nvalue.length ||
+                    if (typeof (nvalue) == "string" && ovalue != nvalue ||
+                        typeof (nvalue) === Array && ovalue.length != nvalue.length ||
                         // HACK: For SPA
                         $(element).attr('has-bound') === undefined) {
                         $(element).attr('has-bound', true);
-                        $(element).tokenfield('setTokens', nvalue);
+                        $(element).trigger('change');
                     }
                 });
 

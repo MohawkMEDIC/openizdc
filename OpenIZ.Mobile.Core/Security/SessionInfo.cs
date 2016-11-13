@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-23
+ * Date: 2016-10-14
  */
 using System;
 using System.Collections.Generic;
@@ -36,6 +36,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -48,6 +49,9 @@ namespace OpenIZ.Mobile.Core.Security
 
         // The entity 
         private UserEntity m_entity;
+
+        // Lock
+        private object m_syncLock = new object();
 
         /// <summary>
         /// Default ctor
@@ -226,6 +230,20 @@ namespace OpenIZ.Mobile.Core.Security
             get
             {
                 return this.Issued;
+            }
+        }
+
+        /// <summary>
+        /// Extends the session
+        /// </summary>
+        public bool Extend()
+        {
+            lock (this.m_syncLock)
+            {
+                if (this.Expiry > DateTime.Now.AddMinutes(5)) // session will still be valid in 5 mins so no auth
+                    return true;
+                this.Principal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(this.Principal, null);
+                return this.Principal != null;
             }
         }
     }

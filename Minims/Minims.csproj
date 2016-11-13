@@ -96,6 +96,9 @@
     <Compile Include="TestTraceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

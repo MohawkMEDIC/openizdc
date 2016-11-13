@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-18
+ * Date: 2016-11-12
  */
 using System;
 using System.Collections.Generic;
@@ -227,15 +227,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
-                            try
-                            {
                                 AuthenticationContext.Current = new AuthenticationContext(session);
-                            }
-                            catch(SessionExpiredException)
-                            {
-                                this.m_tracer.TraceWarning("Session {0} expired will attempt refresh", session.Key);
-                                AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.IdentityProviderService.Authenticate(session.Principal, null));
-                            }
                     }
                 }
 
