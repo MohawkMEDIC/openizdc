@@ -246,16 +246,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
             {
                 var retVal = base.OnConsoleMessage(consoleMessage);
-                if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
-                {
-
-                }
-
+                
                 // Start off verbose
                 EventLevel eventLevel = EventLevel.Verbose;
                 if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
                 {
-                    Toast.MakeText(this.m_context, "This applet reported an error", ToastLength.Long).Show();
+                    //Toast.MakeText(this.m_context, "This applet reported an error", ToastLength.Long).Show();
                     eventLevel = EventLevel.Error;
                 }
                 else if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Warning)
