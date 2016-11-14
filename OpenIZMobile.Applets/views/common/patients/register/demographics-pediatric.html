@@ -23,8 +23,8 @@
 
    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
-        <div class="col-xs-4">
+        <label class="col-xs-3 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
+        <div class="col-xs-9">
             <div class="input-group">
 
                 <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control ng-cloak">
@@ -34,11 +34,13 @@
                     <option value="2">{{ 'locale.patient.demographics.multipleBirth.second' | i18n }}</option>
                     <option value="3">{{ 'locale.patient.demographics.multipleBirth.third' | i18n }}</option>
                 </select>
+                <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" data-toggle="popover" title="{{ 'locale.patient.demographics.birthOrder' | i18n }}" data-content="{{ 'locale.patient.demographics.birthOrderHelp' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
         </div>  
-        <div class="col-xs-6"></div>
+      
     </div>
 </fieldset>
