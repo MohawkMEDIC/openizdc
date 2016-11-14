@@ -20,7 +20,6 @@
  * Date: 2016-10-14
  */
 
-
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>

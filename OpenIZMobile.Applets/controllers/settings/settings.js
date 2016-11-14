@@ -20,7 +20,6 @@
  * Date: 2016-7-17
  */
 
-
 /// <reference path="../../js/openiz.js"/>
 
 layoutApp.controller('SettingsController', ['$scope', function ($scope) {

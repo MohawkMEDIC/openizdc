@@ -20,7 +20,6 @@
  * Date: 2016-7-23
  */
 
-
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])

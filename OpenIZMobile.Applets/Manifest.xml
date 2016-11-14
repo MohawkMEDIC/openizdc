@@ -18,7 +18,7 @@
  - Date: 2016-7-17
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.12.*">
+  <info id="org.openiz.core" version="0.6.14.*">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
