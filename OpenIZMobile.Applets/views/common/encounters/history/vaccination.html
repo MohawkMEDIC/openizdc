@@ -35,7 +35,6 @@
                 </tr>
             </thead>
             <tbody>
-                {{ display._vaccineAdministrations }}
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
                     <td>{{ antigenName }}</td>
                     <td ng-repeat="sequence in event">
