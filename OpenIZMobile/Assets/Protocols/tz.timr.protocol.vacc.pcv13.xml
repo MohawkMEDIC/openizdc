@@ -55,14 +55,14 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "6d607c13-5a87-40b2-91cd-79f000bd82e4",
+                "mnemonic": 'Site-RightThigh'
               },           
 				      "participation": {
 					      "Product": [{
                   "playerModel" : {
                     "$type" : "Material",
-                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "id" : "E829C3D1-5243-474E-A2D6-BA35D99610C4",
                     "typeConceptModel": {
                       "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
                       "mnemonic": "VaccineType-PCV13"
@@ -127,14 +127,14 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "6d607c13-5a87-40b2-91cd-79f000bd82e4",
+                "mnemonic": 'Site-RightThigh'
               },           
 				      "participation": {
 					      "Product": [{
                   "playerModel" : {
                     "$type" : "Material",
-                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "id" : "E829C3D1-5243-474E-A2D6-BA35D99610C4",
                     "typeConceptModel": {
                       "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
                       "mnemonic": "VaccineType-PCV13"
@@ -199,14 +199,14 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "6d607c13-5a87-40b2-91cd-79f000bd82e4",
+                "mnemonic": 'Site-RightThigh'
               },        
 				      "participation": {
 					      "Product": [{
                   "playerModel" : {
                     "$type" : "Material",
-                    "id" : "41B008A6-FCF8-40BC-AB96-7567E94BCF8F",
+                    "id" : "E829C3D1-5243-474E-A2D6-BA35D99610C4",
                     "typeConceptModel": {
                       "id" : "1185DEF1-6AD4-4995-B67A-406DB08945B5",
                       "mnemonic": "VaccineType-PCV13"

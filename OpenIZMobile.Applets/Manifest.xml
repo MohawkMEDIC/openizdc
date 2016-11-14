@@ -30,7 +30,11 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.0</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
-  
+  <template mnemonic="act.substanceadmin.supplement">
+    <form>/org.openiz.core/views/templates/act.substanceadmin.supplement.html</form>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.1</oid>
+    <definition>/org.openiz.core/templates/act.substanceadmin.supplement.json</definition>
+  </template>
   
   <template mnemonic="act.transferstock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
@@ -83,6 +87,7 @@
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.save">Save</string>
+    <string key="locale.action.finish">Finish</string>
     <string key="locale.action.view">View</string>
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
@@ -214,57 +219,7 @@
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
-    <!-- Stock Management -->
-    <string key="locale.stock.action.transfer">Transfer</string>
-    <string key="locale.stock.action.count">Stock Count</string>
-    <string key="locale.stock.adjustStock">Adjust Stock</string>
-    <string key="locale.stock.lowstock">Low Stock</string>
-    <string key="locale.stock.ordersummary.title">Order Summary</string>
-    <string key="locale.stock.stockorders.title">Stock Orders</string>
-    <string key="locale.stock.gtin">GTIN</string>
-    <string key="locale.stock.lotNumber">Lot No.</string>
-    <string key="locale.stock.vaccine">Vaccine</string>
-    <string key="locale.stock.vaccines.title">Vaccines</string>
-    <string key="locale.stock.dateRecorded">Date Recorded</string>
-    <string key="locale.stock.unitOfMeasure">Unit of Measure</string>
-    <string key="locale.stock.adjustmentReason">Adjustment Reason</string>
-    <string key="locale.stock.quantity">Quantity</string>
-    <string key="locale.stock.amount">Stock Counted</string>
-    <string key="locale.stock.countStock">Count Stock</string>
-    <string key="locale.stock.notes">Notes</string>
-    <string key="locale.stock.errors.dateRecordedRequired">Please enter a recorded date</string>
-    <string key="locale.stock.errors.unitOfMeasureRequired">Please select a unit of measure</string>
-    <string key="locale.stock.errors.adjustmentReasonRequired">Please select an adjustment reason</string>
-    <string key="locale.stock.errors.quantityRequired">Please enter a quantity</string>
-    <string key="locale.stock.transferFromFacility">From Facility</string>
-    <string key="locale.stock.transferToFacility">To Facility</string>
-    <string key="locale.stock.errors.transferFromFacilityRequired">Please select a facility to transfer from</string>
-    <string key="locale.stock.errors.transferToFacilityRequired">Please select a facility to transfer to</string>
-    <string key="locale.stock.errors.orderNumberRequired">Please enter an order number</string>
-    <string key="locale.stock.errors.gtinRequired">Gtin Is Required</string>
-    <string key="locale.stock.editGtin">Edit Gtin</string>
-    <string key="locale.stock.transferStock">Transfer Stock</string>
-    <string key="locale.stock.currentLevel">Current Quantity</string>
-    <string key="locale.stock.orderNo">Order No.</string>
-    <string key="locale.stock.orderDate">Order Date</string>
-    <string key="locale.stock.destinationHealthFacility">Destination</string>
-    <string key="locale.stock.orderStatus">Order Status</string>
-    <string key="locale.stock.orderDetails">Order Details</string>
-    <string key="locale.stock.order">Order</string>
-    <string key="locale.stock.orderNumber">Order No</string>
-    <string key="locale.stock.released">Released</string>
-    <string key="locale.stock.cancelled">Cancelled</string>
-    <string key="locale.stock.packed">Packed</string>
-    <string key="locale.stock.shipped">Shipped</string>
-    <string key="locale.stock.requested">Requested</string>
-    <string key="locale.stock.stockStatusDoses">Stock Status (Doses)</string>
-    <string key="locale.stock.expiryDate">Expiry Date</string>
-    <string key="locale.stock.searchStock">Search Stock</string>
-    <string key="locale.stock.searchGTIN">Search GTIN</string>
-    <string key="locale.stock.vaccines">Vaccines</string>
-    <string key="locale.stock.updateSuccessful">Update successful</string>
-    <string key="locale.stock.updateUnsuccessful">Update Unsuccessful</string>
-    <string key="locale.stock.lowstock.title">Low Stock</string>
+
     
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>

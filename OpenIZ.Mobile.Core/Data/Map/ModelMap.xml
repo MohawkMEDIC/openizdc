@@ -362,6 +362,7 @@
        domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbSubstanceAdministration, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="RouteKey" domainName="RouteConceptUuid"/>
+    <property modelName="SiteKey" domainName="SiteConceptUuid"/>
     <property modelName="DoseUnitKey" domainName="DoseUnitConceptUuid"/>
   </class>
 

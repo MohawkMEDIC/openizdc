@@ -542,6 +542,12 @@ namespace Minims
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
 
+                tw.WriteLine("OpenIZApplicationService.GetDataAsset = function(assetId) {");
+                tw.WriteLine("\tswitch(assetId) {");
+                foreach (var itm in this.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("data/")))
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.LoadedApplets.RenderAssetContent(itm)).Replace("'", "\\'"));
+                tw.WriteLine("\t}");
+                tw.WriteLine("}");
                 // Read the static shim
                 using (StreamReader shim = new StreamReader(typeof(MiniApplicationContext).Assembly.GetManifestResourceStream("Minims.lib.shim.js")))
                     tw.Write(shim.ReadToEnd());

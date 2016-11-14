@@ -52,8 +52,8 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "13c8ec88-f0b8-47a3-850a-522616855106",
+                "mnemonic": 'Site-RightArm'
               },
 				      "participation": {
 					      "Product": [{

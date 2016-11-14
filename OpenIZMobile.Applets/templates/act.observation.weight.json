@@ -9,8 +9,8 @@
     "id": "a261f8cd-69b0-49aa-91f4-e6d3e5c612ed",
     "mnemonic": "VitalSign-Weight"
   },
+  "value" :  null,
   "actTime": "{{now}}",
-  "value": 0,
   "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796",
   "participation": {
     "Location": {

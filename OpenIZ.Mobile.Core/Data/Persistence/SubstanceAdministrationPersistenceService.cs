@@ -46,7 +46,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 retVal.RouteKey = new Guid(dbSbadm.RouteConceptUuid);
             retVal.DoseQuantity = dbSbadm.DoseQuantity;
             retVal.SequenceId = (int)dbSbadm.SequenceId;
-            
+            if(dbSbadm.SiteConceptUuid != null)
+                retVal.SiteKey = new Guid(dbSbadm.SiteConceptUuid);
             return retVal;
         }
 

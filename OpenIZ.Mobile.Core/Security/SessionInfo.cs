@@ -69,44 +69,7 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         public SessionInfo(IPrincipal principal)
         {
-            this.UserName = principal.Identity.Name;
-            this.IsAuthenticated = principal.Identity.IsAuthenticated;
-            this.AuthenticationType = principal.Identity.AuthenticationType;
-            this.Principal = principal;
-            if (principal is ClaimsPrincipal)
-                this.Token = principal.ToString();
-
-            // Expiry / etc
-            if (principal is ClaimsPrincipal)
-            {
-                var cp = principal as ClaimsPrincipal;
-
-                this.Issued = DateTime.Parse(cp.FindClaim(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString());
-                this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration)?.Value ?? DateTime.MaxValue.ToString());
-                this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToList();
-                this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
-
-            }
-            else
-            {
-                IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();
-                this.Roles = rps.GetAllRoles(this.UserName).ToList();
-                this.Issued = DateTime.Now;
-                this.Expiry = DateTime.MaxValue;
-            }
-
-            // Grab the user entity
-            try
-            {
-                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-                var securityUser = userService.GetUser(principal.Identity);
-                this.SecurityUser = securityUser;
-
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error getting extended session information: {0}", e);
-            }
+            this.ProcessPrincipal(principal);
         }
 
         private object ApplicationContextIDataPersistenceService<T>()
@@ -242,8 +205,54 @@ namespace OpenIZ.Mobile.Core.Security
             {
                 if (this.Expiry > DateTime.Now.AddMinutes(5)) // session will still be valid in 5 mins so no auth
                     return true;
-                this.Principal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(this.Principal, null);
+                this.ProcessPrincipal(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(this.Principal, null));
                 return this.Principal != null;
+            }
+        }
+
+        /// <summary>
+        /// Process a principal
+        /// </summary>
+        /// <param name="principal"></param>
+        private void ProcessPrincipal(IPrincipal principal)
+        {
+            this.UserName = principal.Identity.Name;
+            this.IsAuthenticated = principal.Identity.IsAuthenticated;
+            this.AuthenticationType = principal.Identity.AuthenticationType;
+            this.Principal = principal;
+            if (principal is ClaimsPrincipal)
+                this.Token = principal.ToString();
+
+            // Expiry / etc
+            if (principal is ClaimsPrincipal)
+            {
+                var cp = principal as ClaimsPrincipal;
+
+                this.Issued = DateTime.Parse(cp.FindClaim(ClaimTypes.AuthenticationInstant)?.Value ?? DateTime.Now.ToString());
+                this.Expiry = DateTime.Parse(cp.FindClaim(ClaimTypes.Expiration)?.Value ?? DateTime.MaxValue.ToString());
+                this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToList();
+                this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
+
+            }
+            else
+            {
+                IRoleProviderService rps = ApplicationContext.Current.GetService<IRoleProviderService>();
+                this.Roles = rps.GetAllRoles(this.UserName).ToList();
+                this.Issued = DateTime.Now;
+                this.Expiry = DateTime.MaxValue;
+            }
+
+            // Grab the user entity
+            try
+            {
+                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+                var securityUser = userService.GetUser(principal.Identity);
+                this.SecurityUser = securityUser;
+
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting extended session information: {0}", e);
             }
         }
     }

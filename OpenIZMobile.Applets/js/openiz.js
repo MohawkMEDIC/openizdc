@@ -1,4 +1,5 @@
 /// <reference path="openiz-model.js"/>
+/// <reference path="openiz-bre.js"/>
 
 /*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
@@ -159,22 +160,27 @@ var OpenIZ = OpenIZ || {
             }
 
             // Re-assign the identifier
+            fulfills._overdue = act.stopTime < new Date();
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
             fulfills.moodConceptModel = null;
             fulfills.creationTime = new Date();
-            fulfills.actTime = new Date();
             fulfills.createdBy = fulfills.createdByModel = null;
             fulfills.statusConcept = OpenIZModel.StatusKeys.Active;
             fulfills.statusConceptModel = null;
             fulfills.etag = null;
-            fulfills.startTime = fulfills.stopTime = null;
-
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();
             fulfills.relationship.Fulfills.target = act.id;
-            fulfills._overdue = act.stopTime < new Date();
+            fulfills.relationship.Fulfills.targetModel = act;
+
+            if (fulfills._overdue) {
+            }
+            else {
+                fulfills.actTime = new Date();
+                fulfills.startTime = fulfills.stopTime = null;
+            }
 
             return fulfills;
         },
@@ -1171,13 +1177,21 @@ var OpenIZ = OpenIZ || {
     CarePlan: {
         /**
          * @summary Interprets the observation, setting the interpretationConcept property of the observation
-         * @param {OpenIZModel.Observation} obs The observation which is to be interpretation
+         * @param {OpenIZModel.QuantityObservation} obs The observation which is to be interpretation
          * @param {string} ruleSet The rule set to be applied for the clinical decision
          * @memberof OpenIZ.CarePlan
          * @method
          */
-        interpretObservation: function (obs, ruleSet) {
-            obs.interpretationConcept = '41d42abf-17ad-4144-bf97-ec3fd907f57d';
+        interpretObservation: function (obs, patient, ruleSet) {
+            obs.participation = obs.participation || {};
+            obs.participation.RecordTarget = obs.participation.RecordTarget || {};
+            obs.participation.RecordTarget.playerModel = patient;
+            
+            var postVal = OpenIZBre.ExecuteRule("BeforeInsert", obs);
+            obs.interpretationConcept = postVal.interpretationConcept;
+
+            obs.participation.RecordTarget.playerModel = null;
+
         },
         /**
          * @summary Generate a care plan for the specified patient
@@ -1305,6 +1319,14 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
+        /**
+         * @summary Loads an asset synchronously from the data/ directory
+         * @method
+         * @memberof OpenIZ.App
+         */
+        loadDataAsset: function(dataId) {
+            return atob(OpenIZApplicationService.GetDataAsset(dataId));
+        },
         /**
          * @summary Submits a bug report asynchronously
          * @method

@@ -55,8 +55,8 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "1edc643d-a93a-47ed-8737-06ede53d0e1f",
+                "mnemonic": 'Site-LeftThigh'
               },             
 				      "participation": {
 					      "Product": [{
@@ -127,8 +127,8 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "1edc643d-a93a-47ed-8737-06ede53d0e1f",
+                "mnemonic": 'Site-LeftThigh'
               },           
 				      "participation": {
 					      "Product": [{
@@ -199,8 +199,8 @@
                 "mnemonic": "RouteOfAdministration-IM"
               },
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "1edc643d-a93a-47ed-8737-06ede53d0e1f",
+                "mnemonic": 'Site-LeftThigh'
               },           
 				      "participation": {
 					      "Product": [{

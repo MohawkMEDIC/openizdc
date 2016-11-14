@@ -21,7 +21,7 @@
  */
 
 /// <reference path="~/js/openiz.js"/>
-layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
+layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function ($scope, $window) {
 
     $scope.resetRequest = {
         purpose: "PasswordReset"
@@ -64,7 +64,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', function ($scope) {
                                 alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                             }
                             else if (OpenIZ.urlParams["returnUrl"] != null)
-                                window.location = OpenIZ.urlParams["returnUrl"];
+                                $window.location.reload();
                         },
                         onException: function (exception) {
                             alert(exception.message || exception);

@@ -50,12 +50,13 @@
                 "mnemonic" : "DOSE"
               },
               "routeModel" : {
-                "id": "d594f99f-0151-41a0-a359-282ab54683a1",
-                "mnemonic": "RouteOfAdministration-IM"
+                "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
+                "mnemonic": "RouteOfAdministration-PO"
               },
+			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
+                "mnemonic": 'Site-Oral'
               },          
 				      "participation": {
 					      "Product": [{
@@ -122,12 +123,13 @@
                 "mnemonic" : "DOSE"
               },
               "routeModel" : {
-                "id": "d594f99f-0151-41a0-a359-282ab54683a1",
-                "mnemonic": "RouteOfAdministration-IM"
+                "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
+                "mnemonic": "RouteOfAdministration-PO"
               },
+			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
               "siteModel" : {
-                "id": "dd5db8ed-0d97-4728-bd94-27aacd79ea02",
-                "mnemonic": 'Site-LeftArm'
+                "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
+                "mnemonic": 'Site-Oral'
               },           
 				      "participation": {
 					      "Product": [{

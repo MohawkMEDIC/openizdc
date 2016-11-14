@@ -20,15 +20,17 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <oiz:script>/org.openiz.core/controllers/layouts/navbar.patient.js</oiz:script>
     <div class="panel-group">
-        <div class="panel panel-primary">
+        <div class="panel panel-primary" ng-init="collapseStatus.queueOpen = true" ng-click="collapseStatus.patientInfoHeaderOpen = !collapseStatus.patientInfoHeaderOpen">
             <div class="panel-heading">
-                <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
-                    <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicator"></span>
-                    <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong><small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
-                </a>
-                <span class="pull-right">
-                    {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
-                </span>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#patientSummaryPanel">
+                        <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
+                    <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                        <span class="pull-right" style="margin-right:20px">
+                            {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                        </span></a>
+                    <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.patientInfoHeaderOpen, 'glyphicon-chevron-right': !collapseStatus.patientInfoHeaderOpen}"></i>
+                </h4>
             </div>
             <div class="panel-collapse collapse" id="patientSummaryPanel">
                 <div class="panel-body">
@@ -59,7 +61,9 @@
                         </div>
                         <div class="row">
                             <label class="col-xs-2">{{ 'locale.patient.demographics.domicile' | i18n }}</label>
-                            <div class="col-xs-10"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <label class="col-xs-2">{{ 'locale.patient.demographics.facility' | i18n }}</label>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
                         </div>
                     </div>
                 </div>

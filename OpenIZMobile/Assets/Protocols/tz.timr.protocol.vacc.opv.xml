@@ -55,6 +55,7 @@
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOfAdministration-PO"
               },
+			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
               "siteModel" : {
                 "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
                 "mnemonic": 'Site-Oral'
@@ -124,6 +125,7 @@
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOfAdministration-PO"
               },
+			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
               "siteModel" : {
                 "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
                 "mnemonic": 'Site-Oral'
@@ -196,7 +198,8 @@
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOfAdministration-PO"
               },
-              "siteModel" : {
+ 			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
+             "siteModel" : {
                 "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
                 "mnemonic": 'Site-Oral'
               },
@@ -269,6 +272,7 @@
                 "id": "0a1388b0-66fb-4063-bfe3-151dd8442838",
                 "mnemonic": "RouteOfAdministration-PO"
               },
+			  "site" : "e5b6847e-91e0-4fca-ac2e-753962008080",
               "siteModel" : {
                 "id": "e5b6847e-91e0-4fca-ac2e-753962008080",
                 "mnemonic": 'Site-Oral'
