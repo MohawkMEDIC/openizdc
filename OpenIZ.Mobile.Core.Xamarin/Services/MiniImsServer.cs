@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-18
+ * Date: 2016-11-12
  */
 using System;
 using System.Collections.Generic;
@@ -124,7 +124,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         {
                                             BindObject = instance,
                                             Method = mi,
-                                            FaultProvider = faultMethod
+                                            FaultProvider = faultMethod,
+                                            Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o=>o.PolicyId).ToList(),
+                                            Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null
                                         });
 
                             }
@@ -225,15 +227,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
-                            try
-                            {
                                 AuthenticationContext.Current = new AuthenticationContext(session);
-                            }
-                            catch(SessionExpiredException)
-                            {
-                                this.m_tracer.TraceWarning("Session {0} expired will attempt refresh", session.Key);
-                                ApplicationContext.Current.IdentityProviderService.Authenticate(session.Principal, null);
-                            }
                     }
                 }
 
@@ -265,8 +259,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 {
 
                     // Services require magic
-                    if (request.Headers["X-OIZMagic"] == null ||
-                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString())
+                    if (!invoke.Anonymous && (request.Headers["X-OIZMagic"] == null ||
+                        request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString()))
                         throw new UnauthorizedAccessException();
 
                     this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
@@ -279,9 +273,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     try
                     {
                         // Method demand?
-                        var demand = invoke.Method.GetCustomAttributes<DemandAttribute>();
-                        foreach (var itm in demand)
-                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm.PolicyId).Demand();
+                        foreach (var itm in invoke.Demand)
+                            new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, itm).Demand();
 
                         // Invoke method
                         if (parmInfo.Length == 0)
@@ -305,17 +298,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         }
                         response.StatusCode = 200;
                     }
-                    catch(TargetInvocationException e) {
-                        this.m_tracer.TraceError("Error executing service request: {0}", e);
-                        if (e.InnerException is UnauthorizedAccessException)
-                            throw e.InnerException;
-                        else if (invoke.FaultProvider != null)
-                        {
-                            response.StatusCode = 500;
-                            result = invoke.FaultProvider.Invoke(invoke.BindObject, new object[] { e.InnerException });
-                        }
-                        else
-                            throw e.InnerException;
+                    catch(Exception e)
+                    {
+                        result = this.HandleServiceException(e, invoke, response);
+                        if (result == null)
+                            throw;
                     }
 
                     // Serialize the response
@@ -335,12 +322,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
                         {
                             case RestMessageFormat.Raw:
-                                byte[] buffer = new byte[8096];
-                                int br = 8096;
-                                while (br == 8096)
+                                if (result is Stream)
+                                    (result as Stream).CopyTo(response.OutputStream);
+                                else
                                 {
-                                    br = (result as Stream).Read(buffer, 0, 8096);
-                                    response.OutputStream.Write(buffer, 0, br);
+                                    var br = result as Byte[];
+                                    response.OutputStream.Write(br, 0, br.Length);
                                 }
                                 break;
                             case RestMessageFormat.SimpleJson:
@@ -422,6 +409,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 500;
                 var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
                 var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
             finally
@@ -441,11 +429,37 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
         }
 
-		/// <summary>
-		/// Handles the process of rendering an asset.
-		/// </summary>
-		/// <param name="request">The HTTP request.</param>
-		/// <param name="response">The HTTP response.</param>
+        /// <summary>
+        /// Handles a service exception
+        /// </summary>
+        private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
+        {
+            this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e);
+
+            response.StatusCode = 500;
+            if(e is SecurityException)
+            {
+                response.StatusCode = 401;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if (e is UnauthorizedAccessException)
+            {
+                response.StatusCode = 403;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if (e is TargetInvocationException) 
+                return this.HandleServiceException(e.InnerException, invoke, response);
+            else
+            {
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+        }
+
+        /// <summary>
+        /// Handles the process of rendering an asset.
+        /// </summary>
+        /// <param name="request">The HTTP request.</param>
+        /// <param name="response">The HTTP response.</param>
         private void HandleAssetRenderRequest(HttpListenerRequest request, HttpListenerResponse response)
 		{
             // Try to demand policy 
@@ -510,11 +524,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private class InvokationInformation
         {
+            /// <summary>
+            /// Allow anonymous access
+            /// </summary>
+            public bool Anonymous { get; internal set; }
 
             /// <summary>
             /// Bind object
             /// </summary>
             public Object BindObject { get; set; }
+
+            /// <summary>
+            /// Gets the demand for the overall object
+            /// </summary>
+            public List<String> Demand { get; internal set; }
 
             /// <summary>
             /// Fault provider

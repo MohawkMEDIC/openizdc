@@ -74,6 +74,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public IEnumerable<TObject> GetRelations<TObject>(Guid? sourceKey) where TObject : IdentifiedData, ISimpleAssociation, new()
         {
+
             return this.Query<TObject>(o => o.SourceEntityKey == sourceKey).ToList();
         }
 

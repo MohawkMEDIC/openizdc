@@ -1,3 +1,22 @@
+/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-10-11
+ */
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -128,8 +147,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
-            if (menu.Launcher != null &&
-                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+            if (menu.Asset != null &&
+                !XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item
@@ -139,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 existing = new MenuInformation()
                 {
-                    Action = menu.Launcher,
+                    Action = menu.Launch,
                     Icon = menu.Icon,
                     Text = menuText
                 };

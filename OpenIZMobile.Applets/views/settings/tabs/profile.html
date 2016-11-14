@@ -1,15 +1,34 @@
-﻿<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="saveProfile($root.session.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="saveProfile(editObject.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>/org.openiz.core/controllers/settings/profile.js</oiz:script>
     <div class="container-fluid">
         <div class="form-group">
             <label class="col-xs-12 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Given" /> </div>
+            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Given" /> </div>
         </div>
         <div class="form-group">
             <label class="col-xs-12 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="$root.session.entity.name.OfficialRecord.component.Family" /> </div>
+            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Family" /> </div>
         </div>
-        <div class="form-group" ng-repeat="(use,tel) in $root.session.entity.telecom">
+        <div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
             <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
             <div class="col-xs-4">
                 <select name="telephone" id="telephone" class="form-control" ng-model="tel.use"
@@ -23,8 +42,8 @@
             <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-                        <option value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                        <option value="{{editObject.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{editObject.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                     </select>
                 </div>
             </div>
@@ -33,7 +52,7 @@
             <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="$root.session.entity.language[0].languageCode">
+                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.language[0].languageCode">
                         <option value="en">English</option>
                         <option value="sw">Kiswahili</option>
                     </select>

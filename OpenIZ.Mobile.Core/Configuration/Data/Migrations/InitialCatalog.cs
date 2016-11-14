@@ -98,6 +98,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbEntityExtension>();
                     db.CreateTable<DbEntityNote>();
                     db.CreateTable<DbExtensionType>();
+                    db.CreateTable<DbTemplateDefinition>();
 
                     tracer.TraceInfo("Installing Security Tables...");
                     db.CreateTable<DbSecurityApplication>();

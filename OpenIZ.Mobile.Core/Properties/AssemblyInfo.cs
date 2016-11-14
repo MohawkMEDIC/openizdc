@@ -36,7 +36,7 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 [assembly: AssemblyInformationalVersion("Dalhouse")]
-[assembly: AssemblyVersion("0.6.11.*")]
+[assembly: AssemblyVersion("0.6.14.*")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

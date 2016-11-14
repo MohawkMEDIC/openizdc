@@ -47,6 +47,7 @@ using OpenIZ.Mobile.Core.Search;
 using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
+using OpenIZ.Mobile.Core.Android.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -118,7 +119,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "tz.timr.applet",
+                StartupAsset = "org.openiz.core",
                 AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
             };
 
@@ -204,8 +205,13 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 						Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
 						InitializationData = "OpenIZ",
 						TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-					}
-				}
+					},
+                    new TraceWriterConfiguration() {
+                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        InitializationData = "OpenIZ",
+                        TraceWriter = new AndroidLogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                    }
+                }
 			};
 #else
             DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection()

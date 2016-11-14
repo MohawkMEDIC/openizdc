@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-2
+ * Date: 2016-7-1
  */
 using SQLite.Net;
 using SQLite.Net.Attributes;
@@ -44,6 +44,12 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// </summary>
         [Column("doseUnit"), MaxLength(16)]
         public byte[] DoseUnitConceptUuid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the site
+        /// </summary>
+        [Column("site"), MaxLength(16)]
+        public byte[] SiteConceptUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the dose quantity

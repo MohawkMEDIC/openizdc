@@ -1,4 +1,23 @@
-﻿<div id="layout-navbar" xmlns:oiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/root.html" ng-controller="LayoutController">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-23
+ -->
+<div id="layout-navbar" xmlns:oiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/root.html" ng-controller="LayoutController">
     <oiz:script>/org.openiz.core/controllers/layouts/navbar.js</oiz:script>
     <div class="navbar navbar-inverse">
         <div class="navbar-header">
@@ -58,7 +77,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px">
-                            <a style="padding-left:0px" href="/org.openiz.core/views/alerts/view.html?alertId={{msg.id}}">
+                            <a style="padding-left:0px" ui-sref="org-openiz-core.alert({alertId: msg.id})" >
                                 <div style="padding-left:0px" class="container-fluid">
                                     <div class="col-xs-2">
                                         <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
@@ -86,7 +105,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
-                            <a href="/org.openiz.core/views/settings/preferences.html">
+                            <a ui-sref="org-openiz-core.preferences">
                                 <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | i18n }}
                             </a>
                         </li>
@@ -101,7 +120,7 @@
         </div>
     </div>
     <div class="container-fluid">
-        <!--#include virtual="content" -->
+        <!-- #include virtual="content" -->
     </div>
 
     <footer class="footer">

@@ -1,13 +1,32 @@
-﻿/// <refernece path="~/js/openiz.js"/>
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-17
+ */
+
+/// <refernece path="~/js/openiz.js"/>
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
 // Document ready, bind search results to their related contexts
-$(document).ready(function () {
-    $('table.oiz-patient-results').each(function (i,e) {
+layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Get the current scope that we're in
-        var scope = angular.element(e).scope();
+        var scope = $scope;
 
         // If the current scope does not have required values bind them
         scope.search = scope.search || {};
@@ -16,6 +35,11 @@ $(document).ready(function () {
         scope.search.paging = scope.search.paging || {
             size: 10
         };
+
+        scope.$watch('search.dateOfBirthString', function (nvalue, ovalue) {
+            if(nvalue !== undefined) 
+                $scope.search.query.dateOfBirth = OpenIZ.Util.toDateInputString(new Date(nvalue));
+        });
 
         var updateResultEncounters = function () {
             for (var i in scope.search.results.item) {
@@ -165,6 +189,4 @@ $(document).ready(function () {
             scope.doStartEncounter(patient);
         };
 
-
-    });
-});
+}]);

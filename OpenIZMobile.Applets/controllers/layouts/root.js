@@ -1,59 +1,93 @@
 ﻿/// <reference path="~/js/openiz-model.js"/>
 
+/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-23
+ */
+
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ngRoute', "xeditable"]).run(function ($rootScope) {
-    OpenIZ.Configuration.getConfigurationAsync({
-        continueWith: function (config) {
-            $rootScope.system = {};
-            $rootScope.system.config = config;
-            $rootScope.$apply();
-        }
-    })
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
+    .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
+        $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
+        $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 
-    $rootScope.page = {
-        title: OpenIZ.App.getCurrentAssetTitle(),
-        loadTime: new Date(),
-        maxEventTime: new Date().tomorrow(), // Dislike Javascript
-        minEventTime: new Date().yesterday(), // quite a bit
-        locale: OpenIZ.Localization.getLocale(),
-        onlineState: OpenIZ.App.getOnlineState()
-    };
+        OpenIZ.UserInterface.states.forEach(function (state) {
+            $stateProvider.state(state);
+        });
 
-    setInterval(function () {
-        $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
-        $rootScope.$applyAsync();
-    }, 10000);
+        //$urlRouterProvider.otherwise('/');
 
+    }])
+    .run(function ($rootScope) {
 
-    // Get current session
-    OpenIZ.Authentication.getSessionAsync({
-        continueWith: function (session) {
-            $rootScope.session = session;
-            if (session != null && session.entity != null) {
-                session.entity.telecom = session.entity.telecom || {};
-                if (Object.keys(session.entity.telecom).length == 0)
-                    session.entity.telecom.MobilePhone = { value: "" };
+        // HACK: Sometimes HASH is empty ... ugh... 
+        // Once we fix the panels and tabs in BS this can be removed
+        if (window.location.hash == "")
+            window.location.hash = "#/";
+
+        OpenIZ.Configuration.getConfigurationAsync({
+            continueWith: function (config) {
+                $rootScope.system = {};
+                $rootScope.system.config = config;
+                $rootScope.$apply();
             }
-            $rootScope.$apply();
-        }
+        })
+        $rootScope.$on("$stateChangeError", console.log.bind(console));
+
+        $rootScope.page = {
+            title: OpenIZ.App.getCurrentAssetTitle(),
+            loadTime: new Date(),
+            maxEventTime: new Date().tomorrow(), // Dislike Javascript
+            minEventTime: new Date().yesterday(), // quite a bit
+            locale: OpenIZ.Localization.getLocale(),
+            onlineState: OpenIZ.App.getOnlineState()
+        };
+
+        setInterval(function () {
+            $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+            $rootScope.$applyAsync();
+        }, 10000);
+
+
+        // Get current session
+        OpenIZ.Authentication.getSessionAsync({
+            continueWith: function (session) {
+                $rootScope.session = session;
+                if (session != null && session.entity != null) {
+                    session.entity.telecom = session.entity.telecom || {};
+                    if (Object.keys(session.entity.telecom).length == 0)
+                        session.entity.telecom.MobilePhone = { value: "" };
+                }
+                $rootScope.$apply();
+            }
+        });
+
+        $rootScope.changeInputType = function (controlId, type) {
+            $(controlId).attr('type', type);
+            if ($(controlId).attr('data-max-' + type) != null) {
+                $(controlId).attr('max', $(controlId).attr('data-max-' + type));
+            }
+        };
+
+        $rootScope.OpenIZ = OpenIZ;
     });
 
-    $rootScope.changeInputType = function (controlId, type) {
-        $(controlId).attr('type', type);
-        if ($(controlId).attr('data-max-' + type) != null) {
-            $(controlId).attr('max', $(controlId).attr('data-max-' + type));
-        }
-    };
-
-    $rootScope.OpenIZ = OpenIZ;
-});
-
-// Configure the safe ng-urls
-layoutApp.config(['$compileProvider', function ($compileProvider) {
-    $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
-    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
-}]);
 
 /**
  * @summary The queryUrlParameterService is used to get url parameters.

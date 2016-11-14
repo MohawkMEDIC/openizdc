@@ -1,23 +1,22 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- *
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you
- * may not use this file except in compliance with the License. You may
- * obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
  * the License.
- *
+ * 
  * User: justi
  * Date: 2016-7-8
  */
-
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
@@ -25,6 +24,7 @@ using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
@@ -110,8 +110,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			p = this.Validate(p);
 
+            var bre = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
+            bre?.BeforeInsert(p);
+
 			// Persist patient
 			var patient = this.persistenceService.Insert(p);
+            bre?.AfterInsert(p);
 
 			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 
@@ -198,6 +202,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the validated patient.</returns>
 		public Patient Validate(Patient p)
 		{
+            var details = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>()?.Validate(p);
+            //if(details.Any(d=>d.Priority == DetectedIssuePriorityType.Error))
+            //    throw new OpenIZ.Core.Exceptions.De
+
 			p = p.Clean() as Patient; // clean up messy data
 
 			// Generate temporary identifier

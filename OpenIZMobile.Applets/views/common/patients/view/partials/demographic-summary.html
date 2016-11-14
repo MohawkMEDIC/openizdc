@@ -1,4 +1,23 @@
-﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="container-fluid" ng-controller="DemographicSummaryController" xmlns:bind="http://openiz.org/applet/binding">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-10-11
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="container-fluid" ng-controller="DemographicSummaryController" xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>~/controllers/common/patients/view/partials/demographic-summary.js</oiz:script>
     <div class="row">
         <label class="col-sm-2 col-xs-12">
@@ -21,10 +40,10 @@
             {{ 'locale.patient.demographics.dateOfBirth' | i18n }}
         </label>
         <div class="col-sm-10 col-xs-12" ng-if="patient.dateOfBirthPrecision">
-            {{ patient.dateOfBirth | date: 'yyyy-MM' }}
+            {{ patient.dateOfBirth | date: 'yyyy-MMM' }}
         </div>
         <div class="col-sm-10 col-xs-12" ng-if="!patient.dateOfBirthPrecision">
-            {{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}
+            {{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }}
         </div>
     </div>
     <div class="row" ng-if="patient.multipleBirthOrder">
@@ -39,25 +58,24 @@
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.gender' | i18n }}
         </label>
-        <div class="col-sm-2 col-xs-12">
-                {{ patient.genderConceptModel.name[$root.page.locale] }}
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.genderConceptModel | oizConcept }}
         </div>
     </div>
     <div class="row">
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.facility' | i18n }}
         </label>
-        <div class="col-sm-2 col-xs-12">
-            {{patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord.component.$other.value}}
+        <div class="col-sm-10 col-xs-12">
+            {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}
         </div>
-
     </div>
     <div class="row">
         <label class="col-sm-2 col-xs-12">
             {{ 'locale.patient.demographics.domicile' | i18n }}
         </label>
         <div class="col-sm-10 col-xs-12">
-                {{patient.address.HomeAddress.component.AdditionalLocator}}
+            {{ patient.address.HomeAddress | oizEntityAddress }}
         </div>
     </div>
 </div>

@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-2
+ * Date: 2016-7-1
  */
 using SQLite.Net;
 using SQLite.Net.Attributes;

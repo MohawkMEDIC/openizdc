@@ -17,7 +17,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-18
+ * Date: 2016-7-30
  */
 
 /// <reference path="openiz.js"/>
@@ -100,6 +100,12 @@ angular.module('openiz', [])
                     return modelValue[k].value;
         };
     })
+    .filter('oizConcept', function () {
+        return function (modelValue) {
+            if(modelValue != null && modelValue.name != null)
+                return OpenIZ.Util.renderConceptName(modelValue.name);
+        }
+    })
     .filter('oizEntityName', function ()
     {
         return function (modelValue)
@@ -131,16 +137,20 @@ angular.module('openiz', [])
                 function tagFormatter(viewValue)
                 {
                     if (typeof (viewValue) === Array)
-                        return viewValue.join(viewView)
+                        return viewValue.join(viewValue)
                     return viewValue;
                 }
 
                 // Tag input
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
-                    if (ovalue != nvalue &&
-                        ovalue === undefined)
+                    if (typeof (nvalue) == "string" && ovalue != nvalue ||
+                        typeof (nvalue) === Array && ovalue.length != nvalue.length ||
+                        // HACK: For SPA
+                        $(element).attr('has-bound') === undefined) {
+                        $(element).attr('has-bound', true);
                         $(element).trigger('change');
+                    }
                 });
 
                 $(element).tokenfield({

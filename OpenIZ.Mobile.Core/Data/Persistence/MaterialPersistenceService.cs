@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-2
+ * Date: 2016-7-1
  */
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model;
