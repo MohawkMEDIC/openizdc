@@ -100,6 +100,12 @@ angular.module('openiz', [])
                     return modelValue[k].value;
         };
     })
+    .filter('oizConcept', function () {
+        return function (modelValue) {
+            if(modelValue != null && modelValue.name != null)
+                return OpenIZ.Util.renderConceptName(modelValue.name);
+        }
+    })
     .filter('oizEntityName', function ()
     {
         return function (modelValue)

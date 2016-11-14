@@ -35,6 +35,7 @@
                 </tr>
             </thead>
             <tbody>
+                {{ display._vaccineAdministrations }}
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
                     <td>{{ antigenName }}</td>
                     <td ng-repeat="sequence in event">
@@ -47,7 +48,7 @@
                             </span>
                             <input
                                    ng-disabled="!sequence._enabled" type="date" class="form-control"
-                                   max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"
+                                   max="{{ $root.page.loadTime | date: 'yyyy-MM-dd'}}"
                                    ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
                         </div>
                     </td>

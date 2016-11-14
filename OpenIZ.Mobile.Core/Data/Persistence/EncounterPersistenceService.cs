@@ -37,12 +37,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var dbEnc = dataInstance as DbPatientEncounter ?? context.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbEnc = dataInstance as DbPatientEncounter ?? context.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).FirstOrDefault();
             var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(a => a.Uuid == dbEnc.Uuid).First();
             var retVal = m_actPersister.ToModelInstance<PatientEncounter>(dba, context, loadFast);
 
-            if (dbEnc.DischargeDispositionUuid != null)
-                retVal.DischargeDispositionKey = new Guid(dbEnc.DischargeDispositionUuid);
+            if (dbEnc?.DischargeDispositionUuid != null)
+                retVal.DischargeDispositionKey = new Guid(dbEnc?.DischargeDispositionUuid);
             return retVal;
         }
 

@@ -24,7 +24,7 @@
     <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
         <div class="col-xs-3">
             <div class="input-group">
-                <select ng-model="identifier.authority" class="form-control" ng-change="rebindDomain(authority, identifier)"
+                <select ng-model="identifier.authority.domainName" class="form-control" ng-change="rebindDomain(authority, identifier)"
                         bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
             </div>
         </div>

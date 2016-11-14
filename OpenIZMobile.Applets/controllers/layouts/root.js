@@ -23,7 +23,7 @@
 
 /// <reference path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', "xeditable"])
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
     .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);

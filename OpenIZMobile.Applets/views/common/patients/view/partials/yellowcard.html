@@ -1,0 +1,51 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding"
+          ng-controller="YellowCardController">
+    <oiz:script>/org.openiz.core/controllers/common/patients/view/partials/yellowcard.js</oiz:script>
+
+    <!-- TODO: Call the forecaster for this -->
+    <div class="table-responsive">
+        <table class="table table-striped oiz-vaccination-history-table">
+            <thead>
+                <tr>
+                    <th class="vaccine-table-column"></th>
+                    <th class="vaccine-table-column" style="text-align:center">0</th>
+                    <th class="vaccine-table-column" style="text-align:center">1</th>
+                    <th class="vaccine-table-column" style="text-align:center">2</th>
+                    <th class="vaccine-table-column" style="text-align:center">3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
+                    <td>{{ antigenName }}</td>
+                    <td ng-repeat="sequence in event track by $index">
+                        <a data-toggle="tab" data-target="#vaccinations">
+                            <div ng-if="sequence != null" class="input-group">
+                                <div ng-if="sequence.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'">
+                                    <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
+                                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                    </div>
+                                    <div class="text-warn" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &lt; $root.page.maxEventTime &amp;&amp; (sequence.stopTime == null || sequence.stopTime != null &amp;&amp;  $root.page.maxEventTime &lt; sequence.stopTime)">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </div>
+                                    <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </div>
+                                </div>
+                                <div ng-if="sequence.moodConcept != 'acf7baf2-221f-4bc2-8116-ceb5165be079'" class="text-success">
+                                    <div class="text-success" ng-if="!sequence.negationInd" >
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </div>
+                                    <div class="text-warn" ng-if="sequence.negationInd">
+                                        <span class="glyphicon glyphicon-question-sign"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
