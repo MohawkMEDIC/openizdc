@@ -41,6 +41,7 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using System.Text;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -75,6 +76,17 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
             this.m_context = context;
             this.m_view = view;
+        }
+
+        /// <summary>
+        /// Get the specified reference set
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetDataAsset(String dataId)
+        {
+            dataId = String.Format("data/{0}", dataId);
+            return Convert.ToBase64String(XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Assets).FirstOrDefault(o => o.Name == dataId), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
         }
 
         /// <summary>
@@ -273,8 +285,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
-            if (menu.Launcher != null &&
-                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+            if (menu.Asset != null &&
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item
@@ -284,7 +296,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 existing = new MenuInformation()
                 {
-                    Action = menu.Launcher,
+                    Action = menu.Launch,
                     Icon = menu.Icon,
                     Text = menuText
                 };

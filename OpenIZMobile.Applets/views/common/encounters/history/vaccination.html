@@ -1,5 +1,25 @@
-﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/binding" class="oiz-vaccination-history form-horizontal form-group">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-30
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-vaccination-history form-horizontal form-group"
+          ng-controller="VaccinationHistoryController">
     <oiz:script>/org.openiz.core/controllers/common/encounters/history/vaccination.js</oiz:script>
 
     <!-- TODO: Call the forecaster for this -->
@@ -31,7 +51,7 @@
                             </span>
                             <input
                                    ng-disabled="!sequence._enabled" type="date" class="form-control"
-                                   max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"
+                                   max="{{ $root.page.loadTime | date: 'yyyy-MM-dd'}}"
                                    ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
                         </div>
                     </td>

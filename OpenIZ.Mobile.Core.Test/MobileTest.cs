@@ -17,7 +17,6 @@
  * User: justi
  * Date: 2016-6-14
  */
-
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace OpenIZ.Mobile.Core.Test

@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-23
+ * Date: 2016-7-24
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -57,6 +58,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
+
+            if (dbInstance.TemplateUuid != null)
+                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(context.Get<DbTemplateDefinition>(dbInstance.TemplateUuid), true);
 
             // Has this been updated? If so, minimal information about the previous version is available
             if(dbInstance.UpdatedTime != null)
@@ -132,6 +136,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     return this.ToModelInstance<Act>(dbAct, context, loadFast);
 
             }
+        }
+
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Act modelInstance, SQLiteConnectionWithLock context)
+        {
+            var domainInstance = base.FromModelInstance(modelInstance, context) as DbAct;
+            if (modelInstance.Template != null)
+            {
+                modelInstance.Template = modelInstance.Template.EnsureExists(context);
+                domainInstance.TemplateUuid = modelInstance.Template.Key.Value.ToByteArray();
+            }
+            return domainInstance;
         }
 
         /// <summary>

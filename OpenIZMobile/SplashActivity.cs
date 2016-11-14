@@ -15,9 +15,8 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-11
+ * Date: 2016-10-11
  */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,7 +99,7 @@ namespace OpenIZMobile
                 {
                     Intent viewIntent = new Intent(this, typeof(AppletActivity));
                     var appletConfig = AndroidApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
-                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html");
+                    viewIntent.PutExtra("assetLink", "http://127.0.0.1:9200/" + appletConfig.StartupAsset + "/index.html#/");
                     this.StartActivity(viewIntent);
 
                 }

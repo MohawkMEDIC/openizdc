@@ -83,6 +83,7 @@
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Security\TokenValidationManager.cs" />
+    <Compile Include="Services\Attributes\AnonymousAttribute.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />
     <Compile Include="Services\Model\ApplicationInfo.cs" />
     <Compile Include="Services\Model\BugReport.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Patient.cs" />
+    <Compile Include="Services\ServiceHandlers\UserInterface.cs" />
     <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
     <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
@@ -138,6 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ViewModel.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\OpenIZDC.licenseheader">
+      <Link>OpenIZDC.licenseheader</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

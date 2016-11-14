@@ -272,15 +272,7 @@ namespace OpenIZ.Mobile.Core.Data
                 // Exists but is an old version
                 if (vMe?.VersionKey.GetValueOrDefault() != Guid.Empty && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
                 {
-                    // Update method
-                    var updateMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 2);
-                    if (updateMethod != null)
-                    {
-                        IVersionedEntity updated = updateMethod.Invoke(idpInstance, new object[] { context, me }) as IVersionedEntity;
-                        me.Key = updated.Key;
-                        if (vMe != null)
-                            vMe.VersionKey = (updated as IVersionedEntity).VersionKey;
-                    }
+                    throw new InvalidOperationException("Cannot update child object, ensure you are using the most up to date copy before persisting");
                 }
 
             }
@@ -303,7 +295,7 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Stop();
             s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
 #endif
-            return (TModel)existing;
+            return existing == null ? me : (TModel)existing;
 
         }
 

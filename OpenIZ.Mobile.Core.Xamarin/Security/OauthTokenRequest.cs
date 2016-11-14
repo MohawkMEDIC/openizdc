@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-23
+ * Date: 2016-10-11
  */
 using System;
 using System.Collections.Generic;
@@ -103,10 +103,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         /// <summary>
         /// Token request for refresh
         /// </summary>
-        public OAuthTokenRequest(TokenClaimsPrincipal current)
+        public OAuthTokenRequest(TokenClaimsPrincipal current, String scope)
         {
             this.GrantType = "refresh_token";
             this.RefreshToken = current.RefreshToken;
+            this.Scope = scope;
         }
 
         /// <summary>

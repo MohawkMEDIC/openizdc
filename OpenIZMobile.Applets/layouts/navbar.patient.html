@@ -1,16 +1,35 @@
-﻿<div ng-controller="PatientLayoutController" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
-    <oiz:script>/org.openiz.core/controllers/layouts/navbar.patient.js</oiz:script>
-
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
-        <div class="panel panel-primary">
+        <div class="panel panel-primary" ng-init="collapseStatus.queueOpen = true" ng-click="collapseStatus.patientInfoHeaderOpen = !collapseStatus.patientInfoHeaderOpen">
             <div class="panel-heading">
-                <a style="color:#fff" href="#patientSummaryPanel" data-toggle="collapse">
-                    <span class="glyphicon glyphicon-chevron-right" id="patientSummaryPanelIndicator"></span>
-                    <strong style="font-size:1.1em">{{ patient.name.OfficialRecord | oizEntityName }} </strong><small>({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
-                </a>
-                <span class="pull-right">
-                    {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
-                </span>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#patientSummaryPanel">
+                        <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
+                    <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                        <span class="pull-right" style="margin-right:20px">
+                            {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                        </span></a>
+                    <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.patientInfoHeaderOpen, 'glyphicon-chevron-right': !collapseStatus.patientInfoHeaderOpen}"></i>
+                </h4>
             </div>
             <div class="panel-collapse collapse" id="patientSummaryPanel">
                 <div class="panel-body">
@@ -41,12 +60,27 @@
                         </div>
                         <div class="row">
                             <label class="col-xs-2">{{ 'locale.patient.demographics.domicile' | i18n }}</label>
-                            <div class="col-xs-10"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <label class="col-xs-2">{{ 'locale.patient.demographics.facility' | i18n }}</label>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
+                        </div>
+                    </div>
+                    <div class="container-fluid" ng-if="patientEdit">
+                        <div class="row">
+                            <div class="pull-right btn-group">
+                                <button type="button" ng-click="patientEdit.show()" class="btn btn-lg btn-info">
+                                    <span>
+                                        <span class="glyphicon glyphicon-pencil">
+                                        </span>
+                                        {{ 'locale.action.edit' | i18n }}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- #include virtual="content" -->
+            <!-- #include virtual="content" -->
     </div>
 </div>

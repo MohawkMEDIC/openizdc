@@ -209,6 +209,28 @@ a.not-active {
     position:relative;
 }
 
+.panel-primary > .panel-heading{
+    background: #23527c;
+    color: white;
+    font-size: 17px;
+    padding: 20px;
+    border-radius: 0;
+    border: none;
+    background-image: none !important;
+    position:relative;
+}
+
+.panel-info > .panel-heading{
+    background: #d9edf7;
+    color: #23527c;
+    font-size: 17px;
+    padding: 20px;
+    border-radius: 0;
+    border: none;
+    background-image: none !important;
+    position:relative;
+}
+
 .panel-chevron{
     right: 20px;
     position: absolute;
