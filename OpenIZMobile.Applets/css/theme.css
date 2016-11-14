@@ -149,8 +149,13 @@ a.not-active {
   background-color: #007FD1;
   border-color: #007FD1;
   margin-bottom: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
 }
-
+.navbar-inverse + div {
+    padding-top: 50px;
+}
 .navbar-inverse .navbar-nav > .open > a,
 .navbar-inverse .navbar-nav > .active > a {
   background-image: -webkit-linear-gradient(top, #007FD1 0%, #007FD1 100%);
@@ -237,6 +242,14 @@ a.not-active {
     display: block;
 }
 
+.input-group-btn > button{
+    border-left: 2px solid #ebeff5;
+}
+
+.btn{
+    padding: 6px 16px;
+}
+
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
@@ -304,7 +317,6 @@ body{
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
 }
 
-
 .button-icon-text{
     padding-left: 40px;
 }
@@ -321,6 +333,7 @@ body{
     z-index: 10000;
     top: 28px;
     right: 55px;
+    pointer-events:none;
 }
 
 .select-arrow-container{
@@ -328,6 +341,7 @@ body{
     z-index: 10000;
     top: 28px;
     right: 10px;
+    pointer-events:none;
 }
 
 .select-arrow{
@@ -335,6 +349,39 @@ body{
     border-color: #888 transparent transparent transparent;
     border-style: solid;
 }
+
+.input-group-addon-alt{
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.date-checkbox-control{
+    padding-left: 45px !important;
+}
+
+.approx-add-in{
+    position: absolute;
+    top: 12px;
+    left: 34px;
+}
+.glyphicon-chevron-down{
+    font-size:15px;
+}
+.input-group-addon-approx{
+    vertical-align: top;
+    border: none;
+    background: #ccd4e0;
+    width: 110px;
+    position: relative;
+}
+
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.

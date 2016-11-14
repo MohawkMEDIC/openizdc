@@ -19,20 +19,21 @@
                     <td>{{ antigenName }}</td>
                     <td ng-repeat="sequence in event">
                         <div ng-if="sequence != null" class="input-group">
-                            <span class="input-group-addon">
-                                <label class="control control--checkbox">
-                                    <input type="checkbox" 
-                                           ng-model="sequence._enabled" 
-                                           ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime > $root.page.maxEventTime ? 'disabled' : null"
-                                           value="1"
-                                           name="tetanusImmunity" />
-                                    <div class="control__indicator"></div>
-                                </label>
-                            </span>
-                            <input
-                                   ng-disabled="!sequence._enabled" type="date" class="form-control"
+                            <label class="control control--checkbox">
+                                <input type="checkbox"
+                                        ng-model="sequence._enabled"
+                                        ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime > $root.page.maxEventTime ? 'disabled' : null"
+                                        value="1"
+                                        name="hasBirthCertificate" />
+                                <div class="control__indicator control__indicator_alt"></div>
+                            </label>
+                            
+                            <input class="date-checkbox-control form-control" 
+                                   ng-disabled="!sequence._enabled" 
+                                   type="date" 
+                                   ng-model="sequence.actTime"
                                    max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"
-                                   ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
+                                   min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
                         </div>
                     </td>
                 </tr>

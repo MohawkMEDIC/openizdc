@@ -28,10 +28,14 @@
         <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
             <div class="input-group">
                 <input type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
-                <span class="input-group-addon">
-                    <input type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
-                    <label for="approximateDob" class="ng-cloak">
-                        {{ 'locale.patient.demographic.dob.fuzzy' | i18n }}
+                <span class="input-group-addon input-group-addon-approx">
+                    <label class="control control--checkbox">
+                        <span class="approx-add-in">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span>
+                        <input type="checkbox"
+                               ng-model="patient.dateOfBirthPrecision"
+                               value="1"
+                               name="approximateDob" />
+                        <div class="control__indicator" style="top: 8px;"></div>
                     </label>
                 </span>
                 <span class="input-group-btn">
