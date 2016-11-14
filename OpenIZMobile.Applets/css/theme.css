@@ -246,12 +246,9 @@ a.not-active {
     margin: 0;
 }
 
-.panel-default{
-    margin-top:20px;
-}
-
-.panel-group .panel+.panel {
-    margin-top: 20px;
+.panel-group .panel {
+    margin-bottom: 20px !important;
+    margin-top:0;
 }
 
 .panel-title{
