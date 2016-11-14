@@ -379,7 +379,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_tracer.TraceError(ex.ToString());
                 if (AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
                 {
-                    string redirectLocation = String.Format("{0}?returnUrl={1}",
+                    string redirectLocation = String.Format("{0}",
                         XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset
                         , request.RawUrl);
                     response.Redirect(redirectLocation);

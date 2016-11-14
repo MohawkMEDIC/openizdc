@@ -267,16 +267,7 @@ namespace OpenIZ.Mobile.Core.Data
 #endif
 
             // Existing exists?
-            if (existing != null)
-            {
-                // Exists but is an old version
-                if (vMe?.VersionKey.GetValueOrDefault() != Guid.Empty && (existing as IVersionedEntity)?.VersionKey != vMe?.VersionKey)
-                {
-                    throw new InvalidOperationException("Cannot update child object, ensure you are using the most up to date copy before persisting");
-                }
-
-            }
-            else // Insert
+            if (existing == null)
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
                 if (insertMethod != null)

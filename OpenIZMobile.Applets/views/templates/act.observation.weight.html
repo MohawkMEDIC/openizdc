@@ -31,11 +31,15 @@
                     ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
                 </small>
             </span>
+            <small ng-if="act.statusConcept == '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+                {{ 'locale.action.finish' | i18n }}
+            </small>
+
         </div>
         <div class="col-xs-12 col-sm-9" ng-if="!act.targetModel._overdue">
             <div class="input-group">
                 <span class="input-group-addon">
-                    <input ng-if="!act._created" type="checkbox"
+                    <input ng-if="!act._created || act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'" type="checkbox"
                            ng-model="act._enabled"
                            checked="checked"
                            value="1"

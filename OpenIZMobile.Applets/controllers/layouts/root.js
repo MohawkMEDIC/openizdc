@@ -36,6 +36,8 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
     }])
     .run(function ($rootScope) {
 
+        $rootScope.isLoading = true;
+
         // HACK: Sometimes HASH is empty ... ugh... 
         // Once we fix the panels and tabs in BS this can be removed
         if (window.location.hash == "")
@@ -49,6 +51,13 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
             }
         })
         $rootScope.$on("$stateChangeError", console.log.bind(console));
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            $rootScope.isLoading = true;
+        });
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            OpenIZ.App.hideWait();
+            $rootScope.isLoading = false;
+        });
 
         $rootScope.page = {
             title: OpenIZ.App.getCurrentAssetTitle(),

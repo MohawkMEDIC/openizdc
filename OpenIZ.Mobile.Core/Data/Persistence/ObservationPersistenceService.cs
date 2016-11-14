@@ -91,11 +91,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Not pure observation
             if (data.GetType() != typeof(Observation))
             {
-                var dbobservation = new DbObservation()
-                {
-                    InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray(),
-                    Uuid = updated.Key?.ToByteArray()
-                };
+                var dbobservation = context.Get<DbObservation>(data.Key?.ToByteArray());
+                dbobservation.InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray();
                 context.Update(dbobservation);
             }
             return updated;
@@ -184,6 +181,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class QuantityObservationPersistenceService : ObservationPersistenceService<QuantityObservation, DbQuantityObservation>
     {
+
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>

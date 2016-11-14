@@ -7487,7 +7487,7 @@ var OpenIZModel = OpenIZModel || {
         /** 
          *             Completed status            
          */
-        Completed: '93a48f6a-6808-4c70-83a2-d02178c2a883',
+        Completed: 'afc33800-8225-4061-b168-bacc09cdbae3',
         /** 
          *             Status - New            
          */

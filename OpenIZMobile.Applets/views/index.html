@@ -23,5 +23,9 @@
         <oiz:view>
         </oiz:view>
     </oiz:state>
-    <ui-view></ui-view>
+
+    <div ng-if="$root.isLoading" class="progress">
+        <div id="waitProgressBar" class="progress-bar progress-bar-striped progress-bar-info active" style="width:100%"></div>
+    </div>
+    <ui-view ng-if="!$root.isLoading"></ui-view>
 </div>
