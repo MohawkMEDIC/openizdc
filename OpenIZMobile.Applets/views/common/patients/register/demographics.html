@@ -48,7 +48,7 @@
             <div class="input-group">
                 <input ng-readonly="patient.readonly.dateOfBirth" type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon input-group-addon-approx">
-                    <label for="approximateDob" class="control control--checkbox">
+                    <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
                                ng-model="patient.dateOfBirthPrecision"
@@ -94,6 +94,9 @@
                 <select ng-disabled="patient.readonly.genderConcept" name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control"
                         aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
                         bind:value="name[{{ locale }}].value"></select>
+                <span class="select-arrow-container-alt" role="presentation">
+                    <span class="select-arrow" role="presentation"></span>
+                </span>
                 <span class="input-group-btn">
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
