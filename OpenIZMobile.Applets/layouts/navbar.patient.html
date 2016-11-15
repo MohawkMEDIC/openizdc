@@ -59,7 +59,10 @@
             </div>
             <div class="row">
                 <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
-                <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                <div class="col-xs-4 padding-left-30">
+                    <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
+                </div>
+                
                 <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
                 <label class="col-xs-2 header-dock-labels">Mothers Info</label>
                 <div class="col-xs-4">
