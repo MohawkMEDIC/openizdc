@@ -27,7 +27,7 @@ using Android.App;
 [assembly: AssemblyTitle ("OpenIZMobile")]
 [assembly: AssemblyDescription ("OpenIZ Disconnected Client Host App Container")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("PATH")]
+[assembly: AssemblyCompany ("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct ("Tanzania Immunization Registry (TImR)")]
 [assembly: AssemblyCopyright ("2016")]
 [assembly: AssemblyTrademark ("")]
@@ -38,7 +38,7 @@ using Android.App;
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
 [assembly: AssemblyVersion ("0.6.15.*")]
-[assembly: AssemblyInformationalVersion("Milestone 6")]
+[assembly: AssemblyInformationalVersion("Alpha PRE1")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.

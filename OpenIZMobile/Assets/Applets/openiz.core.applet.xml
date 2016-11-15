@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.14.3516">
+  <info id="org.openiz.core" version="0.6.14.5506">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -3781,8 +3781,13 @@ a.not-active {
   background-color: #007FD1;
   border-color: #007FD1;
   margin-bottom: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
 }
-
+.navbar-inverse + div {
+    padding-top: 50px;
+}
 .navbar-inverse .navbar-nav &gt; .open &gt; a,
 .navbar-inverse .navbar-nav &gt; .active &gt; a {
   background-image: -webkit-linear-gradient(top, #007FD1 0%, #007FD1 100%);
@@ -3873,12 +3878,9 @@ a.not-active {
     margin: 0;
 }
 
-.panel-default{
-    margin-top:20px;
-}
-
-.panel-group .panel+.panel {
-    margin-top: 20px;
+.panel-group .panel {
+    margin-bottom: 20px !important;
+    margin-top:0;
 }
 
 .panel-title{
@@ -3889,6 +3891,14 @@ a.not-active {
 .panel-title a{
     text-decoration:none;
     display: block;
+}
+
+.input-group-btn &gt; button{
+    border-left: 2px solid #ebeff5;
+}
+
+.btn{
+    padding: 6px 16px;
 }
 
 /*----------------------------------------------------*/
@@ -3958,7 +3968,6 @@ body{
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
 }
 
-
 .button-icon-text{
     padding-left: 40px;
 }
@@ -3975,6 +3984,7 @@ body{
     z-index: 10000;
     top: 28px;
     right: 55px;
+    pointer-events:none;
 }
 
 .select-arrow-container{
@@ -3982,6 +3992,7 @@ body{
     z-index: 10000;
     top: 28px;
     right: 10px;
+    pointer-events:none;
 }
 
 .select-arrow{
@@ -3989,6 +4000,39 @@ body{
     border-color: #888 transparent transparent transparent;
     border-style: solid;
 }
+
+.input-group-addon-alt{
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.date-checkbox-control{
+    padding-left: 45px !important;
+}
+
+.approx-add-in{
+    position: absolute;
+    top: 12px;
+    left: 34px;
+}
+.glyphicon-chevron-down{
+    font-size:15px;
+}
+.input-group-addon-approx{
+    vertical-align: top;
+    border: none;
+    background: #ccd4e0;
+    width: 110px;
+    position: relative;
+}
+
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -38204,14 +38248,12 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   <td>{{ antigenName }}</td>
                   <td ng-repeat="sequence in event">
                     <div ng-if="sequence != null" class="input-group">
-                      <span class="input-group-addon">
-                        <label class="control control--checkbox">
-                          <input type="checkbox" ng-model="sequence._enabled" ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime &gt; $root.page.maxEventTime ? 'disabled' : null" value="1" name="tetanusImmunity" />
-                          <div class="control__indicator">
-                          </div>
-                        </label>
-                      </span>
-                      <input ng-disabled="!sequence._enabled" type="date" class="form-control" max="{{ $root.page.loadTime | date: 'yyyy-MM-dd'}}" ng-model="sequence.actTime" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
+                      <label class="control control--checkbox">
+                        <input type="checkbox" ng-model="sequence._enabled" ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime &gt; $root.page.maxEventTime ? 'disabled' : null" value="1" name="tetanusImmunity" />
+                        <div class="control__indicator control__indicator_alt">
+                        </div>
+                      </label>
+                      <input class="date-checkbox-control form-control" ng-disabled="!sequence._enabled" type="date" ng-model="sequence.actTime" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
                     </div>
                   </td>
                 </tr>
@@ -38473,7 +38515,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                   </span>
                 </span>
                 <span class="input-group-btn">
-                  <button type="button" class="btn btn-default" data-toggle="popover" title="{{ 'locale.patient.demographics.birthOrder' | i18n }}" data-content="{{ 'locale.patient.demographics.birthOrderHelp' | i18n }}">
+                  <button type="button" class="btn btn-default" data-placement="left" data-toggle="popover" title="{{ 'locale.patient.demographics.birthOrder' | i18n }}" data-content="{{ 'locale.patient.demographics.birthOrderHelp' | i18n }}">
                     <span class="glyphicon glyphicon-question-sign">
                     </span>
                   </button>
@@ -38490,8 +38532,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="oiz-demographics" xmlns:bind="http://openiz.org/applet/binding">
           <div class="form-group">
-            <label class="col-xs-2 control-label ng-cloak" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
-            <div class="col-xs-10">
+            <label class="col-xs-3 control-label ng-cloak" for="givenName">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+            <div class="col-xs-9">
               <div class="input-group">
                 <input type="text" name="givenName" id="givenName" class="tagEntry form-control" aria-describedby="givenNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Given" />
                 <span class="input-group-btn">
@@ -38504,8 +38546,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="form-group">
-            <label class="col-xs-2 control-label ng-cloak" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
-            <div class="col-xs-10">
+            <label class="col-xs-3 control-label ng-cloak" for="familyName">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+            <div class="col-xs-9">
               <div class="input-group">
                 <input type="text" name="familyName" id="familyName" class="tagEntry form-control" aria-describedby="familyNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
@@ -38518,15 +38560,17 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="form-group">
-            <label class="col-xs-2 control-label ng-cloak" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-            <div class="col-xs-10" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+            <label class="col-xs-3 control-label ng-cloak" for="dobInput">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+            <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
               <div class="input-group">
                 <input ng-readonly="patient.readonly.dateOfBirth" type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
-                <span class="input-group-addon">
-                  <input ng-readonly="patient.readonly.dateOfBirth" type="checkbox" name="approximateDob" ng-model="patient.dateOfBirthPrecision" value="1" />
-                  <label for="approximateDob" class="ng-cloak">
-                        {{ 'locale.patient.demographic.dob.fuzzy' | i18n }}
-                    </label>
+                <span class="input-group-addon input-group-addon-approx">
+                  <label for="approximateDob" class="control control--checkbox">
+                    <span class="approx-add-in">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span>
+                    <input type="checkbox" ng-model="patient.dateOfBirthPrecision" value="1" name="approximateDob" />
+                    <div class="control__indicator" style="top: 8px;">
+                    </div>
+                  </label>
                 </span>
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}">
@@ -38539,8 +38583,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="form-group" ng-if="patient.version">
-            <label class="col-xs-2 control-label ng-cloak" for="deathDate">{{ 'locale.patient.demographics.deceasedDate' | i18n }}</label>
-            <div class="col-xs-10">
+            <label class="col-xs-3 control-label ng-cloak" for="deathDate">{{ 'locale.patient.demographics.deceasedDate' | i18n }}</label>
+            <div class="col-xs-9">
               <div class="input-group">
                 <span class="input-group-addon">
                   <input type="checkbox" ng-model="patient.isDeceased" />
@@ -38563,8 +38607,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
             </div>
           </div>
           <div class="form-group">
-            <label class="col-xs-2 control-label ng-cloak" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-            <div class="col-xs-4" ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+            <label class="col-xs-3 control-label ng-cloak" for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+            <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
               <div class="input-group">
                 <select ng-disabled="patient.readonly.genderConcept" name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[{{ locale }}].value">
                 </select>
@@ -38615,7 +38659,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                     <span class="glyphicon glyphicon-remove">
                     </span>
                   </button>
-                  <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.identifier' | i18n }}" data-content="{{ 'locale.patient.demographics.identifier.help' | i18n }}">
+                  <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}">
                     <span class="glyphicon glyphicon-question-sign">
                     </span>
                   </button>
@@ -39548,7 +39592,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
         </view>
       </view>
       <content>
-        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+        <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="page-padding">
           <h3>{{ 'locale.debug.bugReport' | i18n }}</h3>
           <div class="alert alert-warning" ng-if="!$root.page.onlineState">
         {{ 'locale.action.onlineOnly' | i18n }}
