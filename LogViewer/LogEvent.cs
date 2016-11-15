@@ -41,6 +41,11 @@ namespace LogViewer
         public String Message { get; set; }
 
         /// <summary>
+        /// Log sequence
+        /// </summary>
+        public int Sequence { get; internal set; }
+
+        /// <summary>
         /// Load gzipped stream
         /// </summary>
         public static List<LogEvent> LoadGz(String filename)
@@ -65,7 +70,8 @@ namespace LogViewer
         public static List<LogEvent> Load(StreamReader stream)
         {
             Regex v1Regex = new Regex(@"^(.*)?(\s)?[\s][\[\<](.*?)[\]\>]\s\[(.*?)\]\s?:(.*)$"),
-             v2Regex = new Regex(@"^(.*)?@(.*)?\s[\[\<](.*)?[\>\]]\s\[(.*)?\]\:\s(.*)$");
+             v2Regex = new Regex(@"^(.*)?@(.*)?\s[\[\<](.*)?[\>\]]\s\[(.*)?\]\:\s(.*)$"),
+             server = new Regex(@"^([0-9\-\s\:APM]*)?:\s(.*)\s(Information|Warning|Error|Fatal):\s\d{1,10}\s:([0-9\-\s\:APM]*)??:(.*)$");
 
             List<LogEvent> retVal = new List<LogEvent>();
             LogEvent current = null;
@@ -81,11 +87,28 @@ namespace LogViewer
                     if (current != null) retVal.Add(current);
                     current = new LogEvent()
                     {
+                        Sequence = current?.Sequence + 1 ?? 0,
                         Source = match.Groups[1].Value,
                         Thread = match.Groups[2].Value,
                         Level = (EventLevel)Enum.Parse(typeof(EventLevel), match.Groups[3].Value),
                         Date = DateTime.Parse(match.Groups[4].Value),
                         Message = match.Groups[5].Value
+                    };
+                }
+                else if(server.IsMatch(line))
+                {
+                    if (current != null) retVal.Add(current);
+                    match = server.Match(line);
+                    current = new LogEvent()
+                    {
+                        Sequence = current?.Sequence + 1 ?? 0,
+                        Source = match.Groups[2].Value,
+                        Level = match.Groups[3].Value == "Information" ? EventLevel.Informational :
+                        match.Groups[3].Value == "Warning" ? EventLevel.Warning :
+                        match.Groups[3].Value == "Error" ? EventLevel.Error : EventLevel.Verbose,
+                        Date = DateTime.Parse(match.Groups[1].Value),
+                        Message = match.Groups[5].Value,
+                        Thread = ""
                     };
                 }
                 else if(current != null)

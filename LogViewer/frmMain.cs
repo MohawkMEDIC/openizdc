@@ -28,7 +28,7 @@ namespace LogViewer
 
             OpenFileDialog ofd = new OpenFileDialog()
             {
-                Filter = "Log Files (*.log)|*.log|Historical Log Files (*.log.*)|*.log.*|Compressed Log Files (*.log.gz)|*.log.gz",
+                Filter = "All Log Files|*.log;*.log.*;*.log*.gz|Log Files (*.log)|*.log|Historical Log Files (*.log.*)|*.log.*|Compressed Log Files (*.log.gz)|*.log*.gz",
                 Title = "Open Log File"
             };
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -48,6 +48,7 @@ namespace LogViewer
                 this.m_logEvent
                 .Where(items)
                 .Select(o => new ListViewItem(new String[] {
+                    o.Sequence.ToString(),
                     o.Level.ToString(),
                     o.Source,
                     o.Date.ToString("yyyy-MMM-dd HH:mm:ss"),
@@ -128,7 +129,7 @@ namespace LogViewer
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            this.Filter();
+            
         }
 
         private void cbxLevel_SelectedIndexChanged(object sender, EventArgs e)
@@ -147,7 +148,32 @@ namespace LogViewer
         {
             if(this.lsvEvents.SelectedItems.Count > 0)
             {
-                txtText.Text = lsvEvents.SelectedItems[0].SubItems[4].Text;
+                txtText.Text = $"Source: {lsvEvents.SelectedItems[0].SubItems[2].Text}\r\nLevel: {lsvEvents.SelectedItems[0].SubItems[1].Text}\r\n"+
+                    $"Date: {lsvEvents.SelectedItems[0].SubItems[3].Text}\r\nThread:{lsvEvents.SelectedItems[0].SubItems[4].Text}\r\nMessage:\r\n\r\n{lsvEvents.SelectedItems[0].SubItems[5].Text}";
+            }
+        }
+
+        private void txtSearch_Leave(object sender, EventArgs e)
+        {
+            this.Filter();
+        }
+
+        private void showCousinsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvEvents.SelectedItems.Count > 0)
+            {
+                var selSequence = Int32.Parse(lsvEvents.SelectedItems[0].SubItems[0].Text);
+                this.DrawList(o => Math.Abs(o.Sequence - selSequence) < 20);
+            }
+        }
+
+        private void showNeighboursOnSameThreadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvEvents.SelectedItems.Count > 0)
+            {
+                var selDate = DateTime.Parse(lsvEvents.SelectedItems[0].SubItems[3].Text);
+                var thread = lsvEvents.SelectedItems[0].SubItems[4].Text;
+                this.DrawList(o => Math.Abs((o.Date - selDate).TotalMilliseconds) < 1000 && o.Thread == thread);
             }
         }
     }

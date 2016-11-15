@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,6 +57,10 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.txtText = new System.Windows.Forms.TextBox();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showCousinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.colId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.showNeighboursOnSameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -67,6 +72,7 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -165,11 +171,13 @@
             // lsvEvents
             // 
             this.lsvEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colId,
             this.colLevel,
             this.colSource,
             this.colTime,
             this.colThread,
             this.colText});
+            this.lsvEvents.ContextMenuStrip = this.contextMenuStrip1;
             this.lsvEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lsvEvents.FullRowSelect = true;
             this.lsvEvents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -236,6 +244,7 @@
             this.txtSearch.AutoSize = false;
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(200, 31);
+            this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // toolStripSeparator1
@@ -320,6 +329,33 @@
             this.txtText.TabIndex = 1;
             this.txtText.WordWrap = false;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showCousinsToolStripMenuItem,
+            this.showNeighboursOnSameThreadToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(299, 97);
+            // 
+            // showCousinsToolStripMenuItem
+            // 
+            this.showCousinsToolStripMenuItem.Name = "showCousinsToolStripMenuItem";
+            this.showCousinsToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
+            this.showCousinsToolStripMenuItem.Text = "Show Neighbours";
+            this.showCousinsToolStripMenuItem.Click += new System.EventHandler(this.showCousinsToolStripMenuItem_Click);
+            // 
+            // colId
+            // 
+            this.colId.Text = "#";
+            // 
+            // showNeighboursOnSameThreadToolStripMenuItem
+            // 
+            this.showNeighboursOnSameThreadToolStripMenuItem.Name = "showNeighboursOnSameThreadToolStripMenuItem";
+            this.showNeighboursOnSameThreadToolStripMenuItem.Size = new System.Drawing.Size(298, 30);
+            this.showNeighboursOnSameThreadToolStripMenuItem.Text = "Show Thread Neighbours";
+            this.showNeighboursOnSameThreadToolStripMenuItem.Click += new System.EventHandler(this.showNeighboursOnSameThreadToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -347,6 +383,7 @@
             this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -382,6 +419,10 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.TextBox txtText;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem showCousinsToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader colId;
+        private System.Windows.Forms.ToolStripMenuItem showNeighboursOnSameThreadToolStripMenuItem;
     }
 }
 
