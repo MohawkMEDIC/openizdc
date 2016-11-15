@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
             this.m_dispatchThread.IsBackground = true;
             this.m_dispatchThread.Start();
 
-            this.WriteTrace(EventLevel.Informational, "Startup", "OpenIZ.Mobile.Core Version: {0} logging at level [{1}]", typeof(TraceWriter).Assembly.GetName().Version, filter);
+            this.WriteTrace(EventLevel.Informational, "Startup", "OpenIZ.Mobile.Core Version: {0} logging at level [{1}]", typeof(ApplicationContext).Assembly.GetName().Version, filter);
         }
 
         #region implemented abstract members of TraceWriter
@@ -100,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
         protected override void WriteTrace(System.Diagnostics.Tracing.EventLevel level, string source, string format, params object[] args)
         {
             lock(s_syncObject)
-                this.m_logBacklog.Enqueue(String.Format("{0} [{1}] [{2:o}]: {3}", source, level, DateTime.Now, String.Format(format, args)));
+                this.m_logBacklog.Enqueue(String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args)));
 
             lock (this.m_logBacklog)
                 Monitor.Pulse(this.m_logBacklog);

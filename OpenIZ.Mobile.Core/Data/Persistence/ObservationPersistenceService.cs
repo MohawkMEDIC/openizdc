@@ -89,12 +89,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var updated = base.Update(context, data);
 
             // Not pure observation
-            if (data.GetType() != typeof(Observation))
-            {
-                var dbobservation = context.Get<DbObservation>(data.Key?.ToByteArray());
-                dbobservation.InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray();
-                context.Update(dbobservation);
-            }
+            var dbobservation = context.Get<DbObservation>(data.Key?.ToByteArray());
+            dbobservation.InterpretationConceptUuid = data.InterpretationConceptKey?.ToByteArray();
+            context.Update(dbobservation);
             return updated;
         }
     }

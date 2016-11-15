@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDescription ("OpenIZ Disconnected Client for Android")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("Mohawk College of Applied Arts and Technology")]
-[assembly: AssemblyProduct ("Open Immunize")]
+[assembly: AssemblyProduct ("Open Immunize Disconnected Client")]
 [assembly: AssemblyCopyright ("2016")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]

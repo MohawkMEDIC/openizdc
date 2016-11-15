@@ -27,8 +27,8 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDescription ("OpenIZ Mobile Core Functions")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
-[assembly: AssemblyProduct("Open Immunize")]
-[assembly: AssemblyCopyright ("2015-2016")]
+[assembly: AssemblyProduct("Open Immunize Disconnected Client")]
+[assembly: AssemblyCopyright ("Copyright (C) 2015-2016")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
