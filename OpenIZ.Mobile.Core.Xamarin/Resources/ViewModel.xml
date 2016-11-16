@@ -166,7 +166,6 @@
   <type type="Act" all="true">
     
     <property name="classConceptModel" behavior="never"/>
-    <property name="classConcept" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     
