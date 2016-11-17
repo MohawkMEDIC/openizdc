@@ -10,6 +10,31 @@ fieldset{
     margin-right:30px;
     margin: 0 30px 0 0 !important;
 }
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+    background-color: #146396;
+    border-color: #146396;
+}
+.nav-tabs>li>a:hover {
+    border-color: #146396;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    text-decoration: none;
+    background-color: #146396;
+}
+
+.dropdown-menu > li > a {
+    padding:20px;
+}
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+    background-color: #146396;
+    background-image: -webkit-linear-gradient(top, #007fd1 0%, #146396 100%);
+    background-image: -o-linear-gradient(top, #007fd1 0%, #146396 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#007fd1), to(#146396));
+    background-image: linear-gradient(to bottom, #007fd1 0%, #146396 100%);
+}
+
 .patient-panel small { color: #fff }
 .glyphicon-question-sign:before {
     content: "\e086";
@@ -34,7 +59,7 @@ fieldset{
     background: #ebeff5;
     border: none;
     padding: 12px 10px;
-    font-size: 20px;
+    font-size: 18px;
     min-height:52px;
 }
 .tokenfield{
@@ -73,7 +98,7 @@ fieldset{
     background: #ebeff5;
     border: none;
     padding: 12px 10px;
-    font-size: 20px;
+    font-size: 18px;
     height: 52px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -280,6 +305,7 @@ a.not-active {
 .panel-title a{
     text-decoration:none;
     display: block;
+    margin: -20px;
 }
 .label{
     border-radius: 12px;
@@ -343,6 +369,9 @@ body{
 .padding-10{
     padding:10px;
 }
+.padding-left-30{
+    padding-left: 30px;
+}
 .margin-left-100{
     margin-left:100px;
 }
@@ -353,7 +382,11 @@ body{
     padding-top: 9px;
     padding-bottom: 9px;
 }
-
+.domicle-marker{
+        position: absolute;
+    left: 12px;
+    top: 4px;
+}
 .navbar-brand-img {
     position: absolute;
     left: 15px;
@@ -389,7 +422,7 @@ body{
     width:100%;
 }
 .nav-tabs-fixed-content{
-    padding-top:210px;
+    padding-top:200px;
 }
 .button-icon{
     width: 25px;
@@ -462,18 +495,23 @@ body{
     border-left: solid 2px;
     padding-left: 5px;
 }
-
+@media screen and (max-width: 605px){
+    .nav-tabs>li>a {
+        padding:18px;
+        font-size:13px;
+    }
+}
 
 /**Celendar edits*/
-.fc-left{
+.fc-left,.fc-right{
     float:none !important;
 }
 
-.fc-left .fc-button-group{
+.fc-left .fc-button-group, .fc-right .fc-button-group{
     width:100% !important;
 }
 
-.fc-left .fc-button-group .fc-button{
+.fc-left .fc-button-group .fc-button, .fc-right .fc-button-group .fc-button{
     width: 33% !important;
     background: #c7ceda;
     border-radius: 0;

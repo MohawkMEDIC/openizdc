@@ -4,8 +4,8 @@
     "mnemonic": "Act.CountStock"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
-  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "classConcept": "CA44A469-81D7-4484-9189-CA1D55AFECBC",
+  "statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
   "actTime": "{{now}}",
   "participation": {
     "Location": {
