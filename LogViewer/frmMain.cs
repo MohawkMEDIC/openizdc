@@ -51,7 +51,7 @@ namespace LogViewer
                     o.Sequence.ToString(),
                     o.Level.ToString(),
                     o.Source,
-                    o.Date.ToString("yyyy-MMM-dd HH:mm:ss"),
+                    o.Date.ToString("yyyy-MMM-dd HH:mm:ss.ffff"),
                     o.Thread,
                     o.Message
                 })).ToArray()

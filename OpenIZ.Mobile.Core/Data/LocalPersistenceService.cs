@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data
 
         private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
         private static Dictionary<Type, Object> s_idpInstances = new Dictionary<Type, object>(20);
-        private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
+        //private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
 
         /// <summary>
         /// Load specified associations
@@ -152,9 +152,9 @@ namespace OpenIZ.Mobile.Core.Data
 
             // First, is the object a concept?
             Guid meKey = Guid.Empty;
-            Concept conceptMe = me as Concept;
-            if (conceptMe != null && s_conceptDictionary.TryGetValue(conceptMe.Mnemonic, out meKey))
-                me.Key = meKey;
+            //Concept conceptMe = me as Concept;
+            //if (conceptMe != null && s_conceptDictionary.TryGetValue(conceptMe.Mnemonic, out meKey))
+            //    me.Key = meKey;
 
             // Have we already loaded the data provider?
             object idpInstance = null;
@@ -164,7 +164,8 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
                     idpInstance = ApplicationContext.Current.GetService(idpType);
-                    s_idpInstances.Add(me.GetType(), idpInstance);
+                    if(!s_idpInstances.ContainsKey(me.GetType()))
+                        s_idpInstances.Add(me.GetType(), idpInstance);
                 }
             }
             if (idpInstance == null) return null;
@@ -225,9 +226,9 @@ namespace OpenIZ.Mobile.Core.Data
             }
 
             // Add to concept dictionary
-            if (existing != null && conceptMe != null && !s_conceptDictionary.ContainsKey(conceptMe.Mnemonic))
-                lock (s_lock)
-                    s_conceptDictionary.Add(conceptMe.Mnemonic, conceptMe.Key.Value);
+            //if (existing != null && conceptMe != null && !s_conceptDictionary.ContainsKey(conceptMe.Mnemonic))
+            //    lock (s_lock)
+            //        s_conceptDictionary.Add(conceptMe.Mnemonic, conceptMe.Key.Value);
 
 #if PERFMON
             sw.Stop();

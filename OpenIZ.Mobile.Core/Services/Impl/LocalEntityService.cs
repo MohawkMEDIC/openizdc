@@ -75,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			return persistenceService.Query(query, offSet, count, out totalCount);
+			return persistenceService.Query(query, offSet, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>

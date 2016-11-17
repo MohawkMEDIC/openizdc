@@ -27,7 +27,7 @@
     <when evaluation="and">
       <!-- MR1 is not in their file yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
     </imsiExpression>
     </when>
@@ -94,12 +94,12 @@
     <when evaluation="and">
       <!-- MR 1 is in their file yet -->
       <imsiExpression negationIndicator="false">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
       </imsiExpression>
       <!-- MR 2 is not in their file yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
     </imsiExpression>
     </when>
@@ -156,9 +156,9 @@
 			      }
           ]]>
         </jsonModel>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="StartTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="ActTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-MR" propertyName="StopTime">Act.ActTime + new TimeSpan(281,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR" propertyName="StartTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR" propertyName="ActTime">Act.ActTime + new TimeSpan(274,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-MR" propertyName="StopTime">Act.ActTime + new TimeSpan(281,0,0,0)</assign>
       </action>
     </then>
   </rule>

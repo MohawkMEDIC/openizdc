@@ -25,7 +25,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -51,6 +51,9 @@
     </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.ViewModelSerializers">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.ViewModelSerializers.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>

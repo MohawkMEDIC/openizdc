@@ -20,6 +20,7 @@
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 
@@ -30,6 +31,10 @@ namespace OpenIZ.Mobile.Core.Security
 	/// </summary>
 	public class LocalPolicyDecisionService : IPolicyDecisionService
 	{
+
+        // Policy cache
+        private Dictionary<String, Dictionary<String, PolicyGrantType>> m_policyCache = new Dictionary<string, Dictionary<string, PolicyGrantType>>();
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Security.PolicyDecisionService"/> class.
 		/// </summary>
@@ -71,6 +76,9 @@ namespace OpenIZ.Mobile.Core.Security
 		/// </summary>
 		public PolicyGrantType GetPolicyOutcome(IPrincipal principal, string policyId)
 		{
+            Dictionary<String, PolicyGrantType> grants = null;
+            PolicyGrantType rule;
+
 			if (principal == null)
 			{
 				throw new ArgumentNullException(nameof(principal));
@@ -79,49 +87,71 @@ namespace OpenIZ.Mobile.Core.Security
 			{
 				throw new ArgumentNullException(nameof(policyId));
 			}
+            else if(this.m_policyCache.TryGetValue(principal.Identity.Name, out grants) &&
+                grants.TryGetValue(policyId, out rule))
+            {
+                return rule;
+            }
 
-			// Can we make this decision based on the claims?
-			if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId))
-			{
-				return PolicyGrantType.Grant;
-			}
+            // Can we make this decision based on the claims?
+            if (principal is ClaimsPrincipal && (principal as ClaimsPrincipal).HasClaim(c => c.Type == ClaimTypes.OpenIzGrantedPolicyClaim && c.Value == policyId))
+            {
+                rule = PolicyGrantType.Grant;
+            }
+            else
+            {
+                // Get the user object from the principal
+                var pip = ApplicationContext.Current.PolicyInformationService;
 
-			// Get the user object from the principal
-			var pip = ApplicationContext.Current.PolicyInformationService;
+                // Policies
+                var activePolicies = pip.GetActivePolicies(principal).Where(o => policyId == o.Policy.Oid || policyId.StartsWith(String.Format("{0}.", o.Policy.Oid)));
 
-			// Policies
-			var activePolicies = pip.GetActivePolicies(principal).Where(o => policyId == o.Policy.Oid || policyId.StartsWith(String.Format("{0}.", o.Policy.Oid)));
+                // Most restrictive
+                IPolicyInstance policyInstance = null;
 
-			// Most restrictive
-			IPolicyInstance policyInstance = null;
+                foreach (var pol in activePolicies)
+                {
+                    if (policyInstance == null)
+                    {
+                        policyInstance = pol;
+                    }
+                    else if (pol.Rule < policyInstance.Rule)
+                    {
+                        policyInstance = pol;
+                    }
+                }
 
-			foreach (var pol in activePolicies)
-			{
-				if (policyInstance == null)
-				{
-					policyInstance = pol;
-				}
-				else if (pol.Rule < policyInstance.Rule)
-				{
-					policyInstance = pol;
-				}
-			}
+                if (policyInstance == null)
+                {
+                    // TODO: Configure OptIn or OptOut
+                    rule = PolicyGrantType.Deny;
+                }
+                else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyGrantType.Elevate)
+                {
+                    rule = PolicyGrantType.Deny;
+                }
+                else if (!policyInstance.Policy.IsActive)
+                {
+                    rule = PolicyGrantType.Grant;
+                }
+                else
+                    rule = policyInstance.Rule;
+                
+            } // db lookup
 
-			if (policyInstance == null)
-			{
-				// TODO: Configure OptIn or OptOut
-				return PolicyGrantType.Deny;
-			}
-			else if (!policyInstance.Policy.CanOverride && policyInstance.Rule == PolicyGrantType.Elevate)
-			{
-				return PolicyGrantType.Deny;
-			}
-			else if (!policyInstance.Policy.IsActive)
-			{
-				return PolicyGrantType.Grant;
-			}
+            // Add to local policy cache
+            lock (this.m_policyCache)
+            {
 
-			return policyInstance.Rule;
-		}
+                if (!this.m_policyCache.ContainsKey(principal.Identity.Name))
+                {
+                    grants = new Dictionary<string, PolicyGrantType>();
+                    this.m_policyCache.Add(principal.Identity.Name, grants);
+                }
+                if (!grants.ContainsKey(policyId))
+                    grants.Add(policyId, rule);
+            }
+            return rule;
+        }
 	}
 }

@@ -26,7 +26,7 @@
   <rule id="BCG">
     <when evaluation="and">
       <!-- Patient does not have BCG -->
-      <imsiExpression negationIndicator="true">participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-BCG</imsiExpression>
+      <imsiExpression negationIndicator="true">participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-BCG</imsiExpression>
     </when>
     <then>
       <action>
@@ -62,7 +62,8 @@
                     "id" : "ED144BD2-A334-40A2-9A8F-B767A1397D07",
                     "typeConceptModel": {
                       "id" : "19afe679-ef94-48b4-9d6a-3c9827c4c8e2",
-                      "mnemonic": "VaccineType-BCG"
+                      "mnemonic": "VaccineType-BCG",
+                      "name": { "en" : "BCG" }
                     },
 						        "name": {
 							        "OfficialRecord": {

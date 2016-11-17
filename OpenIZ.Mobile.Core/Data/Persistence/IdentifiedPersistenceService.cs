@@ -34,6 +34,7 @@ using OpenIZ.Core.Services;
 using System.Diagnostics;
 using System.Reflection;
 using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Caching;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -45,6 +46,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         where TDomain : DbIdentified, new()
     {
 
+        // Query persistence
+        private IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<IQueryPersistenceService>();
 
         #region implemented abstract members of LocalDataPersistenceService
         /// <summary>
@@ -123,16 +126,29 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public override System.Collections.Generic.IEnumerable<TModel> Query(SQLiteConnectionWithLock context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults)
+        public override System.Collections.Generic.IEnumerable<TModel> Query(SQLiteConnectionWithLock context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults, Guid queryId)
         {
+
+            // Query has been registered?
+            if (this.m_queryPersistence?.IsRegistered(queryId) == true)
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
+                return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p)).ToList();
+            }
+
             var domainQuery = m_mapper.MapModelExpression<TModel, TDomain>(query);
             var retVal = context.Table<TDomain>().Where(domainQuery);
+
             // Total count
             totalResults = retVal.Count();
+
             // Skip
             retVal = retVal.Skip(offset);
             if (count > 0)
                 retVal = retVal.Take(count);
+
+            if (queryId != Guid.Empty)
+                this.m_queryPersistence?.RegisterQuerySet(queryId, retVal.Select(o => o.Key), query);
 
             var domainList = retVal.ToList();
 
@@ -144,6 +160,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context, bool loadFast)
         {
+            if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
                 cacheItem = this.ToModelInstance(o, context, loadFast);
@@ -157,8 +174,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="query">Query.</param>
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
-        public override IEnumerable<TModel> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
+        public override IEnumerable<TModel> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
         {
+
+
+            // Query has been registered?
+            if (this.m_queryPersistence.IsRegistered(queryId))
+            {
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
+                return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p));
+            }
 
             // Build a query
             StringBuilder sb = new StringBuilder();
@@ -282,36 +307,51 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             else
                 sb.Append(" ORDER BY uuid ASC ");
 
-            // First get total results before we reduce the result-set size
-            totalResults = context.ExecuteScalar<Int32>(String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray());
-            if (count >= 0)
-                sb.AppendFormat("LIMIT {0} ", count);
-            if (offset > 0)
-                sb.AppendFormat("OFFSET {0}", offset);
-
-            sb.Append(";");
-
-            // Log
 #if DEBUG
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             this.m_tracer.TraceVerbose("EXECUTE: {0}", sb);
             foreach (var v in vals)
                 this.m_tracer.TraceVerbose(" --> {0}", v is byte[] ? BitConverter.ToString(v as Byte[]).Replace("-", "") : v);
 #endif
 
+            // First get total results before we reduce the result-set size
+            var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray()).ToList();
 
-#if DEBUG
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-            var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray());
+            if(queryId != Guid.Empty)
+                this.m_queryPersistence.RegisterQuerySet(queryId, retVal.Select(o => o.Key), parms);
+
+            // Retrieve the results
+            totalResults = retVal.Count();
+
 #if DEBUG
             sw.Stop();
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
             //totalResults = retVal.Count;
-            return retVal.Select(o => this.CacheConvert(o, context, count != 1)).ToList();
+            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context, true)).ToList();
         }
 
+        /// <summary>
+        /// Get the specified data element
+        /// </summary>
+        internal override TModel Get(SQLiteConnectionWithLock context, Guid key)
+        {
+            var existing = MemoryCache.Current.TryGetEntry(typeof(TModel), key);
+            if (existing != null)
+                return existing as TModel;
+
+            // Get from the database
+            try
+            {
+                var kuuid = key.ToByteArray();
+                return this.CacheConvert(context.Table<TDomain>().Where(o=>o.Uuid == kuuid).FirstOrDefault(), context, true);
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
 
         /// <summary>
         /// Update associated version items

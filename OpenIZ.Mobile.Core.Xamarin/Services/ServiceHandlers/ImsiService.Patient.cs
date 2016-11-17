@@ -27,7 +27,6 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
-using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
@@ -76,7 +75,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
-                patient = patient.LoadDisplayProperties().LoadImmediateRelations();
                 return patient;
             }
             else
@@ -117,12 +115,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 }
 
                 // Serialize the response
-                var itms = retVal.OfType<Patient>().Select(o => o.LoadDisplayProperties().LoadImmediateRelations());
                 return new Bundle()
                 {
-                    Item = itms.OfType<IdentifiedData>().ToList(),
+                    Item = retVal.OfType<IdentifiedData>().ToList(),
                     Offset = offset,
-                    Count = itms.Count(),
+                    Count = retVal.Count(),
                     TotalResults = totalResults
                 };
             }

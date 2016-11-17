@@ -593,7 +593,9 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZModel.ConceptName} name The concept name to be rendered
          */
         renderConceptName: function (name) {
-            if (typeof (name) == "String") return name;
+            if (name == null)
+                return "";
+            else if (typeof (name) == "String") return name;
             else if (name[OpenIZ.Localization.getLocale()] != null)
                 return name[OpenIZ.Localization.getLocale()];
             else

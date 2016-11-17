@@ -32,6 +32,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Reflection;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Collections.Generic;
+using OpenIZ.Core.Model.Constants;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -52,9 +53,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Bundle CreatePlan([RestMessage(RestMessageFormat.SimpleJson)]Patient p)
         {
             // Additional instructions?
+            this.m_tracer.TraceInfo(">>>> CALCULATING CARE PLAN ");
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Act>(search);
 
+            if(search.ContainsKey("_patientId"))
+            {
+                var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty);
+            }
+            if(p.Participations.Count == 0)
+            {
+                var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+                int tr = 0;
+                IEnumerable<Act> acts = null;
+                if (actService is IPersistableQueryProvider && search.ContainsKey("_state"))
+                    acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, Guid.Parse(search["_state"][0]));
+                else
+                    acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
+
+                p.Participations = acts.Select(a=>new ActParticipation(ActParticipationKey.RecordTarget, p) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
+
+            }
             var protocolService = ApplicationContext.Current.GetService<ICarePlanService>();
             Stopwatch sw = new Stopwatch();
             sw.Start();

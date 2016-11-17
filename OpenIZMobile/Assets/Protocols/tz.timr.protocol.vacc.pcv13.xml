@@ -27,7 +27,7 @@
     <when evaluation="and">
       <!-- PCV1 is not in their file yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
       </imsiExpression>
     </when>
@@ -95,12 +95,12 @@
     <when evaluation="and">
       <!-- PCV 1 is in their file yet -->
       <imsiExpression negationIndicator="false">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
     </imsiExpression>
       <!-- PCV 2 is not in their file yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
       </imsiExpression>
     </when>
@@ -157,9 +157,9 @@
 			      }
           ]]>
         </jsonModel>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
       </action>
     </then>
   </rule>
@@ -167,12 +167,12 @@
     <when evaluation="and">
       <!-- PCV 2 is in their file yet -->
       <imsiExpression negationIndicator="false">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
       </imsiExpression>
       <!-- PCV 3 is not in their file yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=3
       </imsiExpression>
     </when>
@@ -229,9 +229,9 @@
 			      }
           ]]>
         </jsonModel>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-PCV13" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
       </action>
     </then>
   </rule>

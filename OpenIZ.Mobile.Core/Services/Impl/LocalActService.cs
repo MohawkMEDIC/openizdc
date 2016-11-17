@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-17
  */
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
@@ -30,18 +31,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActService : IActRepositoryService
+	public class LocalActService : IActRepositoryService, IPersistableQueryProvider
 	{
 		/// <summary>
 		/// Finds acts based on a specific query.
 		/// </summary>
 		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
-			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
-			if (persistenceService == null)
-				throw new InvalidOperationException("No concept persistence service found");
-
-			return persistenceService.Query(filter, offset, count, out totalResults);
+            return this.Query(filter, offset, count, out totalResults, Guid.Empty);
 		}
 
 		/// <summary>
@@ -96,12 +93,24 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Obsolete(act);
 		}
 
-		/// <summary>
-		/// Insert or update the specified act
-		/// </summary>
-		/// <param name="act"></param>
-		/// <returns></returns>
-		public TAct Save<TAct>(TAct act) where TAct : Act
+        /// <summary>
+        /// Queries the Act service using the specified state query id
+        /// </summary>
+        public IEnumerable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+            if (persistenceService == null)
+                throw new InvalidOperationException("No concept persistence service found");
+
+            return persistenceService.Query(filter, offset, count, out totalResults, queryId);
+        }
+
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        public TAct Save<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 

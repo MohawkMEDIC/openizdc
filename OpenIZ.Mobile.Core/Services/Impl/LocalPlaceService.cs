@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
 			if (persistenceService == null)
 				throw new InvalidOperationException("No persistence service found");
-			return persistenceService.Query(predicate, offset, count, out totalCount);
+			return persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>

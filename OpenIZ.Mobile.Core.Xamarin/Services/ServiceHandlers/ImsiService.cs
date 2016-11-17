@@ -40,7 +40,6 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Model.Interfaces;
 using System.Linq.Expressions;
-using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using OpenIZ.Mobile.Core.Security;
 using System.Reflection;
@@ -96,7 +95,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["_id"].FirstOrDefault()));
                 var entityId = Guid.Parse(search["_id"].FirstOrDefault());
                 var entity = entityService.Get(entityId, Guid.Empty);
-                entity = entity.LoadDisplayProperties().LoadImmediateRelations();
                 return entity;
             }
             else
@@ -135,12 +133,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     }
 
                     // Serialize the response
-                    var itms = retVal.OfType<Entity>().Select(o => o.LoadDisplayProperties());
                     return new Bundle()
                     {
-                        Item = itms.OfType<IdentifiedData>().ToList(),
+                        Item = retVal.OfType<IdentifiedData>().ToList(),
                         Offset = offset,
-                        Count = itms.Count(),
+                        Count = retVal.Count(),
                         TotalResults = totalResults
                     };
                 }
@@ -166,7 +163,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = providerService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
-                provider = provider.LoadDisplayProperties().LoadImmediateRelations();
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);
                 return provider;
@@ -220,7 +216,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var manufacturedMaterialId = Guid.Parse(search["id"].FirstOrDefault());
                     var manufacturedMaterial = manufacturedMaterialService.GetManufacturedMaterial(manufacturedMaterialId, Guid.Empty);
 
-                    manufacturedMaterial = manufacturedMaterial.LoadDisplayProperties().LoadImmediateRelations();
+                    manufacturedMaterial = manufacturedMaterial;
 
                     if (manufacturedMaterial != null)
                     {
@@ -244,7 +240,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 // Serialize the response
                 bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
-                bundle.Item = manufacturedMaterials.Select(o => o.LoadDisplayProperties().LoadImmediateRelations()).OfType<IdentifiedData>().ToList();
+                bundle.Item = manufacturedMaterials.OfType<IdentifiedData>().ToList();
                 bundle.Offset = offset;
                 bundle.TotalResults = totalResults;
             }
@@ -271,7 +267,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = this.m_serializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
-            retVal.LoadImmediateRelations();
             // Delayload
             return retVal;
         }
@@ -288,7 +283,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = this.m_serializer.DeSerialize<Entity>(templateString);
             retVal.Key = Guid.NewGuid();
-            retVal.LoadImmediateRelations();
             //retVal.SetDelayLoad(true);
             return retVal;
         }
@@ -347,7 +341,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = securityService.GetUserEntity(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
-                provider = provider.LoadDisplayProperties().LoadImmediateRelations();
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);
                 return provider;
@@ -416,7 +409,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var placeService = ApplicationContext.Current.GetService<IPlaceRepositoryService>();
 
             if (search.ContainsKey("_id"))
-                return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty).LoadDisplayProperties().LoadImmediateRelations();
+                return placeService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
             else
             {
                 var predicate = QueryExpressionParser.BuildLinqExpression<Place>(search);
@@ -427,12 +420,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
                 var retVal = placeService.Find(predicate, offset, count, out totalResults);
 
-                // Serialize the response
-                var itms = retVal.OfType<Place>().Select(o => o.LoadDisplayProperties().LoadImmediateRelations());
-
                 return new Bundle()
                 {
-                    Item = itms.OfType<IdentifiedData>().ToList(),
+                    Item = retVal.OfType<IdentifiedData>().ToList(),
                     Offset = offset,
                     Count = count,
                     TotalResults = totalResults

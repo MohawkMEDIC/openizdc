@@ -34,7 +34,6 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.Constants;
 using System.Threading;
 using OpenIZ.Mobile.Core.Resources;
-using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Search
@@ -324,7 +323,7 @@ namespace OpenIZ.Mobile.Core.Search
                             {
 
                                 if (patientService == null) break;
-                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr);
+                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, Guid.Empty);
 
                                 // Index 
                                 entities.Select(e => this.IndexEntity(e)).ToList();

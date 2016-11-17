@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			if (persistenceService == null)
 				throw new InvalidOperationException("No concept persistence service found");
 
-			return persistenceService.Query(query, offset, count, out totalResults);
+			return persistenceService.Query(query, offset, count, out totalResults, Guid.Empty);
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			if (persistenceService == null)
 				throw new InvalidOperationException("No concept set persistence service found");
 
-			return persistenceService.Query(query, offset, count, out totalResults);
+			return persistenceService.Query(query, offset, count, out totalResults, Guid.Empty);
 		}
 
 		/// <summary>

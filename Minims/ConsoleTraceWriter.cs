@@ -19,7 +19,9 @@
  */
 using OpenIZ.Core.Diagnostics;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Threading;
 
 namespace Minims
 {
@@ -28,11 +30,28 @@ namespace Minims
     /// </summary>
     public class ConsoleTraceWriter : TraceWriter
     {
+        // Dispatch thread
+        private Thread m_dispatchThread = null;
+
+        // True when disposing
+        private bool m_disposing = false;
+        
+        // The log backlog
+        private Queue<KeyValuePair<ConsoleColor, String>> m_logBacklog = new Queue<KeyValuePair<ConsoleColor, string>>();
+
+        // Sync object
+        private static Object s_syncObject = new object();
+
         /// <summary>
         /// Console trace writer
         /// </summary>
         public ConsoleTraceWriter(EventLevel filter, string initializationData) : base(filter, initializationData)
         {
+            // Start log dispatch
+            this.m_dispatchThread = new Thread(this.LogDispatcherLoop);
+            this.m_dispatchThread.IsBackground = true;
+            this.m_dispatchThread.Start();
+
         }
 
         /// <summary>
@@ -40,25 +59,73 @@ namespace Minims
         /// </summary>
         protected override void WriteTrace(EventLevel level, string source, string format, params object[] args)
         {
+            ConsoleColor color = ConsoleColor.White;
             switch(level)
             {
                 case EventLevel.Verbose:
                     if (format.Contains("PERF"))
-                        Console.ForegroundColor = ConsoleColor.Green;
+                        color = ConsoleColor.Green;
                     else
-                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        color = ConsoleColor.Magenta;
                     break;
                 case EventLevel.Informational:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    color = ConsoleColor.Cyan;
                     break;
                 case EventLevel.Warning:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    color = ConsoleColor.Yellow;
                     break;
                 case EventLevel.Error:
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    color = ConsoleColor.Red;
                     break;
             }
-            Console.WriteLine("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args));
+
+            this.m_logBacklog.Enqueue(new KeyValuePair<ConsoleColor, String>(color, String.Format("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args))));
+
+            lock (this.m_logBacklog)
+                Monitor.Pulse(this.m_logBacklog);
+        }
+
+        private void LogDispatcherLoop()
+        {
+            while (true)
+            {
+                lock (this.m_logBacklog)
+                {
+                    try
+                    {
+                        if (this.m_disposing) return; // shutdown dispatch
+                        while (this.m_logBacklog.Count == 0)
+                            Monitor.Wait(this.m_logBacklog);
+                        if (this.m_disposing) return;
+
+                        while (this.m_logBacklog.Count > 0)
+                        {
+                            var dq = this.m_logBacklog.Dequeue();
+                            Console.ForegroundColor = dq.Key;
+                            Console.WriteLine(dq.Value);
+                        }
+                    }
+                    catch
+                    {
+                        ;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Dispose of the object
+        /// </summary>
+        public void Dispose()
+        {
+            if (this.m_dispatchThread != null)
+            {
+                this.m_disposing = true;
+                lock (this.m_logBacklog)
+                    Monitor.PulseAll(this.m_logBacklog);
+                this.m_dispatchThread.Join(); // Abort thread
+                this.m_dispatchThread = null;
+            }
         }
     }
 }

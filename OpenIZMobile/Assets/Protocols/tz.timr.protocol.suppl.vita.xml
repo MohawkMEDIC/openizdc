@@ -27,7 +27,7 @@
     <when evaluation="and">
       <!-- Vitamin A not set yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=Supplement-VitaminA&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=Supplement-VitaminA&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=$index
       </imsiExpression>
       <linqExpression>index > 0</linqExpression>
@@ -66,7 +66,8 @@
                     "id" : "7D80E518-6E04-4091-8D19-7265BB09BC1F",
                     "typeConceptModel": {
                       "id" : "3023bad7-8c16-49ea-81fc-eee6232b80e7",
-                      "mnemonic": "Supplement-VitaminA"
+                      "mnemonic": "Supplement-VitaminA",
+                      "name": { "en" : "Vitamin A" }
                     },
 						        "name": {
 							        "OfficialRecord": [{

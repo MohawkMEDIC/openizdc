@@ -53,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 			if (pers == null)
 				throw new InvalidOperationException("Persistence service not found");
-			return pers.Query(expression, offset, count, out totalCount);
+			return pers.Query(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Material>)));
 			}
 
-			return persistenceService.Query(expression, offset, count, out totalCount);
+			return persistenceService.Query(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>

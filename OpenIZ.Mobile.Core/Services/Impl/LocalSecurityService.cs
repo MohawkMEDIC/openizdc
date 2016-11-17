@@ -21,7 +21,6 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Services;
-using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Synchronization;
 using System;
 using System.Collections.Generic;
@@ -171,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 			if (pers == null)
 				throw new InvalidOperationException("Missing role persistence service");
-			return pers.Query(query, offset, count, out total);
+			return pers.Query(query, offset, count, out total, Guid.Empty);
 		}
 
 		/// <summary>
@@ -193,7 +192,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Query(expression, offset, count, out totalCount);
+			return persistence.Query(expression, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -204,7 +203,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Query(expression, offset, offset, out totalCount);
+			return persistence.Query(expression, offset, offset, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>
@@ -224,7 +223,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>();
 			if (pers == null)
 				throw new InvalidOperationException("Missing persistence service");
-			return pers.Query(query, offset, count, out total);
+			return pers.Query(query, offset, count, out total, Guid.Empty);
 		}
 
 		public SecurityDevice GetDevice(Guid deviceId)
@@ -263,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             if (pers == null)
                 throw new InvalidOperationException("Missing persistence service");
             int tr = 0;
-            return pers.Query(u=>u.UserName == userName, 0, 1, out tr).FirstOrDefault();
+            return pers.Query(u=>u.UserName == userName, 0, 1, out tr, Guid.Empty).FirstOrDefault();
         }
 
         /// <summary>
@@ -285,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (pers == null)
 				throw new InvalidOperationException("Missing persistence service");
-			return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault()?.LoadImmediateRelations();
+			return pers.Query(o => o.SecurityUser.UserName == identity.Name).FirstOrDefault();
 		}
 
 		/// <summary>
@@ -296,7 +295,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Get(id).LoadImmediateRelations();
+			return persistence.Get(id);
 		}
 
 		/// <summary>

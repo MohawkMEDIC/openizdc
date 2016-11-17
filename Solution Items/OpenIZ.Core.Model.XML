@@ -766,6 +766,203 @@
             Packages the objects into a bundle
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1">
+            <summary>
+            Represents a collection of entities
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor">
+            <summary>
+            Entity collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Create simple assoc
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor(OpenIZ.Core.Model.Interfaces.IIdentifiedEntity)">
+            <summary>
+            Creates the specified entity collection in the specified context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Ensure">
+            <summary>
+            Perform a delay load on the entire collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.AsAlwaysLoad">
+            <summary>
+            Forces the associations to be loaded from database regardless of current state
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.GetLocked">
+            <summary>
+            Forces the associations to be loaded from database regardless of current state
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Refresh">
+            <summary>
+            Forces a refresh of the current associations
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IndexOf(`0)">
+            <summary>
+            Index of the specified item
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Insert(System.Int32,`0)">
+            <summary>
+            Insert an item at the specified index
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.RemoveAt(System.Int32)">
+            <summary>
+            Remove the objects at the specified data element
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Add(`0)">
+            <summary>
+            Adds the speciifed entity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Clear">
+            <summary>
+            Clear the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Contains(`0)">
+            <summary>
+            Return true if the array contains the list of objects
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.CopyTo(`0[],System.Int32)">
+            <summary>
+            Copy to the specified array
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Remove(`0)">
+            <summary>
+            Remove the specified item from the array
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.GetEnumerator">
+            <summary>
+            Get the specified enumerator
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Get enumerator
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Item(System.Int32)">
+            <summary>
+            Gets the entity data at the specified source
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Count">
+            <summary>
+            Gets the count of data in the array
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsReadOnly">
+            <summary>
+            Returns true if the object is readonly 
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsFixedSize">
+            <summary>
+            True if list is fixed size
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsSynchronized">
+            <summary>
+            True if list is synchronized
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.SyncRoot">
+            <summary>
+            Gets the synchronization root
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.System#Collections#IList#Item(System.Int32)">
+            <summary>
+            Get the item as an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.RemoveAll(System.Func{`0,System.Boolean})">
+            <summary>
+            Remove all elements matching the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Add(System.Object)">
+            <summary>
+            Add this object 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Contains(System.Object)">
+            <summary>
+            Contains
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IndexOf(System.Object)">
+            <summary>
+            Index of value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Insert(System.Int32,System.Object)">
+            <summary>
+            Insert the specified object at the specified index
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Remove(System.Object)">
+            <summary>
+            Remove the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copy the specified data to an array
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.SimpleAssociationCollection{`0}">
+            <summary>
+            Creates a new simple association from the specified list
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1">
+            <summary>
+            Represents a collection of entities
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor">
+            <summary>
+            Entity collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Entity collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor(OpenIZ.Core.Model.Interfaces.IVersionedEntity)">
+            <summary>
+            Creates the specified entity collection in the specified context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.Ensure">
+            <summary>
+            Perform a delay load on the entire collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.VersionedAssociationCollection{`0}">
+            <summary>
+            Creates a new simple association from the specified list
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActClassKeys">
             <summary>
             Represents a series of class keys for use on acts
@@ -2421,6 +2618,11 @@
         <member name="P:OpenIZ.Core.Model.DataTypes.ReferenceTermName.PhoneticAlgorithm">
             <summary>
             Gets or sets the phonetic algorithm
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.ReferenceTermName.SourceEntityKey">
+            <summary>
+            Gets the source entity key
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.Refresh">
@@ -4303,7 +4505,7 @@
         </member>
         <member name="P:OpenIZ.Core.Model.Security.SecurityApplication.Name">
             <summary>
-            Gets or sets the name of the security device/user/role/devie
+            Gets or sets the name of the security device/user/role/device.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Security.SecurityDevice">

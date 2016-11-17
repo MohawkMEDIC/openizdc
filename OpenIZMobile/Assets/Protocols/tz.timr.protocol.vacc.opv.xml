@@ -28,7 +28,7 @@
     <when evaluation="and">
       <!-- Does not have a recommendation for OPV-0 (Birth Dose) -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=0
       </imsiExpression>
     </when>
@@ -67,7 +67,8 @@
                     "id" : "790be5ca-d07d-46c6-8fa0-9d4f5adf388c",
                     "typeConceptModel": {
                       "id" : "c7f4980b-e338-4363-83f7-2b3d38933e7e",
-                      "mnemonic": "VaccineType-OPV"
+                      "mnemonic": "VaccineType-OPV",
+                      "name": { "en" : "OPV" }
                     },
 						        "name": {
 							        "OfficialRecord": [{
@@ -99,7 +100,7 @@
     <when evaluation="and">
       <!-- Does not have a recommendation for OPV-1 -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
     </imsiExpression>
     </when>
@@ -137,7 +138,8 @@
                     "id" : "790be5ca-d07d-46c6-8fa0-9d4f5adf388c",
                     "typeConceptModel": {
                       "id" : "c7f4980b-e338-4363-83f7-2b3d38933e7e",
-                      "mnemonic": "VaccineType-OPV"
+                      "mnemonic": "VaccineType-OPV",
+                      "name": { "en" : "OPV" }
                     },
 						        "name": {
 							        "OfficialRecord": [{
@@ -167,12 +169,12 @@
     <when evaluation="and">
       <!-- Does not have a recommendation for OPV-2 -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
     </imsiExpression>
       <!-- DOES HAVE OPV1 -->
       <imsiExpression>
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=1
     </imsiExpression>
     </when>
@@ -210,7 +212,8 @@
                     "id" : "790be5ca-d07d-46c6-8fa0-9d4f5adf388c",
                     "typeConceptModel": {
                       "id" : "c7f4980b-e338-4363-83f7-2b3d38933e7e",
-                      "mnemonic": "VaccineType-OPV"
+                      "mnemonic": "VaccineType-OPV",
+                      "name": { "en" : "OPV" }
                     },
 						        "name": {
 							        "OfficialRecord": [{
@@ -230,9 +233,9 @@
 			      }
             ]]>
         </jsonModel>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=1&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
       </action>
     </then>
   </rule>
@@ -241,12 +244,12 @@
     <when evaluation="and">
       <!-- Does not have a recommendation for OPV-3 -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=3
     </imsiExpression>
       <!-- DOES HAVE OPV2 -->
       <imsiExpression>
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV&amp;
       participation[RecordTarget].source@SubstanceAdministration.doseSequence=2
     </imsiExpression>
     </when>
@@ -284,7 +287,8 @@
                     "id" : "790be5ca-d07d-46c6-8fa0-9d4f5adf388c",
                     "typeConceptModel": {
                       "id" : "c7f4980b-e338-4363-83f7-2b3d38933e7e",
-                      "mnemonic": "VaccineType-OPV"
+                      "mnemonic": "VaccineType-OPV",
+                      "name": { "en" : "OPV" }
                     },
 						        "name": {
 							        "OfficialRecord": [{
@@ -304,9 +308,9 @@
 			      }
             ]]>
         </jsonModel>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
-        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept.mnemonic=VaccineType-OPV" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="StartTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="ActTime">Act.ActTime + new TimeSpan(4 * 7,0,0,0)</assign>
+        <assign scope="Participations" where="participationRole.mnemonic=RecordTarget&amp;source.classConcept=932A3C7E-AD77-450A-8A1F-030FC2855450&amp;source@SubstanceAdministration.doseSequence=2&amp;source.participation[Product].player.typeConcept?.mnemonic=VaccineType-OPV" propertyName="StopTime">Act.ActTime + new TimeSpan(5 * 7,0,0,0)</assign>
       </action>
     </then>
   </rule>

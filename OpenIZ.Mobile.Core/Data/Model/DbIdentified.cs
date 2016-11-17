@@ -31,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 	/// <summary>
 	/// Represents data that is identified in some way
 	/// </summary>
-	public abstract class DbIdentified
+	public class DbIdentified
 	{
 
 		/// <summary>

@@ -96,12 +96,12 @@ namespace OpenIZ.Mobile.Core.Caching
                  // Seed the cache
                  try
                  {
-                     //this.m_tracer.TraceInfo("Loading concept dictionary ...");
-                     ////ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
+                     this.m_tracer.TraceInfo("Loading concept dictionary ...");
+                     //ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
                      //ApplicationContext.Current.GetService<IDataPersistenceService<IdentifierType>>().Query(q => true);
                      //ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Query(q => true);
-                     //// Seed cache
-                     //this.m_tracer.TraceInfo("Loading materials dictionary...");
+                     // Seed cache
+                     this.m_tracer.TraceInfo("Loading materials dictionary...");
                      //ApplicationContext.Current.GetService<IDataPersistenceService<Material>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
                      //ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>().Query(q => q.StatusConceptKey == StatusKeys.Active);
 

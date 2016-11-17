@@ -27,7 +27,7 @@
     <when evaluation="and">
       <!-- Vitamin A not set yet -->
       <imsiExpression negationIndicator="true">
-        participation[RecordTarget].source.participation[Product].player.typeConcept.mnemonic=Supplement-Mebendazole&amp;
+        participation[RecordTarget].source.participation[Product].player.typeConcept?.mnemonic=Supplement-Mebendazole&amp;
         participation[RecordTarget].source@SubstanceAdministration.doseSequence=$index
       </imsiExpression>
       <linqExpression>index>1</linqExpression>
@@ -66,7 +66,8 @@
                     "id" : "7D80E518-6E04-4091-8D19-7A3BB2B32C1F",
                     "typeConceptModel": {
                       "id" : "1ee21592-da84-4253-a65f-84681aeae1b6",
-                      "mnemonic": "Supplement-Mebendazole"
+                      "mnemonic": "Supplement-Mebendazole",
+                      "name": { "en" : "Mebendazole" }
                     },
 						        "name": {
 							        "OfficialRecord": [{

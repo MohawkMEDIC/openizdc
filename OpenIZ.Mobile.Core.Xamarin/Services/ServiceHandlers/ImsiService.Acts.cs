@@ -23,7 +23,6 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
-using OpenIZ.Mobile.Core.Extensions;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
@@ -71,23 +70,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Act), Guid.Parse(search["_id"].FirstOrDefault()));
                 var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
-                act = act.LoadDisplayProperties();
                 return act;
             }
             else
             {
+
+                var queryId = search.ContainsKey("_state") ? Guid.Parse(search["_state"][0]) : Guid.NewGuid();
+
                 int totalResults = 0,
                        offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                        count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-                var results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
+                IEnumerable<Act> results = null;
+                if (actRepositoryService is IPersistableQueryProvider)
+                {
+                    results = (actRepositoryService as IPersistableQueryProvider).Query<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
+                }
+                else
+                {
+                    results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
+                }
 
-                results = results.Select(a => a.LoadDisplayProperties()); //.LoadImmediateRelations());
-                results.Select(a => a).ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
+                results.ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
 
                 // 
                 return new Bundle
                 {
+                    Key = queryId,
                     Count = results.Count(),
                     Item = results.OfType<IdentifiedData>().ToList(),
                     Offset = 0,

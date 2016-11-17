@@ -77,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			return persistenceService.Query(predicate, offset, count, out totalCount);
+			return persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
 		}
 
 		/// <summary>

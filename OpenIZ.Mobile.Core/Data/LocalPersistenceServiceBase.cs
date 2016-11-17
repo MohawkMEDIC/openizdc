@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Data
     {
 
         // Get tracer
-        protected Tracer m_tracer = Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
+        protected Tracer m_tracer; //= Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
 
         // Configuration
         protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
@@ -65,6 +65,10 @@ namespace OpenIZ.Mobile.Core.Data
             m_mapper = LocalPersistenceService.Mapper;
         }
 
+        public LocalPersistenceServiceBase()
+        {
+            this.m_tracer = Tracer.GetTracer(this.GetType());
+        }
         #region IDataPersistenceService implementation
         /// <summary>
         /// Occurs when inserted.
@@ -304,7 +308,8 @@ namespace OpenIZ.Mobile.Core.Data
             if (existing != null)
                 return existing as TData;
             int toss = 0;
-            return this.Query(o => o.Key == key, 0, 1, out toss)?.SingleOrDefault();
+            this.m_tracer.TraceInfo("GET: {0}", key);
+            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -314,14 +319,14 @@ namespace OpenIZ.Mobile.Core.Data
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
-            return this.Query(query, 0, null, out totalResults);
+            return this.Query(query, 0, null, out totalResults, Guid.Empty);
         }
 
         /// <summary>
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults)
+        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -347,7 +352,7 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-                    var results = this.Query(connection, query, offset, count ?? -1, out totalResults);
+                    var results = this.Query(connection, query, offset, count ?? -1, out totalResults, queryId);
 
                     var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
                     this.Queried?.Invoke(this, postData);
@@ -386,7 +391,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                     }
                     // Query
-                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults);
+                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
                 }
                 catch (Exception e)
                 {
@@ -410,7 +415,7 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms)
         {
             int totalResults = 0;
-            return this.Query(storedQueryName, parms, 0, null, out totalResults);
+            return this.Query(storedQueryName, parms, 0, null, out totalResults, Guid.Empty);
         }
 
         /// <summary>
@@ -419,14 +424,14 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual int Count(Expression<Func<TData, bool>> query)
         {
             var tr = 0;
-            this.Query(query, 0, null, out tr);
+            this.Query(query, 0, null, out tr, Guid.Empty);
             return tr;
         }
 
         /// <summary>
         /// Query this instance.
         /// </summary>
-        public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults)
+        public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults, Guid queryId)
         {
 
             if (String.IsNullOrEmpty(storedQueryName))
@@ -451,7 +456,7 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-                    var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
+                    var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId).ToList();
 
                     var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
                     this.Queried?.Invoke(this, postArgs);
@@ -529,13 +534,13 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId);
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId);
 
         /// <summary>
         /// Query internal without caring about limiting
@@ -546,20 +551,20 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> expr)
         {
             int t;
-            return this.Query(context, expr, 0, -1, out t);
+            return this.Query(context, expr, 0, -1, out t, Guid.Empty);
         }
 
         /// <summary>
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        internal TData Get(SQLiteConnectionWithLock context, Guid key)
+        internal virtual TData Get(SQLiteConnectionWithLock context, Guid key)
         {
             int totalResults = 0;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
-            return this.Query(context, o => o.Key == key, 0, 1, out totalResults)?.SingleOrDefault();
+            return this.Query(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty)?.SingleOrDefault();
         }
 
         /// <summary>

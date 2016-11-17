@@ -61,7 +61,7 @@
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
-    
+    <property name="typeConceptModel" behavior="always" ref="Concept"/>
     <property name="relationship" all="true">
       <property name="*" all="true">
         <property name="targetModel" all="true"/>
@@ -112,7 +112,7 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
-    <property name="typeConceptModel" behavior="never"/>
+    <property name="typeConceptModel" behavior="always"/>
     <property name="relationship" all="true">
       <property name="*" all="true">
         <property name="targetModel" all="true">
@@ -141,7 +141,7 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
-
+    <property name="typeConceptModel" behavior="always"/>
     <property name="relationship" all="true">
       <property name="Parent" all="true">
         <property name="targetModel" all="true">
@@ -169,7 +169,8 @@
     <property name="classConcept" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
-    
+    <property name="typeConceptModel" behavior="always" ref="Concept">
+    </property>
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="relationshipTypeModel" behavior="never"/>
@@ -189,7 +190,7 @@
     <property name="participation" all="true" behavior="always">
       <property name="RecordTarget" all="true">
         <property name="participationRoleModel" behavior="never"/>
-        <property name="playerModel" all="false" behavior="always">
+        <property name="playerModel" all="false" behavior="never">
           <property name="id"/>
           <property name="version"/>
           <property name="identifier" all="true"/>
@@ -207,9 +208,9 @@
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
-
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
           <property name="identifier" all="true"/>
-          <property name="name" all="true"/>
+          <property name="name" all="true" behavior="always"/>
           <property name="tag" all="true"/>
           <property name="extension" all="true"/>
           <property name="participation" all="true">

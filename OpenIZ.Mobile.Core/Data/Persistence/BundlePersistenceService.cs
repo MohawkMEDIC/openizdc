@@ -39,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Cannot query for bundles
         /// </summary>
-        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults)
+        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults, Guid queryId)
         {
             totalResults = 0;
             return new List<Bundle>();
@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Connot query bundles
         /// </summary>
-        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
+        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
         {
             totalResults = 0;
             return new List<Bundle>();

@@ -104,6 +104,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
                 this.m_serializer = new JsonViewModelSerializer();
                 this.m_serializer.ViewModel = this.m_defaultViewModel;
+                this.m_serializer.LoadSerializerAssembly(typeof(OpenIZ.Core.Model.Json.Formatter.ActExtensionViewModelSerializer).Assembly);
 
                 // Scan for services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
@@ -126,7 +127,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                             Method = mi,
                                             FaultProvider = faultMethod,
                                             Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o=>o.PolicyId).ToList(),
-                                            Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null
+                                            Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null,
+                                            Parameters = mi.GetParameters()
                                         });
 
                             }
@@ -228,6 +230,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
                                 AuthenticationContext.Current = new AuthenticationContext(session);
+                        this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
                     }
                 }
 
@@ -246,6 +249,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     throw new UnauthorizedAccessException();
                                 else
                                     AuthenticationContext.Current = new AuthenticationContext(principal);
+                                this.m_tracer.TraceVerbose("Performed BASIC auth for {0}", AuthenticationContext.Current.Principal.Identity.Name);
+
                                 break;
                             }
                     }
@@ -254,20 +259,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // Attempt to find a service which implements the path
                 var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
                 InvokationInformation invoke = null;
-
+                this.m_tracer.TraceVerbose("Performing service matching on {0}", rootPath);
                 if (this.m_services.TryGetValue(rootPath, out invoke))
                 {
+                    this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
 
                     // Services require magic
                     if (!invoke.Anonymous && (request.Headers["X-OIZMagic"] == null ||
                         request.Headers["X-OIZMagic"] != ApplicationContext.Current.ExecutionUuid.ToString()))
-                        throw new UnauthorizedAccessException();
-
-                    this.m_tracer.TraceVerbose("Matched path {0} to handler {1}.{2}", rootPath, invoke.BindObject.GetType().FullName, invoke.Method.Name);
-
+                    {
+                        this.m_tracer.TraceVerbose("Ah ah ah! You didn't say the magic word");
+                        throw new UnauthorizedAccessException("Ah ah ah! You didn't say the magic word (client has invalid magic)");
+                    }
+                    this.m_tracer.TraceVerbose("Client has the right magic word");
 
                     // Get the method information 
-                    var parmInfo = invoke.Method.GetParameters();
+                    var parmInfo = invoke.Parameters;
                     object result = null;
 
                     try
@@ -337,15 +344,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                                     using (StreamWriter sw = new StreamWriter(response.OutputStream))
                                     {
-#if DEBUG
-                                        Stopwatch serializerWatch = new Stopwatch();
-                                        serializerWatch.Start();
-#endif
-                                        this.m_serializer.Serialize(sw, result as IdentifiedData);
-#if DEBUG
-                                        serializerWatch.Stop();
-                                        this.m_tracer.TraceVerbose("PERF: Serializer >>>> {0} took {1}", result, serializerWatch.ElapsedMilliseconds);
-#endif
+                                        this.m_serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
                                     }
                                 }
                                 else if(result != null)
@@ -549,6 +548,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             /// </summary>
             public MethodInfo Method { get; set; }
 
+            /// <summary>
+            /// The list of parameters
+            /// </summary>
+            public ParameterInfo[] Parameters { get; set; }
         }
     }
 }

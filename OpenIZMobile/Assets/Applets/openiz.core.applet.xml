@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.14.5506">
+  <info id="org.openiz.core" version="0.6.14.0728">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -1550,6 +1550,8 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
     }])
     .run(function ($rootScope) {
 
+        $rootScope.isLoading = true;
+
         // HACK: Sometimes HASH is empty ... ugh... 
         // Once we fix the panels and tabs in BS this can be removed
         if (window.location.hash == "")
@@ -1563,6 +1565,13 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
             }
         })
         $rootScope.$on("$stateChangeError", console.log.bind(console));
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            $rootScope.isLoading = true;
+        });
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            OpenIZ.App.hideWait();
+            $rootScope.isLoading = false;
+        });
 
         $rootScope.page = {
             title: OpenIZ.App.getCurrentAssetTitle(),
@@ -3660,6 +3669,18 @@ fieldset{
     margin-bottom: 0;
     text-align: right;
 }
+
+.input-group .form-control{
+    border-radius: 0;
+    background: #ebeff5;
+    border: none;
+    padding: 12px 10px;
+    font-size: 20px;
+    min-height:52px;
+}
+.tokenfield{
+    padding-bottom: 4px !important;
+}
 .tokenfield .token{
     height: 32px;
     padding-left: 3px;
@@ -3672,14 +3693,7 @@ fieldset{
     height: initial;
 }
 
-.input-group .form-control{
-    border-radius: 0;
-    background: #ebeff5;
-    border: none;
-    padding: 12px 10px;
-    font-size: 20px;
-    height:52px;
-}
+
 
 .tokenfield .token .close{
     opacity: 0.3;
@@ -3737,6 +3751,22 @@ a.not-active {
 }
 
 
+.input-group-btn &gt; button{
+    border-left: 2px solid #ebeff5;
+}
+.btn{
+    height:52px;
+    padding: 16px;
+    border-radius:1px;
+    border:none;
+}
+.input-group-btn &gt;.btn{
+    height: 100% !important;
+    padding: 0px !important;
+}
+.input-group-btn &gt; .btn &gt;span {
+        padding: 16px;
+}
 .btn &gt; .glyphicon {
     font-size: 1.4em;
 }
@@ -3892,21 +3922,31 @@ a.not-active {
     text-decoration:none;
     display: block;
 }
-
-.input-group-btn &gt; button{
-    border-left: 2px solid #ebeff5;
+.label{
+    border-radius: 12px;
+    padding: 4px 12px;
 }
-
-.btn{
-    padding: 6px 16px;
+.nav-tabs{
+    background: #007fd1;
 }
-
+.nav-tabs&gt;li&gt;a {
+    color: white;
+    border: none;
+    border-radius: 0;
+    padding: 20px;
+    cursor: pointer;
+}
+.nav-tabs&gt;li.active&gt;a, .nav-tabs&gt;li.active&gt;a:focus, .nav-tabs&gt;li.active&gt;a:hover{
+    background-color: #146396;
+    color:white;
+}
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
 
 body{
     background: #f6f8ff;
+    overflow-x: hidden;
 }
 .panel-default &gt; .patient-panel {
     background-color: #007FD1;
@@ -3941,7 +3981,15 @@ body{
 .no-padding-right {
     padding-right: 0;
 }
-
+.padding-10{
+    padding:10px;
+}
+.margin-left-100{
+    margin-left:100px;
+}
+.margin-right-100{
+    margin-right:100px;
+}
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
@@ -3967,11 +4015,23 @@ body{
     padding: 20px 0px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
 }
-
+.static-dock{
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+}
 .button-icon-text{
     padding-left: 40px;
 }
-
+.nav-tabs-fixed{
+    position: fixed;
+    top: 114px;
+    z-index: 20;
+    width:100%;
+}
+.nav-tabs-fixed-content{
+    padding-top:210px;
+}
 .button-icon{
     width: 25px;
     position: absolute;
@@ -4032,6 +4092,38 @@ body{
     width: 110px;
     position: relative;
 }
+.header-dock-labels{
+    padding: 0;
+    margin-bottom: 0;
+    text-align: right;
+    font-size: 14px;
+    white-space: nowrap;
+}
+.mother-info-item{
+    border-left: solid 2px;
+    padding-left: 5px;
+}
+
+
+/**Celendar edits*/
+.fc-left{
+    float:none !important;
+}
+
+.fc-left .fc-button-group{
+    width:100% !important;
+}
+
+.fc-left .fc-button-group .fc-button{
+    width: 33% !important;
+    background: #c7ceda;
+    border-radius: 0;
+    height: 50px;
+}
+#appointmentCalendar{
+    padding-top:15px;
+}
+
 
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
@@ -4115,8 +4207,7 @@ fieldset[disabled] .btn-danger {
 }
 .btn-default:active,
 .btn-default.active {
-  background-color: #e0e0e0;
-  border-color: #dbdbdb;
+  background-color: #ccd4e0;
 }
 .btn-default.disabled,
 .btn-default[disabled],
@@ -12539,7 +12630,7 @@ var OpenIZModel = OpenIZModel || {
         /** 
          *             Completed status            
          */
-        Completed: '93a48f6a-6808-4c70-83a2-d02178c2a883',
+        Completed: 'afc33800-8225-4061-b168-bacc09cdbae3',
         /** 
          *             Status - New            
          */
@@ -15233,7 +15324,9 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZModel.ConceptName} name The concept name to be rendered
          */
         renderConceptName: function (name) {
-            if (typeof (name) == "String") return name;
+            if (name == null)
+                return "";
+            else if (typeof (name) == "String") return name;
             else if (name[OpenIZ.Localization.getLocale()] != null)
                 return name[OpenIZ.Localization.getLocale()];
             else
@@ -17413,75 +17506,138 @@ var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionSe
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <div class="panel-group">
-            <div class="panel panel-primary" ng-init="collapseStatus.queueOpen = true" ng-click="collapseStatus.patientInfoHeaderOpen = !collapseStatus.patientInfoHeaderOpen">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-target="#patientSummaryPanel">
-                    <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
-                    <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span>
-                    <small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
-                    <span class="pull-right" style="margin-right:20px">
-                            {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
-                        </span>
-                  </a>
-                  <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.patientInfoHeaderOpen, 'glyphicon-chevron-right': !collapseStatus.patientInfoHeaderOpen}">
-                  </i>
-                </h4>
+            <div class="header-dock" ng-if="!(patientViewScrollHeight &gt; 70)">
+              <div class="row">
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
+                <div class="col-xs-4">
+                  <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                        {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                    </span>
+                </div>
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
+                <div class="col-xs-4">
+                  <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                        {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                    </span>
+                </div>
               </div>
-              <div class="panel-collapse collapse" id="patientSummaryPanel">
-                <div class="panel-body">
-                  <div class="container-fluid">
-                    <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
-                      <div class="col-xs-4">
-                        <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
-                                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
-                                </span>
-                      </div>
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
-                      <div class="col-xs-4">
-                        <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
-                                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
-                                </span>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
-                      <div class="col-xs-4">
-                        <span ng-model="patient.dateOfBirth" oiz-editor="date">
-                                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
-                                </span>
-                      </div>
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.gender' | i18n }}</label>
-                      <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
-                    </div>
-                    <div class="row">
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.domicile' | i18n }}</label>
-                      <div class="col-xs-4">
-                        <span class="glyphicon glyphicon-map-marker">
-                        </span> {{ patient.address | oizEntityAddress }}</div>
-                      <label class="col-xs-2">{{ 'locale.patient.demographics.facility' | i18n }}</label>
-                      <div class="col-xs-4">
-                        <span class="glyphicon glyphicon-map-marker">
-                        </span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
-                    </div>
-                  </div>
-                  <div class="container-fluid" ng-if="patientEdit">
-                    <div class="row">
-                      <div class="pull-right btn-group">
-                        <button type="button" ng-click="patientEdit.show()" class="btn btn-lg btn-info">
-                          <span>
-                            <span class="glyphicon glyphicon-pencil">
-                            </span>
-                                        {{ 'locale.action.edit' | i18n }}
-                                    </span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              <div class="row">
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
+                <div class="col-xs-4">
+                  <span>
+                        {{ patient.identifier | oizEntityIdentifier }}
+                    </span>
+                </div>
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
+                <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+              </div>
+              <div class="row">
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
+                <div class="col-xs-4">
+                  <span ng-model="patient.dateOfBirth" oiz-editor="date">
+                        {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                    </span>
+                </div>
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}:</label>
+                <div class="col-xs-4">
+                  <span class="glyphicon glyphicon-map-marker">
+                  </span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
+              </div>
+              <div class="row">
+                <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
+                <div class="col-xs-4">
+                  <span class="glyphicon glyphicon-map-marker">
+                  </span> {{ patient.address | oizEntityAddress }}</div>
+                <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
+                <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+                <div class="col-xs-4">
+                  <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
+                    <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                    <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                    <span ng-repeat="contact in rel.targetModel.telecom">
+                      <small>Contact: {{contact.value}}</small>
+                    </span>
+                  </span>
                 </div>
               </div>
             </div>
+            <div class="header-dock static-dock" ng-if="patientViewScrollHeight &gt; 70">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-target="#patientSummaryPanel">
+                  <span class="margin-left-100" ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
+                  <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span>
+                  <small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                  <span class="pull-right margin-right-100">
+                        {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                    </span>
+                </a>
+              </h4>
+            </div>
+            <!--
+        <div class="panel panel-primary" ng-init="collapseStatus.queueOpen = true" ng-click="collapseStatus.patientInfoHeaderOpen = !collapseStatus.patientInfoHeaderOpen">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#patientSummaryPanel">
+                        <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
+                    <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                        <span class="pull-right" style="margin-right:20px">
+                            {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                        </span></a>
+                    <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.patientInfoHeaderOpen, 'glyphicon-chevron-right': !collapseStatus.patientInfoHeaderOpen}"></i>
+                </h4>
+            </div>
+            <div class="panel-collapse collapse" id="patientSummaryPanel">
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}</label>
+                            <div class="col-xs-4">
+                                <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                                    {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
+                                </span>
+                            </div>
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}</label>
+                            <div class="col-xs-4">
+                                <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                                    {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}</label>
+                            <div class="col-xs-4">
+                                <span ng-model="patient.dateOfBirth" oiz-editor="date">
+                                    {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                                </span>
+                            </div>
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}</label>
+                            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+                        </div>
+                        <div class="row">
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}</label>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.address | oizEntityAddress }}</div>
+                            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}</label>
+                            <div class="col-xs-4"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
+                        </div>
+                    </div>
+                    <div class="container-fluid" ng-if="patientEdit">
+                        <div class="row">
+                            <div class="pull-right btn-group">
+                                <button type="button" ng-click="patientEdit.show()" class="btn btn-lg btn-info">
+                                    <span>
+                                        <span class="glyphicon glyphicon-pencil">
+                                        </span>
+                                        {{ 'locale.action.edit' | i18n }}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        -->
             <!-- #include virtual="content" -->
           </div>
         </div>
@@ -17542,9 +17698,6 @@ var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionSe
           <body>
             <!-- #include virtual="content" -->
             <!--#include virtual="/org.openiz.core/views/common/modal/authenticate.html"-->
-            <!--#include virtual="/org.openiz.core/views/common/modal/wait.html"-->
-            <div id="initialBlock" class="modal-backdrop fade in">
-            </div>
           </body>
         </html>
       </content>
@@ -38161,7 +38314,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
       </view>
       <content>
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-          <ui-view>
+          <ui-view ng-if="!$root.isLoading">
           </ui-view>
         </div>
       </content>
@@ -38440,26 +38593,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
   <asset name="views/common/modal/wait.html" mimeType="text/html">
     <contentHtml>
       <content>
-        <div id="waitModal" style="display:block" class="modal fade in" tabindex="-1" data-keyboard="false" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
-          <div class="modal-dialog in">
-            <div class="modal-content">
-              <div class="text-center modal-body">
-                <span id="waitModalText">{{ 'locale.dialog.wait.text' | i18n }}</span>
-                <div class="progress">
-                  <div id="waitProgressBar" class="progress-bar progress-bar-striped progress-bar-info active" style="width:100%">
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <script type="text/javascript">
-        // <![CDATA[
-
-        window.onbeforeunload = function () {
-            OpenIZ.App.showWait();
-        };
-
-        //]]></script>
+        <div id="waitModal" style="display:block" tabindex="-1" data-keyboard="false" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
         </div>
       </content>
     </contentHtml>
@@ -38565,7 +38699,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
               <div class="input-group">
                 <input ng-readonly="patient.readonly.dateOfBirth" type="date" required="required" name="date" id="dobInput" class="form-control" ng-model="patient.dateOfBirth" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
                 <span class="input-group-addon input-group-addon-approx">
-                  <label for="approximateDob" class="control control--checkbox">
+                  <label class="control control--checkbox">
                     <span class="approx-add-in">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span>
                     <input type="checkbox" ng-model="patient.dateOfBirthPrecision" value="1" name="approximateDob" />
                     <div class="control__indicator" style="top: 8px;">
@@ -38612,6 +38746,10 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
               <div class="input-group">
                 <select ng-disabled="patient.readonly.genderConcept" name="gender" ng-model="patient.genderConcept" required="required" id="genderSelect" class="form-control" aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" bind:value="name[{{ locale }}].value">
                 </select>
+                <span class="select-arrow-container-alt" role="presentation">
+                  <span class="select-arrow" role="presentation">
+                  </span>
+                </span>
                 <span class="input-group-btn">
                   <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}">
                     <span class="glyphicon glyphicon-question-sign">
@@ -39249,7 +39387,7 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
           <ul class="list-group">
             <li ng-repeat="(auth, id) in patient.identifier" class="list-group-item">
-              <h4 class="list-group-item-heading">{{id.value}} <small class="label label-info">{{auth}}</small></h4>
+              <h4 class="list-group-item-heading">{{id.value}} <span class="label label-info">{{auth}}</span></h4>
             </li>
           </ul>
         </div>
@@ -40388,11 +40526,14 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
                     ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
                 </small>
               </span>
+              <small ng-if="act.statusConcept == '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+                {{ 'locale.action.finish' | i18n }}
+            </small>
             </div>
             <div class="col-xs-12 col-sm-9" ng-if="!act.targetModel._overdue">
               <div class="input-group">
                 <span class="input-group-addon">
-                  <input ng-if="!act._created" type="checkbox" ng-model="act._enabled" checked="checked" value="1" readonly="readonly" />
+                  <input ng-if="!act._created || act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'" type="checkbox" ng-model="act._enabled" checked="checked" value="1" readonly="readonly" />
                 </span>
                 <span class="input-group-addon">{{ 'locale.encounters.weight.value' | i18n }}</span>
                 <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" min="0" max="200" class="form-control" ng-model="act.targetModel.value" />

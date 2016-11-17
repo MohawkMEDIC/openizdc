@@ -367,7 +367,7 @@ namespace OpenIZ.Mobile.Core.Services
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults);
+        IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId);
 
         /// <summary>
         /// Executes a stored query
@@ -377,7 +377,7 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Executes a stored query
         /// </summary>
-        IEnumerable<TData> Query(String queryName, IDictionary<String, Object> parameters, int offset, int? count, out int totalResults);
+        IEnumerable<TData> Query(String queryName, IDictionary<String, Object> parameters, int offset, int? count, out int totalResults, Guid queryId);
 
         /// <summary>
         /// Performs a fast count
