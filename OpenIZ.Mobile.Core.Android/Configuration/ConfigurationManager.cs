@@ -157,6 +157,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
+                    typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,

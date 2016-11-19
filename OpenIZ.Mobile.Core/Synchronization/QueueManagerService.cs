@@ -127,10 +127,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		/// </summary>
 		public void ExhaustOutboundQueue()
 		{
-			//if (!Monitor.IsEntered(this.m_outboundLock)) return;
-
-			lock (this.m_outboundLock)
-			{
+            bool locked = false;
+            try
+            {
+                locked = Monitor.TryEnter(this.m_outboundLock, 100);
+                if (!locked) return;
 				// Exhaust the queue
 				while (SynchronizationQueue.Outbound.Count() > 0)
 				{
@@ -139,9 +140,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
 					var syncItm = SynchronizationQueue.Outbound.PeekRaw();
 					var dpe = SynchronizationQueue.Outbound.DeserializeObject(syncItm);
 
-					// TODO: Sleep thread here
-					while (!integrationService.IsAvailable())
-						;
+                    // TODO: Sleep thread here
+                    if (!integrationService.IsAvailable())
+                    {
+                        // Come back in 30 seconds...
+                        this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null); 
+                        return;
+                    }
 
 					// try to send
 					try
@@ -190,7 +195,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
 					}
 				}
 			}
-		}
+            finally
+            {
+                if (locked) Monitor.Exit(this.m_outboundLock);
+            }
+        }
 
 		/// <summary>
 		/// Import element

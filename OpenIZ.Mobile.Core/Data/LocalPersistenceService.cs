@@ -35,7 +35,6 @@ using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Exceptions;
 using System.Linq.Expressions;
-using OpenIZ.Core.Model.Reflection;
 using System.Collections;
 using OpenIZ.Core.Services;
 using System.Diagnostics;

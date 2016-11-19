@@ -21,6 +21,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,12 +35,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// </summary>
 	public class LocalActService : IActRepositoryService, IPersistableQueryProvider
 	{
+
 		/// <summary>
 		/// Finds acts based on a specific query.
 		/// </summary>
 		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
-            return this.Query(filter, offset, count, out totalResults, Guid.Empty);
+            var results = this.Query(filter, offset, count, out totalResults, Guid.Empty);
+            results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
+            return results;
 		}
 
 		/// <summary>
@@ -53,7 +58,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
-			return persistenceService.Get(key);
+			var result = persistenceService.Get(key);
+            result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
+            return result;
 		}
 
 		/// <summary>
@@ -61,14 +68,23 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// </summary>
 		public TAct Insert<TAct>(TAct insert) where TAct : Act
 		{
+            insert = this.Validate(insert);
+
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
 			if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
-			return persistenceService.Insert(insert);
+            insert = breService?.BeforeInsert(insert) ?? insert;
+			insert = persistenceService.Insert(insert);
+            insert = breService?.AfterInsert(insert) ?? insert;
+
+            SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
+
+            return insert;
 		}
 
 		/// <summary>
@@ -77,6 +93,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		public TAct Obsolete<TAct>(Guid key) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
 			if (persistenceService == null)
 			{
@@ -86,56 +103,97 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var act = persistenceService.Get(key);
 
 			if (act == null)
-			{
-				throw new InvalidOperationException("Act not found");
-			}
+				throw new KeyNotFoundException(key.ToString());
 
-			return persistenceService.Obsolete(act);
+            act = breService?.BeforeObsolete(act) ?? act;
+			act = persistenceService.Obsolete(act);
+            act = breService?.AfterObsolete(act) ?? act;
+
+            SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
+
+            return act;
 		}
 
         /// <summary>
         /// Queries the Act service using the specified state query id
         /// </summary>
-        public IEnumerable<TEntity> Query<TEntity>(Expression<Func<TEntity, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        public IEnumerable<TAct> Query<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
         {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
             if (persistenceService == null)
                 throw new InvalidOperationException("No concept persistence service found");
 
-            return persistenceService.Query(filter, offset, count, out totalResults, queryId);
+            var results = persistenceService.Query(filter, offset, count, out totalResults, queryId);
+            results = breService?.AfterQuery(results) ?? results;
+            return results;
         }
 
         /// <summary>
         /// Insert or update the specified act
         /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
         public TAct Save<TAct>(TAct act) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
 			if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
 			}
 
+            // Validate act
+            act = this.Validate(act);
+
 			try
 			{
-				return persistenceService.Update(act);
-			}
-			catch (KeyNotFoundException)
-			{
-				return persistenceService.Insert(act);
-			}
-		}
+                // Get older version
+                if (act.Key.HasValue)
+                {
+                    var old = persistenceService.Get(act.Key.Value).Clone();
+
+                    // Fire before update
+                    act = breService?.BeforeUpdate(act) ?? act;
+
+                    // update
+                    act = persistenceService.Update(act);
+
+                    // First after update
+                    act = breService?.AfterUpdate(act) ?? act;
+
+                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
+
+                    SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+
+                }
+                else throw new KeyNotFoundException();
+                return act;
+            }
+            catch (KeyNotFoundException)
+            {
+                // Fire before update
+                act = breService?.BeforeInsert(act) ?? act;
+
+                act = persistenceService.Insert(act);
+
+                act = breService?.AfterInsert(act) ?? act;
+                SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
+                return act;
+            }
+        }
 
 		/// <summary>
 		/// Validates an act.
 		/// </summary>
 		public TAct Validate<TAct>(TAct data) where TAct : Act
 		{
-			// Correct author information and controlling act information
-			data = data.Clean() as TAct;
+            var details = ApplicationContext.Current.GetService<IBusinessRulesService<Act>>()?.Validate(data) ?? new List<DetectedIssue>();
+            if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+                throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
+
+            // Correct author information and controlling act information
+            data = data.Clean() as TAct;
 
 			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 

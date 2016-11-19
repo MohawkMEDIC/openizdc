@@ -50,14 +50,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return securityUser;
 		}
 
-		public SecurityDevice CreateDevice(SecurityDevice device)
+        public SecurityApplication CreateApplication(SecurityApplication application)
+        {
+            throw new NotSupportedException();
+        }
+
+        public SecurityDevice CreateDevice(SecurityDevice device)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public SecurityPolicy CreatePolicy(SecurityPolicy policy)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>
@@ -126,23 +131,43 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistence.Insert(userEntity);
 		}
 
-		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
+        public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query)
+        {
+            int total = 0;
+            return this.FindApplications(query, 0, null, out total);
+        }
+
+        public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query, int offset, int? count, out int totalResults)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing application persistence service");
+            return pers.Query(query, offset, count, out totalResults, Guid.Empty);
+        }
+
+        public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query)
 		{
-			throw new NotImplementedException();
-		}
+            int total = 0;
+            return this.FindDevices(query, 0, null, out total);
+        }
 
 		public IEnumerable<SecurityDevice> FindDevices(Expression<Func<SecurityDevice, bool>> query, int offset, int? count, out int totalResults)
 		{
-			throw new NotImplementedException();
-		}
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing device persistence service");
+            return pers.Query(query, offset, count, out totalResults, Guid.Empty);
 
-		/// <summary>
-		/// Find policies that match the specified data
-		/// </summary>
-		public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
+        }
+
+        /// <summary>
+        /// Find policies that match the specified data
+        /// </summary>
+        public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter)
 		{
-			throw new NotImplementedException();
-		}
+            int total = 0;
+            return this.FindPolicies(filter, 0, null, out total);
+        }
 
 		/// <summary>
 		/// Find policies that match the specified data
@@ -150,8 +175,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns></returns>
 		public IEnumerable<SecurityPolicy> FindPolicies(Expression<Func<SecurityPolicy, bool>> filter, int offset, int? count, out int totalResults)
 		{
-			throw new NotImplementedException();
-		}
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing policy persistence service");
+            return pers.Query(filter, offset, count, out totalResults, Guid.Empty);
+        }
 
 		/// <summary>
 		/// Finds the roles matching the specified queried
@@ -225,16 +253,44 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException("Missing persistence service");
 			return pers.Query(query, offset, count, out total, Guid.Empty);
 		}
+        
+        /// <summary>
+        /// Get application
+        /// </summary>
+        public SecurityApplication GetApplication(Guid applicationId)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityApplication>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing security application persistence service");
+            return pers.Get(applicationId);
+        }
 
-		public SecurityDevice GetDevice(Guid deviceId)
+        /// <summary>
+        /// Get device 
+        /// </summary>
+        public SecurityDevice GetDevice(Guid deviceId)
 		{
-			throw new NotImplementedException();
-		}
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityDevice>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing security device persistence service");
+            return pers.Get(deviceId);
+        }
 
-		/// <summary>
-		/// Gets the specified role
-		/// </summary>
-		public SecurityRole GetRole(Guid roleId)
+        /// <summary>
+        /// Gets the specified policy id
+        /// </summary>
+        public SecurityPolicy GetPolicy(Guid policyId)
+        {
+            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityPolicy>>();
+            if (pers == null)
+                throw new InvalidOperationException("Missing security policy persistence service");
+            return pers.Get(policyId);
+        }
+
+        /// <summary>
+        /// Gets the specified role
+        /// </summary>
+        public SecurityRole GetRole(Guid roleId)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 			if (pers == null)
@@ -311,15 +367,25 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			iids.SetLockout(securityUser.UserName, true);
 		}
 
-		public SecurityDevice ObsoleteDevice(Guid deviceId)
+        public SecurityApplication ObsoleteApplication(Guid applicationId)
+        {
+            throw new NotSupportedException();
+        }
+
+        public SecurityDevice ObsoleteDevice(Guid deviceId)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
-		/// <summary>
-		/// Obsoletes the specified role
-		/// </summary>
-		public SecurityRole ObsoleteRole(Guid roleId)
+        public SecurityPolicy ObsoletePolicy(Guid policyId)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Obsoletes the specified role
+        /// </summary>
+        public SecurityRole ObsoleteRole(Guid roleId)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SecurityRole>>();
 			if (pers == null)
@@ -356,14 +422,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistence.Obsolete(new UserEntity() { Key = id });
 		}
 
-		public SecurityDevice SaveDevice(SecurityDevice device)
+        public SecurityApplication SaveApplication(SecurityApplication application)
+        {
+            throw new NotSupportedException();
+        }
+
+        public SecurityDevice SaveDevice(SecurityDevice device)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		public SecurityPolicy SavePolicy(SecurityPolicy policy)
 		{
-			throw new NotImplementedException();
+			throw new NotSupportedException();
 		}
 
 		/// <summary>

@@ -113,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query)
         {
 
             if (String.IsNullOrEmpty(method))
@@ -209,12 +209,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                         });
                         if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                             throw new TimeoutException();
-                        else if (responseError != null)
+                        else
                         {
-                            if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
-                                return default(TResult);
-                            else
-                                throw responseError;
+                            responseHeaders = response.Headers;
+                            if (responseError != null)
+                            {
+                                if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
+                                    return default(TResult);
+                                else
+                                    throw responseError;
+                            }
                         }
 
                         var validationResult = this.ValidateResponse(response);
@@ -223,37 +227,48 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             this.m_tracer.TraceError("Response failed validation : {0}", validationResult);
                             throw new WebException(Strings.err_response_failed_validation, null, WebExceptionStatus.Success, response);
                         }
-                        // De-serialize
-                        var responseContentType = response.ContentType;
-                        if (String.IsNullOrEmpty(responseContentType))
-                            return default(TResult);
 
-                        if (responseContentType.Contains(";"))
-                            responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
-
-                        if (response.StatusCode == HttpStatusCode.NotModified)
-                            return default(TResult);
-                        serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
-
-                        TResult retVal = default(TResult);
-                        // Compression?
-                        switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                        // No content - does the result want a pointer maybe?
+                        if (response.StatusCode == HttpStatusCode.NoContent)
                         {
-                            case "deflate":
-                                using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                    retVal = (TResult)serializer.DeSerialize(df);
-                                break;
-                            case "gzip":
-                                using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                    retVal = (TResult)serializer.DeSerialize(df);
-                                break;
-                            default:
-                                retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
-                                break;
+
+                            return default(TResult);
                         }
+                        else
+                        {
+                            // De-serialize
+                            var responseContentType = response.ContentType;
+                            if (String.IsNullOrEmpty(responseContentType))
+                                return default(TResult);
+
+                            if (responseContentType.Contains(";"))
+                                responseContentType = responseContentType.Substring(0, responseContentType.IndexOf(";"));
+
+                            if (response.StatusCode == HttpStatusCode.NotModified)
+                                return default(TResult);
+
+                            serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(responseContentType, typeof(TResult));
+
+                            TResult retVal = default(TResult);
+                            // Compression?
+                            switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                            {
+                                case "deflate":
+                                    using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                        retVal = (TResult)serializer.DeSerialize(df);
+                                    break;
+                                case "gzip":
+                                    using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+                                        retVal = (TResult)serializer.DeSerialize(df);
+                                    break;
+                                default:
+                                    retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
+                                    break;
+                            }
 
                     (retVal as IdentifiedData)?.SetDelayLoad(true);
-                        return retVal;
+                            return retVal;
+                        }
                     }
                     finally
                     {
@@ -331,7 +346,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                
             }
 
-
+            responseHeaders = new WebHeaderCollection();
             return default(TResult);
         }
 

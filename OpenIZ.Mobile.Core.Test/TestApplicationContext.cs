@@ -33,8 +33,8 @@ using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Diagnostics;
 using System.Security.Principal;
-using OpenIZ.Mobile.Core.Android.Threading;
 using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Xamarin.Threading;
 
 namespace OpenIZ.Mobile.Core.Test
 {

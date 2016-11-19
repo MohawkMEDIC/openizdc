@@ -37,14 +37,22 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <summary>
 		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
 		/// </summary>
-		private IDataPersistenceService<Patient> persistenceService;
+		private IDataPersistenceService<Patient> m_persistenceService;
+
+        /// <summary>
+        /// Internal reference to the bre service
+        /// </summary>
+        private IBusinessRulesService<Patient> m_breService;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LocalPatientService"/> class.
 		/// </summary>
 		public LocalPatientService()
 		{
-			ApplicationContext.Current.Started += (o, e) => { this.persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>(); };
+			ApplicationContext.Current.Started += (o, e) => {
+                this.m_persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                this.m_breService = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
+            };
 		}
 
 		/// <summary>
@@ -54,12 +62,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of patients which match the query.</returns>
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			return this.persistenceService.Query(predicate);
+			var results = this.m_persistenceService.Query(predicate);
+            results = this.m_breService?.AfterQuery(results) ?? results;
+            return results;
 		}
 
 		/// <summary>
@@ -72,12 +82,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of patients which match the query.</returns>
 		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			return persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
+			var results = m_persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
+            results = this.m_breService?.AfterQuery(results) ?? results;
+            return results;
 		}
 
 		/// <summary>
@@ -88,12 +100,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a patient.</returns>
 		public Patient Get(Guid id, Guid versionId)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			return persistenceService.Get(id);
+			var result = m_persistenceService.Get(id);
+            result = this.m_breService?.AfterRetrieve(result) ?? result;
+            return result;
 		}
 
 		/// <summary>
@@ -103,19 +117,18 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the inserted patient.</returns>
 		public Patient Insert(Patient p)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
 			p = this.Validate(p);
 
-            var bre = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
-            bre?.BeforeInsert(p);
+            p = this.m_breService?.BeforeInsert(p) ?? p;
 
 			// Persist patient
-			var patient = this.persistenceService.Insert(p);
-            bre?.AfterInsert(p);
+			var patient = this.m_persistenceService.Insert(p);
+            p = this.m_breService?.AfterInsert(p) ?? p;
 
 			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 
@@ -140,14 +153,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the obsoleted patient.</returns>
 		public Patient Obsolete(Guid key)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
 
-			var result = this.persistenceService.Obsolete(new Patient() { Key = key });
-
-			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
+            var p = this.m_persistenceService.Get(key);
+            if (p == null)
+                throw new KeyNotFoundException(key.ToString());
+            p = this.m_breService?.BeforeObsolete(p) ?? p;
+            var result = this.m_persistenceService.Obsolete(p);
+            p = this.m_breService?.AfterObsolete(result) ?? result;
+            
+            SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
 
 			return result;
 		}
@@ -159,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the saved patient.</returns>
 		public Patient Save(Patient p)
 		{
-			if (this.persistenceService == null)
+			if (this.m_persistenceService == null)
 			{
 				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
 			}
@@ -170,14 +188,37 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			try
 			{
-				patient = this.persistenceService.Update(p);
+               
+                // Get older version
+                if (p.Key.HasValue)
+                {
+                    var old = this.m_persistenceService.Get(p.Key.Value).Clone();
 
-				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Update);
-			}
+                    // Fire before update
+                    p = this.m_breService?.BeforeUpdate(p) ?? p;
+
+                    // update
+                    patient = this.m_persistenceService.Update(p);
+
+                    // First after update
+                    patient = this.m_breService?.AfterUpdate(p) ?? p;
+
+                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, patient);
+
+                    SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+
+                }
+                else throw new KeyNotFoundException();
+
+            }
 			catch (KeyNotFoundException)
 			{
-				patient = this.persistenceService.Insert(p);
+                // Fire before update
+                p = this.m_breService?.BeforeInsert(p) ?? p;
 
+                patient = this.m_persistenceService.Insert(p);
+
+                patient = this.m_breService?.AfterInsert(patient) ?? patient;
 				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 			}
 
@@ -202,9 +243,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the validated patient.</returns>
 		public Patient Validate(Patient p)
 		{
-            var details = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>()?.Validate(p);
-            //if(details.Any(d=>d.Priority == DetectedIssuePriorityType.Error))
-            //    throw new OpenIZ.Core.Exceptions.De
+            var details = this.m_breService?.Validate(p) ?? new List<DetectedIssue>();
+            if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+                throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
 
 			p = p.Clean() as Patient; // clean up messy data
 

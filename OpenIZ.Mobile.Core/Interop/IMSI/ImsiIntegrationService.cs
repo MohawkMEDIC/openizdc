@@ -19,6 +19,8 @@
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Services;
@@ -172,9 +174,28 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 		{
 			ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
 			client.Client.Credentials = client.Client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
-            var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
-			method.MakeGenericMethod(new Type[] { data.GetType() });
-			method.Invoke(this, new object[] { data });
+
+            if (data is Patch)
+            {
+                var patch = data as Patch;
+                var newUuid = client.Patch(patch);
+
+                // Update the ETag of the current version
+                var idp = typeof(IDataPersistenceService<>).MakeGenericType(patch.AppliesTo.GetType());
+                var idpService = ApplicationContext.Current.GetService(idp);
+                if (idpService != null)
+                {
+                    var updateTarget = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) }).Invoke(idpService, new object[] { patch.AppliesTo.Key }) as IVersionedEntity;
+                    updateTarget.VersionKey = newUuid;
+                    idp.GetRuntimeMethod("Update", new Type[] { patch.AppliesTo.GetType() }).Invoke(idpService, new object[] { updateTarget });
+                }
+            }
+            else // regular update 
+            {
+                var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
+                method.MakeGenericMethod(new Type[] { data.GetType() });
+                method.Invoke(this, new object[] { data });
+            }
 		}
 	}
 }

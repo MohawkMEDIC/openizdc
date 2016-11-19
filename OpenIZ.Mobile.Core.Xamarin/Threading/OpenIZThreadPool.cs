@@ -86,6 +86,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         /// <summary>
         /// Queue a work item to be completed
         /// </summary>
+        public void QueueUserWorkItem(TimeSpan timeout, Action<Object> callback, Object parm)
+        {
+            Timer timer = null;
+            timer = new Timer((o) => {
+                var kv = (KeyValuePair<Action<Object>, Object>)o;
+                this.QueueUserWorkItem(kv.Key, kv.Value);
+                timer.Dispose();
+            }, new KeyValuePair<Action<Object>, Object>(callback, parm), (int)timeout.TotalMilliseconds, Timeout.Infinite);
+        }
+
+        /// <summary>
+        /// Queue a work item to be completed
+        /// </summary>
         public void QueueUserWorkItem(Action<Object> callback)
         {
             QueueUserWorkItem(callback, null);

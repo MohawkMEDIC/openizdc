@@ -71,7 +71,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MobileTest.cs" />
-    <Compile Include="OpenIZThreadPool.cs" />
     <Compile Include="Persistence\ActPersistenceServiceTest.cs" />
     <Compile Include="Persistence\ConceptPersistenceServiceTest.cs" />
     <Compile Include="Persistence\EntityPersistenceServiceTest.cs" />
@@ -89,6 +88,10 @@
     <Compile Include="TestTraceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
+      <Project>{9A06ACC9-4D6F-4EAB-8A8A-9652BC6A70AE}</Project>
+      <Name>OpenIZ.Mobile.Core.Xamarin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
       <Name>OpenIZ.Mobile.Core</Name>

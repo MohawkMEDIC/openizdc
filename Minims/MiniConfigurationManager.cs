@@ -18,6 +18,7 @@
  * Date: 2016-10-11
  */
 using OpenIZ.Core.Protocol;
+using OpenIZ.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
@@ -150,6 +151,7 @@ namespace Minims
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
+                    typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                 },
