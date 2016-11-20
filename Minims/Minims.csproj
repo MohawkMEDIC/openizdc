@@ -45,11 +45,21 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Alert">
+      <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.ViewModelSerializers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.ViewModelSerializers.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
@@ -60,8 +70,14 @@
     <Reference Include="OpenIZ.Messaging.IMSI.Client">
       <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Messaging.RISI.Client">
+      <HintPath>..\Solution Items\OpenIZ.Messaging.RISI.Client.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Protocol.Xml">
       <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Protocol.Xml.Test">
+      <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.Test.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\Solution Items\SharpCompress.dll</HintPath>
@@ -84,6 +100,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="zlibnet">
       <HintPath>..\Solution Items\zlibnet.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.portable">
+      <HintPath>..\Solution Items\zxing.portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

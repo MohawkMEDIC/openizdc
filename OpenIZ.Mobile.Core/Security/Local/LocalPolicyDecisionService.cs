@@ -148,6 +148,8 @@ namespace OpenIZ.Mobile.Core.Security
                     grants = new Dictionary<string, PolicyGrantType>();
                     this.m_policyCache.Add(principal.Identity.Name, grants);
                 }
+                else if (grants == null)
+                    grants = this.m_policyCache[principal.Identity.Name];
                 if (!grants.ContainsKey(policyId))
                     grants.Add(policyId, rule);
             }

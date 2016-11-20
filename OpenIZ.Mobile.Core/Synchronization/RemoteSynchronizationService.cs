@@ -189,11 +189,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
-                var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
-                // TODO: Clean this up - Login as device account
-                if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
-                    DateTime.Parse((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
-                    AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
 
                 // Get last modified date
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());

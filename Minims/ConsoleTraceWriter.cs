@@ -77,6 +77,10 @@ namespace Minims
                 case EventLevel.Error:
                     color = ConsoleColor.Red;
                     break;
+                case EventLevel.Critical:
+                    color = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.DarkRed;
+                    break;
             }
 
             this.m_logBacklog.Enqueue(new KeyValuePair<ConsoleColor, String>(color, String.Format("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args))));

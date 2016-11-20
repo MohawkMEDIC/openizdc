@@ -33,7 +33,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
 
     // Rebind the domain scope
     scope.rebindDomain = scope.rebindDomain || function (authority, identifier) {
-        scope.patient.identifier[identifier.authority] = identifier;
+        scope.patient.identifier[identifier.authority.domainName] = identifier;
         delete scope.patient.identifier["NEW"];
     };
 
@@ -45,12 +45,12 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     // Add identifier
     scope.addIdentifier = scope.addIdentifier || function () {
         if (scope.patient.identifier["NEW"] != null &&
-            scope.patient.identifier["NEW"].authority != "NEW") {
+            scope.patient.identifier["NEW"].authority.domainName != "NEW") {
             scope.patient.identifier[scope.patient.identifier["NEW"].authority] = scope.patient.identifier["NEW"];
-            scope.patient.identifier["NEW"] = { authority: "NEW", value: null };
+            scope.patient.identifier["NEW"] = { authority: { domainName: "NEW" }, value: null };
         }
         else if (scope.patient.identifier["NEW"] == null)
-            scope.patient.identifier["NEW"] = { authority: "NEW", value: null };
+            scope.patient.identifier["NEW"] = { authority: { domainName: "NEW" }, value: null };
     };
 
     // Remove identifier

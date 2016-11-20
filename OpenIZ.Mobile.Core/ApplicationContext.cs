@@ -220,7 +220,7 @@ namespace OpenIZ.Mobile.Core
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
-            foreach (var d in daemons)
+            foreach (var d in daemons.Distinct())
             {
                 tracer.TraceInfo("Starting {0}", d.GetType().Name);
                 if (!d.Start())

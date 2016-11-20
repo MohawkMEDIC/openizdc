@@ -173,7 +173,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     // TODO: Customize this
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial" })
+                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient" })
                     {
                         var syncSetting = new SynchronizationResource()
                         {
@@ -184,7 +184,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         var efield = typeof(EntityClassKeys).GetField(res);
                         if (efield != null && res != "Place")
                             syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
-
+                        // TODO: Patient registration <> facility
                         syncConfig.SynchronizationResources.Add(syncSetting);
                     }
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);
@@ -281,6 +281,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     amiUri = String.Format("http://{0}:8080/ami", realmUri);
 
                 // Parse IMSI URI
+                serviceClientSection.Client.Clear();
                 serviceClientSection.Client.Add(new ServiceClientDescription()
                 {
                     Binding = new ServiceClientBinding()
@@ -314,7 +315,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             CredentialProvider = new TokenCredentialProvider(),
                             PreemptiveAuthentication = true
                         },
-                        Optimize = true
+                        Optimize = false
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
@@ -445,6 +446,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         amiUri = String.Format("http://{0}:8080/ami", realmUri);
 
                 // Parse ACS URI
+                serviceClientSection.Client.Clear();
+
                 serviceClientSection.Client.Add(new ServiceClientDescription()
                 {
                     Binding = new ServiceClientBinding()

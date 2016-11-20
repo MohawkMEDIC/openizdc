@@ -294,9 +294,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			// Bind to outbound queue
 			SynchronizationQueue.Outbound.Enqueued += (o, e) =>
 			{
-				// Another thread worker is doing this
-				if (Monitor.IsEntered(this.m_outboundLock)) return;
-
 				// Trigger sync?
 				if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
 					Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&

@@ -110,6 +110,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
                     try
                     {
+                        this.m_tracer.TraceVerbose("Scanning {0} for service attributes...", a);
                         foreach (var t in a.DefinedTypes.Where(o => o.GetCustomAttribute<RestServiceAttribute>() != null))
                         {
                             var serviceAtt = t.GetCustomAttribute<RestServiceAttribute>();

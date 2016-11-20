@@ -211,16 +211,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             throw new TimeoutException();
                         else
                         {
-                            responseHeaders = response.Headers;
                             if (responseError != null)
                             {
                                 if (((responseError as WebException)?.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotModified)
+                                {
+                                    responseHeaders = response?.Headers;
                                     return default(TResult);
+                                }
                                 else
                                     throw responseError;
                             }
                         }
 
+                        responseHeaders = response.Headers;
                         var validationResult = this.ValidateResponse(response);
                         if (validationResult != ServiceClientErrorType.Valid)
                         {

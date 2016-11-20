@@ -174,7 +174,7 @@ namespace Minims
             }
             catch (Exception e)
             {
-                Console.WriteLine("OpenIZ FATAL", e.ToString());
+                Console.WriteLine("OpenIZ FATAL: {0}", e.ToString());
                 return false;
             }
         }
