@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Tracing;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -174,6 +175,34 @@ namespace LogViewer
                 var selDate = DateTime.Parse(lsvEvents.SelectedItems[0].SubItems[3].Text);
                 var thread = lsvEvents.SelectedItems[0].SubItems[4].Text;
                 this.DrawList(o => Math.Abs((o.Date - selDate).TotalMilliseconds) < 1000 && o.Thread == thread);
+            }
+        }
+
+        private void sameSourceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvEvents.SelectedItems.Count > 0)
+            {
+                var src = lsvEvents.SelectedItems[0].SubItems[2].Text;
+                this.DrawList(o => o.Source == src);
+            }
+        }
+
+        private void sameThreadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvEvents.SelectedItems.Count > 0)
+            {
+                var thd = lsvEvents.SelectedItems[0].SubItems[4].Text;
+
+                this.DrawList(o => o.Thread == thd);
+            }
+        }
+
+        private void sameLevelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lsvEvents.SelectedItems.Count > 0)
+            {
+                var el = (EventLevel)Enum.Parse(typeof(EventLevel), lsvEvents.SelectedItems[0].SubItems[1].Text);
+                this.DrawList(o => o.Level == el);
             }
         }
     }

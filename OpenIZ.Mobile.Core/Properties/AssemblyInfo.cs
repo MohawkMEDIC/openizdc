@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 // The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
-[assembly: AssemblyInformationalVersion("Dalhouse")]
+[assembly: AssemblyInformationalVersion("Chippewa")]
 [assembly: AssemblyVersion("0.6.14.*")]
 
 // The following attributes are used to specify the signing key for the assembly,

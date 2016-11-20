@@ -61,6 +61,10 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.cbxThread = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.sameSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sameLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -147,7 +151,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -167,7 +171,7 @@
             // 
             this.trvSource.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trvSource.Location = new System.Drawing.Point(0, 0);
-            this.trvSource.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.trvSource.Margin = new System.Windows.Forms.Padding(2);
             this.trvSource.Name = "trvSource";
             this.trvSource.Size = new System.Drawing.Size(199, 466);
             this.trvSource.TabIndex = 0;
@@ -177,7 +181,7 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 25);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -210,7 +214,7 @@
             this.lsvEvents.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lsvEvents.HideSelection = false;
             this.lsvEvents.Location = new System.Drawing.Point(0, 0);
-            this.lsvEvents.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lsvEvents.Margin = new System.Windows.Forms.Padding(2);
             this.lsvEvents.Name = "lsvEvents";
             this.lsvEvents.Size = new System.Drawing.Size(869, 238);
             this.lsvEvents.TabIndex = 4;
@@ -252,9 +256,13 @@
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.showCousinsToolStripMenuItem,
-            this.showNeighboursOnSameThreadToolStripMenuItem});
+            this.showNeighboursOnSameThreadToolStripMenuItem,
+            this.toolStripMenuItem2,
+            this.sameSourceToolStripMenuItem,
+            this.sameThreadToolStripMenuItem,
+            this.sameLevelToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(209, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(209, 142);
             // 
             // showCousinsToolStripMenuItem
             // 
@@ -276,7 +284,7 @@
             this.txtText.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtText.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtText.Location = new System.Drawing.Point(0, 19);
-            this.txtText.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtText.Margin = new System.Windows.Forms.Padding(2);
             this.txtText.Multiline = true;
             this.txtText.Name = "txtText";
             this.txtText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
@@ -366,6 +374,32 @@
             this.cbxThread.Size = new System.Drawing.Size(201, 23);
             this.cbxThread.SelectedIndexChanged += new System.EventHandler(this.cbxThread_SelectedIndexChanged);
             // 
+            // toolStripMenuItem2
+            // 
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(205, 6);
+            // 
+            // sameSourceToolStripMenuItem
+            // 
+            this.sameSourceToolStripMenuItem.Name = "sameSourceToolStripMenuItem";
+            this.sameSourceToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameSourceToolStripMenuItem.Text = "Same Source";
+            this.sameSourceToolStripMenuItem.Click += new System.EventHandler(this.sameSourceToolStripMenuItem_Click);
+            // 
+            // sameThreadToolStripMenuItem
+            // 
+            this.sameThreadToolStripMenuItem.Name = "sameThreadToolStripMenuItem";
+            this.sameThreadToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameThreadToolStripMenuItem.Text = "Same Thread";
+            this.sameThreadToolStripMenuItem.Click += new System.EventHandler(this.sameThreadToolStripMenuItem_Click);
+            // 
+            // sameLevelToolStripMenuItem
+            // 
+            this.sameLevelToolStripMenuItem.Name = "sameLevelToolStripMenuItem";
+            this.sameLevelToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameLevelToolStripMenuItem.Text = "Same Level";
+            this.sameLevelToolStripMenuItem.Click += new System.EventHandler(this.sameLevelToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -375,7 +409,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmMain";
             this.Text = "OpenIZ Log Viewer";
             this.menuStrip1.ResumeLayout(false);
@@ -434,6 +468,10 @@
         private System.Windows.Forms.ToolStripMenuItem showCousinsToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader colId;
         private System.Windows.Forms.ToolStripMenuItem showNeighboursOnSameThreadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
+        private System.Windows.Forms.ToolStripMenuItem sameSourceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sameThreadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sameLevelToolStripMenuItem;
     }
 }
 

@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-7-30
  */
+using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
@@ -25,6 +26,7 @@ using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Configuration;
+using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
 using System;
@@ -41,6 +43,29 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
     public class ImsiIntegrationService : IIntegrationService
     {
 
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiIntegrationService));
+
+        /// <summary>
+        /// Throws an exception if the specified service client has the invalid version
+        /// </summary>
+        private bool IsValidVersion(ImsiServiceClient client)
+        {
+            var expectedVersion = typeof(IdentifiedData).GetTypeInfo().Assembly.GetName().Version;
+            var options = client.Options();
+            if (options == null) return false;
+            var version = new Version(options.InterfaceVersion);
+            // Major version must match & minor version must match. Example:
+            // Server           Client          Result
+            // 0.6.14.*         0.6.14.*        Compatible
+            // 0.7.0.*          0.6.14.*        Not compatible (server newer)
+            // 0.7.0.*          0.9.0.0         Compatible (client newer)
+            // 0.8.0.*          1.0.0.0         Not compatible (major version mis-match)
+            this.m_tracer.TraceVerbose("IMSI server indicates version {0}", options.InterfaceVersion);
+            return (expectedVersion.Major == version.Major &&
+                expectedVersion.Minor >= version.Minor);
+        }
+
         /// <summary>
         /// Gets current credentials
         /// </summary>
@@ -50,7 +75,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
             // TODO: Clean this up - Login as device account
             if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
-                DateTime.Parse((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
+                ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
                 AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
             return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
         }
@@ -99,6 +124,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (options.Timeout.HasValue)
                     client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
+
+                this.m_tracer.TraceVerbose("Performing IMSI query ({0}):{1}", typeof(TModel).FullName, predicate);
 
                 var retVal = client.Query<TModel>(predicate, offset, count);
                 //retVal?.Reconstitute();
@@ -150,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options.IfNoneMatch;
                 };
                 client.Client.Credentials = this.GetCredentials(client.Client);
-
+                this.m_tracer.TraceVerbose("Performing IMSI GET ({0}):{1}v{2}", typeof(TModel).FullName, key, versionKey);
                 var retVal = client.Get<TModel>(key, versionKey);
 
                 if (retVal is Bundle)
@@ -177,12 +204,14 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
                 method = method.MakeGenericMethod(new Type[] { data.GetType() });
-                method.Invoke(client, new object[] { data });
+                this.m_tracer.TraceVerbose("Performing IMSI INSERT {0}", data);
+                var iver = method.Invoke(client, new object[] { data }) as IVersionedEntity;
+                if (iver != null)
+                    this.UpdateToServerCopy(iver);
             }
             catch (TargetInvocationException e)
             {
@@ -206,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
 
                 return networkInformationService.IsNetworkAvailable &&
-                    client.Client.Options<Object>("/Patient") == null;
+                    this.IsValidVersion(client);
             }
             catch (Exception e)
             {
@@ -224,9 +253,14 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
                 method.MakeGenericMethod(new Type[] { data.GetType() });
-                method.Invoke(this, new object[] { data });
+                this.m_tracer.TraceVerbose("Performing IMSI OBSOLETE {0}", data);
+
+                var iver = method.Invoke(this, new object[] { data }) as IVersionedEntity;
+                if (iver != null)
+                    this.UpdateToServerCopy(iver);
             }
             catch (TargetInvocationException e)
             {
@@ -249,23 +283,20 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 if (data is Patch)
                 {
                     var patch = data as Patch;
+                    this.m_tracer.TraceVerbose("Performing IMSI UPDATE (PATCH) {0}", data);
                     var newUuid = client.Patch(patch);
-
-                    // Update the ETag of the current version
-                    var idp = typeof(IDataPersistenceService<>).MakeGenericType(patch.AppliesTo.GetType());
-                    var idpService = ApplicationContext.Current.GetService(idp);
-                    if (idpService != null)
-                    {
-                        var updateTarget = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) }).Invoke(idpService, new object[] { patch.AppliesTo.Key }) as IVersionedEntity;
-                        updateTarget.VersionKey = newUuid;
-                        idp.GetRuntimeMethod("Update", new Type[] { patch.AppliesTo.GetType() }).Invoke(idpService, new object[] { updateTarget });
-                    }
+                    (patch.AppliesTo as IVersionedEntity).VersionKey = newUuid;
+                    this.UpdateToServerCopy(patch.AppliesTo as IVersionedEntity);
                 }
                 else // regular update 
                 {
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
                     method.MakeGenericMethod(new Type[] { data.GetType() });
-                    method.Invoke(this, new object[] { data });
+                    this.m_tracer.TraceVerbose("Performing IMSI UPDATE (FULL) {0}", data);
+
+                    var iver = method.Invoke(this, new object[] { data }) as IVersionedEntity;
+                    if (iver != null)
+                        this.UpdateToServerCopy(iver);
                 }
             }
             catch (TargetInvocationException e)
@@ -273,6 +304,19 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 throw Activator.CreateInstance(e.InnerException.GetType(), "Error performing action", e) as Exception;
             }
 
+        }
+
+        /// <summary>
+        /// Update the version identifier to the server identifier
+        /// </summary>
+        public void UpdateToServerCopy(IVersionedEntity newData)
+        {
+            this.m_tracer.TraceVerbose("Updating to remote version {0}", newData);
+            // Update the ETag of the current version
+            var idp = typeof(IDataPersistenceService<>).MakeGenericType(newData.GetType());
+            var idpService = ApplicationContext.Current.GetService(idp);
+            if (idpService != null)
+                idp.GetRuntimeMethod("Update", new Type[] { newData.GetType() }).Invoke(idpService, new object[] { newData });
         }
     }
 }

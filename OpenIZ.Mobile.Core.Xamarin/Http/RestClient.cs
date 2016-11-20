@@ -118,8 +118,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
             if (String.IsNullOrEmpty(method))
                 throw new ArgumentNullException(nameof(method));
-            if (String.IsNullOrEmpty(url))
-                throw new ArgumentNullException(nameof(url));
+            //if (String.IsNullOrEmpty(url))
+            //    throw new ArgumentNullException(nameof(url));
 
             // Three times:
             // 1. With provided credential

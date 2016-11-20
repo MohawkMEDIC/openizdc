@@ -32,8 +32,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Exceptions
 		InvalidSignature,
 		InvalidTokenType,
 		KeyNotFound,
-		NotYetValid
-	}
+		NotYetValid,
+        InvalidClaim
+    }
 
 	/// <summary>
 	/// Represents an error with a token

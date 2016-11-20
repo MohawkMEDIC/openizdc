@@ -56,6 +56,23 @@ namespace OpenIZ.Mobile.Core.Security
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Claim value as date time
+        /// </summary>
+        public DateTime AsDateTime()
+        {
+            DateTime value = DateTime.MinValue;
+            if(!DateTime.TryParse(this.Value, out value))
+            {
+                int offset = 0;
+                if (Int32.TryParse(this.Value, out offset))
+                    value = new DateTime(1970, 1, 1).AddSeconds(offset).ToLocalTime();
+                else
+                    throw new ArgumentOutOfRangeException(nameof(Value));
+            }
+            return value;
+        }
 	}
 
 

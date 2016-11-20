@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Security.Remote
             var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
             if (this.m_authContext == null ||
-                DateTime.Parse((this.m_authContext.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
+                ((this.m_authContext.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
                 this.m_authContext = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
         }
 

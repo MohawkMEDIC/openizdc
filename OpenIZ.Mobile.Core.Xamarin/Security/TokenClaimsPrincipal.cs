@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 			{ "sub", ClaimTypes.Sid },
 			{ "authmethod", ClaimTypes.AuthenticationMethod },
 			{ "exp", ClaimTypes.Expiration },
-			{ "auth_time", ClaimTypes.AuthenticationInstant },
+			{ "nbf", ClaimTypes.AuthenticationInstant },
 			{ "email", ClaimTypes.Email }
 		};
 
@@ -111,13 +111,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 					claims.AddRange (this.ProcessClaim (kf, claimName));
 			}
 
-			Claim expiry = claims.Find (o => o.Type == ClaimTypes.Expiration),
-				notBefore = claims.Find (o => o.Type == ClaimTypes.AuthenticationInstant);
-			if (expiry == null || DateTime.Parse (expiry.Value) < DateTime.Now)
-				throw new SecurityTokenException (SecurityTokenExceptionType.TokenExpired, "Token expired");
-			else if (notBefore == null || Math.Abs(DateTime.Parse (notBefore.Value).Subtract(DateTime.Now).TotalMinutes) > 2)
-				throw new SecurityTokenException (SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
+			Claim expiryClaim = claims.Find (o => o.Type == ClaimTypes.Expiration),
+				notBeforeClaim = claims.Find (o => o.Type == ClaimTypes.AuthenticationInstant);
 
+            if (expiryClaim == null || notBeforeClaim == null)
+                throw new SecurityTokenException(SecurityTokenExceptionType.InvalidClaim, "Missing NBF or EXP claim");
+            else
+            {
+                DateTime expiry = new DateTime(1970, 1, 1),
+                    notBefore = new DateTime(1970, 1, 1);
+                expiry = expiry.AddSeconds(Int32.Parse(expiryClaim.Value)).ToLocalTime();
+                notBefore = notBefore.AddSeconds(Int32.Parse(notBeforeClaim.Value)).ToLocalTime();
+
+                if (expiry == null || expiry < DateTime.Now)
+                    throw new SecurityTokenException(SecurityTokenExceptionType.TokenExpired, "Token expired");
+                else if (notBefore == null || Math.Abs(notBefore.Subtract(DateTime.Now).TotalMinutes) > 2)
+                    throw new SecurityTokenException(SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
+            }
             this.RefreshToken = refreshToken;
 
 			this.m_identities.Clear ();
