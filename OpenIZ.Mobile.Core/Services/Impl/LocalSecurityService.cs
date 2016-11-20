@@ -128,7 +128,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service missing");
-			return persistence.Insert(userEntity);
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<UserEntity>>();
+            userEntity = breService?.BeforeInsert(userEntity) ?? userEntity;
+			userEntity = persistence.Insert(userEntity);
+            userEntity = breService?.AfterInsert(userEntity) ?? userEntity;
+            SynchronizationQueue.Outbound.Enqueue(userEntity, Synchronization.Model.DataOperationType.Insert);
+            return userEntity;
 		}
 
         public IEnumerable<SecurityApplication> FindApplications(Expression<Func<SecurityApplication, bool>> query)
@@ -476,15 +481,33 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<UserEntity>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Persistence service not found");
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<UserEntity>>();
+
             UserEntity retVal = userEntity;
 			try
 			{
+                if (!userEntity.Key.HasValue) throw new KeyNotFoundException();
+
+                var old = persistence.Get(userEntity.Key.Value)?.Clone();
+                if (old == null)
+                    throw new KeyNotFoundException(userEntity.Key.Value.ToString());
+
+                userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
 				retVal = persistence.Update(userEntity);
-			}
+                retVal = breService?.AfterUpdate(userEntity) ?? userEntity;
+
+                var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, retVal);
+
+                SynchronizationQueue.Outbound.Enqueue(diff, Synchronization.Model.DataOperationType.Update);
+            }
 			catch
 			{
-				retVal = persistence.Insert(userEntity);
-			}
+                userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
+                retVal = persistence.Insert(userEntity);
+                retVal = breService?.AfterUpdate(userEntity) ?? userEntity;
+                SynchronizationQueue.Outbound.Enqueue(retVal, Synchronization.Model.DataOperationType.Insert);
+
+            }
 
             // We should update that user as well
             if (userEntity.SecurityUserKey.HasValue)

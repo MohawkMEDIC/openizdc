@@ -297,7 +297,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				// Trigger sync?
 				if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
 					Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&
-							(r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0))
+							(r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == "Patch")
 				{
 					Action<Object> async = (itm) =>
 					{

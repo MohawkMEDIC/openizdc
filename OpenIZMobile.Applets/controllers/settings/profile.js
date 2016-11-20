@@ -27,8 +27,9 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function 
 
     $rootScope.$watch('session', function (n, o) {
         if ($rootScope.session != null) {
-            $scope.editObject = $rootScope.session;
-            angular.copy($rootScope.session, $scope.editObject);
+            //$scope.editObject = $rootScope.session;
+            $scope.editObject = JSON.parse(JSON.stringify($rootScope.session));
+            
             
         }
     });

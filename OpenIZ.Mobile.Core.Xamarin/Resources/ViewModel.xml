@@ -64,7 +64,7 @@
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
     <property name="relationship" all="true">
       <property name="*" all="true">
-        <property name="targetModel" all="true"/>
+        <property name="targetModel" all="true" behavior="always"/>
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
@@ -230,6 +230,6 @@
   
   <!-- Session information -->
   <type type="SessionInfo" all="true">
-    <property name="entity" all="true"/>
+    <property name="entity" all="true"  ref="Entity"/>
   </type>
 </ViewModel>

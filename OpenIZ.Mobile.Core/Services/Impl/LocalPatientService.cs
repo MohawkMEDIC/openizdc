@@ -192,7 +192,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 // Get older version
                 if (p.Key.HasValue)
                 {
-                    var old = this.m_persistenceService.Get(p.Key.Value).Clone();
+                    var old = this.m_persistenceService.Get(p.Key.Value)?.Clone();
+
+                    if (old == null) throw new KeyNotFoundException();
 
                     // Fire before update
                     p = this.m_breService?.BeforeUpdate(p) ?? p;
