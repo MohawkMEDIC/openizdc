@@ -18,7 +18,7 @@
  - User: justi
  - Date: 2016-10-11
  -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="MR6" package="tz.timr.mobile" android:installLocation="auto" android:versionCode="15">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="MR6" package="tz.timr.mobile" android:installLocation="auto" android:versionCode="17">
 	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="19" />
 	<uses-permission android:name="android.permission.STATUS_BAR" />
 	<uses-permission android:name="android.permission.REBOOT" />
