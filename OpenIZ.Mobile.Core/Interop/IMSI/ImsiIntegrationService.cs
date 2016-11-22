@@ -46,6 +46,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiIntegrationService));
 
+        private readonly String[] m_removePatchTest =
+        {
+            "creationTime",
+            "obsoletionTime"
+        };
+
         /// <summary>
         /// Throws an exception if the specified service client has the invalid version
         /// </summary>
@@ -283,10 +289,27 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 if (data is Patch)
                 {
                     var patch = data as Patch;
-                    this.m_tracer.TraceVerbose("Performing IMSI UPDATE (PATCH) {0}", data);
+
+                    // Patch for update on times (obsolete, creation time, etc. always fail so lets remove them)
+                    patch.Operation.RemoveAll(o => o.OperationType == PatchOperationType.Test && this.m_removePatchTest.Contains(o.Path));
+                    this.m_tracer.TraceVerbose("Performing IMSI UPDATE (PATCH) {0}", patch);
+
+                    var existingKey = patch.AppliesTo.Key;
+                    // Get the object and then update
+                    var idp = typeof(IDataPersistenceService<>).MakeGenericType(patch.AppliesTo.Type);
+                    var idpService = ApplicationContext.Current.GetService(idp);
+                    var getMethod = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
+                    var existing = getMethod.Invoke(idpService, new object[] { existingKey });
+
                     var newUuid = client.Patch(patch);
-                    (patch.AppliesTo as IVersionedEntity).VersionKey = newUuid;
-                    this.UpdateToServerCopy(patch.AppliesTo as IVersionedEntity);
+
+                    // Update the server version key
+                    if (existing is IVersionedEntity)
+                    {
+                        (existing as IVersionedEntity).VersionKey = newUuid;
+                        getMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
+                        getMethod.Invoke(idpService, new object[] { existing });
+                    }
                 }
                 else // regular update 
                 {

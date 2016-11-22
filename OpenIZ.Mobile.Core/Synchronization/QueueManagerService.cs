@@ -21,6 +21,7 @@ using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Configuration;
@@ -297,7 +298,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				// Trigger sync?
 				if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
 					Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&
-							(r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == "Patch")
+							(r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == typeof(Patch).AssemblyQualifiedName)
 				{
 					Action<Object> async = (itm) =>
 					{

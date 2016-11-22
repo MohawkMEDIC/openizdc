@@ -92,7 +92,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 if (itm.GetValue(domainObject) == null)
                     throw new ArgumentNullException(itm.Name, "Requires a value");
 #endif
-            context.Insert(domainObject);
+
+            // Does this already exist?
+            if (this.Get(context, data.Key.Value) == null)
+                context.Insert(domainObject);
+            else
+                context.Update(domainObject);
 
             return data;
         }

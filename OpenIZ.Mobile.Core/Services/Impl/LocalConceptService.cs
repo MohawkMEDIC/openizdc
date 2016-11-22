@@ -42,10 +42,20 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Find concepts
-		/// </summary>
-		public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query)
+        public IEnumerable<ConceptReferenceTerm> FindConceptReferenceTerms(Expression<Func<ConceptReferenceTerm, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ConceptReferenceTerm> FindConceptReferenceTerms(Expression<Func<ConceptReferenceTerm, bool>> query, int offset, int? count, out int totalCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Find concepts
+        /// </summary>
+        public IEnumerable<Concept> FindConcepts(Expression<Func<Concept, bool>> query)
 		{
 			int total = 0;
 			return this.FindConcepts(query, 0, null, out total);
@@ -125,10 +135,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Get the specified concept set by identifier
-		/// </summary>
-		public ConceptSet GetConceptSet(Guid id)
+        public ConceptReferenceTerm GetConceptReferenceTerm(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get the specified concept set by identifier
+        /// </summary>
+        public ConceptSet GetConceptSet(Guid id)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
 			if (persistenceService == null)
@@ -171,10 +186,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Create the specified concept st
-		/// </summary>
-		public ConceptSet InsertConceptSet(ConceptSet set)
+        public ConceptReferenceTerm InsertConceptReferenceTerm(ConceptReferenceTerm conceptReferenceTerm)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Create the specified concept st
+        /// </summary>
+        public ConceptSet InsertConceptSet(ConceptSet set)
 		{
 			throw new NotImplementedException();
 		}
@@ -200,7 +220,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		public ConceptSet ObsoleteConceptSet(Guid key)
+        public ConceptReferenceTerm ObsoleteConceptReferenceTerm(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptSet ObsoleteConceptSet(Guid key)
 		{
 			throw new NotImplementedException();
 		}
@@ -215,7 +240,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		public ConceptSet SaveConceptSet(ConceptSet set)
+        public ConceptReferenceTerm SaveConceptReferenceTerm(ConceptReferenceTerm conceptReferenceTerm)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ConceptSet SaveConceptSet(ConceptSet set)
 		{
 			throw new NotImplementedException();
 		}
@@ -224,5 +254,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+        ConceptClass IConceptRepositoryService.SaveConceptClass(ConceptClass conceptClass)
+        {
+            throw new NotImplementedException();
+        }
+
+        ReferenceTerm IConceptRepositoryService.SaveReferenceTerm(ReferenceTerm term)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
