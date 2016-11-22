@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <AppletManifest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.14.0728">
+  <info id="org.openiz.core" version="0.6.14.2231">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -3651,6 +3651,31 @@ fieldset{
     margin-right:30px;
     margin: 0 30px 0 0 !important;
 }
+
+.nav .open&gt;a, .nav .open&gt;a:focus, .nav .open&gt;a:hover {
+    background-color: #146396;
+    border-color: #146396;
+}
+.nav-tabs&gt;li&gt;a:hover {
+    border-color: #146396;
+}
+
+.nav&gt;li&gt;a:focus, .nav&gt;li&gt;a:hover {
+    text-decoration: none;
+    background-color: #146396;
+}
+
+.dropdown-menu &gt; li &gt; a {
+    padding:20px;
+}
+.dropdown-menu &gt; .active &gt; a, .dropdown-menu &gt; .active &gt; a:hover, .dropdown-menu &gt; .active &gt; a:focus {
+    background-color: #146396;
+    background-image: -webkit-linear-gradient(top, #007fd1 0%, #146396 100%);
+    background-image: -o-linear-gradient(top, #007fd1 0%, #146396 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#007fd1), to(#146396));
+    background-image: linear-gradient(to bottom, #007fd1 0%, #146396 100%);
+}
+
 .patient-panel small { color: #fff }
 .glyphicon-question-sign:before {
     content: "\e086";
@@ -3675,7 +3700,7 @@ fieldset{
     background: #ebeff5;
     border: none;
     padding: 12px 10px;
-    font-size: 20px;
+    font-size: 18px;
     min-height:52px;
 }
 .tokenfield{
@@ -3714,7 +3739,7 @@ fieldset{
     background: #ebeff5;
     border: none;
     padding: 12px 10px;
-    font-size: 20px;
+    font-size: 18px;
     height: 52px;
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow {
@@ -3921,6 +3946,7 @@ a.not-active {
 .panel-title a{
     text-decoration:none;
     display: block;
+    margin: -20px;
 }
 .label{
     border-radius: 12px;
@@ -3984,6 +4010,9 @@ body{
 .padding-10{
     padding:10px;
 }
+.padding-left-30{
+    padding-left: 30px;
+}
 .margin-left-100{
     margin-left:100px;
 }
@@ -3994,7 +4023,11 @@ body{
     padding-top: 9px;
     padding-bottom: 9px;
 }
-
+.domicle-marker{
+        position: absolute;
+    left: 12px;
+    top: 4px;
+}
 .navbar-brand-img {
     position: absolute;
     left: 15px;
@@ -4030,7 +4063,7 @@ body{
     width:100%;
 }
 .nav-tabs-fixed-content{
-    padding-top:210px;
+    padding-top:200px;
 }
 .button-icon{
     width: 25px;
@@ -4103,18 +4136,23 @@ body{
     border-left: solid 2px;
     padding-left: 5px;
 }
-
+@media screen and (max-width: 605px){
+    .nav-tabs&gt;li&gt;a {
+        padding:18px;
+        font-size:13px;
+    }
+}
 
 /**Celendar edits*/
-.fc-left{
+.fc-left,.fc-right{
     float:none !important;
 }
 
-.fc-left .fc-button-group{
+.fc-left .fc-button-group, .fc-right .fc-button-group{
     width:100% !important;
 }
 
-.fc-left .fc-button-group .fc-button{
+.fc-left .fc-button-group .fc-button, .fc-right .fc-button-group .fc-button{
     width: 33% !important;
     background: #c7ceda;
     border-radius: 0;
@@ -17545,9 +17583,10 @@ var OpenIZApplicationService=window.OpenIZApplicationService||{},OpenIZSessionSe
               </div>
               <div class="row">
                 <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
-                <div class="col-xs-4">
-                  <span class="glyphicon glyphicon-map-marker">
-                  </span> {{ patient.address | oizEntityAddress }}</div>
+                <div class="col-xs-4 padding-left-30">
+                  <span class="glyphicon glyphicon-map-marker domicle-marker">
+                  </span> {{ patient.address | oizEntityAddress }}
+                </div>
                 <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
                 <label class="col-xs-2 header-dock-labels">Mothers Info</label>
                 <div class="col-xs-4">
@@ -38145,8 +38184,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     "mnemonic": "Act.AdjustStock"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
-  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "classConcept": "CA44A469-81D7-4484-9189-CA1D55AFECBC",
+  "statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
   "actTime": "{{now}}",
   "participation": {
     "Location": {
@@ -38183,8 +38222,8 @@ return function(i){typeof t.define=="function"&amp;&amp;t.define.amd?t.define("j
     "mnemonic": "Act.CountStock"
   },
   "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
-  "classConcept": "28D022C6-8A8B-47C4-9E6A-2BC67308739E",
-  "statusConcept": "C34FCBF1-E0FE-4989-90FD-0DC49E1B9685",
+  "classConcept": "CA44A469-81D7-4484-9189-CA1D55AFECBC",
+  "statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
   "actTime": "{{now}}",
   "participation": {
     "Location": {

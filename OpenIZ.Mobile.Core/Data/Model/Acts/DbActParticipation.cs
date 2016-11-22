@@ -51,5 +51,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         [Column("participationRole"), MaxLength(16)]
         public byte[] ParticipationRoleUuid { get; set; }
 
+        /// <summary>
+        /// Gets or sets the quantity
+        /// </summary>
+        [Column("quantity")]
+        public int Quantity { get; set; }
+
     }
 }

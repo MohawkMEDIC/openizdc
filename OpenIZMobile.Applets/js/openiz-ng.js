@@ -145,7 +145,7 @@ angular.module('openiz', [])
                 scope.$watch(attrs.ngModel, function (nvalue, ovalue)
                 {
                     if (typeof (nvalue) == "string" && ovalue != nvalue ||
-                        typeof (nvalue) === Array && ovalue.length != nvalue.length ||
+                        Array.isArray(nvalue) && (!Array.isArray(ovalue) || ovalue.length != nvalue.length) ||
                         // HACK: For SPA
                         $(element).attr('has-bound') === undefined) {
                         $(element).attr('has-bound', true);

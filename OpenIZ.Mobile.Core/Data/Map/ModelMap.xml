@@ -155,6 +155,7 @@
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
     <property modelName="TargetEntityKey" domainName="TargetUuid"/>
     <property modelName="RelationshipTypeKey" domainName="RelationshipTypeUuid"/>
+    <property modelName="Quantity" domainName="Quantity"/>
   </class>
   
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityIdentifier, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -346,17 +347,11 @@
          domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbActParticipation, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="PlayerEntityKey" domainName="EntityUuid"/>
+    <property modelName="PlayerEntityKey" domainName="Quantity"/>
     <property modelName="SourceEntityKey" domainName="ActUuid"/>
     <property modelName="ParticipationRoleKey" domainName="ParticipationRoleUuid"/>
   </class>
 
-  <class modelClass="OpenIZ.Core.Model.Acts.ActParticipation, OpenIZ.Core.Model, Version=1.0.0.0"
-       domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbActParticipation, OpenIZ.Mobile.Core, Version=0.5.0.0">
-    <property modelName="Key" domainName="Uuid"/>
-    <property modelName="PlayerEntityKey" domainName="EntityUuid"/>
-    <property modelName="SourceEntityKey" domainName="ActUuid"/>
-    <property modelName="ParticipationRoleKey" domainName="ParticipationRoleUuid"/>
-  </class>
 
   <class modelClass="OpenIZ.Core.Model.Acts.SubstanceAdministration, OpenIZ.Core.Model, Version=1.0.0.0"
        domainClass="OpenIZ.Mobile.Core.Data.Model.Acts.DbSubstanceAdministration, OpenIZ.Mobile.Core, Version=0.5.0.0">
