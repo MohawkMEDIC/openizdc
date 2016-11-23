@@ -150,6 +150,13 @@
           </property>
         </property>
       </property>
+      <property name="OwnedEntity" all="true">
+        <property name="targetModel" behavior="always" all="true">
+          <property name="relationship" all="true">
+            <property name="OwnedEntity" behavior="never" all="false"/>
+          </property>
+        </property>
+      </property>
       <property name="*" all="true">
         <property name="source" behavior="never"/>
         <property name="holder" behavior="never"/>
