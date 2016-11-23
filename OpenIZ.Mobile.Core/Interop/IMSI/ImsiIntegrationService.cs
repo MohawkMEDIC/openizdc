@@ -46,10 +46,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiIntegrationService));
 
+        // Tests to remove due to the mobile / server auto-calculating them
         private readonly String[] m_removePatchTest =
         {
             "creationTime",
-            "obsoletionTime"
+            "obsoletionTime",
+            "previousVersion"
         };
 
         /// <summary>
@@ -304,8 +306,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     var newUuid = client.Patch(patch);
 
                     // Update the server version key
-                    if (existing is IVersionedEntity)
+                    if (existing is IVersionedEntity && 
+                        (existing as IVersionedEntity)?.VersionKey != newUuid)
                     {
+                        this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
                         (existing as IVersionedEntity).VersionKey = newUuid;
                         getMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
                         getMethod.Invoke(idpService, new object[] { existing });

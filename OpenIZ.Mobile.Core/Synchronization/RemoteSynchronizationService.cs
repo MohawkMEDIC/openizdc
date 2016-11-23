@@ -204,11 +204,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
                     result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 10000 });
-                    this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
+                    
 
                     // Queue the act of queueing
                     if (result != null)
                     {
+                        this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
                         retVal = result.TotalResults;
                     }
