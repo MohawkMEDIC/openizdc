@@ -110,10 +110,20 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Query(query, offset, count, out totalResults, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Gets the specified concept by mnemonic
-		/// </summary>
-		public Concept GetConcept(string mnemonic)
+        public IEnumerable<ReferenceTerm> FindReferenceTerms(Expression<Func<ReferenceTerm, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ReferenceTerm> FindReferenceTerms(Expression<Func<ReferenceTerm, bool>> query, int offset, int? count, out int totalCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets the specified concept by mnemonic
+        /// </summary>
+        public Concept GetConcept(string mnemonic)
 		{
 			return this.FindConcepts(o => o.Mnemonic == mnemonic).FirstOrDefault();
 		}
@@ -160,10 +170,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return this.FindConceptSets(o => o.Mnemonic == mnemonic).FirstOrDefault();
 		}
 
-		/// <summary>
-		/// Get the specified reference term for the concept
-		/// </summary>
-		public ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid)
+        public ReferenceTerm GetReferenceTerm(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Get the specified reference term for the concept
+        /// </summary>
+        public ReferenceTerm GetReferenceTerm(Concept concept, string codeSystemOid)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptReferenceTerm>>();
 			if (persistenceService == null)
@@ -199,10 +214,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Determine if the concept set contains the specified concept
-		/// </summary>
-		public bool IsMember(ConceptSet set, Concept concept)
+        public ReferenceTerm InsertReferenceTerm(ReferenceTerm referenceTerm)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Determine if the concept set contains the specified concept
+        /// </summary>
+        public bool IsMember(ConceptSet set, Concept concept)
 		{
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
 			if (persistence == null)

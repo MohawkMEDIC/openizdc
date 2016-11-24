@@ -28,6 +28,7 @@ using SQLite.Net;
 using OpenIZ.Mobile.Core.Services;
 using System.Reflection;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -68,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 if (itm.TryGetExisting(context) != null)
                     method = "Update";
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(SQLiteConnectionWithLock), itm.GetType() });
-                mi.Invoke(svc, new object[] { context, itm });
+                itm.CopyObjectData(mi.Invoke(svc, new object[] { context, itm }));
             }
             return data;
         }
@@ -82,7 +83,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var mi = idp.GetRuntimeMethod("Update", new Type[] { typeof(SQLiteConnectionWithLock), itm.GetType() });
-                mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm });
+                itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm }));
             }
             return data;
         }
@@ -96,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var mi = idp.GetRuntimeMethod("Obsolete", new Type[] { typeof(SQLiteConnectionWithLock), itm.GetType() });
-                mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm });
+                itm.CopyObjectData(mi.Invoke(ApplicationContext.Current.GetService(idp), new object[] { context, itm }));
             }
             return data;
         }

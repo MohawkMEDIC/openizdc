@@ -64,12 +64,15 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                                 alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                             }
                             else if (OpenIZ.urlParams["returnUrl"] != null)
-                                $window.location.reload();
+                                if (window.location.hash == "")
+                                    window.location.hash = "#/";
+                            $window.location.reload();
                         },
                         onException: function (exception) {
                             alert(exception.message || exception);
                         },
                         finally: function () {
+                            $("#forgotPasswordWizard").modal("hide");
                             OpenIZ.App.hideWait()
                         }
                     });

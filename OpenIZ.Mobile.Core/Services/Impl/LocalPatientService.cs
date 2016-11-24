@@ -260,6 +260,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 					{
 						DomainName = "TEMP",
 						Name= "Temporary Identifiers",
+                        Oid = "0.0.0.0",
 					}, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace("-",""))
 				};
 			}

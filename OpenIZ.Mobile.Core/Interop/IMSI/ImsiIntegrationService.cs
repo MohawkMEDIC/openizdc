@@ -216,10 +216,13 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
+                // Special case = Batch submit of data with an entry point
+                var submission = (data as Bundle)?.Entry ?? data;
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
-                method = method.MakeGenericMethod(new Type[] { data.GetType() });
-                this.m_tracer.TraceVerbose("Performing IMSI INSERT {0}", data);
-                var iver = method.Invoke(client, new object[] { data }) as IVersionedEntity;
+                method = method.MakeGenericMethod(new Type[] { submission.GetType() });
+
+                this.m_tracer.TraceVerbose("Performing IMSI INSERT {0}", submission);
+                var iver = method.Invoke(client, new object[] { submission }) as IVersionedEntity;
                 if (iver != null)
                     this.UpdateToServerCopy(iver);
             }
@@ -299,9 +302,12 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 if (unsafeUpdate)
                     client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-OpenIZ-Unsafe"] = "true";
 
-                if (data is Patch)
+                // Special case = Batch submit of data with an entry point
+                var submission = (data as Bundle)?.Entry ?? data;
+
+                if (submission is Patch)
                 {
-                    var patch = data as Patch;
+                    var patch = submission as Patch;
 
                     // Patch for update on times (obsolete, creation time, etc. always fail so lets remove them)
                     patch.Operation.RemoveAll(o => o.OperationType == PatchOperationType.Test && this.m_removePatchTest.Contains(o.Path));
@@ -333,10 +339,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
 
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
-                    method.MakeGenericMethod(new Type[] { data.GetType() });
+                    method.MakeGenericMethod(new Type[] { submission.GetType() });
                     this.m_tracer.TraceVerbose("Performing IMSI UPDATE (FULL) {0}", data);
 
-                    var iver = method.Invoke(this, new object[] { data }) as IVersionedEntity;
+                    var iver = method.Invoke(this, new object[] { submission }) as IVersionedEntity;
                     if (iver != null)
                         this.UpdateToServerCopy(iver);
                 }

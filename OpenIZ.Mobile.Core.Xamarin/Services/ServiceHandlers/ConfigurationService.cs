@@ -49,6 +49,7 @@ using System.Data;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Security.Remote;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Core.Model.AMI.Auth;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -401,10 +402,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     if (existingDevice.CollectionItem.Count == 0)
                     {
                         // Create device
-                        var newDevice = amiClient.CreateDevice(new OpenIZ.Core.Model.Security.SecurityDevice()
+                        var newDevice = amiClient.CreateDevice(new SecurityDeviceInfo()
                         {
-                            Name = deviceName,
-                            DeviceSecret = Guid.NewGuid().ToString()
+                            Device = new OpenIZ.Core.Model.Security.SecurityDevice()
+                            {
+                                Name = deviceName,
+                                DeviceSecret = Guid.NewGuid().ToString()
+                            }
                         });
 
                         //// Now create device entity

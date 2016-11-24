@@ -198,6 +198,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
                         this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex);
+                        throw;
                     }
                 }
             }
