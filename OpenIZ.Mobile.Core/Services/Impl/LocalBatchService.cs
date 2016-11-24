@@ -17,11 +17,15 @@
  * User: justi
  * Date: 2016-10-11
  */
+using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
 using System;
+using System.Linq;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -39,7 +43,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Missing persistence service");
-			return persistence.Insert(data);
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
+
+            data = breService?.BeforeInsert(data) ?? data;
+			data = persistence.Insert(data);
+            data = breService?.AfterInsert(data) ?? data;
+
+            SynchronizationQueue.Outbound.Enqueue(data, Synchronization.Model.DataOperationType.Insert);
+
+            return data;
 		}
 
 		/// <summary>
@@ -51,7 +63,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Missing persistence service");
-			return persistence.Obsolete(obsolete);
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
+
+            obsolete = breService?.BeforeObsolete(obsolete) ?? obsolete;
+			obsolete = persistence.Obsolete(obsolete);
+            obsolete = breService?.AfterObsolete(obsolete) ?? obsolete;
+
+            SynchronizationQueue.Outbound.Enqueue(obsolete, Synchronization.Model.DataOperationType.Obsolete);
+            return obsolete;
 		}
 
 		/// <summary>
@@ -65,16 +84,51 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 			if (persistence == null)
 				throw new InvalidOperationException("Missing persistence service");
-			return persistence.Insert(data);
-		}
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
-		/// <summary>
-		/// Validate the bundle and its contents
-		/// </summary>
-		public Bundle Validate(Bundle bundle)
+            // Entry point
+            IdentifiedData old = null;
+            if(data.EntryKey != null)
+            {
+                var type = data.Entry.GetType();
+                var idps = typeof(IDataPersistenceService<>).MakeGenericType(type);
+                var dataService = ApplicationContext.Current.GetService(idps) as IDataPersistenceService;
+                old = (dataService.Get(data.EntryKey.Value) as IdentifiedData).Clone();
+            }
+
+            data = breService?.BeforeUpdate(data) ?? data;
+            data = persistence.Insert(data);
+            data = breService?.AfterUpdate(data) ?? data;
+
+            // Patch
+            if(old != null)
+            {
+                var diff = ApplicationContext.Current.GetService<IPatchService>()?.Diff(old, data.Entry);
+                if (diff != null)
+                    SynchronizationQueue.Outbound.Enqueue(diff, Synchronization.Model.DataOperationType.Update);
+                else
+                    SynchronizationQueue.Outbound.Enqueue(data, Synchronization.Model.DataOperationType.Update);
+            }
+            else
+                SynchronizationQueue.Outbound.Enqueue(data, Synchronization.Model.DataOperationType.Update);
+            return data;
+        }
+
+        /// <summary>
+        /// Validate the bundle and its contents
+        /// </summary>
+        public Bundle Validate(Bundle bundle)
 		{
 			bundle = bundle.Clean() as Bundle;
-			for (int i = 0; i < bundle.Item.Count; i++)
+
+            // BRE validation
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
+            var issues = breService?.Validate(bundle);
+            if (issues.Any(i => i.Priority == DetectedIssuePriorityType.Error))
+                throw new DetectedIssueException(issues);
+
+            // Bundle items
+            for (int i = 0; i < bundle.Item.Count; i++)
 			{
 				var itm = bundle.Item[i];
 				if (itm is Patient)

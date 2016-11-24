@@ -50,7 +50,10 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showCousinsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showNeighboursOnSameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtText = new System.Windows.Forms.TextBox();
+            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            this.sameSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sameLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -61,10 +64,9 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.cbxThread = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.sameSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sameThreadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sameLevelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.decodeBase64ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtText = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -77,6 +79,7 @@
             this.splitContainer2.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -262,7 +265,7 @@
             this.sameThreadToolStripMenuItem,
             this.sameLevelToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(209, 142);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(209, 120);
             // 
             // showCousinsToolStripMenuItem
             // 
@@ -278,19 +281,31 @@
             this.showNeighboursOnSameThreadToolStripMenuItem.Text = "Show Thread Neighbours";
             this.showNeighboursOnSameThreadToolStripMenuItem.Click += new System.EventHandler(this.showNeighboursOnSameThreadToolStripMenuItem_Click);
             // 
-            // txtText
+            // toolStripMenuItem2
             // 
-            this.txtText.Cursor = System.Windows.Forms.Cursors.Default;
-            this.txtText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtText.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtText.Location = new System.Drawing.Point(0, 19);
-            this.txtText.Margin = new System.Windows.Forms.Padding(2);
-            this.txtText.Multiline = true;
-            this.txtText.Name = "txtText";
-            this.txtText.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtText.Size = new System.Drawing.Size(869, 181);
-            this.txtText.TabIndex = 1;
-            this.txtText.WordWrap = false;
+            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(205, 6);
+            // 
+            // sameSourceToolStripMenuItem
+            // 
+            this.sameSourceToolStripMenuItem.Name = "sameSourceToolStripMenuItem";
+            this.sameSourceToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameSourceToolStripMenuItem.Text = "Same Source";
+            this.sameSourceToolStripMenuItem.Click += new System.EventHandler(this.sameSourceToolStripMenuItem_Click);
+            // 
+            // sameThreadToolStripMenuItem
+            // 
+            this.sameThreadToolStripMenuItem.Name = "sameThreadToolStripMenuItem";
+            this.sameThreadToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameThreadToolStripMenuItem.Text = "Same Thread";
+            this.sameThreadToolStripMenuItem.Click += new System.EventHandler(this.sameThreadToolStripMenuItem_Click);
+            // 
+            // sameLevelToolStripMenuItem
+            // 
+            this.sameLevelToolStripMenuItem.Name = "sameLevelToolStripMenuItem";
+            this.sameLevelToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.sameLevelToolStripMenuItem.Text = "Same Level";
+            this.sameLevelToolStripMenuItem.Click += new System.EventHandler(this.sameLevelToolStripMenuItem_Click);
             // 
             // label1
             // 
@@ -374,31 +389,31 @@
             this.cbxThread.Size = new System.Drawing.Size(201, 23);
             this.cbxThread.SelectedIndexChanged += new System.EventHandler(this.cbxThread_SelectedIndexChanged);
             // 
-            // toolStripMenuItem2
+            // contextMenuStrip2
             // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(205, 6);
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.decodeBase64ToolStripMenuItem});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(149, 26);
             // 
-            // sameSourceToolStripMenuItem
+            // decodeBase64ToolStripMenuItem
             // 
-            this.sameSourceToolStripMenuItem.Name = "sameSourceToolStripMenuItem";
-            this.sameSourceToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.sameSourceToolStripMenuItem.Text = "Same Source";
-            this.sameSourceToolStripMenuItem.Click += new System.EventHandler(this.sameSourceToolStripMenuItem_Click);
+            this.decodeBase64ToolStripMenuItem.Name = "decodeBase64ToolStripMenuItem";
+            this.decodeBase64ToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.decodeBase64ToolStripMenuItem.Text = "Inspect Data...";
+            this.decodeBase64ToolStripMenuItem.Click += new System.EventHandler(this.decodeBase64ToolStripMenuItem_Click);
             // 
-            // sameThreadToolStripMenuItem
+            // txtText
             // 
-            this.sameThreadToolStripMenuItem.Name = "sameThreadToolStripMenuItem";
-            this.sameThreadToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.sameThreadToolStripMenuItem.Text = "Same Thread";
-            this.sameThreadToolStripMenuItem.Click += new System.EventHandler(this.sameThreadToolStripMenuItem_Click);
-            // 
-            // sameLevelToolStripMenuItem
-            // 
-            this.sameLevelToolStripMenuItem.Name = "sameLevelToolStripMenuItem";
-            this.sameLevelToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.sameLevelToolStripMenuItem.Text = "Same Level";
-            this.sameLevelToolStripMenuItem.Click += new System.EventHandler(this.sameLevelToolStripMenuItem_Click);
+            this.txtText.ContextMenuStrip = this.contextMenuStrip2;
+            this.txtText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtText.Font = new System.Drawing.Font("Consolas", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtText.Location = new System.Drawing.Point(0, 19);
+            this.txtText.Name = "txtText";
+            this.txtText.ReadOnly = true;
+            this.txtText.Size = new System.Drawing.Size(869, 181);
+            this.txtText.TabIndex = 1;
+            this.txtText.Text = "";
             // 
             // frmMain
             // 
@@ -423,12 +438,12 @@
             this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.contextMenuStrip1.ResumeLayout(false);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.contextMenuStrip2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -462,7 +477,6 @@
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox cbxThread;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private System.Windows.Forms.TextBox txtText;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem showCousinsToolStripMenuItem;
@@ -472,6 +486,9 @@
         private System.Windows.Forms.ToolStripMenuItem sameSourceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sameThreadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sameLevelToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem decodeBase64ToolStripMenuItem;
+        private System.Windows.Forms.RichTextBox txtText;
     }
 }
 

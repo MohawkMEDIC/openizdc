@@ -252,6 +252,10 @@ namespace OpenIZ.Mobile.Core
 
         }
 
+        /// <summary>
+        /// Close the application
+        /// </summary>
+        public abstract void Exit();
     }
 }
 

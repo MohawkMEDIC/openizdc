@@ -161,6 +161,12 @@
   <data name="locale_sync" xml:space="preserve">
     <value>Downloading {0}s...</value>
   </data>
+  <data name="locale_syncErrorBody" xml:space="preserve">
+    <value>Error synchronizing data with remote server: {0}</value>
+  </data>
+  <data name="locale_syncErrorSubject" xml:space="preserve">
+    <value />
+  </data>
   <data name="locale_welcomeMessageBody" xml:space="preserve">
     <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the sycnrhonization is complete. We'll let you know when the synchronization operation is done!
 

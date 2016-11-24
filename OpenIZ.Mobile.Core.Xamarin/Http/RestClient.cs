@@ -35,6 +35,7 @@ using OpenIZ.Mobile.Core.Xamarin.Resources;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using OpenIZ.Core.Model.Query;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -85,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 		/// <summary>
 		/// Create HTTP Request object
 		/// </summary>
-		protected override WebRequest CreateHttpRequest (string url, params KeyValuePair<string, object>[] query)
+		protected override WebRequest CreateHttpRequest (string url, NameValueCollection query)
 		{
 			var retVal = (HttpWebRequest)base.CreateHttpRequest (url, query);
 
@@ -113,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
         /// <param name="query">Query.</param>
         /// <typeparam name="TBody">The 1st type parameter.</typeparam>
         /// <typeparam name="TResult">The 2nd type parameter.</typeparam>
-        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, out WebHeaderCollection responseHeaders, TBody body, params KeyValuePair<string, object>[] query)
+        protected override TResult InvokeInternal<TBody, TResult>(string method, string url, string contentType, WebHeaderCollection additionalHeaders, out WebHeaderCollection responseHeaders, TBody body, NameValueCollection query)
         {
 
             if (String.IsNullOrEmpty(method))

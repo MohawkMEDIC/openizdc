@@ -23,6 +23,7 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
+using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;

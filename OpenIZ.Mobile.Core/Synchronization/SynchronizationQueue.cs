@@ -30,6 +30,8 @@ using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Connection;
+using System.Linq.Expressions;
+using System.Linq;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -304,6 +306,35 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		}
 
         /// <summary>
+        /// Query the specified object
+        /// </summary>
+        public IEnumerable<TQueueEntry> Query(Expression<Func<TQueueEntry, bool>> query, int offset, int? count, out int totalResults)
+        {
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
+                try
+                {
+                    using (conn.Lock())
+                    {
+                        var retVal = conn.Table<TQueueEntry>().Where(query);
+                        totalResults = retVal.Count();
+
+                        retVal = retVal.Skip(offset);
+                        if (count.HasValue)
+                            retVal = retVal.Take(count.Value);
+                        return retVal.OrderBy(i => i.Id).ToList();
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error querying queue: {0}", e);
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
         /// Counts the number of objects in the current queue
         /// </summary>
         public int Count()
@@ -323,6 +354,48 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 }
             }
         }
-	}
+
+        /// <summary>
+        /// Deletes the specified object from the queue
+        /// </summary>
+        public void Delete(int id)
+        {
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
+                try
+                {
+                    using (conn.Lock())
+                        conn.Table<TQueueEntry>().Delete(o => o.Id == id);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error deleting object: {0}", e);
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the specified queue item
+        /// </summary>
+        public TQueueEntry Get(int id)
+        {
+            var conn = this.CreateConnection();
+            lock (this.m_syncObject)
+            {
+                try
+                {
+                    using (conn.Lock())
+                        return conn.Get<TQueueEntry>(id);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error getting queue entry {0}: {1}", id, e);
+                    throw;
+                }
+            }
+        }
+    }
 }
 

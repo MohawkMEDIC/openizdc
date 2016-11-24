@@ -39,6 +39,7 @@ using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -103,11 +104,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
             this.m_integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
             this.m_networkInfoService = ApplicationContext.Current.GetService<INetworkInformationService>();
-            
+
             this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);
 
             this.Pull(SynchronizationPullTriggerType.OnStart);
-            
+
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
@@ -201,10 +202,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
                     float perc = i / (float)result.TotalResults;
-                    
+
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 10000 });
-                    
+                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 10000, Lean = true });
+
 
                     // Queue the act of queueing
                     if (result != null)

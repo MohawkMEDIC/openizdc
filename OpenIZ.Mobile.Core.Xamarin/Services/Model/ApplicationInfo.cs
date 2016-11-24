@@ -67,17 +67,30 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
             try
             {
                 // Configuration files
-                var mainDb = new FileInfo(ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value);
-                var queueDb = new FileInfo(ApplicationContext.Current.Configuration.GetConnectionString("openIzQueue").Value);
                 var logFileName = ApplicationContext.Current.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.FirstOrDefault(o => o.TraceWriter.GetType() == typeof(FileTraceWriter)).InitializationData;
+
                 logFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "log", logFileName + ".log");
                 var logFile = new FileInfo(logFileName);
+
+                // File information
                 this.FileInfo = new List<DiagnosticAttachmentInfo>()
+                {
+                    new DiagnosticAttachmentInfo() { FileDescription = "Log File", FileSize = logFile.Length, FileName = logFile.Name, Id = "log", LastWriteDate = logFile.LastWriteTime }
+                };
+
+                foreach (var con in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
+                {
+                    var fi = new FileInfo(con.Value);
+                    this.FileInfo.Add(new DiagnosticAttachmentInfo() { FileDescription = con.Name, FileName = fi.FullName, LastWriteDate = fi.LastWriteTime, FileSize = fi.Length, Id = "db" });
+                    
+                    // Existing path
+                    if(File.Exists(Path.ChangeExtension(con.Value, "bak")))
                     {
-                        new DiagnosticAttachmentInfo() { FileDescription = "Core Data", FileName = mainDb.FullName, LastWriteDate = mainDb.LastWriteTime, FileSize = mainDb.Length },
-                        new DiagnosticAttachmentInfo() { FileDescription = "Queue Data", FileName = queueDb.FullName, LastWriteDate = queueDb.LastWriteTime, FileSize = queueDb.Length },
-                        new DiagnosticAttachmentInfo() { FileDescription = "Log File", FileName = logFile.FullName, LastWriteDate = logFile.LastWriteTime, FileSize = logFile.Length }
-                    };
+                        fi = new FileInfo(con.Value);
+                        this.FileInfo.Add(new DiagnosticAttachmentInfo() { FileDescription = con.Name + " Backup", FileName = fi.FullName, LastWriteDate = fi.LastWriteTime, FileSize = fi.Length, Id = "bak" });
+                    }
+                }
+
 
                 this.SyncInfo = Synchronization.SynchronizationLog.Current.GetAll().Select(o => new DiagnosticSyncInfo()
                 {

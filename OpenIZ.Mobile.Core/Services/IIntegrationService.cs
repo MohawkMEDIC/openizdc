@@ -83,12 +83,13 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Obsoletes specified data.
 		/// </summary>
 		/// <param name="data">The data to be obsoleted.</param>
-		void Obsolete(IdentifiedData data);
+		void Obsolete(IdentifiedData data, bool forceObsolete = false);
 
 		/// <summary>
 		/// Updates specified data.
 		/// </summary>
 		/// <param name="data">The data to be updated.</param>
-		void Update(IdentifiedData data);
+        /// <param name="forceUpdate">When true, indicates that update should not do a safety check</param>
+		void Update(IdentifiedData data, bool forceUpdate = false);
     }
 }

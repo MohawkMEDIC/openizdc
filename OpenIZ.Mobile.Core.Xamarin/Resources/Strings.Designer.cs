@@ -70,6 +70,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot restore from backup as the backup files do not exist.
+        /// </summary>
+        internal static string err_backupNotExist {
+            get {
+                return ResourceManager.GetString("err_backupNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified security certificate was not found.
         /// </summary>
         internal static string err_certificate_not_found {
@@ -133,6 +142,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A purge is not permitted on this application configuration. Perhaps you&apos;re set to online mode only?.
+        /// </summary>
+        internal static string err_purgeNotPermitted {
+            get {
+                return ResourceManager.GetString("err_purgeNotPermitted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password reset is not supported from this configuration.
         /// </summary>
         internal static string err_reset_not_supported {
@@ -147,6 +165,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         internal static string err_response_failed_validation {
             get {
                 return ResourceManager.GetString("err_response_failed_validation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A restore is not permitted due to the configuration of this device. Perhaps you&apos;re in online only mode?.
+        /// </summary>
+        internal static string err_restoreNotPermitted {
+            get {
+                return ResourceManager.GetString("err_restoreNotPermitted", resourceCulture);
             }
         }
         

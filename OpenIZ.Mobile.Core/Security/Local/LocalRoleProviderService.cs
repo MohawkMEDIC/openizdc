@@ -108,14 +108,15 @@ namespace OpenIZ.Mobile.Core.Security
 			var conn = this.CreateConnection();
 			using (conn.Lock())
 			{
-				foreach (var un in userNames)
+				foreach (var userName in userNames)
 				{
-					var dbu = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == un);
+                    var un = userName.ToLower();
+					var dbu = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName.ToLower() == un);
 					if (dbu == null)
 						throw new KeyNotFoundException(String.Format("User {0} not found", un));
 					foreach (var rn in roleNames)
 					{
-						var dbr = conn.Table<DbSecurityRole>().FirstOrDefault(o => o.Name == rn);
+						var dbr = conn.Table<DbSecurityRole>().FirstOrDefault(o => o.Name.ToLower() == rn.ToLower());
 						if (dbr == null)
 							throw new KeyNotFoundException(String.Format("Role {0} not found", rn));
 						else if (conn.Table<DbSecurityUserRole>().Where(o => o.RoleUuid == dbr.Uuid && o.UserUuid == dbu.Uuid).Count() == 0)

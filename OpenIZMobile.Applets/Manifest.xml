@@ -56,7 +56,18 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
     <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>
-  
+  <menuItem order="50">
+    <icon>/tz.timr.applet/img/appbar.settings.png</icon>
+    <text>Administration</text>
+    <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
+      <icon>/org.openiz.core/img/appbar.shield.png</icon>
+      <text lang="en">Settings</text>
+    </menuItem>
+    <menuItem asset="/org.openiz.core/views/settings/data.html" launch="#/core/data">
+      <icon>/org.openiz.core/img/appbar.database.png</icon>
+      <text lang="en">Data Manager</text>
+    </menuItem>
+  </menuItem>
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
     <text>Development Tools</text>
@@ -201,7 +212,15 @@
     <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
     <string key="locale.settings.localAdminName">Local Admin Username:</string>
     <string key="locale.actions.save">Save</string>
-
+    <string key="locale.settings.data.restore">Restore DB</string>
+    <string key="locale.settings.data.purge">Purge DB</string>
+    <string key="locale.settings.data.pull">Pull from Central</string>
+    <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
+    <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
+    <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
+    <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
+    <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
+    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock">&lt;/span> User Elevation Required</string>
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Change Password</string>
     <string key="locale.preferences.username">Username</string>

@@ -92,6 +92,7 @@
     <Compile Include="Services\Model\BugReport.cs" />
     <Compile Include="Services\Model\ErrorResult.cs" />
     <Compile Include="Services\Model\MenuInformation.cs" />
+    <Compile Include="Services\ServiceHandlers\ApplicationService.Data.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />

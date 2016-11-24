@@ -1,0 +1,90 @@
+﻿<div class="row" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" ng-controller="DatabaseController">
+    <oiz:script>/org.openiz.core/controllers/common/app/files.js</oiz:script>
+
+    <div class="col-xs-12">
+        <h3>{{ 'locale.about.fileInfo' | i18n }}</h3>
+        <table class="table table-striped">
+            <tr>
+                <th></th>
+                <th>{{ 'locale.about.files.name' | i18n }}</th>
+                <th>{{ 'locale.about.files.size' | i18n }}</th>
+                <th>{{ 'locale.about.files.date' | i18n }}</th>
+            </tr>
+            <tr ng-repeat="f in about.fileInfo">
+                <td>
+                    <img src="~/img/appbar.database.png" style="width:24px; height:24px" ng-if="f.id == 'db'" />
+                    <img src="~/img/appbar.book.list.png" style="width:24px; height:24px" ng-if="f.id == 'log'" />
+                    <img src="~/img/appbar.reset.png" style="width:24px; height:24px" ng-if="f.id == 'bak'" />
+                </td>
+                <td>{{ f.description }}</td>
+                <td>{{ f.size | number:0 }} b</td>
+                <td>{{ f.lastWrite | date: 'yyyy-MMM-dd HH:mm'}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-xs-12">
+        <div class="modal fade" id="purgeConfirmModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content panel-danger">
+                    <div class="modal-header panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-exclamation-sign" style="font-size:2em"></span>
+                            {{ 'locale.settings.data.purge.confirmTitle' | i18n }}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {{ 'locale.settings.data.purge.description' | i18n }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <label>
+                            <input type="checkbox" ng-model="_backup" />
+                            {{ 'locale.settings.data.purge.backup' | i18n }}
+                        </label>
+                        <button type="submit" class="btn btn-danger" ng-click="doPurge(true, _backup)">{{ 'locale.settings.data.purge' | i18n }}</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="restoreConfirmModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content panel-warning">
+                    <div class="modal-header panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-warning-sign" style="font-size:2em"></span>
+                            {{ 'locale.settings.data.restore.confirmTitle' | i18n }}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    {{ 'locale.settings.data.restore.description' | i18n }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        
+                        <button type="submit" class="btn btn-warning" ng-click="doRestore(true)">{{ 'locale.settings.data.restore' | i18n }}</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button ng-if="hasBackup()" ng-click="doRestore()" class="btn btn-warning btn-lg"><span class="glyphicon glyphicon-download-alt"></span> {{ 'locale.settings.data.restore' | i18n }}</button>
+            <button ng-click="doPull()" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-cloud-download"></span> {{ 'locale.settings.data.pull' | i18n }}</button>
+            <button ng-click="doPurge()" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-floppy-remove"></span> {{ 'locale.settings.data.purge' | i18n }}</button>
+        </div>
+    </div>
+</div>

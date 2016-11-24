@@ -97,6 +97,7 @@
     <Compile Include="Security\ITwoFactorRequestService.cs" />
     <Compile Include="Security\Remote\AmiTwoFactorRequestService.cs" />
     <Compile Include="Security\SessionInfo.cs" />
+    <Compile Include="Services\IDataConnectionManager.cs" />
     <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />
     <Compile Include="Services\Impl\LocalBatchService.cs" />

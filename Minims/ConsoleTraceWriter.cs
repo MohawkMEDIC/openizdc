@@ -35,9 +35,10 @@ namespace Minims
 
         // True when disposing
         private bool m_disposing = false;
-        
+
+
         // The log backlog
-        private Queue<KeyValuePair<ConsoleColor, String>> m_logBacklog = new Queue<KeyValuePair<ConsoleColor, string>>();
+        private Queue<KeyValuePair<ConsoleColor, String>> m_logBacklog = new Queue<KeyValuePair<ConsoleColor, string>>(10);
 
         // Sync object
         private static Object s_syncObject = new object();
@@ -60,7 +61,7 @@ namespace Minims
         protected override void WriteTrace(EventLevel level, string source, string format, params object[] args)
         {
             ConsoleColor color = ConsoleColor.White;
-            switch(level)
+            switch (level)
             {
                 case EventLevel.Verbose:
                     if (format.Contains("PERF"))
@@ -83,10 +84,11 @@ namespace Minims
                     break;
             }
 
-            this.m_logBacklog.Enqueue(new KeyValuePair<ConsoleColor, String>(color, String.Format("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args))));
-
             lock (this.m_logBacklog)
+            {
+                this.m_logBacklog.Enqueue(new KeyValuePair<ConsoleColor, String>(color, String.Format("[{0} {1:yyyy/MM/dd HH:mm:ss}] {2} : {3}", level, DateTime.Now, source, String.Format(format, args))));
                 Monitor.Pulse(this.m_logBacklog);
+            }
         }
 
         private void LogDispatcherLoop()

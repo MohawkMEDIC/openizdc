@@ -45,5 +45,10 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Gets or sets the timeout
 		/// </summary>
 		public int? Timeout { get; set; }
+
+        /// <summary>
+        /// Lean
+        /// </summary>
+        public bool Lean { get; set; }
 	}
 }

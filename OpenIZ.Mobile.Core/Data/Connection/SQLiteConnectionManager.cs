@@ -18,6 +18,7 @@
  * Date: 2016-7-30
  */
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Services;
 using SQLite.Net;
 using SQLite.Net.Interop;
 using System;
@@ -32,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
     /// <summary>
     /// SQLiteConnectionManager
     /// </summary>
-    public class SQLiteConnectionManager
+    public class SQLiteConnectionManager : IDataConnectionManager
     {
 
 
@@ -46,6 +47,11 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         // instance singleton
         private static SQLiteConnectionManager s_instance = null;
 
+        public event EventHandler Starting;
+        public event EventHandler Started;
+        public event EventHandler Stopping;
+        public event EventHandler Stopped;
+
         /// <summary>
         /// Gets the current connection manager
         /// </summary>
@@ -53,12 +59,23 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         {
             get
             {
-                if (s_instance== null)
-                    lock (s_lockObject)
-                        if (s_instance == null)
-                            s_instance = new SQLiteConnectionManager();
-                return s_instance;
+                //if (s_instance == null)
+                //    lock (s_lockObject)
+                //        if (s_instance == null)
+                //        {
+                //            s_instance = new SQLiteConnectionManager();
+                //            s_instance.Start();
+                //        }
+                return ApplicationContext.Current.GetService<SQLiteConnectionManager>();
             }
+        }
+
+        /// <summary>
+        /// True if the daemon is running
+        /// </summary>
+        public bool IsRunning
+        {
+            get; private set;
         }
 
         ///// <summary>
@@ -77,9 +94,10 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// <summary>
         /// SQLLiteConnection manager
         /// </summary>
-        private SQLiteConnectionManager()
+        public SQLiteConnectionManager()
         {
-
+            s_instance = this;
+            this.Start();
         }
 
         /// <summary>
@@ -88,6 +106,8 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         public SQLiteConnectionWithLock GetConnection(String dataSource)
         {
             SQLiteConnectionWithLock conn = null;
+            if (!this.IsRunning)
+                throw new InvalidOperationException("Cannot get connection before daemon is started");
 
             try
             {
@@ -97,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         {
 
                             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString( dataSource,true));
+                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, true));
                             this.m_connections.Add(dataSource, conn);
                             this.m_tracer.TraceInfo("Connection to {0} established, {1} active connections", dataSource, this.m_connections.Count);
 #if DEBUG_SQL
@@ -106,13 +126,44 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         }
                 return conn;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error getting connection: {0}", e);
                 if (conn != null)
                     Monitor.Exit(conn);
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Start the connection manager
+        /// </summary>
+        public bool Start()
+        {
+            if (this.IsRunning) return true;
+            this.Starting?.Invoke(this, EventArgs.Empty);
+            this.Started?.Invoke(this, EventArgs.Empty);
+            this.IsRunning = true;
+            this.Started?.Invoke(this, EventArgs.Empty);
+            return this.IsRunning;
+        }
+
+        /// <summary>
+        /// Stop this service
+        /// </summary>
+        public bool Stop()
+        {
+            this.Stopping?.Invoke(this, EventArgs.Empty);
+
+            // disconnect all 
+            foreach (var itm in this.m_connections)
+            {
+                this.m_tracer.TraceInfo("Closing connection {0}...", itm.Key);
+                using (itm.Value.Lock())
+                    itm.Value.Close();
+            }
+            this.Stopped?.Invoke(this, EventArgs.Empty);
+            return true;
         }
     }
 
@@ -122,7 +173,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
     internal class TracerTraceListener : ITraceListener
     {
         // Tracer
-        private Tracer m_tracer = Tracer.GetTracer(typeof(SQLiteConnectionWithLock) );
+        private Tracer m_tracer = Tracer.GetTracer(typeof(SQLiteConnectionWithLock));
 
         /// <summary>
         /// Trace info to console

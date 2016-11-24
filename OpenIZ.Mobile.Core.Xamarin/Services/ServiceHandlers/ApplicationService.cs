@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     /// Represents a service for interacting with the application asynchronously
     /// </summary>
     [RestService("/__app")]
-    public class ApplicationService
+    public partial class ApplicationService
     {
 
         // App information

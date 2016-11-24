@@ -205,6 +205,11 @@ namespace LogViewer
                 this.DrawList(o => o.Level == el);
             }
         }
+
+        private void decodeBase64ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new frmDataInspector(txtText.SelectedText ?? txtText.Text).ShowDialog();
+        }
     }
 
 }

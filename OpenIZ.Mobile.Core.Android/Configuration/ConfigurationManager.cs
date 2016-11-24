@@ -48,6 +48,7 @@ using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -135,6 +136,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 Style = StyleSchemeType.Dark,
                 UserPrefDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "userpref"),
                 ServiceTypes = new List<string>() {
+                    
                     typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,

@@ -259,10 +259,12 @@ namespace Minims
                         retVal.ConfigurationManager.Save();
                     }
                     retVal.LoadedApplets.CachePages = false;
-                    retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
-                    {
-                        TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
-                    });
+
+                    if(!retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Any(o=>o.TraceWriterClassXml.Contains("Console")))
+                        retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
+                        {
+                            TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
+                        });
 
                     retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
@@ -570,6 +572,14 @@ namespace Minims
         public override void SaveConfiguration()
         {
             this.m_configurationManager.Save();
+        }
+
+        /// <summary>
+        /// Exit the application
+        /// </summary>
+        public override void Exit()
+        {
+            Environment.Exit(0);
         }
     }
 }

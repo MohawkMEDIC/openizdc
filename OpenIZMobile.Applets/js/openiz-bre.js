@@ -77,14 +77,14 @@ var OpenIZBre = OpenIZBre || {
      * @summary Simulates the simplify 
      * @deprecated
      */
-    ExpandObject: function (object) { return object; },
+    ToViewModel: function (object) { return object; },
     /**
      * @method
      * @memberof OpenIZBre
      * @summary Simulates the expand object method
      * @deprecated
      */
-    SimplifyObject: function (object) { return object; },
+    FromViewModel: function (object) { return object; },
     /**
      * @method
      * @memberof OpenIZBre
@@ -124,7 +124,7 @@ var OpenIZBre = OpenIZBre || {
         for (var t in this._triggers)
             if (this._triggers[t].type == instance.$type) {
                 var triggerResult = this._triggers[t].callback(retVal);
-                retVal = triggerResult[Object.keys(triggerResult)[0]] || retVal;
+                retVal = triggerResult || retVal;
             }
         return retVal;
     },

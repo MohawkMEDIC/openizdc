@@ -445,6 +445,17 @@ namespace OpenIZ.Mobile.Core.Android
 			}
 		}
 
-		#endregion implemented abstract members of ApplicationContext
-	}
+        /// <summary>
+        /// Close 
+        /// </summary>
+        public override void Exit()
+        {
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
+                ApplicationContext.Current.Stop();
+                (this.Context as Activity).Finish();
+            }, null);
+        }
+        #endregion implemented abstract members of ApplicationContext
+    }
 }

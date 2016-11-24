@@ -117,49 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="err_authentication_exception" xml:space="preserve">
-    <value>General authentication error occurred</value>
-  </data>
-  <data name="err_backupNotExist" xml:space="preserve">
-    <value>Cannot restore from backup as the backup files do not exist</value>
-  </data>
-  <data name="err_certificate_not_found" xml:space="preserve">
-    <value>The specified security certificate was not found</value>
-  </data>
-  <data name="err_duplicate_deviceName" xml:space="preserve">
-    <value>Device has already been registered.</value>
-  </data>
-  <data name="err_duplicate_package_name" xml:space="preserve">
-    <value>Package is already installed</value>
-  </data>
-  <data name="err_invalid_accept" xml:space="preserve">
-    <value>Accept header is not understood</value>
-  </data>
-  <data name="err_invalid_argumentType" xml:space="preserve">
-    <value>Argument is of wrong type</value>
-  </data>
-  <data name="err_login_invalidusername" xml:space="preserve">
-    <value>Invalid Username/Password</value>
-  </data>
-  <data name="err_offline_use_cache_creds" xml:space="preserve">
-    <value>The authentication server cannot be contacted. Use the credentials you last used to access this device</value>
-  </data>
-  <data name="err_purgeNotPermitted" xml:space="preserve">
-    <value>A purge is not permitted on this application configuration. Perhaps you're set to online mode only?</value>
-  </data>
-  <data name="err_reset_not_supported" xml:space="preserve">
-    <value>Password reset is not supported from this configuration</value>
-  </data>
-  <data name="err_response_failed_validation" xml:space="preserve">
-    <value>Invalid response received from server</value>
-  </data>
-  <data name="err_restoreNotPermitted" xml:space="preserve">
-    <value>A restore is not permitted due to the configuration of this device. Perhaps you're in online only mode?</value>
-  </data>
-  <data name="err_too_many_certificate_matches" xml:space="preserve">
-    <value>Too many certificates matched the criteria (perhaps search criteria is too vague?)</value>
-  </data>
-  <data name="err_unauthenticated_principal" xml:space="preserve">
-    <value>Cannot set context to unauthenticated principal</value>
-  </data>
 </root>

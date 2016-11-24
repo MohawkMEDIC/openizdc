@@ -211,5 +211,10 @@ namespace OpenIZ.Mobile.Core.Test
         {
             throw new NotImplementedException();
         }
+
+        public override void Exit()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

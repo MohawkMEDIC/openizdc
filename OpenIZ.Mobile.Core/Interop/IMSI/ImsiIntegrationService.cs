@@ -128,6 +128,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options.IfModifiedSince.Value.ToString();
                     else if (!String.IsNullOrEmpty(options.IfNoneMatch))
                         e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options.IfNoneMatch;
+                    if (options.Lean)
+                        e.Query.Add("_lean", "true");
                 };
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (options.Timeout.HasValue)
@@ -255,12 +257,17 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         /// Obsoletes specified data.
         /// </summary>
         /// <param name="data">The data to be obsoleted.</param>
-        public void Obsolete(IdentifiedData data)
+        public void Obsolete(IdentifiedData data, bool unsafeObsolete = false)
         {
             try
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+                // Force an update
+                if (unsafeObsolete)
+                    client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-OpenIZ-Unsafe"] = "true";
+                else
+                    client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
 
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
                 method.MakeGenericMethod(new Type[] { data.GetType() });
@@ -281,12 +288,16 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         /// Updates specified data.
         /// </summary>
         /// <param name="data">The data to be updated.</param>
-        public void Update(IdentifiedData data)
+        public void Update(IdentifiedData data, bool unsafeUpdate = false)
         {
             try
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
+
+                // Force an update
+                if (unsafeUpdate)
+                    client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-OpenIZ-Unsafe"] = "true";
 
                 if (data is Patch)
                 {
@@ -317,6 +328,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 }
                 else // regular update 
                 {
+                    // Force an update
+                    if (!unsafeUpdate)
+                        client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
+
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
                     method.MakeGenericMethod(new Type[] { data.GetType() });
                     this.m_tracer.TraceVerbose("Performing IMSI UPDATE (FULL) {0}", data);
