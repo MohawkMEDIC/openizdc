@@ -35,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the email.
 		/// </summary>
 		/// <value>The email.</value>
-		[Column("email")]
+		[Column("email"), Collation("NOCASE")]
 		public String Email {
 			get;
 			set;
@@ -95,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the name of the user.
 		/// </summary>
 		/// <value>The name of the user.</value>
-		[Column("username"), Unique, NotNull]
+		[Column("username"), Unique, NotNull, Collation("NOCASE")]
 		public String UserName {
 			get;
 			set;
@@ -115,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the phone number.
 		/// </summary>
 		/// <value>The phone number.</value>
-		[Column("phone_number")]
+		[Column("phone_number"), Collation("NOCASE")]
 		public String PhoneNumber {
 			get;
 			set;

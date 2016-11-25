@@ -40,6 +40,7 @@ using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -211,6 +212,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     if (result != null)
                     {
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
+                        result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
                         retVal = result.TotalResults;
                     }

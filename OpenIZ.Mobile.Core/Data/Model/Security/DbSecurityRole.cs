@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name"), NotNull, Unique]
+		[Column("name"), NotNull, Unique, Collation("NOCASE")]
 		public String Name {
 			get;
 			set;

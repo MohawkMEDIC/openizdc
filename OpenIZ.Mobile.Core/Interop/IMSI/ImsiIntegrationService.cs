@@ -20,10 +20,13 @@
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Exceptions;
@@ -218,11 +221,15 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 // Special case = Batch submit of data with an entry point
                 var submission = (data as Bundle)?.Entry ?? data;
+                client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity));
+
+                // Create method
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
                 method = method.MakeGenericMethod(new Type[] { submission.GetType() });
 
                 this.m_tracer.TraceVerbose("Performing IMSI INSERT {0}", submission);
                 var iver = method.Invoke(client, new object[] { submission }) as IVersionedEntity;
+
                 if (iver != null)
                     this.UpdateToServerCopy(iver);
             }
@@ -338,11 +345,13 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     if (!unsafeUpdate)
                         client.Client.Requesting += (o, e) => e.AdditionalHeaders["If-Match"] = data.Tag;
 
+                    client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Patient || i is Provider || i is UserEntity));
+
                     var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Update" && o.GetParameters().Length == 1);
                     method.MakeGenericMethod(new Type[] { submission.GetType() });
                     this.m_tracer.TraceVerbose("Performing IMSI UPDATE (FULL) {0}", data);
 
-                    var iver = method.Invoke(this, new object[] { submission }) as IVersionedEntity;
+                   var iver = method.Invoke(this, new object[] { submission }) as IVersionedEntity;
                     if (iver != null)
                         this.UpdateToServerCopy(iver);
                 }

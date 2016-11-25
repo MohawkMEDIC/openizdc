@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-7-8
  */
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
@@ -130,7 +131,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			var patient = this.m_persistenceService.Insert(p);
             p = this.m_breService?.AfterInsert(p) ?? p;
 
-			SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
+            if(patient.Relationships.Count > 0 || patient.Participations.Count > 0)
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(patient), DataOperationType.Insert);
+            else
+                SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
 
 			return patient;
 		}
@@ -221,8 +225,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 patient = this.m_persistenceService.Insert(p);
 
                 patient = this.m_breService?.AfterInsert(patient) ?? patient;
-				SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
-			}
+
+                // Patient relationships
+                if (patient.Relationships.Count > 0 || patient.Participations.Count > 0)
+                    SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(patient), DataOperationType.Insert);
+                else
+                    SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
+
+            }
 
 			return patient;
 		}

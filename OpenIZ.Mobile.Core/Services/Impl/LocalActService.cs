@@ -19,6 +19,7 @@
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
@@ -82,7 +83,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			insert = persistenceService.Insert(insert);
             insert = breService?.AfterInsert(insert) ?? insert;
 
-            SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
+            // Patient relationships
+            if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(insert), DataOperationType.Insert);
+            else
+                SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
+            //SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
 
             return insert;
 		}
@@ -178,7 +184,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 act = persistenceService.Insert(act);
 
                 act = breService?.AfterInsert(act) ?? act;
-                SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
+
+                // Patient relationships
+                if (act.Relationships.Count > 0 || act.Participations.Count > 0)
+                    SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(act), DataOperationType.Insert);
+                else
+                    SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
+
                 return act;
             }
         }

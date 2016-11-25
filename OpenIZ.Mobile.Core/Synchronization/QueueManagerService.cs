@@ -152,6 +152,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     // try to send
                     try
                     {
+                        // Reconstitute bundle
+                        (dpe as Bundle)?.Reconstitute();
+                        dpe = (dpe as Bundle)?.Entry ?? dpe;
+
                         // Send the object to the remote host
                         switch (syncItm.Operation)
                         {
@@ -313,7 +317,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 // Trigger sync?
                 if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
                     Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&
-                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == typeof(Patch).AssemblyQualifiedName)
+                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == typeof(Patch).AssemblyQualifiedName ||
+                            e.Data.Type == typeof(Bundle).AssemblyQualifiedName)
                 {
                     Action<Object> async = (itm) =>
                     {
