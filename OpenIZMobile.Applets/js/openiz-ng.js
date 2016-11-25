@@ -292,7 +292,7 @@ angular.module('openiz', [])
                                     return {
                                         results: $.map(data, function (o)
                                         {
-                                            o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : false) || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.Assigned) : "");
+                                            o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : "") 
                                             return o;
                                         })
                                     };
@@ -342,6 +342,9 @@ angular.module('openiz', [])
                                 case "Place":
                                     retVal += "<span class='glyphicon glyphicon-map-marker'></span>";
                                     break;
+                                case "Entity":
+                                    retVal += "<span class='glyphicon glyphicon-tag'></span>";
+                                    break;
                             }
                             retVal += "&nbsp;";
                             if (displayString != null)
@@ -367,15 +370,9 @@ angular.module('openiz', [])
                                 var scope = result;
                                 return eval(displayString);
                             }
-                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned != null)
-                                return "<div class='label label-default'>" +
-                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else if (result.name != null && result.name.Assigned != null)
-                                return "<div class='label label-default'>" +
-                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);
                             else if (result.name != null)
                                 return "<div class='label label-default'>" +
                                     result.$type + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
