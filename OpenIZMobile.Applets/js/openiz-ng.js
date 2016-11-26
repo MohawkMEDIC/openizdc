@@ -87,6 +87,35 @@ angular.module('openiz', [])
         filterFn.$stateful = false;
         return filterFn;
     }])
+    .filter('translate', function () {
+        return function (input) {
+            return OpenIZ.Localization.getString(input);
+        };
+    })
+    .filter('orderStatus', function () {
+        return function (moodConcept, statusConcept) {
+            if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
+                return "locale.stock.label.shipped";
+            } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
+                return "locale.stock.label.fulfilled";
+            } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
+                return "locale.stock.label.cancelled";
+            }
+            return "locale.stock.label.pending";
+        };
+    })
+    .filter('orderLabel', function () {
+        return function (moodConcept, statusConcept) {
+            if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
+                return "info";
+            } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
+                return "success";
+            } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
+                return "danger";
+            }
+            return "default";
+        };
+    })
     .filter('oizEntityIdentifier', function ()
     {
         return function (modelValue)

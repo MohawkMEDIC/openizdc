@@ -152,8 +152,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if (act.Key == actKey && act.VersionKey == actVersionKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
-
-                    return actRepositoryService.Save(act);
+                    if(act.ObsoletionTime == null)
+                    {
+                        return actRepositoryService.Save(act);
+                    }
+                    return actRepositoryService.Obsolete<Act>(act.Key.Value);
                 }
                 else
                 {
