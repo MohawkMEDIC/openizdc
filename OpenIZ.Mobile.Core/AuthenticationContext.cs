@@ -21,6 +21,7 @@ using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Security;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -44,7 +45,7 @@ namespace OpenIZ.Mobile.Core
         /// ANONYMOUS user's SID
         /// </summary>
         public const String AnonymousUserSid = "C96859F0-043C-4480-8DAB-F69D6E86696C";
-
+        
         /// <summary>
         /// System identity
         /// </summary>

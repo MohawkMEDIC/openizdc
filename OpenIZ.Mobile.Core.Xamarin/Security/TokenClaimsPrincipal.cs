@@ -125,13 +125,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
                 if (expiry == null || expiry < DateTime.Now)
                     throw new SecurityTokenException(SecurityTokenExceptionType.TokenExpired, "Token expired");
-                else if (notBefore == null || Math.Abs(notBefore.Subtract(DateTime.Now).TotalMinutes) > 2)
+                else if (notBefore == null || Math.Abs(notBefore.Subtract(DateTime.Now).TotalMinutes) > 3)
                     throw new SecurityTokenException(SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
             }
             this.RefreshToken = refreshToken;
 
 			this.m_identities.Clear ();
-			this.m_identities.Add(new ClaimsIdentity(body["unique_name"].Value<String>().ToLower(), true, claims));
+			this.m_identities.Add(new ClaimsIdentity(body["unique_name"]?.Value<String>().ToLower() ?? body["sub"]?.Value<String>().ToLower(), true, claims));
 		}
 
 

@@ -192,12 +192,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         var localRoles = localRp.GetAllRoles();
                         foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
                         {
+                            // Ensure policy exists
+                            var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
+                            foreach(var pol in amiPolicies)
+                                if (localPip.GetPolicy(pol.Policy.Oid) == null)
+                                {
+                                    var policy = amiPip.GetPolicy(pol.Policy.Oid);
+                                    localPip.CreatePolicy(policy, new SystemPrincipal());
+                                }
+
                             // Local role doesn't exist
                             if (!localRoles.Contains(itm.Value))
                             {
                                 localRp.CreateRole(itm.Value, new SystemPrincipal());
                             }
-                            localRp.AddPoliciesToRoles(amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray(), new String[] { itm.Value }, new SystemPrincipal());
+                            localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
 
                         }
 
