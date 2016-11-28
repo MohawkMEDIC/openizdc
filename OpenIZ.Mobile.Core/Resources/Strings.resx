@@ -170,6 +170,9 @@
   <data name="locale_setting_table" xml:space="preserve">
     <value>Installing Tables</value>
   </data>
+  <data name="locale_startingPoll" xml:space="preserve">
+    <value>Initiating pull request...</value>
+  </data>
   <data name="locale_sync" xml:space="preserve">
     <value>Downloading {0}s...</value>
   </data>

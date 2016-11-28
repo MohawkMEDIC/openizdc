@@ -217,6 +217,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Initiating pull request....
+        /// </summary>
+        internal static string locale_startingPoll {
+            get {
+                return ResourceManager.GetString("locale_startingPoll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Downloading {0}s....
         /// </summary>
         internal static string locale_sync {

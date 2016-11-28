@@ -111,11 +111,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.Pull(SynchronizationPullTriggerType.OnStart);
 
             // Polling
-            if(this.m_configuration.SynchronizationResources.Any(o=>(o.Triggers & SynchronizationPullTriggerType.PeriodicPoll) != 0) &&
+            if (this.m_configuration.SynchronizationResources.Any(o => (o.Triggers & SynchronizationPullTriggerType.PeriodicPoll) != 0) &&
                 this.m_configuration.PollInterval.HasValue &&
                 this.m_configuration.PollInterval.Value != default(TimeSpan))
-                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, _ => this.Pull(SynchronizationPullTriggerType.PeriodicPoll), null);
+            {
+                Action<Object> pollFn = null;
+                pollFn = _ =>
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 0.5f);
+                    this.Pull(SynchronizationPullTriggerType.PeriodicPoll);
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
 
+                };
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+            }
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
