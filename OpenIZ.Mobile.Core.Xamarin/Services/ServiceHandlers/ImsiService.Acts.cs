@@ -91,8 +91,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
                 }
 
-                results.ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
+                //results.ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
 
+                this.m_tracer.TraceVerbose("Returning ACT bundle {0}..{1} / {2}", offset, offset + count, totalResults);
                 // 
                 return new Bundle
                 {

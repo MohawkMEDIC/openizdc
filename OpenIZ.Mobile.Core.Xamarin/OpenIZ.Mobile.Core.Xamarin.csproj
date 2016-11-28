@@ -25,7 +25,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,9 +36,15 @@
     <Reference Include="ExpressionEvaluator">
       <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
     </Reference>
+    <Reference Include="jint">
+      <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.BusinessRules.JavaScript">
+      <HintPath>..\Solution Items\OpenIZ.BusinessRules.JavaScript.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Alert">
       <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>
@@ -85,6 +91,7 @@
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
+    <Compile Include="Rules\BusinessRulesDaemonService.cs" />
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Services\Attributes\AnonymousAttribute.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />

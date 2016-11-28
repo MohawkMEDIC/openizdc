@@ -30,6 +30,7 @@ using System.Linq;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -54,7 +55,7 @@ namespace OpenIZ.Mobile.Core
 	/// <summary>
 	/// Application context.
 	/// </summary>
-	public abstract class ApplicationContext : IServiceProvider
+	public abstract class ApplicationContext : IServiceProvider, IServiceManager
 	{
 
         // Execution uuid
@@ -214,6 +215,8 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         protected void Start()
         {
+            if(!this.m_cache.ContainsKey(typeof(IServiceManager)))
+                this.m_cache.Add(typeof(IServiceManager), this);
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
             this.Starting?.Invoke(this, EventArgs.Empty);
 
@@ -256,6 +259,15 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
+
+        /// <summary>
+        /// Add service 
+        /// </summary>
+        public void AddServiceProvider(Type serviceType)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.Add(Activator.CreateInstance(serviceType));
+        }
     }
 }
 

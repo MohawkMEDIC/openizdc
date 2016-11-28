@@ -27,7 +27,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <DefineConstants>DEBUG;DEBUG PERFMON</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Alerting\DbAlertMessage.cs" />
@@ -219,8 +219,14 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
+    <Reference Include="jint">
+      <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.BusinessRules.JavaScript">
+      <HintPath>..\Solution Items\OpenIZ.BusinessRules.JavaScript.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Alert">
       <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>

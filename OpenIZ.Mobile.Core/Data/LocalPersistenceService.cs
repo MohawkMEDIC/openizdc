@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data
                 throw new ArgumentNullException(nameof(me));
             else if (context.IsInTransaction) return;
 
-#if PERFMON
+#if DEBUG
             Stopwatch sw = new Stopwatch();
             sw.Start();
 #endif
@@ -136,7 +136,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
             }
 
-#if PERFMON
+#if DEBUG
             sw.Stop();
             s_tracer.TraceVerbose("PERF: LoadAssociations ({0} ms)", sw.ElapsedMilliseconds);
 #endif

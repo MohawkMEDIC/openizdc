@@ -142,6 +142,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             var domainQuery = m_mapper.MapModelExpression<TModel, TDomain>(query);
+
+            m_tracer.TraceVerbose("Domain Query: {0}", domainQuery);
+
             var retVal = context.Table<TDomain>().Where(domainQuery);
 
             // Total count

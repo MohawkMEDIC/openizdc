@@ -59,6 +59,7 @@
     <DebugSymbols>False</DebugSymbols>
     <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
     <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">

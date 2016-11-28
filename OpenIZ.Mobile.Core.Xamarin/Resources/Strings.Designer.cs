@@ -178,6 +178,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A startup error occurred. The application cannot continue. Please contact support..
+        /// </summary>
+        internal static string err_startup_error {
+            get {
+                return ResourceManager.GetString("err_startup_error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Too many certificates matched the criteria (perhaps search criteria is too vague?).
         /// </summary>
         internal static string err_too_many_certificate_matches {

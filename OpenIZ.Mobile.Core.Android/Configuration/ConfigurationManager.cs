@@ -49,6 +49,7 @@ using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Mobile.Core.Xamarin.Rules;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -149,6 +150,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalSecurityService).AssemblyQualifiedName,
                     typeof(LocalMaterialService).AssemblyQualifiedName,
                     typeof(LocalBatchService).AssemblyQualifiedName,
+                    typeof(BusinessRulesDaemonService).AssemblyQualifiedName,
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(AndroidNetworkInformationService).AssemblyQualifiedName,

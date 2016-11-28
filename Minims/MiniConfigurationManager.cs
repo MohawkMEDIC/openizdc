@@ -33,6 +33,7 @@ using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Xamarin.Http;
 using OpenIZ.Mobile.Core.Xamarin.Net;
+using OpenIZ.Mobile.Core.Xamarin.Rules;
 using OpenIZ.Mobile.Core.Xamarin.Security;
 using OpenIZ.Mobile.Core.Xamarin.Services;
 using OpenIZ.Mobile.Core.Xamarin.Threading;
@@ -144,6 +145,7 @@ namespace Minims
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
                     typeof(ProtocolWatchService).AssemblyQualifiedName,
+                    typeof(BusinessRulesDaemonService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,

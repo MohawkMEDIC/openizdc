@@ -156,6 +156,9 @@
   <data name="err_restoreNotPermitted" xml:space="preserve">
     <value>A restore is not permitted due to the configuration of this device. Perhaps you're in online only mode?</value>
   </data>
+  <data name="err_startup_error" xml:space="preserve">
+    <value>A startup error occurred. The application cannot continue. Please contact support.</value>
+  </data>
   <data name="err_too_many_certificate_matches" xml:space="preserve">
     <value>Too many certificates matched the criteria (perhaps search criteria is too vague?)</value>
   </data>
