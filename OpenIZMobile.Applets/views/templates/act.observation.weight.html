@@ -52,20 +52,20 @@
                 </span>
                 <select name="uom_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" ng-model="act.targetModel.unitOfMeasure" class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value"></select>
                 <span class="input-group-addon" ng-if="act.targetModel.interpretationConcept == '41d42abf-17ad-4144-bf97-ec3fd907f57d'">
-                    <span class="label label-success"> <span class="glyphicon glyphicon-ok"></span> {{ 'locale.encounter.weight.interpretation.normal' | i18n }}</span>
+                    <span class="label label-success"> <span class="glyphicon glyphicon-ok"></span> {{ 'locale.encounters.weight.interpretation.normal' | i18n }}</span>
                 </span>
                 <span class="input-group-addon" ng-if="!act.targetModel.interpretationConcept || act.targetModel.interpretationConcept == '6188f821-261f-420c-9520-0de240a05661' || act.targetModel.interpretationConcept == 'a7159ba0-a9ec-4565-95b8-ed364794c0b8'">
-                    <span class="label label-danger"><span class="glyphicon glyphicon-triangle-bottom"></span> {{ 'locale.encounter.weight.interpretation.low' | i18n }}</span>
+                    <span class="label label-danger"><span class="glyphicon glyphicon-triangle-bottom"></span> {{ 'locale.encounters.weight.interpretation.low' | i18n }}</span>
                 </span>
                 <span class="input-group-addon" ng-if="act.targetModel.interpretationConcept == '8b553d58-6c8c-4d01-a534-83ba5780b41a' || act.targetModel.interpretationConcept == '3c4d6579-7496-4b44-aac1-18a714ff7a05'">
-                    <span class="label label-danger"><span class="glyphicon glyphicon-triangle-top"></span> {{ 'locale.encounter.weight.interpretation.high' | i18n }}</span>
+                    <span class="label label-danger"><span class="glyphicon glyphicon-triangle-top"></span> {{ 'locale.encounters.weight.interpretation.high' | i18n }}</span>
                 </span>
             </div>
         </div>
         <div class="row" ng-if="act.targetModel.interpretationConcept != null &amp;&amp; act.targetModel.interpretationConcept != '41d42abf-17ad-4144-bf97-ec3fd907f57d'">
             <div class="col-xs-12 col-sm-9 col-sm-offset-3 text-primary" style="padding:10px;">
                 <span class="glyphicon glyphicon-info-sign"></span>
-                {{ 'locale.encounter.cdss.nutritionCounselingText' | i18n }}
+                {{ 'locale.encounters.cdss.nutritionCounselingText' | i18n }}
             </div>
         </div>
         <div class="row">

@@ -50,7 +50,16 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
      * Delete sub-encounter
      */
     scope.delSubEncounter = function (bind, index) {
-        bind.splice(index, 1);
+        if (isNaN(index)) {
+            for (var i in bind) {
+                try {
+                    if (bind[i].targetModel.template.mnemonic == index)
+                        bind.splice(i, 1);
+                } catch (e) { }
+            }
+        }
+        else
+            bind.splice(index, 1);
     };
 
     // Encounter 

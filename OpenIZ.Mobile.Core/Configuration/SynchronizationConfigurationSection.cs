@@ -42,6 +42,31 @@ namespace OpenIZ.Mobile.Core.Configuration
         }
 
         /// <summary>
+        /// Time between polling requests
+        /// </summary>
+        [XmlElement("pollInterval"), JsonProperty("pollInterval")]
+        public String PollIntervalXml
+        {
+            get
+            {
+                return this.PollInterval?.ToString();
+            }
+            set
+            {
+                if (value == null)
+                    this.PollInterval = null;
+                else
+                    this.PollInterval = TimeSpan.Parse(value);
+            }
+        }
+
+        /// <summary>
+        /// Poll interval
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
+        public TimeSpan? PollInterval { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of synchronization queries
         /// </summary>
         [XmlElement("sync")]
@@ -105,14 +130,16 @@ namespace OpenIZ.Mobile.Core.Configuration
     /// Represents synchronization pull triggers
     /// </summary>
     [XmlType(nameof(SynchronizationPullTriggerType), Namespace = "http://openiz.org/mobile/configuration")]
+    [Flags]
     public enum SynchronizationPullTriggerType
     {
         Never = 0x0,
-        Always = OnStart | OnCommit | OnStop | OnPush | OnNetworkChange,
+        Always = OnStart | OnCommit | OnStop | OnPush | OnNetworkChange | PeriodicPoll,
         OnStart = 0x01,
         OnCommit = 0x02,
         OnStop = 0x04,
         OnPush = 0x08,
-        OnNetworkChange = 0x10
+        OnNetworkChange = 0x10,
+        PeriodicPoll = 0x20
     }
 }

@@ -236,6 +236,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             retVal.Sections.Add(secSection);
             retVal.Sections.Add(serviceSection);
             retVal.Sections.Add(forecastingSection);
+            retVal.Sections.Add(new SynchronizationConfigurationSection()
+            {
+                PollInterval = new TimeSpan(0, 5, 0)
+            });
             return retVal;
         }
 

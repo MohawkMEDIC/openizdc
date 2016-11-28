@@ -69,12 +69,18 @@ namespace OpenIZ.Mobile.Core.Data
             Stopwatch sw = new Stopwatch();
             sw.Start();
 #endif
-
+            var classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
+            String classValue = null;
+            if(classProperty != null)
+            {
+                classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
+                classValue = classProperty.GetValue(me)?.ToString();
+            }
             // Load associations
             foreach (var pi in me.GetType().GetRuntimeProperties())
             {
                 if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    pi.GetCustomAttribute<AutoLoadAttribute>() == null)
+                    pi.GetCustomAttributes<AutoLoadAttribute>().Count(p=>p.ClassCode == classValue || p.ClassCode == null) == 0)
                     continue;
 
                 var value = pi.GetValue(me);

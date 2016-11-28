@@ -270,15 +270,29 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                         }
                                         break;
                                     case '!':
-                                        sb.AppendFormat(" {0} <> ? AND ", key);
-                                        value = sValue.Substring(1);
+                                        if (sValue.Equals("!null"))
+                                        {
+                                            sb.AppendFormat(" {0} IS NOT NULL AND ", key);
+                                            value = sValue = null;
+                                        }
+                                        else
+                                        {
+                                            sb.AppendFormat(" {0} <> ? AND ", key);
+                                            value = sValue.Substring(1);
+                                        }
                                         break;
                                     case '~':
                                         sb.AppendFormat(" {0} LIKE '%' || ? || '%'  OR ", key);
                                         value = sValue.Substring(1);
                                         break;
                                     default:
-                                        sb.AppendFormat(" {0} = ?  OR ", key);
+                                        if (sValue.Equals("null"))
+                                        {
+                                            sb.AppendFormat("{0} IS NULL OR ", key);
+                                            value = sValue = null;
+                                        }
+                                        else
+                                            sb.AppendFormat(" {0} = ?  OR ", key);
                                         break;
                                 }
                             }
@@ -288,13 +302,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                             // Value correction
                             DateTime tdateTime = default(DateTime);
                             Guid gValue = Guid.Empty;
-                            if (value is Guid)
+                            if (value == null)
+                                ;
+                            else if (value is Guid)
                                 vals.Add(((Guid)value).ToByteArray());
                             else if (Guid.TryParse(value.ToString(), out gValue))
                                 vals.Add(gValue.ToByteArray());
                             else if (DateTime.TryParse(value.ToString(), out tdateTime))
                                 vals.Add(tdateTime);
-                            else
+                            else 
                                 vals.Add(value);
                         }
                         sb.Remove(sb.Length - 4, 4);

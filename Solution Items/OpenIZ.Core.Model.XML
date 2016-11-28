@@ -155,6 +155,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActParticipation">
             <summary>
             Associates an entity which participates in an act
@@ -227,6 +232,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.SemanticEquals(System.Object)">
+            <summary>
+            Determine equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActProtocol">
             <summary>
             Represents information related to the clinical protocol to which an act is a member of
@@ -297,6 +307,11 @@
             Empty?
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ControlAct">
             <summary>
             Represents an act which indicates why data was created/changed
@@ -332,6 +347,11 @@
             Refresh the object forcing delay load 
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Observation.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.QuantityObservation">
             <summary>
             Represents an observation that contains a quantity
@@ -357,6 +377,11 @@
             Forces a refresh of the object
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.QuantityObservation.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.TextObservation">
             <summary>
             Represents an observation with a text value
@@ -365,6 +390,11 @@
         <member name="P:OpenIZ.Core.Model.Acts.TextObservation.Value">
             <summary>
             Gets or sets the textual value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.TextObservation.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.CodedObservation">
@@ -385,6 +415,11 @@
         <member name="M:OpenIZ.Core.Model.Acts.CodedObservation.Refresh">
             <summary>
             Forces a refresh of underlying data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.CodedObservation.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.PatientEncounter">
@@ -412,6 +447,11 @@
             Refresh forcing delay load
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.PatientEncounter.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.Protocol">
             <summary>
             Represents the model of a protocol
@@ -435,6 +475,11 @@
         <member name="P:OpenIZ.Core.Model.Acts.Protocol.Definition">
             <summary>
             Contains instructions which the handler class can understand
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Protocol.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.SubstanceAdministration">
@@ -492,9 +537,29 @@
             Force delay loading of properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.SubstanceAdministration.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Attributes.AutoLoadAttribute">
             <summary>
             Auto load attribute
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Attributes.AutoLoadAttribute.#ctor">
+            <summary>
+            Auto load
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Attributes.AutoLoadAttribute.#ctor(System.String)">
+            <summary>
+            Load on attribute
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Attributes.AutoLoadAttribute.ClassCode">
+            <summary>
+            Gets or sets the value when the class code is true to auto-load
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Attributes.BindingAttribute">
@@ -563,6 +628,11 @@
         <member name="P:OpenIZ.Core.Model.Attributes.SerializationReferenceAttribute.RedirectProperty">
             <summary>
             Identifies where the serialization information can be found
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Attributes.SerializationReferenceAttribute.GetProperty(System.Type)">
+            <summary>
+            Get property from the type
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Attributes.SimpleValueAttribute">
@@ -679,9 +749,19 @@
             The entity that this relationship targets
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Association`1.ShouldSerializeSourceEntityKey">
+            <summary>
+            Should serialize obsolete
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Association`1.Refresh">
             <summary>
             Force delay load properties to reload
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Association`1.SemanticEquals(System.Object)">
+            <summary>
+            Determines equality of this association
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Collection.Bundle">
@@ -1563,6 +1643,111 @@
             instance
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Constants.EntityClassKeyStrings">
+            <summary>
+            Entity class concept keys
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Animal">
+            <summary>
+            Animal
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.ChemicalSubstance">
+            <summary>
+            Chemical Substance
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.CityOrTown">
+            <summary>
+            City or town
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Container">
+            <summary>
+            Container
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Country">
+            <summary>
+            Country or nation
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.CountyOrParish">
+            <summary>
+            County or parish
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Device">
+            <summary>
+            Device
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Entity">
+            <summary>
+            Entity
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Food">
+            <summary>
+            Food
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.LivingSubject">
+            <summary>
+            Living Subject
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.ManufacturedMaterial">
+            <summary>
+            Manufactured material
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Material">
+            <summary>
+            Material
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.NonLivingSubject">
+            <summary>
+            Non living subject
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Organization">
+            <summary>
+            Organization
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Patient">
+            <summary>
+            Patient
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Person">
+            <summary>
+            Person
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Place">
+            <summary>
+            Place
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.Provider">
+            <summary>
+            Service delivery location
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.ServiceDeliveryLocation">
+            <summary>
+            Service delivery location
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.EntityClassKeyStrings.State">
+            <summary>
+            State
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Constants.EntityClassKeys">
             <summary>
             Entity class concept keys
@@ -1953,6 +2138,11 @@
             Force reloading of delay load properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.SemanticEquals(System.Object)">
+            <summary>
+            Gets the equals of this object
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.CodeSystem">
             <summary>
             Represents a code system which is a collection of reference terms
@@ -2001,6 +2191,11 @@
         <member name="P:OpenIZ.Core.Model.DataTypes.CodeSystem.Description">
             <summary>
             Gets or sets the human description
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.CodeSystem.SemanticEquals(System.Object)">
+            <summary>
+            Determine equality of 
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.Concept">
@@ -2077,6 +2272,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.Concept.ToString">
             <summary>
             Override string
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Concept.SemanticEquals(System.Object)">
+            <summary>
+            Determine equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ConceptClass">
@@ -2264,7 +2464,12 @@
             Gets or sets the value of the extension
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtesionValue">
+        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtensionValueString">
+            <summary>
+            Value as string of bytes
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.Extension`1.ExtensionValue">
             <summary>
             Gets or sets the ignore value
             </summary>
@@ -2287,6 +2492,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.Extension`1.Refresh">
             <summary>
             Forces refresh 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Extension`1.SemanticEquals(System.Object)">
+            <summary>
+            Determine equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.EntityExtension">
@@ -2440,6 +2650,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.IdentifierBase`1.SemanticEquals(System.Object)">
+            <summary>
+            Returns true if the objects are equal
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.IdentifierType">
             <summary>
             Represents a basic information class which classifies the use of an identifier
@@ -2503,6 +2718,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.Note`1.Refresh">
             <summary>
             Forces a refresh of the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Note`1.SemanticEquals(System.Object)">
+            <summary>
+            Determine equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.EntityNote">
@@ -2595,6 +2815,11 @@
             Back-reference to reference term
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeReferenceTermKey">
+            <summary>
+            Should serialize reference term key
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.ReferenceTermName.Language">
             <summary>
             Gets or sets the language code of the object
@@ -2654,6 +2879,17 @@
             <summary>
             The entity that this relationship targets
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Tag`1.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.Tag`1.ToString">
+            <summary>
+            Represent tag as key/value
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.EntityTag">
             <summary>
@@ -2725,6 +2961,11 @@
             Gets or sets the security user key
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.UserEntity.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.ApplicationEntity">
             <summary>
             An associative entity which links a SecurityApplication to an Entity
@@ -2765,6 +3006,11 @@
             Force delay loading
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.ApplicationEntity.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.DeviceEntity">
             <summary>
             Represents a device entity
@@ -2798,6 +3044,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.DeviceEntity.Refresh">
             <summary>
             Force refresh of data model
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.DeviceEntity.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality 
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Entity">
@@ -2916,6 +3167,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddress">
             <summary>
             Entity address
@@ -2956,6 +3212,11 @@
             True if empty
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityAddress.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddressComponent">
             <summary>
@@ -3031,6 +3292,11 @@
             True if empty
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityName.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityNameComponent">
             <summary>
@@ -3157,6 +3423,11 @@
             Refresh this entity
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityTelecomAddress">
             <summary>
             Represents an entity telecom address
@@ -3201,6 +3472,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.Refresh">
             <summary>
             Forces refresh of the delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.GenericComponentValues`1">
@@ -3250,6 +3526,11 @@
             Forces refreshing of delay load properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.ManufacturedMaterial">
             <summary>
             Manufactured material
@@ -3263,6 +3544,11 @@
         <member name="P:OpenIZ.Core.Model.Entities.ManufacturedMaterial.LotNumber">
             <summary>
             Gets or sets the lot number of the manufactured material
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.ManufacturedMaterial.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Material">
@@ -3316,6 +3602,11 @@
             Forces refresh of the delay load properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Material.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.Organization">
             <summary>
             Organization entity
@@ -3339,6 +3630,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.Organization.Refresh">
             <summary>
             Forces reload of delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Organization.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Person">
@@ -3371,6 +3667,11 @@
             Gets the security user account associated with this person if applicable
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Person.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.PersonLanguageCommunication">
             <summary>
             Represents a single preferred communication method for the entity
@@ -3394,6 +3695,11 @@
         <member name="P:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.IsPreferred">
             <summary>
             Gets or set the user's preference indicator
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Place">
@@ -3431,6 +3737,11 @@
             Gets the services
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Place.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.PlaceService">
             <summary>
             Represents a service for a place
@@ -3454,6 +3765,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.PlaceService.Refresh">
             <summary>
             Refresh the delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.PlaceService.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.EntityLoader.EntitySource">
@@ -3622,6 +3938,13 @@
             <summary>
             Clone the specified data
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.SemanticEquals(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Interfaces.IBaseEntityData">
             <summary>
@@ -4236,6 +4559,131 @@
             The level of the warning
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Patch.Patch">
+            <summary>
+            Represents a series of patch instructions 
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.Patch.#ctor">
+            <summary>
+            Patch
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.Patch.AppliesTo">
+            <summary>
+            Application version
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.Patch.Operation">
+            <summary>
+            A list of patch operations to be applied to the object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.Patch.ToString">
+            <summary>
+            To string representation
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Patch.PatchOperation">
+            <summary>
+            Represents a single patch operation
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.PatchOperation.#ctor">
+            <summary>
+            Patch operation default ctor
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.PatchOperation.#ctor(OpenIZ.Core.Model.Patch.PatchOperationType,System.String,System.Object)">
+            <summary>
+            Patch operation
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchOperation.OperationType">
+            <summary>
+            Gets or sets the operation type
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchOperation.Path">
+            <summary>
+            Gets or sets the path
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchOperation.Value">
+            <summary>
+            Get or sets the value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.PatchOperation.ToString">
+            <summary>
+            To string representation
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Patch.PatchOperationType">
+            <summary>
+            Represents a patch operation type
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Patch.PatchOperationType.Add">
+            <summary>
+            Patch operation adds the specified value to the array
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Patch.PatchOperationType.Remove">
+            <summary>
+            Patch operation removes the specified value from the array
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Patch.PatchOperationType.Replace">
+            <summary>
+            Patch operation replaces the specified item at the path 
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Patch.PatchOperationType.Test">
+            <summary>
+            Patch should test value before proceeding
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Patch.PatchTarget">
+            <summary>
+            Represents a target of a patch
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.PatchTarget.#ctor">
+            <summary>
+            Default ctor
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Patch.PatchTarget.#ctor(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Construct a new patch target
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchTarget.TypeXml">
+            <summary>
+            Identifies the target type
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchTarget.Type">
+            <summary>
+            Represents the type
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchTarget.Key">
+            <summary>
+            Gets or sets the key
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchTarget.VersionKey">
+            <summary>
+            Gets or sets the key
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Patch.PatchTarget.Tag">
+            <summary>
+            Gets or sets the tag of the item
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Query.NameValueCollection">
             <summary>
             Name value collection
@@ -4343,7 +4791,7 @@
             <returns>The path.</returns>
             <param name="access">Access.</param>
         </member>
-        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.BuildQuery``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.BuildQuery``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Boolean)">
             <summary>
             Builds the query dictionary .
             </summary>
@@ -4375,27 +4823,37 @@
             Build LINQ expression
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Model.Reflection.ReflectionUtil">
+        <member name="T:OpenIZ.Core.Model.ExtensionMethods">
             <summary>
             Reflection tools
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.StripGeneric(System.Type)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.HashCode(System.Byte[])">
+            <summary>
+            Compute a basic hash string
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.SemanticEquals``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determine semantic equality of each item in me and other
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripGeneric(System.Type)">
             <summary>
             Strips list
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.StripNullable(System.Type)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripNullable(System.Type)">
             <summary>
             Strips any nullable typing
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.CopyObjectData``1(``0,``0)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.CopyObjectData``1(``0,``0)">
             <summary>
             Update property data if required
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.IsActive``1(System.Linq.Expressions.Expression,``0)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive``1(System.Linq.Expressions.Expression,``0)">
             <summary>
             Create a version filter
             </summary>
@@ -4404,7 +4862,7 @@
             <param name="domainInstance"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.IsActive(System.Linq.Expressions.Expression)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression)">
             <summary>
             Create a version filter
             </summary>
@@ -4413,17 +4871,17 @@
             <param name="domainInstance"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.Aggregate(System.Linq.Expressions.Expression,OpenIZ.Core.Model.Map.AggregationFunctionType)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Aggregate(System.Linq.Expressions.Expression,OpenIZ.Core.Model.Map.AggregationFunctionType)">
             <summary>
             Create aggregation functions
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.Sort(System.Linq.Expressions.Expression,System.String,OpenIZ.Core.Model.Map.SortOrderType)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Sort(System.Linq.Expressions.Expression,System.String,OpenIZ.Core.Model.Map.SortOrderType)">
             <summary>
             Create sort expression
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Reflection.ReflectionUtil.GetGenericMethod(System.Type,System.String,System.Type[],System.Type[])">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.GetGenericMethod(System.Type,System.String,System.Type[],System.Type[])">
             <summary>
             Get generic method
             </summary>
@@ -4468,6 +4926,11 @@
             Force a refresh of delay load properties
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Roles.Patient.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Roles.Provider">
             <summary>
             Represents a provider role of a person
@@ -4491,6 +4954,11 @@
         <member name="M:OpenIZ.Core.Model.Roles.Provider.Refresh">
             <summary>
             Force a refresh of the delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Roles.Provider.SemanticEquals(System.Object)">
+            <summary>
+            Semantic equality function
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Security.SecurityApplication">
@@ -4623,6 +5091,11 @@
             Gets or sets the security users in the role
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Security.SecurityRole.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Security.SecurityUser">
             <summary>
             Security user represents a user for the purpose of security 
@@ -4723,6 +5196,11 @@
             Gets or sets the policies for the user
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Security.SecurityUser.SemanticEquals(System.Object)">
+            <summary>
+            Determine semantic equality of user
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Serialization.ModelSerializationBinder">
             <summary>
             Model binding 
@@ -4787,6 +5265,21 @@
         <member name="P:OpenIZ.Core.Model.VersionedAssociation`1.ObsoleteVersionSequenceId">
             <summary>
             Gets or sets the obsoleted version identifier
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.VersionedAssociation`1.ShouldSerializeObsoleteVersionSequenceId">
+            <summary>
+            Should serialize obsolete
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.VersionedAssociation`1.ShouldSerializeEffectiveVersionSequenceId">
+            <summary>
+            Should serialize obsolete
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.VersionedAssociation`1.SemanticEquals(System.Object)">
+            <summary>
+            Determines equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.VersionedEntityData`1">

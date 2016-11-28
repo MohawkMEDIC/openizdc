@@ -85,15 +85,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 );
 
             if (retVal.ConceptSetsXml != null)
-                    foreach (var r in retVal.ConceptSetsXml)
-                    {
+                foreach (var r in retVal.ConceptSetsXml)
+                {
+                    if (context.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == r.ToByteArray() &&
+                     o.ConceptUuid == retVal.Key.Value.ToByteArray()).Any())
+                        continue;
+                    else
                         context.Insert(new DbConceptSetConceptAssociation()
                         {
                             Uuid = Guid.NewGuid().ToByteArray(),
                             ConceptSetUuid = r.ToByteArray(),
                             ConceptUuid = retVal.Key.Value.ToByteArray()
                         });
-                    }
+                }
 
             return retVal;
         }
@@ -113,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var sourceKey = data.Key.Value.ToByteArray();
             if (retVal.ConceptNames != null)
                 base.UpdateAssociatedItems<ConceptName, Concept>(
-                    context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
+                    context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
                     data.ConceptNames,
                     retVal.Key,
                     context

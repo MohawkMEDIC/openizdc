@@ -256,7 +256,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		public Patient Validate(Patient p)
 		{
             var details = this.m_breService?.Validate(p) ?? new List<DetectedIssue>();
-            if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+            if (details?.Any(d => d.Priority == DetectedIssuePriorityType.Error) == true)
                 throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
 
 			p = p.Clean() as Patient; // clean up messy data

@@ -62,6 +62,24 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The server has detected a change conflict on an object you&apos;re attempting to update..
+        /// </summary>
+        internal static string Conflict {
+            get {
+                return ResourceManager.GetString("Conflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The server has a newer version of the object you&apos;re trying to update.
+        /// </summary>
+        internal static string DBPE002 {
+            get {
+                return ResourceManager.GetString("DBPE002", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error Downloading Remote Data.
         /// </summary>
         internal static string locale_downloadError {
@@ -136,6 +154,24 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;.
+        /// </summary>
+        internal static string locale_rejectionBody {
+            get {
+                return ResourceManager.GetString("locale_rejectionBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synchronization Conflict.
+        /// </summary>
+        internal static string locale_rejectionSubject {
+            get {
+                return ResourceManager.GetString("locale_rejectionSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Session is expired.
         /// </summary>
         internal static string locale_session_expired {
@@ -190,7 +226,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error synchronizing data with remote server: {0}.
+        ///   Looks up a localized string similar to &lt;p&gt;Error synchronizing data with remote server. This is usually caused by a conflict where this device tried to send an object ({1}) to the server but the server had a different version of that object.&lt;/p&gt;&lt;p&gt;For your reference, the error is:&lt;br/&gt;{0}&lt;/p&gt;.
         /// </summary>
         internal static string locale_syncErrorBody {
             get {
@@ -199,7 +235,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Error sending object to the server.
         /// </summary>
         internal static string locale_syncErrorSubject {
             get {

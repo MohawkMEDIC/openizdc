@@ -61,8 +61,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.Insert(context, data);
 
             // Concept members (nb: this is only a UUID if from the wire)
-            if (retVal.ConceptsXml != null)
-                foreach (var r in retVal.ConceptsXml)
+            if (data.ConceptsXml != null)
+                foreach (var r in data.ConceptsXml)
                 {
                     context.Insert(new DbConceptSetConceptAssociation()
                     {
@@ -84,10 +84,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var keyuuid = retVal.Key.Value.ToByteArray();
 
             // Wipe and re-associate
-            if (retVal.ConceptsXml != null)
+            if (data.ConceptsXml != null)
             {
                 context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptSetUuid == keyuuid);
-                foreach (var r in retVal.ConceptsXml)
+                foreach (var r in data.ConceptsXml)
                 {
                     context.Insert(new DbConceptSetConceptAssociation()
                     {

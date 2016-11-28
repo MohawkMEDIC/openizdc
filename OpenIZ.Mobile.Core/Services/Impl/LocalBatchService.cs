@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             // BRE validation
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
             var issues = breService?.Validate(bundle);
-            if (issues.Any(i => i.Priority == DetectedIssuePriorityType.Error))
+            if (issues?.Any(i => i.Priority == DetectedIssuePriorityType.Error) == true)
                 throw new DetectedIssueException(issues);
 
             // Bundle items

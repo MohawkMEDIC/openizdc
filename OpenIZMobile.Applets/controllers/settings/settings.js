@@ -42,8 +42,8 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             //OpenIZ.App.getService("ImsiPersistenceService") == null ? "offline" : "online" : "sync";
             $scope.config.data.sync = {
                 event: [],
-                enablePoll: OpenIZ.App.getService("ImsiPollingService") != null,
-                pollInterval: OpenIZ.Configuration.getApplicationSetting("imsi.poll.interval")
+                enablePoll: config.sync.pollInterval,
+                pollInterval: config.sync.pollInterval
             };
             $scope.config.log.mode = $scope.config.log.trace[0].filter || "Warning";
             $scope.config.security.hasher = OpenIZ.App.getService("IPasswordHashingService") || "SHA256PasswordHasher";
