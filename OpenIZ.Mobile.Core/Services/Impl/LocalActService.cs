@@ -211,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
 
-			if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator))
+			if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
 			{
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
 			}

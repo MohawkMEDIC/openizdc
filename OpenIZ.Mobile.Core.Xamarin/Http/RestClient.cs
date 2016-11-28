@@ -335,6 +335,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                             e.Response);
 
                                     break;
+                                case HttpStatusCode.Conflict:
+                                    throw new RestClientException<TBody>(
+                                        body,
+                                        e,
+                                        e.Status,
+                                        e.Response);
                                 default:
                                     throw new RestClientException<TResult>(
                                         result,

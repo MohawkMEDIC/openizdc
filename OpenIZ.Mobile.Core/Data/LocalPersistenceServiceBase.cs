@@ -371,7 +371,7 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
 
                     // Build dictionary
-                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query);
+                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
                     var filter = new Dictionary<String, Object>();
 
                     foreach (var f in httpValues)

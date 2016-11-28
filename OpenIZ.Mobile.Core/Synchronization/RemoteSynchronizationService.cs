@@ -110,6 +110,21 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             this.Pull(SynchronizationPullTriggerType.OnStart);
 
+            // Polling
+            if (this.m_configuration.SynchronizationResources.Any(o => (o.Triggers & SynchronizationPullTriggerType.PeriodicPoll) != 0) &&
+                this.m_configuration.PollInterval.HasValue &&
+                this.m_configuration.PollInterval.Value != default(TimeSpan))
+            {
+                Action<Object> pollFn = null;
+                pollFn = _ =>
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 0.5f);
+                    this.Pull(SynchronizationPullTriggerType.PeriodicPoll);
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+
+                };
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+            }
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
@@ -205,7 +220,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     float perc = i / (float)result.TotalResults;
 
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 50, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 10000, Lean = true });
+                    result = this.m_integrationService.Find(modelType, filter, i, 75, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true });
 
 
                     // Queue the act of queueing

@@ -267,6 +267,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = this.m_serializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Participations) itm.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Relationships) itm.Key = Guid.NewGuid();
+
             // Delayload
             return retVal;
         }
@@ -283,6 +286,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = this.m_serializer.DeSerialize<Entity>(templateString);
             retVal.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Participations) itm.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Relationships) itm.Key = Guid.NewGuid();
+
             //retVal.SetDelayLoad(true);
             return retVal;
         }

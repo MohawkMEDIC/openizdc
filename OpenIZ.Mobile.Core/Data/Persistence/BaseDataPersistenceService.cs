@@ -66,7 +66,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override TModel Update (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
+            var existing = context.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).FirstOrDefault();
+            if (existing == null)
+                throw new KeyNotFoundException(data.Key.ToString());
 
+            // Created by is the updated by
+            domainObject.CreatedByUuid = existing.CreatedByUuid;
             data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;

@@ -35,32 +35,40 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.1</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.supplement.json</definition>
   </template>
-  
-  <template mnemonic="act.transferstock">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
-    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
-  </template>
-  
   <template mnemonic="act.observation.weight">
     <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.0</oid>
     <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
   </template>
-
+  <template mnemonic="act.observation.causeofdeath">
+    <form>/org.openiz.core/views/templates/act.observation.causeofdeath.html</form>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.1</oid>
+    <definition>/org.openiz.core/templates/act.observation.causeofdeath.json</definition>
+  </template>
+  <template mnemonic="act.transferstock">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
+    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
+  </template>
   <template mnemonic="act.adjuststock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
     <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
   </template>
-
   <template mnemonic="act.neworder">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
     <definition>/org.openiz.core/templates/act.neworder.json</definition>
   </template>
-
   <template mnemonic="act.countstock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
     <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>
+
+  <template mnemonic="act.concern.aefi">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
+    <definition>/org.openiz.core/templates/act.concern.aefi.json</definition>
+    <form>/org.openiz.core/views/templates/act.concern.aefi.html</form>
+
+  </template>
+  
   <menuItem order="50">
     <icon>/tz.timr.applet/img/appbar.settings.png</icon>
     <text>Administration</text>
@@ -226,6 +234,12 @@
     <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
     <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
     <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock">&lt;/span> User Elevation Required</string>
+    <string key="locale.settings.networkTitle">Network Settings</string>
+    <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
+    <string key="locale.settings.useProxy">Use a Proxy</string>
+    <string key="locale.settings.useProxyDescription">Select this option to proxy all requests sent from the mobile device through an HTTP proxy.</string>
+    <string key="locale.settings.proxyAddress">Proxy Address</string>
+    <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Change Password</string>
     <string key="locale.preferences.username">Username</string>

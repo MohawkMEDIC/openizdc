@@ -2605,7 +2605,12 @@ $.ajaxSetup({
 
 $(document).ajaxError(function (e, data, setting, err) {
     if ((data.status == 401 || data.status == 403) && OpenIZ.Authentication.$session != null) {
-        OpenIZ.Authentication.showElevationDialog();
+        if (document.cookie == "" && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined) {
+            OpenIZ.App.showWait();
+            window.location.reload(true);
+        }
+        else // The session is active
+            OpenIZ.Authentication.showElevationDialog();
     }
     else
         console.warn(new OpenIZModel.Exception("Exception", "err_request", err, null));

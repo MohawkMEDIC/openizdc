@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Conflict" xml:space="preserve">
+    <value>The server has detected a change conflict on an object you're attempting to update.</value>
+  </data>
+  <data name="DBPE002" xml:space="preserve">
+    <value>The server has a newer version of the object you're trying to update</value>
+  </data>
   <data name="locale_downloadError" xml:space="preserve">
     <value>Error Downloading Remote Data</value>
   </data>
@@ -143,6 +149,12 @@
   <data name="locale_indexing" xml:space="preserve">
     <value>Constructing Freetext Index</value>
   </data>
+  <data name="locale_rejectionBody" xml:space="preserve">
+    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;</value>
+  </data>
+  <data name="locale_rejectionSubject" xml:space="preserve">
+    <value>Synchronization Conflict</value>
+  </data>
   <data name="locale_sessionError" xml:space="preserve">
     <value>Error establishing session:</value>
   </data>
@@ -158,14 +170,17 @@
   <data name="locale_setting_table" xml:space="preserve">
     <value>Installing Tables</value>
   </data>
+  <data name="locale_startingPoll" xml:space="preserve">
+    <value>Initiating pull request...</value>
+  </data>
   <data name="locale_sync" xml:space="preserve">
     <value>Downloading {0}s...</value>
   </data>
   <data name="locale_syncErrorBody" xml:space="preserve">
-    <value>Error synchronizing data with remote server: {0}</value>
+    <value>&lt;p&gt;Error synchronizing data with remote server. This is usually caused by a conflict where this device tried to send an object ({1}) to the server but the server had a different version of that object.&lt;/p&gt;&lt;p&gt;For your reference, the error is:&lt;br/&gt;{0}&lt;/p&gt;</value>
   </data>
   <data name="locale_syncErrorSubject" xml:space="preserve">
-    <value />
+    <value>Error sending object to the server</value>
   </data>
   <data name="locale_welcomeMessageBody" xml:space="preserve">
     <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the sycnrhonization is complete. We'll let you know when the synchronization operation is done!

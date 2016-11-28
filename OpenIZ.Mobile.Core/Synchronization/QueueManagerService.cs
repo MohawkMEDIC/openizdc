@@ -177,7 +177,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                         SynchronizationQueue.Outbound.DequeueRaw();
-                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex);
+
+                        // Construct an alert
+                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {
@@ -191,7 +193,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
-                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex);
+                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         }
                         else
                         {
@@ -201,7 +203,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
-                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex);
+                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         throw;
                     }
                 }
@@ -215,10 +217,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Create an alert that the user can acknowledge
         /// </summary>
-        private void CreateUserAlert(String subject, String body, Exception ex)
+        private void CreateUserAlert(String subject, String body, params object[] parms)
         {
             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, ex), AlertMessageFlags.Alert));
+            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, parms), AlertMessageFlags.Alert));
         }
 
         /// <summary>
@@ -284,7 +286,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
                 // throw;
-                this.CreateUserAlert(Strings.locale_importErrorSubject, Strings.locale_importErrorSubject, e);
+                this.CreateUserAlert(Strings.locale_importErrorSubject, Strings.locale_importErrorBody, e, data);
 
             }
         }

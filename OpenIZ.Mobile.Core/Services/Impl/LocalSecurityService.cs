@@ -500,7 +500,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 SynchronizationQueue.Outbound.Enqueue(diff, Synchronization.Model.DataOperationType.Update);
             }
-			catch
+			catch(KeyNotFoundException)
 			{
                 userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
                 retVal = persistence.Insert(userEntity);

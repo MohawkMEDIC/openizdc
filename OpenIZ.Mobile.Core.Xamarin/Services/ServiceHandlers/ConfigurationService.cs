@@ -50,6 +50,7 @@ using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Security.Remote;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -77,6 +78,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             this.Application = config.GetSection<ApplicationConfigurationSection>();
             this.Log = config.GetSection<DiagnosticsConfigurationSection>();
             this.Network = config.GetSection<ServiceClientConfigurationSection>();
+            this.Synchronization = config.GetSection<SynchronizationConfigurationSection>();
         }
         /// <summary>
         /// Security section
@@ -113,7 +115,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         [JsonProperty("network")]
         public ServiceClientConfigurationSection Network { get; set; }
-
+        [JsonProperty("sync")]
+        public SynchronizationConfigurationSection Synchronization { get; set; }
     }
 
     /// <summary>
@@ -148,6 +151,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(OAuthIdentityProvider).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(AmiPolicyInformationService).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(ImsiPersistenceService).AssemblyQualifiedName);
+            ApplicationContext.Current.Configuration.Sections.RemoveAll(o => o is SynchronizationConfigurationSection);
 
             // Data mode
             switch (optionObject["data"]["mode"].Value<String>())
@@ -163,7 +167,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "offline":
                     
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
-
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalIdentityService).AssemblyQualifiedName);
                     break;
@@ -179,22 +182,37 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
+                    var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
                     // TODO: Customize this
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient" })
+                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient", "Act" })
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = SynchronizationPullTriggerType.Always
+                            Triggers = res == "UserEntity" || res == "Patient" || res == "Act" ? SynchronizationPullTriggerType.Always :
+                                SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
 
                         var efield = typeof(EntityClassKeys).GetField(res);
                         if (efield != null && res != "Place")
                             syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
+                        // Assignable from
+                        if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
+                        {
+                            for (int i = 0; i < syncSetting.Filters.Count; i++)
+                                syncSetting.Filters[i] += "&obsoletionTime=null";
+                            if (syncSetting.Filters.Count == 0)
+                                syncSetting.Filters.Add("obsoletionTime=null");
+                        }
+
                         // TODO: Patient registration <> facility
                         syncConfig.SynchronizationResources.Add(syncSetting);
                     }
+
+                    if (optionObject["data"]["sync"]["pollInterval"].Value<String>() != "00:00:00")
+                        syncConfig.PollIntervalXml = optionObject["data"]["sync"]["pollInterval"].Value<String>();
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);
+
                     break;
             }
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalRoleProviderService).AssemblyQualifiedName);

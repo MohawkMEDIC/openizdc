@@ -45,29 +45,23 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.disposition' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10">
-            <select ng-model="encounter.dischargeDisposition" bind:source="Concept" bind:filter="conceptSet.mnemonic=DischargeDisposition" bind:value="name[{{ locale }}].value" class="form-control"></select>
-        </div>
-    </div>
-    <div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
-            <select style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="UserEntity">
+            <select disabled="disabled" style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="UserEntity">
                 <option selected="selected" value="{{encounter.participation.Performer.player}}">{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}</option>
             </select>
         </div>
         </div>
-    <div class="form-group row">
+    <!--<div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
             <div class="input-group">
-                <select style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player"  oiz-entitysearch="UserEntity">
+                <select disabled="disabled" style="width:100%; height:100%" id="encounterVerifier" name="encounterVerifier" class="form-control" ng-model="encounter.participation.Verifier.player"  oiz-entitysearch="UserEntity">
                     <option selected="selected" value="{{encounter.participation.Verifier.player}}">{{encounter.participation.Verifier.playerModel.name.OfficialRecord | oizEntityName }}</option>
                 </select>
             </div>
         </div>
-    </div>
+    </div>-->
     <div ng-include="OpenIZ.App.resolveTemplate(encounter.template.mnemonic)">
     </div>
 </div>

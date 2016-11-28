@@ -201,6 +201,7 @@ angular.module('openiz', [])
                     var watchString = $(element).attr('data-watch');
                     var watchTargetString = $(element).attr('data-watch-target');
                     var displayString = $(element).attr('data-display');
+                    var dataKey = $(element).attr('data-key');
 
                     var filter = {};
                     if (filterString !== undefined)
@@ -236,7 +237,10 @@ angular.module('openiz', [])
                                         text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
 
                                     // Append element
-                                    options[options.length] = new Option(text, data.item[i].id);
+                                    if (dataKey == null)
+                                        options[options.length] = new Option(text, data.item[i].id);
+                                    else
+                                        options[options.length] = new Option(text, eval(dataKey));
                                 }
                             }
                         });

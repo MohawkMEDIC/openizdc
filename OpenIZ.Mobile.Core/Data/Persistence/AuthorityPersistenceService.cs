@@ -70,7 +70,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 foreach (var itm in context.Table<DbAuthorityScope>().Where(o => o.Uuid == ruuid))
                     context.Delete(itm);
-                context.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
+                context.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { Key = Guid.NewGuid(), ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
             }
             return retVal;
         }

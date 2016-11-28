@@ -176,6 +176,10 @@
        domainClass="OpenIZ.Mobile.Core.Data.Model.DataType.DbAssigningAuthority, OpenIZ.Mobile.Core, Version=0.5.0.0">
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="AssigningDeviceKey" domainName="AssigningDeviceUuid"/>
+    <property modelName="CreatedByKey" domainName="CreatedByUuid"    />
+    <property modelName="CreatedByKey" domainName="UpdatedByUuid"/>
+    <property modelName="ObsoletedByKey" domainName="ObsoletedByUuid"/>
+
   </class>
 
 

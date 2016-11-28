@@ -230,8 +230,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var smgr = ApplicationContext.Current.GetService<ISessionManagerService>();
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
-                                AuthenticationContext.Current = new AuthenticationContext(session);
-                        this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                        {
+                            AuthenticationContext.Current = new AuthenticationContext(session);
+                            this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                        }
+                        else // Something wrong??? Perhaps it is an issue with the thingy?
+                            response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
                     }
                 }
 
