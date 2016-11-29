@@ -468,7 +468,28 @@ body{
 .date-checkbox-control{
     padding-left: 45px !important;
 }
-
+.btn-edit{
+    position: absolute;
+    right: 10px;
+    top: 60px;
+    border: none;
+    background: none;
+    box-shadow: none;
+    z-index:10;
+    border-radius: 50px;
+    padding: 12px;
+}
+.btn-edit-alt {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    border: none;
+    background: none;
+    box-shadow: none;
+    z-index: 10;
+    border-radius: 50px;
+    padding: 12px;
+}
 .approx-add-in{
     position: absolute;
     top: 12px;
@@ -520,8 +541,29 @@ body{
 #appointmentCalendar{
     padding-top:15px;
 }
-
-
+.vis-timeline{
+    border: none;
+}
+.vis-item .vis-item-content {
+    padding: 7px 15px;
+    background: #007fd1;
+    color: white;
+    border-radius: 0;
+    border: none;
+}
+.vis-panel.vis-bottom{
+    border:none;
+    border-top: solid 2px #0d5f94;
+}
+.vis-panel.vis-center, .vis-panel.vis-left, .vis-panel.vis-right, .vis-panel.vis-top{
+    border: none;
+}
+.vis-time-axis .vis-grid.vis-minor {
+    border-color: rgba(13,95,148, 0.3)
+}
+.vis-current-time{
+    height: 90% !important;
+}
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
