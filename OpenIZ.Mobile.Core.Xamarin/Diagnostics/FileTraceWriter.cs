@@ -112,23 +112,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
         {
             while(true)
             {
-                lock(this.m_logBacklog)
+                while (true)
                 {
                     try
                     {
+                        Monitor.Enter(this.m_logBacklog);
                         if (this.m_disposing) return; // shutdown dispatch
                         while (this.m_logBacklog.Count == 0)
                             Monitor.Wait(this.m_logBacklog);
                         if (this.m_disposing) return;
-                        
-                        using (TextWriter tw = File.AppendText(this.m_logFile))
-                            tw.WriteLine(this.m_logBacklog.Dequeue());
+
+                        while (this.m_logBacklog.Count > 0)
+                        {
+                            var dq = this.m_logBacklog.Dequeue();
+                            Monitor.Exit(this.m_logBacklog);
+                            using (TextWriter tw = File.AppendText(this.m_logFile))
+                                tw.WriteLine(dq);
+                            Monitor.Enter(this.m_logBacklog);
+                        }
                     }
                     catch
                     {
                         ;
                     }
+                    finally
+                    {
+                        Monitor.Exit(this.m_logBacklog);
+                    }
                 }
+
             }
         }
 

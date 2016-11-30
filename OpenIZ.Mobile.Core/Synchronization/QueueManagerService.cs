@@ -179,7 +179,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationQueue.Outbound.DequeueRaw();
 
                         // Construct an alert
-                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription), dpe);
+                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {

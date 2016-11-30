@@ -95,26 +95,30 @@ namespace Minims
         {
             while (true)
             {
-                lock (this.m_logBacklog)
+                try
                 {
-                    try
-                    {
-                        if (this.m_disposing) return; // shutdown dispatch
-                        while (this.m_logBacklog.Count == 0)
-                            Monitor.Wait(this.m_logBacklog);
-                        if (this.m_disposing) return;
+                    Monitor.Enter(this.m_logBacklog);
+                    if (this.m_disposing) return; // shutdown dispatch
+                    while (this.m_logBacklog.Count == 0)
+                        Monitor.Wait(this.m_logBacklog);
+                    if (this.m_disposing) return;
 
-                        while (this.m_logBacklog.Count > 0)
-                        {
-                            var dq = this.m_logBacklog.Dequeue();
-                            Console.ForegroundColor = dq.Key;
-                            Console.WriteLine(dq.Value);
-                        }
-                    }
-                    catch
+                    while (this.m_logBacklog.Count > 0)
                     {
-                        ;
+                        var dq = this.m_logBacklog.Dequeue();
+                        Monitor.Exit(this.m_logBacklog);
+                        Console.ForegroundColor = dq.Key;
+                        Console.WriteLine(dq.Value);
+                        Monitor.Enter(this.m_logBacklog);
                     }
+                }
+                catch
+                {
+                    ;
+                }
+                finally
+                {
+                    Monitor.Exit(this.m_logBacklog);
                 }
             }
         }

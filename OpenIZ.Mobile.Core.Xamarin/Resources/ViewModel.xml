@@ -261,9 +261,9 @@
       <property name="*" all="false">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
-        <property name="act" behavior="never"/>
+        <property name="act" all="true"/>
         <property name="participationRoleModel" behavior="never"/>
-        <property name="playerModel" all="true">
+        <property name="player" all="true">
         </property>
       </property>
     </property>

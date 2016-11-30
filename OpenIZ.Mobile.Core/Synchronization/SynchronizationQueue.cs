@@ -150,7 +150,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 			// Serialize object
 			XmlSerializer xsz = new XmlSerializer (data.GetType ());
 			using (MemoryStream ms = new MemoryStream ()) {
-				xsz.Serialize (ms, data);
+				xsz.Serialize (ms, data.GetLocked());
 				ms.Flush ();
 
 				// Create queue entry
