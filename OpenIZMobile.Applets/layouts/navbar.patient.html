@@ -20,6 +20,9 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
         <div class="header-dock" ng-if="!(patientViewScrollHeight > 55)">
+            <button type="button" ng-click="patientEdit.show()" class="btn btn-edit">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </button>
             <div class="row">
                 <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
                 <div class="col-xs-4">
@@ -78,6 +81,9 @@
         </div>
         
         <div class="header-dock static-dock" ng-if="patientViewScrollHeight > 55">
+            <button type="button" ng-click="patientEdit.show()" class="btn btn-edit-alt">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </button>
             <h4 class="panel-title">
                 <a data-toggle="collapse" data-target="#patientSummaryPanel">
                     <span class="margin-left-100" ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
