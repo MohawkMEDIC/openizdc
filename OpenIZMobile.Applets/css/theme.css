@@ -449,6 +449,17 @@ body{
     padding: 9px;
     height: 35px;
  }
+
+ /**Vaccination queue*/
+ .queue-tile{
+    padding: 15px 15px 10px 15px;
+    background: #386582;
+    color: white;
+    position: relative;
+    font-size: 15px;
+    margin-bottom:10px;
+ }
+
 /**Header dock*/
 
 .header-dock{
