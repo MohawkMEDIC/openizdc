@@ -122,14 +122,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
                             Monitor.Wait(this.m_logBacklog);
                         if (this.m_disposing) return;
 
-                        while (this.m_logBacklog.Count > 0)
-                        {
-                            var dq = this.m_logBacklog.Dequeue();
-                            Monitor.Exit(this.m_logBacklog);
-                            using (TextWriter tw = File.AppendText(this.m_logFile))
-                                tw.WriteLine(dq);
-                            Monitor.Enter(this.m_logBacklog);
-                        }
+                        using (TextWriter tw = File.AppendText(this.m_logFile))
+                            while (this.m_logBacklog.Count > 0)
+                            {
+                                var dq = this.m_logBacklog.Dequeue();
+                                Monitor.Exit(this.m_logBacklog);
+                                tw.WriteLine(dq); // This allows other threads to add to the write queue
+                                Monitor.Enter(this.m_logBacklog);
+                            }
                     }
                     catch
                     {
@@ -137,7 +137,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
                     }
                     finally
                     {
-                        Monitor.Exit(this.m_logBacklog);
+                        if(Monitor.IsEntered(this.m_logBacklog))
+                            Monitor.Exit(this.m_logBacklog);
                     }
                 }
 

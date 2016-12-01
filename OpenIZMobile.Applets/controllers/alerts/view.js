@@ -59,7 +59,7 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
 
         $scope.alert.creationTime = $scope.alert.time;
 
-        OpenIZ.App.saveAlertAsync({
+        OpenIZ.App.deleteAlertAsync({
             data: alert,
             continueWith: function (data)
             {

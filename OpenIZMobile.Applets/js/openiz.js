@@ -666,8 +666,7 @@ var OpenIZ = OpenIZ || {
 
             $.ajax({
                 method: 'DELETE',
-                url: url,
-                data: JSON.stringify(controlData.data),
+                url: controlData == null ? url : url + "?" + controlData.query,
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
@@ -1744,9 +1743,28 @@ var OpenIZ = OpenIZ || {
                         controlData.finally(controlData.state);
                 }
             });
+        },
+        /**
+             * @summary Delete an alert asynchronously
+             * @method
+             * @memberof OpenIZ.App
+             * @param {object} controlData The data which controls the operation of the asynchronous operation
+             * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+             * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+             * @param {uuid} controlData.data The alert id to be delete from the alerts service
+             * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+             */
+        deleteAlertAsync: function (controlData) {
+            OpenIZ.Util.simpleDelete("/__app/alerts", {
+                query: "id=" + controlData.id,
+                continueWith: controlData.continueWith,
+                finally: controlData.finally,
+                onException: controlData.onException,
+                state : controlData.state
+            });
+
         }
     },
-
     /**
      * @summary Represents functions related to the localization of applets
      * @static
@@ -2526,37 +2544,37 @@ var OpenIZ = OpenIZ || {
      * @memberOf OpenIZ.ManufacturedMaterial
      */
     ManufacturedMaterial:
-    {
-        /**
-         * @deprecated
-         * @see OpenIZ.ManufacturedMaterial.getManufacturedMaterialsAsync
-         */
-        getManufacturedMaterials: function (controlData) {
-            OpenIZ.ManufacturedMaterial.getManufacturedMaterialAsync(controlData);
+        {
+            /**
+             * @deprecated
+             * @see OpenIZ.ManufacturedMaterial.getManufacturedMaterialsAsync
+             */
+            getManufacturedMaterials: function (controlData) {
+                OpenIZ.ManufacturedMaterial.getManufacturedMaterialAsync(controlData);
+            },
+            /**
+             * @summary Get manufactured materials from the IMS 
+             * @param {object} controlData An object containing search, offset, count and callback data
+             * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+             * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+             * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+             * @param {object} controlData.query The query filters to apply to the search
+             * @param {int} controlData.query._count The limit of results to return from the ims
+             * @param {int} controlData.query._offset The offset of the search result window
+             * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+             * @memberof OpenIZ.ManufacturedMaterial
+             * @method
+             */
+            getManufacturedMaterialAsync: function (controlData) {
+                OpenIZ.Ims.get({
+                    resource: "ManufacturedMaterial",
+                    continueWith: controlData.continueWith,
+                    onException: controlData.onException,
+                    query: controlData.query,
+                    state: controlData.state
+                })
+            }
         },
-        /**
-         * @summary Get manufactured materials from the IMS 
-         * @param {object} controlData An object containing search, offset, count and callback data
-         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
-         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
-         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
-         * @param {object} controlData.query The query filters to apply to the search
-         * @param {int} controlData.query._count The limit of results to return from the ims
-         * @param {int} controlData.query._offset The offset of the search result window
-         * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
-         * @memberof OpenIZ.ManufacturedMaterial
-         * @method
-         */
-        getManufacturedMaterialAsync: function (controlData) {
-            OpenIZ.Ims.get({
-                resource: "ManufacturedMaterial",
-                continueWith: controlData.continueWith,
-                onException: controlData.onException,
-                query: controlData.query,
-                state: controlData.state
-            })
-        }
-    },
     /**
      * @static
      * @class
