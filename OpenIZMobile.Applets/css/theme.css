@@ -401,11 +401,64 @@ body{
 }
 
 
+/**Search Results*/
+.search-results-tile{
+    padding: 15px 15px 10px 15px;
+    background: #386582;
+    color: white;
+    position: relative;
+    font-size: 15px;
+}
+
+.search-results-tile .row{
+    height:22px;
+}
+
+.search-results-tile-container{
+    padding: 5px;
+}
+
+.search-results-tile-circle{
+    width: 30px;
+    height: 30px;
+    background: white;
+    border-radius: 15px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    padding-top: 5px;
+}
+
+.search-results-tile-counter{
+    color:black;
+    margin-left: 10px;
+}
+
+ .search-tile-label{
+    font-weight: 600;
+    color: #c3c3c3;
+ }
+
+ .tile-btn{
+    color: white;
+    font-size: 17px;
+    border: none;
+    border-radius: 0;
+    width: 100%;
+    margin: auto;
+    padding: 9px;
+    height: 35px;
+ }
+/**Header dock*/
+
 .header-dock{
     background: #007FD1;
     color: whitesmoke;
     padding: 20px 0px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
+}
+.header-dock h4{
+    font-size:20px;
 }
 .static-dock{
     position: fixed;
