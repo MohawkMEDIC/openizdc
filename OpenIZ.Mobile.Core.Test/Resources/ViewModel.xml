@@ -21,6 +21,14 @@
 <ViewModel xmlns="http://openiz.org/model/view" name="default">
   
   <!-- BASE TYPES -->
+  <type type="EntityRelationship" all="false">
+    <property name="source" all="true"/>
+    <property name="target" all="true"/>
+    <property name="participationRole" all="true"/>
+    <property name="key" all="true"/>
+    <property name="quantity" all="true"/>
+  </type>
+  
   <type type="EntityAddress" all="true">
     <property name="component" all="false" classifier="*">
       <property name="value" all="false"/>

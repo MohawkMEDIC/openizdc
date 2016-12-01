@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             data = breService?.BeforeInsert(data) ?? data;
 			data = persistence.Insert(data);
-            data = breService?.AfterInsert(data) ?? data;
+            breService?.AfterInsert(data) ;
 
             SynchronizationQueue.Outbound.Enqueue(data, Synchronization.Model.DataOperationType.Insert);
 
@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             data = breService?.BeforeUpdate(data) ?? data;
             data = persistence.Insert(data);
-            data = breService?.AfterUpdate(data) ?? data;
+            breService?.AfterUpdate(data);
 
             // Patch
             if(old != null)

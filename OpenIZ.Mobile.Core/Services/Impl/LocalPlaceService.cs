@@ -28,7 +28,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Local place service
 	/// </summary>
-	public class LocalPlaceService : IPlaceRepositoryService
+	public class LocalPlaceService : IPlaceRepositoryService, IRepositoryService<Place>
 	{
 		/// <summary>
 		/// Find the specified place
@@ -54,11 +54,19 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException("No persistence service found");
 			return persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
 		}
+        
+        /// <summary>
+        /// Get place by id
+        /// </summary>
+        public Place Get(Guid key)
+        {
+            return this.Get(key, Guid.Empty);
+        }
 
-		/// <summary>
-		/// Gets the specified place
-		/// </summary>
-		public Place Get(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets the specified place
+        /// </summary>
+        public Place Get(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Place>>();
 			if (persistenceService == null)

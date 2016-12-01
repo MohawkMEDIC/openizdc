@@ -131,7 +131,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<UserEntity>>();
             userEntity = breService?.BeforeInsert(userEntity) ?? userEntity;
 			userEntity = persistence.Insert(userEntity);
-            userEntity = breService?.AfterInsert(userEntity) ?? userEntity;
+            breService?.AfterInsert(userEntity);
             SynchronizationQueue.Outbound.Enqueue(userEntity, Synchronization.Model.DataOperationType.Insert);
             return userEntity;
 		}
@@ -494,7 +494,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
 				retVal = persistence.Update(userEntity);
-                retVal = breService?.AfterUpdate(userEntity) ?? userEntity;
+                breService?.AfterUpdate(userEntity);
 
                 var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, retVal);
 
@@ -504,7 +504,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			{
                 userEntity = breService?.BeforeUpdate(userEntity) ?? userEntity;
                 retVal = persistence.Insert(userEntity);
-                retVal = breService?.AfterUpdate(userEntity) ?? userEntity;
+                breService?.AfterUpdate(userEntity);
                 SynchronizationQueue.Outbound.Enqueue(retVal, Synchronization.Model.DataOperationType.Insert);
 
             }

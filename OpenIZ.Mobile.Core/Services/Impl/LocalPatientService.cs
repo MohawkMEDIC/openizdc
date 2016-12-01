@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents a patient repository service.
 	/// </summary>
-	public class LocalPatientService : IPatientRepositoryService
+	public class LocalPatientService : IPatientRepositoryService, IRepositoryService<Patient>
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
@@ -129,7 +129,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			// Persist patient
 			var patient = this.m_persistenceService.Insert(p);
-            p = this.m_breService?.AfterInsert(p) ?? p;
+            this.m_breService?.AfterInsert(p) ;
 
             if(patient.Relationships.Count > 0 || patient.Participations.Count > 0)
                 SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(patient), DataOperationType.Insert);
@@ -207,7 +207,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     patient = this.m_persistenceService.Update(p);
 
                     // First after update
-                    patient = this.m_breService?.AfterUpdate(p) ?? p;
+                    this.m_breService?.AfterUpdate(p);
 
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, patient);
 
@@ -224,7 +224,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 patient = this.m_persistenceService.Insert(p);
 
-                patient = this.m_breService?.AfterInsert(patient) ?? patient;
+                this.m_breService?.AfterInsert(patient);
 
                 // Patient relationships
                 if (patient.Relationships.Count > 0 || patient.Participations.Count > 0)
@@ -277,5 +277,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			return p;
 		}
-	}
+
+        /// <summary>
+        /// Get by key
+        /// </summary>
+        public Patient Get(Guid key)
+        {
+            return this.Get(key, Guid.Empty);
+        }
+    }
 }

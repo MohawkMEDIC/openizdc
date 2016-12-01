@@ -34,23 +34,35 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActService : IActRepositoryService, IPersistableQueryProvider
+	public class LocalActService : IActRepositoryService, IPersistableQueryProvider, IRepositoryService<Act>
 	{
+        public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Finds acts based on a specific query.
-		/// </summary>
-		public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
+        /// <summary>
+        /// Finds acts based on a specific query.
+        /// </summary>
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
             var results = this.Query(filter, offset, count, out totalResults, Guid.Empty);
             results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
             return results;
 		}
 
-		/// <summary>
-		/// Get the specified act
-		/// </summary>
-		public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
+        /// <summary>
+        /// Get by key
+        /// </summary>
+        public Act Get(Guid key)
+        {
+            return this.Get<Act>(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get the specified act
+        /// </summary>
+        public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
 
@@ -64,10 +76,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return result;
 		}
 
-		/// <summary>
-		/// Insert the specified act
-		/// </summary>
-		public TAct Insert<TAct>(TAct insert) where TAct : Act
+        public Act Insert(Act data)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Insert the specified act
+        /// </summary>
+        public TAct Insert<TAct>(TAct insert) where TAct : Act
 		{
             insert = this.Validate(insert);
 
@@ -81,8 +98,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             insert = breService?.BeforeInsert(insert) ?? insert;
 			insert = persistenceService.Insert(insert);
-            insert = breService?.AfterInsert(insert) ?? insert;
-
+            breService?.AfterInsert(insert);
+            
             // Patient relationships
             if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
                 SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(insert), DataOperationType.Insert);
@@ -93,10 +110,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return insert;
 		}
 
-		/// <summary>
-		/// Obsolete the specified act
-		/// </summary>
-		public TAct Obsolete<TAct>(Guid key) where TAct : Act
+        public Act Obsolete(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Obsolete the specified act
+        /// </summary>
+        public TAct Obsolete<TAct>(Guid key) where TAct : Act
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
@@ -136,6 +158,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return results;
         }
 
+        public Act Save(Act data)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Insert or update the specified act
         /// </summary>
@@ -166,7 +193,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     act = persistenceService.Update(act);
 
                     // First after update
-                    act = breService?.AfterUpdate(act) ?? act;
+                    breService?.AfterUpdate(act);
 
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
 
@@ -183,7 +210,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 act = persistenceService.Insert(act);
 
-                act = breService?.AfterInsert(act) ?? act;
+                breService?.AfterInsert(act);
 
                 // Patient relationships
                 if (act.Relationships.Count > 0 || act.Participations.Count > 0)

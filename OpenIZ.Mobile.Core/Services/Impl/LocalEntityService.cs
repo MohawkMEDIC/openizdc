@@ -23,6 +23,7 @@ using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
@@ -30,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an entity repository service.
 	/// </summary>
-	public class LocalEntityRepositoryService : IEntityRepositoryService
+	public class LocalEntityRepositoryService : IEntityRepositoryService, IRepositoryService<Entity>, IRepositoryService<EntityRelationship>
 	{
 		/// <summary>
 		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
@@ -45,12 +46,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			ApplicationContext.Current.Started += (o, e) => { this.persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>(); };
 		}
 
-		/// <summary>
-		/// Finds a list of entities.
-		/// </summary>
-		/// <param name="query">The query to use to find the entities.</param>
-		/// <returns>Returns a list of entities.</returns>
-		public IEnumerable<Entity> Find(Expression<Func<Entity, bool>> query)
+        public IEnumerable<EntityRelationship> Find(Expression<Func<EntityRelationship, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Finds a list of entities.
+        /// </summary>
+        /// <param name="query">The query to use to find the entities.</param>
+        /// <returns>Returns a list of entities.</returns>
+        public IEnumerable<Entity> Find(Expression<Func<Entity, bool>> query)
 		{
 			if (this.persistenceService == null)
 			{
@@ -78,13 +84,21 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Query(query, offSet, count, out totalCount, Guid.Empty);
 		}
 
-		/// <summary>
-		/// Gets an entity.
-		/// </summary>
-		/// <param name="key">The key of the entity to be retrieved.</param>
-		/// <param name="versionKey">The version key of the entity to be retrieved.</param>
-		/// <returns>Returns an entity.</returns>
-		public Entity Get(Guid key, Guid versionKey)
+        /// <summary>
+        /// Get entity by key
+        /// </summary>
+        public Entity Get(Guid key)
+        {
+            return this.Get(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Gets an entity.
+        /// </summary>
+        /// <param name="key">The key of the entity to be retrieved.</param>
+        /// <param name="versionKey">The version key of the entity to be retrieved.</param>
+        /// <returns>Returns an entity.</returns>
+        public Entity Get(Guid key, Guid versionKey)
 		{
 			if (this.persistenceService == null)
 			{
@@ -94,12 +108,23 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Get(key);
 		}
 
-		/// <summary>
-		/// Inserts an entity.
-		/// </summary>
-		/// <param name="entity">The entity to be inserted.</param>
-		/// <returns>Returns the inserted entity.</returns>
-		public Entity Insert(Entity entity)
+        /// <summary>
+        /// Insert entity relationship
+        /// </summary>
+        public EntityRelationship Insert(EntityRelationship data)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Unable to locate persistence service");
+            return persistence.Insert(data);
+        }
+
+        /// <summary>
+        /// Inserts an entity.
+        /// </summary>
+        /// <param name="entity">The entity to be inserted.</param>
+        /// <returns>Returns the inserted entity.</returns>
+        public Entity Insert(Entity entity)
 		{
 			if (this.persistenceService == null)
 			{
@@ -131,13 +156,39 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			return result;
 		}
+        
+        /// <summary>
+        /// Save or insert
+        /// </summary>
+        public EntityRelationship Save(EntityRelationship data)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Unable to locate persistence service");
+            try
+            {
+                int tr = 0;
+                EntityRelationship old = null;
+                if (data.Key != null)
+                    old = persistence.Get(data.Key.Value);
+                if (old == null)
+                    old = persistence.Query(o => o.SourceEntityKey == data.SourceEntityKey && o.TargetEntityKey == data.TargetEntityKey, 0, 1, out tr, Guid.Empty).FirstOrDefault();
+                if (old == null)
+                    throw new KeyNotFoundException(data.Key?.ToString());
+                return persistence.Update(data);
+            }
+            catch(KeyNotFoundException)
+            {
+                return persistence.Insert(data);
+            }
+        }
 
-		/// <summary>
-		/// Saves or inserts an entity.
-		/// </summary>
-		/// <param name="entity">The entity to be saved.</param>
-		/// <returns>Returns the saved entity.</returns>
-		public Entity Save(Entity entity)
+        /// <summary>
+        /// Saves or inserts an entity.
+        /// </summary>
+        /// <param name="entity">The entity to be saved.</param>
+        /// <returns>Returns the saved entity.</returns>
+        public Entity Save(Entity entity)
 		{
 			if (this.persistenceService == null)
 			{
@@ -159,5 +210,27 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			return result;
 		}
-	}
+
+        /// <summary>
+        /// Get entity relationship
+        /// </summary>
+        EntityRelationship IRepositoryService<EntityRelationship>.Get(Guid key)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Unable to locate persistence service");
+            return persistence.Get(key);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        EntityRelationship IRepositoryService<EntityRelationship>.Obsolete(Guid key)
+        {
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Unable to locate persistence service");
+            return persistence.Obsolete(new EntityRelationship() { Key = key });
+        }
+    }
 }

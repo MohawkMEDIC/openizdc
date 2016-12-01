@@ -20,6 +20,13 @@
 <ViewModel xmlns="http://openiz.org/model/view">
 
   <!-- Base types -->
+  <type type="EntityRelationship" all="false">
+    <property name="source" all="true"/>
+    <property name="target" all="true"/>
+    <property name="participationRole" all="true"/>
+    <property name="key" all="true"/>
+    <property name="quantity" all="true"/>
+  </type>
   <type type="IdentifiedData" all="true">
     <property name="etag" behavior="never"/>
   </type>
@@ -156,18 +163,25 @@
       <property name="Parent" all="true">
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
+        <property name="relationshipTypeModel" behavior="never"/>
         <property name="targetModel" all="true">
           <property name="relationship" all="true">
             <property name="Parent" behavior="never" all="false"/>
+            <property name="OwnedEntity" behavior="never" all="false"/>
           </property>
         </property>
       </property>
       <property name="OwnedEntity" all="true">
         <property name="holderModel" behavior="never"/>
-        <property name="targetModel" behavior="always" all="true">
-          <property name="relationship" all="true">
-            <property name="OwnedEntity" behavior="never" all="false"/>
-          </property>
+        <property name="relationshipTypeModel" behavior="never"/>
+        <property name="targetModel" behavior="always" all="false">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true"/>
+          <property name="name" all="true" behavior="always"/>
+          <property name="tag" all="true"/>
+          <property name="extension" all="true"/>
         </property>
       </property>
       <property name="*" all="true">
@@ -175,6 +189,7 @@
         <property name="holder" behavior="never"/>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
+        <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
     <property name="participation" all="true">
@@ -271,6 +286,15 @@
   
   <!-- Session information -->
   <type type="SessionInfo" all="true">
-    <property name="entity" all="true"  ref="Entity"/>
+    <property name="entity" all="true">
+      <property name="relationship" all="true">
+        <property name="*" all="true">
+          <property name="sourceModel" behavior="never"/>
+          <property name="relationshipTypeModel" behavior="never"/>
+          <property name="holderModel" behavior="never"/>
+          <property name="targetModel" behavior="never"/>
+        </property>
+      </property>
+    </property>
   </type>
 </ViewModel>

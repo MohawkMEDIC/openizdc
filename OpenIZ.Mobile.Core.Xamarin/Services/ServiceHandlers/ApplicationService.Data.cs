@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
             {
                 if (MiniImsServer.CurrentContext.Request.QueryString["backup"] == "true" ||
-                    parm["backup"]?.Value<Boolean>() == true)
+                    parm?["backup"]?.Value<Boolean>() == true)
                     File.Copy(itm.Value, Path.ChangeExtension(itm.Value, ".bak"), true);
                 File.Delete(itm.Value);
             }
