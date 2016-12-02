@@ -177,6 +177,8 @@
         <property name="targetModel" behavior="always" all="false">
           <property name="id"/>
           <property name="version"/>
+          <property name="lotNumber"/>
+          <property name="expiryDate"/>
           <property name="typeConceptModel" behavior="always" ref="Concept"/>
           <property name="identifier" all="true"/>
           <property name="name" all="true" behavior="always"/>
