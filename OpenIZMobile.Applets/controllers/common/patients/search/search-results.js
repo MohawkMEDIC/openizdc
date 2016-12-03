@@ -27,9 +27,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
     // Get the current scope that we're in
     var scope = $scope;
-        
-    scope.showAdvancedSearch = false;
-            
+                    
     // If the current scope does not have required values bind them
     scope.search = scope.search || {};
     scope.search.query = scope.search.query || {};

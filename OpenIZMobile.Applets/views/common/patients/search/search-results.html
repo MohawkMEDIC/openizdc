@@ -17,56 +17,84 @@
  - User: justi
  - Date: 2016-7-17
  -->
-<div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" 
+<div class="container-fluid no-padding-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" 
      xmlns:bind="http://openiz.org/applet/binding" ng-controller="SearchResultsController">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
+    <h3>{{ 'locale.patient.search.title' | i18n }}</h3>
 
-    <div class="advanced-search-container" ng-if="showAdvancedSearch == true">
-        <div>
-            <input class="form-control" 
-                    oiz-tag="oiz-tag" 
-                    ng-model="search.query['name.component.value']" 
-                    type="search" 
-                    name="nameDetailFilter" />
+    <div class="panel panel-info no-margin-all margin-top-10" ng-init="collapseStatus.searchFilterOpen = false">
+        <div class="panel-heading" ng-click="collapseStatus.searchFilterOpen = !collapseStatus.searchFilterOpen">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-target="#searchFilterCollapse">{{ 'locale.patient.search.quickSearchFilterTitle' | i18n }}</a>
+                <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.searchFilterOpen, 'glyphicon-chevron-right': !collapseStatus.searchFilterOpen}"></i>
+            </h4>
         </div>
-        <div>
-            <input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}" 
-                    style="max-width:200px" 
-                    class="form-control" 
-                    ng-model="search.dateOfBirthString" 
-                    type="date" name="dobFilter" />
-        </div>
-        <div>
-            <select class="form-control" bind:source="Concept" 
-                    bind:filter="conceptSet.mnemonic=AdministrativeGenderCode" 
-                    bind:value="name[{{ locale }}].value" 
-                    ng-model="search.query['genderConcept']" name="genderFilter" />
-        </div>
-        <div>
-            <select class="form-control" 
-                    ng-model="search.query['address[HomeAddress].component.value']" 
-                    type="search" name="addressFilter" 
-                    oiz-entitysearch="Place" 
-                    data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }' 
-                    data-group-by="address.Direct.component.County">
-            </select>
-        </div>
-        <div>
-            <input type="text" class="form-control" 
-                    ng-model="search.query['identifier.value']" 
-                    name="identifierFilter" />
-        </div>
-        <div>
-            <button class="btn btn-info" ng-click="search.search()" 
-                    type="button">
-                <span class="glyphicon glyphicon-refresh"></span>
-            </button>
+        <div id="searchFilterCollapse" class="panel-collapse collapse">
+            <div class="panel-body">
+                <fieldset class="form-horizontal form-group">
+                    <div class="form-group row">
+                        <label class="control-label col-xs-3">{{ 'locale.patient.search.header.names' | i18n }}</label>
+                        <div class="col-xs-9">
+                            <input class="form-control"
+                                   oiz-tag="oiz-tag"
+                                   ng-model="search.query['name.component.value']"
+                                   type="search"
+                                   name="nameDetailFilter" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-xs-3">{{ 'locale.patient.search.header.identifier' | i18n }}</label>
+                        <div class="col-xs-9">
+                            <input type="text" class="form-control"
+                                   ng-model="search.query['identifier.value']"
+                                   name="identifierFilter" />
+                            
+                        </div>
+                    </div>
+                   <div class="form-group row">
+                        <label class="control-label col-xs-3">{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</label>
+                        <div class="col-xs-9">
+                            <input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}"
+                                   class="form-control"
+                                   ng-model="search.dateOfBirthString"
+                                   type="date" name="dobFilter" />
+                            <span class="select-arrow-container" style="right: 32px;" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-xs-3">{{ 'locale.patient.search.header.gender' | i18n }}</label>
+                        <div class="col-xs-9">
+                            <select class="form-control" bind:source="Concept"
+                                    bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
+                                    bind:value="name[{{ locale }}].value"
+                                    ng-model="search.query['genderConcept']" name="genderFilter" /> 
+                            <span class="select-arrow-container" style="right: 32px;" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="control-label col-xs-3">{{ 'locale.patient.search.header.cityVillage' | i18n }}</label>
+                        <div class="col-xs-9">
+                            <select class="form-control"
+                                    ng-model="search.query['address[HomeAddress].component.value']"
+                                    type="search" name="addressFilter"
+                                    oiz-entitysearch="Place"
+                                    data-filter='{ "classConcept" :  "!FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'
+                                    data-group-by="address.Direct.component.County"></select>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-info pull-right" ng-click="search.search()"
+                                type="button">
+                            <span class="glyphicon glyphicon-refresh"></span> {{ 'locale.patient.search.filterResults' | i18n }}
+                        </button>
+                    </div>
+                </fieldset>
+</div>
         </div>
     </div>
 
     <div class="search-results-container">
-        <h3>{{ 'locale.patient.search.title' | i18n }}</h3>
-        <div class="row">
+        <div class="row" style="padding: 0 10px;">
             <div class="col-xs-6 search-results-tile-container"  ng-repeat="patient in search.results.item track by $index">
                 <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
                     <span class="search-results-tile-circle">
