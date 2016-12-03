@@ -294,11 +294,14 @@
           <property name="sourceModel" behavior="never"/>
           <property name="relationshipTypeModel" behavior="never"/>
           <property name="holderModel" behavior="never"/>
-          <property name="targetModel" all="false">
-            <property name="id"/>
-            <property name="version"/>
-            <property name="identifier" ref="EntityIdentifier"/>
-            <property name="name"  ref="EntityName"/>
+          <property name="target" all="false"/>
+          <property name="relationshipType" all="false"/>
+          <property name="holder" all="false"/>
+          <property name="targetModel" all="false" behavior="always">
+            <property name="id" all="false"/>
+            <property name="version" all="false"/>
+            <property name="identifier" ref="EntityIdentifier" all="true"/>
+            <property name="name"  ref="EntityName" all="true"/>
           </property>
         </property>
         <property name="*" all="true">

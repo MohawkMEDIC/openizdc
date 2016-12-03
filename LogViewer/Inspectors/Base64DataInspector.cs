@@ -58,7 +58,6 @@ namespace LogViewer.Inspectors
                             sb.AppendFormat("    ");
                         if (e % 4 == 3) sb.Append("\t");
                     }
-                    sb.AppendFormat("{0}\r\n", Encoding.UTF8.GetString(bytes, i, bytes.Length - i < 8 ? bytes.Length - i : 8));
                 }
                 return sb.ToString();
             }
