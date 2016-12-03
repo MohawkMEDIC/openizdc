@@ -165,4 +165,7 @@
   <data name="err_unauthenticated_principal" xml:space="preserve">
     <value>Cannot set context to unauthenticated principal</value>
   </data>
+  <data name="flushing_logFile" xml:space="preserve">
+    <value>Flusing diagnostics queue...</value>
+  </data>
 </root>

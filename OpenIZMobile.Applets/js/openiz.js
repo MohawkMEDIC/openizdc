@@ -2374,7 +2374,8 @@ var OpenIZ = OpenIZ || {
                      data: {
                          realmUri: controlData.domain,
                          deviceName: controlData.deviceName,
-                         force: controlData.force
+                         force: controlData.force,
+                         enableTrace: controlData.enableTrace
                      },
                      dataType: "json",
                      contentType: 'application/x-www-urlform-encoded',

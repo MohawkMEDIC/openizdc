@@ -82,6 +82,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,
+                enableTrace : realm.enableTrace,
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;

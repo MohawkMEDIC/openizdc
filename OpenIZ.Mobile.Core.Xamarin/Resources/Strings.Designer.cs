@@ -203,5 +203,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
                 return ResourceManager.GetString("err_unauthenticated_principal", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flusing diagnostics queue....
+        /// </summary>
+        internal static string flushing_logFile {
+            get {
+                return ResourceManager.GetString("flushing_logFile", resourceCulture);
+            }
+        }
     }
 }

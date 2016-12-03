@@ -274,6 +274,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
+            List<string> enableTrace = null;
+            realmData.TryGetValue("enableTrace", out enableTrace);
+            enableTrace = enableTrace ?? new List<String>();
+
             // Stage 1 - Demand access admin policy
             try
             {
@@ -325,7 +329,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Address = imsiUri
                         }
                     },
-                    Name = "imsi"
+                    Name = "imsi",
+                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
                 // Parse ACS URI
@@ -347,7 +352,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Address = amiUri, Timeout = 10000
                         }
                     },
-                    Name = "ami"
+                    Name = "ami",
+                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
                 // Parse ACS URI
@@ -368,7 +374,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Address = oauthUri
                         }
                     },
-                    Name = "acs"
+                    Name = "acs",
+                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
@@ -494,7 +501,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Address = amiUri, Timeout = 10000
                         }
                     },
-                    Name = "ami"
+                    Name = "ami",
+                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
                 // Parse ACS URI
@@ -515,7 +523,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Address = oauthUri
                         }
                     },
-                    Name = "acs"
+                    Name = "acs",
+                    Trace = enableTrace.Count > 0 && enableTrace[0] == "true"
                 });
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new OAuthIdentityProvider());

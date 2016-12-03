@@ -246,7 +246,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.HighPriorityAlert));
 
                 return 0;
             }

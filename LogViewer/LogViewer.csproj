@@ -62,6 +62,7 @@
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="DataInspectorBase.cs" />
+    <Compile Include="Inspectors\CompressedDataInspector.cs" />
     <Compile Include="Inspectors\Base64DataInspector.cs" />
     <Compile Include="Inspectors\JwtDataInspector.cs" />
     <Compile Include="LogEvent.cs" />

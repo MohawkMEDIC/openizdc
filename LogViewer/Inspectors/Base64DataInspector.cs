@@ -6,13 +6,38 @@ using System.Threading.Tasks;
 
 namespace LogViewer.Inspectors
 {
+    public class Base64TextDecoder : DataInspectorBase
+    {
+        public override string Name
+        {
+            get
+            {
+                return "Base64 Text Decoder";
+            }
+        }
+
+        public override string Inspect(string source)
+        {
+            try
+            {
+                var bytes = Convert.FromBase64String(source);
+                return Encoding.UTF8.GetString(bytes);   
+            }
+            catch
+            {
+                return "Invalid Data";
+            }
+        }
+    }
+
+
     public class Base6DecodeInspector : DataInspectorBase
     {
         public override string Name
         {
             get
             {
-                return "Base64 Decoder";
+                return "Base64 Binary Decoder";
             }
         }
         

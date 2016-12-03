@@ -165,7 +165,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                     requestException = r.Exception.InnerExceptions.First();
                                 else
                                     requestStream = r.Result;
-                            });
+                            }, TaskContinuationOptions.LongRunning);
 
                             if (!requestTask.Wait(this.Description.Endpoint[0].Timeout))
                             {
@@ -179,14 +179,25 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                             serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
                             (body as IdentifiedData)?.SetDelayLoad(false);
                             // Serialize and compress with deflate
-                            if (this.Description.Binding.Optimize)
+                            using(MemoryStream ms = new MemoryStream())
                             {
-                                requestObj.Headers.Add("Content-Encoding", "deflate");
-                                using (var df = new DeflateStream(requestStream, CompressionMode.Compress))
-                                    serializer.Serialize(df, body);
+                                if (this.Description.Binding.Optimize)
+                                {
+                                    requestObj.Headers.Add("Content-Encoding", "deflate");
+                                    using (var df = new DeflateStream(ms, CompressionMode.Compress))
+                                        serializer.Serialize(df, body);
+                                }
+                                else
+                                    serializer.Serialize(ms, body);
+
+                                // Trace
+                                if(this.Description.Trace)
+                                    this.m_tracer.TraceVerbose("HTTP >> {0}", Convert.ToBase64String(ms.ToArray()));
+
+                                using (var nms = new MemoryStream(ms.ToArray()))
+                                    nms.CopyTo(requestStream);
+
                             }
-                            else
-                                serializer.Serialize(requestStream, body);
                         }
                         finally
                         {
@@ -207,7 +218,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 responseError = r.Exception.InnerExceptions.First();
                             else
                                 response = r.Result as HttpWebResponse;
-                        });
+                        }, TaskContinuationOptions.LongRunning);
                         if (!responseTask.Wait(this.Description.Endpoint[0].Timeout))
                             throw new TimeoutException();
                         else
@@ -255,22 +266,36 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                             TResult retVal = default(TResult);
                             // Compression?
-                            switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                            using (MemoryStream ms = new MemoryStream())
                             {
-                                case "deflate":
-                                    using (DeflateStream df = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                        retVal = (TResult)serializer.DeSerialize(df);
-                                    break;
-                                case "gzip":
-                                    using (GZipStream df = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
-                                        retVal = (TResult)serializer.DeSerialize(df);
-                                    break;
-                                default:
-                                    retVal = (TResult)serializer.DeSerialize(response.GetResponseStream());
-                                    break;
+                                if (this.Description.Trace)
+                                    this.m_tracer.TraceVerbose("Received response {0} : {1} bytes", response.ContentType, response.ContentLength);
+
+                                response.GetResponseStream().CopyTo(ms);
+                                ms.Seek(0, SeekOrigin.Begin);
+
+                                // Trace
+                                if (this.Description.Trace)
+                                    this.m_tracer.TraceVerbose("HTTP << {0}", Convert.ToBase64String(ms.ToArray()));
+
+                                switch (response.Headers[HttpResponseHeader.ContentEncoding])
+                                {
+                                    case "deflate":
+                                        using (DeflateStream df = new DeflateStream(ms, CompressionMode.Decompress))
+                                            retVal = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    case "gzip":
+                                        using (GZipStream df = new GZipStream(ms, CompressionMode.Decompress))
+                                            retVal = (TResult)serializer.DeSerialize(df);
+                                        break;
+                                    default:
+                                        retVal = (TResult)serializer.DeSerialize(ms);
+                                        break;
+                                }
+
                             }
 
-                    (retVal as IdentifiedData)?.SetDelayLoad(true);
+                            (retVal as IdentifiedData)?.SetDelayLoad(true);
                             return retVal;
                         }
                     }

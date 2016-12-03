@@ -25,6 +25,7 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Services;
 using System.Collections.Generic;
 using System.Threading;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
 {

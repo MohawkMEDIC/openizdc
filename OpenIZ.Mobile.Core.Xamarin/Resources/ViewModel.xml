@@ -285,11 +285,22 @@
       </property>
     </property>
   </type>
-  
+
   <!-- Session information -->
   <type type="SessionInfo" all="true">
     <property name="entity" all="true">
       <property name="relationship" all="true">
+        <property name="DedicatedServiceDeliveryLocation">
+          <property name="sourceModel" behavior="never"/>
+          <property name="relationshipTypeModel" behavior="never"/>
+          <property name="holderModel" behavior="never"/>
+          <property name="targetModel" all="false">
+            <property name="id"/>
+            <property name="version"/>
+            <property name="identifier" ref="EntityIdentifier"/>
+            <property name="name"  ref="EntityName"/>
+          </property>
+        </property>
         <property name="*" all="true">
           <property name="sourceModel" behavior="never"/>
           <property name="relationshipTypeModel" behavior="never"/>
