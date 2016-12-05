@@ -37,7 +37,7 @@
             <tbody>
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
                     <td>{{ antigenName }}</td>
-                    <td ng-repeat="sequence in event">
+                    <td ng-repeat="sequence in event track by $index">
                         <div ng-if="sequence != null" class="input-group">
                             <label class="control control--checkbox">
                                 <input type="checkbox"
@@ -52,8 +52,7 @@
                                    ng-disabled="!sequence._enabled" 
                                    type="date" 
                                    ng-model="sequence.actTime"
-                                   max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}"
-                                   min="{{(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime)| date: 'yyyy-MM-dd'}}" />
+                                   ng-min="(event[sequence.doseSequence - 1] == null ? patient.dateOfBirth : event[sequence.doseSequence - 1].actTime) | date: 'yyyy-MM-dd'" />
                         </div>
                     </td>
                 </tr>

@@ -52,8 +52,8 @@
                        name="date" id="dobInput" 
                        class="form-control" 
                        ng-model="patient.dateOfBirth" 
-                       max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" 
-                       required="true"/>
+                       ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
+                       ng-required="true"/>
                 <span class="input-group-addon input-group-addon-approx">
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographic.dob.fuzzy' | i18n }}</span>
@@ -81,7 +81,7 @@
                 <span class="input-group-addon">
                     <input type="checkbox" ng-model="patient.isDeceased" />
                 </span>
-                <input ng-readonly="patient.readonly.deceasedDate" ng-disabled="!patient.isDeceased" type="date" ng-required="patient.isDeceased" name="date" id="deathDate" class="form-control" ng-model="patient.deceasedDate" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" min="{{patient.dateOfBirth | date : 'yyyy-MM-dd' }}" />
+                <input ng-readonly="patient.readonly.deceasedDate" ng-disabled="!patient.isDeceased" type="date" ng-required="patient.isDeceased" name="date" id="deathDate" class="form-control" ng-model="patient.deceasedDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" ng-min="patient.dateOfBirth | date : 'yyyy-MM-dd'" />
                 <span class="input-group-addon">
                     <input ng-disabled="!patient.isDeceased" ng-readonly="patient.readonly.deceasedDate" type="checkbox" name="approximateDeath" ng-model="patient.deceaseDatePrecision" value="1" />
                     <label for="approxDeath" class="ng-cloak">
@@ -104,7 +104,7 @@
             <div class="input-group">
                 <select ng-disabled="patient.readonly.genderConcept" name="gender" 
                         ng-model="patient.genderConcept" 
-                        required="true" id="genderSelect" 
+                        ng-required="true" id="genderSelect" 
                         class="form-control"
                         aria-describedby="genderAddon" bind:source="Concept" bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
                         bind:value="name[{{ locale }}].value"></select>
