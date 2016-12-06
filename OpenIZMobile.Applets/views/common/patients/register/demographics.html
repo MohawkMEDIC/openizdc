@@ -68,7 +68,7 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
+            <p ng-show="masterForm.date.$touched||masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
         </div>
     </div>
 
@@ -81,9 +81,18 @@
                 <span class="input-group-addon">
                     <input type="checkbox" ng-model="patient.isDeceased" />
                 </span>
-                <input ng-readonly="patient.readonly.deceasedDate" ng-disabled="!patient.isDeceased" type="date" ng-required="patient.isDeceased" name="date" id="deathDate" class="form-control" ng-model="patient.deceasedDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" ng-min="patient.dateOfBirth | date : 'yyyy-MM-dd'" />
+                <input ng-readonly="patient.readonly.deceasedDate" 
+                       ng-disabled="!patient.isDeceased" type="date" 
+                       ng-required="patient.isDeceased" name="date" 
+                       id="deathDate" class="form-control" 
+                       ng-model="patient.deceasedDate"
+                       ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
+                       ng-min="patient.dateOfBirth | date : 'yyyy-MM-dd'" />
                 <span class="input-group-addon">
-                    <input ng-disabled="!patient.isDeceased" ng-readonly="patient.readonly.deceasedDate" type="checkbox" name="approximateDeath" ng-model="patient.deceaseDatePrecision" value="1" />
+                    <input ng-disabled="!patient.isDeceased" 
+                           ng-readonly="patient.readonly.deceasedDate" 
+                           type="checkbox" name="approximateDeath" 
+                           ng-model="patient.deceaseDatePrecision" value="1" />
                     <label for="approxDeath" class="ng-cloak">
                         {{ 'locale.patient.demographic.dob.fuzzy' | i18n }}
                     </label>

@@ -90,7 +90,7 @@ fieldset{
   font-size:1.2em;
   color: #666;
 }
-.has-error .form-control {
+.has-error .form-control, .has-error .select2-container {
     border:1px solid #843534;
 }
 .select2-container--default .select2-selection--single {
@@ -599,23 +599,56 @@ body{
 }
 
 /**Celendar edits*/
-.fc-left,.fc-right{
-    float:none !important;
+.fc-unthemed .fc-today {
+    background: #cde7f8;
 }
-
+.fc th, .fc-list-heading > .fc-widget-header {
+    text-align: center;
+    background: #146396 !important;
+    color: white;
+    padding: 10px 0 !important;
+}
+.fc-widget-header a{
+    color:white;
+    padding:0 10px;
+}
+.fc-toolbar .fc-center {
+    padding-top: 10px;
+}
+.fc-toolbar .fc-center h2 {
+    font-weight: 600;
+}
+.fc-unthemed .fc-list-empty {
+    background-color: #f6f8ff;
+}
+.fc-basic-view .fc-week-number, .fc-basic-view .fc-day-number {
+    padding: 4px;
+}
+.fc .fc-button-group > :not(:first-child):not(:last-child) {
+    border-left: Solid 1px #f6f8ff !important;
+    border-right: solid 1px #f6f8ff !important;
+}
+.fc-unthemed th, .fc-unthemed td, .fc-unthemed thead, .fc-unthemed tbody, .fc-unthemed .fc-divider, .fc-unthemed .fc-row, .fc-unthemed .fc-content, .fc-unthemed .fc-popover, .fc-unthemed .fc-list-view, .fc-unthemed .fc-list-heading td {
+    border-color: rgba(75, 113, 137, 0.5);
+}
 .fc-left .fc-button-group, .fc-right .fc-button-group{
     width:100% !important;
 }
 
-.fc-left .fc-button-group .fc-button, .fc-right .fc-button-group .fc-button{
-    width: 33% !important;
+.fc-left .fc-button-group .fc-button, .fc-right .fc-button-group .fc-button, .fc-button{
     background: #c7ceda;
-    border-radius: 0;
-    height: 50px;
+    border-radius: 0 !important;
+    height: 50px !important;
+    box-shadow: none;
+    border: none;
+    padding: 0 12px !important;
 }
 #appointmentCalendar{
     padding-top:15px;
 }
+
+
+/**Timeline css*/
 .vis-timeline{
     border: none;
 }
