@@ -46,10 +46,10 @@
         <label class="col-xs-3 control-label ng-cloak" for="dobInput">
         {{ 'locale.patient.demographics.dateOfBirth' | i18n }}*
         </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.date.$touched||masterForm.$submitted) &amp;&amp; masterForm.date.$invalid }">
+        <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.dateOfBirth.$touched || masterForm.$submitted) &amp;&amp; masterForm.dateOfBirth.$invalid }">
             <div class="input-group">
                 <input ng-readonly="patient.readonly.dateOfBirth" type="date" 
-                       name="date" id="dobInput" 
+                       name="dateOfBirth" id="dobInput" 
                        class="form-control" 
                        ng-model="patient.dateOfBirth" 
                        ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
@@ -68,7 +68,20 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="masterForm.date.$touched||masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
+            <p ng-if="(masterForm.dateOfBirth.$touched || masterForm.$submitted)">
+                <span ng-show="masterForm.dateOfBirth.$error.required"
+                   class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.required' | i18n }}
+                </span>
+                <span ng-show="masterForm.dateOfBirth.$error.date"
+                   class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.date' | i18n }}
+                </span>
+                <span ng-show="masterForm.dateOfBirth.$error.max"
+                   class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.max' | i18n }}
+                </span>
+            </p>
         </div>
     </div>
 
@@ -83,7 +96,7 @@
                 </span>
                 <input ng-readonly="patient.readonly.deceasedDate" 
                        ng-disabled="!patient.isDeceased" type="date" 
-                       ng-required="patient.isDeceased" name="date" 
+                       ng-required="patient.isDeceased" name="deceasedDate" 
                        id="deathDate" class="form-control" 
                        ng-model="patient.deceasedDate"
                        ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
@@ -101,7 +114,10 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="(masterForm.date.$touched||masterForm.$submitted)&amp;&amp;masterForm.date.$invalid" class="help-block text-danger">{{ 'locale.patient.errors.dob' | i18n }}</p>
+            <p ng-show="(masterForm.deceasedDate.$touched||masterForm.$submitted)&amp;&amp;masterForm.deceasedDate.$invalid" 
+               class="help-block text-danger">
+                {{ 'locale.patient.errors.dob' | i18n }}
+            </p>
         </div>
     </div>
 

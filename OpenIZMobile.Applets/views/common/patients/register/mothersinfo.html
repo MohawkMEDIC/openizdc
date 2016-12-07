@@ -46,16 +46,17 @@
         <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
-                <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
-                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"></select>
+                <select disabled="disabled" name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
+                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA">
+                </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
             </div>
         </div>
         <div class="col-xs-5">
             <div class="input-group">
-                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
+                <input disabled="disabled" placeholder="(Under development)" type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.$other.value)">
+                    <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.$other.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
