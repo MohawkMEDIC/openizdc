@@ -42,6 +42,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         private int m_concurrencyLevel = System.Environment.ProcessorCount * 4;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
+        private Queue<WorkItem> m_priorityQueue = null;
+
         // Active threads
         private Thread[] m_threadPool = null;
         // Hint of the number of threads waiting to be executed
@@ -57,6 +59,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
             if (ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency") != null)
                 this.m_concurrencyLevel = Int32.Parse(ApplicationContext.Current?.Configuration?.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == "queue_process_concurrency").Value);
             this.m_queue = new Queue<WorkItem>(this.m_concurrencyLevel);
+            this.m_priorityQueue = new Queue<WorkItem>();
         }
 
         /// <summary>
@@ -88,12 +91,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         /// </summary>
         public void QueueUserWorkItem(TimeSpan timeout, Action<Object> callback, Object parm)
         {
-            Timer timer = null;
-            timer = new Timer((o) => {
-                var kv = (KeyValuePair<Action<Object>, Object>)o;
-                this.QueueUserWorkItem(kv.Key, kv.Value);
-                timer.Dispose();
-            }, new KeyValuePair<Action<Object>, Object>(callback, parm), (int)timeout.TotalMilliseconds, Timeout.Infinite);
+            if (timeout == TimeSpan.MinValue)
+                this.QueueWorkItemInternal(callback, parm, true);
+            else
+            {
+                Timer timer = null;
+                timer = new Timer((o) =>
+                {
+                    var kv = (KeyValuePair<Action<Object>, Object>)o;
+                    this.QueueUserWorkItem(kv.Key, kv.Value);
+                    timer.Dispose();
+                }, new KeyValuePair<Action<Object>, Object>(callback, parm), (int)timeout.TotalMilliseconds, Timeout.Infinite);
+            }
         }
 
         /// <summary>
@@ -109,6 +118,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         /// </summary>
         public void QueueUserWorkItem(Action<Object> callback, object state)
         {
+            this.QueueWorkItemInternal(callback, state);
+        }
+
+        /// <summary>
+        /// Perform queue of workitem internally
+        /// </summary>
+        private void QueueWorkItemInternal(Action<Object> callback, object state, bool isPriority = false)
+        {
             ThrowIfDisposed();
 
             try
@@ -123,12 +140,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
                 this.EnsureStarted(); // Ensure thread pool threads are started
                 lock (m_queue)
                 {
-                    m_queue.Enqueue(wd);
+                    if (!isPriority)
+                        m_queue.Enqueue(wd);
+                    else // priority items get inserted at the head so that they are executed first
+                        this.m_priorityQueue.Enqueue(wd);
+                                        
                     if (m_threadWait > 0)
                         Monitor.Pulse(m_queue);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error queueing work item: {0}", e);
             }
@@ -169,7 +190,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
                     try
                     {
                         if (m_disposing) return; // Shutdown requested
-                        while (m_queue.Count == 0)
+                        while (m_queue.Count == 0 && m_priorityQueue.Count == 0)
                         {
                             m_threadWait++;
                             try { Monitor.Wait(m_queue); }
@@ -177,7 +198,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
                             if (m_disposing)
                                 return;
                         }
-                        wi = m_queue.Dequeue();
+                        if (this.m_priorityQueue.Count > 0)
+                            wi = this.m_priorityQueue.Dequeue();
+                        else
+                            wi = m_queue.Dequeue();
                     }
                     catch(Exception e)
                     {

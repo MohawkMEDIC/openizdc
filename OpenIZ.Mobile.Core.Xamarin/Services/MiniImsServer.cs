@@ -158,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             //iAsyncResult.AsyncWaitHandle.WaitOne();
                             var context = this.m_listener.GetContext(); //this.m_listener.EndGetContext(iAsyncResult);
                             //new Thread(this.HandleRequest).Start(context);
-                            this.m_threadPool.QueueUserWorkItem(this.HandleRequest, context);
+                            this.m_threadPool.QueueUserWorkItem(TimeSpan.MinValue ,this.HandleRequest, context);
                         }
                         catch (Exception e)
                         {
