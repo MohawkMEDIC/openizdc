@@ -38,11 +38,11 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
             OpenIZ.App.hideWait();
 
             if (typeof (ex) == "string")
-                alert(ex);
+                console.log(ex);
             else if (ex.message != undefined)
-                alert("" + ex.message + " - " + ex.details);
+                console.log("" + ex.message + " - " + ex.details);
             else
-                alert(ex);
+                console.log(ex);
         },
         continueWith: function (data)
         {

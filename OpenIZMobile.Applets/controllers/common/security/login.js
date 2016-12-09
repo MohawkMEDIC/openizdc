@@ -36,7 +36,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
 
             if (!form.$valid)
             {
-                alert(OpenIZ.Localization.getString("locale.security.login.invalid"));
+                console.log(OpenIZ.Localization.getString("locale.security.login.invalid"));
                 return;
             }
             OpenIZ.App.showWait();
@@ -45,7 +45,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                 password: password,
                 continueWith: function (session) {
                     if (session == null) {
-                        alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                        console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
                     else {
                         if(window.location.hash == "")
@@ -58,11 +58,11 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
 
 
                 if (typeof (ex) == "string")
-                    alert(ex);
+                    console.log(ex);
                 else if (ex.message != undefined)
-                    alert("" + ex.message + " - " + ex.details);
+                    console.log("" + ex.message + " - " + ex.details);
                 else
-                    alert(ex);
+                    console.log(ex);
             }
         });
     }; // scope.login
