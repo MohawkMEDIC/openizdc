@@ -124,9 +124,6 @@ a.not-active {
     color:#d9534f
 }
 
-.vaccine-table-column {
-    width:20%;
-}
 
 .page-header, .page-header h3 { 
   margin-top:0px; 
@@ -326,6 +323,10 @@ a.not-active {
     background-color: #146396;
     color:white;
 }
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    border: none;
+    border-right: solid 1px #c7dae6;
+}
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
@@ -376,6 +377,10 @@ body{
 .padding-left-30{
     padding-left: 30px;
 }
+
+.margin-15{
+    margin:15px;
+}
 .margin-left-100{
     margin-left:100px;
 }
@@ -384,6 +389,9 @@ body{
 }
 .margin-top-10{
     margin-top:10px
+}
+.margin-top-15{
+    margin-top:15px
 }
 .btn-custom {
     padding-top: 9px;
@@ -406,11 +414,40 @@ body{
     font-weight: 600;
     padding-left: 55px;
 }
-
+.order-list-delete-button-container{
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    z-index:50;
+}
+.order-list-delete-button{
+    background: none;
+}
+/**Vaccinations Table*/
+.vaccine-table-column {
+    width:20%;
+}
+.vaccine-table-row{
+    background:#e9f1f7 !important;
+}
+.table{
+    margin: 15px 0;
+}
+.oiz-vaccination-history-table thead{
+    background: #146396;
+    color: white;
+}
+.vaccine-table-icon{
+    padding-left:20px !important;
+}
+.vaccine-table-vaccine{
+    min-width: 120px;
+    padding: 8px 0 8px 6px !important;
+}
 
 /**Search Results*/
 .search-results-tile{
-    padding: 15px 15px 10px 15px;
+    padding: 13px 15px 10px 15px;
     background: #386582;
     color: white;
     position: relative;
@@ -463,7 +500,7 @@ body{
 
  /**Vaccination queue*/
  .queue-tile{
-    padding: 15px 15px 10px 15px;
+    padding: 13px 15px 10px 15px;
     background: #386582;
     color: white;
     position: relative;
@@ -599,7 +636,7 @@ body{
 }
 
 /**Celendar edits*/
-.fc-unthemed .fc-today {
+.fc-unthemed .fc-today{
     background: #cde7f8;
 }
 .fc th, .fc-list-heading > .fc-widget-header {
@@ -617,8 +654,9 @@ body{
 }
 .fc-toolbar .fc-center h2 {
     font-weight: 600;
+    font-size: 25px;
 }
-.fc-unthemed .fc-list-empty {
+.fc-unthemed .fc-list-empty, .fc-view-container{
     background-color: #f6f8ff;
 }
 .fc-basic-view .fc-week-number, .fc-basic-view .fc-day-number {
@@ -636,15 +674,19 @@ body{
 }
 
 .fc-left .fc-button-group .fc-button, .fc-right .fc-button-group .fc-button, .fc-button{
-    background: #c7ceda;
+    background: #5f93b5;
+    color: white;
     border-radius: 0 !important;
     height: 50px !important;
     box-shadow: none;
     border: none;
     padding: 0 12px !important;
 }
+.fc-list-table td {
+    padding: 12px 14px;
+}
 #appointmentCalendar{
-    padding-top:15px;
+    padding: 15px 0;
 }
 
 
