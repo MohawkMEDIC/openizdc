@@ -39,7 +39,7 @@
                 <label class="col-xs-2 control-label" for="submitter">{{ 'locale.debug.reporter' | i18n }}</label>
                 <div class="col-xs-10">
                     <select disabled="disabled" style="width:100%; height:100%" id="submitter" name="submitter" class="form-control" ng-model="report.submitterKey" oiz-entitysearch="UserEntity">
-                        <option selected="selected" value="{{report.submitterKey}}">{{report.submitterModel.name.OfficialRecord | oizEntityName }}</option>
+                        <option selected="selected" value="{{$root.session.entity.id}}">{{$root.session.entity.name.OfficialRecord | oizEntityName }}</option>
                     </select>
                 </div>
                 <p ng-show="masterForm.submitter.$invalid &amp;&amp; masterForm.submitter.$touched" class="help-block text-danger">{{ 'locale.debug.errors.submitterRequired' | i18n }}</p>

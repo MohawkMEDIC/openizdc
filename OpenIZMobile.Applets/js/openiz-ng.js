@@ -262,17 +262,19 @@ angular.module('openiz', [])
     .directive('oizEntitysearch', function ($timeout)
     {
         return {
+            scope: {
+                defaultResults: '='
+            },
             link: function (scope, element, attrs, ctrl)
             {
                 $timeout(function ()
                 {
-
-                    var modelType = $(element).attr('oiz-entitysearch');
-                    var filterString = $(element).attr('data-filter');
-                    var displayString = $(element).attr('data-display');
-                    var defaultFilterString = $(element).attr('data-default');
-                    var groupString = $(element).attr('data-group-by');
-                    var groupDisplayString = $(element).attr('data-group-display');
+                    var modelType = attrs.oizEntitysearch;
+                    var filterString = attrs.dataFilter;
+                    var displayString = attrs.dataDisplay;
+                    var defaultFilterString = attrs.dataDefault;
+                    var groupString =attrs.dataGroupBy;
+                    var groupDisplayString = attrs.dataGroupDisplay;
 
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
@@ -282,7 +284,6 @@ angular.module('openiz', [])
                     filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
-                    $(element).attr('style', 'width:100%; height:100%');
 
                     // Bind select 2 search
                     $(element).select2({
@@ -290,9 +291,10 @@ angular.module('openiz', [])
                         defaultResults: function ()
                         {
 
-                            if ($(element[0]).attr('data-default-results') != null)
+                            if (scope.defaultResults != null)
                             {
-                                return JSON.parse($(element[0]).attr('data-default-results'));
+                                console.log(scope.defaultResults);
+                                return scope.defaultResults;
                             }
                             else
                             {
@@ -316,19 +318,25 @@ angular.module('openiz', [])
                             },
                             processResults: function (data, params)
                             {
-                                $('option', element[0]).remove(); // clear existing 
-
                                 //params.page = params.page || 0;
                                 var data = data.item || data;
                                 var retVal = { results: [] };
-                                if (groupString == null)
+                                if (groupString == null){
                                     return {
-                                        results: $.map(data, function (o)
-                                        {
-                                            o.text = o.text || (o.name !== undefined ? OpenIZ.Util.renderName(o.name.OfficialRecord) : "") 
+                                        results: $.map(data,function (o) {
+                                            var text = "";
+                                            if (o.name !== undefined) {
+                                                if (o.name.OfficialRecord) {
+                                                    text = OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                                } else if (o.name.Assigned) {
+                                                    text = OpenIZ.Util.renderName(o.name.Assigned);
+                                                }
+                                            }
+                                            o.text = o.text || text;
                                             return o;
                                         })
                                     };
+                                }
                                 else
                                 {
                                     // Get the group string
@@ -356,15 +364,14 @@ angular.module('openiz', [])
                                         }
                                     }
                                 }
-
                                 return retVal;
                             },
                             cache: true
                         },
                         escapeMarkup: function (markup) { return markup; }, // Format normally
                         minimumInputLength: 4,
-                        templateSelection: function (result)
-                        {
+                        templateSelection: function (selection)
+                        {                            
                             var retVal = "";
                             switch (modelType)
                             {
@@ -382,33 +389,40 @@ angular.module('openiz', [])
                             retVal += "&nbsp;";
                             if (displayString != null)
                             {
-                                var scope = result;
+                                var scope = selection;
                                 retVal += eval(displayString);
                             }
-                            else if (result.name != null && result.name.OfficialRecord != null)
-                                retVal += OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else if (result.name != null && result.name.Assigned != null)
-                                retVal += OpenIZ.Util.renderName(result.name.Assigned);
-                            else if (result.element !== undefined)
-                                retVal += result.element.innerText;
-                            else if (result.text != "")
-                                retVal += result.text;
+                            else if (selection.name != null && selection.name.OfficialRecord != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.OfficialRecord);
+                            else if (selection.name != null && selection.name.Assigned != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.Assigned);
+                            else if (selection.element !== undefined)
+                                retVal += selection.element.innerText;
+                            else if (selection.text)
+                                retVal += selection.text;
                             return retVal;
                         },
                         keepSearchResults: true,
                         templateResult: function (result)
                         {
+                            if (result.loading) return result.text;
+
                             if (displayString != null)
                             {
-                                var scope = result;
                                 return eval(displayString);
                             }
-                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null)
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else if (result.name != null)
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)
+                                return "<div class='label label-default'>" +
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);
+                            else if (result.name != null && result.name.OfficialRecord)
                                 return "<div class='label label-default'>" +
                                     result.$type + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else if (result.name != null && result.name.Assigned)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.Assigned)
                             else
                                 return result.text;
                         }

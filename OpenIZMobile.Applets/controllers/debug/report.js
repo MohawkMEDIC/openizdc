@@ -26,7 +26,7 @@
 
 layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
-    $rootScope.$watch('session', function(n, o) {
+    $rootScope.$watch('session', function (n, o) {
         if(n != null)
             $scope.report = {
                 submitterKey: $rootScope.session.entity.id,
