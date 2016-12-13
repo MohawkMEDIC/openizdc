@@ -2001,6 +2001,7 @@ var OpenIZ = OpenIZ || {
                 id: controlData.id,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
+                versionId: controlData.versionId,
                 finally: controlData.finally,
                 state: controlData.state
             });

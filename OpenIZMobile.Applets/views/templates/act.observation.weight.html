@@ -36,7 +36,7 @@
             </small>
 
         </div>
-        <div class="col-xs-12 col-sm-9" ng-if="!act.targetModel._overdue">
+        <div class="col-xs-12 col-sm-9">
             <div class="input-group">
                 <span class="input-group-addon">
                     <input ng-if="!act._created || act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'" type="checkbox"
@@ -46,7 +46,7 @@
                            readonly="readonly" />
                 </span>
                 <span class="input-group-addon">{{ 'locale.encounters.weight.value' | i18n }}</span>
-                <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" min="0" max="200" class="form-control" ng-model="act.targetModel.value" />
+                <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" ng-min="0" ng-max="200" class="form-control" ng-model="act.targetModel.value" />
                 <span class="input-group-addon">
                     {{ 'locale.encounters.weight.unitOfMeasure' | i18n }}
                 </span>

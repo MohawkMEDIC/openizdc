@@ -58,6 +58,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return repository.Insert(patientToInsert).GetLocked() as Patient;
         }
 
+
+        /// <summary>
+        /// Updates a patient.
+        /// </summary>
+        /// <param name="patientToUpdate">The patient to be updated.</param>
+        /// <returns>Returns the updated patient.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/Patient", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Patient UpdatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToUpdate)
+        {
+            IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+            return repository.Save(patientToUpdate).GetLocked() as Patient;
+        }
+
         /// <summary>
 		/// Gets a patient.
 		/// </summary>
