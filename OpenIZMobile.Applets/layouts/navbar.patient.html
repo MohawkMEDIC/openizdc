@@ -20,6 +20,12 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
         <div class="header-dock" ng-if="!(patientViewScrollHeight > 55)">
+            <button id="btn-header-check-in" type="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})" class="btn btn-check-in">
+                <span class="glyphicon glyphicon-check"></span>
+            </button>
+            <button id="btn-header-weight" type="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})" class="btn btn-weight">
+                <span class="glyphicon glyphicon-scale"></span>
+            </button>
             <button type="button" ng-click="patientEdit.show()" class="btn btn-edit">
                 <span class="glyphicon glyphicon-pencil"></span>
             </button>
@@ -81,18 +87,30 @@
         </div>
         
         <div class="header-dock static-dock" ng-if="patientViewScrollHeight > 55">
-            <button type="button" ng-click="patientEdit.show()" class="btn btn-edit-alt">
-                <span class="glyphicon glyphicon-pencil"></span>
-            </button>
-            <h4 class="panel-title">
-                <a data-toggle="collapse" data-target="#patientSummaryPanel">
-                    <span class="margin-left-100" ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
-                    <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
-                    <span class="pull-right margin-right-100" >
-                        {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
-                    </span>
-                </a>
-            </h4>
+            <div class="col-xs-10">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-target="#patientSummaryPanel">
+                        <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
+                        <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
+                        <span class="pull-right">
+                            {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                        </span>
+                    </a>
+                </h4>
+            </div>
+            <div class="col-xs-2 text-right">
+                <div class="dropdown">
+                    <button class="btn btn-alt" type="button" id="edit-menu" data-toggle="dropdown" data-container="body" aria-haspopup="true" aria-expanded="true">
+                        <span class="glyphicon glyphicon-option-vertical"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right header-dropdown" aria-labelledby="edit-menu">
+                        <li><a role="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})"><span class="glyphicon glyphicon-scale"></span> Enter weight</a></li>
+                        <li><a role="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})"><span class="glyphicon glyphicon-check"></span> Check in</a></li>
+                        <li><a role="button" ng-click="patientEdit.show()"><span class="glyphicon glyphicon-pencil"></span> Edit</a></li>
+                    </ul>
+                </div>
+            </div>
+            
         </div>
 
         <!-- #include virtual="content" -->
