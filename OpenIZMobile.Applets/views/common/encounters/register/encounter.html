@@ -18,12 +18,16 @@
  - Date: 2016-8-17
  -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/binding"
-          ng-controller="EncounterEntryController">
+     xmlns:bind="http://openiz.org/applet/binding"
+     ng-controller="EncounterEntryController">
     <oiz:script>/org.openiz.core/controllers/common/encounters/register/encounter.js</oiz:script>
     <div class="form-group row" ng-class="{'has-error' : (masterForm.encounterDate.$touched||masterForm.$submitted) &amp;&amp; masterForm.encounterDate.$invalid}">
         <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10"><input required="required" type="datetime-local" name="encounterDate" max="{{$root.page.loadTime | date: 'yyyy-MM-ddTHH:mm:SS'}}" class="form-control" ng-model="encounter.actTime" /></div>
+        <div class="col-xs-12 col-sm-10">
+            <input required="required" type="datetime-local" 
+                   name="encounterDate" max="{{$root.page.loadTime | date: 'yyyy-MM-ddTHH:mm:SS'}}" 
+                   class="form-control" ng-model="encounter.actTime" />
+        </div>
     </div>
     <div class="col-xs-offset-2 col-xs-10" ng-if="(masterForm.encounterDate.$touched||masterForm.$submitted)&amp;&amp;masterForm.encounterDate.$invalid">
         <p class="help-block text-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
@@ -37,9 +41,14 @@
                            ng-model="encounter.participation.Location._enabled"
                            value="1" />
                 </span>
-                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" class="form-control"  oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" 
+                        id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" 
+                        class="form-control"  oiz-entitysearch="Place" 
+                        data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
                     <option value="">{{ 'locale.common.location.none' | i18n }}</option>
-                    <option selected="selected" value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    <option selected="selected" value="{{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">
+                        {{$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}
+                    </option>
                 </select>
             </div>
         </div>
@@ -47,10 +56,13 @@
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
-            <select disabled="disabled" style="width:100%; height:100%" id="encounterPerformer" name="encounterPerformer" class="form-control" ng-model="encounter.participation.Performer.player" oiz-entitysearch="UserEntity">
+            <select ng-disabled="true" style="width:100%; height:100%" 
+                    id="encounterPerformer" name="encounterPerformer" 
+                    class="form-control" ng-model="encounter.participation.Performer.player"
+                    oiz-entitysearch="UserEntity">
             </select>
         </div>
-        </div>
+    </div>
     <!--<div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.verifier' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">

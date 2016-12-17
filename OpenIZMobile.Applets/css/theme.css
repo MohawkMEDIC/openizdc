@@ -370,6 +370,9 @@ body{
 .no-padding-right {
     padding-right: 0;
 }
+.no-margin-all{
+    margin:0;
+}
 .padding-10{
     padding: 10px;
 }
@@ -394,18 +397,24 @@ body{
 .margin-right-10{
     margin-right:10px;
 }
+.margin-top-5{
+    margin-top:5px;
+}
 .margin-top-10{
     margin-top:10px
 }
 .margin-top-15{
     margin-top:15px
 }
+.margin-bottom-10{
+    margin-bottom:10px;
+}
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
 }
 .domicle-marker{
-        position: absolute;
+    position: absolute;
     left: 12px;
     top: 4px;
 }
@@ -445,7 +454,7 @@ body{
     color: white;
 }
 .vaccine-table-icon{
-    padding-left:20px !important;
+    text-align:center;
 }
 .vaccine-table-vaccine{
     min-width: 120px;
@@ -546,6 +555,12 @@ body{
     color: whitesmoke;
     padding: 20px 0px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
+}
+.index-dock{
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    border-top: solid 6px #007fd1;
 }
 .header-dock h4{
     font-size:20px;
@@ -690,6 +705,20 @@ body{
     }
 }
 
+/**order list*/
+.active > .order-list-selector{
+    font-weight: 600;
+    border-bottom: solid 5px;
+}
+
+.order-list-selector{
+    border: none;
+    background: none !important;
+    color: #386582 !important;
+    font-weight: 400;
+    font-size: 21px;
+}
+
 /**Celendar edits*/
 .fc-unthemed .fc-today{
     background: #cde7f8;
@@ -739,6 +768,9 @@ body{
 }
 .fc-list-table td {
     padding: 12px 14px;
+}
+#appointmentCalendar .fc-scroller{
+    height:200px !important;
 }
 #appointmentCalendar{
     padding: 15px 0;

@@ -22,9 +22,10 @@
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
 
     <div class="panel panel-info no-margin-all margin-top-10" ng-init="collapseStatus.searchFilterOpen = false">
-        <div class="panel-heading" ng-click="collapseStatus.searchFilterOpen = !collapseStatus.searchFilterOpen">
+        <div class="panel-heading" ng-click="collapseStatus.searchFilterOpen = !collapseStatus.searchFilterOpen"
+             data-toggle="collapse" data-target="#searchFilterCollapse">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-target="#searchFilterCollapse">{{ 'locale.patient.search.filterTitle' | i18n }}</a>
+                {{ 'locale.patient.search.filterTitle' | i18n }}
                 <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.searchFilterOpen, 'glyphicon-chevron-right': !collapseStatus.searchFilterOpen}"></i>
             </h4>
         </div>
