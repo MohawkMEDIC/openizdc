@@ -20,12 +20,11 @@
 <div class="container-fluid no-padding-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" 
      xmlns:bind="http://openiz.org/applet/binding" ng-controller="SearchResultsController">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
-    <h3>{{ 'locale.patient.search.title' | i18n }}</h3>
 
     <div class="panel panel-info no-margin-all margin-top-10" ng-init="collapseStatus.searchFilterOpen = false">
         <div class="panel-heading" ng-click="collapseStatus.searchFilterOpen = !collapseStatus.searchFilterOpen">
             <h4 class="panel-title">
-                <a data-toggle="collapse" data-target="#searchFilterCollapse">{{ 'locale.patient.search.quickSearchFilterTitle' | i18n }}</a>
+                <a data-toggle="collapse" data-target="#searchFilterCollapse">{{ 'locale.patient.search.filterTitle' | i18n }}</a>
                 <i class="panel-chevron glyphicon" ng-class="{'glyphicon-chevron-down': collapseStatus.searchFilterOpen, 'glyphicon-chevron-right': !collapseStatus.searchFilterOpen}"></i>
             </h4>
         </div>
@@ -92,6 +91,8 @@
             </div>
         </div>
     </div>
+
+    <h3>{{ 'locale.patient.search.title' | i18n }}</h3>
 
     <div class="search-results-container">
         <div class="row" style="padding: 0 10px;">

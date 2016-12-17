@@ -369,15 +369,17 @@ body{
     padding-right: 0;
 }
 .padding-10{
-    padding:10px;
+    padding: 10px;
 }
 .padding-top-10{
-    padding-top:10px;
+    padding-top: 10px;
+}
+.padding-right-10{
+    padding-right: 10px;
 }
 .padding-left-30{
     padding-left: 30px;
 }
-
 .margin-15{
     margin:15px;
 }
@@ -496,6 +498,30 @@ body{
     margin: auto;
     padding: 9px;
     height: 35px;
+ }
+
+
+ /**stock snapshot*/
+ .stock-snapshot-tile{
+    padding: 13px 15px 10px 15px;
+    background: #386582;
+    color: white;
+    position: relative;
+    font-size: 15px;
+ }
+ .circle-quantity{
+    border-radius: 20px;
+    width: 32px;
+    height: 31px;
+    text-align: center;
+    top: -4px;
+    padding-top: 3px;
+    position: absolute;
+    font-size: 18px;
+ }
+ .stock-tile-button-row{
+    height:auto;
+    padding-top:5px;
  }
 
  /**Vaccination queue*/
