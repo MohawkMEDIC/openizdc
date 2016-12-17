@@ -330,7 +330,9 @@ a.not-active {
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
-
+.white-text{
+    color:white;
+}
 body{
     background: #f6f8ff;
     overflow-x: hidden;
@@ -388,6 +390,9 @@ body{
 }
 .margin-right-100{
     margin-right:100px;
+}
+.margin-right-10{
+    margin-right:10px;
 }
 .margin-top-10{
     margin-top:10px

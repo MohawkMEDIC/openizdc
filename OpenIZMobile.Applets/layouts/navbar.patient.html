@@ -20,15 +20,32 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
         <div class="header-dock" ng-if="!(patientViewScrollHeight > 55)">
-            <button id="btn-header-check-in" type="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})" class="btn btn-check-in">
-                <span class="glyphicon glyphicon-check"></span>
-            </button>
-            <button id="btn-header-weight" type="button" ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})" class="btn btn-weight">
-                <span class="glyphicon glyphicon-scale"></span>
-            </button>
-            <button type="button" ng-click="patientEdit.show()" class="btn btn-edit">
-                <span class="glyphicon glyphicon-pencil"></span>
-            </button>
+            <div class="dropdown">
+                <a id="patientMenuButton" data-toggle="dropdown" 
+                   class="btn btn-edit white-text" style="top: -5px;"
+                   aria-haspopup="true" aria-expanded="true">
+                    <span class="glyphicon glyphicon-option-vertical"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li role="presentation">
+                        <a ng-click="patientEdit.show()">
+                            <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})">
+                            <span class="glyphicon glyphicon-check margin-right-10"></span> {{ 'locale.patient.action.startEncounter' | i18n }}
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})">
+                            <span class="glyphicon glyphicon-scale margin-right-10"></span> {{ 'locale.patient.tabs.weight' | i18n }}
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+
             <div class="row">
                 <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
                 <div class="col-xs-4">
