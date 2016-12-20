@@ -631,15 +631,14 @@ body{
     padding-left: 45px !important;
 }
 .btn-edit{
-    position: absolute;
-    right: 10px;
-    top: 60px;
+    height: inherit;
     border: none;
     background: none;
     box-shadow: none;
-    z-index:10;
+    z-index: 10;
     border-radius: 50px;
-    padding: 12px;
+    padding: 4px;
+}
 }
 .btn-check-in{
     position: absolute;

@@ -23,14 +23,17 @@
         <tr ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747'">
             <td>
                 <div class="container-fluid">
-                    <div class="row">
-                        <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                    <div class="row flex-container" ng-if="act._created">
+                        <div class="col-xs-11" >
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                        </div>
+                        <div class="col-xs-1 flex-item-center" >
+                            <button type="button" class="btn btn-icon" ng-if="$index > 0" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
                     </div>
-                    <div class="row">
+                    <div class="row" ng-if="!act._created">
                         <div class="col-xs-12">
-                            <div ng-if="act._created" class="btn-group pull-right">
-                                <button type="button" ng-if="$index > 0" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
-                            </div>
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
                         </div>
                     </div>
                 </div>
