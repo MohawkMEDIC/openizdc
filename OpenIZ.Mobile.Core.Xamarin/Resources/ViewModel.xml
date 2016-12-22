@@ -104,6 +104,7 @@
             </property>
           </property>
         </property>
+        <property name="Mother" all="true"/>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="relationshipTypeModel" behavior="never"/>
