@@ -29,7 +29,7 @@
     </oiz:state>
     <h3>{{ 'locale.debug.bugReport' | i18n }}</h3>
     <oiz:script>/org.openiz.core/controllers/settings/password.js</oiz:script>
-    <div class="alert alert-warning" ng-if="!$root.page.onlineState">
+    <div class="alert alert-warning" ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'">
         {{ 'locale.action.onlineOnly' | i18n }}
     </div>
 
@@ -69,7 +69,7 @@
                         </span>
                     </button>
                     <div class="btn-group">
-                        <button ng-disabled="!$root.page.onlineState" type="submit" class="btn btn-lg btn-primary">
+                        <button ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-primary">
                             <span>
                                 <span class="glyphicon glyphicon-ok">
                                 </span>

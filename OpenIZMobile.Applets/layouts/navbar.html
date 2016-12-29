@@ -116,6 +116,7 @@
                         </li>
                     </ul>
                 </li>
+
             </ul>
         </div>
     </div>
@@ -131,5 +132,9 @@
                 {{ 'locale.layout.footer' | i18n }}
             </p>
         </div>
+        <div class="sticky-footer" style="position:fixed; bottom:0; z-index:999" ng-if="!$root.page.onlineState  || $root.session.method == 'LOCAL'">
+            <img src="~/img/appbar.network.disconnect.png" /> {{ 'locale.network.offline' | i18n }}
+        </div>
     </footer>
+
 </div>

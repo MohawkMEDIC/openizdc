@@ -274,9 +274,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
-            List<string> enableTrace = null;
+            List<string> enableTrace = null, noTimeout = null;
             realmData.TryGetValue("enableTrace", out enableTrace);
             enableTrace = enableTrace ?? new List<String>();
+            realmData.TryGetValue("noTimeout", out noTimeout);
+            noTimeout = noTimeout ?? new List<String>();
 
             // Stage 1 - Demand access admin policy
             try
@@ -326,7 +328,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = imsiUri
+                            Address = imsiUri,
+                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
                         }
                     },
                     Name = "imsi",
@@ -349,7 +352,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = amiUri, Timeout = 10000
+                            Address = amiUri,
+                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
                         }
                     },
                     Name = "ami",
@@ -371,7 +375,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {
-                            Address = oauthUri
+                            Address = oauthUri,
+                            Timeout = noTimeout.Count > 0 && noTimeout[0] == "true" ? 60000 : 10000
                         }
                     },
                     Name = "acs",
