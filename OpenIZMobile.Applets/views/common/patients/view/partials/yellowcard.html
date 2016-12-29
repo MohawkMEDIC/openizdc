@@ -24,10 +24,10 @@
 
     <!-- TODO: Call the forecaster for this -->
     <div class="table-responsive">
-        <table class="table table-striped oiz-vaccination-history-table">
+        <table class="table table-stripd oiz-vaccination-history-table">
             <thead>
                 <tr>
-                    <th class="vaccine-table-column"></th>
+                    <th class="vaccine-table-column vaccine-table-vaccine"></th>
                     <th class="vaccine-table-column" style="text-align:center">0</th>
                     <th class="vaccine-table-column" style="text-align:center">1</th>
                     <th class="vaccine-table-column" style="text-align:center">2</th>
@@ -35,9 +35,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
-                    <td>{{ antigenName }}</td>
-                    <td ng-repeat="sequence in event track by $index">
+                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations track by $index" ng-class-odd="'vaccine-table-row'">
+                    <td class="vaccine-table-vaccine">{{ antigenName }}</td>
+                    <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon">
                         <a data-toggle="tab" data-target="#vaccinations">
                             <div ng-if="sequence != null" class="input-group">
                                 <div ng-if="sequence.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'">
@@ -61,8 +61,8 @@
                                 </div>
                             </div>
                         </a>
-
                     </td>
+                    <td ng-if="event.length != 4" ng-repeat-n="{{4 - event.length}}"> </td>
                 </tr>
             </tbody>
         </table>

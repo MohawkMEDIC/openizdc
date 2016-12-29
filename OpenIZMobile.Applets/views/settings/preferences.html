@@ -17,7 +17,7 @@
  - User: justi
  - Date: 2016-8-17
  -->
-<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+<div class="container-fluid no-padding-all no-margin-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
     <oiz:script>/org.openiz.core/controllers/settings/preferences.js</oiz:script>
     <oiz:state name="org-openiz-core.preferences">
         <oiz:url>/preferences</oiz:url>
@@ -27,9 +27,13 @@
             <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
         </oiz:view>
     </oiz:state>
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a data-target="#profile" data-toggle="tab">{{ 'locale.preferences.tabs.profile' | i18n }}</a></li>
-        <li role="presentation"><a data-target="#password" data-toggle="tab" ng-disabled="!isNetworkAvailable">{{ 'locale.preferences.tabs.password' | i18n }}</a></li>
+    <ul class="row nav nav-tabs" role="tablist">
+        <li role="presentation" class="active margin-top-5" >
+            <a data-target="#profile" data-toggle="tab">{{ 'locale.preferences.tabs.profile' | i18n }}</a>
+        </li>
+        <li role="presentation" class="margin-top-5">
+            <a data-target="#password" data-toggle="tab" ng-disabled="!isNetworkAvailable">{{ 'locale.preferences.tabs.password' | i18n }}</a>
+        </li>
     </ul>
 
     <div class="tab-content">

@@ -26,8 +26,8 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a href="/tz.timr.applet/index.html" class="navbar-brand">
-                <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span> 
+            <a href="#/" class="navbar-brand">
+                <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
             </a>
         </div>
@@ -41,7 +41,7 @@
                         <img class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> <span class="oiz-menu-text">{{::m.text}}</span> <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu" ng-if="m.menu">
-                        <li ng-repeat="c in ::m.menu">
+                        <li ng-repeat="c in ::m.menu" ng-class="{ 'disabled menu-disabled' : c.action == '#/encounter/search'} ">
                             <a ng-href="{{::c.action}}">
                                 <img class="navbar-icon" ng-if="::c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}" />
                                 <img class="navbar-icon" ng-if="::!c.icon" src="/org.openiz.core/img/appbar.blank.png" />

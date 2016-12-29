@@ -26,7 +26,7 @@
 
 layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
-    $rootScope.$watch('session', function(n, o) {
+    $rootScope.$watch('session', function (n, o) {
         if(n != null)
             $scope.report = {
                 submitterKey: $rootScope.session.entity.id,
@@ -45,7 +45,7 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
     // Submit
     $scope.submitBugReport = function (form) {
         if (form.$invalid) {
-            alert(OpenIZ.Localization.getString("locale.common.invalidForm"));
+            console.log(OpenIZ.Localization.getString("locale.common.invalidForm"));
             return;
         }
 
@@ -59,9 +59,9 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
             },
             onException: function (error) {
                 if (error.message)
-                    alert(error.message);
+                    console.log(error.message);
                 else
-                    alert(error);
+                    console.log(error);
             },
             finally: function () {
                 OpenIZ.App.hideWait();

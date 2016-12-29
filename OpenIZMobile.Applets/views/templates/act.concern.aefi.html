@@ -1,79 +1,127 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
     <div class="row">
-        <div class="control-label col-xs-12 col-sm-3">
+        <div class="control-label col-xs-12">
             <label class="control-label">
                 {{ 'locale.encounters.aefi.title' | i18n }}
             </label><br />
         </div>
-        <div class="col-xs-12 col-sm-9">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                {{ 'locale.encounters.aefi.drug' | i18n }}
-                            </span>
-                            <select ng-class="{'has-error':(masterForm['aefiDrug_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiDrug_' + act.targetModel.id].$invalid}" name="aefiDrug_{{act.targetModel.id}}" required="required" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.value"
-                                    oiz-databind="SubstanceAdministration" data-filter='{ "relationship[RecordTarget].player" : "{{ patient.id }}", "moodConcept" : "EC74541F-87C4-4327-A4B9-97F325501747" }' data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned)" data-key="scope.participation.Product.playerModel.typeConcept">
-                                <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
-                            </select>
-                            <span class="input-group-addon" ng-if="act.targetModel.relationship.IsCauseOf">
-                                ( {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
-                                {{ act.targetModel.relationship.IsCauseOf.targetModel.doseSequence }},
-                                {{ 'locale.encountersimmunizations.lot' | i18n }} :
-                                {{ act.targetModel.relationship.IsCauseOf.targetModel.participation.Consumable.playerModel.lotNumber }},
-                                {{ 'locale.encounters.immunizations.site' | i18n }} :
-                                {{ act.targetModel.relationship.IsCauseOf.targetModel.siteModel.name | oizConceptName }} )
-                            </span>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>
+                        {{ 'locale.encounters.aefi.drug' | i18n }}
+                    </label>
+                    <select ng-class="{'has-error':(masterForm['aefiDrug_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiDrug_' + act.targetModel.id].$invalid}" name="aefiDrug_{{act.targetModel.id}}" required="required" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.value"
+                            oiz-databind="SubstanceAdministration" data-filter='{ "relationship[RecordTarget].player" : "{{ patient.id }}", "moodConcept" : "EC74541F-87C4-4327-A4B9-97F325501747" }' data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned)" data-key="scope.participation.Product.playerModel.typeConcept">
+                        <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <span ng-if="act.targetModel.relationship.IsCauseOf">
+                        ( {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
+                        {{ act.targetModel.relationship.IsCauseOf.targetModel.doseSequence }},
+                        {{ 'locale.encountersimmunizations.lot' | i18n }} :
+                        {{ act.targetModel.relationship.IsCauseOf.targetModel.participation.Consumable.playerModel.lotNumber }},
+                        {{ 'locale.encounters.immunizations.site' | i18n }} :
+                        {{ act.targetModel.relationship.IsCauseOf.targetModel.siteModel.name | oizConceptName }} )
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <label>{{ 'locale.encounters.aefi.detailsOfAdverseReaction.title' | i18n }}</label>
+                    <select required="required" ng-class="{'has-error':(masterForm['aefiReaction_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiReaction_' + act.targetModel.id].$invalid}" name="aefiReaction_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=ReactionObservation" bind:value="name[{{ locale }}].value">
+                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.manifestation' | i18n }}</option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <label>{{ 'locale.encounters.aefi.dateReactionStarted.title' | i18n }}</label>
+                    <input class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.startTime" type="date" required="required" />
+                </div>
+                <div class="col-xs-6">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <label>
+                                {{ 'locale.encounters.aefi.dateReactionStopped.title' | i18n }}
+                            </label>
                         </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">{{ 'locale.encounters.aefi.detailsOfAdverseReaction.title' | i18n }}</span>
-                            <select required="required" ng-class="{'has-error':(masterForm['aefiReaction_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiReaction_' + act.targetModel.id].$invalid}" name="aefiReaction_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=ReactionObservation" bind:value="name[{{ locale }}].value">
-                                <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.manifestation' | i18n }}</option>
-                            </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <label class="control control--checkbox">
+                                <input type="checkbox" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.statusConcept"
+                                       ng-true-value="'afc33800-8225-4061-b168-bacc09cdbae3'" ng-false-value="'c8064cbd-fa06-4530-b430-1a52f1530c27'" />
+                                <div class="control__indicator control__indicator_alt"></div>
+                            </label>
                         </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">{{ 'locale.encounters.aefi.dateReactionStarted.title' | i18n }}</span>
-                            <input class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.startTime" type="date" required="required" />
-                            <span class="input-group-addon">
-                                <label>
-                                    <input type="checkbox" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.statusConcept"
-                                           ng-true-value="'afc33800-8225-4061-b168-bacc09cdbae3'" ng-false-value="'c8064cbd-fa06-4530-b430-1a52f1530c27'" />
-                                    {{ 'locale.encounters.aefi.dateReactionStopped.title' | i18n }}
-                                </label>
-                            </span>
+
+                        <div class="col-xs-10">
                             <input class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.stopTime" type="date" ng-disabled="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'" ng-required="act.targetModel.relationship.HasSubject.targetModel.HasManifestation.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'" />
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">{{ 'locale.encounters.aefi.managementOfReaction.seriousnessOfReaction.title' | i18n }}</span>
-                            <select required="required" ng-class="{'has-error':(masterForm['aefiSeverity_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiSeverity_' + act.targetModel.id].$invalid}" name="aefiSeverity_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasComponent.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=SeverityObservation" bind:value="name[{{ locale }}].value">
-                                <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.severity' | i18n }}</option>
-                            </select>
-                            <span class="input-group-addon">
-                                <label>
-                                    <input type="checkbox" ng-model="patient._deceased"
-                                           ng-click="patient._deceased ? addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath') : delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')" />
-                                    {{ 'locale.encounters.aefi.outcomeOfReaction.died' | i18n }}
-                                </label>
-                            </span>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 col-xs-12">
-                        <label>
-                            <input type="checkbox" ng-model="act.targetModel.statusConcept"
-                                   ng-true-value="'afc33800-8225-4061-b168-bacc09cdbae3'" ng-false-value="'c8064cbd-fa06-4530-b430-1a52f1530c27'" />
-                            {{ 'locale.encounters.aefi.isOngoingConcern' | i18n }}
-                        </label>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <label>{{ 'locale.encounters.aefi.managementOfReaction.seriousnessOfReaction.title' | i18n }}</label>
+                    <select required="required" ng-class="{'has-error':(masterForm['aefiSeverity_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiSeverity_' + act.targetModel.id].$invalid}" name="aefiSeverity_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.HasComponent.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=SeverityObservation" bind:value="name[{{ locale }}].value">
+                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.severity' | i18n }}</option>
+                    </select>
+                </div>
+                <div class="col-xs-6">
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <label class="control control--checkbox">
+                                <input id="{{act.targetModel.id}}-patient-died"  type="checkbox" ng-model="patient._deceased"
+                                       ng-click="patient._deceased ? addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath') : delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')" />
+                                <div class="control__indicator control__indicator_alt" ></div>
+                            </label>
+                        </div>
+                        <div class="col-xs-10">
+                            <label class="lbl-checkbox" for="{{act.targetModel.id}}-patient-died">
+                                {{ 'locale.encounters.aefi.outcomeOfReaction.died' | i18n }}
+                            </label>
+                        </div>
                     </div>
-                    <div class="col-sm-6 col-xs-12">
-                        <label>
-                            <input type="checkbox" ng-model="act.targetModel.tag[treated]" />
-                            {{ 'locale.encounters.aefi.reactionTreated' | i18n }}
-                        </label>
-
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <label class="control control--checkbox">
+                                <input id="{{act.targetModel.id}}-ongoing-concern" type="checkbox" ng-model="act.targetModel.statusConcept"
+                                       ng-true-value="'afc33800-8225-4061-b168-bacc09cdbae3'" ng-false-value="'c8064cbd-fa06-4530-b430-1a52f1530c27'" />
+                                <div class="control__indicator control__indicator_alt" ></div>
+                            </label>
+                        </div>
+                        <div class="col-xs-10">
+                            <label class="lbl-checkbox" for="{{act.targetModel.id}}-ongoing-concern">
+                                {{ 'locale.encounters.aefi.isOngoingConcern' | i18n }}
+                            </label>
+                        </div>
                     </div>
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <label class="control control--checkbox">
+                                <input id="{{act.targetModel.id}}-reaction-treated" type="checkbox" ng-model="act.targetModel.tag[treated]" />
+                                <div class="control__indicator control__indicator_alt"></div>
+                            </label>
+                        </div>
+                        <div class="col-xs-10">
+                            <label class="lbl-checkbox" for="{{act.targetModel.id}}-reaction-treated">
+                                {{ 'locale.encounters.aefi.reactionTreated' | i18n }}
+                            </label>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

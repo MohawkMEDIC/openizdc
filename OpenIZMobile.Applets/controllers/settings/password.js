@@ -28,9 +28,9 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
 
         // Are we even online?
         if (!$rootScope.page.onlineState)
-            alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+            console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
         else if(password != confirmation) 
-            alert(OpenIZ.Localization.getString("locale.settings.passwordNoMatch"));
+            console.log(OpenIZ.Localization.getString("locale.settings.passwordNoMatch"));
         else {
             
             OpenIZ.App.showWait();
@@ -49,9 +49,9 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
                             },
                             onException: function (ex) {
                                 if (ex.message != null)
-                                    alert(ex.message);
+                                    console.log(ex.message);
                                 else
-                                    alert(ex);
+                                    console.log(ex);
                             },
                             finally: function () {
                                 OpenIZ.App.hideWait();
@@ -60,9 +60,9 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
                 },
                 onException: function (ex) { // Some error with authentication
                     if (ex.message != null)
-                        alert(ex.message);
+                        console.log(ex.message);
                     else
-                        alert(ex);
+                        console.log(ex);
                     OpenIZ.App.hideWait(); // We won't make it to the other finally :( 
                 }
             })

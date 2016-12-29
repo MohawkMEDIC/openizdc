@@ -28,13 +28,13 @@
         </oiz:view>
     </oiz:state>
 
-    <ul class="nav nav-tabs" role="tablist">
+    <ul class="nav nav-tabs row index-dock" role="tablist">
         <li role="presentation" class="active"><a data-target="#versions" data-toggle="tab">{{ 'locale.about.tabs.versions' | i18n }}</a></li>
         <li role="presentation"><a data-target="#log" data-toggle="tab">{{ 'locale.about.tabs.log' | i18n }}</a></li>
         <li role="presentation"><a data-target="#runtime" data-toggle="tab">{{ 'locale.about.tabs.runtime' | i18n }}</a></li>
     </ul>
 
-    <div class="tab-content">
+    <div class="tab-content" style="padding-top: 80px;">
         <div role="tabpanel" class="tab-pane active" id="versions"><!-- #include virtual="~/views/debug/tabs/versions.html" --></div>
         <div role="tabpanel" class="tab-pane" id="log"><!-- #include virtual="~/views/debug/tabs/log.html" --></div>
         <div role="tabpanel" class="tab-pane" id="runtime"><!-- #include virtual="~/views/debug/tabs/runtime.html" --></div>

@@ -24,7 +24,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        alert(ex.message || ex);
+                        console.log(ex.message || ex);
                 }
             });
         };
@@ -53,7 +53,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")
-                        alert(ex.message || ex);
+                        console.log(ex.message || ex);
                 }
             });
         };

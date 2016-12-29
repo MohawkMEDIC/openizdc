@@ -43,7 +43,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
     $("a[data-toggle='tab'][href='#changePasswordTab']").on('shown.bs.tab', function () {
         $scope.onNext = function () {
             if (!OpenIZ.App.getOnlineState()) {
-                alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+                console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
                 return false;
             }
 
@@ -61,7 +61,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                         password: $scope.resetRequest.password,
                         continueWith: function (session) {
                             if (session == null) {
-                                alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                                console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                             }
                             else if (OpenIZ.urlParams["returnUrl"] != null)
                                 if (window.location.hash == "")
@@ -69,7 +69,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                             $window.location.reload();
                         },
                         onException: function (exception) {
-                            alert(exception.message || exception);
+                            console.log(exception.message || exception);
                         },
                         finally: function () {
                             $("#forgotPasswordWizard").modal("hide");
@@ -78,7 +78,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                     });
                 },
                 onException: function (exception) {
-                    alert(exception.message || exception);
+                    console.log(exception.message || exception);
                 },
                 finally: function () {
                     OpenIZ.App.hideWait();
@@ -143,7 +143,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                     $scope.nextWizard();
                 },
                 onException: function (exception) {
-                    alert(exception.message || exception);
+                    console.log(exception.message || exception);
                 },
                 finally: function () {
                     OpenIZ.App.hideWait();
@@ -154,7 +154,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
 
         // Online only
         if (!OpenIZ.App.getOnlineState()) {
-            alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+            console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
             return false;
         }
 
@@ -166,7 +166,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                 $scope.$apply();
             },
             onException: function (ex) {
-                alert(ex.message || ex);
+                console.log(ex.message || ex);
             },
             finally: function () {
                 OpenIZ.App.hideWait();

@@ -1,21 +1,21 @@
 ﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
     <div class="row">
-        <div class="control-label col-xs-12 col-sm-3">
+        <div class="control-label col-xs-12">
             <label class="control-label">
                 {{ 'locale.encounters.causeofdeath.title' | i18n }}
             </label><br />
         </div>
-        <div class="col-xs-12 col-sm-9">
-            <div class="input-group">
-                <span class="input-group-addon"> {{ 'locale.patient.causeofdeath' | i18n }}</span>
-                <select class="form-control" ng-model="act.targetModel.relationship.HasComponent.targetModel.value" required="required" 
-                      bind:source="Concept" bind:filter="conceptSet.mnemonic=CauseOfDeath" bind:value="name[{{ locale }}].value">
-                    <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
-                </select>
-                <span class="input-group-addon"> {{ 'locale.patient.demographics.deceasedDate' | i18n }}</span>
-                <input required="required" ng-init="patient.deceasedDate = $root.page.loadTime" type="date" ng-model="patient.deceasedDate" class="form-control"/>
-
-            </div>
+        <div class="col-xs-6">
+            <label> {{ 'locale.patient.causeofdeath' | i18n }}</label>
+            <select class="form-control" ng-model="act.targetModel.relationship.HasComponent.targetModel.value" required="required" 
+                    bind:source="Concept" bind:filter="conceptSet.mnemonic=CauseOfDeath" bind:value="name[{{ locale }}].value">
+                <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
+            </select>
         </div>
+        <div class="col-xs-5">
+            <label> {{ 'locale.patient.demographics.deceasedDate' | i18n }}</label>
+            <input required="required" ng-init="patient.deceasedDate = $root.page.loadTime" type="date" ng-model="patient.deceasedDate" class="form-control" />
+        </div>
+
     </div>
 </div>

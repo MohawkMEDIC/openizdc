@@ -29,7 +29,7 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
     $scope.authenticate = function (form) {
         if(!form.$valid) 
         {
-            alert(OpenIZ.Localization.getString('locale.error.login.invalid'));
+            console.log(OpenIZ.Localization.getString('locale.error.login.invalid'));
             return;
         }
 
@@ -40,7 +40,7 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
             scope: "elevation",
             continueWith: function(session) {
                 if (session == null) {
-                    alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                    console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                 }
                 else {
                     OpenIZ.Authentication.$elevationCredentials = {
@@ -56,11 +56,11 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
             },
             onException: function(error) {
                 if(error.error != null)
-                    alert(error.error);
+                    console.log(error.error);
                 else if(error.message != null)
-                    alert(error.message);
+                    console.log(error.message);
                 else
-                    alert(error);
+                    console.log(error);
             }
         })
     }

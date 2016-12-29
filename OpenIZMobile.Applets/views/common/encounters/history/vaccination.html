@@ -37,7 +37,7 @@
             <tbody>
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations">
                     <td>{{ antigenName }}</td>
-                    <td ng-repeat="sequence in event">
+                    <td ng-repeat="sequence in event track by $index">
                         <div ng-if="sequence != null" class="input-group">
                             <label class="control control--checkbox">
                                 <input type="checkbox"
