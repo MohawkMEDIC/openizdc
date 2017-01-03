@@ -69,15 +69,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Returns true if the service is running
         /// </summary>
-        public bool IsRunning
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsRunning => true;
 
-        /// <summary>
+	    /// <summary>
         /// Exhausts the inbound queue
         /// </summary>
         public void ExhaustInboundQueue()
@@ -204,7 +198,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
                         this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
-                        SynchronizationQueue.Outbound.DequeueRaw();
+						SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+						SynchronizationQueue.Outbound.DequeueRaw();
 
                         throw;
                     }

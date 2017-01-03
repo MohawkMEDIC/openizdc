@@ -157,13 +157,13 @@
 
                     <div class="row" style="height:auto;">
                         <div class="col-xs-6">
-                            <a class="btn tile-btn" ng-click="startEncounter(patient);$event.stopPropagation();" ng-class="{'disabled' : !patient._isInEncounter}">
+                            <a class="btn tile-btn" ui-sref="tz-timr-applet.encounter-entry({patientId : patient.id})" ng-click="$event.stopPropagation();">
                                 {{ 'locale.patient.action.startEncounter' | i18n }}
                             </a>
                         </div>
                         <div class="col-xs-6">
-                            <a class="btn tile-btn" ng-click="viewEncounter(patient);$event.stopPropagation();" ng-class="{'disabled' : patient._isInEncounter}">
-                                {{ 'locale.patient.action.viewEncounter' | i18n }}
+                            <a class="btn tile-btn" ui-sref="tz-timr-applet.encounter-entry({patientId : patient.id, weightsOnly: true})" ng-click="$event.stopPropagation();">
+                                {{ 'locale.patient.action.weight' | i18n }}
                             </a>
                         </div>
                     </div>

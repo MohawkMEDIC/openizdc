@@ -16,7 +16,7 @@
     "Authororiginator": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",
       "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
-      "player": "{{userId}}"
+      "player": "{{userEntityId}}"
     },
     "Product": [ ]
   }
