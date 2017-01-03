@@ -91,8 +91,13 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
+    <property name="genderConceptModel" all="true" behavior="always"/>
 
     <property name="relationship" all="true">
+      <property name="Mother" all="true">
+        <property name="target" all="true"/>
+        <property name="targetModel" all="true" behavior="always"/>
+      </property>
       <property name="*" all="true">
         <property name="targetModel" all="true">
           <property name="relationship" all="true">
@@ -104,7 +109,6 @@
             </property>
           </property>
         </property>
-        <property name="Mother" all="true"/>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="relationshipTypeModel" behavior="never"/>
