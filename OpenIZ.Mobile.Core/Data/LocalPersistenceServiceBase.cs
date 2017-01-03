@@ -303,7 +303,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="key">Key.</param>
         public TData Get(Guid key)
         {
-            if(key == Guid.Empty) return null;
+            if (key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
@@ -346,58 +346,61 @@ namespace OpenIZ.Mobile.Core.Data
 #endif
             // Query object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                IEnumerable<TData> results = null;
+                using (connection.Lock())
                 {
                     this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-                    var results = this.Query(connection, query, offset, count ?? -1, out totalResults, queryId);
-
-                    var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
-                    this.Queried?.Invoke(this, postData);
-
-                    totalResults = postData.TotalResults;
-
-                    // Set delay load
-                    foreach (var i in postData.Results)
-                        i.SetDelayLoad(true);
-
-                    return postData.Results;
-
+                    results = this.Query(connection, query, offset, count ?? -1, out totalResults, queryId);
                 }
-                catch (NotSupportedException e)
+
+                var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
+                this.Queried?.Invoke(this, postData);
+
+                totalResults = postData.TotalResults;
+
+                // Set delay load
+                foreach (var i in postData.Results)
+                    i.SetDelayLoad(true);
+
+                return postData.Results;
+
+
+            }
+            catch (NotSupportedException e)
+            {
+                this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
+
+                // Build dictionary
+                var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
+                var filter = new Dictionary<String, Object>();
+
+                foreach (var f in httpValues)
                 {
-                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
-
-                    // Build dictionary
-                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
-                    var filter = new Dictionary<String, Object>();
-
-                    foreach (var f in httpValues)
+                    object existing = null;
+                    if (filter.TryGetValue(f.Key, out existing))
                     {
-                        object existing = null;
-                        if (filter.TryGetValue(f.Key, out existing))
+                        if (!(existing is IList))
                         {
-                            if (!(existing is IList))
-                            {
-                                existing = new List<Object>() { existing };
-                                filter[f.Key] = existing;
-                            }
-                            (existing as IList).Add(f.Value);
+                            existing = new List<Object>() { existing };
+                            filter[f.Key] = existing;
                         }
-                        else
-                            filter.Add(f.Key, f.Value);
-
+                        (existing as IList).Add(f.Value);
                     }
-                    // Query
-                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
+                    else
+                        filter.Add(f.Key, f.Value);
+
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    throw;
-                }
+                // Query
+                return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error : {0}", e);
+                throw;
+            }
 #if PERFMON
             finally
             {
@@ -406,7 +409,6 @@ namespace OpenIZ.Mobile.Core.Data
             }
 #endif
 
-            }
         }
 
         /// <summary>
@@ -450,29 +452,30 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Query object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+
+            try
             {
-                try
+                List<TData> results = null;
+                using (connection.Lock())
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-                    var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId).ToList();
-
-                    var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
-                    this.Queried?.Invoke(this, postArgs);
-
-                    totalResults = postArgs.TotalResults;
-                    foreach (var i in postArgs.Results)
-                        i.SetDelayLoad(true);
-                    return postArgs.Results;
-
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    throw;
+                    results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId).ToList();
                 }
 
+                var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
+                this.Queried?.Invoke(this, postArgs);
+
+                totalResults = postArgs.TotalResults;
+                foreach (var i in postArgs.Results)
+                    i.SetDelayLoad(true);
+
+                return postArgs.Results;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error : {0}", e);
+                throw;
             }
         }
 

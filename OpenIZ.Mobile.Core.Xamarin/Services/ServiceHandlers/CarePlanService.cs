@@ -59,7 +59,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if(search.ContainsKey("_patientId"))
             {
                 var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty);
+                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty).Clone() as Patient;
+                p.Participations = new List<ActParticipation>(p.Participations);
             }
             if(p.Participations.Count == 0)
             {

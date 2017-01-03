@@ -49,6 +49,11 @@
             Return the count of applets in the collection
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Applets.AppletCollection.ViewStateAssets">
+            <summary>
+            Gets a list of all view states of all loaded applets
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Applets.AppletCollection.IsReadOnly">
             <summary>
             Return true if the collection is readonly
@@ -136,7 +141,7 @@
             Rewrte the url
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.AppletCollection.GetInjectionHeaders(OpenIZ.Core.Applets.Model.AppletAsset)">
+        <member name="M:OpenIZ.Core.Applets.AppletCollection.GetInjectionHeaders(OpenIZ.Core.Applets.Model.AppletAsset,System.Boolean)">
             <summary>
             Injection for HTML headers
             </summary>
@@ -250,6 +255,46 @@
         <member name="P:OpenIZ.Core.Applets.Model.AppletTemplateDefinition.DefinitionContent">
             <summary>
             The content loaded
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.Model.AppletView">
+            <summary>
+            Represents a single view in the applet view state
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletView.Title">
+            <summary>
+            Gets or sets the list of titles 
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletView.Controller">
+            <summary>
+            Gets or sets the controller for the object
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.Model.AppletViewState">
+            <summary>
+            Represents view state information related to the applet
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewState.Name">
+            <summary>
+            Gets or sets the name of the view state
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewState.Route">
+            <summary>
+            Gets or sets the list of routes associated with the applet view
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewState.View">
+            <summary>
+            Gets or sets the view(s) related to the applet view state
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewState.IsAbstract">
+            <summary>
+            Indicates the view is abstract
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Applets.Model.AssetData">
@@ -396,6 +441,11 @@
         <member name="P:OpenIZ.Core.Applets.Model.AppletAssetHtml.Style">
             <summary>
             Gets or sets the script
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletAssetHtml.ViewState">
+            <summary>
+            Gets one or more routes
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletAssetHtml.Html">
@@ -647,9 +697,14 @@
             Gets or sets the icon file reference
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Applets.Model.AppletMenu.Launcher">
+        <member name="P:OpenIZ.Core.Applets.Model.AppletMenu.Launch">
             <summary>
             Gets or sets the applet asset that this item should launch
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletMenu.Asset">
+            <summary>
+            Asset that this menu item is linked to
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletMenu.Manifest">
@@ -810,6 +865,11 @@
             Whether to retrieve all children
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription.Ref">
+            <summary>
+            Gets the reference to use
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.Description.PropertyModelDescription">
             <summary>
             Property model description
@@ -870,6 +930,11 @@
             Initialize
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.String)">
+            <summary>
+            Find description based on name
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.FindDescription(System.Type)">
             <summary>
             Find description
@@ -916,7 +981,7 @@
             Gets the appropriate classifier for the specified data
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object},System.Type)">
             <summary>
             Re-compose the classified data 
             </summary>
@@ -983,7 +1048,7 @@
             Classify the specified data element
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.Compose(System.Collections.Generic.Dictionary{System.String,System.Object},System.Type)">
             <summary>
             Perform a re-classification of values
             </summary>
@@ -1128,12 +1193,12 @@
             Delay loads the specified collection association
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadRelated``1(System.Guid)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.LoadRelated``1(System.Nullable{System.Guid})">
             <summary>
             Load the related information
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.WritePropertyUtil(Newtonsoft.Json.JsonWriter,System.String,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.WritePropertyUtil(Newtonsoft.Json.JsonWriter,System.String,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext,System.Boolean)">
             <summary>
             Write property utility
             </summary>
@@ -1197,6 +1262,11 @@
             Serializes the object <paramref name="data"/> onto stream <paramref name="s"/>
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.Serialize(System.IO.TextWriter,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serializes the object <paramref name="data"/> onto stream <paramref name="s"/>
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.DeSerialize``1(System.IO.Stream)">
             <summary>
             De-serializes the specified object from the stream
@@ -1212,7 +1282,7 @@
             Loads the associations for the specified object
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.LoadRelated``1(System.Guid)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer.LoadRelated``1(System.Nullable{System.Guid})">
             <summary>
             Loads the specified related object
             </summary>
@@ -1267,7 +1337,7 @@
             Gets the root context
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ShouldForceLoad(System.String)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ShouldForceLoad(System.String,System.Guid)">
             <summary>
             Returns true when child property information should be force loaded
             </summary>

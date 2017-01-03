@@ -483,7 +483,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				throw new InvalidOperationException("Persistence service not found");
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<UserEntity>>();
 
-            UserEntity retVal = userEntity;
+            UserEntity retVal = userEntity.Clean() as UserEntity;
 			try
 			{
                 if (!userEntity.Key.HasValue) throw new KeyNotFoundException();

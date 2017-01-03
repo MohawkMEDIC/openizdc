@@ -232,8 +232,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 		public IdentifiedData ObsoleteConcept(Guid key)
 		{
-			throw new NotImplementedException();
-		}
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Concept>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Cannot locate concept set persistence service");
+            return persistence.Obsolete(new Concept() { Key = key });
+        }
 
 		public ConceptClass ObsoleteConceptClass(Guid key)
 		{
@@ -247,10 +250,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
         public ConceptSet ObsoleteConceptSet(Guid key)
 		{
-			throw new NotImplementedException();
-		}
+            var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<ConceptSet>>();
+            if (persistence == null)
+                throw new InvalidOperationException("Cannot locate concept set persistence service");
+            return persistence.Obsolete(new ConceptSet() { Key = key });
 
-		public Concept SaveConcept(Concept concept)
+        }
+
+        public Concept SaveConcept(Concept concept)
 		{
 			throw new NotImplementedException();
 		}
@@ -274,6 +281,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		{
 			throw new NotImplementedException();
 		}
+
+        Concept IConceptRepositoryService.ObsoleteConcept(Guid key)
+        {
+            throw new NotImplementedException();
+        }
 
         ConceptClass IConceptRepositoryService.SaveConceptClass(ConceptClass conceptClass)
         {
