@@ -53,7 +53,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
-			context.Insert (domainObject);
+
+            if (!context.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+                context.Insert(domainObject);
+            else
+                context.Update(domainObject);
 
 			return data;
 		}
@@ -71,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 throw new KeyNotFoundException(data.Key.ToString());
 
             // Created by is the updated by
+            domainObject.CopyObjectData(existing);
             domainObject.CreatedByUuid = existing.CreatedByUuid;
             data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;

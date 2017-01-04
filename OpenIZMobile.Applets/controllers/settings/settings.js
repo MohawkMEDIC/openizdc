@@ -86,7 +86,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
-                    console.log(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+                    alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
                 },
                 onException: function (error) {
                     if (error.type == 'DuplicateNameException')

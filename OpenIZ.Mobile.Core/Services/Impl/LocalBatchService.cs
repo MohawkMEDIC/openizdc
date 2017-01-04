@@ -49,7 +49,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			data = persistence.Insert(data);
             breService?.AfterInsert(data) ;
 
-            SynchronizationQueue.Outbound.Enqueue(data, Synchronization.Model.DataOperationType.Insert);
+            // Insert bundle to the master queue
+            SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert);
 
             return data;
 		}

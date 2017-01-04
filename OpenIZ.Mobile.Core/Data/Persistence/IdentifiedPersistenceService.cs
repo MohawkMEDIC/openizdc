@@ -94,7 +94,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
 
             // Does this already exist?
-            if (this.Get(context, data.Key.Value) == null)
+            if (!context.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).Any())
                 context.Insert(domainObject);
             else
                 context.Update(domainObject);
