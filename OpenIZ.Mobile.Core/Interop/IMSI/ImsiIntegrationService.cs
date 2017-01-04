@@ -221,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 // Special case = Batch submit of data with an entry point
                 var submission = (data as Bundle)?.Entry ?? data;
-                client.Client.Requesting += (o, e) => (e.Body as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity)));
+                client.Client.Requesting += (o, e) => (submission as Bundle)?.Item.RemoveAll(i => !(i is Act || i is Person && !(i is UserEntity)));
                 // Create method
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Create" && o.GetParameters().Length == 1);
                 method = method.MakeGenericMethod(new Type[] { submission.GetType() });

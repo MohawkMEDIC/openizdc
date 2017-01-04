@@ -269,7 +269,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             retVal.Key = Guid.NewGuid();
             foreach (var itm in retVal.Participations) itm.Key = Guid.NewGuid();
             foreach (var itm in retVal.Relationships) itm.Key = Guid.NewGuid();
-
+            foreach (var itm in retVal.Participations.Where(o => o.PlayerEntityKey == AuthenticationContext.Current.Session.UserEntity.Key))
+                itm.PlayerEntity = AuthenticationContext.Current.Session.UserEntity;
             // Delayload
             return retVal;
         }
@@ -316,9 +317,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             //    templateString = templateString.Remove(0, c_utf8bom.Length);
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
-            var securityRepo = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-            var securityUser = securityRepo?.GetUser(AuthenticationContext.Current.Principal.Identity);
-            var userEntity = securityRepo?.FindUserEntity(o => o.SecurityUserKey == securityUser.Key).FirstOrDefault();
+            var securityUser = AuthenticationContext.Current.Session.SecurityUser;
+            var userEntity = AuthenticationContext.Current.Session.UserEntity;
             templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
                 .Replace("{{uuid}}", Guid.NewGuid().ToString())
                 .Replace("{{now}}", DateTime.Now.ToString("o"))

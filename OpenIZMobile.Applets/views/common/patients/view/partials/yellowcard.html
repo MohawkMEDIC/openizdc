@@ -52,8 +52,11 @@
                                     </div>
                                 </div>
                                 <div ng-if="sequence.moodConcept != 'acf7baf2-221f-4bc2-8116-ceb5165be079'" class="text-success">
-                                    <div class="text-success" ng-if="!sequence.negationInd" >
-                                        <span class="glyphicon glyphicon-ok"></span>
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept == '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+                                        <span class="glyphicon glyphicon-ok"></span> 
+                                    </div>
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+                                        <span class="glyphicon glyphicon-tasks"></span> 
                                     </div>
                                     <div class="text-warn" ng-if="sequence.negationInd">
                                         <span class="glyphicon glyphicon-question-sign"></span>

@@ -231,8 +231,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         var session = smgr.Get(Guid.Parse(cookie.Value));
                         if (session != null)
                         {
-                            AuthenticationContext.Current = new AuthenticationContext(session);
-                            this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                            try
+                            {
+                                AuthenticationContext.Current = new AuthenticationContext(session);
+                                this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
+                            }
+                            catch(SessionExpiredException)
+                            {
+                                this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", cookie.Value);
+                                response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
+                            }
                         }
                         else // Something wrong??? Perhaps it is an issue with the thingy?
                             response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });

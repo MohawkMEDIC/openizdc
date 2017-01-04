@@ -60,6 +60,9 @@
                     id="encounterPerformer" name="encounterPerformer" 
                     class="form-control" ng-model="encounter.participation.Performer.player"
                     oiz-entitysearch="UserEntity">
+                <option selected="selected" value="{{encounter.participation.Performer.player}}">
+                    {{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}
+                </option>
             </select>
         </div>
     </div>
