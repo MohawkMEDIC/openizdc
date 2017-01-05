@@ -369,7 +369,7 @@ angular.module('openiz', [])
                             cache: true
                         },
                         escapeMarkup: function (markup) { return markup; }, // Format normally
-                        minimumInputLength: 4,
+                        minimumInputLength: 2,
                         templateSelection: function (selection)
                         {                            
                             var retVal = "";
