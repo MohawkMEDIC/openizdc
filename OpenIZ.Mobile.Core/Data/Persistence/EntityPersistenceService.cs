@@ -234,13 +234,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
-            // Ensure participations
-            if (data.Participations != null)
-                foreach (var itm in data.Participations)
-                {
-                    itm.PlayerEntityKey = retVal.Key;
-                    itm.EnsureExists(context);
-                }
+            // Participations = The source is not the patient so we don't touch
+            //if (data.Participations != null)
+            //    foreach (var itm in data.Participations)
+            //    {
+            //        itm.PlayerEntityKey = retVal.Key;
+            //        itm.EnsureExists(context);
+            //    }
             return retVal;
         }
 
@@ -342,23 +342,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
-            // Participations
-            if(data.Participations != null)
-            {
-                foreach (var itm in data.Participations)
-                {
-                    itm.PlayerEntityKey = retVal.Key;
-                    itm.Act?.EnsureExists(context);
-                    itm.SourceEntityKey = itm.Act?.Key ?? itm.SourceEntityKey;
-                } 
-                var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList();
-                base.UpdateAssociatedItems<ActParticipation, Act>(
-                    existing,
-                    data.Participations,
-                    retVal.Key,
-                    context, 
-                    true);
-            }
+            // Participations - We don't touch as Act > Participation
+            //if(data.Participations != null)
+            //{
+            //    foreach (var itm in data.Participations)
+            //    {
+            //        itm.PlayerEntityKey = retVal.Key;
+            //        itm.Act?.EnsureExists(context);
+            //        itm.SourceEntityKey = itm.Act?.Key ?? itm.SourceEntityKey;
+            //    } 
+            //    var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList();
+            //    base.UpdateAssociatedItems<ActParticipation, Act>(
+            //        existing,
+            //        data.Participations,
+            //        retVal.Key,
+            //        context, 
+            //        true);
+            //}
           
 
             return retVal;

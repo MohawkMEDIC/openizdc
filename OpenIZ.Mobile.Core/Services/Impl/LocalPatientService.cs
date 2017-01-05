@@ -21,6 +21,7 @@ using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
@@ -171,6 +172,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             
             SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
 
+            // Remove from the memory cache
+            MemoryCache.Current.RemoveObject(typeof(Patient), key);
 			return result;
 		}
 
@@ -212,6 +215,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, patient);
 
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+                    //MemoryCache.Current.RemoveObject(typeof(Patient), p.Key);
 
                 }
                 else throw new KeyNotFoundException();

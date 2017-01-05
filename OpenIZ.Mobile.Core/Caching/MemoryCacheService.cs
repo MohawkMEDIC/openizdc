@@ -18,6 +18,7 @@
  * Date: 2016-7-30
  */
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
@@ -127,13 +128,24 @@ namespace OpenIZ.Mobile.Core.Caching
                          // Handles when an item is no longer being mapped
                          this.m_mappedHandler = (o, e) =>
                          {
-
                              this.GetOrUpdateCacheItem(e);
                          };
 
                          // Subscribe to message mapping
                          ModelMapper.MappingToModel += this.m_mappingHandler;
                          ModelMapper.MappedToModel += this.m_mappedHandler;
+
+                         // Relationship / Associated Entities are to be refreshed whenever persisted
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
+                         ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
+
                      }
                  }
                  catch {

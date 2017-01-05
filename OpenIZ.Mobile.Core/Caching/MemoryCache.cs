@@ -37,6 +37,7 @@ using OpenIZ.Core.Services;
 using System.Collections;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Security;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -187,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Caching
 
                         }
             }
-            else
+            else if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
                 this.RegisterCacheType(data.GetType());
 
         }
@@ -448,17 +449,7 @@ namespace OpenIZ.Mobile.Core.Caching
                     if (cache.ContainsKey(key))
                         lock (this.m_lock)
                         {
-                            //this.m_entryTable.Remove(objData);
-                            //this.Clear();
-                            //this.RemoveObject(objData, key);
-                            //this.AddUpdateEntry(idData);
-                            this.Update(idData as IdentifiedData);
-                            //cache.Remove(key);
-                           // CacheEntry cacheEntry = new CacheEntry(DateTime.Now, data);
-                           // cacheEntry.LastUpdateTime = DateTime.Now.Ticks;
-                            //cache.Add(key, cacheEntry);
-                           // cache[key].Data = data;
-                           // cache[key].LastUpdateTime = DateTime.Now.Ticks;
+                            cache[key].Update(data);
                         }
                     //cache.Remove(key);
                 }
@@ -474,45 +465,45 @@ namespace OpenIZ.Mobile.Core.Caching
             this.m_disposed = true;
         }
 
-        public void Update(object data)
-        {
-            var properties = data.GetType().GetRuntimeProperties();
+        //public void Update(object data)
+        //{
+        //    var properties = data.GetType().GetRuntimeProperties();
 
-            foreach (var item in properties)
-            {
-                var value = item.GetValue(data);
+        //    foreach (var item in properties)
+        //    {
+        //        var value = item.GetValue(data);
                 
-                if (value is IList && (value as IList).Count > 0)
-                {
-                    foreach (var listItem in value as IList)
-                    {
-                        this.Update(listItem);
+        //        if (value is IList && (value as IList).Count > 0)
+        //        {
+        //            foreach (var listItem in value as IList)
+        //            {
+        //                this.Update(listItem);
 
-                        if (listItem is IdentifiedData)
-                        {
-                            var identifiedData = listItem as IdentifiedData;
+        //                if (listItem is IdentifiedData)
+        //                {
+        //                    var identifiedData = listItem as IdentifiedData;
 
-                            // if there is a key and the key is not an empty GUID
-                            if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
-                            {
-                                this.RemoveObject(listItem.GetType(), identifiedData.Key.Value);
-                                this.AddUpdateEntry(listItem);
-                            }
-                        }
-                    }
-                }
-                if (value is IdentifiedData)
-                {
-                    var identifiedData = value as IdentifiedData;
+        //                    // if there is a key and the key is not an empty GUID
+        //                    if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
+        //                    {
+        //                        this.RemoveObject(listItem.GetType(), identifiedData.Key.Value);
+        //                        this.AddUpdateEntry(listItem);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (value is IdentifiedData)
+        //        {
+        //            var identifiedData = value as IdentifiedData;
 
-                    // if there is a key and the key is not an empty GUID
-                    if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
-                    {
-                        this.RemoveObject(value.GetType(), identifiedData.Key.Value);
-                        this.AddUpdateEntry(value);
-                    }
-                }
-            }
-        }
+        //            // if there is a key and the key is not an empty GUID
+        //            if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
+        //            {
+        //                this.RemoveObject(value.GetType(), identifiedData.Key.Value);
+        //                this.AddUpdateEntry(value);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

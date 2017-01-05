@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
@@ -198,7 +199,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
 
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
-
+                    MemoryCache.Current.RemoveObject(typeof(TAct), act.Key);
+                    MemoryCache.Current.RemoveObject(typeof(Act), act.Key);
                 }
                 else throw new KeyNotFoundException();
                 return act;

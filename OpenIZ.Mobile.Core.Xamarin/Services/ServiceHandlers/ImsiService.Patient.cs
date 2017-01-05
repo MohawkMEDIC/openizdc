@@ -70,6 +70,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient UpdatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToUpdate)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+            // Get all the acts if none were supplied, and all of the relationships if none were supplied
             return repository.Save(patientToUpdate).GetLocked() as Patient;
         }
 
@@ -88,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
+                //MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
                 var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 return patient;
             }

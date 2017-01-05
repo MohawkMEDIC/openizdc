@@ -45,7 +45,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                 password: password,
                 continueWith: function (session) {
                     if (session == null) {
-                        console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                        alert(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                     }
                     else {
                         if(window.location.hash == "")
@@ -60,7 +60,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                 if (typeof (ex) == "string")
                     console.log(ex);
                 else if (ex.message != undefined)
-                    console.log("" + ex.message + " - " + ex.details);
+                    alert("" + ex.message + " - " + ex.details);
                 else
                     console.log(ex);
             }

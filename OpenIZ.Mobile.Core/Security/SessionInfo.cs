@@ -201,12 +201,20 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         public bool Extend()
         {
-            lock (this.m_syncLock)
+            try
             {
-                if (this.Expiry > DateTime.Now.AddMinutes(5)) // session will still be valid in 5 mins so no auth
-                    return true;
-                this.ProcessPrincipal(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(this.Principal, null));
-                return this.Principal != null;
+                lock (this.m_syncLock)
+                {
+                    if (this.Expiry > DateTime.Now.AddMinutes(5)) // session will still be valid in 5 mins so no auth
+                        return true;
+                    this.ProcessPrincipal(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(this.Principal, null));
+                    return this.Principal != null;
+                }
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error extending session: {0}", e);
+                return false;
             }
         }
 

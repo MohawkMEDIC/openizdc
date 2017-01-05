@@ -36,7 +36,10 @@
             </thead>
             <tbody>
                 <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations track by $index" ng-class-odd="'vaccine-table-row'">
-                    <td class="vaccine-table-vaccine">{{ antigenName }}</td>
+                    <td class="vaccine-table-vaccine">
+                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="(event[0].route || event[1].route) == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="(event[0].route || event[1].route) == '0a1388b0-66fb-4063-bfe3-151dd8442838'" />
+                    {{ antigenName }}</td>
                     <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon">
                         <a data-toggle="tab" data-target="#vaccinations">
                             <div ng-if="sequence != null" class="input-group">
@@ -52,8 +55,11 @@
                                     </div>
                                 </div>
                                 <div ng-if="sequence.moodConcept != 'acf7baf2-221f-4bc2-8116-ceb5165be079'" class="text-success">
-                                    <div class="text-success" ng-if="!sequence.negationInd" >
-                                        <span class="glyphicon glyphicon-ok"></span>
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                        <span class="glyphicon glyphicon-ok"></span> 
+                                    </div>
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                        <span class="glyphicon glyphicon-tasks"></span> 
                                     </div>
                                     <div class="text-warn" ng-if="sequence.negationInd">
                                         <span class="glyphicon glyphicon-question-sign"></span>
