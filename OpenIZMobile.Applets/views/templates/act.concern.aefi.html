@@ -11,9 +11,9 @@
                     <label>
                         {{ 'locale.encounters.aefi.drug' | i18n }}
                     </label>
-                    <select ng-class="{'has-error':(masterForm['aefiDrug_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiDrug_' + act.targetModel.id].$invalid}" name="aefiDrug_{{act.targetModel.id}}" required="required" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.value"
-                            oiz-databind="SubstanceAdministration" data-filter='{ "relationship[RecordTarget].player" : "{{ patient.id }}", "moodConcept" : "EC74541F-87C4-4327-A4B9-97F325501747" }' data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned)" data-key="scope.participation.Product.playerModel.typeConcept">
-                        <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
+                    <select ng-class="{'has-error':(masterForm['aefiDrug_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['aefiDrug_' + act.targetModel.id].$invalid}" name="aefiDrug_{{act.targetModel.id}}" required="required" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.value">
+                        <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
+                        <option ng-repeat="vaccine in completedVaccines" value="{{vaccine.id}}">{{ vaccine.participation.Product.playerModel.name.OfficialRecord.component.$other.value}} {{'locale.encounters.immunization.doseSequence' | i18n}} {{vaccine.doseSequence}}</option>
                     </select>
                 </div>
             </div>
