@@ -270,11 +270,11 @@ angular.module('openiz', [])
                 $timeout(function ()
                 {
                     var modelType = attrs.oizEntitysearch;
-                    var filterString = attrs.dataFilter;
-                    var displayString = attrs.dataDisplay;
-                    var defaultFilterString = attrs.dataDefault;
-                    var groupString =attrs.dataGroupBy;
-                    var groupDisplayString = attrs.dataGroupDisplay;
+                    var filterString = attrs.filter;
+                    var displayString = attrs.display;
+                    var defaultFilterString = attrs.default;
+                    var groupString =attrs.groupBy;
+                    var groupDisplayString = attrs.groupDisplay;
 
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
@@ -425,6 +425,13 @@ angular.module('openiz', [])
                                     result.$type + "</div> " + OpenIZ.Util.renderName(result.name.Assigned)
                             else
                                 return result.text;
+                        }
+                    });
+                    // HACK: For angular values, after select2 has "selected" the value, it will be a ? string: ID ? value we do not want this
+                    // we want the actual value, so this little thing corrects this bugginess
+                    $(element).on("select2:select", function (e) {
+                        if (e.currentTarget.value.indexOf("? string:") == 0) {
+                            e.currentTarget.value = e.currentTarget.value.substring(9, e.currentTarget.value.length - 2);
                         }
                     });
                 });

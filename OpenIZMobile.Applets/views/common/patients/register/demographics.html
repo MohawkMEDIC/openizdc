@@ -46,7 +46,7 @@
         <label class="col-xs-3 control-label ng-cloak" for="dobInput">
         {{ 'locale.patient.demographics.dateOfBirth' | i18n }}*
         </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.dateOfBirth.$touched || masterForm.$submitted) &amp;&amp; masterForm.dateOfBirth.$invalid }">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
             <div class="input-group">
                 <input ng-readonly="patient.readonly.dateOfBirth" type="date" 
                        name="dateOfBirth" id="dobInput" 
@@ -68,16 +68,16 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-if="(masterForm.dateOfBirth.$touched || masterForm.$submitted)">
-                <span ng-show="masterForm.dateOfBirth.$error.required"
+            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted)">
+                <span ng-show="editPatientForm.dateOfBirth.$error.required"
                    class="help-block text-danger">
                     {{ 'locale.patient.errors.dob.required' | i18n }}
                 </span>
-                <span ng-show="masterForm.dateOfBirth.$error.date"
+                <span ng-show="editPatientForm.dateOfBirth.$error.date"
                    class="help-block text-danger">
                     {{ 'locale.patient.errors.dob.date' | i18n }}
                 </span>
-                <span ng-show="masterForm.dateOfBirth.$error.max"
+                <span ng-show="editPatientForm.dateOfBirth.$error.max"
                    class="help-block text-danger">
                     {{ 'locale.patient.errors.dob.max' | i18n }}
                 </span>
@@ -114,7 +114,7 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="(masterForm.deceasedDate.$touched||masterForm.$submitted)&amp;&amp;masterForm.deceasedDate.$invalid" 
+            <p ng-show="(editPatientForm.deceasedDate.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.deceasedDate.$invalid" 
                class="help-block text-danger">
                 {{ 'locale.patient.errors.dob' | i18n }}
             </p>
@@ -125,7 +125,7 @@
         <label class="col-xs-3 control-label ng-cloak" 
                for="genderSelect">{{ 'locale.patient.demographics.gender' | i18n }}*
         </label>
-        <div class="col-xs-9" ng-class="{ 'has-error': (masterForm.gender.$touched||masterForm.$submitted) &amp;&amp; masterForm.gender.$invalid }">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched||editPatientForm.$submitted) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
                 <select ng-disabled="patient.readonly.genderConcept" name="gender" 
                         ng-model="patient.genderConcept" 
@@ -140,7 +140,7 @@
                     <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
-            <p ng-show="(masterForm.gender.$touched||masterForm.$submitted)&amp;&amp;masterForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
+            <p ng-show="(editPatientForm.gender.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>
 

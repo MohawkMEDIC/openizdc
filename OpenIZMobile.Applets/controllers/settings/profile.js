@@ -22,7 +22,7 @@
 
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="../../js/openiz.js"/>
-layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window', function ($scope, $rootScope, $window) {
     $scope.editObject = {};
 
     $rootScope.$watch('session', function (n, o) {
@@ -58,8 +58,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', function 
                 {
                     OpenIZ.Localization.setLocale(data.language[0].languageCode);
                 }
-
-                window.location.reload();
+                $window.location.reload();
             },
             onException: function (ex) {
                 console.log(ex);

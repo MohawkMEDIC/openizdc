@@ -303,6 +303,9 @@
     <string key="locale.about.sync.filter">Filter</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
+  
+  <!-- Common Dialog -->
+    <string key="locale.network.offline">Offline</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>

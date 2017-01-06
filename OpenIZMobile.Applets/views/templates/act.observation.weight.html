@@ -78,10 +78,10 @@
             </div>
         </div>
         <div>
-            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['uom_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['uom_' + act.targetModel.id].$invalid">
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['uom_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['uom_' + act.targetModel.id].$invalid">
                 {{ 'locale.encounters.immunizations.errors.missingUom' | i18n }}
             </div>
-            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (masterForm['weight_' + act.targetModel.id].$touched||masterForm.$submitted) &amp;&amp; masterForm['weight_' + act.targetModel.id].$invalid">
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['weight_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['weight_' + act.targetModel.id].$invalid">
                 {{ 'locale.encounters.immunizations.errors.weightInvalid' | i18n }}
             </div>
         </div>

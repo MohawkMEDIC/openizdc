@@ -1826,7 +1826,8 @@ var OpenIZ = OpenIZ || {
          * @returns The locale the user interface is now operating in
          */
         setLocale: function (locale) {
-            return OpenIZApplicationService.SetLocale(locale);
+            if (OpenIZApplicationService.SetLocale !== undefined)
+                return OpenIZApplicationService.SetLocale(locale);
         },
         /**
          * @memberof OpenIZ.Localization

@@ -28,12 +28,30 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.addIdentifier = addIdentifier;
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
-    
+    $scope.Array = Array;
 
     // Rebind the domain scope
     function rebindDomain(authority, identifier) {
-        $scope.patient.identifier[identifier.authority.domainName] = identifier;
-        delete $scope.patient.identifier[authority];
+        if ($scope.patient.identifier[identifier.authority.domainName] !== undefined) { // Already have one, add another
+        
+            var current = $scope.patient.identifier[identifier.authority.domainName];
+            if (!Array.isArray(current))
+                current = $scope.patient.identifier[identifier.authority.domainName] = [
+                    $scope.patient.identifier[identifier.authority.domainName]
+                ];
+            else if(current == undefined)
+                current = $scope.patient.identifier[identifier.authority.domainName] = [];
+
+            current.push(identifier);
+        }
+        else
+            $scope.patient.identifier[identifier.authority.domainName] = identifier;
+
+        // Remove the identifier from the current list
+        if (Array.isArray($scope.patient.identifier[authority]))
+            ;
+        else
+            delete $scope.patient.identifier[authority];
 
     };
     
@@ -56,8 +74,17 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     };
 
     // Remove identifier
-    function removeIdentifier(id) {
-        delete $scope.patient.identifier[id];
+    function removeIdentifier(authority, index) {
+
+        // Remove one from collection of ids
+        if (Array.isArray($scope.patient.identifier[authority])) {
+            $scope.patient.identifier[authority].splice(index, 1);
+            if ($scope.patient.identifier[authority].length == 1)
+                $scope.patient.identifier[authority] = $scope.patient.identifier[authority][0];
+        }
+        else
+            delete $scope.patient.identifier[authority];
+
         if (Object.keys($scope.patient.identifier) == 0)
             $scope.addIdentifier();
     };

@@ -318,6 +318,11 @@
             Represents a description of a service
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Http.Description.IRestClientDescription.Trace">
+            <summary>
+            Gets whether a tracing is enabled.
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Http.Description.IRestClientDescription.Endpoint">
             <summary>
             Gets or sets the endpoints for the client
@@ -693,14 +698,14 @@
             </summary>
             <param name="binder">The serialization binder to use.</param>
         </member>
-        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateQueryString(System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateQueryString(OpenIZ.Core.Model.Query.NameValueCollection)">
             <summary>
             Create the query string from a list of query parameters
             </summary>
             <param name="query"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateHttpRequest(System.String,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+        <member name="M:OpenIZ.Core.Http.RestClientBase.CreateHttpRequest(System.String,OpenIZ.Core.Model.Query.NameValueCollection)">
             <summary>
             Create the HTTP request
             </summary>
@@ -751,7 +756,7 @@
             <param name="query"></param>
             <returns></returns>
         </member>
-        <member name="M:OpenIZ.Core.Http.RestClientBase.InvokeInternal``2(System.String,System.String,System.String,System.Net.WebHeaderCollection,System.Net.WebHeaderCollection@,``0,System.Collections.Generic.KeyValuePair{System.String,System.Object}[])">
+        <member name="M:OpenIZ.Core.Http.RestClientBase.InvokeInternal``2(System.String,System.String,System.String,System.Net.WebHeaderCollection,System.Net.WebHeaderCollection@,``0,OpenIZ.Core.Model.Query.NameValueCollection)">
             <summary>
             Invokes the specified method against the url provided
             </summary>
@@ -858,6 +863,11 @@
             The result
             </summary>
             <value>The result.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Http.RestClientException`1.#ctor(System.String,System.Exception)">
+            <summary>
+            Create a new rest client exception
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Http.RestClientException`1.#ctor(`0,System.Exception,System.Net.WebExceptionStatus,System.Net.WebResponse)">
             <summary>
@@ -1000,13 +1010,26 @@
         </member>
         <member name="P:OpenIZ.Core.Interop.ServiceOptions.ModifiedOn">
             <summary>
-            Modified on
+            Gets or sets the modified on date time of the service options.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Interop.ServiceResourceOptions">
             <summary>
             Service resource options
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interop.ServiceResourceOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Interop.ServiceOptions"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Interop.ServiceResourceOptions.#ctor(System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Interop.ServiceResourceOptions"/> class
+            with a specific resource name, and verbs.
+            </summary>
+            <param name="resourceName">The name of the resource of the service resource options.</param>
+            <param name="verbs">The list of HTTP verbs of the resource option.</param>
         </member>
         <member name="P:OpenIZ.Core.Interop.ServiceResourceOptions.ResourceName">
             <summary>
@@ -1044,7 +1067,7 @@
             Generate a test operation in the patch
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Applies the specified <paramref name="patch"/> onto <paramref name="data"/> to derive the return value.
             </summary>
@@ -1342,8 +1365,7 @@
         </member>
         <member name="T:OpenIZ.Core.Services.IConceptRepositoryService">
             <summary>
-            Represents a service which is responsible for the
-            maintenance of concepts
+            Represents a service which is responsible for the maintenance of concepts.
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptClasses(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptClass,System.Boolean}})">
@@ -1362,6 +1384,23 @@
             <param name="offset">The offset for the search results.</param>
             <param name="totalCount">The total count of the search results.</param>
             <returns>Returns a list of concept classes who match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptReferenceTerms(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm,System.Boolean}})">
+            <summary>
+            Queries for concept reference terms.
+            </summary>
+            <param name="query">The query to use to search for concept reference terms.</param>
+            <returns>Returns a list of concept reference terms.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConceptReferenceTerms(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Queries for concept reference terms.
+            </summary>
+            <param name="query">The query to use to search for concept reference terms.</param>
+            <param name="offset">The offset of the query.</param>
+            <param name="count">The count of the query.</param>
+            <param name="totalCount">The total count of the query.</param>
+            <returns>Returns a list of concept reference terms.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindConcepts(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.Concept,System.Boolean}})">
             <summary>
@@ -1413,6 +1452,23 @@
             <param name="totalCount">The total count of the search results.</param>
             <returns>Returns a list of concept sets who match the specified query.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindReferenceTerms(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ReferenceTerm,System.Boolean}})">
+            <summary>
+            Searches for a reference term using a given query.
+            </summary>
+            <param name="query">The query to use for searching for the reference term.</param>
+            <returns>Returns a list of concept sets who match the specified query.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.FindReferenceTerms(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.DataTypes.ReferenceTerm,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches for a reference terms using a given query.
+            </summary>
+            <param name="query">The query to use for searching for the reference terms.</param>
+            <param name="count">The count of the reference terms to return.</param>
+            <param name="offset">The offset for the search results.</param>
+            <param name="totalCount">The total count of the search results.</param>
+            <returns>Returns a list of reference terms who match the specified query.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConcept(System.Guid,System.Guid)">
             <summary>
             Gets the specified concept.
@@ -1423,9 +1479,10 @@
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConcept(System.String)">
             <summary>
-            Get a concept by its mnemonic
+            Gets a concept by mnemonic.
             </summary>
-            <param name="mnemonic">The concept mnemonic to get</param>
+            <param name="mnemonic">The mnemonic of the concept.</param>
+            <returns>Returns the concept.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptClass(System.Guid)">
             <summary>
@@ -1434,25 +1491,41 @@
             <param name="id">The id of the concept class to retrieve.</param>
             <returns>Returns the concept class.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptReferenceTerm(System.Guid)">
+            <summary>
+            Gets a concept reference term by id.
+            </summary>
+            <param name="id">The id of the concept reference term.</param>
+            <returns>Returns the concept reference term.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptSet(System.Guid)">
             <summary>
-            Gets the specified concept set.
+            Gets a concept set.
             </summary>
+            <param name="id">The id of the concept set to retrieve.</param>
+            <returns>Returns the concept set.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptSet(System.String)">
             <summary>
-            Get the concept set by mnemonic
+            Gets a concept set by mnemonic.
             </summary>
+            <param name="mnemonic">The mnemonic of the concept set.</param>
+            <returns>Returns the concept set.</returns>
         </member>
-        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetReferenceTerm(OpenIZ.Core.Model.DataTypes.Concept,System.String)">
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetReferenceTerm(System.Guid)">
             <summary>
-            Gets the specified reference term from <paramref name="concept"/> in <paramref name="codeSystemOid"/>
+            Gets a reference term.
             </summary>
+            <param name="id">The id of the reference term to retrieve.</param>
+            <returns>Returns the reference term.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.Implies(OpenIZ.Core.Model.DataTypes.Concept,OpenIZ.Core.Model.DataTypes.Concept)">
             <summary>
             Returns a value which indicates whether <paramref name="a"/> implies <paramref name="b"/>
             </summary>
+            <param name="a">The left hand concept.</param>
+            <param name="b">The right hand concept.</param>
+            <returns>Returns true if the first concept implies the second concept.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertConcept(OpenIZ.Core.Model.DataTypes.Concept)">
             <summary>
@@ -1468,12 +1541,26 @@
             <param name="conceptClass">The concept class to be inserted.</param>
             <returns>Returns the newly inserted concept class.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertConceptReferenceTerm(OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm)">
+            <summary>
+            Inserts a concept reference term.
+            </summary>
+            <param name="conceptReferenceTerm">The concept reference term to be inserted.</param>
+            <returns>Returns the inserted concept reference term.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertConceptSet(OpenIZ.Core.Model.DataTypes.ConceptSet)">
             <summary>
             Inserts a concept set.
             </summary>
             <param name="set">The concept set to be inserted.</param>
             <returns>Returns the inserted concept set.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.InsertReferenceTerm(OpenIZ.Core.Model.DataTypes.ReferenceTerm)">
+            <summary>
+            Inserts a reference term.
+            </summary>
+            <param name="referenceTerm">The reference term to be inserted.</param>
+            <returns>Returns the inserted reference term.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.IsMember(OpenIZ.Core.Model.DataTypes.ConceptSet,OpenIZ.Core.Model.DataTypes.Concept)">
             <summary>
@@ -1494,6 +1581,13 @@
             <param name="key">The key of the concept class to obsolete.</param>
             <returns>Returns the obsoleted concept class.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.ObsoleteConceptReferenceTerm(System.Guid)">
+            <summary>
+            Obsoletes a concept reference term.
+            </summary>
+            <param name="key">The key of the concept reference term to obsolete.</param>
+            <returns>Returns the obsoleted concept reference term.</returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.ObsoleteConceptSet(System.Guid)">
             <summary>
             Obsoletes a concept set.
@@ -1512,8 +1606,15 @@
             <summary>
             Inserts or updates a concept class.
             </summary>
-            <param name="clazz">The concept class to be saved.</param>
+            <param name="conceptClass">The concept class to be saved.</param>
             <returns>Returns the saved concept class.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConceptReferenceTerm(OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm)">
+            <summary>
+            Inserts or updates a concept reference term.
+            </summary>
+            <param name="conceptReferenceTerm">The concept reference term to be saved.</param>
+            <returns>Returns the saved concept reference term.</returns>
         </member>
         <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.SaveConceptSet(OpenIZ.Core.Model.DataTypes.ConceptSet)">
             <summary>
@@ -1526,8 +1627,8 @@
             <summary>
             Inserts or updates a concept reference term.
             </summary>
-            <param name="term">The reference term to be saved.</param>
-            <returns>Returns a concept.</returns>
+            <param name="referenceTerm">The reference term to be saved.</param>
+            <returns>Returns a reference term.</returns>
         </member>
         <member name="T:OpenIZ.Core.Services.IDataCachingService">
             <summary>
@@ -1561,10 +1662,66 @@
             to <paramref name="updated"/>
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IPatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Services.IPatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Apples the specified <paramref name="patch"/> onto <paramref name="data"/> returning the updated object
             </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPersonRepositoryService">
+            <summary>
+            Represents a repository service for managing persons.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Person,System.Boolean}})">
+            <summary>
+            Searches for a person using a given predicate.
+            </summary>
+            <param name="predicate">The predicate to use for searching for the person.</param>
+            <returns>Returns a list of persons who match the specified predicate.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Person,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches for a person using a given predicate.
+            </summary>
+            <param name="predicate">The predicate to use for searching for the person.</param>
+            <param name="count">The count of the persons to return.</param>
+            <param name="offset">The offset for the search results.</param>
+            <param name="totalCount">The total count of the search results.</param>
+            <returns>Returns a list of persons who match the specified predicate.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets the specified person.
+            </summary>
+            <param name="id">The id of the person.</param>
+            <param name="versionId">The version id of the person.</param>
+            <returns>Returns the specified person.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Get(System.Security.Principal.IIdentity)">
+            <summary>
+            Get the person based off the user identity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Insert(OpenIZ.Core.Model.Entities.Person)">
+            <summary>
+            Inserts the specified person.
+            </summary>
+            <param name="person">The person to insert.</param>
+            <returns>Returns the inserted person.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Obsolete(System.Guid)">
+            <summary>
+            Obsoletes the specified person.
+            </summary>
+            <param name="id">The id of the person to obsolete.</param>
+            <returns>Returns the obsoleted person.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPersonRepositoryService.Save(OpenIZ.Core.Model.Entities.Person)">
+            <summary>
+            /// Saves the specified person.
+            </summary>
+            <param name="person">The person to save.</param>
+            <returns>Returns the saved person.</returns>
         </member>
         <member name="T:OpenIZ.Core.Services.IRepositoryService`1">
             <summary>
