@@ -196,6 +196,7 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="ExtensionTypeKey" domainName="ExtensionTypeUuid"/>
     <property modelName="SourceEntityKey" domainName="EntityUuid"/>
+  <property modelName="ExtensionValueXml" domainName="Value"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.EntityNote, OpenIZ.Core.Model, Version=1.0.0.0"
@@ -315,6 +316,8 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="ExtensionTypeKey" domainName="ExtensionTypeUuid"/>
     <property modelName="SourceEntityKey" domainName="ActUuid"/>
+  <property modelName="ExtensionValueXml" domainName="Value"/>
+  
   </class>
 
   <class modelClass="OpenIZ.Core.Model.DataTypes.ActNote, OpenIZ.Core.Model, Version=1.0.0.0"
