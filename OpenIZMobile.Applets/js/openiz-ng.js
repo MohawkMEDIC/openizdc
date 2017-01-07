@@ -396,6 +396,8 @@ angular.module('openiz', [])
                                 retVal += OpenIZ.Util.renderName(selection.name.OfficialRecord);
                             else if (selection.name != null && selection.name.Assigned != null)
                                 retVal += OpenIZ.Util.renderName(selection.name.Assigned);
+                            else if (selection.name != null && selection.name.$other != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.$other);
                             else if (selection.element !== undefined)
                                 retVal += selection.element.innerText;
                             else if (selection.text)
@@ -423,6 +425,9 @@ angular.module('openiz', [])
                             else if (result.name != null && result.name.Assigned)
                                 return "<div class='label label-default'>" +
                                     result.$type + "</div> " + OpenIZ.Util.renderName(result.name.Assigned)
+                            else if (result.name != null && result.name.$other)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.$other)
                             else
                                 return result.text;
                         }

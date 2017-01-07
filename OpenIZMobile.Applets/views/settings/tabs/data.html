@@ -41,14 +41,14 @@
     <div class="form-group" ng-if="config.data.mode == 'sync'">
         <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}:</label>
         <div class="col-sm-10">
-            <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
-                <option value="onstart">On Startup</option>
-                <option value="onclose">On Close</option>
-                <option value="oncommit">On Commit</option>
+            <select class="form-control" multiple="multiple" ng-model="config.data.sync.event">
+                <option value="onstart">{{ 'locale.settings.pollEvent.start' | i18n }}</option>
+                <option value="onchange">{{ 'locale.settings.pollEvent.network' | i18n }}</option>
+                <option value="oncommit">{{ 'locale.settings.pollEvent.commit' | i18n }}</option>
             </select>
         </div>
     </div>
-    <div class="form-group" ng-if="config.data.mode == 'sync'">
+    <div class="form-group" ng-if="config.data.mode == 'sync' &amp;&amp; config.realmName != null">
         <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}:</label>
         <div class="col-sm-10">
             <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
@@ -58,6 +58,14 @@
                 <option value="00:30:00">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
                 <option value="00:00:00">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
                 <option value="00:00:00">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group" ng-if="config.data.mode == 'sync'">
+        <label class="control-label col-sm-2">{{ 'locale.settings.subscribe' | i18n }}:</label>
+        <div class="col-sm-10">
+            <select multiple="multiple" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="config.data.sync.subscribe" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                <option value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
             </select>
         </div>
     </div>
