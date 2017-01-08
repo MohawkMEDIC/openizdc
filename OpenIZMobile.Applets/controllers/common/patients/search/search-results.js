@@ -32,6 +32,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search = scope.search || {};
     scope.search.query = scope.search.query || {};
     scope.search.results = null;
+    scope.search.mode = 0;
     scope.search.paging = scope.search.paging || {size: 10};
     scope.act = {};
 
@@ -70,11 +71,15 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     /** 
      * @summary Advances to the next set of results
      */
-    function search(nonInteractive) {
-        if (!nonInteractive) OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
+    function search(onlineOnly) {
+        
+        if (onlineOnly)
+            scope.search.query["_onlineOnly"] = onlineOnly;
+        else
+            delete (scope.search.query["_onlineOnly"]);
         scope.search.query["_offset"] = 0;
         scope.search.query["_count"] = scope.search.paging.size;
-
+        scope.search.isSearching = true;
         OpenIZ.Patient.findAsync({
             query: scope.search.query,
             continueWith: function (r) {
@@ -94,7 +99,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                scope.search.isSearching = false;
+
             }
         });
 

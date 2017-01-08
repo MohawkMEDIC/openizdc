@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-7-8
  */
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Roles;
@@ -40,6 +41,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
 		/// </summary>
 		private IDataPersistenceService<Patient> m_persistenceService;
+		private IIntegrationService m_integration;
 
         /// <summary>
         /// Internal reference to the bre service
@@ -52,6 +54,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		public LocalPatientService()
 		{
 			ApplicationContext.Current.Started += (o, e) => {
+                this.m_integration = ApplicationContext.Current.GetService<IIntegrationService>();
                 this.m_persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 this.m_breService = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
             };
@@ -70,6 +73,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			}
 
 			var results = this.m_persistenceService.Query(predicate);
+           
             results = this.m_breService?.AfterQuery(results) ?? results;
             return results;
 		}
@@ -90,6 +94,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			}
 
 			var results = m_persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
+            
             results = this.m_breService?.AfterQuery(results) ?? results;
             return results;
 		}
@@ -108,6 +113,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			}
 
 			var result = m_persistenceService.Get(id);
+            
             result = this.m_breService?.AfterRetrieve(result) ?? result;
             return result;
 		}

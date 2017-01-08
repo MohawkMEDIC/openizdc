@@ -39,6 +39,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         public SynchronizationConfigurationSection()
         {
             this.SynchronizationResources = new List<SynchronizationResource>();
+            this.Facilities = new List<string>();
         }
 
         /// <summary>
@@ -69,8 +70,14 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// <summary>
         /// Gets or sets the list of synchronization queries
         /// </summary>
-        [XmlElement("sync")]
+        [XmlElement("sync"), JsonProperty("sync")]
         public List<SynchronizationResource> SynchronizationResources { get; set; }
+
+        /// <summary>
+        /// Subscription
+        /// </summary>
+        [XmlElement("subscribe"), JsonProperty("subscribe")]
+        public List<String> Facilities { get; set; }
     }
 
     /// <summary>

@@ -138,6 +138,8 @@ namespace Minims
                 retVal.m_configurationManager = new MiniConfigurationManager(MiniConfigurationManager.GetDefaultConfiguration());
                
                 ApplicationContext.Current = retVal;
+                ApplicationServiceContext.Current = ApplicationContext.Current;
+
                 retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext));
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
@@ -146,7 +148,7 @@ namespace Minims
                 foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                     try
                     {
-                        if (!Directory.Exists(appletDir) || !File.Exists(Path.Combine(appletDir, "Manifest.xml")))
+                        if (!Directory.Exists(appletDir) || !File.Exists(Path.Combine(appletDir, "manifest.xml")))
                             continue;
 
                         retVal.m_tracer.TraceInfo("Loading applet {0}", appletDir);
@@ -207,7 +209,7 @@ namespace Minims
                     foreach (var appletDir in consoleParms.AppletDirectories)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                         try
                         {
-                            if (!Directory.Exists(appletDir) || !File.Exists(Path.Combine(appletDir, "Manifest.xml")))
+                            if (!Directory.Exists(appletDir) || !File.Exists(Path.Combine(appletDir, "manifest.xml")))
                                 continue;
 
                             retVal.m_tracer.TraceInfo("Loading applet {0}", appletDir);
@@ -305,8 +307,8 @@ namespace Minims
         public override void LoadApplet(AppletManifest applet)
         {
             var baseDirectory = this.m_appletBaseDir[applet];
-            if (!baseDirectory.EndsWith("\\"))
-                baseDirectory += "\\";
+            if (!baseDirectory.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                baseDirectory += Path.DirectorySeparatorChar.ToString();
             applet.Assets.AddRange(this.ProcessDirectory(baseDirectory, baseDirectory));
             applet.Initialize();
             base.LoadApplet(applet);

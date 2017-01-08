@@ -20,10 +20,14 @@
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Query;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Security;
+using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
@@ -38,6 +42,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     /// </summary>
     public partial class ImsiService
     {
+        public Guid? ActParticipationKeys { get; private set; }
 
         /// <summary>
         /// Creates an act.
@@ -82,7 +87,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                        count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
                 IEnumerable<Act> results = null;
-                if (actRepositoryService is IPersistableQueryProvider)
+                if (search.ContainsKey("_onlineOnly") && search["_onlineOnly"][0] == "true")
+                {
+                    var integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+                    var bundle = integrationService.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count);
+                    totalResults = bundle.TotalResults;
+                    bundle.Reconstitute();
+                    bundle.Item.OfType<Act>().ToList().ForEach(o => o.Tags.Add(new ActTag("onlineResult", "true")));
+                    results = bundle.Item.OfType<Act>();
+
+                }
+                else if (actRepositoryService is IPersistableQueryProvider)
                 {
                     results = (actRepositoryService as IPersistableQueryProvider).Query<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
                 }
@@ -153,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if (act.Key == actKey && act.VersionKey == actVersionKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
-                    if(act.ObsoletionTime == null)
+                    if (act.ObsoletionTime == null)
                     {
                         return actRepositoryService.Save(act);
                     }

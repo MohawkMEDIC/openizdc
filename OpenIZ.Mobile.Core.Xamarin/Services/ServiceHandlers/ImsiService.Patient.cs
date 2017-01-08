@@ -32,6 +32,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -85,18 +86,32 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+            var integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
 
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
                 //MemoryCache.Current.RemoveObject(typeof(Patient), Guid.Parse(search["_id"].FirstOrDefault()));
-                var patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                // Filtes
+                Patient patient = null;
+                if (search.ContainsKey("_onlineOnly"))
+                {
+                    patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null);
+                    // Add this to the cache
+                    ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
+                    patient.Tags.Add(new EntityTag("onlineResult", "true"));
+                }
+                else
+                    patient = patientService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+
+                if (patient == null)
+                    throw new FileNotFoundException();
+
                 return patient;
             }
             else
             {
-
-
+                
                 int totalResults = 0,
                     offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                     count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
@@ -109,25 +124,70 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
 
-
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
                     // Filtes
-                    var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
-                    retVal = fts.Search<Patient>(values.ToArray(), offset, count, out totalResults);
+                    if (search.ContainsKey("_onlineOnly"))
+                    {
+                        String[] tryFields = { "identifier.value", "name.component.value", "relationship[Mother].target.name.component.value" };
+
+                        Bundle bundle = new Bundle();
+                        int tryField = 0;
+                        // Created predicate for value
+                        while (bundle.TotalResults == 0 && tryField < tryFields.Length)
+                        {
+                            var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(
+                                new NameValueCollection() {
+                                    { tryFields[tryField++] , values }
+                                }
+                            );
+                            bundle = integrationService.Find(predicate, offset, count);
+                        }
+
+                        // Now compose bundle
+                        if (bundle != null && bundle.TotalResults > 0)
+                        {
+                            totalResults = bundle.TotalResults;
+                            bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
+                            bundle.Reconstitute();
+                            retVal = bundle.Item.OfType<Patient>();
+                        }
+                    }
+                    else
+                    {
+                        var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
+                        retVal = fts.Search<Patient>(values.ToArray(), offset, count, out totalResults);
+                    }
+
                     search.Remove("any");
                     search.Remove("any[]");
                 }
 
+                // There is additional filter parameters
                 if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
                 {
                     var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
                     this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
-                    var tret = patientService.Find(predicate, offset, count, out totalResults);
-                    if (retVal == null)
-                        retVal = tret;
+                    if (search.ContainsKey("_onlineOnly"))
+                    {
+                        var bundle = integrationService.Find(predicate, offset, count);
+                        totalResults = bundle.TotalResults;
+                        bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
+                        bundle.Reconstitute();
+                        if (retVal == null)
+                            retVal = bundle.Item.OfType<Patient>();
+                        else
+                            retVal = retVal.OfType<IIdentifiedEntity>().Intersect(bundle.Item.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Patient>();
+                    }
                     else
-                        retVal = retVal.OfType<IIdentifiedEntity>().Intersect(tret.OfType<IIdentifiedEntity>(), new KeyComparer()).OfType<Patient>();
+                    {
+                        if(retVal != null)
+                            retVal = retVal.Where(predicate.Compile());
+                        else
+                        {
+                            retVal = patientService.Find(predicate, offset, count, out totalResults);
+                        }
+                    }
                 }
 
                 // Serialize the response

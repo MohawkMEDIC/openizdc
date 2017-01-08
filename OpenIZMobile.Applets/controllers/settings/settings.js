@@ -94,7 +94,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                             doJoin(true);
                         else {
                             if (error.message != null)
-                                console.log(error.message);
+                                alert(error.message);
                             else
                                 console.log(error);
                         }

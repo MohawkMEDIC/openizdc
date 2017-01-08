@@ -56,9 +56,9 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
             },
             onException: function(error) {
                 if(error.error != null)
-                    console.log(error.error);
+                    alert(error.error);
                 else if(error.message != null)
-                    console.log(error.message);
+                    alert(error.message);
                 else
                     console.log(error);
             }

@@ -240,6 +240,7 @@
     <string key="locale.settings.useProxyDescription">Select this option to proxy all requests sent from the mobile device through an HTTP proxy.</string>
     <string key="locale.settings.proxyAddress">Proxy Address</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
+    <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Change Password</string>
     <string key="locale.preferences.username">Username</string>

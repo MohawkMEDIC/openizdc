@@ -18,6 +18,7 @@
  * Date: 2016-10-11
  */
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,11 @@ namespace OpenIZ.Mobile.Core.Services
 		/// Gets or sets the timeout
 		/// </summary>
 		public int? Timeout { get; set; }
+
+        /// <summary>
+        /// Gets or sets the infrastructure options
+        /// </summary>
+        public NameValueCollection InfrastructureOptions { get; set; }
 
         /// <summary>
         /// Lean

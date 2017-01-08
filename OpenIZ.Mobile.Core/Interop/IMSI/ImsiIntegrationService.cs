@@ -127,15 +127,18 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 client.Client.Requesting += (o, e) =>
                 {
                     if (options == null) return;
-                    else if (options.IfModifiedSince.HasValue)
-                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options.IfModifiedSince.Value.ToString();
-                    else if (!String.IsNullOrEmpty(options.IfNoneMatch))
-                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options.IfNoneMatch;
-                    if (options.Lean)
+                    else if (options?.IfModifiedSince.HasValue == true)
+                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options?.IfModifiedSince.Value.ToString();
+                    else if (!String.IsNullOrEmpty(options?.IfNoneMatch))
+                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
+                    if (options?.Lean == true)
                         e.Query.Add("_lean", "true");
+                    if (options?.InfrastructureOptions?.Count > 0)
+                        foreach (var inf in options?.InfrastructureOptions)
+                            e.Query.Add(inf.Key, inf.Value);
                 };
                 client.Client.Credentials = this.GetCredentials(client.Client);
-                if (options.Timeout.HasValue)
+                if (options?.Timeout.HasValue == true)
                     client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
 
                 this.m_tracer.TraceVerbose("Performing IMSI query ({0}):{1}", typeof(TModel).FullName, predicate);
@@ -184,10 +187,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 client.Client.Requesting += (o, e) =>
                 {
                     if (options == null) return;
-                    else if (options.IfModifiedSince.HasValue)
-                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options.IfModifiedSince.Value.ToString();
-                    else if (!String.IsNullOrEmpty(options.IfNoneMatch))
-                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options.IfNoneMatch;
+                    else if (options?.IfModifiedSince.HasValue == true)
+                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options?.IfModifiedSince.Value.ToString();
+                    else if (!String.IsNullOrEmpty(options?.IfNoneMatch))
+                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
                 };
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 this.m_tracer.TraceVerbose("Performing IMSI GET ({0}):{1}v{2}", typeof(TModel).FullName, key, versionKey);

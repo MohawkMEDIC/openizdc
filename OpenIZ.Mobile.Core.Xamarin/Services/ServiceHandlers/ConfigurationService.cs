@@ -51,6 +51,8 @@ using OpenIZ.Mobile.Core.Security.Remote;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Caching;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -165,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     break;
                 case "offline":
-                    
+
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalIdentityService).AssemblyQualifiedName);
@@ -183,7 +185,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
-                    // TODO: Customize this
+                    // TODO: Customize this and clean it up ... It is very hackish
                     foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient", "Act" })
                     {
                         var syncSetting = new SynchronizationResource()
@@ -193,9 +195,58 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
 
-                        var efield = typeof(EntityClassKeys).GetField(res);
-                        if (efield != null && res != "Place")
-                            syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
+
+
+                        // Subscription
+                        if (optionObject["data"]["sync"]["subscribe"] == null)
+                        {
+                            var efield = typeof(EntityClassKeys).GetField(res);
+
+                            if (efield != null && res != "Place")
+                                syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
+                        }
+                        else
+                        { // Only interested in a few facilities
+                            foreach (var itm in optionObject["data"]["sync"]["subscribe"].Values<String>())
+                            {
+                                if (!syncConfig.Facilities.Contains(itm))
+                                    syncConfig.Facilities.Add(itm);
+
+                                switch (res)
+                                {
+                                    case "UserEntity":
+                                        if (syncSetting.Filters.Count == 0)
+                                            syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        break;
+                                    case "Patient":
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        break;
+                                    case "Act":
+                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        break;
+                                    case "Place":
+                                        if (syncSetting.Filters.Count == 0)
+                                        {
+                                            syncSetting.Filters.Add("id=!" + itm + "&classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
+                                            syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                        }
+                                        syncSetting.Filters.Add("id=" + itm + "&_expand=relationship");
+                                        break;
+                                    case "Material":
+                                        if (syncSetting.Filters.Count == 0)
+                                            syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Material);
+                                        break;
+                                    case "ManufacturedMaterial":
+                                        if (syncSetting.Filters.Count == 0)
+                                            syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ManufacturedMaterial);
+                                        break;
+                                }
+
+                            }
+                        }
+
                         // Assignable from
                         if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
                         {
@@ -257,8 +308,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
-            
-            return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration) ;
+
+            return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
         }
 
         /// <summary>
@@ -385,6 +436,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
+
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Guid.NewGuid().ToString().Replace("-", "");
 
                 // Create the necessary device user
@@ -392,7 +444,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 {
                     AmiServiceClient amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     // Create application user
-                    var role = amiClient.GetRoles(o=>o.Name == "SYNCHRONIZERS").CollectionItem.First();
+                    var role = amiClient.GetRoles(o => o.Name == "SYNCHRONIZERS").CollectionItem.First();
 
 
                     // Does the user actually exist?
@@ -414,7 +466,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
-                            UserClass = UserClassKeys.ApplictionUser, 
+                            UserClass = UserClassKeys.ApplictionUser,
                             SecurityHash = Guid.NewGuid().ToString()
                         })
                         {
@@ -426,7 +478,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         });
 
                     // TODO: Generate the CSR
-                    
+
                     // Lookup sync role
                     var existingDevice = amiClient.GetDevices(o => o.Name == deviceName);
                     if (existingDevice.CollectionItem.Count == 0)
@@ -453,14 +505,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     else
                         ; // TODO: Update
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     this.m_tracer.TraceError("Error registering device account: {0}", e);
                     throw;
                 }
                 return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
             }
-            catch(PolicyViolationException ex)
+            catch (PolicyViolationException ex)
             {
                 this.m_tracer.TraceWarning("Policy violation exception on {0}. Will attempt again", ex.Demanded);
                 // Only configure the minimum to contact the realm for authentication to continue
@@ -481,7 +533,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     "RS256",
                     "HS256"
                 };
-                
+
                 String oauthUri = String.Format("http://{0}:8080/auth", realmUri),
                                         amiUri = String.Format("http://{0}:8080/ami", realmUri);
 

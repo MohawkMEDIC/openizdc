@@ -219,7 +219,9 @@ namespace OpenIZ.Mobile.Core.Android
 
                 retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
 				ApplicationContext.Current = retVal;
-				retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
+                ApplicationServiceContext.Current = ApplicationContext.Current;
+
+                retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
                 retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 				retVal.Start();
 				return true;
