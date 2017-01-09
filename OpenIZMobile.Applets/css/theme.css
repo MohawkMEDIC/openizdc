@@ -783,10 +783,17 @@ body{
 }
 .vis-item .vis-item-content {
     padding: 7px 15px;
-    background: #007fd1;
+    /*background: #007fd1;*/
     color: white;
     border-radius: 0;
     border: none;
+}
+
+.vis-proposal{
+    background: #007fd1;
+}
+.vis-event{
+    background: #5cb85c; 
 }
 .vis-panel.vis-bottom{
     border:none;
