@@ -155,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(AndroidNetworkInformationService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
-                    typeof(ProtocolWatchService).AssemblyQualifiedName,
+                    typeof(CarePlanManagerService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,
                     typeof(MemoryCacheService).AssemblyQualifiedName,

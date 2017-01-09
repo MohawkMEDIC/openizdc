@@ -19,7 +19,6 @@
  -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
-        
         <div class="header-dock" ng-class="patientViewScrollHeight > 55 ? 'static-dock' : 'row'">
             <div class="col-xs-12">
                 <div class="col-xs-10" ng-if="patientViewScrollHeight > 55">
@@ -124,6 +123,11 @@
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
                                 <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})">
                                     <span class="glyphicon glyphicon-scale margin-right-10"></span> {{ 'locale.patient.tabs.weight' | i18n }}
+                                </a>
+                            </li>
+                            <li role="presentation" ng-if="!patient.tag.onlineResult">
+                                <a ng-click="patientEdit.appointment()">
+                                    <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">

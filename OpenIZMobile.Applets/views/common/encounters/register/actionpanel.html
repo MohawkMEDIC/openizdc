@@ -28,7 +28,7 @@
                             <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
                         </div>
                         <div class="col-xs-1 flex-item-center" >
-                            <button type="button" class="btn btn-icon" ng-if="$index > 0" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
+                            <button type="button" class="btn btn-icon" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </div>
                     <div class="row" ng-if="!act._created">
@@ -37,6 +37,11 @@
                         </div>
                     </div>
                 </div>
+            </td>
+        </tr>
+        <tr ng-if="encounter.relationship.HasComponent.length == 0">
+            <td>
+                {{ 'locale.encounter.noactions' | i18n }}
             </td>
         </tr>
     </table>

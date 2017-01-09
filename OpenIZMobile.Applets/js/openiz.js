@@ -859,7 +859,7 @@ var OpenIZ = OpenIZ || {
          * @summary Changes the specified date string into an appropriate ISO string
          * @memberof OpenIZ.Util
          * @method
-         * @param {String} date The date to be formatted
+         * @param {Date} date The date to be formatted
          * @return {string} A DATE as an ISO String only
          */
         toDateInputString: function (date) {
@@ -2679,6 +2679,14 @@ $(document).ajaxError(function (e, data, setting, err) {
 Date.prototype.getWeek = function () {
     var oneJan = this.getFirstDayOfYear();
     return Math.ceil((((this - oneJan) / 86400000) + oneJan.getDay() + 1) / 7);
+}
+
+/**
+ * @method
+ * @summary Get the week of the year
+ */
+Date.prototype.getUTC = function () {
+    return new Date(this.toUTCString());
 }
 
 /** 

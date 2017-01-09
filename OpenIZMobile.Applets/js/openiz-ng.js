@@ -202,11 +202,14 @@ angular.module('openiz', [])
                     var watchTargetString = $(element).attr('data-watch-target');
                     var displayString = $(element).attr('data-display');
                     var dataKey = $(element).attr('data-key');
+                    var modelBinding = $(element).attr('ng-model');
 
                     var filter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    if(!filter.statusConcept)
+                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     var bind = function ()
                     {
@@ -221,6 +224,8 @@ angular.module('openiz', [])
                             },
                             continueWith: function (data)
                             {
+                                var currentValue = $(element).val();
+
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
                                 options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
@@ -241,6 +246,14 @@ angular.module('openiz', [])
                                         options[options.length] = new Option(text, data.item[i].id);
                                     else
                                         options[options.length] = new Option(text, eval(dataKey));
+
+                                    
+                                    
+                                }
+
+                                // Strip and bind select
+                                if(currentValue && currentValue.indexOf("? string:") == 0) {
+                                    $(element).val(currentValue.substring(9, currentValue.length - 2));
                                 }
                             }
                         });

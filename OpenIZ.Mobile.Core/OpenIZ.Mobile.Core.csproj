@@ -88,7 +88,7 @@
     <Compile Include="Exceptions\InvalidVersionException.cs" />
     <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
-    <Compile Include="Protocol\ProtocolWatchService.cs" />
+    <Compile Include="Protocol\CarePlanManagerService.cs" />
     <Compile Include="Search\Model\SearchEntityType.cs" />
     <Compile Include="Search\Model\SearchTerm.cs" />
     <Compile Include="Search\Model\SearchTermEntity.cs" />
@@ -291,4 +291,5 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

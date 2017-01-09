@@ -17,10 +17,7 @@
           "mnemonic": "DrugNonAllergyIntolerance"
         },
         "actTime": "{{now}}",
-        "valueModel": { // valueModel will be the concept which is the drug to which the person is allergic to or nullflavor unknown 70fe34ce-caff-4f46-b6e6-9cd6d8f289d6
-          "id": "70fe34ce-caff-4f46-b6e6-9cd6d8f289d6",
-          "mnemonic": "NullFlavor-Unknown"
-        },
+        "value": "70fe34ce-caff-4f46-b6e6-9cd6d8f289d6",
         "relationship": {
           "HasManifestation": { // Where we record the manifestation of the allergy
             "targetModel": {
@@ -29,6 +26,7 @@
               "moodConcept": "EC74541F-87C4-4327-A4B9-97F325501747",
               "typeConceptModel": "10a0fb51-687d-41ec-8d50-ad6549e2ae58", // TODO: Look this up
               "statusConcept": "afc33800-8225-4061-b168-bacc09cdbae3",
+              "startTime" :  "{{now}}",
               "value": null
             }
           },

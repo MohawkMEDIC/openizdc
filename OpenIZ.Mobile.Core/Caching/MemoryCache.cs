@@ -188,7 +188,7 @@ namespace OpenIZ.Mobile.Core.Caching
 
                         }
             }
-            else if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
+            else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
                 this.RegisterCacheType(data.GetType());
 
         }

@@ -46,6 +46,30 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
 
     };
 
+    /**
+     * Bind a relationship model
+     * @param {OpenIZModel.Act} act
+     */
+    scope.bindRelationship = function (act, relationshipType, targetId, final) {
+
+        OpenIZ.Act.findAsync({
+            query: { "_id": targetId },
+            continueWith: function (targetAct) {
+
+                act.relationship = act.relationship || {};
+                act.relationship[relationshipType] = new OpenIZModel.ActRelationship({
+                    relationshipType: OpenIZModel.ActRelationshipTypeKeys[relationshipType],
+                    targetModel: targetAct,
+                    target: targetId,
+                    source: act.id
+                });
+                eval(final);
+
+                $scope.$apply();
+            }
+        })
+    }
+
     /** 
      * Delete sub-encounter
      */

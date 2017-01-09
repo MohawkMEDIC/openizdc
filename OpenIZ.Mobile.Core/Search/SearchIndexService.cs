@@ -172,12 +172,9 @@ namespace OpenIZ.Mobile.Core.Search
                     var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
                     var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();
                     conn.InsertAll(inserting);
-#if DEBUG
                     this.m_tracer.TraceVerbose("{0}", e);
                     foreach (var itm in existing.Union(inserting))
                         this.m_tracer.TraceVerbose("\t+{0}", itm.Term);
-#endif
-
                     // Now match tokens with this 
                     conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
                     conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());

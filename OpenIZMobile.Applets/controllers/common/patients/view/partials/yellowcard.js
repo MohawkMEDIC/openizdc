@@ -58,8 +58,10 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                     var participation = newEncounters[ptcpt];
                     if (participation.$type != 'PatientEncounter')
                         acts.push(participation);
-                    else
+                    else if (participation.relationship && participation.relationship.HasComponent)
                         acts = $.map(participation.relationship.HasComponent, function (e) { return e.targetModel; });
+                    else
+                        acts.push(participation);
 
                     for (var act in acts) {
 

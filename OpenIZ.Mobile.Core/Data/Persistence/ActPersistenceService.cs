@@ -89,13 +89,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance as DbAct;
+
             switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {
                 case ControlAct:
                     return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Condition:
                 case Observation:
 		            var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
 

@@ -144,7 +144,7 @@ namespace Minims
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
-                    typeof(ProtocolWatchService).AssemblyQualifiedName,
+                    typeof(CarePlanManagerService).AssemblyQualifiedName,
                     typeof(BusinessRulesDaemonService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(MiniImsServer).AssemblyQualifiedName,

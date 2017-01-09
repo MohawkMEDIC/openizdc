@@ -239,13 +239,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
 			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
-
-			if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
-			{
+            var currentLocation = currentUserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
+            // Set authororiginator
+            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
-			}
+            // Set location if not done
+            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation|| o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
+                data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.Key));
 
-			return data;
+            return data;
 		}
 	}
 }

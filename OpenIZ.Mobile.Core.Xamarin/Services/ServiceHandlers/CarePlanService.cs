@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
     {
 
         private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanService));
-
+        
         /// <summary>
         /// Gets the specified forecast
         /// </summary>
@@ -75,10 +75,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 p.Participations = acts.Select(a=>new ActParticipation(ActParticipationKey.RecordTarget, p) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
 
             }
+
+            // As appointments
+            bool asAppointments = search.ContainsKey("_appointments") && search["_appointments"][0] == "true";
+
             var protocolService = ApplicationContext.Current.GetService<ICarePlanService>();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var plan = new List<Act>(protocolService.CreateCarePlan(p));
+            var plan = new List<Act>(protocolService.CreateCarePlan(p, asAppointments));
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
             // Instructions?
