@@ -18,13 +18,23 @@
  - Date: 2016-7-17
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.14.*">
+  <info id="org.openiz.core" version="0.6.17.*">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
   <startup>~/index.html</startup>
-  
+
+  <viewModel key="base">
+    <definition>/org.openiz.core/views/viewmodel/base.xml</definition>
+  </viewModel>
+  <viewModel key="min">
+    <definition>/org.openiz.core/views/viewmodel/min.xml</definition>
+  </viewModel>
+  <viewModel key="full">
+    <definition>/org.openiz.core/views/viewmodel/full.xml</definition>
+  </viewModel>
+
   <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.0</oid>

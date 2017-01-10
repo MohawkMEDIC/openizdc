@@ -2069,7 +2069,8 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 query: {
-                    _id: controlData.id || controlData.patientId
+                    _id: controlData.id || controlData.patientId,
+                    _viewModel: "full"
                 },
                 state: controlData.state
             });
