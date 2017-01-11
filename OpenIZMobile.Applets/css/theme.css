@@ -2,6 +2,11 @@
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
 
+.ellipsis{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 
 select{
     -webkit-appearance: none;
@@ -338,6 +343,9 @@ body{
     background: #f6f8ff;
     overflow-x: hidden;
 }
+.bold{
+    font-weight:600;
+}
 .panel-default > .patient-panel {
     background-color: #007FD1;
     color: #fff;
@@ -410,6 +418,13 @@ body{
 .margin-bottom-10{
     margin-bottom:10px;
 }
+
+.no-wrap{
+    white-space:nowrap;
+}
+
+
+
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
@@ -533,6 +548,7 @@ body{
     padding-top: 3px;
     position: absolute;
     font-size: 18px;
+    right:9px;
  }
  .stock-tile-button-row{
     height:auto;
@@ -571,6 +587,14 @@ body{
     top:15px;
 }
 
+
+
+ /**Vaccinations */
+
+.vaccinations-tile{
+    background:white;
+    margin-bottom:5px;
+}
 
 /**Header dock*/
 
@@ -806,10 +830,17 @@ body{
 }
 .vis-item .vis-item-content {
     padding: 7px 15px;
-    background: #007fd1;
+    /*background: #007fd1;*/
     color: white;
     border-radius: 0;
     border: none;
+}
+
+.vis-proposal{
+    background: #007fd1;
+}
+.vis-event{
+    background: #5cb85c; 
 }
 .vis-panel.vis-bottom{
     border:none;

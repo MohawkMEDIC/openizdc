@@ -232,5 +232,13 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             MemoryCache.Current.AddUpdateEntry(data);
         }
+
+        /// <summary>
+        /// Remove
+        /// </summary>
+        public void Remove(Type tdata, Guid key)
+        {
+            MemoryCache.Current.RemoveObject(tdata, key);
+        }
     }
 }

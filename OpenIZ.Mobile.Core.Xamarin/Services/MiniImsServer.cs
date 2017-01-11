@@ -102,9 +102,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
-                this.m_serializer = new JsonViewModelSerializer();
-                this.m_serializer.ViewModel = this.m_defaultViewModel;
-                this.m_serializer.LoadSerializerAssembly(typeof(OpenIZ.Core.Model.Json.Formatter.ActExtensionViewModelSerializer).Assembly);
+                this.m_serializer = this.CreateSerializer(null);
 
                 // Scan for services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
@@ -181,6 +179,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_tracer.TraceError("Error starting IMS : {0}", ex);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Create the specified serializer
+        /// </summary>
+        private JsonViewModelSerializer CreateSerializer(ViewModelDescription viewModelDescription)
+        {
+            var retVal = new JsonViewModelSerializer();
+            retVal.ViewModel = viewModelDescription ?? this.m_defaultViewModel;
+            retVal.LoadSerializerAssembly(typeof(OpenIZ.Core.Model.Json.Formatter.ActExtensionViewModelSerializer).Assembly);
+            return retVal;
         }
 
         /// <summary>
@@ -357,7 +366,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                                     using (StreamWriter sw = new StreamWriter(response.OutputStream))
                                     {
-                                        this.m_serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
+                                        if(request.QueryString["_viewModel"] != null)
+                                        {
+                                            var viewModelDescription = XamarinApplicationContext.Current.LoadedApplets.GetViewModelDescription(request.QueryString["_viewModel"]);
+                                            var serializer = this.m_serializer;
+                                            if(viewModelDescription != null)
+                                                serializer = this.CreateSerializer(viewModelDescription);
+                                            serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
+                                        }
+                                        else
+                                            this.m_serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
                                     }
                                 }
                                 else if(result != null)
