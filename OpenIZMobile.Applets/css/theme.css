@@ -548,6 +548,29 @@ body{
     font-size: 15px;
     margin-bottom:10px;
  }
+.ad-hoc-title{
+        font-weight: 600;
+    font-size: 18px;
+    color: white;
+    background: #5d8db1;
+    padding: 20px;
+    margin-bottom: 10px !important;
+}
+
+ 
+ /**History tab*/
+ .history-tile{
+     background:white;
+     margin:15px 0;
+     padding:10px;
+     position: relative;
+}
+.history-tile-status{
+    position: absolute;
+    right:15px;
+    top:15px;
+}
+
 
 /**Header dock*/
 
