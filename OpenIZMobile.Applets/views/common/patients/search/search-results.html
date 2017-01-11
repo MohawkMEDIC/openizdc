@@ -150,7 +150,7 @@
                         <div class="col-xs-3 search-tile-label">
                             {{ 'locale.patient.search.header.cityVillage' | i18n }}
                         </div>
-                        <div class="col-xs-9">
+                        <div class="col-xs-9 ellipsis">
                             {{ ::patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
                         </div>
                     </div>
