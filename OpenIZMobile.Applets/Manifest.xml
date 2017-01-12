@@ -34,6 +34,9 @@
   <viewModel key="full">
     <definition>/org.openiz.core/views/viewmodel/full.xml</definition>
   </viewModel>
+  <viewModel key="encounter">
+    <definition>/org.openiz.core/views/viewmodel/encounters.xml</definition>
+  </viewModel>
 
   <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
