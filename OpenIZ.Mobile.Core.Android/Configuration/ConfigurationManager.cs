@@ -50,6 +50,7 @@ using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -108,6 +109,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                         Name = "openIzQueue",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MessageQueue.sqlite")
                     },
+                    new ConnectionString () {
+                        Name = "openIzWarehouse",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.warehouse.sqlite")
+                    }
                 }
             };
 
@@ -151,6 +156,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalMaterialService).AssemblyQualifiedName,
                     typeof(LocalBatchService).AssemblyQualifiedName,
                     typeof(BusinessRulesDaemonService).AssemblyQualifiedName,
+                    typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(AndroidNetworkInformationService).AssemblyQualifiedName,

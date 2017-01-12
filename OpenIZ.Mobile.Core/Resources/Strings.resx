@@ -173,6 +173,9 @@
   <data name="locale_startingPoll" xml:space="preserve">
     <value>Initiating pull request...</value>
   </data>
+  <data name="locale_start_careplan" xml:space="preserve">
+    <value>Starting care plan manager service...</value>
+  </data>
   <data name="locale_sync" xml:space="preserve">
     <value>Downloading {0}s...</value>
   </data>

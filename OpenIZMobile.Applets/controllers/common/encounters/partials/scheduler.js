@@ -73,9 +73,16 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
                               }
                             );
                     $scope.appointment = $scope.appointments[0];
-                    $.each($scope.appointment.relationship.HasComponent, function (i, e) {
-                        e._enabled = true;
-                    });
+                    if (Array.isArray($scope.appointment.relationship.HasComponent))
+                        $.each($scope.appointment.relationship.HasComponent, function (i, e) {
+                            e._enabled = true;
+                        });
+                    else {
+                        $scope.appointment.relationship.HasComponent = [
+                            $scope.appointment.relationship.HasComponent
+                        ];
+                        $scope.appointment.relationship.HasComponent[0]._enabled = true;
+                    }
                 }
 
                 // Updates the scheduling assistant view

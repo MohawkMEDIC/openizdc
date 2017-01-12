@@ -217,6 +217,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Starting care plan manager service....
+        /// </summary>
+        internal static string locale_start_careplan {
+            get {
+                return ResourceManager.GetString("locale_start_careplan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Initiating pull request....
         /// </summary>
         internal static string locale_startingPoll {
