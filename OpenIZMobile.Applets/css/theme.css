@@ -423,8 +423,6 @@ body{
     white-space:nowrap;
 }
 
-
-
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
@@ -555,6 +553,13 @@ body{
     padding-top:5px;
  }
 
+ /**History*/
+ .encounter-group-title{
+     background:#146396;
+     padding: 1px 20px;
+     color: white;
+ }
+
  /**Vaccination queue*/
  .queue-tile{
     padding: 13px 15px 10px 15px;
@@ -577,7 +582,7 @@ body{
  /**History tab*/
  .history-tile{
      background:white;
-     margin:15px 0;
+     margin:10px 0;
      padding:10px;
      position: relative;
 }
@@ -589,7 +594,7 @@ body{
 
 
 
- /**Vaccinations */
+/**Vaccinations */
 
 .vaccinations-tile{
     background:white;
