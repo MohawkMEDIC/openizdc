@@ -45,6 +45,7 @@
       <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp" />
+    <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
@@ -75,6 +76,8 @@
       <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
@@ -146,5 +149,4 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Strings.sw.resx" />
   </ItemGroup>
-  <ItemGroup />
 </Project>

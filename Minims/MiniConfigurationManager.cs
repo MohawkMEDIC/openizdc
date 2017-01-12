@@ -24,6 +24,7 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;
@@ -100,6 +101,10 @@ namespace Minims
                         Name = "openIzQueue",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS","MessageQueue.sqlite")
                     },
+                    new ConnectionString () {
+                        Name = "openIzWarehouse",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "MINIMS","OpenIZ.warehouse.sqlite")
+                    }
                 }
             };
 
@@ -142,6 +147,7 @@ namespace Minims
                     typeof(LocalMaterialService).AssemblyQualifiedName,
                     typeof(LocalBatchService).AssemblyQualifiedName,
                     typeof(LocalActService).AssemblyQualifiedName,
+                    typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,

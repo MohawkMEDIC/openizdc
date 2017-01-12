@@ -17,16 +17,21 @@
  * User: justi
  * Date: 2016-10-11
  */
+using OpenIZ.Core.Data.Warehouse;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Services;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,6 +43,13 @@ namespace OpenIZ.Mobile.Core.Protocol
     /// </summary>
     public class CarePlanManagerService : IDaemonService
     {
+
+        // Warehouse service
+        private IAdHocDatawarehouseService m_warehouseService;
+
+        // Tracer
+        private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanManagerService));
+
         /// <summary>
         /// True when running
         /// </summary>
@@ -74,24 +86,107 @@ namespace OpenIZ.Mobile.Core.Protocol
         {
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+            this.m_tracer.TraceInfo("Starting care plan manager / warehousing service...");
+
             // Application context has started
             ApplicationContext.Current.Started += (ao, ae) =>
             {
+                ApplicationContext.Current.SetProgress(Strings.locale_start_careplan, 0);
+
+                // Warehouse service
+                this.m_warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                foreach (var cp in ApplicationContext.Current.GetService<ICarePlanService>().Protocols)
+                    this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
+                // Deploy schema?
+                if (this.m_warehouseService.GetDatamart("oizcp") == null)
+                {
+                    this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
+                    var dm = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
+                    this.m_tracer.TraceVerbose("Datamart {0} created", dm.Id);
+                }
+
                 // Subscribe to persistence
                 var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 if (patientPersistence != null)
                 {
+                    patientPersistence.Inserted += (o, e) => this.UpdateCarePlan(e.Data);
+                    patientPersistence.Updated += (o, e) => this.UpdateCarePlan(e.Data);
+                    patientPersistence.Obsoleted += (o, e) =>
+                    {
+                        var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                        var dataMart = warehouseService.GetDatamart("oizcp");
+                        warehouseService.Delete(dataMart.Id, new { patient_id = e.Data.Key.Value });
+                    };
+
                 }
 
                 // Subscribe to acts
-                var actPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
-                if (actPersistence != null)
+                var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+                if (bundlePersistence != null)
                 {
+                    bundlePersistence.Inserted += (o, e) =>
+                    {
+                        foreach (var i in e.Data.Item.OfType<Patient>())
+                            this.UpdateCarePlan(i);
+                    };
+                    bundlePersistence.Updated += (o, e) =>
+                    {
+                        foreach (var i in e.Data.Item.OfType<Patient>())
+                            this.UpdateCarePlan(i);
+                    };
+                    bundlePersistence.Obsoleted += (o, e) =>
+                    {
+                        var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                        var dataMart = warehouseService.GetDatamart("oizcp");
+                        foreach (var i in e.Data.Item.OfType<Patient>())
+                            warehouseService.Delete(dataMart.Id, new { patient_id = i.Key.Value });
+                    };
+
                 }
 
             };
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Update the care plan for the specified patient
+        /// </summary>
+        private void UpdateCarePlan(Patient p)
+        {
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((d) =>
+            {
+                var data = d as Patient;
+
+                data.Participations = new List<ActParticipation>(data.Participations);
+                this.m_tracer.TraceVerbose("Calculating care plan for {0}", data.Key);
+
+                // First, we clear the warehouse
+                var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                var dataMart = warehouseService.GetDatamart("oizcp");
+                warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
+                var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
+
+                // Now calculate
+                var carePlan = careplanService.CreateCarePlan(data, false);
+                var warehousePlan = carePlan.Select(o => new
+                {
+                    creation_date = DateTime.Now,
+                    patient_id = data.Key.Value,
+                    location_id = data.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
+                    act_id = o.Key.Value,
+                    class_id = o.ClassConceptKey.Value,
+                    type_id = o.TypeConceptKey.Value,
+                    protocol_id = o.Protocols.FirstOrDefault()?.ProtocolKey,
+                    min_date = o.StartTime?.DateTime,
+                    max_date = o.StopTime?.DateTime,
+                    act_date = o.ActTime.DateTime,
+                    product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value
+                });
+
+                // Insert plans
+                warehouseService.Add(dataMart.Id, warehousePlan);
+            }, p.Clone());
         }
 
         /// <summary>
