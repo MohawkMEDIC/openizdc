@@ -23,6 +23,9 @@ using OpenIZ.Core.Model;
 using System.Collections.Generic;
 using System.Reflection;
 using SQLite.Net.Attributes;
+using System.Xml.Serialization;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace OpenIZ.Mobile.Core.Synchronization.Model
 {
@@ -52,14 +55,35 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 	/// <summary>
 	/// The message queue represents outbound or inbound data requests found by the sync service
 	/// </summary>
+    [JsonObject(nameof(SynchronizationQueueEntry)), XmlType(nameof(SynchronizationQueueEntry), Namespace = "http://openiz.org/queue")]
 	public abstract class SynchronizationQueueEntry  
 	{
+
+        /// <summary>
+        /// Serialization ctor
+        /// </summary>
+        public SynchronizationQueueEntry()
+        {
+
+        }
+
+        /// <summary>
+        /// Copy ctor
+        /// </summary>
+        public SynchronizationQueueEntry(SynchronizationQueueEntry entry)
+        {
+            this.CreationTime = entry.CreationTime;
+            this.Data = entry.Data;
+            this.IsRetry = entry.IsRetry;
+            this.Operation = entry.Operation;
+            this.Type = entry.Type;
+        }
 
 		/// <summary>
 		/// Gets or sets the identifier.
 		/// </summary>
 		/// <value>The identifier.</value>
-		[PrimaryKey, AutoIncrement, Column("id")]
+		[PrimaryKey, AutoIncrement, Column("id"), JsonProperty("id"), XmlElement("id")]
 		public int Id {
 			get;
 			set;
@@ -69,7 +93,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Gets or sets the operation.
 		/// </summary>
 		/// <value>The operation.</value>
-		[Column("operation"), NotNull]
+		[Column("operation"), NotNull, JsonProperty("operation"), XmlElement("operation")]
 		public DataOperationType Operation {
 			get;
 			set;
@@ -79,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Gets or sets the model type
 		/// </summary>
 		/// <value>The type.</value>
-		[Column("type")]
+		[Column("type"), JsonProperty("type"), XmlElement("type")]
 		public String Type {
 			get;
 			set;
@@ -89,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Creation time of the queue item
 		/// </summary>
 		/// <value>The creation time.</value>
-		[Column("creation_time")]
+		[Column("creation_time"), JsonProperty("creationTime"), XmlElement("creationTime")]
 		public DateTime CreationTime {
 			get;
 			set;
@@ -99,31 +123,53 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Gets or sets the serialized data which is to be sent to the service (XML)
 		/// </summary>
 		/// <value>The data.</value>
-		[Column("data")]
+		[Column("data"), JsonIgnore, XmlIgnore]
 		public byte[] Data {
 			get;
 			set;
 		}
 
-	}
 
-	/// <summary>
-	/// Outbound synchronization queue entry.
-	/// </summary>
-	[Table("outbound_queue")]
+        /// <summary>
+        /// Identifies whether the queue item is a retry
+        /// </summary>
+        [Column("is_retry"), JsonProperty("isRetry"), XmlElement("isRetry")]
+        public bool IsRetry { get; set; }
+
+    }
+
+    /// <summary>
+    /// Outbound synchronization queue entry.
+    /// </summary>
+    [Table("outbound_queue"), JsonObject(nameof(OutboundQueueEntry)), XmlType(nameof(OutboundQueueEntry), Namespace = "http://openiz.org/queue")]
 	public class OutboundQueueEntry : SynchronizationQueueEntry
 	{
+        /// <summary>
+        /// admin ctor
+        /// </summary>
+        public OutboundQueueEntry()
+        {
 
+        }
+
+        /// <summary>
+        /// Create a new admin queue entry from outbound queue entry
+        /// </summary>
+        public OutboundQueueEntry(DeadLetterQueueEntry retryEntry) : base(retryEntry)
+        {
+
+        }
         /// <summary>
         /// Indicates the fail count
         /// </summary>
+        [JsonProperty("retryCount"), Column("retry"), XmlElement("retryCount")]
         public int RetryCount { get; set; }
     }
 
 	/// <summary>
 	/// Dead letter queue entry - Dead letters are queue items that could not be synchronized for some reason.
 	/// </summary>
-	[Table("deadletter_queue")]
+	[Table("deadletter_queue"), JsonObject(nameof(DeadLetterQueueEntry)), XmlType(nameof(DeadLetterQueueEntry), Namespace = "http://openiz.org/queue")]
 	public class DeadLetterQueueEntry : SynchronizationQueueEntry
 	{
 
@@ -151,11 +197,11 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
             this.TagData = tagData;
 		}
 
-		/// <summary>
-		/// The original queue name to which the dead letter item belonged. This can be used for retry enqueuing 
-		/// </summary>
-		/// <value>The original queue.</value>
-		[Column("original_queue")]
+        /// <summary>
+        /// The original queue name to which the dead letter item belonged. This can be used for retry enqueuing 
+        /// </summary>
+        /// <value>The original queue.</value>
+        [Column("original_queue"), JsonProperty("originalQueue"), XmlElement("originalQueue")]
 		public string OriginalQueue {
 			get;
 			set;
@@ -164,24 +210,54 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
         /// <summary>
         /// Gets or sets data related to why the data is in the dead-letter queue
         /// </summary>
-        [Column("tag")]
+        [Column("tag"), JsonProperty("tag"), XmlElement("tag")]
         public byte[] TagData { get; set; }
 	}
 
 	/// <summary>
 	/// Inbound queue represents an object which was received from the server that needs to be inserted into the OpenIZ mobile database
 	/// </summary>
-	[Table("inbound_queue")]
+	[Table("inbound_queue"), JsonObject(nameof(InboundQueueEntry)), XmlType(nameof(InboundQueueEntry), Namespace = "http://openiz.org/queue")]
 	public class InboundQueueEntry : SynchronizationQueueEntry 
 	{
+        /// <summary>
+        /// Inbound ctor
+        /// </summary>
+        public InboundQueueEntry()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a new inbound queue entry from outbound queue entry
+        /// </summary>
+        public InboundQueueEntry(DeadLetterQueueEntry retryEntry) : base(retryEntry)
+        {
+
+        }
 	}
 
     /// <summary>
     /// Queue which is used to store administrative events on the user
     /// </summary>
-    [Table("admin_queue")]
+    [Table("admin_queue"), JsonObject(nameof(OutboundAdminQueueEntry)), XmlType(nameof(OutboundAdminQueueEntry), Namespace = "http://openiz.org/queue")]
     public class OutboundAdminQueueEntry : SynchronizationQueueEntry
     {
+        /// <summary>
+        /// admin ctor
+        /// </summary>
+        public OutboundAdminQueueEntry()
+        {
+
+        }
+
+        /// <summary>
+        /// Create a new admin queue entry from outbound queue entry
+        /// </summary>
+        public OutboundAdminQueueEntry(DeadLetterQueueEntry retryEntry) : base(retryEntry)
+        {
+
+        }
     }
 }
 

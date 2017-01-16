@@ -26,6 +26,7 @@ using OpenIZ.Core.Model.Entities;
 using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -63,11 +64,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Person ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Person ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var person = dataInstance as DbPerson;
+            var iddat = dataInstance as DbIdentified;
+            var person = iddat as DbPerson ?? context.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context);
+            var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context, loadFast);
             retVal.DateOfBirth = person.DateOfBirth.HasValue ? (DateTime?)person.DateOfBirth.Value.ToLocalTime() : null;
 
             // Reverse lookup

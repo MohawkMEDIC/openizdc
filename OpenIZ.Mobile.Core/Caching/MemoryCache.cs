@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- *
+ * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-19
+ * Date: 2016-7-30
  */
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Model;
@@ -33,6 +33,11 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenIZ.Core.Services;
+using System.Collections;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Security;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -86,7 +91,10 @@ namespace OpenIZ.Mobile.Core.Caching
             typeof(Concept),
             typeof(AssigningAuthority),
             typeof(Place),
-            typeof(ConceptSet)
+            typeof(ConceptSet),
+            typeof(ConceptName),
+            typeof(SecurityUser),
+            typeof(UserEntity)
         };
 
         /// <summary>
@@ -163,25 +171,52 @@ namespace OpenIZ.Mobile.Core.Caching
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
                 Guid key = idData?.Key ?? Guid.Empty;
-                if (cache.ContainsKey(idData?.Key ?? Guid.Empty))
+                CacheEntry entry = null;
+
+                if (cache.TryGetValue(key, out entry))
                     lock (this.m_lock)
                     {
-                        var entry = cache[key];
-                        entry.Data = (data as IdentifiedData)?.GetLocked() ?? data;
+                        entry.Data =  data;
                         entry.LastUpdateTime = DateTime.Now.Ticks;
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
                         {
-                            cache.Add(key, new CacheEntry(DateTime.Now, (data as IdentifiedData)?.GetLocked()?? data));
-                            this.m_tracer.TraceInfo("Cache {0} is now {1} large", objData, cache.Count);
+                            cache.Add(key, new CacheEntry(DateTime.Now, data));
+                            this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
 
                         }
             }
-            else
+            else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
                 this.RegisterCacheType(data.GetType());
 
+        }
+
+        /// <summary>
+        /// Remove the specified object from the cache
+        /// </summary>
+        public void RemoveObject(Type objectType, Guid? key)
+        {
+            this.ThrowIfDisposed();
+
+            if (!key.HasValue) return;
+            else if (objectType == null)
+                throw new ArgumentNullException(nameof(objectType));
+
+            Dictionary<Guid, CacheEntry> cache = null;
+            if (this.m_entryTable.TryGetValue(objectType, out cache))
+            {
+                CacheEntry candidate = default(CacheEntry);
+                if (cache.TryGetValue(key.Value, out candidate))
+                {
+                    lock (this.m_lock)
+                    {
+                        cache.Remove(key.Value);
+                    }
+                }
+            }
+            return;
         }
 
         /// <summary>
@@ -190,6 +225,11 @@ namespace OpenIZ.Mobile.Core.Caching
         public object TryGetEntry(Type objectType, Guid? key)
         {
             this.ThrowIfDisposed();
+
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
 
             if (!key.HasValue) return null;
             else if (objectType == null)
@@ -202,9 +242,18 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
+#if PERFMON
+                    sw.Stop();
+                    this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
+#endif
                     return candidate.Data;
                 }
             }
+
+#if PERFMON
+            sw.Stop();
+            this.m_tracer.TraceVerbose("PERF: TryGetEntry MISS {0} ({1} ms)", key, sw.ElapsedMilliseconds);
+#endif
             return null;
         }
 
@@ -326,7 +375,9 @@ namespace OpenIZ.Mobile.Core.Caching
             // We want to subscribe when this object is changed so we can keep the cache fresh
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(t);
             var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
+            var pqeArgType = typeof(DataQueryEventArgsBase<>).MakeGenericType(t);
             var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
+            var qevtHdlrType = typeof(EventHandler<>).MakeGenericType(pqeArgType);
             var svcInstance = ApplicationContext.Current.GetService(idpType);
 
             if (svcInstance != null)
@@ -339,11 +390,15 @@ namespace OpenIZ.Mobile.Core.Caching
                 var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
                 var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostPersistenceEvent", new Type[] { typeof(Object) }), eventData), senderParm, eventParm).Compile();
 
+                eventParm = Expression.Parameter(pqeArgType, "e");
+                var queryEventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, pqeArgType.GetRuntimeProperty("Results")), typeof(IEnumerable));
+                var queryInstanceDelegate = Expression.Lambda(qevtHdlrType, Expression.Call(Expression.Constant(this), typeof(MemoryCache).GetRuntimeMethod("HandlePostQueryEvent", new Type[] { typeof(IEnumerable) }), queryEventData), senderParm, eventParm).Compile();
 
                 // Bind to events
                 idpType.GetRuntimeEvent("Inserted").AddEventHandler(svcInstance, insertInstanceDelegate);
                 idpType.GetRuntimeEvent("Updated").AddEventHandler(svcInstance, updateInstanceDelegate);
                 idpType.GetRuntimeEvent("Obsoleted").AddEventHandler(svcInstance, obsoleteInstanceDelegate);
+                idpType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queryInstanceDelegate);
             }
 
 
@@ -360,12 +415,45 @@ namespace OpenIZ.Mobile.Core.Caching
         }
 
         /// <summary>
+        /// Handle post query event
+        /// </summary>
+        public void HandlePostQueryEvent(IEnumerable results)
+        {
+            foreach (var data in results)
+            {
+                this.AddUpdateEntry(data);
+            }
+        }
+
+        /// <summary>
         /// Persistence event handler
         /// </summary>
         public void HandlePostPersistenceEvent(Object data)
         {
-                this.AddUpdateEntry(data);
+            // Bundles are special cases.
+            if (data is Bundle)
+            {
+                foreach (var itm in (data as Bundle).Item)
+                    HandlePostPersistenceEvent(itm);
+            }
+            else
+            {
 
+                var idData = data as IIdentifiedEntity;
+                var objData = data.GetType();
+
+                Dictionary<Guid, CacheEntry> cache = null;
+                if (this.m_entryTable.TryGetValue(objData, out cache))
+                {
+                    Guid key = idData?.Key ?? Guid.Empty;
+                    if (cache.ContainsKey(key))
+                        lock (this.m_lock)
+                        {
+                            cache[key].Update(data);
+                        }
+                    //cache.Remove(key);
+                }
+            }
         }
 
         /// <summary>
@@ -376,5 +464,46 @@ namespace OpenIZ.Mobile.Core.Caching
 
             this.m_disposed = true;
         }
+
+        //public void Update(object data)
+        //{
+        //    var properties = data.GetType().GetRuntimeProperties();
+
+        //    foreach (var item in properties)
+        //    {
+        //        var value = item.GetValue(data);
+                
+        //        if (value is IList && (value as IList).Count > 0)
+        //        {
+        //            foreach (var listItem in value as IList)
+        //            {
+        //                this.Update(listItem);
+
+        //                if (listItem is IdentifiedData)
+        //                {
+        //                    var identifiedData = listItem as IdentifiedData;
+
+        //                    // if there is a key and the key is not an empty GUID
+        //                    if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
+        //                    {
+        //                        this.RemoveObject(listItem.GetType(), identifiedData.Key.Value);
+        //                        this.AddUpdateEntry(listItem);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        if (value is IdentifiedData)
+        //        {
+        //            var identifiedData = value as IdentifiedData;
+
+        //            // if there is a key and the key is not an empty GUID
+        //            if (identifiedData.Key.HasValue && identifiedData.Key.Value != Guid.Empty)
+        //            {
+        //                this.RemoveObject(value.GetType(), identifiedData.Key.Value);
+        //                this.AddUpdateEntry(value);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

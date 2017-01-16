@@ -17,109 +17,283 @@
  * User: justi
  * Date: 2016-7-8
  */
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using OpenIZ.Core.Model;
-using OpenIZ.Core.Model.Roles;
-using OpenIZ.Core.Services;
-using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
-    /// <summary>
-    /// Local patient repository service
-    /// </summary>
-    public class LocalPatientService : IPatientRepositoryService
-    {
-        
+	/// <summary>
+	/// Represents a patient repository service.
+	/// </summary>
+	public class LocalPatientService : IPatientRepositoryService, IRepositoryService<Patient>
+	{
+		/// <summary>
+		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
+		/// </summary>
+		private IDataPersistenceService<Patient> m_persistenceService;
+		private IIntegrationService m_integration;
 
         /// <summary>
-        /// Locates the specified patient
+        /// Internal reference to the bre service
         /// </summary>
-        public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
-        {
-            // Repository service
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            return persistenceService.Query(predicate);
-        }
+        private IBusinessRulesService<Patient> m_breService;
 
-        /// <summary>
-        /// Finds the specified patient with query controls
-        /// </summary>
-        public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
-        {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            return persistenceService.Query(predicate, offset, count, out totalCount);
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="LocalPatientService"/> class.
+		/// </summary>
+		public LocalPatientService()
+		{
+			ApplicationContext.Current.Started += (o, e) => {
+                this.m_integration = ApplicationContext.Current.GetService<IIntegrationService>();
+                this.m_persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                this.m_breService = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
+            };
+		}
 
-        /// <summary>
-        /// Gets the specified patient
-        /// </summary>
-        public IdentifiedData Get(Guid id, Guid versionId)
-        {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+		/// <summary>
+		/// Finds a patient based on a specific query.
+		/// </summary>
+		/// <param name="predicate">The query to use to find the patients.</param>
+		/// <returns>Returns a list of patients which match the query.</returns>
+		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
 
-            return persistenceService.Get(id);
-        }
+			var results = this.m_persistenceService.Query(predicate);
+           
+            results = this.m_breService?.AfterQuery(results) ?? results;
+            return results;
+		}
 
-        /// <summary>
-        /// Insert the specified patient
-        /// </summary>
-        public Patient Insert(Patient p)
-        {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            var actPersistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>();
+		/// <summary>
+		/// Finds a patient based on a specific query.
+		/// </summary>
+		/// <param name="predicate">The query to use to find the patients.</param>
+		/// <param name="offset">The offset of the query.</param>
+		/// <param name="count">The count of the query.</param>
+		/// <param name="totalCount">The total count of the query.</param>
+		/// <returns>Returns a list of patients which match the query.</returns>
+		public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
 
-            // Persist patient
-            var retVal = persistenceService.Insert(p);
+			var results = m_persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
+            
+            results = this.m_breService?.AfterQuery(results) ?? results;
+            return results;
+		}
 
-            return retVal;
-        }
+		/// <summary>
+		/// Gets a specific patient by id and version id.
+		/// </summary>
+		/// <param name="id">The id of the patient to be retrieved.</param>
+		/// <param name="versionId">The version id of the patient to be retrieved.</param>
+		/// <returns>Returns a patient.</returns>
+		public Patient Get(Guid id, Guid versionId)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
 
-        /// <summary>
-        /// Merges two patients together
-        /// </summary>
-        public Patient Merge(Patient survivor, Patient victim)
-        {
-            // TODO: Do this
-            throw new NotImplementedException();
-        }
+			var result = m_persistenceService.Get(id);
+            
+            result = this.m_breService?.AfterRetrieve(result) ?? result;
+            return result;
+		}
 
-        /// <summary>
-        /// Obsoletes the specified patient
-        /// </summary>
-        public Patient Obsolete(Guid key)
-        {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            return persistenceService.Obsolete(new Patient() { Key = key });
-        }
+		/// <summary>
+		/// Inserts a patient.
+		/// </summary>
+		/// <param name="p">The patient to be inserted.</param>
+		/// <returns>Returns the inserted patient.</returns>
+		public Patient Insert(Patient p)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
 
-        /// <summary>
-        /// Save / update the patient
-        /// </summary>
-        public Patient Save(Patient p)
-        {
-            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-            try
-            {
-                return persistenceService.Update(p);
+			p = this.Validate(p);
+
+            p = this.m_breService?.BeforeInsert(p) ?? p;
+
+			// Persist patient
+			var patient = this.m_persistenceService.Insert(p);
+            this.m_breService?.AfterInsert(p) ;
+
+            if(patient.Relationships.Count > 0 || patient.Participations.Count > 0)
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(patient), DataOperationType.Insert);
+            else
+                SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
+
+			return patient;
+		}
+
+		/// <summary>
+		/// Merges two patients together.
+		/// </summary>
+		/// <param name="survivor">The survivor record of the merge.</param>
+		/// <param name="victim">The victim record of the merge.</param>
+		/// <returns>Returns the merged patient.</returns>
+		public Patient Merge(Patient survivor, Patient victim)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Obsoletes a specific patient by key.
+		/// </summary>
+		/// <param name="key">The key of the patient to be obsoleted.</param>
+		/// <returns>Returns the obsoleted patient.</returns>
+		public Patient Obsolete(Guid key)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
+
+            var p = this.m_persistenceService.Get(key);
+            if (p == null)
+                throw new KeyNotFoundException(key.ToString());
+            p = this.m_breService?.BeforeObsolete(p) ?? p;
+            var result = this.m_persistenceService.Obsolete(p);
+            p = this.m_breService?.AfterObsolete(result) ?? result;
+            
+            SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
+
+            // Remove from the memory cache
+            MemoryCache.Current.RemoveObject(typeof(Patient), key);
+			return result;
+		}
+
+		/// <summary>
+		/// Saves a patient.
+		/// </summary>
+		/// <param name="p">The patient to be saved.</param>
+		/// <returns>Returns the saved patient.</returns>
+		public Patient Save(Patient p)
+		{
+			if (this.m_persistenceService == null)
+			{
+				throw new ArgumentException(string.Format("{0} not found", nameof(IDataPersistenceService<Patient>)));
+			}
+
+			p = this.Validate(p);
+
+			Patient patient = null;
+
+			try
+			{
+               
+                // Get older version
+                if (p.Key.HasValue)
+                {
+                    var old = this.m_persistenceService.Get(p.Key.Value)?.Clone();
+
+                    if (old == null) throw new KeyNotFoundException();
+
+                    // Fire before update
+                    p = this.m_breService?.BeforeUpdate(p) ?? p;
+
+                    // update
+                    patient = this.m_persistenceService.Update(p);
+
+                    // First after update
+                    this.m_breService?.AfterUpdate(p);
+
+                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, patient);
+
+                    SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+                    //MemoryCache.Current.RemoveObject(typeof(Patient), p.Key);
+
+                }
+                else throw new KeyNotFoundException();
+
             }
-            catch (KeyNotFoundException)
-            {
-                return persistenceService.Insert(p);
+			catch (KeyNotFoundException)
+			{
+                // Fire before update
+                p = this.m_breService?.BeforeInsert(p) ?? p;
+
+                patient = this.m_persistenceService.Insert(p);
+
+                this.m_breService?.AfterInsert(patient);
+
+                // Patient relationships
+                if (patient.Relationships.Count > 0 || patient.Participations.Count > 0)
+                    SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(patient), DataOperationType.Insert);
+                else
+                    SynchronizationQueue.Outbound.Enqueue(patient, DataOperationType.Insert);
+
             }
-        }
+
+			return patient;
+		}
+
+		/// <summary>
+		/// Unmerges two patients.
+		/// </summary>
+		/// <param name="patient">The patient to unmerge.</param>
+		/// <param name="versionKey">The version key of the patient to unmerge.</param>
+		/// <returns>Returns the unmerged patient.</returns>
+		public Patient UnMerge(Patient patient, Guid versionKey)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Validates a patient record.
+		/// </summary>
+		/// <param name="p">The patient to be validated.</param>
+		/// <returns>Returns the validated patient.</returns>
+		public Patient Validate(Patient p)
+		{
+            var details = this.m_breService?.Validate(p) ?? new List<DetectedIssue>();
+            if (details?.Any(d => d.Priority == DetectedIssuePriorityType.Error) == true)
+                throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
+
+			p = p.Clean() as Patient; // clean up messy data
+
+			// Generate temporary identifier
+			if (!(p.Identifiers?.Count > 0))
+			{
+				p.Identifiers = new List<EntityIdentifier>()
+				{
+					new EntityIdentifier(new AssigningAuthority()
+					{
+						DomainName = "TEMP",
+						Name= "Temporary Identifiers",
+                        Oid = "0.0.0.0",
+					}, BitConverter.ToString(Guid.NewGuid().ToByteArray(), 0, 4).Replace("-",""))
+				};
+			}
+
+			return p;
+		}
 
         /// <summary>
-        /// Un-merge two patients
+        /// Get by key
         /// </summary>
-        public Patient UnMerge(Patient patient, Guid versionKey)
+        public Patient Get(Guid key)
         {
-            throw new NotImplementedException();
+            return this.Get(key, Guid.Empty);
         }
     }
 }

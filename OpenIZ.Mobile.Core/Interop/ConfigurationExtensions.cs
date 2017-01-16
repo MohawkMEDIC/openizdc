@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Interop
             var configSection = me.Configuration.GetSection<ServiceClientConfigurationSection>();
             var description = me.Configuration.GetServiceDescription(clientName);
             if (description == null)
-                throw new KeyNotFoundException(clientName);
+                return null;
             IRestClient client = Activator.CreateInstance(configSection.RestClientType, description) as IRestClient;
             return client;
         }

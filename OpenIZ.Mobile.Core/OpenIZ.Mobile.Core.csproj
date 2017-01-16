@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -27,13 +27,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />
+    <Compile Include="AuthenticationContext.cs" />
     <Compile Include="Caching\CacheEntry.cs" />
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Caching\MemoryCacheService.cs" />
+    <Compile Include="Configuration\Data\Migrations\InitialSearchCatalog.cs" />
     <Compile Include="Configuration\ForecastingConfigurationSection.cs" />
     <Compile Include="Configuration\SynchronizationConfigurationSection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionManager.cs" />
@@ -55,7 +58,9 @@
     <Compile Include="Data\Model\Entities\DbUserEntity.cs" />
     <Compile Include="Data\Model\Extensibility\DbTemplateDefinition.cs" />
     <Compile Include="Data\Persistence\ActDerivedPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ActParticipationPersistenceService.cs" />
     <Compile Include="Data\Persistence\ActPersistenceService.cs" />
+    <Compile Include="Data\Persistence\ActRelationshipPersistenceService.cs" />
     <Compile Include="Data\Persistence\ApplicationEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\AuthorityPersistenceService.cs" />
     <Compile Include="Data\Persistence\BundlePersistenceService.cs" />
@@ -67,6 +72,7 @@
     <Compile Include="Data\Persistence\EntityDerivedPersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityNamePersistenceService.cs" />
     <Compile Include="Data\Persistence\EntityPersistenceService.cs" />
+    <Compile Include="Data\Persistence\EntityRelationshipPersistenceService.cs" />
     <Compile Include="Data\Persistence\ManufacturedMaterialPersistenceService.cs" />
     <Compile Include="Data\Persistence\MaterialPersistenceService.cs" />
     <Compile Include="Data\Persistence\ObservationPersistenceService.cs" />
@@ -79,11 +85,31 @@
     <Compile Include="Data\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
+    <Compile Include="Data\Warehouse\SQLiteDatawarehouse.cs" />
+    <Compile Include="Exceptions\InvalidVersionException.cs" />
+    <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
+    <Compile Include="Protocol\CarePlanManagerService.cs" />
+    <Compile Include="Search\Model\SearchEntityType.cs" />
+    <Compile Include="Search\Model\SearchTerm.cs" />
+    <Compile Include="Search\Model\SearchTermEntity.cs" />
+    <Compile Include="Search\SearchIndexService.cs" />
+    <Compile Include="Security\MemorySessionManagerService.cs" />
+    <Compile Include="Security\ITwoFactorRequestService.cs" />
+    <Compile Include="Security\Remote\AmiTwoFactorRequestService.cs" />
+    <Compile Include="Security\SessionInfo.cs" />
+    <Compile Include="Services\IDataConnectionManager.cs" />
+    <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />
+    <Compile Include="Services\Impl\LocalBatchService.cs" />
+    <Compile Include="Services\Impl\LocalEntityService.cs" />
     <Compile Include="Services\Impl\LocalMaterialService.cs" />
+    <Compile Include="Services\Impl\LocalOrganizationService.cs" />
     <Compile Include="Services\Impl\LocalPlaceService.cs" />
     <Compile Include="Services\Impl\LocalProviderService.cs" />
+    <Compile Include="Services\Impl\MemoryQueryPersistenceService.cs" />
+    <Compile Include="Services\IntegrationQueryOptions.cs" />
+    <Compile Include="Services\ISessionManagerService.cs" />
     <Compile Include="Synchronization\RemoteSynchronizationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />
@@ -98,7 +124,6 @@
     <Compile Include="Configuration\SecurityConfigurationSection.cs" />
     <Compile Include="Configuration\ApplicationConfigurationSection.cs" />
     <Compile Include="Configuration\DiagnosticsConfigurationSection.cs" />
-    <Compile Include="Diagnostics\TraceWriter.cs" />
     <Compile Include="Diagnostics\Tracer.cs" />
     <Compile Include="Exceptions\ConfigurationException.cs" />
     <Compile Include="Resources\Strings.fr.Designer.cs">
@@ -138,11 +163,11 @@
     <Compile Include="Services\IRoleProviderService.cs" />
     <Compile Include="Security\Local\LocalPolicyDecisionService.cs" />
     <Compile Include="Services\ISynchronizationService.cs" />
-    <Compile Include="Services\IThreadPoolService.cs" />
     <Compile Include="Services\IIntegrationService.cs" />
     <Compile Include="Synchronization\Model\SynchronizationLogEntry.cs" />
     <Compile Include="Synchronization\Model\SynchronizationQueueEntry.cs" />
     <Compile Include="Synchronization\QueueManagerService.cs" />
+    <Compile Include="Synchronization\SynchronizationConflictEventArgs.cs" />
     <Compile Include="Synchronization\SynchronizationQueue.cs" />
     <Compile Include="Services\IDataPersistenceService.cs" />
     <Compile Include="Data\Model\Security\DbSecurityApplication.cs" />
@@ -195,11 +220,26 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
+    <Reference Include="jint">
+      <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\Solution Items\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.BusinessRules.JavaScript">
+      <HintPath>..\Solution Items\OpenIZ.BusinessRules.JavaScript.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Alert">
+      <HintPath>..\Solution Items\OpenIZ.Core.Alert.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model.AMI">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.PCL">
       <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
@@ -215,6 +255,12 @@
     </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Portable">
+      <HintPath>..\Solution Items\System.Data.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions.Portable">
+      <HintPath>..\Solution Items\System.Transactions.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +290,8 @@
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Data\Warehouse\InitWarehouse.sql" />
+    <EmbeddedResource Include="Protocol\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>
@@ -255,4 +303,5 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
 </Project>

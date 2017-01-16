@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Core.Alert</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Core.Alert.Alerting.AlertEventArgs">
+            <summary>
+            Represents alert event arguments.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Alert.Alerting.AlertEventArgs.#ctor(OpenIZ.Core.Alert.Alerting.AlertMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Alert.Alerting.AlertEventArgs"/> class
+            with a specified alert message.
+            </summary>
+            <param name="message">The alert message.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertEventArgs.Ignore">
+            <summary>
+            Allows the handler to instruct the alert engine to ignore (not to persist) the
+            alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertEventArgs.Message">
+            <summary>
+            Gets the alert message.
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Alert.Alerting.AlertMessage">
+            <summary>
+            Represents an alert message.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Alert.Alerting.AlertMessage.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Alert.Alerting.AlertMessage"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Alert.Alerting.AlertMessage.#ctor(System.String,System.String,System.String,System.String,OpenIZ.Core.Alert.Alerting.AlertMessageFlags)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Alert.Alerting.AlertMessage"/> class
+            with a specified from, to, subject, body, and alert message flags.
+            </summary>
+            <param name="from">The sender of the alert.</param>
+            <param name="to">The recipient of the alert.</param>
+            <param name="subject">The subject of the alert.</param>
+            <param name="body">The body of the alert.</param>
+            <param name="flags">The flags of the alert.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.Body">
+            <summary>
+            Gets or sets the alert body of the alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.Flags">
+            <summary>
+            Gets or sets the status of the alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.From">
+            <summary>
+            Gets or sets the "from" subject if it is a human based message of the alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.Subject">
+            <summary>
+            Gets or sets the subject of the alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.TimeStamp">
+            <summary>
+            Date/time of the alert
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.DateTimeXml">
+            <summary>
+            Gets or sets the time of the alert.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.To">
+            <summary>
+            Gets or sets the recipient of the alert in a human readable form
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.RcptTo">
+            <summary>
+            The recipient users used for query
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Alert.Alerting.AlertMessage.ModifiedOn">
+            <summary>
+            Gets or sets the time this was modified on
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Alert.Alerting.AlertMessageFlags">
+            <summary>
+            Represents a flag for an alert message.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.None">
+            <summary>
+            Just a normal alert
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.Alert">
+            <summary>
+            Indicates the message requires some immediate action!
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.Acknowledged">
+            <summary>
+            Indicates whether someone has acknowledged the alert
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.HighPriority">
+            <summary>
+            Indicates the alert is high priority but doesn't require immediate action
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.System">
+            <summary>
+            Indicates the alert is a system alert
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Alert.Alerting.AlertMessageFlags.Transient">
+            <summary>
+            Indicates the alert is transient and shouldn't be persisted
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IAlertRepositoryService">
+            <summary>
+            Represents an alerting service.
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IAlertRepositoryService.Committed">
+            <summary>
+            Fired when an alert is received.
+            </summary>
+        </member>
+        <member name="E:OpenIZ.Core.Services.IAlertRepositoryService.Received">
+            <summary>
+            Fired when an alert was raised and is being processed.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAlertRepositoryService.BroadcastAlert(OpenIZ.Core.Alert.Alerting.AlertMessage)">
+            <summary>
+            Broadcasts an alert.
+            </summary>
+            <param name="msg">The alert message to be broadcast.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAlertRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Alert.Alerting.AlertMessage,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Searches for alerts.
+            </summary>
+            <param name="predicate">The predicate to use to search for alerts.</param>
+            <param name="offset">The offset of the search.</param>
+            <param name="count">The count of the search results.</param>
+            <param name="totalCount">The total count of the alerts.</param>
+            <returns>Returns a list of alerts.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAlertRepositoryService.Get(System.Guid)">
+            <summary>
+            Gets an alert.
+            </summary>
+            <param name="id">The id of the alert to be retrieved.</param>
+            <returns>Returns an alert.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAlertRepositoryService.Insert(OpenIZ.Core.Alert.Alerting.AlertMessage)">
+            <summary>
+            Inserts an alert message.
+            </summary>
+            <param name="message">The alert message to be inserted.</param>
+            <returns>Returns the inserted alert.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAlertRepositoryService.Save(OpenIZ.Core.Alert.Alerting.AlertMessage)">
+            <summary>
+            Saves an alert.
+            </summary>
+            <param name="message">The alert message to be saved.</param>
+            <returns>Returns the saved alert.</returns>
+        </member>
+    </members>
+</doc>

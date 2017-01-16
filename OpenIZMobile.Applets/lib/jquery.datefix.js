@@ -1,11 +1,21 @@
-﻿/*!
- * jQuery.parseJSON() extension (supports ISO & Asp.net date conversion)
- *
- * Version 1.0 (13 Jan 2011)
- *
- * Copyright (c) 2011 Robert Koritnik
- * Licensed under the terms of the MIT license
- * http://www.opensource.org/licenses/mit-license.php
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-30
  */
 (function ($) {
 
@@ -14,7 +24,7 @@
     var rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
     var rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
     var rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
-    var dateISO = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+].*?/i;
+    var dateISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+].*?$/i;
     var dateNet = /\/Date\((\d+)(?:-\d+)?\)\//i;
 
     // replacer RegExp

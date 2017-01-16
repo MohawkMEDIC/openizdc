@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-2
+ * Date: 2016-7-1
  */
 using SQLite.Net;
 using SQLite.Net.Attributes;
@@ -50,6 +50,12 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// </summary>
         [Column("participationRole"), MaxLength(16)]
         public byte[] ParticipationRoleUuid { get; set; }
+
+        /// <summary>
+        /// Gets or sets the quantity
+        /// </summary>
+        [Column("quantity")]
+        public int Quantity { get; set; }
 
     }
 }

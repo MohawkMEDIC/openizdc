@@ -24,11 +24,11 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle ("OpenIZ.Mobile.Core.Android")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyDescription ("OpenIZ Disconnected Client for Android")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("JustinFyfe")]
+[assembly: AssemblyCompany ("Mohawk College of Applied Arts and Technology")]
+[assembly: AssemblyProduct ("Open Immunize Disconnected Client")]
+[assembly: AssemblyCopyright ("2016")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 

@@ -1,40 +1,45 @@
-﻿<form novalidate="novalidate" name="loginForm" class="form form-login" ng-submit="login(username, password)" xmlns:openiz="http://openiz.org/applet"
-      xmlns="http://www.w3.org/1999/xhtml">
-    <openiz:script>/org.openiz.core/controllers/common/security/login.js</openiz:script>
-    <fieldset class="form-horizontal form-group">
-        <legend class="text-center">{{ 'locale.security.login.helpText' | i18n }}</legend>
-        <div class="form-group" ng-class="{ 'has-error': (loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid }">
-            <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
-            <div class="col-xs-9">
-                <div class="input-group">
-                    <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control"
-                           name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-23
+ -->
+<div xmlns:oiz="http://openiz.org/applet"
+      xmlns="http://www.w3.org/1999/xhtml" xmlns:bind="http://openiz.org/applet/binding">
+    <oiz:script>~/controllers/common/security/login.js</oiz:script>
+    <oiz:state name="org-openiz-core.login">
+        <oiz:url>/login</oiz:url>
+        <oiz:view>
+            <oiz:controller>LoginController</oiz:controller>
+            <oiz:title lang="en">Login</oiz:title>
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+        </oiz:view>
+    </oiz:state>
+    <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
+    <!-- #include virtual="~/views/common/security/forgotPassword.html" -->
+    <form ng-controller="LoginPartController" novalidate="novalidate" name="loginForm" class="form" ng-submit="login(loginForm, username, password)">
+        <!-- #include virtual="~/views/common/security/authenticate.html" -->
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group pull-right">
+                    <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
+                    <button type="button" class="btn btn-lg btn-warning" ng-click="showPasswordReset()">{{ 'locale.security.login.button.forgotPassword' | i18n }}</button>
+                    <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
                 </div>
             </div>
         </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.username.$touched||loginForm.$submitted) &amp;&amp; loginForm.username.$invalid">
-            <p class="alert alert-danger">{{ 'locale.security.errors.missingUsername' | i18n }}</p>
-        </div>
-        <div class="form-group">
-            <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
-            <div class="col-xs-9">
-                <div class="input-group">
-                    <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control"
-                           name="password" id="passwordInput" />
-                </div>
-            </div>
-        </div>
-        <div class="col-xs-offset-2 col-xs-9" ng-if="(loginForm.password.$touched||loginForm.$submitted) &amp;&amp; loginForm.password.$invalid ">
-            <p class="alert alert-danger">{{ 'locale.security.errors.missingPassword' | i18n }}</p>
-        </div>
-    </fieldset>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="btn-group pull-right">
-                <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
-                <a class="btn btn-lg btn-warning" href="~/views/security/resetName.html">{{ 'locale.security.login.button.forgotPassword' | i18n }}</a>
-                <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
-            </div>
-        </div>
-    </div>
-</form>
+    </form>
+</div>

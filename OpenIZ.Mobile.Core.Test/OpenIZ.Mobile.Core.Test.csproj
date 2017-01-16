@@ -35,8 +35,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenIZ.Core.Applets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Model">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
     </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
@@ -63,7 +71,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="MobileTest.cs" />
-    <Compile Include="OpenIZThreadPool.cs" />
     <Compile Include="Persistence\ActPersistenceServiceTest.cs" />
     <Compile Include="Persistence\ConceptPersistenceServiceTest.cs" />
     <Compile Include="Persistence\EntityPersistenceServiceTest.cs" />
@@ -81,6 +88,10 @@
     <Compile Include="TestTraceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
+      <Project>{9A06ACC9-4D6F-4EAB-8A8A-9652BC6A70AE}</Project>
+      <Name>OpenIZ.Mobile.Core.Xamarin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
@@ -89,6 +100,7 @@
   <ItemGroup>
     <EmbeddedResource Include="IMSI\TroublesomePlaceBundle.xml" />
     <Content Include="Data\OpenIZData.sql" />
+    <EmbeddedResource Include="Resources\ViewModel.xml" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -101,6 +113,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -25,6 +25,7 @@ using SQLite.Net;
 using System.Collections.Generic;
 using OpenIZ.Mobile.Core.Services;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -36,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 		where TDomain : DbBaseData, new()
 	{
         /// <summary>
-        /// Performthe actual insert.
+        /// Perform the actual insert.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
@@ -50,9 +51,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Ensure created by exists
             data.CreatedBy?.EnsureExists(context);
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
-			domainObject.CreationTime = domainObject.CreationTime == DateTime.MinValue || domainObject.CreationTime == null ? DateTime.Now : domainObject.CreationTime;
+			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
-			context.Insert (domainObject);
+
+            if (!context.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+                context.Insert(domainObject);
+            else
+                context.Update(domainObject);
 
 			return data;
 		}
@@ -65,13 +70,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override TModel Update (SQLiteConnectionWithLock context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
+            var existing = context.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).FirstOrDefault();
+            if (existing == null)
+                throw new KeyNotFoundException(data.Key.ToString());
 
+            // Created by is the updated by
+            domainObject.CopyObjectData(existing);
+            domainObject.CreatedByUuid = existing.CreatedByUuid;
             data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;
 			context.Update(domainObject);
 
-			return data;
+            return data;
 		}
 
         /// <summary>

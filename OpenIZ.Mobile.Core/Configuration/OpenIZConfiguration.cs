@@ -141,7 +141,18 @@ namespace OpenIZ.Mobile.Core.Configuration
 			return this.GetSection<DataConfigurationSection> ()?.ConnectionString.Find (o => o.Name == name);
 		}
 
-
-	}
+        /// <summary>
+        /// Set application setting
+        /// </summary>
+        internal void SetAppSetting(string key, Object value)
+        {
+            var setting = this.GetSection<ApplicationConfigurationSection>()?.AppSettings?.Find(o => o.Key == key);
+            if (setting == null)
+                this.GetSection<ApplicationConfigurationSection>()?.AppSettings.Add(new AppSettingKeyValuePair() { Key = key, Value = value.ToString() });
+            else
+                setting.Value = value.ToString();
+            ApplicationContext.Current.SaveConfiguration();
+        }
+    }
 }
 

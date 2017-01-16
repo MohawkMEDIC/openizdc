@@ -1,0 +1,76 @@
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-11-14
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding"
+          ng-controller="YellowCardController">
+    <oiz:script>/org.openiz.core/controllers/common/patients/view/partials/yellowcard.js</oiz:script>
+
+    <!-- TODO: Call the forecaster for this -->
+    <div class="table-responsive">
+        <table class="table table-stripd oiz-vaccination-history-table">
+            <thead>
+                <tr>
+                    <th class="vaccine-table-column vaccine-table-vaccine"></th>
+                    <th class="vaccine-table-column" style="text-align:center">0</th>
+                    <th class="vaccine-table-column" style="text-align:center">1</th>
+                    <th class="vaccine-table-column" style="text-align:center">2</th>
+                    <th class="vaccine-table-column" style="text-align:center">3</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="(antigenName, event) in display._vaccineAdministrations track by $index" ng-class-odd="'vaccine-table-row'">
+                    <td class="vaccine-table-vaccine">
+                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="(event[0].route || event[1].route) == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="(event[0].route || event[1].route) == '0a1388b0-66fb-4063-bfe3-151dd8442838'" />
+                    {{ antigenName }}</td>
+                    <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon">
+                        <a data-toggle="tab" data-target="#vaccinations">
+                            <div ng-if="sequence != null" class="input-group">
+                                <div ng-if="sequence.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'">
+                                    <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
+                                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                    </div>
+                                    <div class="text-warn" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &lt; $root.page.maxEventTime &amp;&amp; (sequence.stopTime == null || sequence.stopTime != null &amp;&amp;  $root.page.maxEventTime &lt; sequence.stopTime)">
+                                        <span class="glyphicon glyphicon-info-sign"></span>
+                                    </div>
+                                    <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </div>
+                                </div>
+                                <div ng-if="sequence.moodConcept != 'acf7baf2-221f-4bc2-8116-ceb5165be079'" class="text-success">
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                        <span class="glyphicon glyphicon-ok"></span> 
+                                    </div>
+                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                        <span class="glyphicon glyphicon-tasks"></span> 
+                                    </div>
+                                    <div class="text-warn" ng-if="sequence.negationInd">
+                                        <span class="glyphicon glyphicon-question-sign"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </td>
+                    <td ng-if="event.length != 4" ng-repeat-n="{{4 - event.length}}"> </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

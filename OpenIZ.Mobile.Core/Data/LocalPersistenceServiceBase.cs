@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Data
     {
 
         // Get tracer
-        protected Tracer m_tracer = Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
+        protected Tracer m_tracer; //= Tracer.GetTracer(typeof(LocalPersistenceServiceBase<TData>));
 
         // Configuration
         protected static DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
@@ -65,6 +65,10 @@ namespace OpenIZ.Mobile.Core.Data
             m_mapper = LocalPersistenceService.Mapper;
         }
 
+        public LocalPersistenceServiceBase()
+        {
+            this.m_tracer = Tracer.GetTracer(this.GetType());
+        }
         #region IDataPersistenceService implementation
         /// <summary>
         /// Occurs when inserted.
@@ -117,7 +121,6 @@ namespace OpenIZ.Mobile.Core.Data
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
 
-
             DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
             this.Inserting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -126,37 +129,50 @@ namespace OpenIZ.Mobile.Core.Data
                 return data;
             }
 
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
+
             // Persist object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("INSERT {0}", data);
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("INSERT {0}", data);
 
-                    connection.BeginTransaction();
-                    data.SetDelayLoad(false);
-                    data = this.Insert(connection, data);
-                    data.SetDelayLoad(true);
-                    connection.Commit();
-
-                    this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
-
-                    return data;
+                        connection.BeginTransaction();
+                        data.SetDelayLoad(false);
+                        data = this.Insert(connection, data);
+                        data.SetDelayLoad(true);
+                        connection.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Insert, data, e);
+                    }
 
                 }
-
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Insert, data, e);
-
-                }
+                this.Inserted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                return data;
             }
+            catch { throw; }
 
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: INSERT {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
 
         }
+
         /// <summary>
         /// Update the specified data
         /// </summary>
@@ -175,34 +191,48 @@ namespace OpenIZ.Mobile.Core.Data
                 this.m_tracer.TraceWarning("Pre-Event handler indicates abort update for {0}", data);
                 return data;
             }
-
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             // Persist object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("UPDATE {0}", data);
-                    connection.BeginTransaction();
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("UPDATE {0}", data);
+                        connection.BeginTransaction();
 
-                    data.SetDelayLoad(false);
-                    data = this.Update(connection, data);
-                    data.SetDelayLoad(true);
+                        data.SetDelayLoad(false);
+                        data = this.Update(connection, data);
+                        data.SetDelayLoad(true);
 
-                    connection.Commit();
+                        connection.Commit();
 
-                    this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
-                    return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Update, data, e);
+
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Update, data, e);
-
-                }
+                this.Updated?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+                return data;
             }
+            catch { throw; }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: UPDATE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
         }
 
         /// <summary>
@@ -215,7 +245,10 @@ namespace OpenIZ.Mobile.Core.Data
                 throw new ArgumentNullException(nameof(data));
             else if (!data.Key.HasValue || data.Key == Guid.Empty)
                 throw new InvalidOperationException("Data missing key");
-
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             DataPersistencePreEventArgs<TData> preArgs = new DataPersistencePreEventArgs<TData>(data);
             this.Obsoleting?.Invoke(this, preArgs);
             if (preArgs.Cancel)
@@ -226,30 +259,42 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Obsolete object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                using (connection.Lock())
                 {
-                    this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
-                    connection.BeginTransaction();
+                    try
+                    {
+                        this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
+                        connection.BeginTransaction();
 
-                    data.SetDelayLoad(false);
-                    data = this.Obsolete(connection, data);
-                    data.SetDelayLoad(true);
+                        data.SetDelayLoad(false);
+                        data = this.Obsolete(connection, data);
+                        data.SetDelayLoad(true);
 
-                    connection.Commit();
+                        connection.Commit();
 
-                    this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
 
-                    return data;
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error : {0}", e);
+                        connection.Rollback();
+                        throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    connection.Rollback();
-                    throw new LocalPersistenceException(DataOperationType.Obsolete, data, e);
-                }
+                this.Obsoleted?.Invoke(this, new DataPersistenceEventArgs<TData>(data));
+
+                return data;
             }
+            catch { throw; }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: OBSOLETE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+            }
+#endif
         }
 
         /// <summary>
@@ -258,11 +303,13 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="key">Key.</param>
         public TData Get(Guid key)
         {
+            if (key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
             int toss = 0;
-            return this.Query(o => o.Key == key, 0, 1, out toss)?.SingleOrDefault();
+            this.m_tracer.TraceInfo("GET: {0}", key);
+            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -272,14 +319,14 @@ namespace OpenIZ.Mobile.Core.Data
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
-            return this.Query(query, 0, null, out totalResults);
+            return this.Query(query, 0, null, out totalResults, Guid.Empty);
         }
 
         /// <summary>
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults)
+        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -293,61 +340,75 @@ namespace OpenIZ.Mobile.Core.Data
                 return preArgs.Results;
             }
 
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+#endif
             // Query object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+            try
             {
-                try
+                IEnumerable<TData> results = null;
+                using (connection.Lock())
                 {
                     this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-                    var results = this.Query(connection, query, offset, count ?? -1, out totalResults);
-
-                    var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, results.Count());
-                    this.Queried?.Invoke(this, postData);
-
-                    totalResults = postData.TotalResults;
-
-                    // Set delay load
-                    foreach (var i in postData.Results)
-                        i.SetDelayLoad(true);
-
-                    return postData.Results;
-
+                    results = this.Query(connection, query, offset, count ?? -1, out totalResults, queryId);
                 }
-                catch (NotSupportedException e)
-                {
-                    this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name);
 
-                    // Build dictionary
-                    var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query);
-                    var filter = new Dictionary<String, Object>();
+                var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
+                this.Queried?.Invoke(this, postData);
 
-                    foreach (var f in httpValues)
-                    {
-                        object existing = null;
-                        if (filter.TryGetValue(f.Key, out existing))
-                        {
-                            if (!(existing is IList))
-                            {
-                                existing = new List<Object>() { existing };
-                                filter[f.Key] = existing;
-                            }
-                            (existing as IList).Add(f.Value);
-                        }
-                        else
-                            filter.Add(f.Key, f.Value);
-                    }
-                    // Query
-                    return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults);
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    throw;
-                }
+                totalResults = postData.TotalResults;
+
+                // Set delay load
+                foreach (var i in postData.Results)
+                    i.SetDelayLoad(true);
+
+                return postData.Results;
+
 
             }
+            catch (NotSupportedException e)
+            {
+                this.m_tracer.TraceVerbose("Cannot perform LINQ query, switching to stored query sqp_{0}", typeof(TData).Name, e);
+
+                // Build dictionary
+                var httpValues = QueryExpressionBuilder.BuildQuery<TData>(query, true);
+                var filter = new Dictionary<String, Object>();
+
+                foreach (var f in httpValues)
+                {
+                    object existing = null;
+                    if (filter.TryGetValue(f.Key, out existing))
+                    {
+                        if (!(existing is IList))
+                        {
+                            existing = new List<Object>() { existing };
+                            filter[f.Key] = existing;
+                        }
+                        (existing as IList).Add(f.Value);
+                    }
+                    else
+                        filter.Add(f.Key, f.Value);
+
+                }
+                // Query
+                return this.Query(String.Format("sqp_{0}", typeof(TData).Name), filter, offset, count, out totalResults, queryId);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error : {0}", e);
+                throw;
+            }
+#if PERFMON
+            finally
+            {
+                sw.Stop();
+                this.m_tracer.TraceVerbose("PERF: QUERY {0} ({1} ms)", query, sw.ElapsedMilliseconds);
+            }
+#endif
+
         }
 
         /// <summary>
@@ -356,7 +417,7 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms)
         {
             int totalResults = 0;
-            return this.Query(storedQueryName, parms, 0, null, out totalResults);
+            return this.Query(storedQueryName, parms, 0, null, out totalResults, Guid.Empty);
         }
 
         /// <summary>
@@ -365,14 +426,14 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual int Count(Expression<Func<TData, bool>> query)
         {
             var tr = 0;
-            this.Query(query, 0, null, out tr);
+            this.Query(query, 0, null, out tr, Guid.Empty);
             return tr;
         }
 
         /// <summary>
         /// Query this instance.
         /// </summary>
-        public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults)
+        public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults, Guid queryId)
         {
 
             if (String.IsNullOrEmpty(storedQueryName))
@@ -391,29 +452,30 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Query object
             var connection = this.CreateConnection();
-            using (connection.Lock())
+
+            try
             {
-                try
+                List<TData> results = null;
+                using (connection.Lock())
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
-                    
-                    var results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults).ToList();
 
-                    var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
-                    this.Queried?.Invoke(this, postArgs);
-
-                    totalResults = postArgs.TotalResults;
-                    foreach (var i in postArgs.Results)
-                        i.SetDelayLoad(true);
-                    return postArgs.Results;
-
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error : {0}", e);
-                    throw;
+                    results = this.Query(connection, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId).ToList();
                 }
 
+                var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
+                this.Queried?.Invoke(this, postArgs);
+
+                totalResults = postArgs.TotalResults;
+                foreach (var i in postArgs.Results)
+                    i.SetDelayLoad(true);
+
+                return postArgs.Results;
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error : {0}", e);
+                throw;
             }
         }
 
@@ -425,9 +487,9 @@ namespace OpenIZ.Mobile.Core.Data
         /// <returns>The user UUID.</returns>
         protected Guid CurrentUserUuid(SQLiteConnectionWithLock context)
         {
-            if (ApplicationContext.Current.Principal == null)
+            if (AuthenticationContext.Current.Principal == null)
                 return Guid.Empty;
-            String name = ApplicationContext.Current.Principal.Identity.Name;
+            String name = AuthenticationContext.Current.Principal.Identity.Name;
             var securityUser = context.Table<DbSecurityUser>().Where(o => o.UserName == name).ToList().SingleOrDefault();
             if (securityUser == null)
             {
@@ -443,7 +505,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public abstract TData ToModelInstance(Object dataInstance, SQLiteConnectionWithLock context);
+        public abstract TData ToModelInstance(Object dataInstance, SQLiteConnectionWithLock context, bool loadFast);
 
         /// <summary>
         /// Froms the model instance.
@@ -475,13 +537,13 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId);
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults);
+        public abstract IEnumerable<TData> Query(SQLiteConnectionWithLock context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId);
 
         /// <summary>
         /// Query internal without caring about limiting
@@ -492,20 +554,20 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(SQLiteConnectionWithLock context, Expression<Func<TData, bool>> expr)
         {
             int t;
-            return this.Query(context, expr, 0, -1, out t);
+            return this.Query(context, expr, 0, -1, out t, Guid.Empty);
         }
 
         /// <summary>
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        internal TData Get(SQLiteConnectionWithLock context, Guid key)
+        internal virtual TData Get(SQLiteConnectionWithLock context, Guid key)
         {
             int totalResults = 0;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
-            return this.Query(context, o => o.Key == key, 0, 1, out totalResults)?.SingleOrDefault();
+            return this.Query(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty)?.SingleOrDefault();
         }
 
         /// <summary>

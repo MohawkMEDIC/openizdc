@@ -1,4 +1,23 @@
-﻿using MohawkCollege.Util.Console.Parameters;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-15
+ */
+using MohawkCollege.Util.Console.Parameters;
 using SharpCompress.Reader.Tar;
 using System;
 using System.Collections.Generic;
@@ -73,7 +92,7 @@ namespace BrainBug
             try
             {
                 Console.WriteLine("Extracting {0}...", parameters.BackupFile);
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[8096];
                 using (FileStream ins = File.OpenRead(parameters.BackupFile))
                 {
                     ins.Read(buffer, 0, 24);
@@ -83,10 +102,10 @@ namespace BrainBug
                     {
                         using (ZLibNet.ZLibStream df = new ZLibNet.ZLibStream(ins, ZLibNet.CompressionMode.Decompress))
                         {
-                            int br = 1024;
-                            while (br == 1024)
+                            int br = 8096;
+                            while (br == 8096)
                             {
-                                br = df.Read(buffer, 0, 1024);
+                                br = df.Read(buffer, 0, 8096);
                                 outs.Write(buffer, 0, br);
                             }
                         }

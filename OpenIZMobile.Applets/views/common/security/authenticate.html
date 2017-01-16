@@ -1,0 +1,39 @@
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-10-14
+ -->
+<fieldset class="form-horizontal form-group" xmlns="http://www.w3.org/1999/xhtml">
+    <div class="form-group" ng-class="{ 'has-error' : loginForm.username.$invalid &amp;&amp; loginForm.username.$touched }">
+        <label for="usernameInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.username' | i18n }}</label>
+        <div class="col-xs-9">
+            <div class="input-group">
+                <input ng-model="username" type="text" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.username' | i18n }}" class="form-control" name="username" id="usernameInput" autocomplete="off" autofocus="autofocus" autocorrect="off" autocapitalize="none" />
+                <p ng-show="loginForm.username.$invalid &amp;&amp; loginForm.username.$touched" class="help-block text-danger">{{ 'locale.security.errors.usernameRequired' | i18n }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="form-group" ng-class="{ 'has-error' : loginForm.password.$invalid &amp;&amp; loginForm.password.$touched }">
+        <label for="passwordInput" class="col-xs-2 control-label">{{ 'locale.security.login.label.password' | i18n }}</label>
+        <div class="col-xs-9">
+            <div class="input-group">
+                <input ng-model="password" type="password" ng-required="true" placeholder="{{ 'locale.security.login.placeholder.password' | i18n }}" class="form-control" name="password" />
+                <p ng-show="loginForm.password.$invalid &amp;&amp; loginForm.password.$touched" class="help-block text-danger">{{ 'locale.security.errors.passwordRequired' | i18n }}</p>
+            </div>
+        </div>
+    </div>
+</fieldset>

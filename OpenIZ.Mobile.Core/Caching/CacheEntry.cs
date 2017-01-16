@@ -1,6 +1,6 @@
 ﻿/*
  * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- *
+ * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
  * may not use this file except in compliance with the License. You may 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-19
+ * Date: 2016-7-30
  */
 using OpenIZ.Core.Model;
 using System;
@@ -30,7 +30,7 @@ namespace OpenIZ.Mobile.Core.Caching
     /// <summary>
     /// Represents a cache entry
     /// </summary>
-    public struct CacheEntry
+    public class CacheEntry
     {
 
         // Last read time
@@ -66,6 +66,15 @@ namespace OpenIZ.Mobile.Core.Caching
         internal void Touch()
         {
             Interlocked.Exchange(ref m_lastReadTime, DateTime.Now.Ticks);
+        }
+
+        /// <summary>
+        /// Update the cache entry
+        /// </summary>
+        internal void Update(object data)
+        {
+            this.Data = data;
+            this.Touch();
         }
     }
 }

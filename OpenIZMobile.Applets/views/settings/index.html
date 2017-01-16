@@ -1,4 +1,23 @@
-﻿<div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-17
+ -->
+<div class="container" ng-controller="SettingsController" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet"
      openiz:layout="/org.openiz.core/layouts/minimal.html">
     <openiz:title lang="en">Initial Settings</openiz:title>
     <openiz:title lang="fr"></openiz:title>
@@ -39,6 +58,12 @@
                                                 <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-10 col-offset-sm-2">
+                                                <input type="checkbox" ng-model="config.security.enableTrace"/>
+                                                {{ 'locale.settings.enableTracing' | i18n }}
+                                            </label>
+                                        </div>
                                         <div class="btn-group pull-right">
                                             <button class="btn-danger btn" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
                                                 <span class="glyphicon glyphicon-resize-full">
@@ -67,49 +92,7 @@
                 <div class="panel-collapse collapse" id="dataBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#dataBodyIndicator">
 
                     <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-2 col-xs-2">
-                                    <img src="~/img/appbar.database.png" alt="database" class="left" />
-                                </div>
-                                <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                                    <em>{{ 'locale.settings.dataDescription' | i18n }}</em>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <span class="control-label col-sm-2">{{ 'locale.settings.dataMode' | i18n }}</span>
-                            <div class="col-sm-10">
-                                <select class="form-control" ng-model="config.data.mode">
-                                    <option value="sync">Synchronized</option>
-                                    <option value="online">Online Only</option>
-                                    <option value="offline">Offline Only</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group" ng-if="config.data.mode == 'sync'">
-                            <label class="control-label col-sm-2">{{ 'locale.settings.syncEvents' | i18n }}:</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" multiple="multiple" ng-model="config.data.sync.event">
-                                    <option value="onstart">On Startup</option>
-                                    <option value="onclose">On Close</option>
-                                    <option value="oncommit">On Commit</option>
-                                </select>
-                                </div>
-                            </div>
-                        <div class="form-group" ng-if="config.data.mode == 'sync'">
-                            <label class="control-label col-sm-2">{{ 'locale.settings.pollInterval' | i18n }}:</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" id="pollIntervalInput" ng-model="config.data.sync.pollInterval">
-                                    <option value="1">{{ 'locale.settings.pollInterval.1' | i18n }}</option>
-                                    <option value="5">{{ 'locale.settings.pollInterval.5' | i18n }}</option>
-                                    <option value="15">{{ 'locale.settings.pollInterval.15' | i18n }}</option>
-                                    <option value="30">{{ 'locale.settings.pollInterval.30' | i18n }}</option>
-                                    <option value="0">{{ 'locale.settings.pollInterval.0' | i18n }}</option>
-                                    <option value="-1">{{ 'locale.settings.pollInterval.push' | i18n }}</option>
-                                </select>
-                            </div>
-                        </div>
+                        <!-- #include virtual="~/views/settings/tabs/data.html" -->
                     </div>
                 </div>
             </div>
@@ -124,34 +107,7 @@
                 <div class="panel-collapse collapse" id="logBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#logBodyIndicator">
 
                     <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-2 col-xs-2">
-                                    <img src="~/img/appbar.book.list.png" alt="log" class="left" />
-                                </div>
-                                <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                                    <em>{{ 'locale.settings.logDescription' | i18n }}</em>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">{{ 'locale.settings.logMode' | i18n }}</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" ng-model="config.log.mode">
-                                    <optgroup label="Debugging">
-                                        <option value="LogAlways">{{ 'locale.settings.log.always' | i18n }}</option>
-                                        <option value="Information">{{ 'locale.settings.log.informational' | i18n }}</option>
-                                        <option value="Verbose">{{ 'locale.settings.log.verbose' | i18n }}</option>
-                                    </optgroup>
-                                    <optgroup label="Production">
-                                        <option value="Critical">{{ 'locale.settings.log.critical' | i18n }}</option>
-                                        <option value="Error">{{ 'locale.settings.log.error' | i18n }}</option>
-                                        <option value="Warning">{{ 'locale.settings.log.warning' | i18n }}</option>
-
-                                    </optgroup>
-                                </select>
-                            </div>
-                        </div>
+                        <!-- #include virtual="~/views/settings/tabs/log.html" -->
                     </div>
                 </div>
             </div>
@@ -166,41 +122,7 @@
                 <div class="panel-collapse collapse" id="securityBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#securityBodyIndicator">
 
                     <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-2 col-xs-2">
-                                    <img src="~/img/appbar.shield.png" alt="log" class="left" />
-                                </div>
-                                <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                                    <em>{{ 'locale.settings.securityDescription' | i18n }}</em>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-sm-2">{{ 'locale.settings.passwordFormat' | i18n }}</label>
-                            <div class="col-sm-10">
-                                <select class="form-control" ng-model="config.security.hasher">
-                                    <option value="SHA256PasswordHasher">{{ 'locale.settings.security.sha256' | i18n }}</option>
-                                    <option value="SHA1PasswordHasher">{{ 'locale.settings.security.sha1' | i18n }}</option>
-                                    <option value="PlainTextPasswordHasher">{{ 'locale.settings.security.plain' | i18n }}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="offlineAuthenticationInput" type="checkbox" ng-model="config.security.offline.enable" /> 
-                                        {{ 'locale.settings.allowLocalAuth' | i18n }} 
-                                        - 
-                                        <em>
-                                        {{ 'locale.settings.allowLocalAuthDescription' | i18n}}
-                                        </em>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- #include virtual="~/views/settings/tabs/security.html" -->
 
                     </div>
                 </div>
@@ -216,37 +138,7 @@
                 <div class="panel-collapse collapse" id="networkBody" oiz-collapseindicator="oiz-collapseindicator" data-oiz-chevron="#networkBodyIndicator">
 
                     <div class="panel-body">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-2 col-xs-2">
-                                    <img src="~/img/appbar.network.png" alt="log" class="left" />
-                                </div>
-                                <div class="col-md-10 col-xs-10" style="vertical-align:middle">
-                                    <em>{{ 'locale.settings.networkDescription' | i18n }}</em>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-2"></div>
-                            <div class="col-sm-10">
-                                <div class="checkbox">
-                                    <label>
-                                        <input name="useProxy" type="checkbox" ng-model="config.network.useProxy" />
-                                        {{ 'locale.settings.useProxy' | i18n }}
-                                        -
-                                        <em>
-                                            {{ 'locale.settings.useProxyDescription' | i18n}}
-                                        </em>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div ng-if="config.network.useProxy" class="form-group">
-                            <label class="control-label col-sm-2">{{ 'locale.settings.proxyAddress' | i18n }}</label>
-                            <div class="col-sm-10">
-                                <input type="url" class="form-control" ng-model="config.network.proxyAddress" placeholder="{{ 'locale.settings.proxyAddressPlaceHolder' | i18n }}"/>
-                            </div>
-                        </div>
+                        <!-- #include virtual="~/views/settings/tabs/network.html" -->
 
                     </div>
                 </div>

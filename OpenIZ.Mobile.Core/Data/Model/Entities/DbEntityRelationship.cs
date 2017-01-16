@@ -57,5 +57,11 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// </summary>
         [Column("relationshipType"), MaxLength(16), NotNull]
         public byte[] RelationshipTypeUuid { get; set; }
+
+        /// <summary>
+        /// Quantity 
+        /// </summary>
+        [Column("quantity")]
+        public int Quantity { get; set; }
     }
 }

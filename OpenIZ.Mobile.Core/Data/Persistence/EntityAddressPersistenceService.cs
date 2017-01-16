@@ -35,6 +35,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     {
 
         /// <summary>
+        /// Override model instance
+        /// </summary>
+        public override object FromModelInstance(EntityAddress modelInstance, SQLiteConnectionWithLock context)
+        {
+            foreach (var itm in modelInstance.Component)
+                itm.Value = itm.Value.Trim();
+            return base.FromModelInstance(modelInstance, context);
+        }
+
+        /// <summary>
         /// Insert the specified object
         /// </summary>
         public override EntityAddress Insert(SQLiteConnectionWithLock context, EntityAddress data)
@@ -42,6 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Insert(context, data);
 
@@ -64,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
+            data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.Update(context, data);
 

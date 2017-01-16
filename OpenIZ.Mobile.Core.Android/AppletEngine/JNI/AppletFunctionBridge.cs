@@ -39,6 +39,9 @@ using OpenIZ.Mobile.Core.Configuration;
 using System.Globalization;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Xamarin;
+using OpenIZ.Mobile.Core.Xamarin.Services.Model;
+using System.Text;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -54,38 +57,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
         private KeyValuePair<String, float> m_applicationStatus;
 
-        /// <summary>
-        /// Menu information
-        /// </summary>
-        [JsonObject]
-        private class MenuInformation
-        {
 
-
-            /// <summary>
-            /// Get or sets the menu
-            /// </summary>
-            [JsonProperty("menu")]
-            public List<MenuInformation> Menu { get; set; }
-
-            /// <summary>
-            /// Icon text
-            /// </summary>
-            [JsonProperty("icon")]
-            public String Icon { get; set; }
-
-            /// <summary>
-            /// Text for the menu item
-            /// </summary>
-            [JsonProperty("text")]
-            public String Text { get; set; }
-
-            /// <summary>
-            /// Action
-            /// </summary>
-            [JsonProperty("action")]
-            public String Action { get; set; }
-        }
 
         // Context
         private Context m_context;
@@ -99,9 +71,32 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <param name="context">Context.</param>
         public AppletFunctionBridge(Context context, AppletWebView view)
         {
+            if((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication != null)
+                ZXing.Mobile.MobileBarcodeScanner.Initialize((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication);
             ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
             this.m_context = context;
             this.m_view = view;
+        }
+
+        /// <summary>
+        /// Get the specified reference set
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetDataAsset(String dataId)
+        {
+            dataId = String.Format("data/{0}", dataId);
+            return Convert.ToBase64String(XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Assets).FirstOrDefault(o => o.Name == dataId), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
+        }
+
+        /// <summary>
+        /// Gets the online status
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public bool GetOnlineState()
+        {
+            return ApplicationContext.Current?.GetService<INetworkInformationService>()?.IsNetworkAvailable == true;
         }
 
         /// <summary>
@@ -210,6 +205,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         }
 
         /// <summary>
+        /// Create new UUID
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String NewGuid()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
         /// Get version name
         /// </summary>
         [JavascriptInterface]
@@ -238,10 +243,10 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
 
                 // Cannot have menus if not logged in
-                if (ApplicationContext.Current.Principal == null) return null;
+                if (AuthenticationContext.Current.Principal == null) return null;
 
                 string cached = null;
-                if (this.m_cachedMenus.TryGetValue(ApplicationContext.Current.Principal, out cached))
+                if (this.m_cachedMenus.TryGetValue(AuthenticationContext.Current.Principal, out cached))
                     return cached;
 
                 var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
@@ -255,7 +260,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
                 cached = JniUtil.ToJson(retVal);
                 lock (this.m_cachedMenus)
-                    this.m_cachedMenus.Add(ApplicationContext.Current.Principal, cached);
+                    this.m_cachedMenus.Add(AuthenticationContext.Current.Principal, cached);
                 return cached;
             }
             catch (Exception e)
@@ -280,8 +285,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
         {
             // TODO: Demand permission
-            if (menu.Launcher != null &&
-                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Launcher, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(ApplicationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+            if (menu.Asset != null &&
+                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item
@@ -291,7 +296,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             {
                 existing = new MenuInformation()
                 {
-                    Action = menu.Launcher,
+                    Action = menu.Launch,
                     Icon = menu.Icon,
                     Text = menuText
                 };
@@ -389,7 +394,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
-                return "XXXXXXXXXXXX";
+                var scanner = new ZXing.Mobile.MobileBarcodeScanner();
+                String retVal = String.Empty;
+                var result = scanner.Scan().ContinueWith((o) => retVal = o.Result?.Text);
+                result.Wait();
+                return retVal;
             }
             catch (Exception e)
             {

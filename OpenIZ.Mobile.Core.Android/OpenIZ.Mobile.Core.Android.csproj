@@ -45,6 +45,7 @@
       <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
     </Reference>
     <Reference Include="Mono.CSharp" />
+    <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
@@ -75,6 +76,8 @@
       <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
@@ -83,15 +86,23 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="ZXing.Net.Mobile.Core">
+      <HintPath>..\Solution Items\ZXing.Net.Mobile.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.portable">
+      <HintPath>..\Solution Items\zxing.portable.dll</HintPath>
+    </Reference>
+    <Reference Include="ZXingNetMobile">
+      <HintPath>..\Solution Items\ZXingNetMobile.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppletEngine\JNI\PatientFunctionBridge.cs" />
     <Compile Include="AppletEngine\JNI\SessionServiceBridge.cs" />
-    <Compile Include="AppletEngine\JNI\UserServiceBridge.cs" />
-    <Compile Include="Net\NetworkInformationService.cs" />
+    <Compile Include="Diagnostics\AndroidLogTraceWriter.cs" />
+    <Compile Include="Services\MessageQueueService.cs" />
+    <Compile Include="Services\AndroidNetworkInformationService.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Http\RestClient.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="AppletEngine\AuthenticationProvider.cs" />
     <Compile Include="AppletEngine\AppletWebView.cs" />
@@ -101,37 +112,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="Security\OauthTokenRequest.cs" />
-    <Compile Include="Security\SessionInformation.cs" />
-    <Compile Include="Security\SystemPrincipal.cs" />
-    <Compile Include="Security\X509CertificateUtils.cs" />
-    <Compile Include="Diagnostics\LogTraceWriter.cs" />
-    <Compile Include="Diagnostics\FileTraceWriter.cs" />
-    <Compile Include="Security\PolicyPermissionAttribute.cs" />
     <Compile Include="AndroidApplicationContext.cs" />
     <Compile Include="AppletEngine\JNI\ConfigurationServiceBridge.cs" />
-    <Compile Include="Security\PasswordHashers.cs" />
-    <Compile Include="Security\OAuthIdentityProvider.cs" />
-    <Compile Include="Security\OAuthTokenServiceCredentials.cs" />
-    <Compile Include="AppletEngine\JNI\ConceptServiceBridge.cs" />
-    <Compile Include="Security\TokenClaimsPrincipal.cs" />
-    <Compile Include="Security\OAuth2CredentialProvider.cs" />
-    <Compile Include="Security\TokenCredentialProvider.cs" />
-    <Compile Include="Security\TokenCredentials.cs" />
     <Compile Include="AppletEngine\JNI\JniUtil.cs" />
-    <Compile Include="Exceptions\SecurityTokenException.cs" />
-    <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
-    <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
-    <Compile Include="Services\Attributes\RestServiceAttribute.cs" />
-    <Compile Include="Services\AndroidClinicalProtocolRepositoryService.cs" />
-    <Compile Include="Services\MessageQueueService.cs" />
-    <Compile Include="Services\MiniImsServer.cs" />
-    <Compile Include="Services\ServiceHandlers\ApplicationService.cs" />
-    <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
-    <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
-    <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
-    <Compile Include="Subscribers\PolicyEnforcementSubscriber.cs" />
-    <Compile Include="Threading\OpenIZThreadPool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\OpenIZDC.licenseheader">
@@ -144,6 +127,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\OpenIZ.Mobile.Core.Xamarin\OpenIZ.Mobile.Core.Xamarin.csproj">
+      <Project>{9a06acc9-4d6f-4eab-8a8a-9652bc6a70ae}</Project>
+      <Name>OpenIZ.Mobile.Core.Xamarin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenIZ.Mobile.Core\OpenIZ.Mobile.Core.csproj">
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>

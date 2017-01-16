@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-23
+ * Date: 2016-7-24
  */
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
@@ -29,6 +29,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
+using OpenIZ.Core.Model.Map;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -54,9 +55,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context) where TActType : Act, new()
+        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
+
+            if (dbInstance.TemplateUuid != null)
+                retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(context.Get<DbTemplateDefinition>(dbInstance.TemplateUuid), true);
 
             // Has this been updated? If so, minimal information about the previous version is available
             if(dbInstance.UpdatedTime != null)
@@ -81,19 +85,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Act ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Act ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance as DbAct;
-            switch (new Guid(dbAct.ClassConceptUuid).ToString())
+
+            switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context);
-                case Condition:
+                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Observation:
-                    var dbObs = context.Table<DbObservation>().First(o => o.Uuid == dbAct.Uuid);
+		            var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
+
+		            if (dbObs == null)
+		            {
+						return base.ToModelInstance(dataInstance, context, loadFast);
+					}
+
                     switch(dbObs.ValueType)
                     {
                         case "ST":
@@ -101,40 +111,58 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 context.Table<DbTextObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context, 
+                                loadFast);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
                                 context.Table<DbCodedObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context, 
+                                loadFast);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
                                 context.Table<DbQuantityObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
                                 dbAct, 
                                 dbObs, 
-                                context);
+                                context,
+                                loadFast);
                         default:
-                            return base.ToModelInstance(dataInstance, context);
+                            return base.ToModelInstance(dataInstance, context, loadFast);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context);
+                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 default:
-                    return this.ToModelInstance<Act>(dbAct, context);
+                    return this.ToModelInstance<Act>(dbAct, context, loadFast);
 
             }
         }
 
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(Act modelInstance, SQLiteConnectionWithLock context)
+        {
+            var domainInstance = base.FromModelInstance(modelInstance, context) as DbAct;
+            if (modelInstance.Template != null)
+            {
+                modelInstance.Template = modelInstance.Template.EnsureExists(context);
+                domainInstance.TemplateUuid = modelInstance.Template.Key.Value.ToByteArray();
+            }
+            return domainInstance;
+        }
+
+        /// <summary>
         /// Insert the act into the database
         /// </summary>
-        public override Act Insert(SQLiteConnectionWithLock context, Act data)
+        internal Act InsertInternal(SQLiteConnectionWithLock context, Act data)
         {
-            data.ClassConcept?.EnsureExists(context);
-            data.MoodConcept?.EnsureExists(context);
-            data.ReasonConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            
+            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if(data.MoodConcept != null) data.MoodConcept = data.MoodConcept.EnsureExists(context);
+            if(data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
+            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if(data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
@@ -193,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public override Act Update(SQLiteConnectionWithLock context, Act data)
+        internal Act UpdateInternal(SQLiteConnectionWithLock context, Act data)
         {
             data.ClassConcept?.EnsureExists(context);
             data.MoodConcept?.EnsureExists(context);
@@ -209,6 +237,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Do the update
             var retVal = base.Update(context, data);
+
+            // Set appropriate versioning 
+            retVal.PreviousVersion = new Act()
+            {
+                ClassConcept = retVal.ClassConcept,
+                MoodConcept = retVal.MoodConcept,
+                Key = retVal.Key,
+                VersionKey = retVal.PreviousVersionKey,
+                CreationTime = (DateTimeOffset)retVal.CreationTime,
+                CreatedByKey = retVal.CreatedByKey
+            };
+            retVal.CreationTime = DateTimeOffset.Now;
+            retVal.CreatedByKey = data.CreatedByKey == Guid.Empty || data.CreatedByKey == null ? base.CurrentUserUuid(context) : data.CreatedByKey;
+
             var ruuid = retVal.Key.Value.ToByteArray();
 
             if (retVal.Extensions != null)
@@ -260,10 +302,84 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// Obsolete the act
         /// </summary>
         /// <param name="context"></param>
-        public override Act Obsolete(SQLiteConnectionWithLock context, Act data)
+        internal Act ObsoleteInternal(SQLiteConnectionWithLock context, Act data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.Obsolete(context, data);
         }
+
+        /// <summary>
+        /// Insert the specified act
+        /// </summary>
+        public override Act Insert(SQLiteConnectionWithLock context, Act data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case ControlAct:
+                    return new ControlActPersistenceService().Insert(context, data as ControlAct);
+                case SubstanceAdministration:
+                    return new SubstanceAdministrationPersistenceService().Insert(context, data as SubstanceAdministration);
+                case Condition:
+                case Observation:
+                    switch (data.GetType().Name)
+                    {
+                        case "TextObservation":
+                            return new TextObservationPersistenceService().Insert(context, data as TextObservation);
+                        case "CodedObservation":
+                            return new CodedObservationPersistenceService().Insert(context, data as CodedObservation);
+                        case "QuantityObservation":
+                            return new QuantityObservationPersistenceService().Insert(context, data as QuantityObservation);
+                        default:
+                            return this.InsertInternal(context, data);
+                    }
+                case Encounter:
+                    return new EncounterPersistenceService().Insert(context, data as PatientEncounter);
+                default:
+                    return this.InsertInternal(context, data);
+
+            }
+            
+        }
+
+        /// <summary>
+        /// Update the act
+        /// </summary>
+        public override Act Update(SQLiteConnectionWithLock context, Act data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case ControlAct:
+                    return new ControlActPersistenceService().Update(context, data as ControlAct);
+                case SubstanceAdministration:
+                    return new SubstanceAdministrationPersistenceService().Update(context, data as SubstanceAdministration);
+                case Condition:
+                case Observation:
+                    switch (data.GetType().Name)
+                    {
+                        case "TextObservation":
+                            return new TextObservationPersistenceService().Update(context, data as TextObservation);
+                        case "CodedObservation":
+                            return new CodedObservationPersistenceService().Update(context, data as CodedObservation);
+                        case "QuantityObservation":
+                            return new QuantityObservationPersistenceService().Update(context, data as QuantityObservation);
+                        default:
+                            return this.UpdateInternal(context, data);
+                    }
+                case Encounter:
+                    return new EncounterPersistenceService().Update(context, data as PatientEncounter);
+                default:
+                    return this.UpdateInternal(context, data);
+
+            }
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        public override Act Obsolete(SQLiteConnectionWithLock context, Act data)
+        {
+            return this.ObsoleteInternal(context, data);
+        }
+
     }
 }

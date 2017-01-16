@@ -33,7 +33,8 @@ using OpenIZ.Mobile.Core.Configuration.Data;
 using OpenIZ.Core.Model.EntityLoader;
 using System.Diagnostics;
 using System.Security.Principal;
-using OpenIZ.Mobile.Core.Android.Threading;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Xamarin.Threading;
 
 namespace OpenIZ.Mobile.Core.Test
 {
@@ -111,6 +112,7 @@ namespace OpenIZ.Mobile.Core.Test
                     typeof(LocalPersistenceService).AssemblyQualifiedName,
                     typeof(LocalEntitySource).AssemblyQualifiedName,
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
+                    typeof(MemoryCacheService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName
                 }
                     };
@@ -161,7 +163,6 @@ namespace OpenIZ.Mobile.Core.Test
                         // Set the entity source
                         EntitySource.Current = new EntitySource(this.GetService<IEntitySourceProvider>());
 
-                        this.Principal = new GenericPrincipal(new GenericIdentity("ANONYMOUS"), new string[] { });
                         this.Start();
                     }
                     catch (Exception e)
@@ -206,5 +207,14 @@ namespace OpenIZ.Mobile.Core.Test
             }
         }
 
+        public override void SaveConfiguration()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -36,11 +36,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the database representation to a model instance
         /// </summary>
-        public override DeviceEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override DeviceEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var deviceEntity = dataInstance as DbDeviceEntity;
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == deviceEntity.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<DeviceEntity>(dbe, context);
+            var retVal = m_entityPersister.ToModelInstance<DeviceEntity>(dbe, context, loadFast);
             retVal.SecurityDeviceKey = new Guid(deviceEntity.SecurityDeviceUuid);
             retVal.ManufacturedModelName = deviceEntity.ManufacturerModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;

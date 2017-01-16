@@ -15,12 +15,13 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-13
+ * Date: 2016-7-30
  */
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Configuration;
@@ -43,112 +44,34 @@ namespace OpenIZ.Mobile.Core.Synchronization
 {
 
     /// <summary>
-    /// Represents conflict event args
-    /// </summary>
-    public class SynchronizationConflictEventArgs : EventArgs
-    {
-        /// <summary>
-        /// Represents the remote resource
-        /// </summary>
-        public IdentifiedData RemoteResource { get; set; }
-
-        /// <summary>
-        /// Represents the local resource
-        /// </summary>
-        public IdentifiedData LocalResource { get; set; }
-    }
-
-    /// <summary>
     /// Queue manager daemon
     /// </summary>
     public class QueueManagerService : IDaemonService
     {
 
+        private Object m_inboundLock = new object();
+
+        private Object m_outboundLock = new object();
+
+        private IThreadPoolService m_threadPool = null;
+
         // Queue manager 
         private Tracer m_tracer = Tracer.GetTracer(typeof(QueueManagerService));
-        private Object m_inboundLock = new object();
-        private Object m_outboundLock = new object();
-        private IThreadPoolService m_threadPool = null;
+        public event EventHandler Started;
 
         /// <summary>
         /// Events surrounding the daemon
         /// </summary>
         public event EventHandler Starting;
-        public event EventHandler Started;
-        public event EventHandler Stopping;
         public event EventHandler Stopped;
 
+        public event EventHandler Stopping;
         /// <summary>
         /// Returns true if the service is running
         /// </summary>
-        public bool IsRunning
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsRunning => true;
 
-        /// <summary>
-        /// Import element
-        /// </summary>
-        private void ImportElement(IdentifiedData data, InboundQueueEntry queueEntry)
-        {
-            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(data.GetType());
-            var svc = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
-            try
-            {
-                var existing = svc.Get(data.Key.Value) as IdentifiedData;
-                (existing as IdentifiedData)?.SetDelayLoad(false);
-                data?.SetDelayLoad(false);
-
-                this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
-                if (existing == null)
-                    try {
-                        svc.Insert(data);
-                    } catch(Exception e)
-                    {
-                        this.m_tracer.TraceWarning("Batch insert fails, performing individual inserts");
-                        if (data is Bundle)
-                            foreach (var d in (data as Bundle).Item)
-                                this.ImportElement(d as IdentifiedData, queueEntry);
-                                //SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
-                        else
-                            throw;
-                    }
-                else
-                {
-                    IVersionedEntity ver = data as IVersionedEntity;
-                    if (ver?.VersionKey == (existing as IVersionedEntity)?.VersionKey) // no need to update
-                        this.m_tracer.TraceVerbose("Object {0} is already up to date", existing);
-                    if (ver?.PreviousVersionKey != null && ver?.PreviousVersionKey != (existing as IVersionedEntity)?.VersionKey ||
-                        data.GetType() != existing.GetType()) // Conflict, ask the meatbag to resolve it
-                    {
-                        XmlSerializer xsz = new XmlSerializer(existing.GetType());
-                        using (var ms = new MemoryStream())
-                        {
-                            xsz.Serialize(ms, existing);
-                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
-                        }
-                    }
-                    else
-                    {
-                        svc.Update(data);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error inserting object data: {0}", e);
-                var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, Strings.locale_importErrorSubject, String.Format(Strings.locale_importErrorBody, e), AlertMessageFlags.Alert));
-
-                // SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
-                throw;
-            }
-        }
-
-        /// <summary>
+	    /// <summary>
         /// Exhausts the inbound queue
         /// </summary>
         public void ExhaustInboundQueue()
@@ -170,7 +93,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceInfo("{0} remaining inbound queue items", SynchronizationQueue.Inbound.Count());
                         var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
                         var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
-                        (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
+                        //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
                         dpe = (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Entry ?? dpe;
 
                         this.ImportElement(dpe, queueEntry);
@@ -199,10 +122,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public void ExhaustOutboundQueue()
         {
-            if (!Monitor.IsEntered(this.m_outboundLock)) return;
-
-            lock (this.m_outboundLock)
+            bool locked = false;
+            try
             {
+                locked = Monitor.TryEnter(this.m_outboundLock, 100);
+                if (!locked) return;
                 // Exhaust the queue
                 while (SynchronizationQueue.Outbound.Count() > 0)
                 {
@@ -212,12 +136,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     var dpe = SynchronizationQueue.Outbound.DeserializeObject(syncItm);
 
                     // TODO: Sleep thread here
-                    while (!integrationService.IsAvailable())
-                        ;
+                    if (!integrationService.IsAvailable())
+                    {
+                        // Come back in 30 seconds...
+                        this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
+                        return;
+                    }
 
                     // try to send
                     try
                     {
+                        // Reconstitute bundle
+                        (dpe as Bundle)?.Reconstitute();
+                        dpe = (dpe as Bundle)?.Entry ?? dpe;
+
                         // Send the object to the remote host
                         switch (syncItm.Operation)
                         {
@@ -225,10 +157,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 integrationService.Insert(dpe);
                                 break;
                             case DataOperationType.Obsolete:
-                                integrationService.Obsolete(dpe);
+                                integrationService.Obsolete(dpe, syncItm.IsRetry);
                                 break;
                             case DataOperationType.Update:
-                                integrationService.Update(dpe);
+                                integrationService.Update(dpe, syncItm.IsRetry);
                                 break;
                         }
 
@@ -239,32 +171,129 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                         SynchronizationQueue.Outbound.DequeueRaw();
+
+                        // Construct an alert
+                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {
-                        if (syncItm.RetryCount == 0)
-                            this.m_tracer.TraceError("Error sending object {0}: {1}", dpe, ex);
+
+                        this.m_tracer.TraceError("Error sending object {0}: {1}", dpe, ex);
+
                         syncItm.RetryCount++;
+
                         // Re-queue
                         if (syncItm.RetryCount > 3) // TODO: Make this configurable
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         }
                         else
+                        {
                             SynchronizationQueue.Outbound.UpdateRaw(syncItm);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
+                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+						SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+						SynchronizationQueue.Outbound.DequeueRaw();
 
+                        throw;
                     }
                 }
+            }
+            finally
+            {
+                if (locked) Monitor.Exit(this.m_outboundLock);
             }
         }
 
         /// <summary>
-        /// Start command
+        /// Create an alert that the user can acknowledge
         /// </summary>
+        private void CreateUserAlert(String subject, String body, params object[] parms)
+        {
+            var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, parms), AlertMessageFlags.Alert));
+        }
+
+        /// <summary>
+        /// Import element
+        /// </summary>
+        private void ImportElement(IdentifiedData data, InboundQueueEntry queueEntry)
+        {
+            var idpType = typeof(IDataPersistenceService<>).MakeGenericType(data.GetType());
+            var svc = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
+            try
+            {
+                var existing = svc.Get(data.Key.Value) as IdentifiedData;
+                (existing as IdentifiedData)?.SetDelayLoad(false);
+                data?.SetDelayLoad(false);
+
+                this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
+                if (existing == null)
+                    try
+                    {
+                        svc.Insert(data);
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceWarning("Batch insert fails, performing individual inserts");
+
+                        if (data is Bundle)
+                        {
+                            foreach (var d in (data as Bundle).Item)
+                            {
+                                this.ImportElement(d as IdentifiedData, queueEntry);
+                                SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
+                            }
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                else
+                {
+                    IVersionedEntity ver = data as IVersionedEntity;
+                    if (ver?.VersionKey == (existing as IVersionedEntity)?.VersionKey) // no need to update
+                        this.m_tracer.TraceVerbose("Object {0} is already up to date", existing);
+                    if (ver?.PreviousVersionKey != null && ver?.PreviousVersionKey != (existing as IVersionedEntity)?.VersionKey ||
+                        data.GetType() != existing.GetType()) // Conflict, ask the meatbag to resolve it
+                    {
+                        XmlSerializer xsz = new XmlSerializer(existing.GetType());
+                        using (var ms = new MemoryStream())
+                        {
+                            xsz.Serialize(ms, existing);
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
+                        }
+                    }
+                    else
+                    {
+                        svc.Update(data);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error inserting object data: {0}", e);
+
+                SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
+                // throw;
+                this.CreateUserAlert(Strings.locale_importErrorSubject, Strings.locale_importErrorBody, e, data);
+
+            }
+        }
+
+        /// <summary>
+        /// Starts the queue manager service.
+        /// </summary>
+        /// <returns>Returns true if the service started successfully.</returns>
         public bool Start()
         {
-
             this.Starting?.Invoke(this, EventArgs.Empty);
 
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
@@ -284,13 +313,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Bind to outbound queue
             SynchronizationQueue.Outbound.Enqueued += (o, e) =>
             {
-                // Another thread worker is doing this
-                if (Monitor.IsEntered(this.m_outboundLock)) return;
-
                 // Trigger sync?
                 if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
-                    Exists(r=>r.ResourceType == Type.GetType(e.Data.Type) && 
-                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) !=  0))
+                    Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&
+                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == typeof(Patch).AssemblyQualifiedName ||
+                            e.Data.Type == typeof(Bundle).AssemblyQualifiedName)
                 {
                     Action<Object> async = (itm) =>
                     {
@@ -300,13 +327,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 }
             };
 
-            // startup
-            AsyncCallback startup = (iar) =>
+            ApplicationContext.Current.Started += (o, e) =>
             {
-                this.ExhaustOutboundQueue();
-                this.ExhaustInboundQueue();
+                // startup
+                AsyncCallback startup = (iar) =>
+                {
+                    this.ExhaustOutboundQueue();
+                    this.ExhaustInboundQueue();
+                };
+
+                startup.BeginInvoke(null, null, null);
             };
-            startup.BeginInvoke(null, null, null);
 
 
             this.Started?.Invoke(this, EventArgs.Empty);

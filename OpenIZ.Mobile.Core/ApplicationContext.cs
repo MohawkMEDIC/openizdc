@@ -29,6 +29,8 @@ using OpenIZ.Core.Model.EntityLoader;
 using System.Linq;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Core.Http;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -53,8 +55,11 @@ namespace OpenIZ.Mobile.Core
 	/// <summary>
 	/// Application context.
 	/// </summary>
-	public abstract class ApplicationContext : IServiceProvider
+	public abstract class ApplicationContext : IServiceProvider, IServiceManager
 	{
+
+        // Execution uuid
+        private static Guid s_executionUuid = Guid.NewGuid();
 
 		// Context singleton
 		private static ApplicationContext s_context;
@@ -70,6 +75,8 @@ namespace OpenIZ.Mobile.Core
 
         // Fired when application wishes to show progress of some sort
         public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
+
+
         /// <summary>
         /// Fired when the application is starting
         /// </summary>
@@ -100,6 +107,7 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		public ApplicationContext ()
 		{
+            this.ThreadDefaultPrincipal = AuthenticationContext.AnonymousPrincipal;
 		}
 
 		#region IServiceProvider implementation
@@ -158,11 +166,17 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The policy information service.</value>
 		public IPolicyInformationService PolicyInformationService { get { return this.GetService(typeof(IPolicyInformationService)) as IPolicyInformationService; } }
-		/// <summary>
-		/// Gets the policy decision service.
-		/// </summary>
-		/// <value>The policy decision service.</value>
-		public IPolicyDecisionService PolicyDecisionService { get { return this.GetService(typeof(IPolicyDecisionService)) as IPolicyDecisionService; } }
+
+        /// <summary>
+        /// Save configuration
+        /// </summary>
+        public abstract void SaveConfiguration();
+
+        /// <summary>
+        /// Gets the policy decision service.
+        /// </summary>
+        /// <value>The policy decision service.</value>
+        public IPolicyDecisionService PolicyDecisionService { get { return this.GetService(typeof(IPolicyDecisionService)) as IPolicyDecisionService; } }
 		/// <summary>
 		/// Gets the identity provider service.
 		/// </summary>
@@ -173,11 +187,6 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The role provider service.</value>
 		public IRoleProviderService RoleProviderService { get { return this.GetService(typeof(IRoleProviderService)) as IRoleProviderService; } }
-		/// <summary>
-		/// Gets or sets the principal.
-		/// </summary>
-		/// <value>The principal.</value>
-		public IPrincipal Principal { get; protected set; }
 		/// <summary>
 		/// Gets the configuration.
 		/// </summary>
@@ -193,19 +202,28 @@ namespace OpenIZ.Mobile.Core
 		/// </summary>
 		/// <value>The device.</value>
 		public abstract SecurityDevice Device { get; }
-
+        /// <summary>
+        /// Execution UUID
+        /// </summary>
+        public virtual Guid ExecutionUuid { get { return s_executionUuid; } }
+        /// <summary>
+        /// Gets the default thread principal
+        /// </summary>
+        public IPrincipal ThreadDefaultPrincipal { get; protected set; }
         /// <summary>
         /// Start the daemon services
         /// </summary>
         protected void Start()
         {
+            if(!this.m_cache.ContainsKey(typeof(IServiceManager)))
+                this.m_cache.Add(typeof(IServiceManager), this);
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
             this.Starting?.Invoke(this, EventArgs.Empty);
 
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
-            foreach (var d in daemons)
+            foreach (var d in daemons.Distinct())
             {
                 tracer.TraceInfo("Starting {0}", d.GetType().Name);
                 if (!d.Start())
@@ -237,6 +255,19 @@ namespace OpenIZ.Mobile.Core
 
         }
 
+        /// <summary>
+        /// Close the application
+        /// </summary>
+        public abstract void Exit();
+
+        /// <summary>
+        /// Add service 
+        /// </summary>
+        public void AddServiceProvider(Type serviceType)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.Add(Activator.CreateInstance(serviceType));
+        }
     }
 }
 

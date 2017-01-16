@@ -39,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Gets or sets the class concept identifier.
         /// </summary>
         /// <value>The class concept identifier.</value>
-        [Column("classConcept"), MaxLength(16), NotNull]
+        [Column("classConcept"), MaxLength(16), NotNull, Indexed]
 		public byte[] ClassConceptUuid {
 			get;
 			set;
@@ -59,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the status concept identifier.
 		/// </summary>
 		/// <value>The status concept identifier.</value>
-		[Column("statusConcept"), MaxLength(16)]
+		[Column("statusConcept"), MaxLength(16), Indexed]
 		public byte[] StatusConceptUuid {
 			get;
 			set;

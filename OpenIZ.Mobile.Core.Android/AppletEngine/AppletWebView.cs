@@ -41,7 +41,7 @@ using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
 using System.Security;
 using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Xamarin.Security;
 using A = Android;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine
@@ -92,16 +92,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             this.Settings.BuiltInZoomControls = false;
             this.Settings.DisplayZoomControls = false;
 
-            //this.SetLayerType(A.Views.LayeType., null);
-#if DEBUG
-            WebView.SetWebContentsDebuggingEnabled(true);
-#endif 
-            this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
+			WebView.SetWebContentsDebuggingEnabled(true);
+
+			this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
             this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
-            this.AddJavascriptInterface(new ConceptServiceBridge(), "OpenIZConceptService");
             this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
-            this.AddJavascriptInterface(new PatientFunctionBridge(), "OpenIZPatientService");
-			this.AddJavascriptInterface(new UserServiceBridge(), "OpenIZUserService");
             this.SetWebViewClient(new AppletWebViewClient());
             this.RequestFocus(A.Views.FocusSearchDirection.Down);
             this.SetWebChromeClient(new AppletWebChromeClient(this.Context));
@@ -251,16 +246,12 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
             public override bool OnConsoleMessage(ConsoleMessage consoleMessage)
             {
                 var retVal = base.OnConsoleMessage(consoleMessage);
-                if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
-                {
-
-                }
-
+                
                 // Start off verbose
                 EventLevel eventLevel = EventLevel.Verbose;
                 if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Error)
                 {
-                    Toast.MakeText(this.m_context, "This applet reported an error", ToastLength.Long).Show();
+                    //Toast.MakeText(this.m_context, "This applet reported an error", ToastLength.Long).Show();
                     eventLevel = EventLevel.Error;
                 }
                 else if (consoleMessage.InvokeMessageLevel() == Webkit.ConsoleMessage.MessageLevel.Warning)

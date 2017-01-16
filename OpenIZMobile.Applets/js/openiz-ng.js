@@ -17,7 +17,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-7-18
+ * Date: 2016-7-30
  */
 
 /// <reference path="openiz.js"/>
@@ -28,16 +28,20 @@
 
 angular.module('openiz', [])
     // Localization service
-    .provider('localize', function localizeProvider() {
+    .provider('localize', function localizeProvider()
+    {
 
-        this.$get = ['$rootScope', '$filter', function ($rootScope, $filter) {
+        this.$get = ['$rootScope', '$filter', function ($rootScope, $filter)
+        {
             var localize = {
                 dictionary: OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),
                 /**
                  * @summary Sets the locale of the user interface 
                  */
-                setLanguage: function (locale) {
-                    if (OpenIZ.Localization.getLocale() != locale) {
+                setLanguage: function (locale)
+                {
+                    if (OpenIZ.Localization.getLocale() != locale)
+                    {
                         OpenIZ.Localization.setLocale(locale);
                         localize.dictionary = OpenIZ.Localization.getStrings(locale);
                         //$rootScope.$broadcast('localizeResourcesUpdated');
@@ -49,7 +53,8 @@ angular.module('openiz', [])
                 /**
                  * @summary Gets the specified locale key
                  */
-                getString: function (key) {
+                getString: function (key)
+                {
 
                     // make sure we always have the latest locale
                     //localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
@@ -57,7 +62,8 @@ angular.module('openiz', [])
                     var entry = localize.dictionary[key];
                     if (entry != null)
                         return entry;
-                    else {
+                    else
+                    {
                         var oiz = OpenIZ.Localization.getString(key);
                         if (oiz == null)
                             return key;
@@ -72,175 +78,460 @@ angular.module('openiz', [])
      * @summary Filter for localization
      * @use {{ KEY | i18n }}
      */
-    .filter('i18n', ['$rootScope', 'localize', function ($rootScope, localize) {
-        var filterFn = function (key) {
+    .filter('i18n', ['$rootScope', 'localize', function ($rootScope, localize)
+    {
+        var filterFn = function (key)
+        {
             return localize.getString(key);
         };
         filterFn.$stateful = false;
         return filterFn;
     }])
-    .filter('oizEntityIdentifier', function () {
-        return function (modelValue) {
+    .filter('translate', function () {
+        return function (input) {
+            return OpenIZ.Localization.getString(input);
+        };
+    })
+    .filter('orderStatus', function () {
+        return function (moodConcept, statusConcept) {
+            if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
+                return "locale.stock.label.shipped";
+            } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
+                return "locale.stock.label.fulfilled";
+            } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
+                return "locale.stock.label.cancelled";
+            }
+            return "locale.stock.label.pending";
+        };
+    })
+    .filter('orderLabel', function () {
+        return function (moodConcept, statusConcept) {
+            if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Active) {
+                return "info";
+            } else if (moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence && statusConcept == OpenIZModel.StatusKeys.Completed) {
+                return "success";
+            } else if (statusConcept == OpenIZModel.StatusKeys.Obsolete) {
+                return "danger";
+            }
+            return "default";
+        };
+    })
+    .filter('oizEntityIdentifier', function ()
+    {
+        return function (modelValue)
+        {
+            if (modelValue === undefined)
+                return "";
             if (modelValue.NID !== undefined)
                 return modelValue.NID.value;
             else
                 for (var k in modelValue)
-                    return modelValue.NID;
-
+                    return modelValue[k].value;
         };
     })
-    .filter('oizEntityName', function () {
+    .filter('oizConcept', function () {
         return function (modelValue) {
+            if(modelValue != null && modelValue.name != null)
+                return OpenIZ.Util.renderConceptName(modelValue.name);
+        }
+    })
+    .filter('oizEntityName', function ()
+    {
+        return function (modelValue)
+        {
             return OpenIZ.Util.renderName(modelValue);
         }
     })
-    .directive('oizTag', function ($timeout) {
+    .filter('oizEntityAddress', function ()
+    {
+        return function (modelValue)
+        {
+            return OpenIZ.Util.renderAddress(modelValue);
+        }
+    })
+    .directive('oizTag', function ($timeout)
+    {
         return {
             require: 'ngModel',
-            link: function (scope, element, attrs, ctrl) {
+            link: function (scope, element, attrs, ctrl)
+            {
 
                 // Parsers
                 ctrl.$parsers.unshift(tagParser);
                 ctrl.$formatters.unshift(tagFormatter);
-                function tagParser(viewValue) {
+                function tagParser(viewValue)
+                {
                     return String(viewValue).split(',');
                 }
-                function tagFormatter(viewValue) {
+                function tagFormatter(viewValue)
+                {
                     if (typeof (viewValue) === Array)
-                        return viewValue.join(viewView)
+                        return viewValue.join(viewValue)
                     return viewValue;
                 }
 
                 // Tag input
-                $timeout(
-                    $(element).tokenfield({
-                        delimiter: ' ,',
-                        createTokensOnBlur: true
-                    })
-                );
+                scope.$watch(attrs.ngModel, function (nvalue, ovalue)
+                {
+                    if (typeof (nvalue) == "string" && ovalue != nvalue ||
+                        Array.isArray(nvalue) && (!Array.isArray(ovalue) || ovalue.length != nvalue.length) ||
+                        // HACK: For SPA
+                        $(element).attr('has-bound') === undefined) {
+                        $(element).attr('has-bound', true);
+                        $(element).trigger('change');
+                    }
+                });
+
+                $(element).tokenfield({
+                    delimiter: ' ,',
+                    createTokensOnBlur: true
+                });
             }
         }
     })
-    .directive('oizDatabind', function($timeout) {
+    .directive('oizDatabind', function ($timeout)
+    {
         return {
-            link: function (scope, element, attrs, ctrl) {
-                $timeout(function () {
+            link: function (scope, element, attrs, ctrl)
+            {
+                $timeout(function ()
+                {
                     var modelType = $(element).attr('oiz-databind');
                     var filterString = $(element).attr('data-filter');
+                    var watchString = $(element).attr('data-watch');
+                    var watchTargetString = $(element).attr('data-watch-target');
                     var displayString = $(element).attr('data-display');
+                    var dataKey = $(element).attr('data-key');
+                    var modelBinding = $(element).attr('ng-model');
 
                     var filter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
-                    // Get the bind element
-                    OpenIZ.Ims.get({
-                        resource: modelType,
-                        query: filter,
-                        continueWith: function (data) {
+                    if(!filter.statusConcept)
+                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
-                            var options = $(element)[0].options;
-                            $('option', element[0]).remove(); // clear existing 
-                            options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
-                            for (var i in data.item) {
-                                var text = null;
-                                if (displayString != null) {
-                                    var scope = data.item[i];
-                                    // HACK:
-                                    text = eval(displayString);
+                    var bind = function ()
+                    {
+                        // Get the bind element
+                        $(element)[0].disabled = true;
+                        OpenIZ.Ims.get({
+                            resource: modelType,
+                            query: filter,
+                            finally: function ()
+                            {
+                                $(element)[0].disabled = false;
+                            },
+                            continueWith: function (data)
+                            {
+                                var currentValue = $(element).val();
+
+                                var options = $(element)[0].options;
+                                $('option', element[0]).remove(); // clear existing 
+                                options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                                for (var i in data.item)
+                                {
+                                    var text = null;
+                                    if (displayString != null)
+                                    {
+                                        var scope = data.item[i];
+                                        // HACK:
+                                        text = eval(displayString);
+                                    }
+                                    else
+                                        text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
+
+                                    // Append element
+                                    if (dataKey == null)
+                                        options[options.length] = new Option(text, data.item[i].id);
+                                    else
+                                        options[options.length] = new Option(text, eval(dataKey));
+
+                                    
+                                    
                                 }
-                                else
-                                    text = OpenIZ.Util.renderName(data.item[i].name.OfficialRecord);
 
-                                // Append element
-                                options[options.length] = new Option(text, data.item[i].id);
+                                // Strip and bind select
+                                if(currentValue && currentValue.indexOf("? string:") == 0) {
+                                    $(element).val(currentValue.substring(9, currentValue.length - 2));
+                                }
                             }
-                        }
-                    });
+                        });
+                    };
+
+                    if (watchString !== null)
+                        scope.$watch(watchString, function (newValue, oldValue)
+                        {
+                            if (watchTargetString !== null && newValue !== undefined)
+                                filter[watchTargetString] = newValue;
+
+                            bind();
+                        });
+
                 });
             }
         };
     })
-    .directive('oizEntitysearch', function ($timeout) {
+    .directive('oizEntitysearch', function ($timeout)
+    {
         return {
-            link: function (scope, element, attrs, ctrl) {
-                $timeout(function () {
+            scope: {
+                defaultResults: '='
+            },
+            link: function (scope, element, attrs, ctrl)
+            {
+                $timeout(function ()
+                {
+                    var modelType = attrs.oizEntitysearch;
+                    var filterString = attrs.filter;
+                    var displayString = attrs.display;
+                    var defaultFilterString = attrs.default;
+                    var groupString =attrs.groupBy;
+                    var groupDisplayString = attrs.groupDisplay;
 
-
-                    var modelType = $(element).attr('oiz-entitysearch');
-                    var filterString = $(element).attr('data-filter');
-                    var displayString = $(element).attr('data-display');
-
-                    var filter = {};
+                    var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
+                    if (defaultFilterString !== undefined)
+                        filter = JSON.parse(defaultFilterString);
                     filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
-                    $(element).attr('style', 'width:100%; height:100%');
+
                     // Bind select 2 search
                     $(element).select2({
+                        dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
+                        defaultResults: function ()
+                        {
+
+                            if (scope.defaultResults != null)
+                            {
+                                console.log(scope.defaultResults);
+                                return scope.defaultResults;
+                            }
+                            else
+                            {
+                                return $.map($('option', element[0]), function (o)
+                                {
+                                    return { "id": o.value, "text": o.innerText };
+                                });
+                            }
+                        },
                         ajax: {
                             url: "/__ims/" + modelType,
                             dataType: 'json',
                             delay: 500,
                             method: "GET",
-                            data: function (params) {
+                            data: function (params)
+                            {
                                 filter["name.component.value"] = "~" + params.term;
                                 filter["_count"] = 5;
                                 filter["_offset"] = 0;
                                 return filter;
                             },
-                            processResults: function (data, params) {
-                                $('option', element[0]).remove(); // clear existing 
+                            processResults: function (data, params)
+                            {
+                                //params.page = params.page || 0;
+                                var data = data.item || data;
+                                var retVal = { results: [] };
+                                if (groupString == null){
+                                    return {
+                                        results: $.map(data,function (o) {
+                                            var text = "";
+                                            if (o.name !== undefined) {
+                                                if (o.name.OfficialRecord) {
+                                                    text = OpenIZ.Util.renderName(o.name.OfficialRecord);
+                                                } else if (o.name.Assigned) {
+                                                    text = OpenIZ.Util.renderName(o.name.Assigned);
+                                                }
+                                            }
+                                            o.text = o.text || text;
+                                            return o;
+                                        })
+                                    };
+                                }
+                                else
+                                {
+                                    // Get the group string
+                                    for (var itm in data)
+                                    {
+                                        // parent obj
+                                        try
+                                        {
+                                            var scope = eval('data[itm].' + groupString);
+                                            var groupDisplay = "";
+                                            if (groupDisplayString != null)
+                                                groupDisplay = eval(groupDisplayString);
+                                            else
+                                                groupDisplay = scope;
 
-                                params.page = params.page || 0;
-                                return {
-                                    results: $.map(data.item, function (o) {
-                                        o.text = o.text || OpenIZ.Util.renderName(o.name.OfficialRecord);
-                                        return o;
-                                    }),
-                                    pagination: {
-                                        more: data.offset + data.count < data.total
+                                            var gidx = $.grep(retVal.results, function (e) { return e.text == groupDisplay });
+                                            if (gidx.length == 0)
+                                                retVal.results.push({ "text": groupDisplay, "children": [data[itm]] });
+                                            else
+                                                gidx[0].children.push(data[itm]);
+                                        }
+                                        catch (e)
+                                        {
+                                            retVal.results.push(data[itm]);
+                                        }
                                     }
-                                };
+                                }
+                                return retVal;
                             },
                             cache: true
                         },
                         escapeMarkup: function (markup) { return markup; }, // Format normally
-                        minimumInputLength: 4,
-                        templateSelection: function (result) {
-                            if (result.name != null)
-                                return OpenIZ.Util.renderName(result.name.OfficialRecord);
-                            else
-                                return result.text;
+                        minimumInputLength: 2,
+                        templateSelection: function (selection)
+                        {                            
+                            var retVal = "";
+                            switch (modelType)
+                            {
+                                case "UserEntity":
+                                case "Provider":
+                                    retVal += "<span class='glyphicon glyphicon-user'></span>";
+                                    break;
+                                case "Place":
+                                    retVal += "<span class='glyphicon glyphicon-map-marker'></span>";
+                                    break;
+                                case "Entity":
+                                    retVal += "<span class='glyphicon glyphicon-tag'></span>";
+                                    break;
+                            }
+                            retVal += "&nbsp;";
+                            if (displayString != null)
+                            {
+                                var scope = selection;
+                                retVal += eval(displayString);
+                            }
+                            else if (selection.name != null && selection.name.OfficialRecord != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.OfficialRecord);
+                            else if (selection.name != null && selection.name.Assigned != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.Assigned);
+                            else if (selection.name != null && selection.name.$other != null)
+                                retVal += OpenIZ.Util.renderName(selection.name.$other);
+                            else if (selection.element !== undefined)
+                                retVal += selection.element.innerText;
+                            else if (selection.text)
+                                retVal += selection.text;
+                            return retVal;
                         },
-                        templateResult: function (result) {
-                            if (result.name != null)
+                        keepSearchResults: true,
+                        templateResult: function (result)
+                        {
+                            if (result.loading) return result.text;
+
+                            if (displayString != null)
+                            {
+                                return eval(displayString);
+                            }
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)
                                 return "<div class='label label-default'>" +
                                     result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.Assigned)
+                                return "<div class='label label-default'>" +
+                                    result.typeConceptModel.name[OpenIZ.Localization.getLocale()] + "</div> " + OpenIZ.Util.renderName(result.name.Assigned);
+                            else if (result.name != null && result.name.OfficialRecord)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.OfficialRecord);
+                            else if (result.name != null && result.name.Assigned)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.Assigned)
+                            else if (result.name != null && result.name.$other)
+                                return "<div class='label label-default'>" +
+                                    result.$type + "</div> " + OpenIZ.Util.renderName(result.name.$other)
                             else
                                 return result.text;
+                        }
+                    });
+                    // HACK: For angular values, after select2 has "selected" the value, it will be a ? string: ID ? value we do not want this
+                    // we want the actual value, so this little thing corrects this bugginess
+                    $(element).on("select2:select", function (e) {
+                        if (e.currentTarget.value.indexOf("? string:") == 0) {
+                            e.currentTarget.value = e.currentTarget.value.substring(9, e.currentTarget.value.length - 2);
                         }
                     });
                 });
             }
         };
     })
-    .directive('oizCollapseindicator', function () {
+    .directive('oizCollapseindicator', function ()
+    {
         return {
-            link: function (scope, element, attrs, ctrl) {
-                $(element).on('hide.bs.collapse', function () {
+            link: function (scope, element, attrs, ctrl)
+            {
+                $(element).on('hide.bs.collapse', function ()
+                {
                     var indicator = $(this).attr('data-oiz-chevron');
                     $(indicator).removeClass('glyphicon-chevron-down');
                     $(indicator).addClass('glyphicon-chevron-right');
                 });
-                $(element).on('show.bs.collapse', function () {
+                $(element).on('show.bs.collapse', function ()
+                {
                     var indicator = $(this).attr('data-oiz-chevron');
                     $(indicator).addClass('glyphicon-chevron-down');
                     $(indicator).removeClass('glyphicon-chevron-right');
                 });
             }
         };
-    });
+    })
+    .directive('ngRepeatN', ['$parse', function ($parse) {
+        return {
+            restrict: 'A',
+            transclude: 'element',
+            replace: true,
+            scope: true,
+            link: function (scope, element, attrs, ctrl, $transclude) {
+
+            // the element to insert after
+            scope.last = element;
+
+            // the parent element
+            scope.parentElem = element.parent();
+
+            // list of elements in the repeater
+            scope.elems = [element];
+
+            // a getter function to resolve the parameter
+            var getter = $parse(attrs.ngRepeatN);
+
+            scope.$watch(function () {
+                return parseInt(attrs.ngRepeatN) || getter(scope);
+            }, function (newValue, oldValue) {
+
+                var newInt = parseInt(newValue)
+                , oldInt = parseInt(oldValue)
+                , bothValues = ! isNaN(newInt) && ! isNaN(oldInt)
+                , childScope
+                , i
+                , limit;
+
+                // decrease number of repeated elements
+                if (isNaN(newInt) || (bothValues && newInt < oldInt)) {
+                limit = bothValues ? newInt : 0;
+                scope.last = scope.elems[limit];
+                for (i = scope.elems.length - 1; i > limit; i -= 1) {
+                    scope.elems[i].remove();
+                    scope.elems.pop();
+                }
+                } 
+
+                // increase number of repeated elements
+                else {
+                i = scope.elems.length - 1;
+
+                for (i; i < newInt; i += 1) {
+                    childScope = scope.$new();
+                    childScope.$index = i;
+                    $transclude(childScope, function (clone) {
+                    scope.last.after(clone);
+                    scope.last = clone;
+                    scope.elems.push(clone);
+                    });
+                }
+                }
+            });
+            }
+        };
+    }]);

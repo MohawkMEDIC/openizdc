@@ -38,9 +38,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
-            var modelInstance = base.ToModelInstance(dataInstance, context);
+            var modelInstance = base.ToModelInstance(dataInstance, context, loadFast);
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;
@@ -84,6 +84,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context
                 );
 
+            if (retVal.ConceptSetsXml != null)
+                foreach (var r in retVal.ConceptSetsXml)
+                {
+                    if (context.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == r.ToByteArray() &&
+                     o.ConceptUuid == retVal.Key.Value.ToByteArray()).Any())
+                        continue;
+                    else
+                        context.Insert(new DbConceptSetConceptAssociation()
+                        {
+                            Uuid = Guid.NewGuid().ToByteArray(),
+                            ConceptSetUuid = r.ToByteArray(),
+                            ConceptUuid = retVal.Key.Value.ToByteArray()
+                        });
+                }
+
             return retVal;
         }
 
@@ -102,12 +117,27 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var sourceKey = data.Key.Value.ToByteArray();
             if (retVal.ConceptNames != null)
                 base.UpdateAssociatedItems<ConceptName, Concept>(
-                    context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
+                    context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
                     data.ConceptNames,
                     retVal.Key,
                     context
                     );
 
+            // Wipe and re-associate
+            if (retVal.ConceptSetsXml != null && retVal.ConceptSetsXml.Count > 0)
+            {
+                context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptUuid == sourceKey);
+                foreach (var r in retVal.ConceptSetsXml)
+                {
+                    context.Insert(new DbConceptSetConceptAssociation()
+                    {
+                        Uuid = Guid.NewGuid().ToByteArray(),
+                        ConceptSetUuid = r.ToByteArray(),
+                        ConceptUuid = retVal.Key.Value.ToByteArray()
+                    });
+                }
+
+            }
             return retVal;
         }
 

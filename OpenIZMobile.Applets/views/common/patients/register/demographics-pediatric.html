@@ -1,25 +1,46 @@
-﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-24
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
           xmlns:bind="http://openiz.org/applet/bind" class="form-horizontal form-group">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/demographics.js</oiz:script>
 
    <!-- #include virtual="/org.openiz.core/views/common/patients/register/demographics.html" -->
     <div class="form-group">
-        <label class="col-xs-2 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
-        <div class="col-xs-4">
+        <label class="col-xs-3 control-label" for="multipleBirth">{{ 'locale.patient.demographics.birthOrder' | i18n }}</label>
+        <div class="col-xs-9">
             <div class="input-group">
 
-                <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control">
+                <select name="multipleBirth" ng-model="patient.multipleBirthOrder" id="multipleBirthSelect" class="form-control ng-cloak">
                     <option value="">{{ 'locale.patient.demographics.multipleBirth.none' | i18n }}</option>
                     <option value="0">{{ 'locale.patient.demographics.multipleBirth.unknown' | i18n }}</option>
                     <option value="1">{{ 'locale.patient.demographics.multipleBirth.first' | i18n }}</option>
                     <option value="2">{{ 'locale.patient.demographics.multipleBirth.second' | i18n }}</option>
                     <option value="3">{{ 'locale.patient.demographics.multipleBirth.third' | i18n }}</option>
                 </select>
+                <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" title="{{ 'locale.patient.demographics.birthOrder' | i18n }}" data-content="{{ 'locale.patient.demographics.birthOrderHelp' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <button type="button" class="btn btn-default" data-placement="left"  data-toggle="popover" title="{{ 'locale.patient.demographics.birthOrder' | i18n }}" data-content="{{ 'locale.patient.demographics.birthOrderHelp' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
                 </span>
             </div>
         </div>  
-        <div class="col-xs-6"></div>
+      
     </div>
 </fieldset>

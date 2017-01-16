@@ -32,6 +32,7 @@ using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -64,10 +65,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context) where TEntityType : Entity, new()
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TEntityType : Entity, new()
         {
-            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance);
-
+            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.IsInTransaction);
+            
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
             {
@@ -84,7 +85,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
+            // Now we want to load the relationships inversed!
             retVal.LoadAssociations(context);
+
+            //if (!loadFast)
+            //{
+            //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
+            //        itm.TargetEntity = this.CacheConvert(context.Get<DbEntity>(itm.TargetEntityKey.Value.ToByteArray()), context, true);
+            //    retVal.Relationships.RemoveAll(o => o.InversionIndicator);
+            //    retVal.Relationships.AddRange(
+            //        context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == dbInstance.Uuid).ToList().Select(o => new EntityRelationship(new Guid(o.RelationshipTypeUuid), new Guid(o.TargetUuid))
+            //        {
+            //            SourceEntityKey = new Guid(o.EntityUuid),
+            //            InversionIndicator = true
+            //        })
+            //    );
+            //    retVal.Participations = new List<ActParticipation>(context.Table<DbActParticipation>().Where(o => o.EntityUuid == dbInstance.Uuid).ToList().Select(o => new ActParticipation(new Guid(o.ParticipationRoleUuid), retVal)
+            //    {
+            //        ActKey = new Guid(o.ActUuid),
+            //        Key = o.Key
+            //    }));
+            //}
+
 
             return retVal;
         }
@@ -92,37 +114,37 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
-            switch (new Guid(dbEntity.ClassConceptUuid).ToString())
+            switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
             {
                 case Device:
-                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Person:
-                    return new PersonPersistenceService().ToModelInstance(dataInstance, context);
+                    return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Patient:
-                    return new PatientPersistenceService().ToModelInstance(dataInstance, context);
+                    return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Provider:
-                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Place:
                 case CityOrTown:
                 case Country:
                 case CountyOrParish:
                 case State:
                 case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().ToModelInstance(dataInstance, context);
+                    return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Organization:
-                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context);
+                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Material:
-                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context);
+                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 default:
-                    return this.ToModelInstance<Entity>(dbEntity, context);
+                    return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
 
             }
         }
@@ -134,11 +156,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure FK exists
-            data.ClassConcept?.EnsureExists(context);
-            data.DeterminerConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
-            data.StatusConceptKey = data.StatusConceptKey == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
+            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+
+            data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.Insert(context, data);
 
@@ -207,13 +234,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
-            // Ensure participations
-            if (data.Participations != null)
-                foreach (var itm in data.Participations)
-                {
-                    itm.PlayerEntityKey = retVal.Key;
-                    itm.EnsureExists(context);
-                }
+            // Participations = The source is not the patient so we don't touch
+            //if (data.Participations != null)
+            //    foreach (var itm in data.Participations)
+            //    {
+            //        itm.PlayerEntityKey = retVal.Key;
+            //        itm.EnsureExists(context);
+            //    }
             return retVal;
         }
 
@@ -223,14 +250,33 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Entity Update(SQLiteConnectionWithLock context, Entity data)
         {
             // Esnure exists
-            data.ClassConcept?.EnsureExists(context);
-            data.DeterminerConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
+            data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
+            data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
+            data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+
 
             var retVal = base.Update(context, data);
 
             byte[] entityUuid = retVal.Key.Value.ToByteArray();
+
+
+            // Set appropriate versioning 
+            retVal.PreviousVersion = new Entity()
+            {
+                ClassConcept = retVal.ClassConcept,
+                Key = retVal.Key,
+                VersionKey = retVal.PreviousVersionKey,
+                CreationTime = (DateTimeOffset)retVal.CreationTime,
+                CreatedByKey = retVal.CreatedByKey
+            };
+            retVal.CreationTime = DateTimeOffset.Now;
+            retVal.CreatedByKey = data.CreatedByKey == Guid.Empty || data.CreatedByKey == null ? base.CurrentUserUuid(context) : data.CreatedByKey;
+
 
             // Identifiers
             if (data.Identifiers != null)
@@ -296,22 +342,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
-            // Participations
-            if(data.Participations != null)
-            {
-                foreach (var itm in data.Participations)
-                {
-                    itm.PlayerEntityKey = retVal.Key;
-                    itm.Act?.EnsureExists(context);
-                    itm.SourceEntityKey = itm.Act?.Key ?? itm.SourceEntityKey;
-                } 
-                var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList();
-                base.UpdateAssociatedItems<ActParticipation, Act>(
-                    existing,
-                    data.Participations,
-                    retVal.Key,
-                    context);
-            }
+            // Participations - We don't touch as Act > Participation
+            //if(data.Participations != null)
+            //{
+            //    foreach (var itm in data.Participations)
+            //    {
+            //        itm.PlayerEntityKey = retVal.Key;
+            //        itm.Act?.EnsureExists(context);
+            //        itm.SourceEntityKey = itm.Act?.Key ?? itm.SourceEntityKey;
+            //    } 
+            //    var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList();
+            //    base.UpdateAssociatedItems<ActParticipation, Act>(
+            //        existing,
+            //        data.Participations,
+            //        retVal.Key,
+            //        context, 
+            //        true);
+            //}
           
 
             return retVal;

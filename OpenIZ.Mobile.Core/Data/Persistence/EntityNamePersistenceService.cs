@@ -25,6 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -34,19 +35,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>
     {
         /// <summary>
-        /// Represents the name as a model instance
+        /// Override model instance
         /// </summary>
-        public override EntityName ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(EntityName modelInstance, SQLiteConnectionWithLock context)
         {
-            DbEntityName en = dataInstance as DbEntityName;
-            var retVal = base.ToModelInstance(dataInstance, context);
-            retVal.Component = new List<EntityNameComponent>(context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == en.Uuid).ToArray().Select(o => new EntityNameComponent() {
-                ComponentTypeKey = o.ComponentTypeUuid == null ? null : (Guid?)new Guid(o.ComponentTypeUuid),
-                Value = o.Value
-                }
-            ));
-            return retVal;
-
+            foreach (var itm in modelInstance.Component)
+                itm.Value = itm.Value.Trim();
+            return base.FromModelInstance(modelInstance, context);
         }
 
         /// <summary>
@@ -57,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Ensure exists
             data.NameUse?.EnsureExists(context);
-
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.Insert(context, data);
 
             // Data component
@@ -78,6 +73,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Ensure exists
             data.NameUse?.EnsureExists(context);
+            data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
             var retVal = base.Update(context, data);
 

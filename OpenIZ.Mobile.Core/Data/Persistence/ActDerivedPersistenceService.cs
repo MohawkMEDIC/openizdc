@@ -1,4 +1,23 @@
-﻿using OpenIZ.Core.Model.Acts;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-24
+ */
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model;
 using SQLite.Net;
 using System;
@@ -24,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
         {
-            var inserted = this.m_actPersister.Insert(context, data);
+            var inserted = this.m_actPersister.InsertInternal(context, data);
             data.Key = inserted.Key;
             return base.Insert(context, data);
         }
@@ -34,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override TModel Update(SQLiteConnectionWithLock context, TModel data)
         {
-            this.m_actPersister.Update(context, data);
+            this.m_actPersister.UpdateInternal(context, data);
             return base.Update(context, data);
         }
 
@@ -43,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
         {
-            var retVal = this.m_actPersister.Obsolete(context, data);
+            var retVal = this.m_actPersister.ObsoleteInternal(context, data);
             return data;
         }
     }

@@ -73,6 +73,11 @@
             <param name="data">The data to be updated.</param>
             <returns>Returns the updated data.</returns>
         </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Patch(OpenIZ.Core.Model.Patch.Patch)">
+            <summary>
+            Sends a patch operation to the server
+            </summary>
+        </member>
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Dispose(System.Boolean)">
             <summary>
             Dispose of any managed resources.

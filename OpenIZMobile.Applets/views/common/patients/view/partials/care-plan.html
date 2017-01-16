@@ -1,0 +1,34 @@
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-10-11
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" style="max-height:200px; overflow-y:scroll">
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="act in patient.participation.RecordTarget" ng-if="act.actModel.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079' &amp;&amp; act.actModel.startTime &lt; currentDate"
+            ng-class="{'list-group-item-success':act.actModel.relationship.Fulfills}">
+            <h4 class="list-group-item-heading">
+                {{act.actModel.classConceptModel.name[$root.page.locale] }}  {{act.actModel.typeConceptModel.name[$root.page.locale]}}
+            </h4>
+                <p class="list-group-item-text">
+                   <small>Encounter Start: {{ act.actModel.startTime | date: 'yyyy-MM-dd' }} </small>
+                   <small ng-if="act.actModel.stopTime!=null">Encounter End: {{act.actModel.stopTime | date: 'yyyy-MM-dd'}}</small>
+                   <small ng-if="act.actModel.typeConceptModel.name[$root.page.locale]!='BODY WEIGHT (MEASURED)'">Vaccine: {{act.vaccineName}}</small>
+            </p>
+        </li>
+    </ul>
+</div>

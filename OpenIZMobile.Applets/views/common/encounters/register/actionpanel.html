@@ -1,0 +1,62 @@
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-10-11
+ -->
+<div class="panel panel-info oiz-encounter-action-panel" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+    <div class="panel-heading"><span class="panel-title">{{ 'locale.encounters.actionsPerformed.title' | i18n }}</span></div>
+    <table class="panel-body table table-striped table-responsive">
+        <tr ng-repeat="act in encounter.relationship.HasComponent" ng-if="act.targetModel.moodConcept == 'ec74541f-87c4-4327-a4b9-97f325501747'">
+            <td>
+                <div class="container-fluid">
+                    <div class="row flex-container" ng-if="act._created">
+                        <div class="col-xs-11" >
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                        </div>
+                        <div class="col-xs-1 flex-item-center" >
+                            <button type="button" class="btn btn-icon" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="!act._created">
+                        <div class="col-xs-12">
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr ng-if="encounter.relationship.HasComponent.length == 0">
+            <td>
+                {{ 'locale.encounter.noactions' | i18n }}
+            </td>
+        </tr>
+    </table>
+    <div class="panel-body">
+        <div class="row">
+            <div class="btn-group pull-right dropdown">
+                <button type="button" class="btn btn-success" data-toggle="dropdown"><span class="glyphicon glyphicon-plus-sign"></span><span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.immunization')">{{ 'locale.encounter.action.immunization' | i18n }}</a></li>
+                    <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.weight')">{{ 'locale.encounter.action.weight' | i18n }}</a></li>
+                    <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.supplement')">{{ 'locale.encounter.action.supplement' | i18n }}</a></li>
+                    <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.concern.aefi')">{{ 'locale.encounter.action.aefi' | i18n }}</a></li>
+                    <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath')">{{ 'locale.encounter.action.death' | i18n }}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

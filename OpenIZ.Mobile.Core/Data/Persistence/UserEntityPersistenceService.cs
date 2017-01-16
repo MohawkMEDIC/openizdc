@@ -43,13 +43,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override UserEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context)
+        public override UserEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
             var userEntity = dataInstance as DbUserEntity ?? context.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
             var dbp = context.Table<DbPerson>().Where(o => o.Uuid == userEntity.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<UserEntity>(dbe, context);
+            var retVal = m_entityPersister.ToModelInstance<UserEntity>(dbe, context, loadFast);
             retVal.SecurityUserKey = new Guid(userEntity.SecurityUserUuid);
             retVal.DateOfBirth = dbp.DateOfBirth;
             // Reverse lookup

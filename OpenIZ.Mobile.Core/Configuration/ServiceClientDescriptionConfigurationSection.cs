@@ -154,6 +154,12 @@ namespace OpenIZ.Mobile.Core.Configuration
                 return this.Binding;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the trace
+        /// </summary>
+        [XmlElement("trace")]
+        public bool Trace { get; set; }
     }
 
 	/// <summary>

@@ -1,127 +1,253 @@
-﻿using OpenIZ.Core.Services;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-8-17
+ */
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenIZ.Core.Model.Acts;
 using System.Linq.Expressions;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
-    /// <summary>
-    /// Represents a local persistence service for acts
-    /// </summary>
-    public class LocalActService : IActRepositoryService
-    {
-        /// <summary>
-        /// Finds the specified acts
-        /// </summary>
-        public IEnumerable<Act> FindActs(Expression<Func<Act, bool>> query, int offset, int? count, out int totalResults)
+	/// <summary>
+	/// Represents an act repository service.
+	/// </summary>
+	public class LocalActService : IActRepositoryService, IPersistableQueryProvider, IRepositoryService<Act>
+	{
+        public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
-            return pers.Query(query, offset, count, out totalResults);
+            throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Find substance administrations
+        /// Finds acts based on a specific query.
         /// </summary>
-        public IEnumerable<SubstanceAdministration> FindSubstanceAdministrations(Expression<Func<SubstanceAdministration, bool>> filter, int offset, int? count, out int totalResults)
-        {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SubstanceAdministration>>();
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
-            return pers.Query(filter, offset, count, out totalResults);
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
+		{
+            var results = this.Query(filter, offset, count, out totalResults, Guid.Empty);
+            results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
+            return results;
+		}
 
+        /// <summary>
+        /// Get by key
+        /// </summary>
+        public Act Get(Guid key)
+        {
+            return this.Get<Act>(key, Guid.Empty);
         }
 
         /// <summary>
-        /// Gets the specified act
+        /// Get the specified act
         /// </summary>
-        public Act Get(Guid key, Guid versionId)
+        public TAct Get<TAct>(Guid key, Guid versionId) where TAct : Act
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+			}
+
+			var result = persistenceService.Get(key);
+            result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
+            return result;
+		}
+
+        public Act Insert(Act data)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<SubstanceAdministration>>();
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
-            return pers.Get(key);
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Insert the specified act
         /// </summary>
-        public Act Insert(Act data)
-        {
-            IDataPersistenceService pers = this.GetPersistenceService(data);
+        public TAct Insert<TAct>(TAct insert) where TAct : Act
+		{
+            insert = this.Validate(insert);
 
-            // Persistence not found
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-            // Insert
-            return pers.Insert(data) as Act;
-        }
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+			}
 
-        /// <summary>
-        /// Get the specified persistence service
-        /// </summary>
-        private IDataPersistenceService GetPersistenceService(Act data)
-        {
-            IDataPersistenceService pers = null;
-            // Get appropriate persister
-            if (data is SubstanceAdministration)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<SubstanceAdministration>>();
-            else if (data is TextObservation)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<TextObservation>>();
-            else if (data is QuantityObservation)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<QuantityObservation>>();
-            else if (data is CodedObservation)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<CodedObservation>>();
-            else if (data is PatientEncounter)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<PatientEncounter>>();
-            else if (data is ControlAct)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<ControlAct>>();
-            else if (data is Act)
-                pers = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
+            insert = breService?.BeforeInsert(insert) ?? insert;
+			insert = persistenceService.Insert(insert);
+            breService?.AfterInsert(insert);
+            
+            // Patient relationships
+            if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
+                SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(insert), DataOperationType.Insert);
             else
-                throw new ArgumentOutOfRangeException(nameof(data));
+                SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
+            //SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
 
-            return pers;
-        }
+            return insert;
+		}
 
-        /// <summary>
-        /// Obsoletes the specified data
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public Act Obsolete(Guid key)
         {
-            var pers = ApplicationContext.Current.GetService<IDataPersistenceService<Act>>();
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
-            return pers.Obsolete(new Act() { Key = key });
+            throw new NotImplementedException();
         }
 
         /// <summary>
-        /// Save the specified act
+        /// Obsolete the specified act
         /// </summary>
+        public TAct Obsolete<TAct>(Guid key) where TAct : Act
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+			}
+
+			var act = persistenceService.Get(key);
+
+			if (act == null)
+				throw new KeyNotFoundException(key.ToString());
+
+            act = breService?.BeforeObsolete(act) ?? act;
+			act = persistenceService.Obsolete(act);
+            act = breService?.AfterObsolete(act) ?? act;
+
+            SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
+
+            return act;
+		}
+
+        /// <summary>
+        /// Queries the Act service using the specified state query id
+        /// </summary>
+        public IEnumerable<TAct> Query<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
+        {
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
+
+            if (persistenceService == null)
+                throw new InvalidOperationException("No concept persistence service found");
+
+            var results = persistenceService.Query(filter, offset, count, out totalResults, queryId);
+            results = breService?.AfterQuery(results) ?? results;
+            return results;
+        }
+
         public Act Save(Act data)
         {
-            IDataPersistenceService pers = this.GetPersistenceService(data);
+            throw new NotImplementedException();
+        }
 
-            // Persistence not found
-            if (pers == null)
-                throw new InvalidOperationException("Persistence service not found");
+        /// <summary>
+        /// Insert or update the specified act
+        /// </summary>
+        public TAct Save<TAct>(TAct act) where TAct : Act
+		{
+			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
+            var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();
 
-            try // to insert
-            {
-                return pers.Update(data) as Act;
+			if (persistenceService == null)
+			{
+				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+			}
+
+            // Validate act
+            act = this.Validate(act);
+
+			try
+			{
+                // Get older version
+                if (act.Key.HasValue)
+                {
+                    var old = persistenceService.Get(act.Key.Value).Clone();
+
+                    // Fire before update
+                    act = breService?.BeforeUpdate(act) ?? act;
+
+                    // update
+                    act = persistenceService.Update(act);
+
+                    // First after update
+                    breService?.AfterUpdate(act);
+
+                    var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
+
+                    SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
+                    MemoryCache.Current.RemoveObject(typeof(TAct), act.Key);
+                    MemoryCache.Current.RemoveObject(typeof(Act), act.Key);
+                }
+                else throw new KeyNotFoundException();
+                return act;
             }
-            catch(KeyNotFoundException)
+            catch (KeyNotFoundException)
             {
-                return pers.Insert(data) as Act;
+                // Fire before update
+                act = breService?.BeforeInsert(act) ?? act;
+
+                act = persistenceService.Insert(act);
+
+                breService?.AfterInsert(act);
+
+                // Patient relationships
+                if (act.Relationships.Count > 0 || act.Participations.Count > 0)
+                    SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(act), DataOperationType.Insert);
+                else
+                    SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
+
+                return act;
             }
         }
-    }
+
+		/// <summary>
+		/// Validates an act.
+		/// </summary>
+		public TAct Validate<TAct>(TAct data) where TAct : Act
+		{
+            var details = ApplicationContext.Current.GetService<IBusinessRulesService<Act>>()?.Validate(data) ?? new List<DetectedIssue>();
+            if (details.Any(d => d.Priority == DetectedIssuePriorityType.Error))
+                throw new OpenIZ.Core.Exceptions.DetectedIssueException(details);
+
+            // Correct author information and controlling act information
+            data = data.Clean() as TAct;
+
+			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+
+			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
+            var currentLocation = currentUserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
+            // Set authororiginator
+            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
+				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+            // Set location if not done
+            if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation|| o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
+                data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.Key));
+
+            return data;
+		}
+	}
 }

@@ -1,4 +1,43 @@
-﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" oiz:layout="/org.openiz.core/layouts/navbar.html">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-7-23
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <oiz:script>~/controllers/debug/about.js</oiz:script>
-    <oiz:title>Debug Information</oiz:title>
+    <oiz:state name="org-openiz-core.about">
+        <oiz:url>/about</oiz:url>
+        <oiz:view>
+            <oiz:title>Debug Information</oiz:title>
+            <oiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</oiz:demand>
+            <oiz:controller>AboutApplicationController</oiz:controller>
+        </oiz:view>
+    </oiz:state>
+
+    <ul class="nav nav-tabs row index-dock" role="tablist">
+        <li role="presentation" class="active"><a data-target="#versions" data-toggle="tab">{{ 'locale.about.tabs.versions' | i18n }}</a></li>
+        <li role="presentation"><a data-target="#log" data-toggle="tab">{{ 'locale.about.tabs.log' | i18n }}</a></li>
+        <li role="presentation"><a data-target="#runtime" data-toggle="tab">{{ 'locale.about.tabs.runtime' | i18n }}</a></li>
+    </ul>
+
+    <div class="tab-content" style="padding-top: 80px;">
+        <div role="tabpanel" class="tab-pane active" id="versions"><!-- #include virtual="~/views/debug/tabs/versions.html" --></div>
+        <div role="tabpanel" class="tab-pane" id="log"><!-- #include virtual="~/views/debug/tabs/log.html" --></div>
+        <div role="tabpanel" class="tab-pane" id="runtime"><!-- #include virtual="~/views/debug/tabs/runtime.html" --></div>
+    </div>
+
 </div>

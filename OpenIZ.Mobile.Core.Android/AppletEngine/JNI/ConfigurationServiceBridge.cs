@@ -21,23 +21,23 @@ using System;
 using Android.Webkit;
 using Java.Interop;
 using OpenIZ.Mobile.Core.Security;
-using OpenIZ.Mobile.Core.Android.Security;
+using OpenIZ.Mobile.Core.Xamarin.Security;
 using System.Security.Permissions;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Mobile.Core.Configuration;
-using OpenIZ.Mobile.Core.Android.Http;
+using OpenIZ.Mobile.Core.Xamarin.Http;
 using OpenIZ.Core.Http.Description;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Mobile.Core.Data;
 using System.Diagnostics.Tracing;
-using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Synchronization;
 using OpenIZ.Mobile.Core.Interop.IMSI;
 using OpenIZ.Mobile.Core.Android.Resources;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -197,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             try
             {
                 if (AndroidApplicationContext.Current.ConfigurationManager.IsConfigured)
-                    new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.AccessAdministrativeFunction).Demand();
+                    new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.UnrestrictedAdministration).Demand();
 
 
                 // Configure the stuff to the appropriate realm info
@@ -210,6 +210,8 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     };
                     AndroidApplicationContext.Current.Configuration.Sections.Add(serviceClientSection);
                 }
+                else
+                    serviceClientSection.Client.Clear();
 
                 // TODO: Actually contact the AMI for this information
 
@@ -261,7 +263,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                             CredentialProvider = new TokenCredentialProvider(),
                             PreemptiveAuthentication = true
                         },
-                        Optimize = true
+                        Optimize = false
                     },
                     Endpoint = new System.Collections.Generic.List<ServiceClientEndpoint>() {
                         new ServiceClientEndpoint() {

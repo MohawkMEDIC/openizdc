@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-10-18
+ -->
+<ViewModel xmlns="http://openiz.org/model/view" name="default">
+  
+  <!-- BASE TYPES -->
+  <type type="EntityRelationship" all="false">
+    <property name="source" all="true"/>
+    <property name="target" all="true"/>
+    <property name="participationRole" all="true"/>
+    <property name="key" all="true"/>
+    <property name="quantity" all="true"/>
+  </type>
+  
+  <type type="EntityAddress" all="true">
+    <property name="component" all="false" classifier="*">
+      <property name="value" all="false"/>
+    </property>
+  </type>
+  <type type="EntityIdentifier" all="true"/>
+  <type type="EntityName" all="true">
+    <property name="component" all="false" classifier="*">
+      <property name="value" all="false"/>
+    </property>
+  </type>
+  <type type="EntityTelecomAddress" all="true"/>
+  <type type="EntityNote" all="true"/>
+  <type type="EntityTag" all="true"/>
+  <type type="EntityExtension" all="true"/>
+  <type type="ActIdentifier" all="true"/>
+  <type type="ActNote" all="true"/>
+  <type type="ActExtension" all="true"/>
+  <type type="ActTag" all="true"/>
+ 
+  <!-- ACT -->
+  <type type="Act" all="true">
+    <property name="relationship" classifier="*" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="playerModel" all="true"/>
+    </property>
+    <property name="participation" classifier="RecordTarget" all="true">
+      <property name="playerModel" all="true">
+        <property name="participation" classifier="RecordTarget" all="false"/>
+        <property name="participation" classifier="*" all="true"/>
+      </property>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="playerModel" all="true"/>
+    </property>
+  </type>
+  
+  <!-- PLACE -->
+  <type type="Place" all="true">
+    <property name="relationship" classifier="Parent" all="true">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" all="true"/>
+  </type>
+
+  <type type="Bundle" all="true">
+    <property name="item" all="true"/>
+  </type>
+  
+  <!-- ENTITY FALLBACK -->
+  <type type="Entity" all="true">
+    <property name="relationship" all="true" classifier="*">
+      <property name="targetModel" all="true"/>
+    </property>
+    <property name="participation" classifier="*" all="true">
+      <property name="actModel" all="true">
+      </property>
+    </property>
+  </type>
+</ViewModel>

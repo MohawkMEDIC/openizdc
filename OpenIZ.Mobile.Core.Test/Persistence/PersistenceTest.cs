@@ -24,111 +24,101 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenIZ.Mobile.Core.Test.Persistence
 {
-    /// <summary>
-    /// Persistence test
-    /// </summary>
-    public class PersistenceTest<TModel> : MobileTest where TModel : IdentifiedData
-    {
+	/// <summary>
+	/// Persistence test
+	/// </summary>
+	public class PersistenceTest<TModel> : MobileTest where TModel : IdentifiedData
+	{
+		/// <summary>
+		/// Test the insertion of a valid security user
+		/// </summary>
+		public TModel DoTestInsert(TModel objectUnderTest)
+		{
+			// Store user
+			IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
+			Assert.IsNotNull(persistenceService);
 
-        /// <summary>
-        /// Test the insertion of a valid security user
-        /// </summary>
-        public TModel DoTestInsert(TModel objectUnderTest)
-        {
+			var objectAfterTest = persistenceService.Insert(objectUnderTest);
+			// Key should be set
+			Assert.AreNotEqual(Guid.Empty, objectAfterTest.Key);
 
+			// Verify
+			objectAfterTest = persistenceService.Get(objectAfterTest.Key.Value);
+			if (objectAfterTest is BaseEntityData)
+				Assert.AreNotEqual(default(DateTimeOffset), (objectAfterTest as BaseEntityData).CreationTime);
 
-            // Store user
-            IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
-            Assert.IsNotNull(persistenceService);
+			return objectAfterTest;
+		}
 
-            var objectAfterTest = persistenceService.Insert(objectUnderTest);
-            // Key should be set
-            Assert.AreNotEqual(Guid.Empty, objectAfterTest.Key);
+		/// <summary>
+		/// Do a test step for an update
+		/// </summary>
+		public TModel DoTestInsertUpdate(TModel objectUnderTest, String propertyToChange)
+		{
+			// Auth context
 
-            // Verify
-            objectAfterTest = persistenceService.Get(objectAfterTest.Key.Value);
-            if (objectAfterTest is BaseEntityData)
-                Assert.AreNotEqual(default(DateTimeOffset), (objectAfterTest as BaseEntityData).CreationTime);
+			// Store user
+			IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
+			Assert.IsNotNull(persistenceService);
 
-            return objectAfterTest;
-        }
+			// Update the user
+			var objectAfterInsert = persistenceService.Insert(objectUnderTest);
 
-        /// <summary>
-        /// Do a test step for an update
-        /// </summary>
-        public TModel DoTestInsertUpdate(TModel objectUnderTest, String propertyToChange)
-        {
+			// Update
+			return this.DoTestUpdate(objectAfterInsert, propertyToChange);
+		}
 
-            // Auth context
+		/// <summary>
+		/// Perform a query
+		/// </summary>
+		public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid? knownResultKey)
+		{
+			IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
+			Assert.IsNotNull(persistenceService);
 
-            // Store user
-            IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
-            Assert.IsNotNull(persistenceService);
+			// Perform query
+			var results = persistenceService.Query(predicate);
 
-            // Update the user
-            var objectAfterInsert = persistenceService.Insert(objectUnderTest);
+			// Look for the known key
+			Assert.IsTrue(results.Any(p => p.Key == knownResultKey), "Result doesn't contain known key");
 
-            // Update
-            return this.DoTestUpdate(objectAfterInsert, propertyToChange);
-        }
+			return results;
+		}
 
-        /// <summary>
-        /// Test update only
-        /// </summary>
-        /// <param name="objectUnderTest"></param>
-        /// <param name="propertyToChange"></param>
-        /// <returns></returns>
-        public TModel DoTestUpdate(TModel objectUnderTest, String propertyToChange)
-        {
+		/// <summary>
+		/// Test update only
+		/// </summary>
+		/// <param name="objectUnderTest"></param>
+		/// <param name="propertyToChange"></param>
+		/// <returns></returns>
+		public TModel DoTestUpdate(TModel objectUnderTest, String propertyToChange)
+		{
+			IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
+			Assert.IsNotNull(persistenceService);
 
-            IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
-            Assert.IsNotNull(persistenceService);
+			var propertyInfo = typeof(TModel).GetProperty(propertyToChange);
+			Object oldValue = propertyInfo.GetValue(objectUnderTest);
 
-            var propertyInfo = typeof(TModel).GetProperty(propertyToChange);
-            Object oldValue = propertyInfo.GetValue(objectUnderTest);
+			if (propertyInfo.PropertyType == typeof(String))
+				propertyInfo.SetValue(objectUnderTest, "NEW_VALUE");
+			else if (propertyInfo.PropertyType == typeof(Nullable<DateTimeOffset>) ||
+				propertyInfo.PropertyType == typeof(DateTimeOffset))
+				propertyInfo.SetValue(objectUnderTest, DateTimeOffset.MaxValue);
+			else if (propertyInfo.PropertyType == typeof(Boolean) ||
+				propertyInfo.PropertyType == typeof(Nullable<Boolean>))
+				propertyInfo.SetValue(objectUnderTest, !(bool)propertyInfo.GetValue(objectUnderTest));
 
-            if (propertyInfo.PropertyType == typeof(String))
-                propertyInfo.SetValue(objectUnderTest, "NEW_VALUE");
-            else if (propertyInfo.PropertyType == typeof(Nullable<DateTimeOffset>) ||
-                propertyInfo.PropertyType == typeof(DateTimeOffset))
-                propertyInfo.SetValue(objectUnderTest, DateTimeOffset.MaxValue);
-            else if (propertyInfo.PropertyType == typeof(Boolean) ||
-                propertyInfo.PropertyType == typeof(Nullable<Boolean>))
-                propertyInfo.SetValue(objectUnderTest, !(bool)propertyInfo.GetValue(objectUnderTest));
+			var objectAfterUpdate = persistenceService.Update(objectUnderTest);
+			Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
+			objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Key.Value);
+			// Update attributes should be set
+			Assert.AreNotEqual(oldValue, propertyInfo.GetValue(objectAfterUpdate));
+			Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
 
-            var objectAfterUpdate = persistenceService.Update(objectUnderTest);
-            Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
-            objectAfterUpdate = persistenceService.Get(objectAfterUpdate.Key.Value);
-            // Update attributes should be set
-            Assert.AreNotEqual(oldValue, propertyInfo.GetValue(objectAfterUpdate));
-            Assert.AreEqual(objectUnderTest.Key, objectAfterUpdate.Key);
-
-            return objectAfterUpdate;
-        }
-
-        /// <summary>
-        /// Perform a query
-        /// </summary>
-        public IEnumerable<TModel> DoTestQuery(Expression<Func<TModel, bool>> predicate, Guid? knownResultKey)
-        {
-
-            IDataPersistenceService<TModel> persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TModel>>();
-            Assert.IsNotNull(persistenceService);
-
-            // Perform query
-            var results = persistenceService.Query(predicate);
-
-            // Look for the known key
-            Assert.IsTrue(results.Any(p => p.Key == knownResultKey), "Result doesn't contain known key");
-
-            return results;
-        }
-
-    }
+			return objectAfterUpdate;
+		}
+	}
 }

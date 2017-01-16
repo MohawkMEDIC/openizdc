@@ -1,22 +1,89 @@
-﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
-    <div class="row">
-        <label class="control-label col-sm-2 col-xs-12">
-            {{ 'locale.encounters.weight.title' | i18n }}
-        </label>
-        <div class="col-xs-6 col-sm-4">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ - 
+ - Licensed under the Apache License, Version 2.0 (the "License"); you 
+ - may not use this file except in compliance with the License. You may 
+ - obtain a copy of the License at 
+ - 
+ - http://www.apache.org/licenses/LICENSE-2.0 
+ - 
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ - License for the specific language governing permissions and limitations under 
+ - the License.
+ - 
+ - User: justi
+ - Date: 2016-8-17
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
+    <div class="row form-group">
+        <div class="control-label col-xs-12">
+            <label class="control-label">
+                {{ 'locale.encounters.weight.title' | i18n }}
+            </label>
+            <span ng-if="act.targetModel.interpretationConcept == '41d42abf-17ad-4144-bf97-ec3fd907f57d'">
+                <span class="label label-success"> <span class="glyphicon glyphicon-ok"></span> {{ 'locale.encounters.weight.interpretation.normal' | i18n }}</span>
+            </span>
+            <span ng-if="!act.targetModel.interpretationConcept || act.targetModel.interpretationConcept == '6188f821-261f-420c-9520-0de240a05661' || act.targetModel.interpretationConcept == 'a7159ba0-a9ec-4565-95b8-ed364794c0b8'">
+                <span class="label label-danger"><span class="glyphicon glyphicon-triangle-bottom"></span> {{ 'locale.encounters.weight.interpretation.low' | i18n }}</span>
+            </span>
+            <span ng-if="act.targetModel.interpretationConcept == '8b553d58-6c8c-4d01-a534-83ba5780b41a' || act.targetModel.interpretationConcept == '3c4d6579-7496-4b44-aac1-18a714ff7a05'">
+                <span class="label label-danger"><span class="glyphicon glyphicon-triangle-top"></span> {{ 'locale.encounters.weight.interpretation.high' | i18n }}</span>
+            </span>
+            <br />
+            <span ng-if="act.targetModel._overdue">
+                <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
+            </span>
+            <span ng-if="!act.targetModel._overdue &amp;&amp; act.targetModel.relationship.Fulfills">
+                <small>
+                    ({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                </small>
+            </span>
+            <small ng-if="act.statusConcept == '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+                {{ 'locale.action.finish' | i18n }}
+            </small>
+           
+        </div>
+        <div class="col-xs-7">
             <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox"
-                           ng-model="act._enabled"
-                           checked="checked"
-                           value="1" />
-                </span>
-                <input ng-disabled="!act._enabled" type="number" class="form-control" ng-model="act.actModel.value" />
+                <label>{{ 'locale.encounters.weight.value' | i18n }}</label>
+                <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" ng-min="0" ng-max="200" class="form-control" ng-model="act.targetModel.value" />
             </div>
         </div>
-        <div class="col-xs-6 col-sm-6">
-            <select ng-disabled="!act._enabled"  ng-model="act.actModel.unitOfMeasure" class="col-xs-6 form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value">
-            </select>
+        <div ng-class="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'? 'col-xs-4':'col-xs-5'">
+            <div class="input-group">
+                <label>
+                    {{ 'locale.encounters.weight.unitOfMeasure' | i18n }}
+                </label>
+                <select name="uom_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" ng-model="act.targetModel.unitOfMeasure" class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=UnitOfMeasureWeight" bind:value="name[{{ locale }}].value"></select>
+                
+            </div>
+        </div>
+        <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'">
+            <label class="control control--checkbox">
+                <input type="checkbox"
+                       ng-model="act._enabled"
+                       checked="checked"
+                       value="1"
+                       readonly="readonly" />
+                <div class="control__indicator control__indicator_alt" style="top: 35px; left: 0px;"></div>
+            </label>
+        </div>
+        <div ng-if="act.targetModel.interpretationConcept != null &amp;&amp; act.targetModel.interpretationConcept != '41d42abf-17ad-4144-bf97-ec3fd907f57d'">
+            <div class="col-xs-12 text-primary weight-info">
+                <span class="glyphicon glyphicon-info-sign"></span>
+                {{ 'locale.encounters.cdss.nutritionCounselingText' | i18n }}
+            </div>
+        </div>
+        <div>
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['uom_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['uom_' + act.targetModel.id].$invalid">
+                {{ 'locale.encounters.immunizations.errors.missingUom' | i18n }}
+            </div>
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['weight_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['weight_' + act.targetModel.id].$invalid">
+                {{ 'locale.encounters.immunizations.errors.weightInvalid' | i18n }}
+            </div>
         </div>
     </div>
 </div>

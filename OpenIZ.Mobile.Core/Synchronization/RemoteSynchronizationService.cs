@@ -1,4 +1,23 @@
-﻿using OpenIZ.Mobile.Core.Services;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-7-30
+ */
+using OpenIZ.Mobile.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +38,9 @@ using System.Security.Principal;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Core.Services;
-using OpenIZ.Core.Alerting;
+using OpenIZ.Core.Alert.Alerting;
+using OpenIZ.Core.Model.Entities;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -40,8 +61,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
         private IThreadPoolService m_threadPool;
         // Network service
         private IIntegrationService m_integrationService;
-        // Device principal 
-        private IPrincipal m_devicePrincipal;
         // Network information service
         private INetworkInformationService m_networkInfoService;
 
@@ -86,11 +105,26 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
             this.m_integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
             this.m_networkInfoService = ApplicationContext.Current.GetService<INetworkInformationService>();
-            
+
             this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);
 
             this.Pull(SynchronizationPullTriggerType.OnStart);
-            
+
+            // Polling
+            if (this.m_configuration.SynchronizationResources.Any(o => (o.Triggers & SynchronizationPullTriggerType.PeriodicPoll) != 0) &&
+                this.m_configuration.PollInterval.HasValue &&
+                this.m_configuration.PollInterval.Value != default(TimeSpan))
+            {
+                Action<Object> pollFn = null;
+                pollFn = _ =>
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 0.5f);
+                    this.Pull(SynchronizationPullTriggerType.PeriodicPoll);
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+
+                };
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+            }
             this.Started?.Invoke(this, EventArgs.Empty);
 
             return true;
@@ -126,8 +160,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         if (totalResults > 0)
                         {
-                            var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                            alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
+                            var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                            alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
                     }
 
@@ -172,11 +206,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
-                // TODO: Clean this up - Login as device account
-                if (this.m_devicePrincipal == null ||
-                    DateTime.Parse((this.m_devicePrincipal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.Value ?? "0001-01-01") < DateTime.Now)
-                    this.m_devicePrincipal = ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate("Administrator", "Mohawk123");
-                var credentials = ApplicationContext.Current.Configuration.GetServiceDescription("imsi").Binding.Security.CredentialProvider.GetCredentials(this.m_devicePrincipal);
 
                 // Get last modified date
                 var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
@@ -189,13 +218,26 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
                     float perc = i / (float)result.TotalResults;
-                    retVal = result.TotalResults;
+
                     ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
-                    result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Credentials = credentials, Timeout = 10000 });
+                    NameValueCollection infopt = null;
+                    if (filter.Any(o => o.Key.StartsWith("_")))
+                    {
+                        infopt = new NameValueCollection();
+                        foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
+                            infopt.Add(itm.Key, itm.Value);
+                    }
+                    result = this.m_integrationService.Find(modelType, filter, i, 75, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
+
 
                     // Queue the act of queueing
                     if (result != null)
+                    {
+                        this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
+                        result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                        retVal = result.TotalResults;
+                    }
                     else
                         break;
 
@@ -210,8 +252,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
-                var alertService = ApplicationContext.Current.GetService<IAlertService>();
-                alertService?.BroadcastAlert(new AlertMessage(this.m_devicePrincipal.Identity.Name, "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.HighPriorityAlert));
 
                 return 0;
             }

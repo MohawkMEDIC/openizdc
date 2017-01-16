@@ -15,43 +15,171 @@
  - the License.
  - 
  - User: justi
- - Date: 2016-7-18
+ - Date: 2016-7-17
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.5.*">
-    <icon>~/img/cog.png</icon>
+  <info id="org.openiz.core" version="0.6.17.*">
+    <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
   </info>
   <startup>~/index.html</startup>
-  <template mnemonic="Act.Observation.Weight">
-    <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
-    <oid>1.2.3.4.5.6.7.8.9</oid>
-    <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
-  </template>
-  <template mnemonic="Act.SubstanceAdmin.Immunization">
+
+  <viewModel key="base">
+    <definition>/org.openiz.core/views/viewmodel/base.xml</definition>
+  </viewModel>
+  <viewModel key="min">
+    <definition>/org.openiz.core/views/viewmodel/min.xml</definition>
+  </viewModel>
+  <viewModel key="full">
+    <definition>/org.openiz.core/views/viewmodel/full.xml</definition>
+  </viewModel>
+  <viewModel key="encounter">
+    <definition>/org.openiz.core/views/viewmodel/encounters.xml</definition>
+  </viewModel>
+  <viewModel key="order">
+    <definition>/org.openiz.core/views/viewmodel/order.xml</definition>
+  </viewModel>
+
+  <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
-    <oid>1.2.3.4.5.6.7.8.10</oid>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.0</oid>
     <definition>/org.openiz.core/templates/act.substanceadmin.immunization.json</definition>
   </template>
+  <template mnemonic="act.substanceadmin.supplement">
+    <form>/org.openiz.core/views/templates/act.substanceadmin.supplement.html</form>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.1.1</oid>
+    <definition>/org.openiz.core/templates/act.substanceadmin.supplement.json</definition>
+  </template>
+  <template mnemonic="act.observation.weight">
+    <form>/org.openiz.core/views/templates/act.observation.weight.html</form>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.0</oid>
+    <definition>/org.openiz.core/templates/act.observation.weight.json</definition>
+  </template>
+  <template mnemonic="act.observation.causeofdeath">
+    <form>/org.openiz.core/views/templates/act.observation.causeofdeath.html</form>
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.1</oid>
+    <definition>/org.openiz.core/templates/act.observation.causeofdeath.json</definition>
+  </template>
+  <template mnemonic="act.transferstock">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
+    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
+  </template>
+  <template mnemonic="act.adjuststock">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
+    <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
+  </template>
+  <template mnemonic="act.countstock">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
+    <definition>/org.openiz.core/templates/act.countstock.json</definition>
+  </template>
+  <template mnemonic="act.neworder">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.3</oid>
+    <definition>/org.openiz.core/templates/act.neworder.json</definition>
+  </template>
+  <template mnemonic="act.fulfilledorder">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.4</oid>
+    <definition>/org.openiz.core/templates/act.fulfilledorder.json</definition>
+  </template>
   
+  <template mnemonic="act.concern.aefi">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
+    <definition>/org.openiz.core/templates/act.concern.aefi.json</definition>
+    <form>/org.openiz.core/views/templates/act.concern.aefi.html</form>
+
+  </template>
+  <template mnemonic="act.patientencounter.appointment">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.2.0</oid>
+    <definition>/org.openiz.core/templates/act.patientencounter.appointment.json</definition>
+  </template>
+  <menuItem order="50">
+    <icon>~/img/appbar.settings.png</icon>
+    <text>Administration</text>
+    <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
+      <icon>/org.openiz.core/img/appbar.shield.png</icon>
+      <text lang="en">Settings</text>
+    </menuItem>
+    <menuItem asset="/org.openiz.core/views/settings/data.html" launch="#/core/data">
+      <icon>/org.openiz.core/img/appbar.database.png</icon>
+      <text lang="en">Data Manager</text>
+    </menuItem>
+  </menuItem>
   <menuItem order="99">
-    <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
+    <icon>~/img/appbar.code.xml.png</icon>
     <text>Development Tools</text>
-    <menuItem launch="/org.openiz.core/views/debug/report.html">
+    <menuItem asset="/org.openiz.core/views/debug/report.html" launch="#/core/report">
       <icon>/org.openiz.core/img/appbar.bug.png</icon>
       <text>Bug Report</text>
     </menuItem>
-    <menuItem launch="/org.openiz.core/views/debug/about.html">
+    <menuItem asset="/org.openiz.core/views/debug/about.html" launch="#/core/about">
       <icon>/org.openiz.core/img/appbar.futurama.bender.png</icon>
       <text>Debug Information</text>
     </menuItem>
-    <menuItem launch="/org.openiz.core/views/debug/feedback.html">
-      <icon>/org.openiz.core/img/appbar.lightbulb.hue.on.png</icon>
+    <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
+      <icon>/org.openiz.core/img/appbar.settings.png</icon>
       <text>Suggestion Box</text>
     </menuItem>
   </menuItem>
   <strings lang="en">
+
+    <!-- Encounters -->
+    <string key="locale.encounters.overdue">Overdue</string>
+    
+    <!-- Actions -->
+    <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.next">Next</string>
+    <string key="locale.action.back">Back</string>
+    <string key="locale.action.done">Done</string>
+    <string key="locale.action.delete">Delete</string>
+    <string key="locale.action.acknowledge">Acknowledge</string>
+    <string key="locale.action.cancel">Cancel</string>
+    <string key="locale.action.save">Save</string>
+    <string key="locale.action.finish">Finish</string>
+    <string key="locale.action.view">View</string>
+    <string key="locale.action.update">Update</string>
+    <string key="locale.action.edit">Edit</string>
+    <string key="locale.action.remove">Remove</string>
+    <string key="locale.action.search">Search</string>
+
+    <!-- Alerts -->
+    <string key="locale.alert.updateSuccessful">Update Successful</string>
+    <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
+
+    <!-- Common -->
+    <string key="locale.common.no">No</string>
+    <string key="locale.common.yes">Yes</string>
+    <string key="locale.common.unknown">Unknown</string>
+    <string key="locale.common.invalidForm">Form submission is invalid</string>
+    <string key="locale.dialog.wait.text">Please wait</string>
+
+    <!-- Login -->
+    <string key="locale.security.login.helpText">Please log into OpenIZ to continue</string>
+    <string key="locale.security.login.label.username">Username</string>
+    <string key="locale.security.login.label.password">Password</string>
+    <string key="locale.security.login.placeholder.username">Enter your username</string>
+    <string key="locale.security.login.placeholder.password">Enter your password</string>
+    <string key="locale.security.login.button.forgotPassword">Forgot Password</string>
+    <string key="locale.security.login.button.login">Login</string>
+    <string key="locale.security.forgotPassword.title">Forgot Password</string>
+    <string key="locale.security.forgotPassword.userName">Username</string>
+    <string key="locale.security.forgotPassword.mechanism">Method</string>
+    <string key="locale.security.forgotPassword.challenge">Verify</string>
+    <string key="locale.security.forgotPassword.changePassword">Set Password</string>
+    <string key="locale.forgotPassword.userName.title">Enter Username</string>
+    <string key="locale.forgotPassword.userName.help">Enter the name of the user for which you wish to reset the password.</string>
+    <string key="locale.forgotPassword.userName.label">Username</string>
+    <string key="locale.forgotPassword.userName.placeholder">Username</string>
+    <string key="locale.forgotPassword.mechanism.title">Reset Method</string>
+    <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
+    <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
+    <string key="locale.forgotPassword.changePassword.title">Set Password</string>
+    <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
+    <string key="locale.forgotPassword.challenge.resend">Send</string>
+    <string key="locale.forgotPassword.challenge.response">A secret has been sent to you, enter the secret below. If you do not receive the secret you can press "send" to get a new secret sent to you.</string>
+    <string key="locale.security.errors.usernameRequired">Please enter a username</string>
+    <string key="locale.security.errors.passwordRequired">Please enter a password</string>
+    <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
+
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
     <string key="locale.error.500.title">Internal Server Error</string>
@@ -68,8 +196,9 @@
     <string key="locale.error.bug.input.trivial">I am able to work around this bug</string>
     <string key="locale.error.bug.input.description">Describe this bug:</string>
     <string key="locale.error.bug.input.logFile">Attach Log File:</string>
-    
+
     <!-- Settings -->
+    <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
     <string key="locale.settings.realmTitle">Join Realm</string>
     <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
     <string key="locale.settings.deviceName">Device Name:</string>
@@ -119,7 +248,22 @@
     <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
     <string key="locale.settings.localAdminName">Local Admin Username:</string>
     <string key="locale.actions.save">Save</string>
-
+    <string key="locale.settings.data.restore">Restore DB</string>
+    <string key="locale.settings.data.purge">Purge DB</string>
+    <string key="locale.settings.data.pull">Pull from Central</string>
+    <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
+    <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
+    <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
+    <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
+    <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
+    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock">&lt;/span> User Elevation Required</string>
+    <string key="locale.settings.networkTitle">Network Settings</string>
+    <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
+    <string key="locale.settings.useProxy">Use a Proxy</string>
+    <string key="locale.settings.useProxyDescription">Select this option to proxy all requests sent from the mobile device through an HTTP proxy.</string>
+    <string key="locale.settings.proxyAddress">Proxy Address</string>
+    <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
+    <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Change Password</string>
     <string key="locale.preferences.username">Username</string>
@@ -133,6 +277,14 @@
     <string key="locale.preferences.telephone">Tel / E-Mail</string>
     <string key="locale.preferences.facility">Facility</string>
     <string key="locale.preferences.language">Language</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
+    <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
+
+    
+    <!-- Encounters -->
+    <string key="locale.encounters.weightSummary.title">Weight Summary</string>
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
@@ -140,7 +292,46 @@
     <string key="locale.login.password">Password:</string>
     <string key="locale.login.doLogin">Login</string>
 
-  </strings>
+    <string key="locale.debug.bugReport">Submit Bug Report</string>
+    <string key="locale.debug.reporter">Reporter</string>
+    <string key="locale.debug.reproduction">Steps to Reproduce</string>
+    <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
+    <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
+    <string key="locale.debug.submit">Send Report</string>
+    <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
+    <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
+    <string key="locale.about.tabs.versions">Version Information</string>
+    <string key="locale.about.tabs.log">Log Files</string>
+    <string key="locale.about.tabs.runtime">Environment</string>
+    <string key="locale.about.versions.applets.title">Loaded Applets</string>
+    <string key="locale.about.versions.applet">Name</string>
+    <string key="locale.about.versions.author">Author</string>
+    <string key="locale.about.versions.id">Package ID</string>
+    <string key="locale.about.versions.assemblies.title">Loaded DLLs</string>
+    <string key="locale.about.versions.assembly">Assembly</string>
+    <string key="locale.about.versions.version">Version</string>
+    <string key="locale.about.versions.info">Description</string>
+    <string key="locale.about.machineInfo">Runtime Environment</string>
+    <string key="locale.about.fileInfo">Datafile Information</string>
+    <string key="locale.about.syncInfo">Synchronizaton Information</string>
+    <string key="locale.about.environment.os">Operating System Version</string>
+    <string key="locale.about.environment.cpu">CPU Processor Count</string>
+    <string key="locale.about.environment.runtimeVersion">.NET Runtime Version</string>
+    <string key="locale.about.environment.mem">Used Memory</string>
+    <string key="locale.about.files.name">Data File</string>
+    <string key="locale.about.files.size">Total Size</string>
+    <string key="locale.about.files.date">Last Write Date</string>
+    <string key="locale.about.sync.resource">Data Resource</string>
+    <string key="locale.about.sync.date">Last Sync Date</string>
+    <string key="locale.about.sync.etag">Last Version</string>
+    <string key="locale.about.sync.filter">Filter</string>
+    <!-- Generic confirmations-->
+    <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
+  
+  <!-- Common Dialog -->
+    <string key="locale.network.offline">Offline</string>
+
+    <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string></strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
     <string key="locale.error.404.description">Le ressource demandee n'a pas pu etra trouve. </string>

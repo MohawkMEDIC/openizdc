@@ -1,29 +1,77 @@
-﻿<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
+﻿<!--
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ -
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
+ - the License.
+ -
+ - User: justi
+ - Date: 2016-7-30
+ -->
+<fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group"
+          ng-controller="PatientIdentifiersController">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
     <div class="row" ng-repeat="(authority, identifier) in patient.identifier">
-        <div class="col-xs-3">
-            <div class="input-group">
-                <select ng-model="identifier.authority" class="form-control"
-                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
+        <div ng-if="!Array.isArray(identifier)">
+            <div class="col-xs-3">
+                <div class="input-group">
+                    <select ng-model="identifier.authority.domainName" class="form-control" ng-change="rebindDomain(authority, identifier)"
+                            bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
+                    <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                </div>
+            </div>
+            <div class="col-xs-9">
+                <div class="input-group">
+                    <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(authority, identifier)">
+                            <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
+                        </button>
+                        <button class="btn btn-default" type="button" ng-if="addIdentifier" ng-click="addIdentifier(authority)">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                        <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(authority, identifier)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="col-xs-9">
-            <div class="input-group">
-                <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control"/>
-                <span class="input-group-btn">
-                    <button class="btn btn-default" type="button" ng-click="scanBarcode(authority, identifier)">
-                        <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
-                    </button>
-                    <button class="btn btn-default" type="button" ng-click="addIdentifier()">
-                        <span class="glyphicon glyphicon-plus"></span> 
-                    </button>
-                    <button class="btn btn-default" type="button" ng-click="removeIdentifier(authority, identifier)">
-                        <span class="glyphicon glyphicon-remove"></span> 
-                    </button>
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.identifier' | i18n }}" data-content="{{ 'locale.patient.demographics.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
-                </span>
-
+        <div ng-if="Array.isArray(identifier)" ng-repeat="id in identifier">
+            <div class="col-xs-3">
+                <div class="input-group">
+                    <select ng-model="id.authority.domainName" class="form-control" ng-change="rebindDomain(authority, id)"
+                            bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
+                    <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                </div>
+            </div>
+            <div class="col-xs-9">
+                <div class="input-group">
+                    <input type="text" autocomplete="off" autocapitalize="off" ng-model="id.value" class="form-control" />
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(authority, id)">
+                            <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
+                        </button>
+                        <button class="btn btn-default" type="button" ng-if="addIdentifier" ng-click="addIdentifier()">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                        <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(authority, $index)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    </span>
+                </div>
             </div>
         </div>
     </div>

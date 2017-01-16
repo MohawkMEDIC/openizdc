@@ -1,5 +1,24 @@
-﻿using Newtonsoft.Json;
-using OpenIZ.Core.Alerting;
+﻿/*
+ * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you 
+ * may not use this file except in compliance with the License. You may 
+ * obtain a copy of the License at 
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0 
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
+ * License for the specific language governing permissions and limitations under 
+ * the License.
+ * 
+ * User: justi
+ * Date: 2016-8-17
+ */
+using Newtonsoft.Json;
+using OpenIZ.Core.Alert.Alerting;
 using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
@@ -25,14 +44,14 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public DbAlertMessage(AlertMessage am)
         {
-            this.TimeStamp = am.TimeStamp;
+            this.TimeStamp = am.TimeStamp.DateTime;
             this.From = am.From;
             this.Subject = am.Subject;
             this.Body = am.Body;
             this.To = am.To;
-            this.CreatedBy = ApplicationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
+            this.CreatedBy = AuthenticationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
             this.Flags = am.Flags;
-            this.Id = am.Id.ToByteArray();
+            this.Id = am.Key.HasValue ? am.Key.Value.ToByteArray() : Guid.NewGuid().ToByteArray();
         }
 
         /// <summary>
@@ -42,7 +61,8 @@ namespace OpenIZ.Mobile.Core.Alerting
         {
             return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags)
             {
-                Id = new Guid(this.Id)
+                Key = new Guid(this.Id),
+				CreationTime = this.TimeStamp
             };
         }
 
