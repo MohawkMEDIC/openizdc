@@ -40,6 +40,9 @@
   <viewModel key="encounter">
     <definition>/org.openiz.core/views/viewmodel/encounters.xml</definition>
   </viewModel>
+  <viewModel key="order">
+    <definition>/org.openiz.core/views/viewmodel/order.xml</definition>
+  </viewModel>
 
   <template mnemonic="act.substanceadmin.immunization">
     <form>/org.openiz.core/views/templates/act.substanceadmin.immunization.html</form>
@@ -69,15 +72,19 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
     <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
   </template>
-  <template mnemonic="act.neworder">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
-    <definition>/org.openiz.core/templates/act.neworder.json</definition>
-  </template>
   <template mnemonic="act.countstock">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
     <definition>/org.openiz.core/templates/act.countstock.json</definition>
   </template>
-
+  <template mnemonic="act.neworder">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.3</oid>
+    <definition>/org.openiz.core/templates/act.neworder.json</definition>
+  </template>
+  <template mnemonic="act.fulfilledorder">
+    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.4</oid>
+    <definition>/org.openiz.core/templates/act.fulfilledorder.json</definition>
+  </template>
+  
   <template mnemonic="act.concern.aefi">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
     <definition>/org.openiz.core/templates/act.concern.aefi.json</definition>
