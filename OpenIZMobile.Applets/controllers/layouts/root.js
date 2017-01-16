@@ -27,9 +27,17 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
 
+        var hasStartup = false;
         OpenIZ.UserInterface.states.forEach(function (state) {
+            hasStartup |= state.url == '/';
             $stateProvider.state(state);
         });
+        if (!hasStartup)
+            $stateProvider.state({
+                name: 'org-openiz-core', url: '/', abstract: false, views: {
+                    '': { controller: '', templateUrl: '/org.openiz.core/views/landing.html' },
+                }
+            });
 
         //$urlRouterProvider.otherwise('/');
 
