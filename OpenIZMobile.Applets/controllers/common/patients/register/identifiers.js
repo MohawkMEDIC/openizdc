@@ -29,7 +29,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
-
     // Rebind the domain scope
     function rebindDomain(authority, identifier) {
         if ($scope.patient.identifier[identifier.authority.domainName] !== undefined) { // Already have one, add another

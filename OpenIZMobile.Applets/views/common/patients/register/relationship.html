@@ -28,7 +28,7 @@
                         bind:source="Concept" bind:filter="conceptSet.mnemonic=FamilyMember" bind:value="name[{{ locale }}].value"></select>
                 <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -39,7 +39,7 @@
             <div class="input-group">
                 <input type="text" name="relationGivenName" id="relationGivenName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Given" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.givenName' | i18n }}" data-content="{{ 'locale.patient.relative.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.givenName' | i18n }}" data-content="{{ 'locale.patient.relative.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -50,7 +50,7 @@
             <div class="input-group">
                 <input type="text" name="relationFamilyName" id="relationFamilyName" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.$other.targetModel.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.familyName' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.familyName.type' | i18n }}" data-content="{{ 'locale.patient.relative.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -68,7 +68,7 @@
             <div class="input-group">
                 <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.$other.targetModel.telecom.$other.value" class="form-control" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
 
             </div>
