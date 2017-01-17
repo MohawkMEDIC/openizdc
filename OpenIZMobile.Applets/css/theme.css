@@ -518,7 +518,7 @@ body{
  }
 
  .tile-btn{
-    color: white;
+    color: white !important;
     font-size: 17px;
     border: none;
     border-radius: 0;
@@ -526,6 +526,7 @@ body{
     margin: auto;
     padding: 9px;
     height: 35px;
+    background: none;
  }
 
 
