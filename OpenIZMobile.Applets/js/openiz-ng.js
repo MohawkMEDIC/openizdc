@@ -534,4 +534,14 @@ angular.module('openiz', [])
             });
             }
         };
-    }]);
+    }])
+    .directive('siteTrim', function ($parse) {
+        return {
+            replace: true,
+            restrict: 'A',
+            template: "<span>{{site}}</span>",
+            link: function (scope, element, attrs) {
+                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length);
+            }
+        };
+    });

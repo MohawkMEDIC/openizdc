@@ -535,7 +535,7 @@ body{
     background: #386582;
     color: white;
     position: relative;
-    font-size: 15px;
+    font-size: 16px;
  }
  .circle-quantity{
     border-radius: 20px;
@@ -555,9 +555,10 @@ body{
 
  /**History*/
  .encounter-group-title{
-     background:#146396;
-     padding: 1px 20px;
-     color: white;
+    background:#146396;
+    padding: 12px 20px;
+    color: white;
+    margin-bottom: 10px;
  }
 
  /**Vaccination queue*/
@@ -585,6 +586,7 @@ body{
      margin:10px 0;
      padding:10px;
      position: relative;
+     font-size: 16px;
 }
 .history-tile-status{
     position: absolute;
