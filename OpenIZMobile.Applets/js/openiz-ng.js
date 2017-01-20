@@ -541,7 +541,7 @@ angular.module('openiz', [])
             restrict: 'A',
             template: "<span>{{site}}</span>",
             link: function (scope, element, attrs) {
-                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length);
+                scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || "N/A";
             }
         };
     });
