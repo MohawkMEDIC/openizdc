@@ -47,7 +47,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.goPage = scope.search.goPage || goPage;
     scope.startEncounter = startEncounter;
 
-
+    scope.search.searchSubmitted = false;
     
     function updateResultEncounters() {
         for (var i in scope.search.results.item) {
@@ -72,6 +72,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Advances to the next set of results
      */
     function search(onlineOnly) {
+        scope.search.searchSubmitted = true;
+
         if (scope.searchForm.$valid) {
             if (onlineOnly)
                 scope.search.query["_onlineOnly"] = onlineOnly;
