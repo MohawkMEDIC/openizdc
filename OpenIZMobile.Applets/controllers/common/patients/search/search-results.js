@@ -72,38 +72,39 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Advances to the next set of results
      */
     function search(onlineOnly) {
-        
-        if (onlineOnly)
-            scope.search.query["_onlineOnly"] = onlineOnly;
-        else
-            delete (scope.search.query["_onlineOnly"]);
-        scope.search.query["_offset"] = 0;
-        scope.search.query["_count"] = scope.search.paging.size;
-        scope.search.isSearching = true;
-        OpenIZ.Patient.findAsync({
-            query: scope.search.query,
-            continueWith: function (r) {
-                scope.search.results = r;
-                scope.search.paging = {
-                    current: 1,
-                    total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
-                    size: scope.search.paging.size,
-                    pages: []
-                };
-                for (var i = 0; i < scope.search.paging.total; i++)
-                    scope.search.paging.pages[i] = i + 1;
-                updateResultEncounters();
-                scope.$apply();
-            },
-            onException: function (e) {
-                OpenIZ.App.toast(e.message);
-            },
-            finally: function () {
-                scope.search.isSearching = false;
+        if (scope.searchForm.$valid) {
+            if (onlineOnly)
+                scope.search.query["_onlineOnly"] = onlineOnly;
+            else
+                delete (scope.search.query["_onlineOnly"]);
 
-            }
-        });
+            scope.search.query["_offset"] = 0;
+            scope.search.query["_count"] = scope.search.paging.size;
+            scope.search.isSearching = true;
+            OpenIZ.Patient.findAsync({
+                query: scope.search.query,
+                continueWith: function (r) {
+                    scope.search.results = r;
+                    scope.search.paging = {
+                        current: 1,
+                        total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
+                        size: scope.search.paging.size,
+                        pages: []
+                    };
+                    for (var i = 0; i < scope.search.paging.total; i++)
+                        scope.search.paging.pages[i] = i + 1;
+                    updateResultEncounters();
+                    scope.$apply();
+                },
+                onException: function (e) {
+                    OpenIZ.App.toast(e.message);
+                },
+                finally: function () {
+                    scope.search.isSearching = false;
 
+                }
+            });
+        }
     };
 
     /** 
