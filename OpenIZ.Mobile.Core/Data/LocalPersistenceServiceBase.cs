@@ -40,6 +40,7 @@ using System.Threading;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Data.Connection;
 using System.Diagnostics;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -600,6 +601,14 @@ namespace OpenIZ.Mobile.Core.Data
         object IDataPersistenceService.Get(Guid id)
         {
             return this.Get(id);
+        }
+
+        /// <summary>
+        /// Query the specified object
+        /// </summary>
+        public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
+        {
+            return this.Query((Expression<Func<TData, bool>>)query, offset, count, out totalResults, Guid.Empty);
         }
     }
 }

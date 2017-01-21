@@ -34,7 +34,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
         });
         if (!hasStartup)
             $stateProvider.state({
-                name: 'org-openiz-core.index', url: '/', abstract: false, views: {
+                name: 'org-openiz-core-index', url: '/', abstract: false, views: {
                     '': { controller: '', templateUrl: '/org.openiz.core/views/landing.html' },
                 }
             });

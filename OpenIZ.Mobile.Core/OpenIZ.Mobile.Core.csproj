@@ -238,6 +238,9 @@
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
+    <Reference Include="OpenIZ.Core.Model">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
+    </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
     </Reference>
@@ -249,9 +252,6 @@
     </Reference>
     <Reference Include="OpenIZ.Messaging.IMSI.Client">
       <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="OpenIZ.Core.Model">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>

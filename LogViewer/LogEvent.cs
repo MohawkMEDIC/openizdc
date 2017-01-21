@@ -71,7 +71,7 @@ namespace LogViewer
         {
             Regex v1Regex = new Regex(@"^(.*)?(\s)?[\s][\[\<](.*?)[\]\>]\s\[(.*?)\]\s?:(.*)$"),
              v2Regex = new Regex(@"^(.*)?@(.*)?\s[\[\<](.*)?[\>\]]\s\[(.*?)\]\:\s(.*)$"),
-             server = new Regex(@"^([0-9\-\s\:APM\/]*?)\[@(\d*)\]?\s:\s(.*)\s(Information|Warning|Error|Fatal):\s-?\d{1,10}?\s:(.*)$");
+             server = new Regex(@"^([0-9\-\s\:APM\/]*?)\[@(\d*)\]?\s:\s(.*)\s(Information|Warning|Error|Fatal|Verbose):\s-?\d{1,10}?\s:(.*)$");
 
             List<LogEvent> retVal = new List<LogEvent>();
             LogEvent current = null;

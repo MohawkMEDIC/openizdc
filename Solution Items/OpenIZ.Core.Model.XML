@@ -2810,12 +2810,7 @@
             Display name of a code system or reference term
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ReferenceTermKey">
-            <summary>
-            Back-reference to reference term
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeReferenceTermKey">
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeSourceEntityKey">
             <summary>
             Should serialize reference term key
             </summary>
@@ -3031,7 +3026,7 @@
             Gets or sets the security device
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.ManufacturedModelName">
+        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.ManufacturerModelName">
             <summary>
             Gets or sets the manufacturer model name
             </summary>
@@ -4358,6 +4353,16 @@
             Primitive types
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelProperty(System.Type,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps a model property at a root level only
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelProperty(System.Type,System.Type,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps a model property at a root level only
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Map.ModelMapper.#ctor(System.IO.Stream)">
             <summary>
             Creates a new mapper from source stream
@@ -4408,7 +4413,7 @@
             Gets the domain type for the specified model type
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.CreateLambdaMemberAdjustmentExpression(System.Linq.Expressions.MemberExpression,System.Linq.Expressions.ParameterExpression)">
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.CreateLambdaMemberAdjustmentExpression(System.Linq.Expressions.Expression,System.Linq.Expressions.ParameterExpression)">
             <summary>
             Create a traversal expression for a lambda expression
             </summary>
@@ -4427,6 +4432,11 @@
         <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapDomainInstance``2(``0,System.Boolean,System.Collections.Generic.HashSet{System.Guid})">
             <summary>
             Map model instance
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapDomainInstance(System.Type,System.Type,System.Object,System.Boolean,System.Collections.Generic.HashSet{System.Guid})">
+            <summary>
+            Map domain instance
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Map.OpenIZConvert">
@@ -4742,6 +4752,11 @@
             </summary>
             <param name="workingDictionary">Working dictionary.</param>
         </member>
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.HttpQueryExpressionVisitor.AddCondition(System.String,System.Object)">
+            <summary>
+            Add a condition if not already present
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.HttpQueryExpressionVisitor.Visit(System.Linq.Expressions.Expression)">
             <summary>
             Visit a query expression
@@ -4853,7 +4868,7 @@
             Update property data if required
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive``1(System.Linq.Expressions.Expression,``0)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression,System.Object)">
             <summary>
             Create a version filter
             </summary>
@@ -4884,6 +4899,11 @@
         <member name="M:OpenIZ.Core.Model.ExtensionMethods.GetGenericMethod(System.Type,System.String,System.Type[],System.Type[])">
             <summary>
             Get generic method
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.GetXmlProperty(System.Type,System.String,System.Boolean)">
+            <summary>
+            Get a property based on XML property and/or serialization redirect
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Roles.Patient">

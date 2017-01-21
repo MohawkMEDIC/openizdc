@@ -170,7 +170,8 @@
     <property name="routeModel" behavior="never"/>
     <property name="siteModel" behavior="never"/>
     <property name="site" behavior="never"/>
-    <property name="relationship" behavior="never">
+    <property name="relationship" behavior="always">
+      
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="RecordTarget">

@@ -42,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var dbe = context.Table<DbEntity>().Where(o => o.Uuid == deviceEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<DeviceEntity>(dbe, context, loadFast);
             retVal.SecurityDeviceKey = new Guid(deviceEntity.SecurityDeviceUuid);
-            retVal.ManufacturedModelName = deviceEntity.ManufacturerModelName;
+            retVal.ManufacturerModelName = deviceEntity.ManufacturerModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;
             retVal.LoadAssociations(context);
 
