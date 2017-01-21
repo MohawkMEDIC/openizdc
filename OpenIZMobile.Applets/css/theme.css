@@ -423,8 +423,6 @@ body{
     white-space:nowrap;
 }
 
-
-
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
@@ -520,7 +518,7 @@ body{
  }
 
  .tile-btn{
-    color: white;
+    color: white !important;
     font-size: 17px;
     border: none;
     border-radius: 0;
@@ -528,6 +526,7 @@ body{
     margin: auto;
     padding: 9px;
     height: 35px;
+    background: none;
  }
 
 
@@ -537,7 +536,7 @@ body{
     background: #386582;
     color: white;
     position: relative;
-    font-size: 15px;
+    font-size: 16px;
  }
  .circle-quantity{
     border-radius: 20px;
@@ -555,6 +554,14 @@ body{
     padding-top:5px;
  }
 
+ /**History*/
+ .encounter-group-title{
+    background:#146396;
+    padding: 12px 20px;
+    color: white;
+    margin-bottom: 10px;
+ }
+
  /**Vaccination queue*/
  .queue-tile{
     padding: 13px 15px 10px 15px;
@@ -564,9 +571,33 @@ body{
     font-size: 15px;
     margin-bottom:10px;
  }
+.ad-hoc-title{
+        font-weight: 600;
+    font-size: 18px;
+    color: white;
+    background: #5d8db1;
+    padding: 20px;
+    margin-bottom: 10px !important;
+}
+
+ 
+ /**History tab*/
+ .history-tile{
+     background:white;
+     margin:10px 0;
+     padding:10px;
+     position: relative;
+     font-size: 16px;
+}
+.history-tile-status{
+    position: absolute;
+    right:15px;
+    top:15px;
+}
 
 
- /**Vaccinations */
+
+/**Vaccinations */
 
 .vaccinations-tile{
     background:white;
@@ -704,12 +735,15 @@ body{
 .glyphicon-chevron-down{
     font-size:15px;
 }
-.input-group-addon-approx{
+.input-group-addon-approx,
+.input-group-addon-no-label{
     vertical-align: top;
     border: none;
     background: #ccd4e0;
-    width: 110px;
     position: relative;
+}
+.input-group-addon-approx{
+    width: 110px;
 }
 .header-dock-labels{
     padding: 0;

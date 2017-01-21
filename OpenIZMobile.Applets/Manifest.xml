@@ -31,6 +31,9 @@
   <viewModel key="min">
     <definition>/org.openiz.core/views/viewmodel/min.xml</definition>
   </viewModel>
+  <viewModel key="history">
+    <definition>/org.openiz.core/views/viewmodel/history.xml</definition>
+  </viewModel>
   <viewModel key="full">
     <definition>/org.openiz.core/views/viewmodel/full.xml</definition>
   </viewModel>

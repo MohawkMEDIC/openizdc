@@ -88,6 +88,7 @@
     <Compile Include="Data\Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="Exceptions\InvalidVersionException.cs" />
     <Compile Include="Exceptions\SessionExpiredException.cs" />
+    <Compile Include="Interop\AMI\AmiIntegrationService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
     <Compile Include="Protocol\CarePlanManagerService.cs" />
     <Compile Include="Search\Model\SearchEntityType.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Security\ITwoFactorRequestService.cs" />
     <Compile Include="Security\Remote\AmiTwoFactorRequestService.cs" />
     <Compile Include="Security\SessionInfo.cs" />
+    <Compile Include="Services\IAdministrationService.cs" />
     <Compile Include="Services\IDataConnectionManager.cs" />
     <Compile Include="Services\IFreetextSearchService.cs" />
     <Compile Include="Services\Impl\LocalActService.cs" />

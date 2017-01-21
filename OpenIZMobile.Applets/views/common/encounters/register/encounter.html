@@ -24,8 +24,8 @@
     <div class="form-group row" ng-class="{'has-error' : (editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.encounterDate.$invalid}">
         <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
-            <input required="required" type="datetime-local" 
-                   name="encounterDate" max="{{$root.page.loadTime | date: 'yyyy-MM-ddTHH:mm:SS'}}" 
+            <input required="required" type="datetime-local"
+                   name="encounterDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
                    class="form-control" ng-model="encounter.actTime" />
         </div>
     </div>
@@ -36,10 +36,14 @@
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
             <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox"
-                           ng-model="encounter.participation.Location._enabled"
-                           value="1" />
+                <span class="input-group-addon input-group-addon-no-label">
+                    <label class="control control--checkbox">
+                        <input type="checkbox"
+                               ng-model="patient.dateOfBirthPrecision"
+                               value="1"
+                               name="approximateDob" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
                 </span>
                 <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" 
                         id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" 
