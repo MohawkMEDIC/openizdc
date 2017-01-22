@@ -704,11 +704,11 @@ var OpenIZ = OpenIZ || {
          * @summary Perform a simple get not necessarily against the IMS
          * @method
          * @memberof OpenIZ.Util   
-         * @param {object} controlData The control data
+         * @param {string} url The URL from which to retrieve 
+         * @param {Object} controlData The control data
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
-         * @param {string} url The URL from which to retrieve 
          * @param {object} controlData.query The query to be included
          */
         simpleGet: function (url, controlData) {
@@ -2566,8 +2566,41 @@ var OpenIZ = OpenIZ || {
     /**
      * @static
      * @class
+     * @summary Provides utility functions for interacting with {@link OpenIZModel.Material} instances
+     * @memberOf OpenIZ
+     */
+    Material:
+        {
+            /**
+             * @summary Get manufactured materials from the IMS 
+             * @param {object} controlData An object containing search, offset, count and callback data
+             * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+             * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+             * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+             * @param {object} controlData.query The query filters to apply to the search
+             * @param {int} controlData.query._count The limit of results to return from the ims
+             * @param {int} controlData.query._offset The offset of the search result window
+             * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+             * @memberof OpenIZ.ManufacturedMaterial
+             * @method
+             */
+            findMaterialAsync: function (controlData) {
+                var query = controlData.query || {};
+                query.classConcept = OpenIZModel.EntityClassKeys.Material;
+                OpenIZ.Ims.get({
+                    resource: "Entity",
+                    continueWith: controlData.continueWith,
+                    onException: controlData.onException,
+                    query: query,
+                    state: controlData.state
+                })
+            }
+        },
+    /**
+     * @static
+     * @class
      * @summary Provides utility functions for interacting with {@link OpenIZModel.ManufacturedMaterial} instances
-     * @memberOf OpenIZ.ManufacturedMaterial
+     * @memberOf OpenIZ
      */
     ManufacturedMaterial:
         {

@@ -107,14 +107,13 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
 
-        // First we're going to push onto the calendar the safe time for the appointment
-        var items = [{
+        var appointments = [{
             id: $scope.appointment.id,
             title: OpenIZ.Localization.getString("locale.encounters.appointment.recommended"),
-            backgroundColor: "rgba(75, 192, 192, 0.4)",
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
             textColor: "#fff",
             start: OpenIZ.Util.toDateInputString($scope.appointment.startTime),
-            end: OpenIZ.Util.toDateInputString( $scope.appointment.stopTime),
+            end: OpenIZ.Util.toDateInputString($scope.appointment.stopTime),
             rendering: 'background'
         },
         {
@@ -126,32 +125,47 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
             end: OpenIZ.Util.toDateInputString($scope.appointment.actTime)
         }];
 
+        // Use the datawarehouse data
+        OpenIZ.Material.findMaterialAsync({
+            continueWith: function (materials) {
+                var refs = {};
+                for (var i in materials.item)
+                    refs[materials.item[i].id] = OpenIZ.Util.renderName(materials.item[i].name.Assigned);
 
-        // Now gather other load times
-        var date = $scope.appointment.startTime;
-        while(date < $scope.appointment.stopTime)
-        {
-            var title = "";
-            // HACK: This should be an aggregate query when local RISI services are available
-            for(var i in $scope.appointment.relationship.HasComponent)
-            {
-                var comp = $scope.appointment.relationship.HasComponent[i].targetModel;
-                if(comp.$type == 'SubstanceAdministration') {
-                    title += "0 " + OpenIZ.Util.renderName(comp.participation.Product.playerModel.name.Assigned) + "\r\n";
-                }
+                OpenIZWarehouse.Adhoc.query({
+                    martId: "oizcp",
+                    queryId: "bymonth",
+                    parameters: {
+                        "act_date": [">" + OpenIZ.Util.toDateInputString($scope.appointment.startTime), "<" + OpenIZ.Util.toDateInputString($scope.appointment.stopTime)],
+                        "location_id": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
+                    },
+                    /** @param {OpenIZModel.Material} state */
+                    continueWith: function (data) {
+                        var aptDates = {};
+                        for (var apt in data) {
+                            if (data[apt].product_id) {
+                                var dateStr = OpenIZ.Util.toDateInputString(data[apt].act_date);
+                                var dateApt = aptDates[dateStr];
+                                if (dateApt)
+                                    dateApt.title += "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]);
+                                else {
+                                    dateApt = {
+                                        title: OpenIZ.Localization.getString("locale.encounters.appointment.planned") + "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]),
+                                        start: OpenIZ.Util.toDateInputString(data[apt].act_date),
+                                        end: OpenIZ.Util.toDateInputString(data[apt].act_date)
+                                    };
+                                    appointments.push(dateApt);
+                                    aptDates[dateStr] = dateApt;
+                                }
+                            }
+                        }
+
+                        callback(appointments);
+                    }
+                });
             }
-            items.push({
-                id: $scope.appointment.id,
-                title: title,
-                backgroundColor: "rgba(54, 162, 235, 0.4)",
-                textColor: "#fff",
-                start: OpenIZ.Util.toDateInputString(date),
-                end: OpenIZ.Util.toDateInputString(date)
-            });
-            date = date.addDays(1);
-        }
-
-        callback(items);
+        });
+        
 
     };
 

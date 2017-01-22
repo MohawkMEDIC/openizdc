@@ -451,6 +451,11 @@ angular.module('openiz', [])
                         if (e.currentTarget.value.indexOf("? string:") == 0) {
                             e.currentTarget.value = e.currentTarget.value.substring(9, e.currentTarget.value.length - 2);
                         }
+                        e.currentTarget.options.selectedIndex = e.currentTarget.options.length - 1;
+                        //{
+                        //    while (e.currentTarget.options.length > 1)
+                        //        e.currentTarget.options.splice(1);
+                        //}
                     });
                 });
             }

@@ -24,7 +24,7 @@
     var rvalidescape = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
     var rvalidtokens = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
     var rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g;
-    var dateISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+].*?$/i;
+    var dateISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:[.,]\d+)?[Z\-\+]?.*?$/i;
     var dateNet = /\/Date\((\d+)(?:-\d+)?\)\//i;
 
     // replacer RegExp

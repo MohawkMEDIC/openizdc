@@ -43,7 +43,7 @@
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
                     <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-                        <option value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                        <option selected="selected" value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                     </select>
                 </div>
             </div>

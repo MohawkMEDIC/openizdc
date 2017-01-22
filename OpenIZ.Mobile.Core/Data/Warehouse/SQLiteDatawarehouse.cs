@@ -473,7 +473,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                         // First, we delete the record
                         List<object> vals = new List<object>();
-                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} WHERE uuid IN ({1})", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, vals)), vals.ToArray()))
+                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} {1} ", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, vals)), vals.ToArray()))
                             dbc.ExecuteNonQuery();
                         this.DeleteProperties(tx, mart.Schema.Name, mart.Schema);
                         
@@ -637,22 +637,20 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         {
             // Build a query
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", objectName);
+            sb.AppendFormat("SELECT DISTINCT * FROM {0} ", objectName);
             List<Object> vals = new List<Object>();
             sb.Append(this.ParseFilterDictionary(objectName, parms, vals));
-
-            sb.Append(") ");
 
             // Construct the result set
             List<dynamic> retVal = new List<dynamic>();
 
 
             using (var dbc = this.CreateCommand(null, String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray()))
-                totalResults = (int)dbc.ExecuteScalar();
+                totalResults = Convert.ToInt32(dbc.ExecuteScalar());
 
-            sb.AppendFormat(" OFFSET {0} LIMIT {1}", offset, count);
+            sb.AppendFormat(" LIMIT {1}  OFFSET {0}", offset, count);
 
-            using (var dbc = this.CreateCommand(null, sb.ToString(), vals))
+            using (var dbc = this.CreateCommand(null, sb.ToString(), vals.ToArray()))
             using (var rdr = dbc.ExecuteReader())
                 while (rdr.Read())
                     retVal.Add(this.CreateDynamic(rdr));
@@ -667,7 +665,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             StringBuilder sb = new StringBuilder();
             if (parms.Count() > 0)
             {
-                sb.AppendFormat("SELECT uuid FROM {0} WHERE ", objectName);
+                sb.AppendFormat(" WHERE ", objectName);
 
                 foreach (var s in parms)
                 {
@@ -678,7 +676,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                     sb.Append("(");
 
-                    string key = s.Key.Replace(".", "_"),
+                    string key = s.Key.Replace(".", "_").Replace("[]",""),
                         scopedQuery = objectName + ".";
 
                     foreach (var itm in rValue as IList)
@@ -759,13 +757,11 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             vals.Add(value);
                     }
                     sb.Remove(sb.Length - 4, 4);
+                    sb.Append(") AND ");
                 } // exist or value
-
-                sb.Append(") AND ");
-
             }
             else
-                sb.Append("SELECT uuid FROM sqp_{0}_{1}    ");
+                sb.AppendFormat("    ", objectName);
             sb.Remove(sb.Length - 4, 4);
             return sb.ToString();
         }
@@ -775,9 +771,14 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// </summary>
         private dynamic CreateDynamic(SqliteDataReader rdr)
         {
-            dynamic retVal = new ExpandoObject();
+            var retVal = new ExpandoObject() as IDictionary<String, Object>;
             for (int i = 0; i < rdr.FieldCount; i++)
-                retVal[rdr.GetName(i)] = rdr[i];
+            {
+                var value = rdr[i];
+                if (rdr[i] is byte[] && (rdr[i] as byte[]).Length == 16)
+                    value = new Guid(rdr[i] as byte[]);
+                retVal.Add(rdr.GetName(i), value);
+            }
             return retVal;
         }
 

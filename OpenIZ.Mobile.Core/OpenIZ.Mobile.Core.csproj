@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />
     <Compile Include="AuthenticationContext.cs" />
