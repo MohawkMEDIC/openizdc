@@ -48,7 +48,8 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-readonly="patient.readonly.dateOfBirth" type="date" 
+                <input ng-disabled="patient.tag.hasBirthCertificate"
+                       ng-readonly="patient.readonly.dateOfBirth" type="date" 
                        name="dateOfBirth" id="dobInput" 
                        class="form-control" 
                        ng-model="patient.dateOfBirth" 
@@ -58,6 +59,7 @@
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
+                               ng-disabled="patient.tag.hasBirthCertificate"
                                ng-model="patient.dateOfBirthPrecision"
                                value="1"
                                name="approximateDob" />
@@ -149,7 +151,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched||editPatientForm.$submitted) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
-                <select ng-disabled="patient.readonly.genderConcept" name="gender" 
+                <select ng-disabled="patient.readonly.genderConcept || patient.tag.hasBirthCertificate" name="gender" 
                         ng-model="patient.genderConcept" 
                         ng-required="true" id="genderSelect" 
                         class="form-control"
