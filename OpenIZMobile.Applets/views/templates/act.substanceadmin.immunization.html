@@ -47,8 +47,19 @@
                     <label>
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" ng-required="act._enabled" name="consumable_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.participation.Consumable.player" data-watch="act.targetModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}" }' data-display="scope.lotNumber">
-                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.lot' | i18n }}</option>
+                    <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
+                            ng-required="act._enabled" 
+                            name="consumable_{{act.targetModel.id}}" 
+                            class="form-control" 
+                            ng-model="act.targetModel.participation.Consumable.player" 
+                            data-watch="act.targetModel.participation.Product.player" 
+                            data-watch-target="relationship[ManufacturedProduct].source" 
+                            oiz-databind="ManufacturedMaterial" 
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}"  }' 
+                            data-display="scope.lotNumber" 
+                            data-defaultFirst="true"
+                            data-default="$root.session.prefs['default.lot.' + newValue]"
+                            >
                     </select>
                 </div>
                 <div class="row">
@@ -57,6 +68,7 @@
                     </div>
                     <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
+                        {{ editEncounterForm['consumable_' + act.targetModel.id].$error | json }}
                     </div>
                     <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}

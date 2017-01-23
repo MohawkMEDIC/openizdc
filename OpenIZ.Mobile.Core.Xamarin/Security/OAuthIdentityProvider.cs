@@ -216,7 +216,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             if (localUser == null)
                                 localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
                             else
+                            {
                                 localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                                localIdp.Authenticate(principal, password);
+                            }
                         }
                         catch(Exception ex)
                         {

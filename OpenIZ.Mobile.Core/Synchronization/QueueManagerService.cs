@@ -217,7 +217,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         private void CreateUserAlert(String subject, String body, params object[] parms)
         {
             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, parms), AlertMessageFlags.Alert));
+            alertService?.BroadcastAlert(new AlertMessage("SYSTEM", null, subject, String.Format(body, parms), AlertMessageFlags.System));
         }
 
         /// <summary>

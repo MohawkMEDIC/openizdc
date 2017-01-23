@@ -57,7 +57,8 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 $rootScope.system.config = config;
                 $rootScope.$apply();
             }
-        })
+        });
+
         $rootScope.$on("$stateChangeError", console.log.bind(console));
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             $rootScope.isLoading = true;
@@ -91,6 +92,16 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     if (Object.keys(session.entity.telecom).length == 0)
                         session.entity.telecom.MobilePhone = { value: "" };
                 }
+
+                OpenIZ.Configuration.getUserPreferencesAsync({
+                    continueWith: function (prefs) {
+                        $rootScope.session.prefs = {};
+                        for (var p in prefs.application.setting) {
+                            var set = prefs.application.setting[p];
+                            $rootScope.session.prefs[set.key] = set.value;
+                        }
+                    }
+                });
                 $rootScope.$apply();
             }
         });

@@ -61,20 +61,35 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
     };
 
     $scope.checkMessages = function () {
-        OpenIZ.App.getAlertsAsync({
-            query: {
-                flags: "!2",
-                _count: 5
-            },
-            continueWith: function (d) {
-                if ($scope.messages == null || d.length != $scope.messages.length) {
-                    $scope.messages = d;
-                    $scope.$apply();
-                }
+            OpenIZ.App.getAlertsAsync({
+                query: {
+                    flags: "!2"
+                },
+                continueWith: function (d) {
+                    if ($rootScope.session != null) {
+                        if ($scope.messages == null || d.length != $scope.messages.length) {
+                            var nmsg = d.length - ($scope.messages == null ? 0 : $scope.messages.length);
 
-                setTimeout($scope.checkMessages, 30000);
-            }
-        });
+                            var title = null;
+                            var alertBody = null;
+                            var alertOptions = {
+                                "preventDuplicates": true,
+                                "showDuration": 150,
+                                "hideDuration": 250,
+                                "timeout": 2000
+                            };
+
+                            if (nmsg == 1)
+                                toastr.info(d[0].subject + "...", d[0].from, alertOptions);
+                            else
+                                toastr.info(OpenIZ.Localization.getString("locale.alerts.newAlerts"), alertOptions);
+                            $scope.messages = d;
+                            $scope.$apply();
+                        }
+                    }
+                    setTimeout($scope.checkMessages, 30000);
+                }
+            });
     };
     setTimeout($scope.checkMessages, 30000);
     $scope.checkMessages();

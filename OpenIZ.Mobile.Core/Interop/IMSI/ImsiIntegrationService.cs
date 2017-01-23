@@ -37,6 +37,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Reflection;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Interop.IMSI
 {
@@ -45,6 +46,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
     /// </summary>
     public class ImsiIntegrationService : IIntegrationService
     {
+
+        // Cached credential
+        private IPrincipal m_cachedCredential = null;
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ImsiIntegrationService));
@@ -84,10 +88,13 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
+            AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+
             // TODO: Clean this up - Login as device account
             if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
                 ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
                 AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+            this.m_cachedCredential = AuthenticationContext.Current.Principal;
             return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
         }
         /// <summary>

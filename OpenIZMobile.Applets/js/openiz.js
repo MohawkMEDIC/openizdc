@@ -2526,41 +2526,69 @@ var OpenIZ = OpenIZ || {
         * @summary Get applet specific key/value pair configuration parameters which are currently set for the application
         * @memberof OpenIZ.Configuration
         * @method
-        * @param {String} appletId The identifier of the applet from which the settings should be retrieved
+        * @param {object} controlData An object containing async control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        * @param {String} controlData.appletId The identifier of the applet from which the settings should be retrieved
         * @returns A key/value pair representing the applet settings
         */
-        getAppletSettings: function (appletId) {
-            // TODO: Implement
+        getAppletSettingsAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__config/user", {
+                query: { "_id": controlData.appletId },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
         },
         /**
         * @summary Saves the applet specific settings in a key/value pair format to the configuration store
         * @memberof OpenIZ.Configuration
         * @method
-        * @param {String} appletId The applet identification for which the settings apply
-        * @param {Object} settings A key/value pair JSON object of the settings
+        * @param {object} controlData An object containing async control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        * @param {String} controlData.appletId The applet identification for which the settings apply
+        * @param {Object} controlData.settings A key/value pair JSON object of the settings
         * @returns True if the settings save was successful
         */
-        saveAppletSettings: function (appletId, settings) {
-            // TODO: Implement
+        saveAppletSettingsAsync: function (controlData) {
+            OpenIZ.Util.simplePost("/__config/user?_id=" + controlData.appletId, {
+                data: controlData.settings,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
         },
         /**
         * @summary Get local user preference strings in a key/value pair JSON object
         * @memberof OpenIZ.Configuration
+        * @param {object} controlData An object containing async control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
         * @method
-        * @returns The user preferences of the current user
         */
-        getUserPreferences: function () {
-            // TODO: Implement
+        getUserPreferencesAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__config/user", controlData);
         },
         /**
         * @summary Save the user preferences in the key/value pair format
         * @memberof OpenIZ.Configuration
         * @method
-        * @param {Object} preferences The user preferences for the current user which should be saved
+        * @memberof OpenIZ.Configuration
+        * @param {object} controlData An object containing search, offset, count and callback data
+        * @param {object} controlData.data An object containing control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
         * @returns true if the save was successful
         */
-        saveUserPreferences: function (preferences) {
-            // TODO: Implement
+        saveUserPreferencesAsync: function (controlData) {
+            OpenIZ.Util.simplePost("/__config/user", controlData);
         }
     },
     /**
@@ -2592,6 +2620,7 @@ var OpenIZ = OpenIZ || {
                     continueWith: controlData.continueWith,
                     onException: controlData.onException,
                     query: query,
+                    finally: controlData.finally,
                     state: controlData.state
                 })
             }

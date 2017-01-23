@@ -169,5 +169,82 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
 
     };
 
-   
+    /**
+     * Schedule an appointment
+     */
+    $scope.scheduleAppointment = function (form) {
+        if (form.$invalid) return;
+
+        OpenIZ.App.showWait();
+        try {
+            var bundle = new OpenIZModel.Bundle();
+
+            // schedule the appointment
+            var encounter = new OpenIZModel.PatientEncounter($scope.appointment);
+            encounter.moodConcept = OpenIZModel.ActMoodKeys.Appointment;
+            encounter.startTime = encounter.stopTime = null;
+            encounter.participation.Location = new OpenIZModel.ActParticipation({
+                player: $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
+            });
+            encounter.participation.Authororiginator = new OpenIZModel.ActParticipation({
+                player: $rootScope.session.entity.id
+            });
+
+            bundle.item = [ encounter ];
+
+            // Iterate through the has-components and turn them to INT or remove them if not selected
+            if (!Array.isArray(encounter.relationship.HasComponent))
+                encounter.relationship.HasComponent = [encounter.relationship.HasComponent];
+
+            for (var i in encounter.relationship.HasComponent) {
+                /** @type {OpenIZModel.ActParticipation} */
+                var actRelationship = encounter.relationship.HasComponent[i];
+                if (!actRelationship._enabled) {
+                    encounter.relationship.HasComponent.splice(i, 1);
+                }
+                else {
+                    actRelationship.targetModel.moodConcept = OpenIZModel.ActMoodKeys.Intent;
+                    actRelationship.targetModel.actTime = encounter.actTime;
+                    //actRelationship.targetModel.startTime = actRelationship.targetModel.stopTime = null;
+                    actRelationship.targetModel.participation.RecordTarget = encounter.participation.RecordTarget;
+                    actRelationship.targetModel.participation.Location = encounter.participation.Location;
+                    actRelationship.targetModel.participation.Authororiginator = encounter.participation.Authororiginator;
+                    if (actRelationship.targetModel.participation && actRelationship.targetModel.participation.Product)
+                        delete (actRelationship.targetModel.participation.Product.playerModel);
+
+                    delete (actRelationship.targetModel.moodConceptModel);
+                    // Now push the act relationship into the submission bundle
+                    bundle.item.push(actRelationship.targetModel);
+                    delete (actRelationship.targetModel);
+                }
+            }
+
+            // Is there an encounters collection above us? if so we should probably push this up
+            if ($scope.$parent.encounters)
+                $scope.$parent.encounters.push(encounter);
+
+            // Now submit the bundle
+            OpenIZ.Bundle.insertAsync({
+                data: bundle,
+                continueWith: function (data) {
+                    $("#appointmentScheduler").modal("hide");
+                },
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait();
+                }
+            });
+        }
+        catch (e) {
+            console.error(e);
+        }
+        finally {
+            OpenIZ.App.hideWait();
+        }
+    }
 }]);

@@ -193,16 +193,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p));
             }
 
+            var useIntersect = parms.Keys.Count(o => o.StartsWith("relationship")) > 1 ||
+                parms.Keys.Count(o => o.StartsWith("participation")) > 1;
             // Build a query
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
             List<Object> vals = new List<Object>();
             if (parms.Count > 0)
             {
-                sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
+                if(!useIntersect)
+                    sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
 
                 foreach (var s in parms)
                 {
+                    if (useIntersect)
+                        sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
 
                     object rValue = s.Value;
                     if (!(rValue is IList))
@@ -319,11 +324,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         sb.Remove(sb.Length - 4, 4);
                     } // exist or value
 
-                    sb.Append(") AND ");
+                    if(useIntersect)
+                        sb.Append(") INTERSECT ");
+                    else
+                        sb.Append(") AND ");
 
                 }
             }
-            sb.Remove(sb.Length - 4, 4);
+
+            if (useIntersect)
+                sb.Remove(sb.Length - 10, 10);
+            else
+                sb.Remove(sb.Length - 4, 4);
             sb.Append(") ");
 
             if (typeof(DbBaseData).GetTypeInfo().IsAssignableFrom(typeof(TDomain).GetTypeInfo()))

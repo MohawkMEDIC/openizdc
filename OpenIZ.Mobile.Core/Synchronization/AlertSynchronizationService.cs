@@ -18,6 +18,7 @@ using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Security;
+using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -26,6 +27,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
     /// </summary>
     public class AlertSynchronizationService : IDaemonService
     {
+
+        // Cached credetials
+        private IPrincipal m_cachedCredential = null;
 
         // Tracer for alerts
         private Tracer m_tracer = Tracer.GetTracer(typeof(AlertSynchronizationService));
@@ -65,10 +69,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
         {
             var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
+            AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+
             // TODO: Clean this up - Login as device account
             if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
                 ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
                 AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+            this.m_cachedCredential = AuthenticationContext.Current.Principal;
             return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
         }
 
@@ -99,7 +106,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (!this.m_isRunning) return;
 
                         // When was the last time we polled an alert?
-                        var lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage)).GetValueOrDefault();
+                        DateTimeOffset? lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage)).GetValueOrDefault();
 
                         // Poll action for all alerts to "everyone"
                         AmiCollection<AlertMessageInfo> serverAlerts = amiClient.GetAlerts(a => a.CreationTime >= lastTime && a.To.Contains("everyone"));
@@ -112,7 +119,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         Expression userNameFilter = Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(this.m_securityConfiguration.DeviceName));
 
                         // Or eith other users which have logged into this tablet
-                        foreach (var user in ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Query(u => u.LastLoginTime != null))
+                        foreach (var user in ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Query(u => u.LastLoginTime != null && u.UserName != this.m_securityConfiguration.DeviceName))
                             userNameFilter = Expression.OrElse(userNameFilter,
                                 Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(user.UserName))
                                 );
@@ -134,19 +141,23 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         foreach(var itm in serverAlerts.CollectionItem)
                         {
                             this.m_tracer.TraceVerbose("Importing ALERT: [{0}]: {1}", itm.AlertMessage.TimeStamp, itm.AlertMessage.Subject);
+                            itm.AlertMessage.Body = String.Format("<pre>{0}</pre>", itm.AlertMessage.Body);
                             this.m_alertRepository.BroadcastAlert(itm.AlertMessage);
                         }
 
                         // Push alerts which I have created or updated
-                        int tc = 0;
-                        foreach(var itm in this.m_alertRepository.Find(a=> (a.CreationTime >= lastTime || a.UpdatedTime >= lastTime) && a.Flags != AlertMessageFlags.System, 0, null, out tc))
-                        {
-                            this.m_tracer.TraceVerbose("Sending ALERT: [{0}]: {1}", itm.TimeStamp, itm.Subject);
-                            if (itm.UpdatedTime != null)
-                                amiClient.UpdateAlert(itm.Key.ToString(), new AlertMessageInfo(itm));
-                            else
-                                amiClient.CreateAlert(new AlertMessageInfo(itm));
-                        }
+                        //int tc = 0;
+                        //foreach(var itm in this.m_alertRepository.Find(a=> (a.TimeStamp >= lastTime ) && a.Flags != AlertMessageFlags.System, 0, null, out tc))
+                        //{
+                        //    if (!String.IsNullOrEmpty(itm.To))
+                        //    {
+                        //        this.m_tracer.TraceVerbose("Sending ALERT: [{0}]: {1}", itm.TimeStamp, itm.Subject);
+                        //        if (itm.UpdatedTime != null)
+                        //            amiClient.UpdateAlert(itm.Key.ToString(), new AlertMessageInfo(itm));
+                        //        else
+                        //            amiClient.CreateAlert(new AlertMessageInfo(itm));
+                        //    }
+                        //}
                         
                         SynchronizationLog.Current.Save(typeof(AlertMessage), null, null);
                     }
@@ -162,8 +173,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 };
 
                 ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
-                //this.m_alertRepository.Committed += 
                 this.m_isRunning = true;
+
+                pollAction(null);
+                //this.m_alertRepository.Committed += 
             };
 
             this.Started?.Invoke(this, EventArgs.Empty);

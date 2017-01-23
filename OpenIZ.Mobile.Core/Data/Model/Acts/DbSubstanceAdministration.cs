@@ -61,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// Gets or sets the sequence number
         /// </summary>
         [Column("sequenceId")]
-        public int SequenceId { get; set; }
+        public int? SequenceId { get; set; }
 
     }
 }

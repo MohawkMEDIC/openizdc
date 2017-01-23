@@ -76,7 +76,7 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px">
+                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px" ng-if="$index &lt; 5">
                             <a style="padding-left:0px" ui-sref="org-openiz-core.alert({alertId: msg.id})" >
                                 <div style="padding-left:0px" class="container-fluid">
                                     <div class="col-xs-2">

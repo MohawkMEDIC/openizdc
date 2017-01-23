@@ -850,8 +850,14 @@ body{
 .vis-proposal{
     background: #007fd1;
 }
+.vis-appointment{
+    background: rgba(184, 184 , 0, 0.7); 
+}
 .vis-event{
     background: #5cb85c; 
+}
+.vis-overdue{
+    background: #d13333; 
 }
 .vis-panel.vis-bottom{
     border:none;

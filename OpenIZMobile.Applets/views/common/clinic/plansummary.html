@@ -1,0 +1,30 @@
+﻿<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+
+    <div class="panel panel-info">
+        <div class="panel panel-heading">
+            <h4 class="panel-title">
+                {{ 'locale.clinic.plan.today' | i18n }}
+            </h4>
+        </div>
+            <div class="panel panel-body">
+                <table class="table table-bordered" ng-if="appointments.length > 0">
+                    <tr>
+                        <th></th>
+                        <th ng-repeat="appt in appointments">
+                            {{ appt.product_name }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>{{ 'locale.clinic.plan.propose' | i18n }}</td>
+                        <td ng-repeat="appt in appointments" ng-if="appt.isPlanned">
+                            {{ acts || 0 }}
+                        </td>
+                    </tr>
+                </table>
+                <div class="alert alert-success" ng-if="appointments.length == 0">
+                    <span class="glyphicon glyphicon-info-sign"></span> {{ 'locale.clinic.plan.noAppointments' | i18n }}
+                </div>
+            </div>
+    </div>
+</div>
+

@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
                 p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty).Clone() as Patient;
-                p.Participations = new List<ActParticipation>(p.Participations);
+                p.Participations = new List<ActParticipation>();
             }
             if(p.Participations.Count == 0)
             {

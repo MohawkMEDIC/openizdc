@@ -203,7 +203,16 @@ angular.module('openiz', [])
                     var displayString = $(element).attr('data-display');
                     var dataKey = $(element).attr('data-key');
                     var modelBinding = $(element).attr('ng-model');
+                    var defaultFirst = $(element).attr('data-defaultFirst');
+                    var defaultValueExpression = $(element).attr('data-default');
+                    var $root = scope.$root;
+                    var defaultValue = null;
 
+                    // Try to set defaut value
+                    try { 
+                        defaultValue = eval(defaultValueExpression);
+                    } catch(e){}
+                    
                     var filter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
@@ -225,10 +234,12 @@ angular.module('openiz', [])
                             continueWith: function (data)
                             {
                                 var currentValue = $(element).val();
-
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
-                                options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+
+                                if (!data.item || !defaultFirst)
+                                    options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+
                                 for (var i in data.item)
                                 {
                                     var text = null;
@@ -246,14 +257,17 @@ angular.module('openiz', [])
                                         options[options.length] = new Option(text, data.item[i].id);
                                     else
                                         options[options.length] = new Option(text, eval(dataKey));
-
-                                    
+                                                                        
                                     
                                 }
 
                                 // Strip and bind select
-                                if(currentValue && currentValue.indexOf("? string:") == 0) {
+                                if (currentValue && currentValue.indexOf("? string:") == 0) {
                                     $(element).val(currentValue.substring(9, currentValue.length - 2));
+                                }
+                                else if (defaultValue) {
+                                    $(element).val(defaultValue);
+                                    $(element).trigger('change');
                                 }
                             }
                         });
@@ -262,9 +276,12 @@ angular.module('openiz', [])
                     if (watchString !== null)
                         scope.$watch(watchString, function (newValue, oldValue)
                         {
-                            if (watchTargetString !== null && newValue !== undefined)
+                            var $root = scope.$root;
+                            if (watchTargetString !== null && newValue !== undefined) {
                                 filter[watchTargetString] = newValue;
-
+                                if(defaultValueExpression)
+                                    defaultValue = eval(defaultValueExpression);
+                            }
                             bind();
                         });
 

@@ -458,6 +458,7 @@ namespace OpenIZ.Mobile.Core.Android
                 (this.Context as Activity).Finish();
             }, null);
         }
+
         #endregion implemented abstract members of ApplicationContext
     }
 }

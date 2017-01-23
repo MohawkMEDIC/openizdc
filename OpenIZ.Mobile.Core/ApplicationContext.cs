@@ -173,6 +173,16 @@ namespace OpenIZ.Mobile.Core
         public abstract void SaveConfiguration();
 
         /// <summary>
+        /// Gets user preference application
+        /// </summary>
+        public abstract OpenIZConfiguration GetUserConfiguration(String userId);
+
+        /// <summary>
+        /// Save user configuration
+        /// </summary>
+        public abstract void SaveUserConfiguration(String userId, OpenIZConfiguration config);
+
+        /// <summary>
         /// Gets the policy decision service.
         /// </summary>
         /// <value>The policy decision service.</value>

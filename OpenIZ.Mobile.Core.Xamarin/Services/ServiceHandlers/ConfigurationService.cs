@@ -74,7 +74,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <param name="config"></param>
         public ConfigurationViewModel(OpenIZConfiguration config)
         {
-            this.RealmName = config.GetSection<SecurityConfigurationSection>().Domain;
+            if (config == null) return;
+
+            this.RealmName = config.GetSection<SecurityConfigurationSection>()?.Domain;
             this.Security = config.GetSection<SecurityConfigurationSection>();
             this.Data = config.GetSection<DataConfigurationSection>();
             this.Applet = config.GetSection<AppletConfigurationSection>();
@@ -131,6 +133,38 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(ConfigurationService));
+
+        /// <summary>
+        /// Gets the currently authenticated user's configuration
+        /// </summary>
+        [RestOperation(UriPath = "/user", Method = "GET", FaultProvider = nameof(ConfigurationFaultProvider))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        [Demand(PolicyIdentifiers.Login)]
+        public ConfigurationViewModel GetUserConfiguration()
+        {
+            String userId = MiniImsServer.CurrentContext.Request.QueryString["_id"] ?? AuthenticationContext.Current.Principal.Identity.Name;
+            return new ConfigurationViewModel(XamarinApplicationContext.Current.GetUserConfiguration(userId));
+
+        }
+
+        /// <summary>
+        /// Gets the currently authenticated user's configuration
+        /// </summary>
+        [RestOperation(UriPath = "/user", Method = "POST", FaultProvider = nameof(ConfigurationFaultProvider))]
+        public void SaveUserConfiguration([RestMessage(RestMessageFormat.Json)]ConfigurationViewModel model)
+        {
+            String userId = MiniImsServer.CurrentContext.Request.QueryString["_id"] ?? AuthenticationContext.Current.Principal.Identity.Name;
+            XamarinApplicationContext.Current.SaveUserConfiguration(userId,
+                new OpenIZConfiguration()
+                {
+                    Sections = new List<object>()
+                    {
+                        model.Application,
+                        model.Applet
+                    }
+                }
+            );
+        }
 
         /// <summary>
         /// Gets the specified forecast
