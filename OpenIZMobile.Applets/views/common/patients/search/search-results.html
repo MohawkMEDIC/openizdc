@@ -137,6 +137,15 @@
                         </div>
                     </div>
 
+                    <div class="row" ng-if="patient.deceasedDate">
+                        <div class="col-xs-3 search-tile-label">
+                            {{ 'locale.patient.search.header.deceasedDate' | i18n }}
+                        </div>
+                        <div class="col-xs-9">
+                            {{ ::patient.deceasedDate | date: 'yyyy-MMM-dd' }}
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-xs-3 search-tile-label">
                             {{ 'locale.patient.search.header.gender' | i18n }}
