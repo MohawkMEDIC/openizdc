@@ -17,7 +17,7 @@
                     <tr>
                         <td>{{ 'locale.clinic.plan.propose' | i18n }}</td>
                         <td ng-repeat="appt in appointments" ng-if="appt.isPlanned">
-                            {{ acts || 0 }}
+                            {{ appt.acts || 0 }}
                         </td>
                     </tr>
                 </table>
