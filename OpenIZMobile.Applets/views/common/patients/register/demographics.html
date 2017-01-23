@@ -91,8 +91,13 @@
         </label>
         <div class="col-xs-9">
             <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox" ng-model="patient.isDeceased" />
+                <span class="input-group-addon input-group-addon-no-label">
+                    <label class="control control--checkbox">
+                        <input type="checkbox"
+                               ng-model="patient.isDeceased"
+                               value="1" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
                 </span>
                 <input ng-readonly="patient.readonly.deceasedDate" 
                        ng-disabled="!patient.isDeceased" type="date" 
@@ -101,13 +106,16 @@
                        ng-model="patient.deceasedDate"
                        ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
                        ng-min="patient.dateOfBirth | date : 'yyyy-MM-dd'" />
-                <span class="input-group-addon">
-                    <input ng-disabled="!patient.isDeceased" 
-                           ng-readonly="patient.readonly.deceasedDate" 
-                           type="checkbox" name="approximateDeath" 
-                           ng-model="patient.deceaseDatePrecision" value="1" />
-                    <label for="approxDeath" class="ng-cloak">
-                        {{ 'locale.patient.demographics.dob.fuzzy' | i18n }}
+                <span class="input-group-addon input-group-addon-approx">
+                    <label class="control control--checkbox">
+                        <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                        <input type="checkbox"
+                               ng-disabled="!patient.isDeceased"
+                               ng-readonly="patient.readonly.deceasedDate"
+                               ng-model="patient.deceaseDatePrecision"
+                               value="1"
+                               name="approximateDeath" />
+                        <div class="control__indicator" style="top: 8px;"></div>
                     </label>
                 </span>
                 <span class="input-group-btn">
