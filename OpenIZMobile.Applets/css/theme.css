@@ -1,6 +1,11 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
+@media screen and (max-width: 767px) {
+    .hidden-xs {
+        display:none;
+    }
+}
 
 .ellipsis{
     text-overflow: ellipsis;
