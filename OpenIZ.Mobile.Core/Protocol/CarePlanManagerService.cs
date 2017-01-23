@@ -91,59 +91,65 @@ namespace OpenIZ.Mobile.Core.Protocol
             // Application context has started
             ApplicationContext.Current.Started += (ao, ae) =>
             {
-                ApplicationContext.Current.SetProgress(Strings.locale_start_careplan, 0);
-
-                // Warehouse service
-                this.m_warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                foreach (var cp in ApplicationContext.Current.GetService<ICarePlanService>().Protocols)
-                    this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
-                // Deploy schema?
-                if (this.m_warehouseService.GetDatamart("oizcp") == null)
+                try
                 {
-                    this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
-                    var dm = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
-                    this.m_tracer.TraceVerbose("Datamart {0} created", dm.Id);
-                }
+                    ApplicationContext.Current.SetProgress(Strings.locale_start_careplan, 0);
 
-                // Subscribe to persistence
-                var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-                if (patientPersistence != null)
+                    // Warehouse service
+                    this.m_warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                    foreach (var cp in ApplicationContext.Current.GetService<ICarePlanService>().Protocols)
+                        this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
+                    // Deploy schema?
+                    if (this.m_warehouseService.GetDatamart("oizcp") == null)
+                    {
+                        this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
+                        var dm = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
+                        this.m_tracer.TraceVerbose("Datamart {0} created", dm.Id);
+                    }
+
+                    // Subscribe to persistence
+                    var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                    if (patientPersistence != null)
+                    {
+                        patientPersistence.Inserted += (o, e) => this.UpdateCarePlan(e.Data);
+                        patientPersistence.Updated += (o, e) => this.UpdateCarePlan(e.Data);
+                        patientPersistence.Obsoleted += (o, e) =>
+                        {
+                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                            var dataMart = warehouseService.GetDatamart("oizcp");
+                            warehouseService.Delete(dataMart.Id, new { patient_id = e.Data.Key.Value });
+                        };
+
+                    }
+
+                    // Subscribe to acts
+                    var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+                    if (bundlePersistence != null)
+                    {
+                        bundlePersistence.Inserted += (o, e) =>
+                        {
+                            foreach (var i in e.Data.Item.OfType<Patient>())
+                                this.UpdateCarePlan(i);
+                        };
+                        bundlePersistence.Updated += (o, e) =>
+                        {
+                            foreach (var i in e.Data.Item.OfType<Patient>())
+                                this.UpdateCarePlan(i);
+                        };
+                        bundlePersistence.Obsoleted += (o, e) =>
+                        {
+                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                            var dataMart = warehouseService.GetDatamart("oizcp");
+                            foreach (var i in e.Data.Item.OfType<Patient>())
+                                warehouseService.Delete(dataMart.Id, new { patient_id = i.Key.Value });
+                        };
+
+                    }
+                }
+                catch(Exception e)
                 {
-                    patientPersistence.Inserted += (o, e) => this.UpdateCarePlan(e.Data);
-                    patientPersistence.Updated += (o, e) => this.UpdateCarePlan(e.Data);
-                    patientPersistence.Obsoleted += (o, e) =>
-                    {
-                        var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                        var dataMart = warehouseService.GetDatamart("oizcp");
-                        warehouseService.Delete(dataMart.Id, new { patient_id = e.Data.Key.Value });
-                    };
-
+                    this.m_tracer.TraceError("Could not bind clinical protocols: {0}", e);
                 }
-
-                // Subscribe to acts
-                var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
-                if (bundlePersistence != null)
-                {
-                    bundlePersistence.Inserted += (o, e) =>
-                    {
-                        foreach (var i in e.Data.Item.OfType<Patient>())
-                            this.UpdateCarePlan(i);
-                    };
-                    bundlePersistence.Updated += (o, e) =>
-                    {
-                        foreach (var i in e.Data.Item.OfType<Patient>())
-                            this.UpdateCarePlan(i);
-                    };
-                    bundlePersistence.Obsoleted += (o, e) =>
-                    {
-                        var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                        var dataMart = warehouseService.GetDatamart("oizcp");
-                        foreach (var i in e.Data.Item.OfType<Patient>())
-                            warehouseService.Delete(dataMart.Id, new { patient_id = i.Key.Value });
-                    };
-
-                }
-
             };
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

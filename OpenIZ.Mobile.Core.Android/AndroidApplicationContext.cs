@@ -123,6 +123,14 @@ namespace OpenIZ.Mobile.Core.Android
 					ApplicationContext.Current = retVal;
 					retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
+                    
+                    // HACK: For some reason the PCL doesn't do this automagically
+                    //var connectionString = retVal.Configuration.GetConnectionString("openIzWarehouse");
+                    //if (!File.Exists(connectionString.Value))
+                    //{
+                    //    retVal.m_tracer.TraceInfo("HAX: Creating warehouse file since PCL can't... {0}", connectionString.Value);
+                    //    SqliteConnection.CreateFile(connectionString.Value);
+                    //}
 					// Load configured applets
 					var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection>().Applets;
 

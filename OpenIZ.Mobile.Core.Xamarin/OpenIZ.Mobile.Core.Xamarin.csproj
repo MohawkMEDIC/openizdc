@@ -39,6 +39,9 @@
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\Solution Items\Net45\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
@@ -52,7 +55,8 @@
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model">
+    <Reference Include="OpenIZ.Core.Model, Version=0.6.14.39571, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI">
@@ -115,6 +119,7 @@
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
+    <Compile Include="Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="XamarinApplicationContext.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -157,6 +162,9 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Warehouse\InitWarehouse.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

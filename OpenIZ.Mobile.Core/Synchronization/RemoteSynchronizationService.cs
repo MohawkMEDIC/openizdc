@@ -143,6 +143,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 try
                 {
+                    bool initialSync = !SynchronizationLog.Current.GetAll().Any();
                     if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
                     {
                         if (!this.m_integrationService.IsAvailable()) return;
@@ -158,7 +159,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         }
 
-                        if (totalResults > 0)
+                        if (totalResults > 0 && initialSync)
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));

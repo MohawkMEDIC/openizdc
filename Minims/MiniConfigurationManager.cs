@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-10-11
  */
+using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Alerting;
@@ -24,7 +25,6 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
-using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;

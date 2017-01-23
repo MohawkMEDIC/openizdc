@@ -86,7 +86,6 @@
     <Compile Include="Data\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
-    <Compile Include="Data\Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="Exceptions\InvalidVersionException.cs" />
     <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Interop\AMI\AmiIntegrationService.cs" />
@@ -226,9 +225,6 @@
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\Solution Items\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -259,12 +255,6 @@
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
     </Reference>
-    <Reference Include="System.Data.Portable">
-      <HintPath>..\Solution Items\System.Data.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.Portable">
-      <HintPath>..\Solution Items\System.Transactions.Portable.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\Sql\001_init_openiz_core_data.sql" />
@@ -275,6 +265,7 @@
     <EmbeddedResource Include="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ProjectExtensions>
@@ -293,7 +284,6 @@
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Warehouse\InitWarehouse.sql" />
     <EmbeddedResource Include="Protocol\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />

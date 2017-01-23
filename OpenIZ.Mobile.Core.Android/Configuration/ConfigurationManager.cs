@@ -50,7 +50,7 @@ using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
-using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -230,9 +230,9 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             {
                 TraceWriter = new List<TraceWriterConfiguration>() {
                     new TraceWriterConfiguration () {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        Filter = System.Diagnostics.Tracing.EventLevel.Warning,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.Warning, "OpenIZ")
                     }
                 }
             };
