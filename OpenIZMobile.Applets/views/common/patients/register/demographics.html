@@ -65,10 +65,10 @@
                     </label>
                 </span>
                 <span class="input-group-btn">
-                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted)">
+            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid">
                 <span ng-show="editPatientForm.dateOfBirth.$error.required"
                    class="help-block text-danger">
                     {{ 'locale.patient.errors.dob.required' | i18n }}
@@ -85,11 +85,11 @@
         </div>
     </div>
 
-    <div class="form-group" ng-if="patient.version">
+    <div class="form-group" ng-show="patient.version">
         <label class="col-xs-3 control-label ng-cloak" for="deathDate">
         {{ 'locale.patient.demographics.deceasedDate' | i18n }}*
         </label>
-        <div class="col-xs-9">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid }">
             <div class="input-group">
                 <span class="input-group-addon input-group-addon-no-label">
                     <label class="control control--checkbox">
@@ -122,9 +122,23 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="3" data-trigger="focus" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-show="(editPatientForm.deceasedDate.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.deceasedDate.$invalid" 
-               class="help-block text-danger">
-                {{ 'locale.patient.errors.dob' | i18n }}
+            <p ng-if="(editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid">
+                <span ng-show="editPatientForm.deceasedDate.$error.required"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.required' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.date"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.date' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.max"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.max' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.min"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.deceasedDate.min' | i18n }}
+                </span>
             </p>
         </div>
     </div>
