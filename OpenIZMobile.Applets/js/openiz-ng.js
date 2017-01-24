@@ -165,6 +165,36 @@ angular.module('openiz', [])
             return OpenIZ.Util.renderAddress(modelValue);
         }
     })
+    .filter('datePrecisionFormat', function () {
+        return function (date, format) {
+            var dateFormat;
+
+            switch (format) {
+                case 1:   // Year     "Y"
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatYear;
+                    break;
+                case 2:   // Month    "m"
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMonth;
+                    break;
+                case 3:   // Day      "D"
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatDay;
+                    break;
+                case 4:   // Hour     "H"
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatHour;
+                    break;
+                case 5:   // Minute   "M"
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMinute;
+                    break;
+                case 6:   // Second   "S"
+                case 0:   // Full     "F"
+                default:
+                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatSecond;
+                    break;
+            }
+
+            return moment(date).format(dateFormat);
+        };
+    })
     .directive('oizTag', function ($timeout)
     {
         return {

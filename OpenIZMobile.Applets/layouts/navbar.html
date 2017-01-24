@@ -68,36 +68,16 @@
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown" ng-show="$root.session.user">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <li ng-show="$root.session.user">
+                    <a href="#" ui-sref="org-openiz-core.alert()" 
+                       class="dropdown-toggle" 
+                       data-toggle="dropdown" role="button" 
+                       aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | i18n }}</span>
                         <span ng-if="messages" class="badge">
                             {{messages.length}}
                         </span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px" ng-if="$index &lt; 5">
-                            <a style="padding-left:0px" ui-sref="org-openiz-core.alert({alertId: msg.id})" >
-                                <div style="padding-left:0px" class="container-fluid">
-                                    <div class="col-xs-2">
-                                        <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
-                                    </div>
-                                    <div class="col-xs-10">
-                                        <span>
-                                            <span class="subject">{{msg.subject}}</span><br />
-                                            <span class="sender">{{msg.from}}</span><span class="text-muted">{{msg.time | date: 'yyyy-MM-dd HH:mm'}}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-
-                            
-
-                        </li>
-                        <li role="presentation" ng-if="!messages">
-                            {{ 'locale.alerts.noalerts' | i18n }}
-                        </li>
-                    </ul>
                 </li>
                 <li class="dropdown" ng-show="$root.session.user">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

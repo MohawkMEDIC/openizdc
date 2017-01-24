@@ -9134,5 +9134,21 @@ var OpenIZModel = OpenIZModel || {
         this.details = detail;
         this.caused_by = cause;
 
-    }
+    },  // Exception
+    // OpenIZ.Core.Model.Constants.DatePrecisionFormats, OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+    /**
+     * @enum {String}
+     * @memberof OpenIZModel
+     * @public
+     * @readonly
+     * @summary Date formats for using date precision
+     */
+    DatePrecisionFormats: {
+        DateFormatYear: 'YYYY',
+        DateFormatMonth: 'YYYY-MM',
+        DateFormatDay: 'YYYY-MM-DD',
+        DateFormatHour: 'YYYY-MM-DD HH',
+        DateFormatMinute: 'YYYY-MM-DD HH:mm',
+        DateFormatSecond: 'YYYY-MM-DD HH:mm:ss'
+    }  // Date Precision Formats
 } // OpenIZModel
