@@ -1,10 +1,26 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
-@media screen and (max-width: 767px) {
-    .hidden-xs {
-        display:none;
+
+
+@media screen and (orientation:landscape) {
+    .hidden-landscape{
+        display:none!important;
     }
+}
+@media screen and (orientation:portrait) {
+    .hidden-xs, .hidden-portrait {
+        display:none !important;
+    }
+    .full-width-portrait{
+        width:100%;
+    }
+    .col-portrait-12{
+        width:100% !important;
+    }
+}
+.force-show{
+    display:block !important;
 }
 
 .ellipsis{
@@ -257,6 +273,7 @@ a.not-active {
     vertical-align:middle;
 }
 
+
 /**Panels*/
 .panel-default > .panel-heading{
     background: #3BA2E4;
@@ -393,6 +410,9 @@ body{
 .no-margin-right{
     margin-right:0;
 }
+.no-margin-bottom{
+    margin-bottom:0;
+}
 .padding-10{
     padding: 10px;
 }
@@ -401,6 +421,9 @@ body{
 }
 .padding-top-10{
     padding-top: 10px;
+}
+.padding-top-15{
+    padding-top: 15px;
 }
 .padding-right-10{
     padding-right: 10px;
@@ -609,7 +632,44 @@ body{
     top:15px;
 }
 
+/**Alerts*/
+.message-content-tile{
+    background:white;
+    padding: 0 20px;
+}
 
+.message-content-icon{
+    height: 66px;
+    padding-top: 20px;
+}
+
+.alerts-tile{
+    background: white;
+    margin-bottom: 10px;
+    padding: 10px 0px;
+}
+.alerts-tile-selected{
+    background: #0e8cdf;
+    color: white;
+}
+.alerts-tile-selected img {
+    -webkit-filter: invert(100%); 
+    filter: invert(100%);
+}
+.alerts-tile-selected .text-muted{
+    color:#DDD;
+}
+
+.alerts-icon {
+    height: 42px;
+    width: 42px;
+    vertical-align:middle;
+}
+.alerts-icon-container{
+    height: 60px;
+    padding-top: 8px;
+    padding-left: 20px;
+}
 
 /**Vaccinations */
 

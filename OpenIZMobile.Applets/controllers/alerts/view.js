@@ -27,33 +27,43 @@
 
 layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function ($scope, $stateParams)
 {
+    $scope.selectedMessageID = null;
 
-    OpenIZ.App.getAlertsAsync({
-        query: {
-            id: $stateParams.alertId,
-            _count: 1
-        },
-        onException: function (ex)
-        {
-            OpenIZ.App.hideWait();
+    $scope.deleteAlert = deleteAlert;
+    $scope.updateAlert = updateAlert;
+    $scope.closeMessage = closeMessage;
 
-            if (typeof (ex) == "string")
-                console.log(ex);
-            else if (ex.message != undefined)
-                console.log("" + ex.message + " - " + ex.details);
-            else
-                console.log(ex);
-        },
-        continueWith: function (data)
-        {
-            $scope.alert = data[0];
-            console.log($scope.alert);
-            $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
-            $scope.$apply();
-        }
-    });
+    init();
 
-    $scope.deleteAlert = function (alert)
+    function init() {
+        $scope.selectedMessageID = $stateParams.alertId == '' ? null : $stateParams.alertId;
+        OpenIZ.App.getAlertsAsync({
+            query: {
+                id: $stateParams.alertId,
+                _count: 1
+            },
+            onException: function (ex)
+            {
+                OpenIZ.App.hideWait();
+
+                if (typeof (ex) == "string")
+                    console.log(ex);
+                else if (ex.message != undefined)
+                    console.log("" + ex.message + " - " + ex.details);
+                else
+                    console.log(ex);
+            },
+            continueWith: function (data)
+            {
+                $scope.alert = data[0];
+                console.log($scope.alert);
+                $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
+                $scope.$apply();
+            }
+        });
+    }    
+
+    function deleteAlert(alert)
     {
         alert.flags = 2;
 
@@ -78,7 +88,7 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
         });
     };
 
-    $scope.updateAlert = function ()
+    function updateAlert()
     {
         $scope.alert.flags = 2;
 
@@ -103,4 +113,8 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
         });
     };
 
+    function closeMessage() {
+        $scope.selectedMessageID = null;
+        delete $scope.alert;
+    }
 }]);
