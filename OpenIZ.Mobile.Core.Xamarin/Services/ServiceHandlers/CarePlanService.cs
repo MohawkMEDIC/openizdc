@@ -67,8 +67,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
                 int tr = 0;
                 IEnumerable<Act> acts = null;
-                if (actService is IPersistableQueryProvider && search.ContainsKey("_state"))
-                    acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, Guid.Parse(search["_state"][0]));
+                Guid searchState = Guid.Empty;
+
+                if (actService is IPersistableQueryProvider && search.ContainsKey("_state") && Guid.TryParse(search["_state"][0], out searchState))
+                    acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, searchState);
                 else
                     acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
 

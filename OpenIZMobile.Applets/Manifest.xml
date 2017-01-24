@@ -18,7 +18,7 @@
  - Date: 2016-7-17
  -->
 <AppletManifest xmlns="http://openiz.org/applet">
-  <info id="org.openiz.core" version="0.6.17.*">
+  <info id="org.openiz.core" version="0.7.0.*">
     <icon>/org.openiz.core/img/icon.png</icon>
     <name lang="en">OpenIZ Disconnected Client Core</name>
     <author>Mohawk College of Applied Arts and Technology - mHealth &amp; eHealth Development &amp; Innovation Centre</author>
@@ -331,7 +331,7 @@
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>
-
+    <string key="locale.alerts.newAlerts">New alerts</string>
   <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
   </strings>

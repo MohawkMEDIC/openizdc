@@ -125,12 +125,17 @@ namespace OpenIZ.Mobile.Core.Data
                     else
                     {
                         var results = queryMethod.Invoke(idpInstance, new object[] { context, lambda }) as IEnumerable;
-                        var lValue = Activator.CreateInstance(pi.PropertyType) as IList;
-                        pi.SetValue(me, lValue);
+                        var lValue = value as IList;
+                        //var lValue = Activator.CreateInstance(pi.PropertyType) as IList;
+                        //pi.SetValue(me, lValue);
                         foreach (var itm in results)
                         {
-                            (itm as IIdentifiedEntity).LoadAssociations(context);
-                            lValue.Add(itm);
+                            var idm = itm as IIdentifiedEntity;
+                            if (!lValue.OfType<IIdentifiedEntity>().Any(o => o.Key == idm.Key)) // not already added
+                            {
+                                (itm as IIdentifiedEntity).LoadAssociations(context);
+                                lValue.Add(itm);
+                            }
                         }
                     }
                 }
