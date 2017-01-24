@@ -60,19 +60,5 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             return ApplicationContext.Current.ExecutionUuid.ToString();
         }
-
-		[Export]
-		[JavascriptInterface]
-		public string GetFormattedDate(string date, string format)
-		{
-			DateTime parsedDate;
-
-			if (!DateTime.TryParse(date, out parsedDate))
-			{
-				return null;
-			}
-
-			return parsedDate.ToString(format);
-		}
     }
 }
