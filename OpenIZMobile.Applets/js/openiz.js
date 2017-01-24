@@ -894,6 +894,10 @@ var OpenIZ = OpenIZ || {
                         controlData.onException(ex, controlData.state);
                 }
             }, 0);
+        },
+        getFormattedDate: function(date, format)
+        {
+            return OpenIZSessionService.GetFormattedDate(date, format);
         }
     },
 

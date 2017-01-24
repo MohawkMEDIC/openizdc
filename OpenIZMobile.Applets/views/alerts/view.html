@@ -17,7 +17,7 @@
  - User: justi
  - Date: 2016-8-17
  -->
-<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
+<div class="container-fluid no-padding-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
     <oiz:script>/org.openiz.core/controllers/alerts/view.js</oiz:script>
     <oiz:state name="org-openiz-core.alert">
         <oiz:url>/alert/{alertId}</oiz:url>
@@ -27,39 +27,60 @@
         </oiz:view>
     </oiz:state>
     
-        <div class="row">
-            <div class="col-xs-12"><h3>{{ alert.subject }}</h3></div>
+    <div class="row no-margin-all">
+        <div class="col-sm-12 col-md-5 no-padding-all">
+            <div ng-repeat="message in messages" class="vaccinations-tile row no-margin-all">
+                <div class="col-xs-2">
+                    <img class="navbar-icon" src="/org.openiz.core/img/msg/{{message.flags}}.png" />
+                </div>
+                <div class="col-xs-10">
+                    <span>
+                        <span class="subject">{{message.subject}}</span><br />
+                        <span class="sender">{{message.from}}</span><span class="text-muted">{{message.time | date: 'yyyy-MM-dd HH:mm'}}</span>
+                    </span>
+                </div>
+            </div>
+            <div class="vaccinations-tile row no-margin-all" ng-if="!messages || messages.length == 0">
+                <div class="col-xs-12">Nothing to see here</div>
+            </div>
         </div>
-        <div class="row">
-            <div class="col-xs-12"><span class="text-muted">{{ alert.time | date : 'yyyy-MMM-dd' }}</span></div>
-        </div>
-        <div class="row">
-            <label class="col-xs-2">{{ 'locale.alerts.from' | i18n }}</label>
-            <div class="col-xs-10">{{ alert.from }}</div>
-        </div>
-        <div class="row">
-            <label class="col-xs-2">{{ 'locale.alerts.to' | i18n }}</label>
-            <div class="col-xs-10">{{ alert.to }}</div>
-        </div>
-        <div class="row">
-            <hr/>
-        </div>
-        <div class="row">
-            <div class="well" ng-bind-html="alert.body"></div>
-        </div>
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="btn-group pull-right">
-                    <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
-                        <span class="glyphicon glyphicon-trash"></span>
-                        {{ 'locale.action.delete' | i18n }}
-                    </button>
-                    <button class="btn-primary btn btn-lg" ng-click="updateAlert()">
-                        <span class="glyphicon glyphicon-ok"></span>
-                        {{ 'locale.action.acknowledge' | i18n }}
-                    </button>
+        <div class="hidden-xs col-md-7 no-padding-all">
+            <div class="row">
+                <div class="col-xs-12"><h3>{{ alert.subject }}</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12"><span class="text-muted">{{ alert.time | date : 'yyyy-MMM-dd' }}</span></div>
+            </div>
+            <div class="row">
+                <label class="col-xs-2">{{ 'locale.alerts.from' | i18n }}</label>
+                <div class="col-xs-10">{{ alert.from }}</div>
+            </div>
+            <div class="row">
+                <label class="col-xs-2">{{ 'locale.alerts.to' | i18n }}</label>
+                <div class="col-xs-10">{{ alert.to }}</div>
+            </div>
+            <div class="row">
+                <hr />
+            </div>
+            <div class="row">
+                <div class="well" ng-bind-html="alert.body"></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="btn-group pull-right">
+                        <button class="btn-danger btn btn-lg" ng-click="deleteAlert()">
+                            <span class="glyphicon glyphicon-trash"></span>
+                            {{ 'locale.action.delete' | i18n }}
+                        </button>
+                        <button class="btn-primary btn btn-lg" ng-click="updateAlert()">
+                            <span class="glyphicon glyphicon-ok"></span>
+                            {{ 'locale.action.acknowledge' | i18n }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+        
 
 </div>

@@ -1,6 +1,11 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
+@media screen and (max-width: 767px) {
+    .hidden-xs {
+        display:none;
+    }
+}
 
 .ellipsis{
     text-overflow: ellipsis;
@@ -382,8 +387,17 @@ body{
 .no-margin-all{
     margin:0;
 }
+.no-margin-left{
+    margin-left:0;
+}
+.no-margin-right{
+    margin-right:0;
+}
 .padding-10{
     padding: 10px;
+}
+.padding-bottom-10{
+    padding-bottom:10px;
 }
 .padding-top-10{
     padding-top: 10px;
@@ -623,7 +637,8 @@ body{
 }
 .static-dock{
     position: fixed;
-    width: 100%;
+    left: 0;
+    right:0;
     z-index: 10;
 }
 .header-dock.static-dock {
