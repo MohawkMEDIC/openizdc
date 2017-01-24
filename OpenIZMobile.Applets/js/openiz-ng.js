@@ -116,6 +116,22 @@ angular.module('openiz', [])
             return "default";
         };
     })
+    .filter('oizSum', function () {
+        return function (modelValue, propname) {
+            // TODO: Find a better function for doing this
+            var sum = 0;
+            if (!Array.isArray(modelValue))
+                ;
+            else if (!propname) {
+                for (var i in modelValue)
+                    sum += modelValue[i]
+            }
+            else
+                for (var i in modelValue)
+                    sum += modelValue[i][propname];
+            return sum;
+        };
+    })
     .filter('oizEntityIdentifier', function ()
     {
         return function (modelValue)

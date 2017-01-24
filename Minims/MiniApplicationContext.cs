@@ -265,7 +265,7 @@ namespace Minims
                     if(!retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Any(o=>o.TraceWriterClassXml.Contains("Console")))
                         retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
                         {
-                            TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
+                            TraceWriter = new ConsoleTraceWriter(EventLevel.Warning, "")
                         });
 
                     retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;

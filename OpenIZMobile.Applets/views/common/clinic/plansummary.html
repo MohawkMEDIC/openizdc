@@ -20,6 +20,10 @@
                             {{ appt.acts || 0 }}
                         </td>
                     </tr>
+                    <!--<tr>
+                        <th>{{ 'locale.clinic.plan.total' | i18n }}</th>
+                        <td> {{ childcount }} </td>
+                    </tr>-->
                 </table>
                 <div class="alert alert-success" ng-if="appointments.length == 0">
                     <span class="glyphicon glyphicon-info-sign"></span> {{ 'locale.clinic.plan.noAppointments' | i18n }}

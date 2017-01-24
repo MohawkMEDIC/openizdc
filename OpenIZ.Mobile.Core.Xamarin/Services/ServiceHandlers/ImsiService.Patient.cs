@@ -147,7 +147,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         if (bundle != null && bundle.TotalResults > 0)
                         {
                             totalResults = bundle.TotalResults;
-                            bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
                             bundle.Reconstitute();
                             retVal = bundle.Item.OfType<Patient>();
                         }
@@ -172,7 +171,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     {
                         var bundle = integrationService.Find(predicate, offset, count);
                         totalResults = bundle.TotalResults;
-                        bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
                         bundle.Reconstitute();
                         if (retVal == null)
                             retVal = bundle.Item.OfType<Patient>();
@@ -189,6 +187,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         }
                     }
                 }
+
+                retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
+                if (search.ContainsKey("_onlineOnly"))
+                    retVal.ToList().ForEach((o) => {
+                        MemoryCache.Current.RemoveObject(o.GetType(), o.Key);
+                        if (patientService.Get(o.Key.Value, Guid.Empty) == null)
+                            o.Tags.Add(new EntityTag("onlineResult", "true"));
+                    });
 
                 // Serialize the response
                 return new Bundle()

@@ -1,23 +1,23 @@
 ﻿<!--
  - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2016-7-17
  -->
-<div class="container-fluid no-padding-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" 
+<div class="container-fluid no-padding-all" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
      xmlns:bind="http://openiz.org/applet/binding" ng-controller="SearchResultsController">
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
 
@@ -48,10 +48,10 @@
                             <input type="text" class="form-control"
                                    ng-model="search.query['identifier.value']"
                                    name="identifierFilter" />
-                            
+
                         </div>
                     </div>
-                   <div class="form-group row">
+                    <div class="form-group row">
                         <label class="control-label col-xs-3">{{ 'locale.patient.search.header.dateOfBirth' | i18n }}</label>
                         <div class="col-xs-9">
                             <input max="{{::$root.page.loadTime | date: 'yyyy-MM-dd' }}"
@@ -67,7 +67,7 @@
                             <select class="form-control" bind:source="Concept"
                                     bind:filter="conceptSet.mnemonic=AdministrativeGenderCode"
                                     bind:value="name[{{ locale }}].value"
-                                    ng-model="search.query['genderConcept']" name="genderFilter" /> 
+                                    ng-model="search.query['genderConcept']" name="genderFilter" />
                             <span class="select-arrow-container" style="right: 32px;" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                         </div>
                     </div>
@@ -97,13 +97,19 @@
 
     <div class="search-results-container">
         <div class="row" style="padding: 0 10px;">
-            <div class="col-xs-6 search-results-tile-container"  ng-repeat="patient in search.results.item track by $index">
+            <div class="col-xs-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
                 <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
                     <span class="search-results-tile-circle">
                         <span class="search-results-tile-counter">
                             {{$index + 1}}
                         </span>
                     </span>
+
+                    <div class="row" ng-if="patient.tag.onlineResult">
+                        <div class="col-xs-12">
+                            <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-xs-3 search-tile-label">
                             {{ 'locale.patient.search.header.names' | i18n }}
@@ -123,7 +129,7 @@
                         </div>
                         <div class="col-xs-9">
                             <span ng-repeat="(dmn, id) in patient.identifier">
-                                {{ ::id.value }} <span class="label label-info">{{ ::dmn }}</span>
+                                {{ id.value }} <span class="label label-info">{{ dmn }}</span>
                             </span>
                         </div>
                     </div>
@@ -133,7 +139,7 @@
                             {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
                         </div>
                         <div class="col-xs-9">
-                            {{ ::patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                            {{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         </div>
                     </div>
 
@@ -142,7 +148,7 @@
                             {{ 'locale.patient.search.header.deceasedDate' | i18n }}
                         </div>
                         <div class="col-xs-9">
-                            {{ ::patient.deceasedDate | date: 'yyyy-MMM-dd' }}
+                            {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
                         </div>
                     </div>
 
@@ -151,7 +157,7 @@
                             {{ 'locale.patient.search.header.gender' | i18n }}
                         </div>
                         <div class="col-xs-9">
-                            {{ ::patient.genderConceptModel.name[$root.page.locale] }}
+                            {{ patient.genderConceptModel.name[$root.page.locale] }}
                         </div>
                     </div>
 
@@ -160,7 +166,7 @@
                             {{ 'locale.patient.search.header.cityVillage' | i18n }}
                         </div>
                         <div class="col-xs-9 ellipsis">
-                            {{ ::patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
+                            {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
                         </div>
                     </div>
 
@@ -180,14 +186,12 @@
             </div>
         </div>
     </div>
-                        
+
     <table class="table table-responsive table-striped table-bordered oiz-patient-results" ng-controller="SearchResultsController">
         <thead>
-            
+
         </thead>
-        <tbody>
-                   
-        </tbody>
+        <tbody></tbody>
         <tfoot ng-if="search.results">
             <tr>
                 <td colspan="2">{{ search.results.offset + 1 }} .. {{ search.results.offset + search.results.count }} of {{ search.results.totalResults }} </td>
