@@ -639,7 +639,7 @@ body{
     position: fixed;
     left: 0;
     right:0;
-    z-index: 10;
+    z-index: 24;
 }
 .header-dock.static-dock {
     box-shadow: none !important;
