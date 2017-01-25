@@ -24,7 +24,12 @@
 
 layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function ($scope, $rootScope) {
     
-    $scope.changePassword = function (userName, existing, password, confirmation) {
+    $scope.changeData =  {
+        phone : $rootScope.session.user.phoneNumber,
+        email : $rootScope.session.user.email
+    };
+
+    $scope.changePassword = function (userName, existing, password, confirmation, email, telephone) {
 
         // Are we even online?
         if (!$rootScope.page.onlineState)

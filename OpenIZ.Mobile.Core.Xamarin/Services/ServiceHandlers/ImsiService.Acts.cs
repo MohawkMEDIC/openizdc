@@ -89,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 IEnumerable<Act> results = null;
                 if (search.ContainsKey("_onlineOnly") && search["_onlineOnly"][0] == "true")
                 {
-                    var integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+                    var integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
                     var bundle = integrationService.Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count);
                     totalResults = bundle.TotalResults;
                     bundle.Reconstitute();

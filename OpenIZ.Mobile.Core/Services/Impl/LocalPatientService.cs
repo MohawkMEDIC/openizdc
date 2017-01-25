@@ -41,7 +41,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
 		/// </summary>
 		private IDataPersistenceService<Patient> m_persistenceService;
-		private IIntegrationService m_integration;
+		//private IIntegrationService m_integration;
 
         /// <summary>
         /// Internal reference to the bre service
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		public LocalPatientService()
 		{
 			ApplicationContext.Current.Started += (o, e) => {
-                this.m_integration = ApplicationContext.Current.GetService<IIntegrationService>();
+                //this.m_integration = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
                 this.m_persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                 this.m_breService = ApplicationContext.Current.GetService<IBusinessRulesService<Patient>>();
             };

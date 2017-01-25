@@ -77,12 +77,6 @@ namespace OpenIZ.Mobile.Core.Caching
         // Lock object used by cleaning mechanisms to run one at a time
         private object m_cacheCleanLock = new object();
 
-        // Last clean
-        private long m_lastClean = DateTime.Now.Ticks;
-
-        // Last pressure reduction
-        private long m_lastPressureReduce = DateTime.Now.Ticks;
-
         /// <summary>
         /// Bind types
         /// </summary>
@@ -147,18 +141,7 @@ namespace OpenIZ.Mobile.Core.Caching
         public void AddUpdateEntry(object data)
         {
 
-            long nowTicks = DateTime.Now.Ticks;
-            if (nowTicks - this.m_lastClean > this.m_configuration.Cache.MaxDirtyAge)
-            {
-                this.m_lastClean = nowTicks;
-                this.m_taskPool.QueueUserWorkItem((o) => this.Clean());
-            }
-            if(nowTicks - this.m_lastPressureReduce > this.m_configuration.Cache.MaxPressureAge)
-            {
-                this.m_lastPressureReduce = nowTicks;
-                this.m_taskPool.QueueUserWorkItem((o) => this.ReducePressure());
-            }
-
+            
             // Throw if disposed
             this.ThrowIfDisposed();
 

@@ -92,4 +92,20 @@ namespace OpenIZ.Mobile.Core.Services
         /// <param name="forceUpdate">When true, indicates that update should not do a safety check</param>
 		void Update(IdentifiedData data, bool forceUpdate = false);
     }
+
+    /// <summary>
+    /// Represents the clinical integration service
+    /// </summary>
+    public interface IClinicalIntegrationService : IIntegrationService
+    {
+
+    }
+
+    /// <summary>
+    /// Admin integration service
+    /// </summary>
+    public interface IAdministrationIntegrationService : IIntegrationService
+    {
+
+    }
 }

@@ -268,7 +268,7 @@
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <!-- Preferences -->
-    <string key="locale.preferences.changePassword">Change Password</string>
+    <string key="locale.preferences.changePassword">Save</string>
     <string key="locale.preferences.username">Username</string>
     <string key="locale.preferences.existingPassword">Existing Password</string>
     <string key="locale.preferences.password">New Password</string>
@@ -284,8 +284,13 @@
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
+    <string key="locale.preferences.passwordReset.title">Password Recovery Options</string>
+    <string key="locale.preferences.passwordReset.description">The settings below will be used to contact you in case your user account needs to be reset. You must enter your password above to change this data</string>
+    <string key="locale.preferences.email">E-Mail</string>
+    <string key="locale.preferences.phone">Mobile</string>
+    <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
+    <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
 
-    
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
 

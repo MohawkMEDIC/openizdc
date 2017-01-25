@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
     /// <summary>
     /// Represents an IMSI integration service which sends and retrieves data from the IMS.
     /// </summary>
-    public class ImsiIntegrationService : IIntegrationService
+    public class ImsiIntegrationService : IClinicalIntegrationService
     {
 
         // Cached credential
@@ -97,6 +97,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             this.m_cachedCredential = AuthenticationContext.Current.Principal;
             return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
         }
+
         /// <summary>
         /// Gets the specified model object
         /// </summary>
@@ -131,19 +132,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-                client.Client.Requesting += (o, e) =>
-                {
-                    if (options == null) return;
-                    else if (options?.IfModifiedSince.HasValue == true)
-                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options?.IfModifiedSince.Value.ToString();
-                    else if (!String.IsNullOrEmpty(options?.IfNoneMatch))
-                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
-                    if (options?.Lean == true)
-                        e.Query.Add("_lean", "true");
-                    if (options?.InfrastructureOptions?.Count > 0)
-                        foreach (var inf in options?.InfrastructureOptions)
-                            e.Query.Add(inf.Key, inf.Value);
-                };
+                client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (options?.Timeout.HasValue == true)
                     client.Client.Description.Endpoint[0].Timeout = options.Timeout.Value;
@@ -160,6 +149,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             }
 
         }
+
+
 
         /// <summary>
         /// Gets the specified model object
@@ -191,14 +182,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             try
             {
                 ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-                client.Client.Requesting += (o, e) =>
-                {
-                    if (options == null) return;
-                    else if (options?.IfModifiedSince.HasValue == true)
-                        e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options?.IfModifiedSince.Value.ToString();
-                    else if (!String.IsNullOrEmpty(options?.IfNoneMatch))
-                        e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
-                };
+                client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 this.m_tracer.TraceVerbose("Performing IMSI GET ({0}):{1}v{2}", typeof(TModel).FullName, key, versionKey);
                 var retVal = client.Get<TModel>(key, versionKey);

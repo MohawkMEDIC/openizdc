@@ -25,6 +25,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Map;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Services;
 using System;
@@ -122,8 +123,8 @@ namespace OpenIZ.Mobile.Core.Caching
                                      e.Cancel = true;
                                  }
                              }
-                             //this.GetOrUpdateCacheItem(e);
-                         };
+                         //this.GetOrUpdateCacheItem(e);
+                     };
 
                          // Handles when an item is no longer being mapped
                          this.m_mappedHandler = (o, e) =>
@@ -142,18 +143,38 @@ namespace OpenIZ.Mobile.Core.Caching
                              ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
                              ApplicationContext.Current.GetService<IDataPersistenceService<ActParticipation>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
                          }
-                         if(ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>() != null)
+                         if (ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>() != null)
                          {
                              ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
                              ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
                              ApplicationContext.Current.GetService<IDataPersistenceService<ActRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(typeof(Act), e.Data.SourceEntityKey);
                          }
-                         if(ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>() != null)
+                         if (ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>() != null)
                          {
                              ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Updated += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
                              ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Inserted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
                              ApplicationContext.Current.GetService<IDataPersistenceService<EntityRelationship>>().Obsoleted += (o, e) => MemoryCache.Current.RemoveObject(e.Data.SourceEntity.GetType(), e.Data.SourceEntityKey);
                          }
+
+                         // Now start the clean timers
+                         this.m_tracer.TraceInfo("Starting clean timers...");
+
+                         Action<Object> cleanProcess = null, pressureProcess = null;
+
+                         cleanProcess = o =>
+                         {
+                             MemoryCache.Current.Clean();
+                             ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(new TimeSpan(ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Cache.MaxDirtyAge), cleanProcess, null);
+                         };
+                         pressureProcess = o =>
+                         {
+                             MemoryCache.Current.ReducePressure();
+                             ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(new TimeSpan(ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Cache.MaxDirtyAge), pressureProcess, null);
+                         };
+
+                         // Register processes on a delay
+                         ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(new TimeSpan(ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Cache.MaxDirtyAge), pressureProcess, null);
+                         ApplicationContext.Current.GetService<IThreadPoolService>()?.QueueUserWorkItem(new TimeSpan(ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Cache.MaxDirtyAge), cleanProcess, null);
 
                      }
                  }

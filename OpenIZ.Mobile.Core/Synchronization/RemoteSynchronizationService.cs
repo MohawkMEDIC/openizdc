@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         // Thread pool
         private IThreadPoolService m_threadPool;
         // Network service
-        private IIntegrationService m_integrationService;
+        private IClinicalIntegrationService m_integrationService;
         // Network information service
         private INetworkInformationService m_networkInfoService;
 
@@ -103,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Get configuration
             this.m_configuration = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
-            this.m_integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+            this.m_integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
             this.m_networkInfoService = ApplicationContext.Current.GetService<INetworkInformationService>();
 
             this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);

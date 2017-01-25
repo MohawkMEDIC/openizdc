@@ -157,7 +157,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
         /// </summary>
         public OutboundQueueEntry(DeadLetterQueueEntry retryEntry) : base(retryEntry)
         {
-
+            
         }
         /// <summary>
         /// Indicates the fail count
@@ -241,7 +241,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
     /// Queue which is used to store administrative events on the user
     /// </summary>
     [Table("admin_queue"), JsonObject(nameof(OutboundAdminQueueEntry)), XmlType(nameof(OutboundAdminQueueEntry), Namespace = "http://openiz.org/queue")]
-    public class OutboundAdminQueueEntry : SynchronizationQueueEntry
+    public class OutboundAdminQueueEntry : OutboundQueueEntry
     {
         /// <summary>
         /// admin ctor

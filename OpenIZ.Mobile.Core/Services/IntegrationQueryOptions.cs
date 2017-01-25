@@ -22,6 +22,7 @@ using OpenIZ.Core.Model.Query;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -56,5 +57,25 @@ namespace OpenIZ.Mobile.Core.Services
         /// Lean
         /// </summary>
         public bool Lean { get; set; }
-	}
+
+        /// <summary>
+        /// Generates an event hander for the integration options
+        /// </summary>
+        public static EventHandler<RestRequestEventArgs> CreateRequestingHandler(IntegrationQueryOptions options)
+        {
+            return (o, e) =>
+            {
+                if (options == null) return;
+                else if (options?.IfModifiedSince.HasValue == true)
+                    e.AdditionalHeaders[HttpRequestHeader.IfModifiedSince] = options?.IfModifiedSince.Value.ToString();
+                else if (!String.IsNullOrEmpty(options?.IfNoneMatch))
+                    e.AdditionalHeaders[HttpRequestHeader.IfNoneMatch] = options?.IfNoneMatch;
+                if (options?.Lean == true)
+                    e.Query.Add("_lean", "true");
+                if (options?.InfrastructureOptions?.Count > 0)
+                    foreach (var inf in options?.InfrastructureOptions)
+                        e.Query.Add(inf.Key, inf.Value);
+            };
+        }
+    }
 }

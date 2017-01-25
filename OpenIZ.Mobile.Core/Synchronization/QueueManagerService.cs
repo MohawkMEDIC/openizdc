@@ -50,8 +50,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
     {
 
         private Object m_inboundLock = new object();
-
         private Object m_outboundLock = new object();
+        private Object m_adminLock = new object();
 
         private IThreadPoolService m_threadPool = null;
 
@@ -118,6 +118,100 @@ namespace OpenIZ.Mobile.Core.Synchronization
         }
 
         /// <summary>
+        /// Exhaust the administrative queue
+        /// </summary>
+        private void ExhaustAdminQueue()
+        {
+            bool locked = false;
+            try
+            {
+                locked = Monitor.TryEnter(this.m_adminLock, 100);
+                if (!locked) return;
+                // Exhaust the queue
+                while (SynchronizationQueue.Admin.Count() > 0)
+                {
+                    // Exhaust the outbound queue
+                    var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+                    var syncItm = SynchronizationQueue.Admin.PeekRaw();
+                    var dpe = SynchronizationQueue.Admin.DeserializeObject(syncItm);
+
+                    // TODO: Sleep thread here
+                    if (!amiService.IsAvailable())
+                    {
+                        // Come back in 30 seconds...
+                        this.m_threadPool.QueueUserWorkItem(new TimeSpan(0, 0, 30), (o) => this.ExhaustOutboundQueue(), null);
+                        return;
+                    }
+
+                    // try to send
+                    try
+                    {
+                        // Reconstitute bundle
+                        (dpe as Bundle)?.Reconstitute();
+                        dpe = (dpe as Bundle)?.Entry ?? dpe;
+
+                        // Send the object to the remote host
+                        switch (syncItm.Operation)
+                        {
+                            case DataOperationType.Insert:
+                                amiService.Insert(dpe);
+                                break;
+                            case DataOperationType.Obsolete:
+                                amiService.Obsolete(dpe, syncItm.IsRetry);
+                                break;
+                            case DataOperationType.Update:
+                                amiService.Update(dpe, syncItm.IsRetry);
+                                break;
+                        }
+
+                        SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of object from queue
+                    }
+                    catch (WebException ex)
+                    {
+                        this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
+                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                        SynchronizationQueue.Outbound.DequeueRaw();
+
+                        // Construct an alert
+                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
+                    }
+                    catch (TimeoutException ex) // Timeout due to lack of connectivity
+                    {
+
+                        this.m_tracer.TraceError("Error sending object {0}: {1}", dpe, ex);
+
+                        syncItm.IsRetry = false;
+
+                        // Re-queue
+                        if (syncItm.RetryCount > 3) // TODO: Make this configurable
+                        {
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                            SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                        }
+                        else
+                        {
+                            SynchronizationQueue.Outbound.UpdateRaw(syncItm);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        this.m_tracer.TraceError("Error sending object to AMI: {0}", ex);
+                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                        SynchronizationQueue.Outbound.DequeueRaw();
+
+                        throw;
+                    }
+                }
+            }
+            finally
+            {
+                if (locked) Monitor.Exit(this.m_adminLock);
+            }
+        }
+
+        /// <summary>
         /// Exhaust the outbound queue
         /// </summary>
         public void ExhaustOutboundQueue()
@@ -131,7 +225,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 while (SynchronizationQueue.Outbound.Count() > 0)
                 {
                     // Exhaust the outbound queue
-                    var integrationService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IIntegrationService>();
+                    var integrationService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IClinicalIntegrationService>();
                     var syncItm = SynchronizationQueue.Outbound.PeekRaw();
                     var dpe = SynchronizationQueue.Outbound.DeserializeObject(syncItm);
 
@@ -327,6 +421,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 }
             };
 
+            // Bind to administration queue
+            SynchronizationQueue.Admin.Enqueued += (o, e) => {
+                // Admin is always pushed
+                this.m_threadPool.QueueUserWorkItem(a => this.ExhaustAdminQueue());
+            };
+
             ApplicationContext.Current.Started += (o, e) =>
             {
                 // startup
@@ -334,6 +434,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     this.ExhaustOutboundQueue();
                     this.ExhaustInboundQueue();
+                    this.ExhaustAdminQueue();
                 };
 
                 startup.BeginInvoke(null, null, null);
@@ -344,6 +445,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             return true;
         }
+
 
         /// <summary>
         /// Stopping the services

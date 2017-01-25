@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-            var integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+            var integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
 
             if (search.ContainsKey("_id"))
             {

@@ -468,7 +468,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			// Notify admin queue
 			var commUser = retVal.Clone() as SecurityUser;
 			commUser.PasswordHash = null; // Don't set password
-			SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
+			//SynchronizationQueue.Admin.Enqueue(commUser, Synchronization.Model.DataOperationType.Update);
 
 			return retVal;
 		}
