@@ -198,8 +198,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var useIntersect = parms.Keys.Count(o => o.StartsWith("relationship")) > 1 ||
                 parms.Keys.Count(o => o.StartsWith("participation")) > 1;
+            
             // Build a query
             StringBuilder sb = new StringBuilder();
+
             sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
             List<Object> vals = new List<Object>();
             if (parms.Count > 0)

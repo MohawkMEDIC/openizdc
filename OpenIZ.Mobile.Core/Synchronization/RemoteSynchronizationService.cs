@@ -228,7 +228,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
                             infopt.Add(itm.Key, itm.Value);
                     }
-                    result = this.m_integrationService.Find(modelType, filter, i, 25, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
+                    result = this.m_integrationService.Find(modelType, filter, i, 75, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
 
 
                     // Queue the act of queueing

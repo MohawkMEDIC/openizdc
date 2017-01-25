@@ -532,23 +532,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// </summary>
         public DatamartDefinition GetDatamart(String name)
         {
-            DatamartDefinition retVal = null;
-            using (var cmd = this.CreateCommand(null, "SELECT * FROM dw_datamarts WHERE name = ?", name))
-            using (var rdr = cmd.ExecuteReader())
-                if (rdr.Read())
-                {
-                    retVal = new DatamartDefinition()
+            lock (this.m_lock)
+            {
+                DatamartDefinition retVal = null;
+                using (var cmd = this.CreateCommand(null, "SELECT * FROM dw_datamarts WHERE name = ?", name))
+                using (var rdr = cmd.ExecuteReader())
+                    if (rdr.Read())
                     {
-                        Id = new Guid((byte[])rdr["uuid"]),
-                        Name = (string)rdr["name"],
-                        CreationTime = (DateTime)rdr["creation_time"],
-                        Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
-                    };
-                }
-                else return null;
+                        retVal = new DatamartDefinition()
+                        {
+                            Id = new Guid((byte[])rdr["uuid"]),
+                            Name = (string)rdr["name"],
+                            CreationTime = (DateTime)rdr["creation_time"],
+                            Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
+                        };
+                    }
+                    else return null;
 
-            retVal.Schema = this.LoadSchema(retVal.Schema.Id);
-            return retVal;
+                retVal.Schema = this.LoadSchema(retVal.Schema.Id);
+                return retVal;
+            }
         }
 
         /// <summary>
