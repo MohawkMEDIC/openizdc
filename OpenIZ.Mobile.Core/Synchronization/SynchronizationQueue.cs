@@ -182,7 +182,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             }
 
             var conn = this.CreateConnection();
-            lock(this.m_syncObject)
+            using(conn.Lock())
             {
                 try
                 {
@@ -243,7 +243,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 		public TQueueEntry DequeueRaw()
 		{
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -270,7 +270,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         internal void UpdateRaw(TQueueEntry entry)
         {
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -290,7 +290,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <returns>The raw.</returns>
         public TQueueEntry PeekRaw(){
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -311,7 +311,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public IEnumerable<TQueueEntry> Query(Expression<Func<TQueueEntry, bool>> query, int offset, int? count, out int totalResults)
         {
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -340,7 +340,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public int Count()
         {
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -361,7 +361,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public void Delete(int id)
         {
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {
@@ -382,7 +382,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public TQueueEntry Get(int id)
         {
             var conn = this.CreateConnection();
-            lock (this.m_syncObject)
+            using (conn.Lock())
             {
                 try
                 {

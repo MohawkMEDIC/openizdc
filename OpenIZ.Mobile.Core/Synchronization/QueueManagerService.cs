@@ -432,9 +432,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 // startup
                 AsyncCallback startup = (iar) =>
                 {
-                    this.ExhaustOutboundQueue();
-                    this.ExhaustInboundQueue();
-                    this.ExhaustAdminQueue();
+                    try
+                    {
+                        this.ExhaustOutboundQueue();
+                        this.ExhaustInboundQueue();
+                        this.ExhaustAdminQueue();
+                    }
+                    catch(Exception ex)
+                    {
+                        this.m_tracer.TraceError("Error executing initial queues: {0}", ex);
+                    }
                 };
 
                 startup.BeginInvoke(null, null, null);

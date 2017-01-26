@@ -123,8 +123,8 @@ namespace OpenIZ.Mobile.Core.Caching
                                      e.Cancel = true;
                                  }
                              }
-                         //this.GetOrUpdateCacheItem(e);
-                     };
+                             //this.GetOrUpdateCacheItem(e);
+                         };
 
                          // Handles when an item is no longer being mapped
                          this.m_mappedHandler = (o, e) =>

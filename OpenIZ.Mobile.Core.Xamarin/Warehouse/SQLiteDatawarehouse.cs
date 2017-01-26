@@ -96,29 +96,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// </summary>
         private void InitializeDatabase(string dbFile)
         {
-
-            lock (this.m_lock)
+            try
             {
-                this.InitializeConnection(dbFile);
-
-                // Initialize the warehouse
-                using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Warehouse.InitWarehouse.sql"))
-                using (var sr = new StreamReader(initStream))
+                lock (this.m_lock)
                 {
-                    var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
-                    for (int i = 0; i < stmts.Length; i++)
+                    this.InitializeConnection(dbFile);
+
+                    // Initialize the warehouse
+                    using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Warehouse.InitWarehouse.sql"))
+                    using (var sr = new StreamReader(initStream))
                     {
-                        var stmt = stmts[i];
-                        if (String.IsNullOrEmpty(stmt)) continue;
-                        this.m_tracer.TraceVerbose("EXECUTE: {0}", stmt);
-                        using (var cmd = this.m_connection.CreateCommand())
+                        var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
+                        for (int i = 0; i < stmts.Length; i++)
                         {
-                            cmd.CommandText = stmt;
-                            cmd.CommandType = System.Data.CommandType.Text;
-                            cmd.ExecuteNonQuery();
+                            var stmt = stmts[i];
+                            if (String.IsNullOrEmpty(stmt)) continue;
+                            this.m_tracer.TraceVerbose("EXECUTE: {0}", stmt);
+                            using (var cmd = this.m_connection.CreateCommand())
+                            {
+                                cmd.CommandText = stmt;
+                                cmd.CommandType = System.Data.CommandType.Text;
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                this.m_tracer.TraceError("Error initializing database connection to {0} : {1}", dbFile, ex);
             }
         }
 
