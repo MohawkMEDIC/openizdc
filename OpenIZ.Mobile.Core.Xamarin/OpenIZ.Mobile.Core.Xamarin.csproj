@@ -108,7 +108,6 @@
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
-    <Compile Include="Services\ServiceHandlers\ImsiService.Person.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Patient.cs" />
     <Compile Include="Services\ServiceHandlers\UserInterface.cs" />
     <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
