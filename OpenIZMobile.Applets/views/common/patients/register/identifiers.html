@@ -25,7 +25,7 @@
         <div ng-if="!Array.isArray(identifier)">
             <div class="col-xs-3">
                 <div class="input-group">
-                    <select ng-model="identifier.authority.domainName" class="form-control" ng-change="rebindDomain(authority, identifier)"
+                    <select ng-model="identifier.authority.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)"
                             bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
@@ -51,7 +51,7 @@
         <div ng-if="Array.isArray(identifier)" ng-repeat="id in identifier">
             <div class="col-xs-3">
                 <div class="input-group">
-                    <select ng-model="id.authority.domainName" class="form-control" ng-change="rebindDomain(authority, id)"
+                    <select ng-model="id.authority.domainName" class="small-select form-control" ng-change="rebindDomain(authority, id)"
                             bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
