@@ -404,6 +404,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return securityRepositoryService.SaveUserEntity(user);
         }
 
+
+
         /// <summary>
         /// Search places
         /// </summary>
@@ -434,6 +436,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     TotalResults = totalResults
                 };
             }
+        }
+
+        /// <summary>
+        /// Updates an entity.
+        /// </summary>
+        /// <param name="entityToUpdate">The entity to be updated.</param>
+        /// <returns>Returns the updated entity.</returns>
+        [RestOperation(Method = "PUT", UriPath = "/entity", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Entity UpdateEntity([RestMessage(RestMessageFormat.SimpleJson)]Entity entityToUpdate)
+        {
+            IEntityRepositoryService repository = ApplicationContext.Current.GetService<IEntityRepositoryService>();
+            // Get all the acts if none were supplied, and all of the relationships if none were supplied
+            return repository.Save(entityToUpdate).GetLocked() as Entity;
         }
 
 
