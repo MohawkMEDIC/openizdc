@@ -92,16 +92,18 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Application context has started
             ApplicationContext.Current.Started += (o, e) =>
             {
-                // We are to poll for alerts always (never push supported)
-                TimeSpan pollInterval = this.m_configuration.PollInterval ?? new TimeSpan(0, 10, 0);
-                this.m_alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                Action<Object> pollAction = null;
-                pollAction = x =>
+                try
                 {
-                    try
+                    // We are to poll for alerts always (never push supported)
+                    TimeSpan pollInterval = this.m_configuration.PollInterval ?? new TimeSpan(0, 10, 0);
+                    this.m_alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                    Action<Object> pollAction = null;
+                    pollAction = x =>
                     {
-                        var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
-                        amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                        try
+                        {
+                            var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                            amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
                         // Pull from alerts
                         if (!this.m_isRunning) return;
 
@@ -120,30 +122,30 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         // Or eith other users which have logged into this tablet
                         foreach (var user in ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Query(u => u.LastLoginTime != null && u.UserName != this.m_securityConfiguration.DeviceName))
-                            userNameFilter = Expression.OrElse(userNameFilter,
-                                Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(user.UserName))
-                                );
+                                userNameFilter = Expression.OrElse(userNameFilter,
+                                    Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(user.UserName))
+                                    );
 
-                        ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
-                        Expression timeExpression = Expression.GreaterThanOrEqual(
-                            Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
-                            Expression.Constant(lastTime)
-                        ),
-                        // this tablet expression
-                        userExpression = Expression.Call(
-                            (MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(SecurityUser) }, new Type[] { typeof(IEnumerable<SecurityUser>), typeof(Func<SecurityUser, bool>) }),
-                            Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("RcptTo")), 
-                            Expression.Lambda<Func<SecurityUser, bool>>(userNameFilter, userParameter));
+                            ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
+                            Expression timeExpression = Expression.GreaterThanOrEqual(
+                                Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
+                                Expression.Constant(lastTime)
+                            ),
+                            // this tablet expression
+                            userExpression = Expression.Call(
+                                (MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(SecurityUser) }, new Type[] { typeof(IEnumerable<SecurityUser>), typeof(Func<SecurityUser, bool>) }),
+                                Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("RcptTo")),
+                                Expression.Lambda<Func<SecurityUser, bool>>(userNameFilter, userParameter));
 
-                        serverAlerts.CollectionItem = serverAlerts.CollectionItem.Union(amiClient.GetAlerts(Expression.Lambda<Func<AlertMessage, bool>>(Expression.AndAlso(timeExpression, userExpression), parmExpr)).CollectionItem).ToList();
+                            serverAlerts.CollectionItem = serverAlerts.CollectionItem.Union(amiClient.GetAlerts(Expression.Lambda<Func<AlertMessage, bool>>(Expression.AndAlso(timeExpression, userExpression), parmExpr)).CollectionItem).ToList();
 
                         // Import the alerts
-                        foreach(var itm in serverAlerts.CollectionItem)
-                        {
-                            this.m_tracer.TraceVerbose("Importing ALERT: [{0}]: {1}", itm.AlertMessage.TimeStamp, itm.AlertMessage.Subject);
-                            itm.AlertMessage.Body = String.Format("<pre>{0}</pre>", itm.AlertMessage.Body);
-                            this.m_alertRepository.BroadcastAlert(itm.AlertMessage);
-                        }
+                        foreach (var itm in serverAlerts.CollectionItem)
+                            {
+                                this.m_tracer.TraceVerbose("Importing ALERT: [{0}]: {1}", itm.AlertMessage.TimeStamp, itm.AlertMessage.Subject);
+                                itm.AlertMessage.Body = String.Format("<pre>{0}</pre>", itm.AlertMessage.Body);
+                                this.m_alertRepository.BroadcastAlert(itm.AlertMessage);
+                            }
 
                         // Push alerts which I have created or updated
                         //int tc = 0;
@@ -158,24 +160,29 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         //            amiClient.CreateAlert(new AlertMessageInfo(itm));
                         //    }
                         //}
-                        
+
                         SynchronizationLog.Current.Save(typeof(AlertMessage), null, null);
-                    }
-                    catch(Exception ex)
-                    {
-                        this.m_tracer.TraceError("Could not pull alerts: {0}", ex);
-                    }
-                    finally
-                    {
+                        }
+                        catch (Exception ex)
+                        {
+                            this.m_tracer.TraceError("Could not pull alerts: {0}", ex);
+                        }
+                        finally
+                        {
                         // Re-schedule myself in the poll interval time
                         ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
-                    }
-                };
+                        }
+                    };
 
-                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
-                this.m_isRunning = true;
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
+                    this.m_isRunning = true;
 
-                pollAction(null);
+                    pollAction(null);
+                }
+                catch(Exception ex)
+                {
+                    this.m_tracer.TraceError("Error starting Alert Sync: {0}", ex);
+                }
                 //this.m_alertRepository.Committed += 
             };
 

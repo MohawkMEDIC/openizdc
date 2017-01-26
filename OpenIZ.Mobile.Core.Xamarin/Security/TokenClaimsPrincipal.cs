@@ -118,8 +118,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 throw new SecurityTokenException(SecurityTokenExceptionType.InvalidClaim, "Missing NBF or EXP claim");
             else
             {
-                DateTime expiry = new DateTime(1970, 1, 1),
-                    notBefore = new DateTime(1970, 1, 1);
+                DateTime expiry = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    notBefore = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 expiry = expiry.AddSeconds(Int32.Parse(expiryClaim.Value)).ToLocalTime();
                 notBefore = notBefore.AddSeconds(Int32.Parse(notBeforeClaim.Value)).ToLocalTime();
 
