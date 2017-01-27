@@ -24,6 +24,11 @@
             Gets or sets the stop time of the act
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Act.TemplateKey">
+            <summary>
+            Gets the template key
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.Act.Template">
             <summary>
             Gets or sets the template identifier 
@@ -2123,6 +2128,11 @@
             Assigning device identifier
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ValidationRegex">
+            <summary>
+            Gets or sets the validation regex
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDevice">
             <summary>
             Gets or sets the assigning device
@@ -3056,6 +3066,11 @@
             Creates a new instance of the entity class
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.TemplateKey">
+            <summary>
+            Gets the template key
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
             <summary>
             Gets or sets the template identifier 
@@ -3647,6 +3662,11 @@
             Gets or sets the person's date of birth
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthXml">
+            <summary>
+            Gets the date of birth as XML
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthPrecision">
             <summary>
             Gets or sets the precision ofthe date of birth
@@ -3872,7 +3892,7 @@
             True if the class is currently loading associations when accessed
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.IdentifiedData.SetDelayLoad(System.Boolean)">
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.SetDelayLoad(System.Boolean,System.Collections.Generic.HashSet{System.Nullable{System.Guid}})">
             <summary>
             Set delay load
             </summary>
@@ -4228,6 +4248,11 @@
         <member name="M:OpenIZ.Core.Model.Map.ModelExpressionVisitor.LambdaCorrectionVisitor.VisitBinary(System.Linq.Expressions.BinaryExpression)">
             <summary>
             Visit a binary method
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelExpressionVisitor.GetConstantValue(System.Linq.Expressions.Expression)">
+            <summary>
+            Attempt to get constant value
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Map.ModelExpressionVisitor.#ctor(OpenIZ.Core.Model.Map.ModelMapper,System.Linq.Expressions.ParameterExpression[])">
@@ -4919,6 +4944,11 @@
         <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDate">
             <summary>
             Gets or sets the date the patient was deceased
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDateXml">
+            <summary>
+            Deceased date XML
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDatePrecision">

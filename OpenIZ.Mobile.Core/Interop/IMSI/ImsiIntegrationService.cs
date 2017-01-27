@@ -27,6 +27,7 @@ using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Patch;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Exceptions;
@@ -324,18 +325,57 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     var idp = typeof(IDataPersistenceService<>).MakeGenericType(patch.AppliesTo.Type);
                     var idpService = ApplicationContext.Current.GetService(idp);
                     var getMethod = idp.GetRuntimeMethod("Get", new Type[] { typeof(Guid) });
-                    var existing = getMethod.Invoke(idpService, new object[] { existingKey });
+                    var existing = getMethod.Invoke(idpService, new object[] { existingKey }) as IdentifiedData;
+                    Guid newUuid = Guid.Empty;
 
-                    var newUuid = client.Patch(patch);
-
-                    // Update the server version key
-                    if (existing is IVersionedEntity && 
-                        (existing as IVersionedEntity)?.VersionKey != newUuid)
+                    try
                     {
-                        this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
-                        (existing as IVersionedEntity).VersionKey = newUuid;
-                        getMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
-                        getMethod.Invoke(idpService, new object[] { existing });
+
+                        newUuid = client.Patch(patch);
+
+                        // Update the server version key
+                        if (existing is IVersionedEntity &&
+                            (existing as IVersionedEntity)?.VersionKey != newUuid)
+                        {
+                            this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
+                            (existing as IVersionedEntity).VersionKey = newUuid;
+                            getMethod.Invoke(idpService, new object[] { existing });
+                        }
+
+                    }
+                    catch(WebException e)
+                    {
+
+                        if((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Conflict) // Try to resolve the conflict in an automated way
+                        {
+                            this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
+
+                            // First, let's grab the item
+                            var serverCopy = this.Get(patch.AppliesTo.GetType(), patch.AppliesTo.Key.Value, null);
+                            // Condition 1: Can we apply the patch without causing any issues (ignoring version)
+                            client.Client.Requesting += (o, evt) => evt.AdditionalHeaders["X-Patch-Force"] = "true";
+                            if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
+                                newUuid = client.Patch(patch);
+                            else
+                            {
+                                // There are no intersections of properties between the object we have and the server copy
+                                var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
+                                if(!serverDiff.Operation.Any(sd=>patch.Operation.Any(po=>po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                    newUuid = client.Patch(patch);
+                            }
+
+                        }
+
+                        // Update the server version key
+                        if (existing is IVersionedEntity &&
+                            (existing as IVersionedEntity)?.VersionKey != newUuid)
+                        {
+                            this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
+                            (existing as IVersionedEntity).VersionKey = newUuid;
+                            var updateMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
+                            updateMethod.Invoke(idpService, new object[] { existing });
+                        }
+
                     }
                 }
                 else // regular update 

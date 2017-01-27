@@ -3,10 +3,10 @@
   <property name="creation_date" type="date" attributes="nonnull"/>
   <property name="patient_id" type="uuid" attributes="nonnull index"/>
   <property name="location_id" type="uuid" attributes="index"/>
+  <property name="protocol_id" type="uuid" attributes="index"/>
   <property name="act_id" type="uuid" attributes="nonnull"/>
   <property name="class_id" type="uuid" attributes="nonnull"/>
   <property name="type_id" type="uuid" attributes="nonnull"/>
-  <property name="protocol_id" type="uuid" attributes="nonnull"/>
   <property name="min_date" type="date" attributes="nonnull"/>
   <property name="max_date" type="date" attributes="none"/>
   <property name="act_date" type="date" attributes="index"/>

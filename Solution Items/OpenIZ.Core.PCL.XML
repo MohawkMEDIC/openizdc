@@ -1278,6 +1278,11 @@
             Execute a lambda
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Test that a patch can be applied
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.Impl.BaseBusinessRulesService`1">
             <summary>
             Represents a business rules service with no behavior, but intended to help in the implementation of another
@@ -1544,9 +1549,19 @@
             Gets the list of protocols which can be or should be used to create the care plans
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
             <summary>
             Create a care plam
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
+            <summary>
+            Create a care plan controlling the creation of encounters
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+            <summary>
+            Creates a care plan for the patient with the specified protocolsonly
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IClinicalProtocolRepositoryService">
@@ -1968,6 +1983,11 @@
         <member name="M:OpenIZ.Core.Services.IPatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Apples the specified <paramref name="patch"/> onto <paramref name="data"/> returning the updated object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Tests that the patch can be applied on the specified object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IPersonRepositoryService">
@@ -2951,12 +2971,22 @@
             Gets the protocols
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create a care plan for the specified patient
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
             <summary>
             Create a care plan
             </summary>
             <param name="p"></param>
             <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+            <summary>
+            Create a care plan with the specified protocols only
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateEncounter(OpenIZ.Core.Model.Acts.Act,OpenIZ.Core.Model.Roles.Patient)">
             <summary>

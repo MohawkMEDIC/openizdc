@@ -385,7 +385,6 @@ namespace OpenIZ.Mobile.Core.Caching
             }
 
 
-          
         }
 
         /// <summary>
