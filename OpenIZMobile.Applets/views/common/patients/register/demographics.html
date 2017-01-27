@@ -48,7 +48,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-disabled="patient.tag.hasBirthCertificate"
+                <input ng-disabled="patientBackup.tag.hasBirthCertificate"
                        ng-readonly="patient.readonly.dateOfBirth" type="date" 
                        name="dateOfBirth" id="dobInput" 
                        class="form-control" 
@@ -151,7 +151,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched||editPatientForm.$submitted) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
-                <select ng-disabled="patient.readonly.genderConcept || patient.tag.hasBirthCertificate" name="gender" 
+                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate" name="gender" 
                         ng-model="patient.genderConcept" 
                         ng-required="true" id="genderSelect" 
                         class="form-control"
