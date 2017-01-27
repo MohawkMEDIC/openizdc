@@ -24,7 +24,7 @@
         <label class="col-xs-3 control-label" for="relationType">{{ 'locale.patient.relative.type' | i18n }}</label>
         <div class="col-xs-9">
             <div class="input-group">
-                <select ng-model="patient.relationship.NextOfKin.relationshipType" class="form-control"
+                <select ng-model="patient.relationship.NextOfKin.relationshipType" class="form-control" id="nextOfKinRelationshipType"
                         bind:source="Concept" bind:filter="conceptSet.mnemonic=FamilyMember" bind:value="mnemonic"></select>
                 <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 <span class="input-group-btn">
@@ -60,14 +60,17 @@
             <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
             <div class="col-xs-4">
                 <div class="input-group">
-                    <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
+                    <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
+                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                    <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
                             bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
             </div>
             <div class="col-xs-5">
                 <div class="input-group">
-                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" />
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" />
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" />
                     <span class="input-group-btn">
                         <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                     </span>

@@ -20,7 +20,7 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" class="list-group">
     <a ng-click="viewPerson(rel.id)" ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ!='Mother'" class="list-group-item">
         <h4 class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</h4>
-        <small>ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+        <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
         <div ng-repeat="contact in rel.targetModel.telecom">
             <small>Contact: {{contact.value}}</small>
         </div>
