@@ -110,6 +110,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
 							// When was the last time we polled an alert?
 							var lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage));
 
+							DateTimeOffset? syncTime = null;
+
+							if (lastTime.HasValue)
+							{
+								syncTime = new DateTimeOffset(lastTime.Value);
+							}
+
 							// Poll action for all alerts to "everyone"
 							AmiCollection<AlertMessageInfo> serverAlerts = amiClient.GetAlerts(a => a.CreationTime >= lastTime && a.To.Contains("everyone"));
 
@@ -129,7 +136,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 							ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
 							Expression timeExpression = Expression.GreaterThanOrEqual(
 								Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
-								Expression.Constant(lastTime)
+								Expression.Constant(syncTime)
 							),
 							// this tablet expression
 							userExpression = Expression.Call(
