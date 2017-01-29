@@ -50,6 +50,7 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
                             userName: userName,
                             password: password,
                             continueWith: function (result) {
+                                OpenIZ.Authentication.security
                                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.passwordChanged"));
                             },
                             onException: function (ex) {

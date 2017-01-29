@@ -94,6 +94,7 @@
       <property name="Mother" all="true">
         <property name="target" all="true"/>
         <property name="targetModel" all="true" behavior="always"/>
+        <property name="relationshipTypeModel" behavior="never"/>
       </property>
       <property name="*" all="true">
         <property name="targetModel" all="true" behavior="always">

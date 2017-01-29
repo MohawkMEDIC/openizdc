@@ -150,6 +150,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             throw new SecurityException(Strings.err_offline_use_cache_creds);
                         }
                     }
+                    catch (SecurityException ex)
+                    {
+                        this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex);
+                        throw;
+                    }
                     catch (Exception ex) // fallback to local
                     {
                         try

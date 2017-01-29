@@ -339,7 +339,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         {
                             this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
                             (existing as IVersionedEntity).VersionKey = newUuid;
-                            getMethod.Invoke(idpService, new object[] { existing });
+                            var updateMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
+                            updateMethod.Invoke(idpService, new object[] { existing });
                         }
 
                     }

@@ -72,6 +72,25 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 			return new SessionInfo();
 		}
 
+
+        /// <summary>
+        /// Update the security user
+        /// </summary>
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        [RestOperation(UriPath = "/SecurityUser", Method = "POST", FaultProvider = nameof(AuthenticationFault))]
+        public SecurityUser UpdateSecurityUser([RestMessage(RestMessageFormat.SimpleJson)] SecurityUser user)
+        {
+            var localSecSrv = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            var amiServ = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
+            var remoteUser = amiServ.Get<SecurityUser>(user.Key.Value, null);
+            remoteUser.Email = user.Email;
+            remoteUser.PhoneNumber = user.PhoneNumber;
+            // Save the remote user in the local
+            localSecSrv.SaveUser(remoteUser);
+            amiServ.Update(remoteUser, true);
+            return remoteUser;
+        }
+
         /// <summary>
         /// Gets the TFA authentication mechanisms
         /// </summary>

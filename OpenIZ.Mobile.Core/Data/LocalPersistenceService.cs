@@ -55,6 +55,15 @@ namespace OpenIZ.Mobile.Core.Data
         private static Dictionary<Type, Object> s_idpInstances = new Dictionary<Type, object>(20);
         //private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
 
+            // Readonly types
+        private static readonly List<Type> m_readonlyTypes = new List<Type>()
+        {
+            typeof(Concept),
+            typeof(AssigningAuthority),
+            typeof(IdentifierType),
+            typeof(ConceptName)
+        };
+
         /// <summary>
         /// Load specified associations
         /// </summary>
@@ -71,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Data
 #endif
             var classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
             String classValue = null;
-            if(classProperty != null)
+            if (classProperty != null)
             {
                 classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
                 classValue = classProperty.GetValue(me)?.ToString();
@@ -80,9 +89,11 @@ namespace OpenIZ.Mobile.Core.Data
             foreach (var pi in me.GetType().GetRuntimeProperties())
             {
                 if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    pi.GetCustomAttributes<AutoLoadAttribute>().Count(p=>p.ClassCode == classValue || p.ClassCode == null) == 0)
+                    pi.GetCustomAttributes<AutoLoadAttribute>().Count(p => p.ClassCode == classValue || p.ClassCode == null) == 0)
                     continue;
 
+                if (pi.Name == "ConceptNames")
+                    System.Diagnostics.Debugger.Break();
                 var value = pi.GetValue(me);
                 if (value == null)
                 {
@@ -95,7 +106,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(pi.PropertyType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
                     var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
-                    if (getMethod != null) 
+                    if (getMethod != null)
                         pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, keyValue }) as IIdentifiedEntity);
                 }
                 else if (value is IdentifiedData)
@@ -174,7 +185,7 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
                     idpInstance = ApplicationContext.Current.GetService(idpType);
-                    if(!s_idpInstances.ContainsKey(me.GetType()))
+                    if (!s_idpInstances.ContainsKey(me.GetType()))
                         s_idpInstances.Add(me.GetType(), idpInstance);
                 }
             }
@@ -191,7 +202,7 @@ namespace OpenIZ.Mobile.Core.Data
 #endif              
                 //existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
                 //// We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
                 if (getMethod == null) return null;
                 existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
             }
@@ -220,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
 
                 // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
-                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock) );
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
                 var expression = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr });
 
                 if (queryMethod == null) return null;
@@ -257,7 +268,7 @@ namespace OpenIZ.Mobile.Core.Data
 
             // Me
             var vMe = me as IVersionedEntity;
-                                   
+
             // We have to find it
             object idpInstance = null;
             if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
@@ -269,7 +280,7 @@ namespace OpenIZ.Mobile.Core.Data
                     s_idpInstances.Add(me.GetType(), idpInstance);
                 }
             }
-            
+
             var existing = me.TryGetExisting(context);
 
 #if PERFMON
@@ -278,7 +289,7 @@ namespace OpenIZ.Mobile.Core.Data
 #endif
 
             // Existing exists?
-            if (existing == null)
+            if (existing == null && !m_readonlyTypes.Contains(typeof(TModel)))
             {
                 var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
                 if (insertMethod != null)
@@ -292,6 +303,8 @@ namespace OpenIZ.Mobile.Core.Data
                 }
 
             }
+            else if (existing == null)
+                throw new KeyNotFoundException($"Object {me} not found in database and is restricted for creation");
 
 #if PERFMON
             sw.Stop();
@@ -406,7 +419,7 @@ namespace OpenIZ.Mobile.Core.Data
                     if (instance != null)
                     {
                         instance = ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
-                        if(instance != null) rp.SetValue(data, instance);
+                        if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
                 }

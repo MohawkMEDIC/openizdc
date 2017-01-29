@@ -1207,7 +1207,6 @@ var OpenIZ = OpenIZ || {
                  }
              });
         },
-
         /**
         * @summary Performs a query against the UserEntity
         * @memberof OpenIZ.Authentication
@@ -1226,6 +1225,27 @@ var OpenIZ = OpenIZ || {
             OpenIZ.Ims.get({
                 resource: "UserEntity",
                 query: controlData.query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /**
+        * @summary Performs a query against the UserEntity
+        * @memberof OpenIZ.Authentication
+        * @param {Object} controlData Task control data
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        * @param {OpenIZModel.SecurityUser} controlData.data The query object which represents the filters for the object
+        * @method
+        * @see {OpenIZ.Ims.get}
+        */
+        saveUserAsync: function (controlData) {
+            OpenIZ.Util.simplePost("/__auth/SecurityUser", {
+                resource: "SecurityUser",
+                data: controlData.data,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,

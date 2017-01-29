@@ -126,7 +126,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                 if (expiry == null || expiry < DateTime.Now)
                     throw new SecurityTokenException(SecurityTokenExceptionType.TokenExpired, "Token expired");
                 else if (notBefore == null || Math.Abs(notBefore.Subtract(DateTime.Now).TotalMinutes) > 3)
-                    throw new SecurityTokenException(SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used");
+                    throw new SecurityTokenException(SecurityTokenExceptionType.NotYetValid, "Token cannot yet be used (issued in the future)");
             }
             this.RefreshToken = refreshToken;
 

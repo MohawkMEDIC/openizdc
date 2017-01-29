@@ -71,14 +71,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient UpdatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToUpdate)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-            var pservice = ApplicationContext.Current.GetService<IPatchService>();
-
-            // We want to figure out what really changed
-            var existing = repository.Get(patientToUpdate.Key.Value, Guid.Empty);
-            var patch = pservice.Diff(existing, patientToUpdate);
-            var differencePatient = pservice.Patch(patch, existing, true) as Patient;
             // Get all the acts if none were supplied, and all of the relationships if none were supplied
-            return repository.Save(differencePatient).GetLocked() as Patient;
+            return repository.Save(patientToUpdate).GetLocked() as Patient;
         }
 
         /// <summary>
