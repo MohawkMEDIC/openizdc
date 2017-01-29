@@ -22,187 +22,194 @@ using System.Security.Principal;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
-    /// <summary>
-    /// Represents an alert synchronization service
-    /// </summary>
-    public class AlertSynchronizationService : IDaemonService
-    {
+	/// <summary>
+	/// Represents an alert synchronization service
+	/// </summary>
+	public class AlertSynchronizationService : IDaemonService
+	{
 
-        // Cached credetials
-        private IPrincipal m_cachedCredential = null;
+		// Cached credetials
+		private IPrincipal m_cachedCredential = null;
 
-        // Tracer for alerts
-        private Tracer m_tracer = Tracer.GetTracer(typeof(AlertSynchronizationService));
+		// Tracer for alerts
+		private Tracer m_tracer = Tracer.GetTracer(typeof(AlertSynchronizationService));
 
-        // Running service
-        private bool m_isRunning = false;
+		// Running service
+		private bool m_isRunning = false;
 
-        // Configuration
-        private SynchronizationConfigurationSection m_configuration;
+		// Configuration
+		private SynchronizationConfigurationSection m_configuration;
 
-        // Security configuration
-        private SecurityConfigurationSection m_securityConfiguration;
+		// Security configuration
+		private SecurityConfigurationSection m_securityConfiguration;
 
-        // Alert repository
-        private IAlertRepositoryService m_alertRepository;
+		// Alert repository
+		private IAlertRepositoryService m_alertRepository;
 
-        /// <summary>
-        /// True when the service is running
-        /// </summary>
-        public bool IsRunning
-        {
-            get
-            {
-                return this.m_isRunning;
-            }
-        }
+		/// <summary>
+		/// True when the service is running
+		/// </summary>
+		public bool IsRunning
+		{
+			get
+			{
+				return this.m_isRunning;
+			}
+		}
 
-        public event EventHandler Started;
-        public event EventHandler Starting;
-        public event EventHandler Stopped;
-        public event EventHandler Stopping;
+		public event EventHandler Started;
+		public event EventHandler Starting;
+		public event EventHandler Stopped;
+		public event EventHandler Stopping;
 
-        /// <summary>
-        /// Gets current credentials
-        /// </summary>
-        private Credentials GetCredentials(IRestClient client)
-        {
-            var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+		/// <summary>
+		/// Gets current credentials
+		/// </summary>
+		private Credentials GetCredentials(IRestClient client)
+		{
+			var appConfig = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
-            AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
+			AuthenticationContext.Current = new AuthenticationContext(this.m_cachedCredential ?? AuthenticationContext.Current.Principal);
 
-            // TODO: Clean this up - Login as device account
-            if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
-                ((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
-                AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
-            this.m_cachedCredential = AuthenticationContext.Current.Principal;
-            return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
-        }
+			// TODO: Clean this up - Login as device account
+			if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated ||
+				((AuthenticationContext.Current.Principal as ClaimsPrincipal)?.FindClaim(ClaimTypes.Expiration)?.AsDateTime().ToLocalTime() ?? DateTime.MinValue) < DateTime.Now)
+				AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticate(appConfig.DeviceName, appConfig.DeviceSecret));
+			this.m_cachedCredential = AuthenticationContext.Current.Principal;
+			return client.Description.Binding.Security.CredentialProvider.GetCredentials(AuthenticationContext.Current.Principal);
+		}
 
-        /// <summary>
-        /// Start the daemon service
-        /// </summary>
-        public bool Start()
-        {
-            this.Starting?.Invoke(this, EventArgs.Empty);
+		/// <summary>
+		/// Start the daemon service
+		/// </summary>
+		public bool Start()
+		{
+			this.Starting?.Invoke(this, EventArgs.Empty);
 
-            this.m_configuration = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
-            this.m_securityConfiguration = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+			this.m_configuration = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
+			this.m_securityConfiguration = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
 
-            // Application context has started
-            ApplicationContext.Current.Started += (o, e) =>
-            {
-                try
-                {
-                    // We are to poll for alerts always (never push supported)
-                    TimeSpan pollInterval = this.m_configuration.PollInterval ?? new TimeSpan(0, 10, 0);
-                    this.m_alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                    Action<Object> pollAction = null;
-                    pollAction = x =>
-                    {
-                        try
-                        {
-                            var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
-                            amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                        // Pull from alerts
-                        if (!this.m_isRunning) return;
+			// Application context has started
+			ApplicationContext.Current.Started += (o, e) =>
+			{
+				try
+				{
+					// We are to poll for alerts always (never push supported)
+					TimeSpan pollInterval = this.m_configuration.PollInterval ?? new TimeSpan(0, 10, 0);
+					this.m_alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+					Action<Object> pollAction = null;
+					pollAction = x =>
+					{
+						try
+						{
+							var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+							amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+							// Pull from alerts
+							if (!this.m_isRunning) return;
 
-                        // When was the last time we polled an alert?
-                        DateTimeOffset? lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage)).GetValueOrDefault();
+							// When was the last time we polled an alert?
+							var lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage));
 
-                        // Poll action for all alerts to "everyone"
-                        AmiCollection<AlertMessageInfo> serverAlerts = amiClient.GetAlerts(a => a.CreationTime >= lastTime && a.To.Contains("everyone"));
+							DateTimeOffset? syncTime = null;
+
+							if (lastTime.HasValue)
+							{
+								syncTime = new DateTimeOffset(lastTime.Value);
+							}
+
+							// Poll action for all alerts to "everyone"
+							AmiCollection<AlertMessageInfo> serverAlerts = amiClient.GetAlerts(a => a.CreationTime >= lastTime && a.To.Contains("everyone"));
 
 
-                        // TODO: We need to filter by users in which this tablet will be interested in
+							// TODO: We need to filter by users in which this tablet will be interested in
 
-                        ParameterExpression userParameter = Expression.Parameter(typeof(SecurityUser), "u");
-                        // User name filter
-                        Expression userNameFilter = Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(this.m_securityConfiguration.DeviceName));
+							ParameterExpression userParameter = Expression.Parameter(typeof(SecurityUser), "u");
+							// User name filter
+							Expression userNameFilter = Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(this.m_securityConfiguration.DeviceName));
 
-                        // Or eith other users which have logged into this tablet
-                        foreach (var user in ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Query(u => u.LastLoginTime != null && u.UserName != this.m_securityConfiguration.DeviceName))
-                                userNameFilter = Expression.OrElse(userNameFilter,
-                                    Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(user.UserName))
-                                    );
+							// Or eith other users which have logged into this tablet
+							foreach (var user in ApplicationContext.Current.GetService<IDataPersistenceService<SecurityUser>>().Query(u => u.LastLoginTime != null && u.UserName != this.m_securityConfiguration.DeviceName))
+								userNameFilter = Expression.OrElse(userNameFilter,
+									Expression.Equal(Expression.MakeMemberAccess(userParameter, userParameter.Type.GetRuntimeProperty("UserName")), Expression.Constant(user.UserName))
+									);
 
-                            ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
-                            Expression timeExpression = Expression.GreaterThanOrEqual(
-                                Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
-                                Expression.Constant(lastTime)
-                            ),
-                            // this tablet expression
-                            userExpression = Expression.Call(
-                                (MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(SecurityUser) }, new Type[] { typeof(IEnumerable<SecurityUser>), typeof(Func<SecurityUser, bool>) }),
-                                Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("RcptTo")),
-                                Expression.Lambda<Func<SecurityUser, bool>>(userNameFilter, userParameter));
+							ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
+							Expression timeExpression = Expression.GreaterThanOrEqual(
+								Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
+								Expression.Constant(syncTime)
+							),
+							// this tablet expression
+							userExpression = Expression.Call(
+								(MethodInfo)typeof(Enumerable).GetGenericMethod("Any", new Type[] { typeof(SecurityUser) }, new Type[] { typeof(IEnumerable<SecurityUser>), typeof(Func<SecurityUser, bool>) }),
+								Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("RcptTo")),
+								Expression.Lambda<Func<SecurityUser, bool>>(userNameFilter, userParameter));
 
-                            serverAlerts.CollectionItem = serverAlerts.CollectionItem.Union(amiClient.GetAlerts(Expression.Lambda<Func<AlertMessage, bool>>(Expression.AndAlso(timeExpression, userExpression), parmExpr)).CollectionItem).ToList();
+							serverAlerts.CollectionItem = serverAlerts.CollectionItem.Union(amiClient.GetAlerts(Expression.Lambda<Func<AlertMessage, bool>>(Expression.AndAlso(timeExpression, userExpression), parmExpr)).CollectionItem).ToList();
 
-                        // Import the alerts
-                        foreach (var itm in serverAlerts.CollectionItem)
-                            {
-                                this.m_tracer.TraceVerbose("Importing ALERT: [{0}]: {1}", itm.AlertMessage.TimeStamp, itm.AlertMessage.Subject);
-                                itm.AlertMessage.Body = String.Format("<pre>{0}</pre>", itm.AlertMessage.Body);
-                                this.m_alertRepository.BroadcastAlert(itm.AlertMessage);
-                            }
+							// Import the alerts
+							foreach (var itm in serverAlerts.CollectionItem)
+							{
+								this.m_tracer.TraceVerbose("Importing ALERT: [{0}]: {1}", itm.AlertMessage.TimeStamp, itm.AlertMessage.Subject);
+								itm.AlertMessage.Body = String.Format("<pre>{0}</pre>", itm.AlertMessage.Body);
+								this.m_alertRepository.BroadcastAlert(itm.AlertMessage);
+							}
 
-                        // Push alerts which I have created or updated
-                        //int tc = 0;
-                        //foreach(var itm in this.m_alertRepository.Find(a=> (a.TimeStamp >= lastTime ) && a.Flags != AlertMessageFlags.System, 0, null, out tc))
-                        //{
-                        //    if (!String.IsNullOrEmpty(itm.To))
-                        //    {
-                        //        this.m_tracer.TraceVerbose("Sending ALERT: [{0}]: {1}", itm.TimeStamp, itm.Subject);
-                        //        if (itm.UpdatedTime != null)
-                        //            amiClient.UpdateAlert(itm.Key.ToString(), new AlertMessageInfo(itm));
-                        //        else
-                        //            amiClient.CreateAlert(new AlertMessageInfo(itm));
-                        //    }
-                        //}
+							// Push alerts which I have created or updated
+							//int tc = 0;
+							//foreach(var itm in this.m_alertRepository.Find(a=> (a.TimeStamp >= lastTime ) && a.Flags != AlertMessageFlags.System, 0, null, out tc))
+							//{
+							//    if (!String.IsNullOrEmpty(itm.To))
+							//    {
+							//        this.m_tracer.TraceVerbose("Sending ALERT: [{0}]: {1}", itm.TimeStamp, itm.Subject);
+							//        if (itm.UpdatedTime != null)
+							//            amiClient.UpdateAlert(itm.Key.ToString(), new AlertMessageInfo(itm));
+							//        else
+							//            amiClient.CreateAlert(new AlertMessageInfo(itm));
+							//    }
+							//}
 
-                        SynchronizationLog.Current.Save(typeof(AlertMessage), null, null);
-                        }
-                        catch (Exception ex)
-                        {
-                            this.m_tracer.TraceError("Could not pull alerts: {0}", ex);
-                        }
-                        finally
-                        {
-                        // Re-schedule myself in the poll interval time
-                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
-                        }
-                    };
+							SynchronizationLog.Current.Save(typeof(AlertMessage), null, null);
+						}
+						catch (Exception ex)
+						{
+							this.m_tracer.TraceError("Could not pull alerts: {0}", ex);
+						}
+						finally
+						{
+							// Re-schedule myself in the poll interval time
+							ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
+						}
+					};
 
-                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
-                    this.m_isRunning = true;
+					ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
+					this.m_isRunning = true;
 
-                    pollAction(null);
-                }
-                catch(Exception ex)
-                {
-                    this.m_tracer.TraceError("Error starting Alert Sync: {0}", ex);
-                }
-                //this.m_alertRepository.Committed += 
-            };
+					pollAction(null);
+				}
+				catch (Exception ex)
+				{
+					this.m_tracer.TraceError("Error starting Alert Sync: {0}", ex);
+				}
+				//this.m_alertRepository.Committed += 
+			};
 
-            this.Started?.Invoke(this, EventArgs.Empty);
+			this.Started?.Invoke(this, EventArgs.Empty);
 
-            return true;
-        }
+			return true;
+		}
 
-        /// <summary>
-        /// Stop the service
-        /// </summary>
-        public bool Stop()
-        {
-            this.Stopping?.Invoke(this, EventArgs.Empty);
+		/// <summary>
+		/// Stop the service
+		/// </summary>
+		public bool Stop()
+		{
+			this.Stopping?.Invoke(this, EventArgs.Empty);
 
-            this.m_isRunning = false;
+			this.m_isRunning = false;
 
-            this.Stopped?.Invoke(this, EventArgs.Empty);
+			this.Stopped?.Invoke(this, EventArgs.Empty);
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 }

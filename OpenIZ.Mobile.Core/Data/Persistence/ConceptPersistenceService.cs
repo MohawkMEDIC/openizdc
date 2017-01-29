@@ -87,16 +87,24 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (retVal.ConceptSetsXml != null)
                 foreach (var r in retVal.ConceptSetsXml)
                 {
-                    if (context.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == r.ToByteArray() &&
-                     o.ConceptUuid == retVal.Key.Value.ToByteArray()).Any())
+					// HACK: SQL lite has decided that there is no such function as "ToByteArray()"
+					var conceptSetUuid = r.ToByteArray();
+					var conceptUuid = retVal.Key.Value.ToByteArray();
+
+                    if (context.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == conceptSetUuid &&
+                     o.ConceptUuid == conceptUuid).Any())
                         continue;
-                    else
-                        context.Insert(new DbConceptSetConceptAssociation()
-                        {
-                            Uuid = Guid.NewGuid().ToByteArray(),
-                            ConceptSetUuid = r.ToByteArray(),
-                            ConceptUuid = retVal.Key.Value.ToByteArray()
-                        });
+					else
+					{
+						// HACK: SQL lite has decided that there is no such function as "ToByteArray()"
+						var key = Guid.NewGuid().ToByteArray();
+						context.Insert(new DbConceptSetConceptAssociation()
+						{
+							Uuid = key,
+							ConceptSetUuid = conceptSetUuid,
+							ConceptUuid = conceptUuid
+						});
+					}
                 }
 
             return retVal;
