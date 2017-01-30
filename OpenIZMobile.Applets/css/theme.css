@@ -404,6 +404,9 @@ body{
 .no-margin-all{
     margin:0;
 }
+.no-margin-top{
+    margin-top:0;
+}
 .no-margin-left{
     margin-left:0;
 }
@@ -427,6 +430,9 @@ body{
 }
 .padding-right-10{
     padding-right: 10px;
+}
+.padding-left-10{
+    padding-left:10px;
 }
 .padding-left-30{
     padding-left: 30px;
