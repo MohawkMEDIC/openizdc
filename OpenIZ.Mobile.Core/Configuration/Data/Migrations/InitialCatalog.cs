@@ -95,6 +95,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     tracer.TraceInfo("Installing Extensibility Tables...");
                     db.CreateTable<DbActExtension>();
                     db.CreateTable<DbActNote>();
+                    db.CreateTable<DbActProtocol>();
                     db.CreateTable<DbEntityExtension>();
                     db.CreateTable<DbEntityNote>();
                     db.CreateTable<DbExtensionType>();

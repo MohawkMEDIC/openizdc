@@ -173,7 +173,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (cacheItem == null)
             {
                 cacheItem = this.ToModelInstance(o, context, loadFast);
-                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
+                if(!context.IsInTransaction)
+                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
             return cacheItem;
         }

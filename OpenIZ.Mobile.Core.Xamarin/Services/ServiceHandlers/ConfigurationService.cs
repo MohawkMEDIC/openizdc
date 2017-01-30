@@ -262,8 +262,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
-                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[PrimaryInformationRecipient].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Place":
                                         if (syncSetting.Filters.Count == 0)

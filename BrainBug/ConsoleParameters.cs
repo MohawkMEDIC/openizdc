@@ -44,6 +44,13 @@ namespace BrainBug
         }
 
         /// <summary>
+        /// Gets or sets the device id
+        /// </summary>
+        [Parameter("d")]
+        [Parameter("device")]
+        public String DeviceId { get; set; }
+
+        /// <summary>
         /// Shows help
         /// </summary>
         [Parameter("help")]

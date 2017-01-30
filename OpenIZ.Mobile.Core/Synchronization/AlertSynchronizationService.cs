@@ -181,7 +181,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 						}
 					};
 
-					ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
+					//ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(pollInterval, pollAction, null);
 					this.m_isRunning = true;
 
 					pollAction(null);

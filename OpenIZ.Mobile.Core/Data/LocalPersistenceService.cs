@@ -92,8 +92,8 @@ namespace OpenIZ.Mobile.Core.Data
                     pi.GetCustomAttributes<AutoLoadAttribute>().Count(p => p.ClassCode == classValue || p.ClassCode == null) == 0)
                     continue;
 
-                if (pi.Name == "ConceptNames")
-                    System.Diagnostics.Debugger.Break();
+                //if (pi.Name == "ConceptNames")
+                //    System.Diagnostics.Debugger.Break();
                 var value = pi.GetValue(me);
                 if (value == null)
                 {

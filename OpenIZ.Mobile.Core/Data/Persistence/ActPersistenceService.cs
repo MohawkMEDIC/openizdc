@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 retVal.Template = m_mapper.MapDomainInstance<DbTemplateDefinition, TemplateDefinition>(context.Get<DbTemplateDefinition>(dbInstance.TemplateUuid), true);
 
             // Has this been updated? If so, minimal information about the previous version is available
-            if(dbInstance.UpdatedTime != null)
+            if (dbInstance.UpdatedTime != null)
             {
                 retVal.CreationTime = (DateTimeOffset)dbInstance.UpdatedTime;
                 retVal.CreatedByKey = dbInstance.UpdatedByKey;
@@ -97,34 +97,34 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 case SubstanceAdministration:
                     return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
                 case Observation:
-		            var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
+                    var dbObs = context.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
 
-		            if (dbObs == null)
-		            {
-						return base.ToModelInstance(dataInstance, context, loadFast);
-					}
+                    if (dbObs == null)
+                    {
+                        return base.ToModelInstance(dataInstance, context, loadFast);
+                    }
 
-                    switch(dbObs.ValueType)
+                    switch (dbObs.ValueType)
                     {
                         case "ST":
                             return new TextObservationPersistenceService().ToModelInstance(
-                                context.Table<DbTextObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
-                                dbAct, 
-                                dbObs, 
-                                context, 
+                                context.Table<DbTextObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
+                                dbAct,
+                                dbObs,
+                                context,
                                 loadFast);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
-                                context.Table<DbCodedObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
-                                dbAct, 
-                                dbObs, 
-                                context, 
+                                context.Table<DbCodedObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
+                                dbAct,
+                                dbObs,
+                                context,
                                 loadFast);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
-                                context.Table<DbQuantityObservation>().Where(o=>o.Uuid == dbObs.Uuid).First(),
-                                dbAct, 
-                                dbObs, 
+                                context.Table<DbQuantityObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
+                                dbAct,
+                                dbObs,
                                 context,
                                 loadFast);
                         default:
@@ -157,12 +157,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         internal Act InsertInternal(SQLiteConnectionWithLock context, Act data)
         {
-            
-            if(data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
-            if(data.MoodConcept != null) data.MoodConcept = data.MoodConcept.EnsureExists(context);
-            if(data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
-            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
-            if(data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept.EnsureExists(context);
+            if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
@@ -215,6 +215,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     retVal.Key,
                     context);
 
+            if (retVal.Protocols != null)
+                base.UpdateAssociatedItems<ActProtocol, Act>(
+                    new List<ActProtocol>(),
+                    retVal.Protocols,
+                    retVal.Key,
+
+                    context);
             return retVal;
         }
 
@@ -255,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (retVal.Extensions != null)
                 base.UpdateAssociatedItems<ActExtension, Act>(
-                    context.Table<DbActExtension>().Where(a=>ruuid == a.ActUuid).ToList().Select(o=>m_mapper.MapDomainInstance<DbActExtension, ActExtension>(o)).ToList(),
+                    context.Table<DbActExtension>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActExtension, ActExtension>(o)).ToList(),
                     retVal.Extensions,
                     retVal.Key,
                     context);
@@ -292,6 +299,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 base.UpdateAssociatedItems<ActTag, Act>(
                     context.Table<DbActTag>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActTag, ActTag>(o)).ToList(),
                     retVal.Tags,
+                    retVal.Key,
+                    context);
+
+
+            if (retVal.Protocols != null)
+                base.UpdateAssociatedItems<ActProtocol, Act>(
+                    context.Table<DbActProtocol>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActProtocol, ActProtocol>(o)).ToList(),
+                    retVal.Protocols,
                     retVal.Key,
                     context);
 
@@ -338,7 +353,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     return this.InsertInternal(context, data);
 
             }
-            
+
         }
 
         /// <summary>

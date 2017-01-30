@@ -140,7 +140,6 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         public void AddUpdateEntry(object data)
         {
-
             
             // Throw if disposed
             this.ThrowIfDisposed();
@@ -159,8 +158,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key, out entry))
                     lock (this.m_lock)
                     {
-                        entry.Data =  data;
-                        entry.LastUpdateTime = DateTime.Now.Ticks;
+                        entry.Update(data);
                     }
                 else
                     lock (this.m_lock)
@@ -420,21 +418,21 @@ namespace OpenIZ.Mobile.Core.Caching
             }
             else
             {
-                this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
-                //var idData = data as IIdentifiedEntity;
-                //var objData = data.GetType();
+                //this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
+                var idData = data as IIdentifiedEntity;
+                var objData = data.GetType();
 
-                //Dictionary<Guid, CacheEntry> cache = null;
-                //if (this.m_entryTable.TryGetValue(objData, out cache))
-                //{
-                //    Guid key = idData?.Key ?? Guid.Empty;
-                //    if (cache.ContainsKey(key))
-                //        lock (this.m_lock)
-                //        {
-                //            cache[key].Update(data);
-                //        }
-                //    //cache.Remove(key);
-                //}
+                Dictionary<Guid, CacheEntry> cache = null;
+                if (this.m_entryTable.TryGetValue(objData, out cache))
+                {
+                    Guid key = idData?.Key ?? Guid.Empty;
+                    if (cache.ContainsKey(key))
+                        lock (this.m_lock)
+                        {
+                            cache[key].Update(data);
+                        }
+                    //cache.Remove(key);
+                }
             }
         }
 

@@ -46,6 +46,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
             data = breService?.BeforeInsert(data) ?? data;
+
 			data = persistence.Insert(data);
             breService?.AfterInsert(data) ;
 

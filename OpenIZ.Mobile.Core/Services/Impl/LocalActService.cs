@@ -245,7 +245,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
             // Set location if not done
             if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation|| o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
-                data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.Key));
+                data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.TargetEntityKey));
 
             return data;
 		}

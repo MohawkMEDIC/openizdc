@@ -198,11 +198,12 @@ namespace OpenIZ.Mobile.Core.Protocol
             ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((d) =>
             {
                 var act = d as Act;
+
                 // First step, we delete all acts in the warehouse for the specified patient in the protocol
                 var patientId = act.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget)?.PlayerEntityKey;
                 if (patientId == null)
                 {
-                    this.m_tracer.TraceError("Cannot update care plan for act as it seems to have no RecordTarget");
+                    this.m_tracer.TraceWarning("Cannot update care plan for act as it seems to have no RecordTarget");
                     return;
                 }
 
@@ -213,8 +214,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                     var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
                     var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
                     var dataMart = warehouseService.GetDatamart("oizcp");
-                    var patient = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient;
-                    patient.Participations = new List<ActParticipation>(patient.Participations);
+                    var patient = this.EnsureParticipations(ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient);
+                     
 
                     // Is there a protocol for this act?
                     if (act.Protocols.Count() == 0)
@@ -299,8 +300,9 @@ namespace OpenIZ.Mobile.Core.Protocol
                             else this.m_actCarePlanPromise.Add(data.Key.Value);
                         }
 
-                    data.Participations = new List<ActParticipation>(data.Participations);
+
                     this.m_tracer.TraceVerbose("Calculating care plan for {0}", data.Key);
+                    data = this.EnsureParticipations(data);
 
                     // First, we clear the warehouse
                     var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
@@ -340,6 +342,23 @@ namespace OpenIZ.Mobile.Core.Protocol
                 }
 
             }, p.Clone());
+        }
+
+        /// <summary>
+        /// Ensure participations are loaded
+        /// </summary>
+        private Patient EnsureParticipations(Patient patient)
+        {
+            patient = patient.Clone() as Patient;
+            var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+            int tr = 0;
+            IEnumerable<Act> acts = null;
+            Guid searchState = Guid.Empty;
+
+            acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == patient.Key), 0, 200, out tr);
+
+            patient.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, patient) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
+            return patient;
         }
 
         /// <summary>

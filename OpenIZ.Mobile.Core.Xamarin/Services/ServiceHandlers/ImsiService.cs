@@ -268,8 +268,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Load the data from the template string
             var retVal = this.m_serializer.DeSerialize<Act>(templateString);
             retVal.Key = Guid.NewGuid();
-            foreach (var itm in retVal.Participations) itm.Key = Guid.NewGuid();
-            foreach (var itm in retVal.Relationships) itm.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Participations)
+                itm.Key = Guid.NewGuid();
+            foreach (var itm in retVal.Relationships)
+                itm.Key = Guid.NewGuid();
             foreach (var itm in retVal.Participations.Where(o => o.PlayerEntityKey == AuthenticationContext.Current.Session.UserEntity.Key))
                 itm.PlayerEntity = AuthenticationContext.Current.Session.UserEntity;
             // Delayload

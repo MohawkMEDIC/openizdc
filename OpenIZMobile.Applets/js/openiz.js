@@ -171,6 +171,7 @@ var OpenIZ = OpenIZ || {
             fulfills.statusConcept = OpenIZModel.StatusKeys.Active;
             fulfills.statusConceptModel = null;
             fulfills.etag = null;
+            //fulfills.protocol = act.protocol;
             // Add fulfillment relationship
             fulfills.relationship = fulfills.relationship || {};
             fulfills.relationship.Fulfills = new OpenIZModel.ActRelationship();

@@ -70,6 +70,7 @@ namespace OpenIZ.Mobile.Core.Data
         {
             this.m_tracer = Tracer.GetTracer(this.GetType());
         }
+
         #region IDataPersistenceService implementation
         /// <summary>
         /// Occurs when inserted.

@@ -18,6 +18,7 @@
  * Date: 2016-7-30
  */
 using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
@@ -352,32 +353,40 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                             this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
 
                             // First, let's grab the item
-                            var serverCopy = this.Get(patch.AppliesTo.GetType(), patch.AppliesTo.Key.Value, null);
+                            var serverCopy = this.Get(patch.AppliesTo.Type, patch.AppliesTo.Key.Value, null);
                             // Condition 1: Can we apply the patch without causing any issues (ignoring version)
-                            client.Client.Requesting += (o, evt) => evt.AdditionalHeaders["X-Patch-Force"] = "true";
+                            client.Client.Requesting += (o, evt) =>
+                            {
+                                evt.AdditionalHeaders["X-Patch-Force"] = "true";
+                            };
+
                             if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
                                 newUuid = client.Patch(patch);
                             else
                             {
                                 // There are no intersections of properties between the object we have and the server copy
                                 var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
-                                if(!serverDiff.Operation.Any(sd=>patch.Operation.Any(po=>po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                if (!serverDiff.Operation.Any(sd => patch.Operation.Any(po => po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
                                     newUuid = client.Patch(patch);
+                                else
+                                    throw;
                             }
 
                         }
 
-                        // Update the server version key
-                        if (existing is IVersionedEntity &&
-                            (existing as IVersionedEntity)?.VersionKey != newUuid)
-                        {
-                            this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
-                            (existing as IVersionedEntity).VersionKey = newUuid;
-                            var updateMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
-                            updateMethod.Invoke(idpService, new object[] { existing });
-                        }
-
                     }
+
+
+                    // Update the server version key
+                    if (existing is IVersionedEntity &&
+                        (existing as IVersionedEntity)?.VersionKey != newUuid)
+                    {
+                        this.m_tracer.TraceVerbose("Patch successful - VersionId of {0} to {1}", existing, newUuid);
+                        (existing as IVersionedEntity).VersionKey = newUuid;
+                        var updateMethod = idp.GetRuntimeMethod("Update", new Type[] { getMethod.ReturnType });
+                        updateMethod.Invoke(idpService, new object[] { existing });
+                    }
+
                 }
                 else // regular update 
                 {

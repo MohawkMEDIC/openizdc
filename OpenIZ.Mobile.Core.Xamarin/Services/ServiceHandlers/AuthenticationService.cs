@@ -81,14 +81,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public SecurityUser UpdateSecurityUser([RestMessage(RestMessageFormat.SimpleJson)] SecurityUser user)
         {
             var localSecSrv = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-            var amiServ = ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-            var remoteUser = amiServ.Get<SecurityUser>(user.Key.Value, null);
-            remoteUser.Email = user.Email;
-            remoteUser.PhoneNumber = user.PhoneNumber;
+            var amiServ = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+            
+            // Session
+            amiServ.Client.Credentials = new TokenCredentials(AuthenticationContext.Current.Principal);
+            var remoteUser = amiServ.GetUser(user.Key.ToString());
+            remoteUser.User.Email = user.Email;
+            remoteUser.User.PhoneNumber = user.PhoneNumber;
             // Save the remote user in the local
-            localSecSrv.SaveUser(remoteUser);
-            amiServ.Update(remoteUser, true);
-            return remoteUser;
+            localSecSrv.SaveUser(remoteUser.User);
+            amiServ.UpdateUser(remoteUser.UserId.Value, remoteUser);
+            return remoteUser.User;
         }
 
         /// <summary>

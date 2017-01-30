@@ -44,7 +44,9 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
         delete userEntity.telecom[telKey];
         
         // When we update the facility we clear the model properties
-        userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel = null;
+        if (userEntity.relationship &&
+            userEntity.relationship.DedicatedServiceDeliveryLocation)
+            delete (userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel);
         userEntity.securityUser = $rootScope.session.user.id;
         userEntity.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 

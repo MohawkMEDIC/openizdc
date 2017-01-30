@@ -70,6 +70,12 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         [Column("assigningDevice")]
         public byte[] AssigningDeviceUuid { get; set; }
 
+        /// <summary>
+        /// Validation regex
+        /// </summary>
+        [Column("val_rgx")]
+        public String ValidationRegex { get; set; }
+
     }
 
 
