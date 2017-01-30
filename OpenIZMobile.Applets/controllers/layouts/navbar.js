@@ -89,4 +89,12 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
     };
     setTimeout($scope.checkMessages, 30000);
     $scope.checkMessages();
+    /**
+     * Window resize event handling
+     */
+    $scope.$watch(function () {
+        return window.innerWidth;
+    }, function (value) {
+        $scope.windowWidth = value;
+    });
 }]);

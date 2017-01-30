@@ -145,7 +145,7 @@
     <string key="locale.action.search">Search</string>
 
     <!-- Alerts -->
-    <string key="locale.alerts.noneSelected">No Alert Selected</string>
+    <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
     <string key="locale.alerts.details">Details</string>
     <string key="locale.alerts.alerts">Alerts</string>
     <string key="locale.alert.updateSuccessful">Update Successful</string>
