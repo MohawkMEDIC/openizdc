@@ -30,7 +30,7 @@
     </oiz:state>
     <div class="text-center">{{ 'locale.security.login.helpText' | i18n }}</div>
     <!-- #include virtual="~/views/common/security/forgotPassword.html" -->
-    <form ng-controller="LoginPartController" novalidate="novalidate" name="loginForm" class="form" ng-submit="login(loginForm, username, password)">
+    <form ng-controller="LoginPartController" novalidate="novalidate" name="loginForm" class="form" ng-submit="login(loginForm, username, password)" autocomplete="off">
         <!-- #include virtual="~/views/common/security/authenticate.html" -->
         <div class="row">
             <div class="col-xs-12">

@@ -33,8 +33,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
-                    <button type="submit" class="btn btn-primary">{{ 'locale.security.login.button.login' | i18n }}</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove">
+                        </span>
+                        {{ 'locale.action.cancel' | i18n }}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        {{ 'locale.security.login.button.login' | i18n }}
+                    </button>
                 </div>
             </form>
         </div>
