@@ -6,6 +6,7 @@
   "moodConcept": "e658ca72-3b6a-4099-ab6e-7cf6861a5b61",
   "classConcept": "a064984f-9847-4480-8bea-dddf64b3c77c",
   "statusConcept": "c8064cbd-fa06-4530-b430-1a52f1530c27",
+  "typeConcept": "14d69b32-f6c4-4a49-a527-a74893dbcf4a",
   "actTime": "{{now}}",
   "participation": {
     "Location": {
@@ -18,6 +19,6 @@
       "statusConcept": "C8064CBD-FA06-4530-B430-1A52F1530C27",
       "player": "{{userEntityId}}"
     },
-    "Product": [ ]
+    "Product": []
   }
 }
