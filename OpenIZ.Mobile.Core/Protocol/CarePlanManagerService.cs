@@ -102,7 +102,10 @@ namespace OpenIZ.Mobile.Core.Protocol
                     // Warehouse service
                     this.m_warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
                     foreach (var cp in ApplicationContext.Current.GetService<ICarePlanService>().Protocols)
+                    {
+                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_starting, cp.Name), 0);
                         this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
+                    }
                     // Deploy schema?
                     if (this.m_warehouseService.GetDatamart("oizcp") == null)
                     {

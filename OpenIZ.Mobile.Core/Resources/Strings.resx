@@ -194,4 +194,7 @@ Sincerely,
   <data name="locale_welcomeMessageSubject" xml:space="preserve">
     <value>Welcome to OpenIZ Disconnected Client Core!</value>
   </data>
+  <data name="locale_starting" xml:space="preserve">
+    <value>Loading protocol {0}...</value>
+  </data>
 </root>

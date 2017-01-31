@@ -75,10 +75,12 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                             "timeout": 2000
                         };
 
-                        if (nmsg == 1)
-                            toastr.success(d[0].subject + "...", d[0].from, alertOptions);
-                        else
-                            toastr.success(OpenIZ.Localization.getString("locale.alerts.newAlerts"), alertOptions);
+                        if ($scope.messages) {
+                            if (nmsg == 1)
+                                toastr.success(d[0].subject + "...", d[0].from, alertOptions);
+                            else
+                                toastr.success(OpenIZ.Localization.getString("locale.alerts.newAlerts"), alertOptions);
+                        }
                         $scope.messages = d;
                         $scope.$apply();
                     }

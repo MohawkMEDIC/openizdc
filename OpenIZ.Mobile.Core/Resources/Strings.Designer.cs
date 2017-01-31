@@ -226,6 +226,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading protocol {0}....
+        /// </summary>
+        internal static string locale_starting {
+            get {
+                return ResourceManager.GetString("locale_starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Initiating pull request....
         /// </summary>
         internal static string locale_startingPoll {
