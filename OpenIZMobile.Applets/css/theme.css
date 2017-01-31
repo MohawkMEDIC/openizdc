@@ -456,6 +456,9 @@ body{
 .padding-left-30{
     padding-left: 30px;
 }
+.no-border-all{
+    border:none !important;
+}
 .margin-15{
     margin:15px;
 }
