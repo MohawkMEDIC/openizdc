@@ -29,8 +29,9 @@
     
     <div class="row">
         <div class="col-portrait-12 col-sm-5 padding-10 padding-top-15 no-padding-right" ng-class="{'hidden-portrait' : selectedMessageID != null}">
+            <h3 class="no-margin-top padding-left-10">{{ 'locale.alerts.alerts' | i18n }}</h3>
             <div ng-repeat="message in messages" 
-                 class="alerts-tile row no-margin-left no-margin-right" 
+                 class="alerts-tile row no-margin-left no-margin-right-landscape margin-right-10-portrait" 
                  ui-sref="org-openiz-core.alert({alertId: message.id})"
                  ng-class="{'alerts-tile-selected' : message.id == selectedMessageID}">
                 <div class="col-xs-2 alerts-icon-container">
@@ -47,21 +48,27 @@
                 <div class="col-xs-12">{{ 'locale.alerts.noalerts' | i18n }}</div>
             </div>
         </div>
+
         <div class="hidden-xs col-sm-7 padding-10 padding-top-15" ng-class="{'force-show full-width-portrait' : selectedMessageID != null}">
-            <div class="message-content-tile">
-                <div class="message-button-bar">
+            <h3 class="no-margin-top padding-left-10">{{ 'locale.alerts.details' | i18n }}</h3>
+            <div class="message-content-tile" ng-if="selectedMessageID == null" >
+                <div class="padding-10">{{ 'locale.alerts.noneSelected' | i18n }}</div>
+            </div>
+            <div class="message-content-tile" ng-if="selectedMessageID != null" >
+                <div class="message-button-bar row padding-top-5">
                     <button class="btn hidden-landscape" ng-click="closeMessage()">
-                        <span class="glyphicon glyphicon-trash"></span>
+                        <span class="glyphicon glyphicon-chevron-left"></span>
                         {{ 'locale.action.back' | i18n }}
                     </button>
-                    <button class="btn" ng-click="deleteAlert()">
-                        <span class="glyphicon glyphicon-trash"></span>
-                        {{ 'locale.action.delete' | i18n }}
-                    </button>
-                    <button class="btn" ng-click="updateAlert()">
+                    <button class="btn pull-right margin-left-5" ng-click="updateAlert(alert)">
                         <span class="glyphicon glyphicon-ok"></span>
                         {{ 'locale.action.acknowledge' | i18n }}
                     </button>
+                    <button class="btn pull-right" ng-click="deleteAlert(alert)">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        {{ 'locale.action.delete' | i18n }}
+                    </button>
+                    
                 </div>
 
                 <div class="row">

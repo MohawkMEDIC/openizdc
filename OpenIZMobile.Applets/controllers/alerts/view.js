@@ -25,7 +25,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/controllers/layouts/navbar.js"/>
 
-layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function ($scope, $stateParams)
+layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state', function ($scope, $stateParams, $state)
 {
     $scope.selectedMessageID = null;
 
@@ -120,5 +120,6 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
     function closeMessage() {
         $scope.selectedMessageID = null;
         delete $scope.alert;
+        $state.go('.', { alertId: undefined });
     }
 }]);

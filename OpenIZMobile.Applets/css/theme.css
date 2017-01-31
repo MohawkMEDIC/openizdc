@@ -7,6 +7,9 @@
     .hidden-landscape{
         display:none!important;
     }
+    .no-margin-right-landscape{
+        margin-right:0;
+    }
 }
 @media screen and (orientation:portrait) {
     .hidden-xs, .hidden-portrait {
@@ -17,6 +20,9 @@
     }
     .col-portrait-12{
         width:100% !important;
+    }
+    .margin-right-10-portrait{
+        margin-right:10px;
     }
 }
 .force-show{
@@ -32,6 +38,13 @@
 select{
     -webkit-appearance: none;
     -moz-appearance: none;
+}
+
+.pull-right{
+    float:right;
+}
+.pull-left{
+    float:left;
 }
 fieldset{
     margin-right:30px;
@@ -196,6 +209,9 @@ a.not-active {
     }
     .oiz-menu-text {
         display: inline
+    }
+    .navbar-collapse-small{
+
     }
 }
 
@@ -404,6 +420,9 @@ body{
 .no-margin-all{
     margin:0;
 }
+.no-margin-top{
+    margin-top:0;
+}
 .no-margin-left{
     margin-left:0;
 }
@@ -419,6 +438,9 @@ body{
 .padding-bottom-10{
     padding-bottom:10px;
 }
+.padding-top-5{
+    padding-top: 5px;
+}
 .padding-top-10{
     padding-top: 10px;
 }
@@ -428,11 +450,17 @@ body{
 .padding-right-10{
     padding-right: 10px;
 }
+.padding-left-10{
+    padding-left:10px;
+}
 .padding-left-30{
     padding-left: 30px;
 }
 .margin-15{
     margin:15px;
+}
+.margin-left-5{
+    margin-left:5px;
 }
 .margin-left-100{
     margin-left:100px;

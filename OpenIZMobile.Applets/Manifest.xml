@@ -145,6 +145,9 @@
     <string key="locale.action.search">Search</string>
 
     <!-- Alerts -->
+    <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
+    <string key="locale.alerts.details">Details</string>
+    <string key="locale.alerts.alerts">Alerts</string>
     <string key="locale.alert.updateSuccessful">Update Successful</string>
     <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
 
@@ -175,6 +178,8 @@
     <string key="locale.forgotPassword.mechanism.title">Reset Method</string>
     <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
     <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
+    <string key="locale.forgotPassword.challenge.placeholder">Enter the secret code</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholder">Enter the first part of your e-mail</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
     <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
     <string key="locale.forgotPassword.challenge.resend">Send</string>
@@ -209,6 +214,7 @@
     <string key="locale.settings.dataTitle">Data Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
     <string key="locale.settings.dataMode">Data Mode:</string>
+    <string key="locale.settings.enableTracing">Enable Tracing</string>
     <string key="locale.settings.logTitle">Log Settings</string>
     <string key="locale.settings.logDescription">OpenIZ Disconnected Client keeps application log files which can be sent to a centralized diagnosis server in the case of application crash. Use this panel to configure the verbosity of those logs</string>
     <string key="locale.settings.logMode">Log Detail:</string>
@@ -233,6 +239,9 @@
     <string key="locale.settings.syncEvents.stop">When the application closes</string>
     <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
     <string key="locale.settings.syncEvents.ip">When the internet status changes</string>
+    <string key="locale.settings.pollEvent.start">Start</string>
+    <string key="locale.settings.pollEvent.network">Network</string>
+    <string key="locale.settings.pollEvent.commit">Commit</string>
     <string key="locale.settings.pollInterval">Enable Polling:</string>
     <string key="locale.settings.pollInterval.0">Never</string>
     <string key="locale.settings.pollInterval.1">Every 1 minute</string>
