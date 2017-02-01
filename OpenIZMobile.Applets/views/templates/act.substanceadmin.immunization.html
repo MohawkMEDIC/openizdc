@@ -96,7 +96,7 @@
                     <label>
                         {{ 'locale.encounters.protocolViolation.reason' | i18n }}
                     </label>
-                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                     </select>
                 </div>

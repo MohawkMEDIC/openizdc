@@ -51,7 +51,8 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </div>
                                     <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
-                                        <span class="glyphicon glyphicon glyphicon-th-large"></span>
+                                        {{ sequence.actTime | date: 'yyyy-MMM-dd' }}
+                                        <!--<span class="glyphicon glyphicon glyphicon-th-large"></span>-->
                                     </div>
                                 </div>
                                 <div ng-switch-when="099bcc5e-8e2f-4d50-b509-9f9d5bbeb58e" class="text-info">
@@ -62,14 +63,14 @@
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </div>
                                 </div>
-                                <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747" class="text-success">
-                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747">
+                                    <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-ok"></span> 
                                     </div>
-                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                    <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-tasks"></span> 
                                     </div>
-                                    <div class="text-warn" ng-if="sequence.negationInd">
+                                    <div class="text-danger" ng-if="sequence.isNegated">
                                         <span class="glyphicon glyphicon-question-sign"></span>
                                     </div>
                                 </div>
