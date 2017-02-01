@@ -54,7 +54,8 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     }
                 },
                 onException: function (ex) {
-                    OpenIZ.App.hideWait();
+                    //OpenIZ.App.hideWait('#loginButton');
+                    OpenIZ.App.hideWait('#loginButton');
 
 
                 if (typeof (ex) == "string")
@@ -65,7 +66,6 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     console.log(ex);
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait('#loginButton');
                 }
         });
     }; // scope.login
