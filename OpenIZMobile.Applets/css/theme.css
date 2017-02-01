@@ -118,6 +118,7 @@ fieldset{
 .tokenfield .token-input{
     margin-bottom: 0;
     height: initial;
+    width:auto !important;
 }
 
 .tokenfield .token .close{
@@ -576,8 +577,8 @@ body{
     background: white;
     border-radius: 15px;
     position: absolute;
-    right: 15px;
-    top: 15px;
+    right: 7px;
+    top: 7px;
     padding-top: 5px;
 }
 
