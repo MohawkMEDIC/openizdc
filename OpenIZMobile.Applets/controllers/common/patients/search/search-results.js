@@ -87,6 +87,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.isSearching = true;
+            $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
+
             OpenIZ.Patient.findAsync({
                 query: scope.search.query,
                 continueWith: function (r) {
@@ -107,6 +109,9 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 },
                 finally: function () {
                     scope.search.isSearching = false;
+                    //OpenIZ.App.hideWait(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton");
+                    $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+
 
                 }
             });
@@ -117,7 +122,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Advances to the next set of results
      */
     function next() {
-        OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
+        $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled', 'disabled');
+
         if (scope.search.paging.current == scope.search.paging.count)
             return;
 
@@ -138,7 +144,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+
             }
         });
     };
@@ -147,7 +154,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Goes to the previous page
      */
     function previous() {
-        OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
+        $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled', 'disabled');
+
         if (scope.search.paging.current == 1)
             return;
 
@@ -168,7 +176,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+
             }
         });
     };
@@ -177,7 +186,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Goes to the specific page
      */
     function goPage(pageNo) {
-        OpenIZ.App.showWait(OpenIZ.Localization.getString("locale.dialog.wait.text"));
+        $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled', 'disabled');
+
 
         // Current page increment
         scope.search.paging.current = pageNo;
@@ -196,7 +206,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+
             }
         });
     };
