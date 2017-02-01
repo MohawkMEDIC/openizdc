@@ -70,6 +70,9 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
+            <p ng-if="patientBackup.tag.hasBirthCertificate">
+                {{ 'locale.patient.demographics.dateOfBirth.hasBirthCertificate' | i18n }}
+            </p>
             <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid">
                 <span ng-show="editPatientForm.dateOfBirth.$error.required"
                    class="help-block text-danger">
@@ -164,6 +167,9 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="4" data-trigger="focus" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
+            <p ng-if="patientBackup.tag.hasBirthCertificate">
+                {{ 'locale.patient.demographics.gender.hasBirthCertificate' | i18n }}
+            </p>
             <p ng-show="(editPatientForm.gender.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>
