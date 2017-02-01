@@ -140,12 +140,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.m_threadPool.QueueUserWorkItem((state) =>
             {
 
-
-                try
+                bool initialSync = !SynchronizationLog.Current.GetAll().Any();
+                if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
                 {
-                    bool initialSync = !SynchronizationLog.Current.GetAll().Any();
-                    if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
+                    try
                     {
+
                         if (!this.m_integrationService.IsAvailable()) return;
 
                         int totalResults = 0;
@@ -164,18 +164,18 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
+
+
                     }
-
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Cannot process startup command: {0}", e);
+                    }
+                    finally
+                    {
+                        Monitor.Exit(this.m_lock);
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Cannot process startup command: {0}", e);
-                }
-                finally
-                {
-                    Monitor.Exit(this.m_lock);
-                }
-
             });
 
         }

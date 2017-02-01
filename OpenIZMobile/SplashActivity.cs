@@ -45,6 +45,7 @@ using OpenIZ.Mobile.Core;
 using System.IO.Compression;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Core.Xamarin;
 
 namespace OpenIZMobile
 {
@@ -89,10 +90,12 @@ namespace OpenIZMobile
             Task startupWork = new Task(() =>
             {
                 Task.Delay(1000);
-                if (!this.DoConfigure())
-                    ctSource.Cancel();
+                if(XamarinApplicationContext.Current == null)
+                    if (!this.DoConfigure())
+                        ctSource.Cancel();
             }, ct);
 
+            
             startupWork.ContinueWith(t =>
             {
                 if (!ct.IsCancellationRequested)

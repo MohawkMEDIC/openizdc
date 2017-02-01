@@ -344,6 +344,11 @@
     <string key="locale.alerts.newAlerts">New alerts</string>
   <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
+
+    <string key="invalid_grant">Can't login</string>
+    <string key="AUTH_INV">Invalid username or password</string>
+    <string key="AUTH_LCK">Account is locked</string>
+    <string key="AUTH_TFA">Account requires two-factor authentication</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
