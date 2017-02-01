@@ -119,7 +119,8 @@
     <string key="err_generalnull">A general error occurred. Please check the logs.</string>
     <!-- Encounters -->
     <string key="locale.encounters.overdue">Overdue</string>
-    
+    <string key="locale.encounters.addEntry">Add Entry</string>
+
     <!-- Actions -->
     <string key="locale.action.submit">Submit</string>
     <string key="locale.action.next">Next</string>
