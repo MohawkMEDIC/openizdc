@@ -38,6 +38,12 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
 
+    $scope.yellowcardLegend = [
+    { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
+    { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
+    { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
+    ];
+
     scope.$watch(function (s) { return s.encounters != undefined ? s.encounters.length : null; }, function (newValue, oldValue) {
         
         if (newValue != null && newValue != 0) {

@@ -684,7 +684,7 @@ var OpenIZ = OpenIZ || {
                     var error = data.responseJSON;
                     if (controlData.onException === null)
                         console.error(error);
-                    else if (error.error !== undefined) // oauth 2 error
+                    else if (error!== undefined && error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null
@@ -1745,7 +1745,7 @@ var OpenIZ = OpenIZ || {
                     var error = data.responseJSON;
                     if (controlData.onException === null)
                         console.error(error);
-                    else if (error.error !== undefined) // oauth 2 error
+                    else if (error!==undefined &&  error.error !== undefined) // oauth 2 error
                         controlData.onException(new OpenIZModel.Exception(error.type, error.error,
                                 error.error_description,
                                 null

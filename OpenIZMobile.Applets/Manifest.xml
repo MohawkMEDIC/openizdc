@@ -292,6 +292,11 @@
     <string key="locale.preferences.phone">Mobile</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
     <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
+    
+    <!-- Chart Legend -->
+    <string key="locale.legend.overdue">Overdue</string>
+    <string key="locale.legend.completed">Completed</string>
+    <string key="locale.legend.upcoming">Upcoming</string>
 
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>

@@ -572,4 +572,11 @@ angular.module('openiz', [])
                 scope.site = attrs.siteTrim.substring(5, attrs.siteTrim.length) || "N/A";
             }
         };
+    })
+    .directive('chartLegend', function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'views/common/patients/view/partials/chart-legend.html',
+            replace: true
+        }
     });

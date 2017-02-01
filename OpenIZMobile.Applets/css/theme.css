@@ -981,6 +981,24 @@ body{
 .vis-current-time{
     height: 90% !important;
 }
+
+/* Chart legend styles */
+.chart-legend {
+    margin: 10px 0 10px 0;
+}
+.legend-item {
+    display: inline-block;
+    margin-right: 5px;
+}
+.legend-item-color {
+    vertical-align: middle;
+    width: 40px;
+    height: 20px;
+}
+.legend-item-icon {
+    font-size: 16px;
+}
+
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
