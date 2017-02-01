@@ -83,11 +83,6 @@
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult">
-                    <a ng-click="patientEdit.startEncounter()">
-                        <span class="glyphicon glyphicon-check margin-right-10"></span> {{ 'locale.patient.action.startEncounter' | i18n }}
-                    </a>
-                </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
                     <a ng-click="patientEdit.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>

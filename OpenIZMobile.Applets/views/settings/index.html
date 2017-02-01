@@ -65,12 +65,15 @@
                                             </label>
                                         </div>
                                         <div class="btn-group pull-right">
-                                            <button class="btn-danger btn" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
-                                                <span class="glyphicon glyphicon-resize-full">
-                                                </span> {{ 'locale.settings.leaveRealm' | i18n }}
+                                            <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
+                                                <span>
+                                                    <span class="glyphicon glyphicon-resize-full"></span> {{ 'locale.settings.leaveRealm' | i18n }}
+                                                </span>
                                             </button>
-                                            <button class="btn-primary btn" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
-                                                {{ 'locale.settings.joinRealm' | i18n }} <span class="glyphicon glyphicon-resize-small"></span>
+                                            <button class="btn-primary btn btn-lg" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
+                                                <span>
+                                                    <span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.settings.joinRealm' | i18n }}
+                                                </span>
                                             </button>
                                         </div>
                                     </div>
@@ -148,12 +151,15 @@
     <div class="row">
         <div class="col-md-12">
             <div class="btn-group pull-right">
-                <button class="btn-danger btn" ng-click="close()">
-                    <span class="glyphicon glyphicon-remove">
-                    </span> {{ 'locale.settings.cancel' | i18n }}
+                <button class="btn-danger btn btn-lg" ng-click="close()">
+                    <span>
+                        <span class="glyphicon glyphicon-remove"></span> {{ 'locale.settings.cancel' | i18n }}
+                    </span>
                 </button>
-                <button class="btn-primary btn" ng-click="save(config)">
-                    {{ 'locale.settings.apply' | i18n }} <span class="glyphicon glyphicon-ok"></span>
+                <button class="btn-success btn btn-lg" ng-click="save(config)">
+                    <span>
+                        <span class="glyphicon glyphicon-ok"></span> {{ 'locale.settings.apply' | i18n }}
+                    </span>
                 </button>
             </div>
         </div>

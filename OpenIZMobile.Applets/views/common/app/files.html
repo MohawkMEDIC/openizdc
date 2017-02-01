@@ -27,7 +27,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content panel-danger">
                     <div class="modal-header panel-heading">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                         <h4 class="modal-title">
                             <span class="glyphicon glyphicon-exclamation-sign" style="font-size:2em"></span>
                             {{ 'locale.settings.data.purge.confirmTitle' | i18n }}
@@ -47,8 +47,16 @@
                             <input type="checkbox" ng-model="_backup" />
                             {{ 'locale.settings.data.purge.backup' | i18n }}
                         </label>
-                        <button type="submit" class="btn btn-danger" ng-click="doPurge(true, _backup)">{{ 'locale.settings.data.purge' | i18n }}</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
+                        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">
+                            <span>
+                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                            </span>
+                        </button>
+                        <button type="submit" class="btn btn-lg btn-warning" ng-click="doPurge(true, _backup)">
+                            <span>
+                                <span class="glyphicon glyphicon-floppy-remove"></span> {{ 'locale.settings.data.purge' | i18n }}
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -58,7 +66,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content panel-warning">
                     <div class="modal-header panel-heading">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                         <h4 class="modal-title">
                             <span class="glyphicon glyphicon-warning-sign" style="font-size:2em"></span>
                             {{ 'locale.settings.data.restore.confirmTitle' | i18n }}
@@ -74,17 +82,36 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        
-                        <button type="submit" class="btn btn-warning" ng-click="doRestore(true)">{{ 'locale.settings.data.restore' | i18n }}</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">
+                            <span>
+                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                            </span>
+                        </button>
+                        <button type="submit" class="btn btn-warning" ng-click="doRestore(true)">
+                            <span>
+                                <span class="glyphicon glyphicon-refresh"></span> {{ 'locale.settings.data.restore' | i18n }}
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="btn-group">
-            <button ng-if="hasBackup()" ng-click="doRestore()" class="btn btn-warning btn-lg"><span class="glyphicon glyphicon-download-alt"></span> {{ 'locale.settings.data.restore' | i18n }}</button>
-            <button ng-click="doPull()" class="btn btn-info btn-lg"><span class="glyphicon glyphicon-cloud-download"></span> {{ 'locale.settings.data.pull' | i18n }}</button>
-            <button ng-click="doPurge()" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-floppy-remove"></span> {{ 'locale.settings.data.purge' | i18n }}</button>
+            <button ng-if="hasBackup()" ng-click="doRestore()" class="btn btn-warning btn-lg">
+                <span>
+                    <span class="glyphicon glyphicon-download-alt"></span> {{ 'locale.settings.data.restore' | i18n }}
+                </span>
+            </button>
+            <button ng-click="doPull()" class="btn btn-info btn-lg">
+                <span>
+                    <span class="glyphicon glyphicon-cloud-download"></span> {{ 'locale.settings.data.pull' | i18n }}
+                </span>
+            </button>
+            <button ng-click="doPurge()" class="btn btn-warning btn-lg">
+                <span>
+                    <span class="glyphicon glyphicon-floppy-remove"></span> {{ 'locale.settings.data.purge' | i18n }}
+                </span>
+            </button>
         </div>
     </div>
 </div>

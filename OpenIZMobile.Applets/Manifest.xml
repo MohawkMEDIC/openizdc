@@ -134,6 +134,7 @@
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>
     <string key="locale.action.search">Search</string>
+    <string key="locale.action.confirm">Confirm</string>
 
     <!-- Alerts -->
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
@@ -145,6 +146,7 @@
     <!-- Common -->
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
+    <string key="locale.common.of">of</string>
     <string key="locale.common.unknown">Unknown</string>
     <string key="locale.common.invalidForm">Form submission is invalid</string>
     <string key="locale.dialog.wait.text">Please wait</string>
@@ -243,7 +245,6 @@
     <string key="locale.settings.leaveRealm">Leave</string>
     <string key="locale.settings.joinRealm">Join</string>
     <string key="locale.settings.apply">Apply</string>
-    <string key="locale.settings.cancel">Cancel</string>
     <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
     <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
     <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
@@ -333,6 +334,9 @@
     <string key="locale.about.sync.date">Last Sync Date</string>
     <string key="locale.about.sync.etag">Last Version</string>
     <string key="locale.about.sync.filter">Filter</string>
+    <string key="locale.about.sync.logFile">Log File</string>
+    <string key="locale.about.sync.logSize">Log File Size</string>
+    <string key="locale.about.sync.logContents">Log File Contents</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>

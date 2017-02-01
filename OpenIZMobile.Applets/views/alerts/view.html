@@ -56,17 +56,20 @@
             </div>
             <div class="message-content-tile" ng-if="selectedMessageID != null" >
                 <div class="message-button-bar row padding-top-5">
-                    <button class="btn hidden-landscape" ng-click="closeMessage()">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                        {{ 'locale.action.back' | i18n }}
+                    <button class="btn btn-lg btn-primary hidden-landscape" ng-click="closeMessage()">
+                        <span>
+                            <span class="glyphicon glyphicon-chevron-left"></span> {{ 'locale.action.back' | i18n }}
+                        </span>
                     </button>
-                    <button class="btn pull-right margin-left-5" ng-click="updateAlert(alert)">
-                        <span class="glyphicon glyphicon-ok"></span>
-                        {{ 'locale.action.acknowledge' | i18n }}
+                    <button class="btn btn-lg btn-success pull-right margin-left-5" ng-click="updateAlert(alert)">
+                        <span>
+                            <span class="glyphicon glyphicon-ok"></span> {{ 'locale.action.acknowledge' | i18n }}
+                        </span>
                     </button>
-                    <button class="btn pull-right" ng-click="deleteAlert(alert)">
-                        <span class="glyphicon glyphicon-trash"></span>
-                        {{ 'locale.action.delete' | i18n }}
+                    <button class="btn btn-lg btn-danger pull-right" ng-click="deleteAlert(alert)">
+                        <span>
+                            <span class="glyphicon glyphicon-trash"></span> {{ 'locale.action.delete' | i18n }}
+                        </span>
                     </button>
                     
                 </div>

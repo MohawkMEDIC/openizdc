@@ -4,7 +4,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                 <h4 class="modal-title">{{ 'locale.encounters.schedule.title' | i18n }}</h4>
             </div>
             <div class="modal-body">
@@ -81,8 +81,16 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
-                        <button type="submit" class="btn btn-primary">{{ 'locale.action.save' | i18n }}</button>
+                        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">
+                            <span>
+                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                            </span>
+                        </button>
+                        <button type="submit" class="btn btn-lg btn-success">
+                            <span>
+                                <span class="glyphicon glyphicon-check"></span> {{ 'locale.action.save' | i18n }}
+                            </span>
+                        </button>
                     </div>
                 </form>
             </div>
