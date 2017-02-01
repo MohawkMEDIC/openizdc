@@ -36,9 +36,13 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.paging = scope.search.paging || {size: 10};
     scope.act = {};
 
-    scope.$watch('search.dateOfBirthString', function (nvalue, ovalue) {
+    scope.$watch('search.dateOfBirthStringLow', function (nvalue, ovalue) {
         if(nvalue !== undefined) 
-            $scope.search.query.dateOfBirth = OpenIZ.Util.toDateInputString(new Date(nvalue));
+            $scope.search.query.dateOfBirth = ">=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
+    });
+    scope.$watch('search.dateOfBirthStringHigh', function (nvalue, ovalue) {
+        if (nvalue !== undefined)
+            $scope.search.query.dateOfBirth = "<=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
     });
 
     scope.search.search = scope.search.search || search;
