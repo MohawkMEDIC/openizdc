@@ -339,7 +339,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get the alerts from the service
         /// </summary>
         [RestOperation(UriPath = "/alerts", Method = "POST")]
-        public AlertMessage SaveAlert(AlertMessage alert)
+        public AlertMessage SaveAlert([RestMessage(RestMessageFormat.SimpleJson)]AlertMessage alert)
         {
             try
             {
