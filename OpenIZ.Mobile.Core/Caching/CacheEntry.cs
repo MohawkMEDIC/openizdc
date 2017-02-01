@@ -76,5 +76,10 @@ namespace OpenIZ.Mobile.Core.Caching
             this.Data = data;
             this.Touch();
         }
+
+        public override string ToString()
+        {
+            return String.Format("CacheEntry {0} (@{1})", this.Data, this.Data.GetHashCode());
+        }
     }
 }

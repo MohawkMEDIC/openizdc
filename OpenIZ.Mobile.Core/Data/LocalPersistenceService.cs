@@ -156,6 +156,8 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Stop();
             s_tracer.TraceVerbose("PERF: LoadAssociations ({0} ms)", sw.ElapsedMilliseconds);
 #endif
+
+            ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);      
         }
 
         /// <summary>

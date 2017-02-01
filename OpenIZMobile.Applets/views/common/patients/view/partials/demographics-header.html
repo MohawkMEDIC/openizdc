@@ -83,13 +83,8 @@
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult">
-                    <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})">
+                    <a ng-click="patientEdit.startEncounter()">
                         <span class="glyphicon glyphicon-check margin-right-10"></span> {{ 'locale.patient.action.startEncounter' | i18n }}
-                    </a>
-                </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
-                    <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})">
-                        <span class="glyphicon glyphicon-scale margin-right-10"></span> {{ 'locale.patient.tabs.weight' | i18n }}
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult">

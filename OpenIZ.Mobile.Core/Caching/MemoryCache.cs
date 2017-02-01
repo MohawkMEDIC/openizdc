@@ -74,8 +74,6 @@ namespace OpenIZ.Mobile.Core.Caching
         // Minimum age of a cache item (helps when large queries are returned)
         private long m_minAgeTicks = new TimeSpan(0, 0, 30).Ticks;
 
-        // Lock object used by cleaning mechanisms to run one at a time
-        private object m_cacheCleanLock = new object();
 
         /// <summary>
         /// Bind types
@@ -158,12 +156,18 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key, out entry))
                     lock (this.m_lock)
                     {
+#if DEBUG
+                        this.m_tracer.TraceVerbose("Update cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
+#endif
                         entry.Update(data);
                     }
                 else
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
                         {
+#if DEBUG
+                            this.m_tracer.TraceVerbose("Add cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
+#endif
                             cache.Add(key, new CacheEntry(DateTime.Now, data));
                             this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
 
@@ -193,6 +197,10 @@ namespace OpenIZ.Mobile.Core.Caching
                 {
                     lock (this.m_lock)
                     {
+#if DEBUG
+                        this.m_tracer.TraceVerbose("Remove cache object ({0}) - {1}", objectType, key);
+#endif
+
                         cache.Remove(key.Value);
                     }
                 }
@@ -223,6 +231,9 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
+#if DEBUG
+                    this.m_tracer.TraceVerbose("Retrieved cache entry ({0}) {1}", objectType, candidate);
+#endif
 #if PERFMON
                     sw.Stop();
                     this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
@@ -255,13 +266,13 @@ namespace OpenIZ.Mobile.Core.Caching
         public void ReducePressure()
         {
             this.ThrowIfDisposed();
-
-            if (!Monitor.TryEnter(this.m_cacheCleanLock))
-                return; // Something else is locking the process
+            
 
             // Entry table clean
-            lock (this.m_cacheCleanLock)
-            {
+            try {
+                if (!Monitor.TryEnter(this.m_lock))
+                    return; // Something else is locking the process
+
                 this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
                 var nowTicks = DateTime.Now.Ticks;
 
@@ -283,6 +294,10 @@ namespace OpenIZ.Mobile.Core.Caching
                         }, garbageBin);
                     }
                 }
+            }
+            finally
+            {
+                Monitor.Exit(this.m_lock);
             }
         }
 
@@ -306,9 +321,13 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
+           
             long nowTicks = DateTime.Now.Ticks;
-            lock (this.m_cacheCleanLock) // This time wait for a lock
+            try// This time wait for a lock
             {
+                if (!Monitor.TryEnter(this.m_lock))
+                    return;
+
                 this.m_tracer.TraceInfo("Starting memory cache deep clean...");
 
                 // Entry table clean
@@ -329,6 +348,10 @@ namespace OpenIZ.Mobile.Core.Caching
                     }
 
                 }
+            }
+            finally
+            {
+                Monitor.Exit(this.m_lock);
             }
         }
 
@@ -418,21 +441,22 @@ namespace OpenIZ.Mobile.Core.Caching
             }
             else
             {
-                //this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
-                var idData = data as IIdentifiedEntity;
-                var objData = data.GetType();
+                this.AddUpdateEntry(data);
+                ////this.RemoveObject(data.GetType(), (data as IIdentifiedEntity).Key.Value);
+                //var idData = data as IIdentifiedEntity;
+                //var objData = data.GetType();
 
-                Dictionary<Guid, CacheEntry> cache = null;
-                if (this.m_entryTable.TryGetValue(objData, out cache))
-                {
-                    Guid key = idData?.Key ?? Guid.Empty;
-                    if (cache.ContainsKey(key))
-                        lock (this.m_lock)
-                        {
-                            cache[key].Update(data);
-                        }
-                    //cache.Remove(key);
-                }
+                //Dictionary<Guid, CacheEntry> cache = null;
+                //if (this.m_entryTable.TryGetValue(objData, out cache))
+                //{
+                //    Guid key = idData?.Key ?? Guid.Empty;
+                //    if (cache.ContainsKey(key))
+                //        lock (this.m_lock)
+                //        {
+                //            cache[key].Update(data);
+                //        }
+                //    //cache.Remove(key);
+                //}
             }
         }
 

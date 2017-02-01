@@ -67,7 +67,8 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
 
                         var model = acts[act];
                         // Ignore anything except substance admins
-                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization') ||
+                            !model.participation.Product)
                             continue;
                         var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
                         if (scope.display._vaccineAdministrations[antigenId] == null) {

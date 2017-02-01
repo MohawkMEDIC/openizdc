@@ -74,7 +74,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     function search(onlineOnly) {
         scope.search.searchSubmitted = true;
 
-        if (scope.searchForm.$valid) {
+        if (!scope.searchForm || scope.searchForm.$valid) {
             if (onlineOnly)
                 scope.search.query["_onlineOnly"] = onlineOnly;
             else

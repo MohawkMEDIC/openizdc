@@ -472,6 +472,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 401;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
+            else if(e is FileNotFoundException)
+            {
+                response.StatusCode = 404;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
             else if (e is UnauthorizedAccessException)
             {
                 response.StatusCode = 403;

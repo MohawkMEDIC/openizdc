@@ -283,8 +283,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                 var method = typeof(ImsiServiceClient).GetRuntimeMethods().FirstOrDefault(o => o.Name == "Obsolete" && o.GetParameters().Length == 1);
                 method = method.MakeGenericMethod(new Type[] { data.GetType() });
                 this.m_tracer.TraceVerbose("Performing IMSI OBSOLETE {0}", data);
-
-                var iver = method.Invoke(this, new object[] { data }) as IVersionedEntity;
+             
+                var iver = method.Invoke(client, new object[] { data }) as IVersionedEntity;
                 if (iver != null)
                     this.UpdateToServerCopy(iver);
             }

@@ -129,6 +129,7 @@ namespace OpenIZ.Mobile.Core.Caching
                          // Handles when an item is no longer being mapped
                          this.m_mappedHandler = (o, e) =>
                          {
+                             MemoryCache.Current.RegisterCacheType(e.ObjectType);
                              //this.GetOrUpdateCacheItem(e);
                          };
 

@@ -195,6 +195,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 			this.CreationTime = DateTime.Now;
 			this.Type = fromEntry.Type;
             this.TagData = tagData;
+            this.Operation = fromEntry.Operation;
 		}
 
         /// <summary>

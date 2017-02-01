@@ -75,7 +75,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 throw new KeyNotFoundException(data.Key.ToString());
 
             // Created by is the updated by
-            domainObject.CopyObjectData(existing);
+            existing.CopyObjectData(domainObject);
+            domainObject = existing;
             domainObject.CreatedByUuid = existing.CreatedByUuid;
             data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
