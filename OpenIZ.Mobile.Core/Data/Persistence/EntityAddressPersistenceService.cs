@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override model instance
         /// </summary>
-        public override object FromModelInstance(EntityAddress modelInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(EntityAddress modelInstance, LocalDataContext context)
         {
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
@@ -47,14 +47,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override EntityAddress Insert(SQLiteConnectionWithLock context, EntityAddress data)
+        protected override EntityAddress InsertInternal(LocalDataContext context, EntityAddress data)
         {
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Data component
             if (data.Component != null)
@@ -70,21 +70,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the entity name
         /// </summary>
-        public override EntityAddress Update(SQLiteConnectionWithLock context, EntityAddress data)
+        protected override EntityAddress UpdateInternal(LocalDataContext context, EntityAddress data)
         {
 
             // Ensure exists
             data.AddressUse?.EnsureExists(context);
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
             if (data.Component != null)
                 base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
-                    context.Table<DbEntityAddressComponent>().Where(o => o.AddressUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddressComponent, EntityAddressComponent>(o)).ToList(),
+                    context.Connection.Table<DbEntityAddressComponent>().Where(o => o.AddressUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddressComponent, EntityAddressComponent>(o)).ToList(),
                     data.Component,
                     data.Key,
                     context);

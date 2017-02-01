@@ -37,11 +37,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Load to a model instance
         /// </summary>
-        public override Place ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Place ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var place = dataInstance as DbPlace?? context.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
+            var place = dataInstance as DbPlace?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
 
             var retVal = m_entityPersister.ToModelInstance<Place>(dbe, context, loadFast);
             retVal.IsMobile = place.IsMobile;
@@ -55,9 +55,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert 
         /// </summary>
-        public override Place Insert(SQLiteConnectionWithLock context, Place data)
+        protected override Place InsertInternal(LocalDataContext context, Place data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             if (data.Services != null)
                 base.UpdateAssociatedItems<PlaceService, Entity>(
@@ -72,14 +72,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the place
         /// </summary>
-        public override Place Update(SQLiteConnectionWithLock context, Place data)
+        protected override Place UpdateInternal(LocalDataContext context, Place data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             byte[] sourceKey = data.Key.Value.ToByteArray();
             if (data.Services != null)
                 base.UpdateAssociatedItems<PlaceService, Entity>(
-                    context.Table<DbPlaceService>().Where(o => o.EntityUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),
+                    context.Connection.Table<DbPlaceService>().Where(o => o.EntityUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),
                     data.Services,
                     data.Key,
                     context);

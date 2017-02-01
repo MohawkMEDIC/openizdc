@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the relationship
         /// </summary>
-        public override ActRelationship Insert(SQLiteConnectionWithLock context, ActRelationship data)
+        protected override ActRelationship InsertInternal(LocalDataContext context, ActRelationship data)
         {
             // Ensure we haven't already persisted this
             if(data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
@@ -49,9 +49,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            var existing = context.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.ActUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
+            var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.ActUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
             if (existing == null)
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             else
             {
                 data.Key = new Guid(existing.Uuid);
@@ -62,14 +62,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified object
         /// </summary>
-        public override ActRelationship Update(SQLiteConnectionWithLock context, ActRelationship data)
+        protected override ActRelationship UpdateInternal(LocalDataContext context, ActRelationship data)
         {
             if (data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
             data.TargetActKey = data.TargetAct?.Key ?? data.TargetActKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
 
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

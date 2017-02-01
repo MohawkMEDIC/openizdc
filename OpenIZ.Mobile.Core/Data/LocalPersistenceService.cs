@@ -67,12 +67,12 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Load specified associations
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
         {
 
             if (me == null)
                 throw new ArgumentNullException(nameof(me));
-            else if (context.IsInTransaction) return;
+            else if (context.Connection.IsInTransaction) return;
 
 #if DEBUG
             Stopwatch sw = new Stopwatch();
@@ -92,8 +92,7 @@ namespace OpenIZ.Mobile.Core.Data
                     pi.GetCustomAttributes<AutoLoadAttribute>().Count(p => p.ClassCode == classValue || p.ClassCode == null) == 0)
                     continue;
 
-                //if (pi.Name == "ConceptNames")
-                //    System.Diagnostics.Debugger.Break();
+
                 var value = pi.GetValue(me);
                 if (value == null)
                 {
@@ -105,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(pi.PropertyType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
-                    var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
+                    var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
                     if (getMethod != null)
                         pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, keyValue }) as IIdentifiedEntity);
                 }
@@ -129,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var idpType = typeof(IDataPersistenceService<>).MakeGenericType(entryType);
                     var idpInstance = ApplicationContext.Current.GetService(idpType);
                     if (idpInstance == null) continue;
-                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
+                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
 
                     // Execute query
                     if (queryMethod == null) continue;
@@ -163,7 +162,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, SQLiteConnectionWithLock context)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context)
         {
 
 #if PERFMON
@@ -204,7 +203,7 @@ namespace OpenIZ.Mobile.Core.Data
 #endif              
                 //existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
                 //// We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
+                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
                 if (getMethod == null) return null;
                 existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
             }
@@ -233,7 +232,7 @@ namespace OpenIZ.Mobile.Core.Data
                 }
 
                 // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
-                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(SQLiteConnectionWithLock));
+                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
                 var expression = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr });
 
                 if (queryMethod == null) return null;
@@ -265,7 +264,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Ensure the specified object exists
         /// </summary>
-        public static TModel EnsureExists<TModel>(this TModel me, SQLiteConnectionWithLock context) where TModel : IIdentifiedEntity
+        public static TModel EnsureExists<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
         {
 
             // Me
@@ -359,7 +358,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel InsertInternal(LocalDataContext context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -373,13 +372,13 @@ namespace OpenIZ.Mobile.Core.Data
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
                 }
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             }
 
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel UpdateInternal(LocalDataContext context, TModel data)
             {
                 foreach (var rp in typeof(TModel).GetRuntimeProperties().Where(o => typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.GetTypeInfo())))
                 {
@@ -394,7 +393,7 @@ namespace OpenIZ.Mobile.Core.Data
                     }
 
                 }
-                return base.Update(context, data);
+                return base.UpdateInternal(context, data);
             }
         }
 
@@ -409,7 +408,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel InsertInternal(LocalDataContext context, TModel data)
             {
                 if (data.IsEmpty()) return data;
 
@@ -425,13 +424,13 @@ namespace OpenIZ.Mobile.Core.Data
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
                 }
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             }
 
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel UpdateInternal(LocalDataContext context, TModel data)
             {
                 if (data.IsEmpty()) return data;
 
@@ -448,7 +447,7 @@ namespace OpenIZ.Mobile.Core.Data
                     }
 
                 }
-                return base.Update(context, data);
+                return base.UpdateInternal(context, data);
             }
         }
 
@@ -462,7 +461,7 @@ namespace OpenIZ.Mobile.Core.Data
             /// <summary>
             /// Ensure exists
             /// </summary>
-            public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel InsertInternal(LocalDataContext context, TModel data)
             {
                 if (data.IsEmpty()) return data;
 
@@ -480,13 +479,13 @@ namespace OpenIZ.Mobile.Core.Data
                     }
 
                 }
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             }
 
             /// <summary>
             /// Update the specified object
             /// </summary>
-            public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+            protected override TModel UpdateInternal(LocalDataContext context, TModel data)
             {
                 if (data.IsEmpty()) return data;
 
@@ -503,7 +502,7 @@ namespace OpenIZ.Mobile.Core.Data
                     }
 
                 }
-                return base.Update(context, data);
+                return base.UpdateInternal(context, data);
             }
         }
 

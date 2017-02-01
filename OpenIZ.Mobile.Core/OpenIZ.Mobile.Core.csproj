@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
@@ -39,7 +40,6 @@
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Caching\MemoryCacheService.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialSearchCatalog.cs" />
-    <Compile Include="Configuration\ForecastingConfigurationSection.cs" />
     <Compile Include="Configuration\SynchronizationConfigurationSection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionManager.cs" />
     <Compile Include="Data\ImsiPersistenceService.cs" />

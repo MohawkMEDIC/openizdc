@@ -1,7 +1,10 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
-
+.spinloader {
+    width: 24px;
+    height: 24px;
+}
 
 @media screen and (orientation:landscape) {
     .hidden-landscape{

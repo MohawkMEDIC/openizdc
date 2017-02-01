@@ -52,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// From model instance
         /// </summary>
-        public override object FromModelInstance(Person modelInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(Person modelInstance, LocalDataContext context)
         {
             var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
@@ -64,11 +64,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Person ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Person ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var person = iddat as DbPerson ?? context.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
+            var person = iddat as DbPerson ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = context.Connection.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context, loadFast);
             retVal.DateOfBirth = person.DateOfBirth.HasValue ? (DateTime?)person.DateOfBirth.Value.ToLocalTime() : null;
 
@@ -87,9 +87,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public override Person Insert(SQLiteConnectionWithLock context, Person data)
+        protected override Person InsertInternal(LocalDataContext context, Person data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
             byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
             if (data.LanguageCommunication != null)
@@ -104,15 +104,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the person entity
         /// </summary>
-        public override Person Update(SQLiteConnectionWithLock context, Person data)
+        protected override Person UpdateInternal(LocalDataContext context, Person data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             var sourceKey = retVal.Key.Value.ToByteArray();
 
             // Language communication
             if (data.LanguageCommunication != null)
                 base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
-                    context.Table<DbPersonLanguageCommunication>().Where(o=>o.EntityUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
+                    context.Connection.Table<DbPersonLanguageCommunication>().Where(o=>o.EntityUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
                     data.LanguageCommunication,
                     retVal.Key,
                     context);

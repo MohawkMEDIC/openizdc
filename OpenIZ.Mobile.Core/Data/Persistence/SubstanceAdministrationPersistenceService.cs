@@ -33,11 +33,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert databased model to model
         /// </summary>
-        public override SubstanceAdministration ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override SubstanceAdministration ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var dbSbadm = dataInstance as DbSubstanceAdministration ?? context.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(a => a.Uuid == dbSbadm.Uuid).First();
+            var dbSbadm = dataInstance as DbSubstanceAdministration ?? context.Connection.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(a => a.Uuid == dbSbadm.Uuid).First();
             var retVal = m_actPersister.ToModelInstance<SubstanceAdministration>(dba, context, loadFast);
 
             if (dbSbadm.DoseUnitConceptUuid != null)
@@ -54,26 +54,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override SubstanceAdministration Insert(SQLiteConnectionWithLock context, SubstanceAdministration data)
+        protected override SubstanceAdministration InsertInternal(LocalDataContext context, SubstanceAdministration data)
         {
             data.DoseUnit?.EnsureExists(context);
             data.Route?.EnsureExists(context);
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
 
         /// <summary>
         /// Insert the specified sbadm
         /// </summary>
-        public override SubstanceAdministration Update(SQLiteConnectionWithLock context, SubstanceAdministration data)
+        protected override SubstanceAdministration UpdateInternal(LocalDataContext context, SubstanceAdministration data)
         {
             data.DoseUnit?.EnsureExists(context);
             data.Route?.EnsureExists(context);
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

@@ -200,6 +200,8 @@ namespace Minims
                 try
                 {
                     retVal.ConfigurationManager.Load();
+                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
+
                     // Set master application context
                     ApplicationContext.Current = retVal;
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
@@ -268,20 +270,7 @@ namespace Minims
                             TraceWriter = new ConsoleTraceWriter(EventLevel.Warning, "")
                         });
 
-                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
-                    // Load clinical protocols
-                    retVal.m_tracer.TraceInfo("Loading clinical protocols..");
-                    foreach (var dir in consoleParms.ProtocolDirectory)
-                        foreach (var f in Directory.GetFiles(dir))
-                        {
-                            retVal.m_tracer.TraceVerbose("Installing {0}...", f);
-                            using (var stream = File.OpenRead(f))
-                            {
-                                var pd = ProtocolDefinition.Load(stream);
-                                retVal.InstallProtocol(new XmlClinicalProtocol(pd));
-                            }
-                        }
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
                     {

@@ -34,11 +34,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert database instance to patient encounter
         /// </summary>
-        public override PatientEncounter ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override PatientEncounter ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var dbEnc = dataInstance as DbPatientEncounter ?? context.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).FirstOrDefault();
-            var dba = dataInstance as DbAct ?? context.Table<DbAct>().Where(a => a.Uuid == dbEnc.Uuid).First();
+            var dbEnc = dataInstance as DbPatientEncounter ?? context.Connection.Table<DbPatientEncounter>().Where(o => o.Uuid == iddat.Uuid).FirstOrDefault();
+            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(a => a.Uuid == dbEnc.Uuid).First();
             var retVal = m_actPersister.ToModelInstance<PatientEncounter>(dba, context, loadFast);
 
             if (dbEnc?.DischargeDispositionUuid != null)
@@ -49,21 +49,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the patient encounter
         /// </summary>
-        public override PatientEncounter Insert(SQLiteConnectionWithLock context, PatientEncounter data)
+        protected override PatientEncounter InsertInternal(LocalDataContext context, PatientEncounter data)
         {
             data.DischargeDisposition?.EnsureExists(context);
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Updates the specified data
         /// </summary>
-        public override PatientEncounter Update(SQLiteConnectionWithLock context, PatientEncounter data)
+        protected override PatientEncounter UpdateInternal(LocalDataContext context, PatientEncounter data)
         {
             data.DischargeDisposition?.EnsureExists(context);
             data.DischargeDispositionKey = data.DischargeDisposition?.Key ?? data.DischargeDispositionKey;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

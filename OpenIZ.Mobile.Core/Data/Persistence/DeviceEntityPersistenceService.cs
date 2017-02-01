@@ -36,10 +36,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the database representation to a model instance
         /// </summary>
-        public override DeviceEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override DeviceEntity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var deviceEntity = dataInstance as DbDeviceEntity;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == deviceEntity.Uuid).First();
+            var dbe = context.Connection.Table<DbEntity>().Where(o => o.Uuid == deviceEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<DeviceEntity>(dbe, context, loadFast);
             retVal.SecurityDeviceKey = new Guid(deviceEntity.SecurityDeviceUuid);
             retVal.ManufacturerModelName = deviceEntity.ManufacturerModelName;
@@ -52,22 +52,22 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified device entity
         /// </summary>
-        public override DeviceEntity Insert(SQLiteConnectionWithLock context, DeviceEntity data)
+        protected override DeviceEntity InsertInternal(LocalDataContext context, DeviceEntity data)
         {
             data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
 
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Updates the specified user
         /// </summary>
-        public override DeviceEntity Update(SQLiteConnectionWithLock context, DeviceEntity data)
+        protected override DeviceEntity UpdateInternal(LocalDataContext context, DeviceEntity data)
         {
             data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

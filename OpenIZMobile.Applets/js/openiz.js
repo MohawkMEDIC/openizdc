@@ -1407,6 +1407,7 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
+        _originalText:{},
         /**
          * @summary Purges all data from the application
          * @method
@@ -1544,22 +1545,15 @@ var OpenIZ = OpenIZ || {
 
         },
         /**
-         * @summary Show the alert panel
+         * @summary Show the wait loader
          * @param {String} textStr The text on the alert panel to show
          * @method
          * @memberof OpenIZ.App
          */
-        showWait: function (textStr) {
-
-            if (textStr != null)
-                $("#waitModalText").text(textStr);
-            else
-                setTimeout(OpenIZ.App.updateStatus, 6000);
-
-            if (!OpenIZ.App.statusShown) {
-                $('#waitModal').modal({ show: true, backdrop: 'static' });
-                OpenIZ.App.statusShown = true;
-            }
+        showWait: function (controlItem) {
+            OpenIZ.App._originalText[controlItem] = $(controlItem).html();
+            $(controlItem).attr('disabled', 'disabled');
+            $(controlItem).html("<img src='/org.openiz.core/img/ajax-loader.gif' class='spinloader'> " + OpenIZ.Localization.getString("locale.dialog.wait.text"));
         },
         /**
          * @summary Returns whether the internet is available
@@ -1576,9 +1570,10 @@ var OpenIZ = OpenIZ || {
          * @method
          * @memberof OpenIZ.App
          */
-        hideWait: function () {
-            OpenIZ.App.statusShown = false;
-            $('#waitModal').modal('hide');
+        hideWait: function (controlItem) {
+            $(controlItem).removeAttr('disabled');
+            $(controlItem).html(OpenIZ.App._originalText[controlItem]);
+
         },
         /**
          * @summary Gets the specified service implementation in memory

@@ -116,6 +116,7 @@
   </menuItem>
   <strings lang="en">
 
+    <string key="err_generalnull">A general error occurred. Please check the logs.</string>
     <!-- Encounters -->
     <string key="locale.encounters.overdue">Overdue</string>
     

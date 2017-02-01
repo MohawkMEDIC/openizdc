@@ -156,7 +156,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key, out entry))
                     lock (this.m_lock)
                     {
-#if DEBUG
+#if PERFMON
                         this.m_tracer.TraceVerbose("Update cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
 #endif
                         entry.Update(data);
@@ -165,7 +165,7 @@ namespace OpenIZ.Mobile.Core.Caching
                     lock (this.m_lock)
                         if (!cache.ContainsKey(key))
                         {
-#if DEBUG
+#if PERFMON
                             this.m_tracer.TraceVerbose("Add cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
 #endif
                             cache.Add(key, new CacheEntry(DateTime.Now, data));
@@ -197,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 {
                     lock (this.m_lock)
                     {
-#if DEBUG
+#if PERFMON
                         this.m_tracer.TraceVerbose("Remove cache object ({0}) - {1}", objectType, key);
 #endif
 
@@ -231,10 +231,8 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
-#if DEBUG
-                    this.m_tracer.TraceVerbose("Retrieved cache entry ({0}) {1}", objectType, candidate);
-#endif
 #if PERFMON
+                    this.m_tracer.TraceVerbose("Retrieved cache entry ({0}) {1}", objectType, candidate);
                     sw.Stop();
                     this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
 #endif

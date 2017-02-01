@@ -37,7 +37,9 @@
                 <div class="btn-group pull-right">
                     <!--<a class="btn btn-success pull-left" href="~/views/security/register.html">{{ 'locale.buttonLabels.register' | i18n }}</a>-->
                     <button type="button" class="btn btn-lg btn-warning" ng-click="showPasswordReset()">{{ 'locale.security.login.button.forgotPassword' | i18n }}</button>
-                    <button type="submit" class="btn btn-lg btn-primary pull-right">{{ 'locale.security.login.button.login' | i18n }}</button>
+                    <button type="submit" id="loginButton" class="btn btn-lg btn-primary pull-right">
+                        {{ 'locale.security.login.button.login' | i18n }}
+                    </button>
                 </div>
             </div>
         </div>

@@ -206,35 +206,6 @@
     <AndroidResource Include="Resources\drawable\icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.pcv13.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.rota.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.bcg.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.dtp.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.mr.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.vacc.opv.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.weight.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.suppl.vita.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\Protocols\tz.timr.protocol.suppl.mbznl.xml">
-      <SubType>Designer</SubType>
-    </AndroidAsset>
-  </ItemGroup>
-  <ItemGroup>
     <AndroidEnvironment Include="environment.txt" />
   </ItemGroup>
   <PropertyGroup>

@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the concept set to model
         /// </summary>
-        public override ConceptSet ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override ConceptSet ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             
             var modelInstance = base.ToModelInstance(dataInstance, context, loadFast);
@@ -43,7 +43,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var dbInstance = dataInstance as DbConceptSet;
             ConceptPersistenceService cps = new ConceptPersistenceService();
 
-            modelInstance.Concepts = context.Query<DbConcept>("SELECT concept.* FROM concept_concept_set INNER JOIN concept ON (concept_concept_set.concept_uuid = concept.uuid) WHERE concept_concept_set.concept_set_uuid = ?", dbInstance.Uuid).Select(
+            modelInstance.Concepts = context.Connection.Query<DbConcept>("SELECT concept.* FROM concept_concept_set INNER JOIN concept ON (concept_concept_set.concept_uuid = concept.uuid) WHERE concept_concept_set.concept_set_uuid = ?", dbInstance.Uuid).Select(
                 o=>cps.ToModelInstance(o, context, loadFast)
             ).ToList();
 
@@ -55,16 +55,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified concept
         /// </summary>
-        public override ConceptSet Insert(SQLiteConnectionWithLock context, ConceptSet data)
+        protected override ConceptSet InsertInternal(LocalDataContext context, ConceptSet data)
         {
             // Concept set insertion
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Concept members (nb: this is only a UUID if from the wire)
             if (data.ConceptsXml != null)
                 foreach (var r in data.ConceptsXml)
                 {
-                    context.Insert(new DbConceptSetConceptAssociation()
+                    context.Connection.Insert(new DbConceptSetConceptAssociation()
                     {
                         Uuid = Guid.NewGuid().ToByteArray(),
                         ConceptSetUuid = retVal.Key.Value.ToByteArray(),
@@ -78,18 +78,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified data elements
         /// </summary>
-        public override ConceptSet Update(SQLiteConnectionWithLock context, ConceptSet data)
+        protected override ConceptSet UpdateInternal(LocalDataContext context, ConceptSet data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             var keyuuid = retVal.Key.Value.ToByteArray();
 
             // Wipe and re-associate
             if (data.ConceptsXml != null)
             {
-                context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptSetUuid == keyuuid);
+                context.Connection.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptSetUuid == keyuuid);
                 foreach (var r in data.ConceptsXml)
                 {
-                    context.Insert(new DbConceptSetConceptAssociation()
+                    context.Connection.Insert(new DbConceptSetConceptAssociation()
                     {
                         Uuid = Guid.NewGuid().ToByteArray(),
                         ConceptSetUuid = retVal.Key.Value.ToByteArray(),

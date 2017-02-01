@@ -130,12 +130,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
             };
 
-            // Protocol 
-            ForecastingConfigurationSection forecastingSection = new ForecastingConfigurationSection()
-            {
-                ProtocolSourceDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "protocols"),
-            };
-
             // Initial applet style
             ApplicationConfigurationSection appSection = new ApplicationConfigurationSection()
             {
@@ -243,7 +237,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             retVal.Sections.Add(appSection);
             retVal.Sections.Add(secSection);
             retVal.Sections.Add(serviceSection);
-            retVal.Sections.Add(forecastingSection);
             retVal.Sections.Add(new SynchronizationConfigurationSection()
             {
                 PollInterval = new TimeSpan(0, 5, 0)

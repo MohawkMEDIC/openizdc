@@ -36,10 +36,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override ApplicationEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override ApplicationEntity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var applicationEntity = dataInstance as DbApplicationEntity;
-            var dbe = context.Table<DbEntity>().Where(o => o.Uuid == applicationEntity.Uuid).First();
+            var dbe = context.Connection.Table<DbEntity>().Where(o => o.Uuid == applicationEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<ApplicationEntity>(dbe, context, loadFast);
             retVal.SecurityApplicationKey = new Guid(applicationEntity.SecurityApplicationUuid);
             retVal.SoftwareName = applicationEntity.SoftwareName;
@@ -52,21 +52,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the application entity
         /// </summary>
-        public override ApplicationEntity Insert(SQLiteConnectionWithLock context, ApplicationEntity data)
+        protected override ApplicationEntity InsertInternal(LocalDataContext context, ApplicationEntity data)
         {
             data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
         
         /// <summary>
         /// Update the application entity
         /// </summary>
-        public override ApplicationEntity Update(SQLiteConnectionWithLock context, ApplicationEntity data)
+        protected override ApplicationEntity UpdateInternal(LocalDataContext context, ApplicationEntity data)
         {
             data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

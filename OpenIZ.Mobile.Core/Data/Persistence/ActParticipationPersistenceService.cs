@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the relationship
         /// </summary>
-        public override ActParticipation Insert(SQLiteConnectionWithLock context, ActParticipation data)
+        protected override ActParticipation InsertInternal(LocalDataContext context, ActParticipation data)
         {
             // Ensure we haven't already persisted this
             if(data.PlayerEntity != null) data.PlayerEntity = data.PlayerEntity.EnsureExists(context);
@@ -51,9 +51,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
-            var existing = context.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
+            var existing = context.Connection.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
             if (existing == null)
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             else
             {
                 data.Key = new Guid(existing.Uuid);
@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified object
         /// </summary>
-        public override ActParticipation Update(SQLiteConnectionWithLock context, ActParticipation data)
+        protected override ActParticipation UpdateInternal(LocalDataContext context, ActParticipation data)
         {
             if (data.PlayerEntity != null) data.PlayerEntity = data.PlayerEntity.EnsureExists(context);
             data.PlayerEntityKey = data.PlayerEntity?.Key ?? data.PlayerEntityKey;
@@ -73,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Act != null) data.Act = data.Act.EnsureExists(context);
             data.ActKey = data.Act?.Key ?? data.ActKey;
 
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

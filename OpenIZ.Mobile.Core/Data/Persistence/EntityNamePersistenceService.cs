@@ -37,7 +37,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override model instance
         /// </summary>
-        public override object FromModelInstance(EntityName modelInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(EntityName modelInstance, LocalDataContext context)
         {
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
@@ -47,13 +47,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override EntityName Insert(SQLiteConnectionWithLock context, EntityName data)
+        protected override EntityName InsertInternal(LocalDataContext context, EntityName data)
         {
 
             // Ensure exists
             data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Data component
             if (data.Component != null)
@@ -69,20 +69,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the entity name
         /// </summary>
-        public override EntityName Update(SQLiteConnectionWithLock context, EntityName data)
+        protected override EntityName UpdateInternal(LocalDataContext context, EntityName data)
         {
             // Ensure exists
             data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             var sourceKey = data.Key.Value.ToByteArray();
 
             // Data component
             if (data.Component != null)
                 base.UpdateAssociatedItems<EntityNameComponent, EntityName>(
-                    context.Table<DbEntityNameComponent>().Where(o => o.NameUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityNameComponent, EntityNameComponent>(o)).ToList(),
+                    context.Connection.Table<DbEntityNameComponent>().Where(o => o.NameUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityNameComponent, EntityNameComponent>(o)).ToList(),
                     data.Component,
                     data.Key,
                     context);

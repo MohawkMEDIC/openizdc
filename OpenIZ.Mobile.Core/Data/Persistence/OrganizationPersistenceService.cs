@@ -39,11 +39,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Organization ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Organization ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var organization = dataInstance as DbOrganization ?? context.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
+            var organization = dataInstance as DbOrganization ?? context.Connection.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context, loadFast);
             retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;
@@ -52,23 +52,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the organization
         /// </summary>
-        public override Organization Insert(SQLiteConnectionWithLock context, Organization data)
+        protected override Organization InsertInternal(LocalDataContext context, Organization data)
         {
             // ensure industry concept exists
             data.IndustryConcept?.EnsureExists(context);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
 
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the organization
         /// </summary>
-        public override Organization Update(SQLiteConnectionWithLock context, Organization data)
+        protected override Organization UpdateInternal(LocalDataContext context, Organization data)
         {
             data.IndustryConcept?.EnsureExists(context);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
     }

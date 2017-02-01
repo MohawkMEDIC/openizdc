@@ -28,20 +28,16 @@
 
 angular.module('openiz', [])
     // Localization service
-    .provider('localize', function localizeProvider()
-    {
+    .provider('localize', function localizeProvider() {
 
-        this.$get = ['$rootScope', '$filter', function ($rootScope, $filter)
-        {
+        this.$get = ['$rootScope', '$filter', function ($rootScope, $filter) {
             var localize = {
                 dictionary: OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale()),
                 /**
                  * @summary Sets the locale of the user interface 
                  */
-                setLanguage: function (locale)
-                {
-                    if (OpenIZ.Localization.getLocale() != locale)
-                    {
+                setLanguage: function (locale) {
+                    if (OpenIZ.Localization.getLocale() != locale) {
                         OpenIZ.Localization.setLocale(locale);
                         localize.dictionary = OpenIZ.Localization.getStrings(locale);
                         //$rootScope.$broadcast('localizeResourcesUpdated');
@@ -53,8 +49,7 @@ angular.module('openiz', [])
                 /**
                  * @summary Gets the specified locale key
                  */
-                getString: function (key)
-                {
+                getString: function (key) {
 
                     // make sure we always have the latest locale
                     //localize.dictionary = OpenIZ.Localization.getStrings(OpenIZ.Localization.getLocale());
@@ -62,8 +57,7 @@ angular.module('openiz', [])
                     var entry = localize.dictionary[key];
                     if (entry != null)
                         return entry;
-                    else
-                    {
+                    else {
                         var oiz = OpenIZ.Localization.getString(key);
                         if (oiz == null)
                             return key;
@@ -78,10 +72,8 @@ angular.module('openiz', [])
      * @summary Filter for localization
      * @use {{ KEY | i18n }}
      */
-    .filter('i18n', ['$rootScope', 'localize', function ($rootScope, localize)
-    {
-        var filterFn = function (key)
-        {
+    .filter('i18n', ['$rootScope', 'localize', function ($rootScope, localize) {
+        var filterFn = function (key) {
             return localize.getString(key);
         };
         filterFn.$stateful = false;
@@ -132,10 +124,8 @@ angular.module('openiz', [])
             return sum;
         };
     })
-    .filter('oizEntityIdentifier', function ()
-    {
-        return function (modelValue)
-        {
+    .filter('oizEntityIdentifier', function () {
+        return function (modelValue) {
             if (modelValue === undefined)
                 return "";
             if (modelValue.NID !== undefined)
@@ -147,21 +137,17 @@ angular.module('openiz', [])
     })
     .filter('oizConcept', function () {
         return function (modelValue) {
-            if(modelValue != null && modelValue.name != null)
+            if (modelValue != null && modelValue.name != null)
                 return OpenIZ.Util.renderConceptName(modelValue.name);
         }
     })
-    .filter('oizEntityName', function ()
-    {
-        return function (modelValue)
-        {
+    .filter('oizEntityName', function () {
+        return function (modelValue) {
             return OpenIZ.Util.renderName(modelValue);
         }
     })
-    .filter('oizEntityAddress', function ()
-    {
-        return function (modelValue)
-        {
+    .filter('oizEntityAddress', function () {
+        return function (modelValue) {
             return OpenIZ.Util.renderAddress(modelValue);
         }
     })
@@ -195,30 +181,25 @@ angular.module('openiz', [])
             return moment(date).format(dateFormat);
         };
     })
-    .directive('oizTag', function ($timeout)
-    {
+    .directive('oizTag', function ($timeout) {
         return {
             require: 'ngModel',
-            link: function (scope, element, attrs, ctrl)
-            {
+            link: function (scope, element, attrs, ctrl) {
 
                 // Parsers
                 ctrl.$parsers.unshift(tagParser);
                 ctrl.$formatters.unshift(tagFormatter);
-                function tagParser(viewValue)
-                {
+                function tagParser(viewValue) {
                     return String(viewValue).split(',');
                 }
-                function tagFormatter(viewValue)
-                {
+                function tagFormatter(viewValue) {
                     if (typeof (viewValue) === Array)
                         return viewValue.join(viewValue)
                     return viewValue;
                 }
 
                 // Tag input
-                scope.$watch(attrs.ngModel, function (nvalue, ovalue)
-                {
+                scope.$watch(attrs.ngModel, function (nvalue, ovalue) {
                     if (typeof (nvalue) == "string" && ovalue != nvalue ||
                         Array.isArray(nvalue) && (!Array.isArray(ovalue) || ovalue.length != nvalue.length) ||
                         // HACK: For SPA
@@ -235,13 +216,10 @@ angular.module('openiz', [])
             }
         }
     })
-    .directive('oizDatabind', function ($timeout)
-    {
+    .directive('oizDatabind', function ($timeout) {
         return {
-            link: function (scope, element, attrs, ctrl)
-            {
-                $timeout(function ()
-                {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
                     var modelType = $(element).attr('oiz-databind');
                     var filterString = $(element).attr('data-filter');
                     var watchString = $(element).attr('data-watch');
@@ -255,30 +233,27 @@ angular.module('openiz', [])
                     var defaultValue = null;
 
                     // Try to set defaut value
-                    try { 
+                    try {
                         defaultValue = eval(defaultValueExpression);
-                    } catch(e){}
-                    
+                    } catch (e) { }
+
                     var filter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
 
-                    if(!filter.statusConcept)
+                    if (!filter.statusConcept)
                         filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
-                    var bind = function ()
-                    {
+                    var bind = function () {
                         // Get the bind element
                         $(element)[0].disabled = true;
                         OpenIZ.Ims.get({
                             resource: modelType,
                             query: filter,
-                            finally: function ()
-                            {
+                            finally: function () {
                                 $(element)[0].disabled = false;
                             },
-                            continueWith: function (data)
-                            {
+                            continueWith: function (data) {
                                 var currentValue = $(element).val();
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
@@ -286,11 +261,9 @@ angular.module('openiz', [])
                                 if (!data.item || !defaultFirst)
                                     options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
 
-                                for (var i in data.item)
-                                {
+                                for (var i in data.item) {
                                     var text = null;
-                                    if (displayString != null)
-                                    {
+                                    if (displayString != null) {
                                         var scope = data.item[i];
                                         // HACK:
                                         text = eval(displayString);
@@ -303,8 +276,8 @@ angular.module('openiz', [])
                                         options[options.length] = new Option(text, data.item[i].id);
                                     else
                                         options[options.length] = new Option(text, eval(dataKey));
-                                                                        
-                                    
+
+
                                 }
 
                                 // Strip and bind select
@@ -320,12 +293,11 @@ angular.module('openiz', [])
                     };
 
                     if (watchString !== null)
-                        scope.$watch(watchString, function (newValue, oldValue)
-                        {
+                        scope.$watch(watchString, function (newValue, oldValue) {
                             var $root = scope.$root;
                             if (watchTargetString !== null && newValue !== undefined) {
                                 filter[watchTargetString] = newValue;
-                                if(defaultValueExpression)
+                                if (defaultValueExpression)
                                     defaultValue = eval(defaultValueExpression);
                             }
                             bind();
@@ -335,71 +307,59 @@ angular.module('openiz', [])
             }
         };
     })
-    .directive('oizEntitysearch', function ($timeout)
-    {
+    .directive('oizEntitysearch', function ($timeout) {
         return {
             scope: {
                 defaultResults: '='
             },
-            link: function (scope, element, attrs, ctrl)
-            {
-                $timeout(function ()
-                {
+            link: function (scope, element, attrs, ctrl) {
+                $timeout(function () {
                     var modelType = attrs.oizEntitysearch;
                     var filterString = attrs.filter;
                     var displayString = attrs.display;
-                    var defaultFilterString = attrs.default;
-                    var groupString =attrs.groupBy;
+                    var defaultResults = attrs.default;
+                    var groupString = attrs.groupBy;
                     var groupDisplayString = attrs.groupDisplay;
 
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    if (defaultFilterString !== undefined)
-                        filter = JSON.parse(defaultFilterString);
                     filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
 
                     // Bind select 2 search
                     $(element).select2({
-                        dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
-                        defaultResults: function ()
-                        {
-
-                            if (scope.defaultResults != null)
-                            {
-                                console.log(scope.defaultResults);
-                                return scope.defaultResults;
+                        defaultResults: function() {
+                            var s = scope;
+                            if (defaultResults != null) {
+                                return eval(defaultResults);
                             }
-                            else
-                            {
-                                return $.map($('option', element[0]), function (o)
-                                {
+                            else {
+                                return $.map($('option', element[0]), function (o) {
                                     return { "id": o.value, "text": o.innerText };
                                 });
                             }
                         },
+                        dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
                         ajax: {
                             url: "/__ims/" + modelType,
                             dataType: 'json',
                             delay: 500,
                             method: "GET",
-                            data: function (params)
-                            {
+                            data: function (params) {
                                 filter["name.component.value"] = "~" + params.term;
                                 filter["_count"] = 5;
                                 filter["_offset"] = 0;
                                 return filter;
                             },
-                            processResults: function (data, params)
-                            {
+                            processResults: function (data, params) {
                                 //params.page = params.page || 0;
                                 var data = data.item || data;
                                 var retVal = { results: [] };
-                                if (groupString == null){
+                                if (groupString == null) {
                                     return {
-                                        results: $.map(data,function (o) {
+                                        results: $.map(data, function (o) {
                                             var text = "";
                                             if (o.name !== undefined) {
                                                 if (o.name.OfficialRecord) {
@@ -413,14 +373,11 @@ angular.module('openiz', [])
                                         })
                                     };
                                 }
-                                else
-                                {
+                                else {
                                     // Get the group string
-                                    for (var itm in data)
-                                    {
+                                    for (var itm in data) {
                                         // parent obj
-                                        try
-                                        {
+                                        try {
                                             var scope = eval('data[itm].' + groupString);
                                             var groupDisplay = "";
                                             if (groupDisplayString != null)
@@ -434,8 +391,7 @@ angular.module('openiz', [])
                                             else
                                                 gidx[0].children.push(data[itm]);
                                         }
-                                        catch (e)
-                                        {
+                                        catch (e) {
                                             retVal.results.push(data[itm]);
                                         }
                                     }
@@ -446,11 +402,9 @@ angular.module('openiz', [])
                         },
                         escapeMarkup: function (markup) { return markup; }, // Format normally
                         minimumInputLength: 2,
-                        templateSelection: function (selection)
-                        {                            
+                        templateSelection: function (selection) {
                             var retVal = "";
-                            switch (modelType)
-                            {
+                            switch (modelType) {
                                 case "UserEntity":
                                 case "Provider":
                                     retVal += "<span class='glyphicon glyphicon-user'></span>";
@@ -463,8 +417,7 @@ angular.module('openiz', [])
                                     break;
                             }
                             retVal += "&nbsp;";
-                            if (displayString != null)
-                            {
+                            if (displayString != null) {
                                 var scope = selection;
                                 retVal += eval(displayString);
                             }
@@ -481,12 +434,10 @@ angular.module('openiz', [])
                             return retVal;
                         },
                         keepSearchResults: true,
-                        templateResult: function (result)
-                        {
+                        templateResult: function (result) {
                             if (result.loading) return result.text;
 
-                            if (displayString != null)
-                            {
+                            if (displayString != null) {
                                 return eval(displayString);
                             }
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)
@@ -508,6 +459,19 @@ angular.module('openiz', [])
                                 return result.text;
                         }
                     });
+
+                    //$(element).on("select2:opening", function (e) {
+                    //    var s = scope;
+                    //    if (defaultResults != null) {
+                    //        return eval(defaultResults);
+                    //    }
+                    //    else {
+                    //        return $.map($('option', element[0]), function (o) {
+                    //            return { "id": o.value, "text": o.innerText };
+                    //        });
+                    //    }
+                    //}
+                    //);
                     // HACK: For angular values, after select2 has "selected" the value, it will be a ? string: ID ? value we do not want this
                     // we want the actual value, so this little thing corrects this bugginess
                     $(element).on("select2:select", function (e) {
@@ -524,19 +488,15 @@ angular.module('openiz', [])
             }
         };
     })
-    .directive('oizCollapseindicator', function ()
-    {
+    .directive('oizCollapseindicator', function () {
         return {
-            link: function (scope, element, attrs, ctrl)
-            {
-                $(element).on('hide.bs.collapse', function ()
-                {
+            link: function (scope, element, attrs, ctrl) {
+                $(element).on('hide.bs.collapse', function () {
                     var indicator = $(this).attr('data-oiz-chevron');
                     $(indicator).removeClass('glyphicon-chevron-down');
                     $(indicator).addClass('glyphicon-chevron-right');
                 });
-                $(element).on('show.bs.collapse', function ()
-                {
+                $(element).on('show.bs.collapse', function () {
                     var indicator = $(this).attr('data-oiz-chevron');
                     $(indicator).addClass('glyphicon-chevron-down');
                     $(indicator).removeClass('glyphicon-chevron-right');
@@ -552,54 +512,54 @@ angular.module('openiz', [])
             scope: true,
             link: function (scope, element, attrs, ctrl, $transclude) {
 
-            // the element to insert after
-            scope.last = element;
+                // the element to insert after
+                scope.last = element;
 
-            // the parent element
-            scope.parentElem = element.parent();
+                // the parent element
+                scope.parentElem = element.parent();
 
-            // list of elements in the repeater
-            scope.elems = [element];
+                // list of elements in the repeater
+                scope.elems = [element];
 
-            // a getter function to resolve the parameter
-            var getter = $parse(attrs.ngRepeatN);
+                // a getter function to resolve the parameter
+                var getter = $parse(attrs.ngRepeatN);
 
-            scope.$watch(function () {
-                return parseInt(attrs.ngRepeatN) || getter(scope);
-            }, function (newValue, oldValue) {
+                scope.$watch(function () {
+                    return parseInt(attrs.ngRepeatN) || getter(scope);
+                }, function (newValue, oldValue) {
 
-                var newInt = parseInt(newValue)
-                , oldInt = parseInt(oldValue)
-                , bothValues = ! isNaN(newInt) && ! isNaN(oldInt)
-                , childScope
-                , i
-                , limit;
+                    var newInt = parseInt(newValue)
+                    , oldInt = parseInt(oldValue)
+                    , bothValues = !isNaN(newInt) && !isNaN(oldInt)
+                    , childScope
+                    , i
+                    , limit;
 
-                // decrease number of repeated elements
-                if (isNaN(newInt) || (bothValues && newInt < oldInt)) {
-                limit = bothValues ? newInt : 0;
-                scope.last = scope.elems[limit];
-                for (i = scope.elems.length - 1; i > limit; i -= 1) {
-                    scope.elems[i].remove();
-                    scope.elems.pop();
-                }
-                } 
+                    // decrease number of repeated elements
+                    if (isNaN(newInt) || (bothValues && newInt < oldInt)) {
+                        limit = bothValues ? newInt : 0;
+                        scope.last = scope.elems[limit];
+                        for (i = scope.elems.length - 1; i > limit; i -= 1) {
+                            scope.elems[i].remove();
+                            scope.elems.pop();
+                        }
+                    }
 
-                // increase number of repeated elements
-                else {
-                i = scope.elems.length - 1;
+                        // increase number of repeated elements
+                    else {
+                        i = scope.elems.length - 1;
 
-                for (i; i < newInt; i += 1) {
-                    childScope = scope.$new();
-                    childScope.$index = i;
-                    $transclude(childScope, function (clone) {
-                    scope.last.after(clone);
-                    scope.last = clone;
-                    scope.elems.push(clone);
-                    });
-                }
-                }
-            });
+                        for (i; i < newInt; i += 1) {
+                            childScope = scope.$new();
+                            childScope.$index = i;
+                            $transclude(childScope, function (clone) {
+                                scope.last.after(clone);
+                                scope.last = clone;
+                                scope.elems.push(clone);
+                            });
+                        }
+                    }
+                });
             }
         };
     }])

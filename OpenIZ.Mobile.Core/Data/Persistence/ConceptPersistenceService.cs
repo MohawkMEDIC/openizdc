@@ -38,13 +38,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override Concept ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Concept ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var modelInstance = base.ToModelInstance(dataInstance, context, loadFast);
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;
-            modelInstance.ConceptSets = context.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
+            modelInstance.ConceptSets = context.Connection.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
                 o => m_mapper.MapDomainInstance<DbConceptSet, ConceptSet>(o)
             ).ToList();
 
@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert concept 
         /// </summary>
-        public override Concept Insert(SQLiteConnectionWithLock context, Concept data)
+        protected override Concept InsertInternal(LocalDataContext context, Concept data)
         {
             // Ensure exists
             data.Class?.EnsureExists(context);
@@ -73,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 
             // Persist
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Concept names
             if (retVal.ConceptNames != null)
@@ -91,14 +91,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 					var conceptSetUuid = r.ToByteArray();
 					var conceptUuid = retVal.Key.Value.ToByteArray();
 
-                    if (context.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == conceptSetUuid &&
+                    if (context.Connection.Table<DbConceptSetConceptAssociation>().Where(o => o.ConceptSetUuid == conceptSetUuid &&
                      o.ConceptUuid == conceptUuid).Any())
                         continue;
 					else
 					{
 						// HACK: SQL lite has decided that there is no such function as "ToByteArray()"
 						var key = Guid.NewGuid().ToByteArray();
-						context.Insert(new DbConceptSetConceptAssociation()
+						context.Connection.Insert(new DbConceptSetConceptAssociation()
 						{
 							Uuid = key,
 							ConceptSetUuid = conceptSetUuid,
@@ -113,19 +113,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Override update to handle associated items
         /// </summary>
-        public override Concept Update(SQLiteConnectionWithLock context, Concept data)
+        protected override Concept UpdateInternal(LocalDataContext context, Concept data)
         {
             data.Class?.EnsureExists(context);
             //data.StatusConcept?.EnsureExists(context);
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             var sourceKey = data.Key.Value.ToByteArray();
             if (retVal.ConceptNames != null)
                 base.UpdateAssociatedItems<ConceptName, Concept>(
-                    context.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
+                    context.Connection.Table<DbConceptName>().Where(o => o.ConceptUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList(),
                     data.ConceptNames,
                     retVal.Key,
                     context
@@ -134,10 +134,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Wipe and re-associate
             if (retVal.ConceptSetsXml != null && retVal.ConceptSetsXml.Count > 0)
             {
-                context.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptUuid == sourceKey);
+                context.Connection.Table<DbConceptSetConceptAssociation>().Delete(o => o.ConceptUuid == sourceKey);
                 foreach (var r in retVal.ConceptSetsXml)
                 {
-                    context.Insert(new DbConceptSetConceptAssociation()
+                    context.Connection.Insert(new DbConceptSetConceptAssociation()
                     {
                         Uuid = Guid.NewGuid().ToByteArray(),
                         ConceptSetUuid = r.ToByteArray(),
@@ -152,10 +152,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Concept Obsolete(SQLiteConnectionWithLock context, Concept data)
+        protected override Concept ObsoleteInternal(LocalDataContext context, Concept data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Obsolete(context, data);
+            return base.ObsoleteInternal(context, data);
         }
     }
 }

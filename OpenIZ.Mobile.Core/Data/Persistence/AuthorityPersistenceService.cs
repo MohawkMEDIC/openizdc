@@ -37,40 +37,40 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert assigning authority to model
         /// </summary>
-        public override AssigningAuthority ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override AssigningAuthority ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var dataAA = dataInstance as DbAssigningAuthority;
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
-            retVal.AuthorityScopeXml = context.Table<DbAuthorityScope>().Where(o => o.AssigningAuthorityUuid == dataAA.Uuid).ToList().Select(o=>new Guid(o.ScopeConceptUuid)).ToList();
+            retVal.AuthorityScopeXml = context.Connection.Table<DbAuthorityScope>().Where(o => o.AssigningAuthorityUuid == dataAA.Uuid).ToList().Select(o=>new Guid(o.ScopeConceptUuid)).ToList();
             return retVal;
         }
 
         /// <summary>
         /// Insert the specified data
         /// </summary>
-        public override AssigningAuthority Insert(SQLiteConnectionWithLock context, AssigningAuthority data)
+        protected override AssigningAuthority InsertInternal(LocalDataContext context, AssigningAuthority data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Scopes?
             if (retVal.AuthorityScopeXml != null)
-                context.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { Key = Guid.NewGuid(), ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
+                context.Connection.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { Key = Guid.NewGuid(), ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
             return retVal;
         }
 
         /// <summary>
         /// Update the specified data
         /// </summary>
-        public override AssigningAuthority Update(SQLiteConnectionWithLock context, AssigningAuthority data)
+        protected override AssigningAuthority UpdateInternal(LocalDataContext context, AssigningAuthority data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             var ruuid = retVal.Key.Value.ToByteArray();
             // Scopes?
             if (retVal.AuthorityScopeXml != null)
             {
-                foreach (var itm in context.Table<DbAuthorityScope>().Where(o => o.Uuid == ruuid))
-                    context.Delete(itm);
-                context.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { Key = Guid.NewGuid(), ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
+                foreach (var itm in context.Connection.Table<DbAuthorityScope>().Where(o => o.Uuid == ruuid))
+                    context.Connection.Delete(itm);
+                context.Connection.InsertAll(retVal.AuthorityScopeXml.Select(o => new DbAuthorityScope() { Key = Guid.NewGuid(), ScopeConceptUuid = o.ToByteArray(), AssigningAuthorityUuid = retVal.Key.Value.ToByteArray() }));
             }
             return retVal;
         }

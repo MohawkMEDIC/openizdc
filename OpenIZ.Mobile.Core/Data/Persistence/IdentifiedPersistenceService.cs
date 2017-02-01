@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public override TModel ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override TModel ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
 
@@ -69,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <returns>The model instance.</returns>
         /// <param name="modelInstance">Model instance.</param>
         /// <param name="context">Context.</param>
-        public override object FromModelInstance(TModel modelInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(TModel modelInstance, LocalDataContext context)
         {
             return m_mapper.MapModelInstance<TModel, TDomain>(modelInstance);
 
@@ -80,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
             var domainObject = this.FromModelInstance(data, context) as TDomain;
 
@@ -94,10 +94,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
 
             // Does this already exist?
-            if (!context.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).Any())
-                context.Insert(domainObject);
+            if (!context.Connection.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).Any())
+                context.Connection.Insert(domainObject);
             else
-                context.Update(domainObject);
+                context.Connection.Update(domainObject);
 
             return data;
         }
@@ -107,10 +107,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
             var domainObject = this.FromModelInstance(data, context) as TDomain;
-            context.Update(domainObject);
+            context.Connection.Update(domainObject);
             return data;
         }
 
@@ -119,10 +119,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel ObsoleteInternal(LocalDataContext context, TModel data)
         {
             var domainObject = this.FromModelInstance(data, context) as TDomain;
-            context.Delete(domainObject);
+            context.Connection.Delete(domainObject);
             return data;
         }
 
@@ -131,7 +131,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public override System.Collections.Generic.IEnumerable<TModel> Query(SQLiteConnectionWithLock context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults, Guid queryId)
+        protected override System.Collections.Generic.IEnumerable<TModel> QueryInternal(LocalDataContext context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults, Guid queryId)
         {
 
             // Query has been registered?
@@ -145,7 +145,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             m_tracer.TraceVerbose("Domain Query: {0}", domainQuery);
 
-            var retVal = context.Table<TDomain>().Where(domainQuery);
+            var retVal = context.Connection.Table<TDomain>().Where(domainQuery);
 
             // Total count
             totalResults = retVal.Count();
@@ -166,14 +166,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected TModel CacheConvert(TDomain o, SQLiteConnectionWithLock context, bool loadFast)
+        protected TModel CacheConvert(TDomain o, LocalDataContext context, bool loadFast)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
             {
                 cacheItem = this.ToModelInstance(o, context, loadFast);
-                if(!context.IsInTransaction)
+                if(!context.Connection.IsInTransaction)
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
             return cacheItem;
@@ -186,7 +186,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="query">Query.</param>
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
-        public override IEnumerable<TModel> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<TModel> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
         {
 
 
@@ -203,7 +203,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Build a query
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.GetMapping<TDomain>().TableName);
+            sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", context.Connection.GetMapping<TDomain>().TableName);
             List<Object> vals = new List<Object>();
             if (parms.Count > 0)
             {
@@ -358,7 +358,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
 
             // First get total results before we reduce the result-set size
-            var retVal = context.Query<TDomain>(sb.ToString(), vals.ToArray()).ToList();
+            var retVal = context.Connection.Query<TDomain>(sb.ToString(), vals.ToArray()).ToList();
 
             if(queryId != Guid.Empty)
                 this.m_queryPersistence.RegisterQuerySet(queryId, retVal.Select(o => o.Key), parms);
@@ -377,17 +377,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Get the specified data element
         /// </summary>
-        internal override TModel Get(SQLiteConnectionWithLock context, Guid key)
+        internal override TModel Get(LocalDataContext context, Guid key)
         {
             var existing = MemoryCache.Current.TryGetEntry(typeof(TModel), key);
             if (existing != null)
                 return existing as TModel;
-
             // Get from the database
             try
             {
                 var kuuid = key.ToByteArray();
-                return this.CacheConvert(context.Table<TDomain>().Where(o=>o.Uuid == kuuid).FirstOrDefault(), context, true);
+                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o=>o.Uuid == kuuid).FirstOrDefault(), context, true);
             }
             catch(Exception e)
             {
@@ -398,7 +397,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update associated version items
         /// </summary>
-        protected void UpdateAssociatedItems<TAssociation, TModelEx>(IEnumerable<TAssociation> existing, IEnumerable<TAssociation> storage, Guid? sourceKey, SQLiteConnectionWithLock dataContext, bool inversionInd = false)
+        protected void UpdateAssociatedItems<TAssociation, TModelEx>(IEnumerable<TAssociation> existing, IEnumerable<TAssociation> storage, Guid? sourceKey, LocalDataContext dataContext, bool inversionInd = false)
             where TAssociation : IdentifiedData, ISimpleAssociation, new()
             where TModelEx : IdentifiedData
         {

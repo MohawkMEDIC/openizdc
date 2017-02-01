@@ -121,7 +121,9 @@ namespace OpenIZ.Mobile.Core.Android
 					retVal.ConfigurationManager.Load();
 					// Set master application context
 					ApplicationContext.Current = retVal;
-					retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
+                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
+
+                    retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
                     
                     // HACK: For some reason the PCL doesn't do this automagically
@@ -191,7 +193,6 @@ namespace OpenIZ.Mobile.Core.Android
 					{
 						retVal.ConfigurationManager.Save();
 					}
-                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 					// Start daemons
 					retVal.Start();
 
@@ -221,7 +222,9 @@ namespace OpenIZ.Mobile.Core.Android
 			try
 			{
 				var retVal = new AndroidApplicationContext();
-				retVal.Context = context;
+                retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
+
+                retVal.Context = context;
 				retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
@@ -230,7 +233,6 @@ namespace OpenIZ.Mobile.Core.Android
                 ApplicationServiceContext.Current = ApplicationContext.Current;
 
                 retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
-                retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 				retVal.Start();
 				return true;
 			}
