@@ -57,7 +57,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-9 no-padding-right no-wrap">
                                 <span ng-repeat="(dmn, id) in patient.identifier">
                                     {{ id.value }} <span class="label label-info">{{ dmn }}</span>
                                 </span>
@@ -68,8 +68,12 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
                             </div>
-                            <div class="col-xs-9">
-                                {{ patient.dateOfBirth | date: 'yyyy-MMM-dd' }} <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                            <div class="col-xs-9" ng-if="patient.dateOfBirth">
+                                {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
+                                <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                            </div>
+                            <div class="col-xs-9" ng-if="!patient.dateOfBirth">
+                                {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
 

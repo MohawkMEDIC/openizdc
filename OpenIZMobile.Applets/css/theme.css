@@ -118,9 +118,8 @@ fieldset{
 .tokenfield .token-input{
     margin-bottom: 0;
     height: initial;
+    width:auto !important;
 }
-
-
 
 .tokenfield .token .close{
     opacity: 0.3;
@@ -377,6 +376,15 @@ a.not-active {
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
+.prevent-scroll{
+    height: calc(100% - 150px);
+    overflow: hidden;
+}
+.inner-scroll{
+    height:100%;
+    overflow:scroll;
+}
+
 .white-text{
     color:white;
 }
@@ -569,8 +577,8 @@ body{
     background: white;
     border-radius: 15px;
     position: absolute;
-    right: 15px;
-    top: 15px;
+    right: 7px;
+    top: 7px;
     padding-top: 5px;
 }
 
