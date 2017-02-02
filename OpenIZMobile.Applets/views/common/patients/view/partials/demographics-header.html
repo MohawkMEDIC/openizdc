@@ -23,7 +23,7 @@
 
             </div>
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
-            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale].charAt(0).toUpperCase() + patient.genderConceptModel.name[$root.page.locale].slice(1) }}</div>
 
 
         </div>
@@ -43,8 +43,7 @@
                 <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
             </div>
 
-            <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
-            <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
             <div class="col-xs-4">
                 <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
                     <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>

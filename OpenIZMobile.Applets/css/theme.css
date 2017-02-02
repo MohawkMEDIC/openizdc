@@ -904,7 +904,8 @@ body{
     color: white;
     padding: 10px 0 !important;
 }
-.fc-widget-header a{
+.fc-widget-header a,
+.fc-widget-header span{
     color:white;
     padding:0 10px;
 }
