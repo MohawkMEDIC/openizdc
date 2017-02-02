@@ -303,6 +303,9 @@
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
 
+    <!-- Patient -->
+    <string key="locale.patient.search.noresults">No Patients Found</string>
+    
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>

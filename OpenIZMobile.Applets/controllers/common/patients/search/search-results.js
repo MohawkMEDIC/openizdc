@@ -88,10 +88,22 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.isSearching = true;
             $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
-
+            var start = $scope.search.dateOfBirthStringLow;
+            var end = $scope.search.dateOfBirthStringHigh;
             OpenIZ.Patient.findAsync({
                 query: scope.search.query,
                 continueWith: function (r) {
+
+                    if (start !== null && start !== undefined && end != null && end != undefined) {//Temporary fix until the query string can take a range
+                        var inRange = [];
+                        for (var i = 0; i < r.item.length; i++) {
+                            if (r.item[i].dateOfBirth <= end && r.item[i].dateOfBirth >= start) {
+                                inRange.push(r.item[i]);
+                            };
+                        };
+                        r.item = inRange;
+                    }
+
                     scope.search.results = r;
                     scope.search.paging = {
                         current: 1,
