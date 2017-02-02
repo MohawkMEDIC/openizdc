@@ -579,4 +579,33 @@ angular.module('openiz', [])
             templateUrl: 'views/common/patients/view/partials/chart-legend.html',
             replace: true
         }
+    })
+    .directive('integerMinimumValue', function ($filter) {
+        return {
+            require: '?ngModel',
+            link: function (scope, elem, attrs, ctrl) {
+                if (!ctrl) return;
+
+                var integerMinimumValue = attrs.integerMinimumValue;
+
+                ctrl.$formatters.unshift(function (value) {
+                    ctrl.$setValidity('integerMinimumValue', value >= integerMinimumValue);
+                    return value;
+                });
+
+                ctrl.$parsers.unshift(function (viewValue) {
+                    var plainNumber = viewValue.replace(/[^0-9]/g, '');
+                    var isValid = plainNumber >= integerMinimumValue;
+
+                    ctrl.$setValidity('integerMinimumValue', isValid);
+
+                    if (plainNumber !== viewValue) {
+                        ctrl.$setViewValue(plainNumber);
+                        ctrl.$render();
+                    }
+
+                    return isValid ? plainNumber : undefined;
+                });
+            }
+        }
     });

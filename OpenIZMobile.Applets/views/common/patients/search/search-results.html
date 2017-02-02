@@ -22,7 +22,7 @@
     <oiz:script>/org.openiz.core/controllers/common/patients/search/search-results.js</oiz:script>
 
     
-    <div ng-show="search.results &amp;&amp; search.isSearching == false" > 
+    <div ng-show="search.results &amp;&amp; search.results.item.length > 0 &amp;&amp; search.isSearching == false" > 
         <h3>{{ 'locale.patient.search.title' | i18n }}</h3>
 
         <div class="search-results-container">
@@ -127,18 +127,21 @@
             </thead>
             <tbody></tbody>
             <tfoot>
-                <tr>
-                    <td colspan="2" class="no-border-all">{{ search.results.offset + 1 }} .. {{ search.results.offset + search.results.count }} of {{ search.results.totalResults }} </td>
-                    <td colspan="5" class="no-border-all">
-                        <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total > 1">
-                            <li><a ng-click="search.previous()">&lt;&lt;</a></li>
-                            <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages"><a ng-click="search.goPage(i)">{{i}}</a></li>
-                            <li><a ng-click="search.next()">&gt;&gt;</a></li>
-                        </ul>
-                    </td>
-                </tr>
+            <tr>
+                <td colspan="2" class="no-border-all">{{ search.results.offset + 1 }} .. {{ search.results.offset + search.results.count }} of {{ search.results.totalResults }} </td>
+                <td colspan="5" class="no-border-all">
+                    <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total > 1">
+                        <li><a ng-click="search.previous()">&lt;&lt;</a></li>
+                        <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages"><a ng-click="search.goPage(i)">{{i}}</a></li>
+                        <li><a ng-click="search.next()">&gt;&gt;</a></li>
+                    </ul>
+                </td>
+            </tr>
             </tfoot>
         </table>
+    </div>
+    <div class="search-results-tile text-center margin-bottom-10" ng-if="!search.results.item.length &amp;&amp; search.isSearching == false">
+        <h4>{{ 'locale.patient.search.noresults' | i18n }}</h4>
     </div>
     <div class="progress margin-top-10" ng-if="search.isSearching == true">
         <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
