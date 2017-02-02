@@ -1012,7 +1012,7 @@ var OpenIZ = OpenIZ || {
                                  error.error_description,
                                  null
                              ), controlData.state);
-
+                         
                      else // unknown error
                          controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
                                  data,
@@ -2726,9 +2726,9 @@ $.ajaxSetup({
 });
 
 $(document).ajaxError(function (e, data, setting, err) {
-    if ((data.status == 401 || data.status == 403) && OpenIZ.Authentication.$session != null) {
-        if (document.cookie == "" && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined) {
-            OpenIZ.App.showWait();
+    if ((data.status == 401 || data.status == 403)) {
+        if (document.cookie == "" && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined ||
+            OpenIZ.Authentication.$session.exp < new Date() ) {
             window.location.reload(true);
         }
         else // The session is active

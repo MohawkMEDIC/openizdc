@@ -21,6 +21,7 @@
  */
 
 /// <reference path="~/js/openiz.js"/>
+/// <reference path="~/lib/toastr.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter'])
     .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
@@ -45,6 +46,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
     .run(function ($rootScope) {
 
         $rootScope.isLoading = true;
+        $rootScope.extendToast = null;
 
         // HACK: Sometimes HASH is empty ... ugh... 
         // Once we fix the panels and tabs in BS this can be removed
@@ -79,6 +81,15 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
 
         setInterval(function () {
             $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+
+            if ($rootScope.session && ($rootScope.session.exp.getDate() - new Date().getDate() < 10))
+            {
+                if (!$rootScope.extendToast)
+                    $rootScope.extendToast = toastr.warning(OpenIZ.Localization.getString("locale.session.aboutToExpire") + expiry + "<br/><button class='btn btn-primary' onclick='OpenIZ.Authentication.refreshSessionAsync()'>" + OpenIZ.Localization.getString("locale.session.extend") + "</button>");
+                else
+                    $rootScope.extendToast.show();
+            }
+            OpenIZ.Authentication.refreshSessionAsync()
             $rootScope.$applyAsync();
         }, 10000);
 
