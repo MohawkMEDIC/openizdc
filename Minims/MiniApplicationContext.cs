@@ -277,7 +277,9 @@ namespace Minims
                         OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
                     }
                     // Start daemons
-                    retVal.Start();
+                    retVal.GetService<IThreadPoolService>().QueueUserWorkItem(o => { retVal.Start(); });
+
+                    //retVal.Start();
                     
                 }
                 catch (Exception e)

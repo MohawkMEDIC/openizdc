@@ -53,24 +53,24 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
     scope.search.searchSubmitted = false;
     
-    function updateResultEncounters() {
-        for (var i in scope.search.results.item) {
-            OpenIZ.Act.findAsync({
-                query: {
-                    "classConcept": OpenIZModel.ActClassKeys.Encounter,
-                    "statusConcept": OpenIZModel.StatusKeys.Active,
-                    "moodConcept": OpenIZModel.ActMoodKeys.Eventoccurrence,
-                    "participation[RecordTarget].player": scope.search.results.item[i].id,
-                    "_count": 0
-                },
-                continueWith: function (result) {
-                    if (result != null)
-                        scope.search.results.item[i]._isInEncounter = result.totalResults > 0;
-                    scope.$apply();
-                }
-            });
-        }
-    };
+    //function updateResultEncounters() {
+    //    for (var i in scope.search.results.item) {
+    //        OpenIZ.Act.findAsync({
+    //            query: {
+    //                "classConcept": OpenIZModel.ActClassKeys.Encounter,
+    //                "statusConcept": OpenIZModel.StatusKeys.Active,
+    //                "moodConcept": OpenIZModel.ActMoodKeys.Eventoccurrence,
+    //                "participation[RecordTarget].player": scope.search.results.item[i].id,
+    //                "_count": 0
+    //            },
+    //            continueWith: function (result) {
+    //                if (result != null)
+    //                    scope.search.results.item[i]._isInEncounter = result.totalResults > 0;
+    //                scope.$apply();
+    //            }
+    //        });
+    //    }
+    //};
 
     /** 
      * @summary Advances to the next set of results
@@ -113,8 +113,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     };
                     for (var i = 0; i < scope.search.paging.total; i++)
                         scope.search.paging.pages[i] = i + 1;
-                    updateResultEncounters();
-                    scope.$apply();
+
+                    //updateResultEncounters();
                 },
                 onException: function (e) {
                     OpenIZ.App.toast(e.message);
@@ -123,6 +123,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     scope.search.isSearching = false;
                     //OpenIZ.App.hideWait(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton");
                     $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+                    scope.$applyAsync();
 
 
                 }
@@ -149,14 +150,14 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             query: scope.search.query, 
             continueWith: function (r) {
                 scope.search.results = r;
-                updateResultEncounters();
-                scope.$apply();
+                //updateResultEncounters();
             },
             onException: function (e) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+                scope.$apply();
 
             }
         });
@@ -181,14 +182,14 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             query: scope.search.query,
             continueWith: function (r) {
                 scope.search.results = r;
-                updateResultEncounters();
-                scope.$apply();
+                //updateResultEncounters();
             },
             onException: function (e) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+                scope.$apply();
 
             }
         });
@@ -211,14 +212,14 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             query: scope.search.query,
             continueWith: function (r) {
                 scope.search.results = r;
-                updateResultEncounters();
-                scope.$apply();
+                //updateResultEncounters();
             },
             onException: function (e) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+                scope.$apply();
 
             }
         });

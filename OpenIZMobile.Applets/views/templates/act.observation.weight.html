@@ -58,7 +58,7 @@
         <div class="col-xs-7">
             <div class="input-group">
                 <label>{{ 'locale.encounters.weight.value' | i18n }}</label>
-                <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" ng-min="0" ng-max="200" class="form-control" ng-model="act.targetModel.value" />
+                <input ng-change="OpenIZ.CarePlan.interpretObservation(act.targetModel, patient, 'act.observation.weight')" name="weight_{{act.targetModel.id}}" ng-required="act._enabled" ng-disabled="!act._enabled" type="number" ng-min="act._enabled ? 1 : 0" ng-max="200" class="form-control" ng-model="act.targetModel.value" />
             </div>
         </div>
         <div ng-class="!act._created &amp;&amp; act.targetModel.statusConcept != '93a48f6a-6808-4c70-83a2-d02178c2a883'? 'col-xs-4':'col-xs-5'">

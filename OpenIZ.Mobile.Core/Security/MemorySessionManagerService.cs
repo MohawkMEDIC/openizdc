@@ -98,6 +98,8 @@ namespace OpenIZ.Mobile.Core.Security
         /// </summary>
         public SessionInfo Refresh(SessionInfo session, String password)
         {
+
+            if (session == null) return session;
             var idp = ApplicationContext.Current.GetService<IIdentityProviderService>();
 
             // First is this a valid session?

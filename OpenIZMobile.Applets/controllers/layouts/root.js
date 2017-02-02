@@ -82,14 +82,46 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
         setInterval(function () {
             $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
 
-            if ($rootScope.session && ($rootScope.session.exp.getDate() - new Date().getDate() < 10))
+            if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000))
             {
-                if (!$rootScope.extendToast)
-                    $rootScope.extendToast = toastr.warning(OpenIZ.Localization.getString("locale.session.aboutToExpire") + expiry + "<br/><button class='btn btn-primary' onclick='OpenIZ.Authentication.refreshSessionAsync()'>" + OpenIZ.Localization.getString("locale.session.extend") + "</button>");
+                var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
+                var mins = Math.trunc(expiry / 60),
+                    secs = expiry % 60;
+                if (("" + secs).length < 2)
+                    secs = "0" + secs;
+                expiryStr = mins + ":" + secs;
+                var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+
+                if(expiry < 0)
+                    window.location.reload(true);
+                else if (!$rootScope.extendToast)
+                    $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"),  {
+                        closeButton: false,
+                        preventDuplicates: true,
+                        onclick: function () {
+                            OpenIZ.Authentication.refreshSessionAsync({
+                                continueWith: function (s) {
+                                    $rootScope.session = s;
+                                },
+                                onException: function (e) {
+                                    if (e.message) OpenIZ.App.toast(e.message);
+                                    else console.error(e);
+                                }
+                            });
+                            $rootScope.extendToast = null;
+                            toastr.clear();
+                        },
+                        positionClass: "toast-bottom-center",
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
                 else
-                    $rootScope.extendToast.show();
+                    $($rootScope.extendToast).children('.toast-message').html(authString);
+                    //$rootScope.extendToast.show();
             }
-            OpenIZ.Authentication.refreshSessionAsync()
+            else {
+                
+            }
             $rootScope.$applyAsync();
         }, 10000);
 

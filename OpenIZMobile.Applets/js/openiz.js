@@ -988,7 +988,7 @@ var OpenIZ = OpenIZ || {
                  },
                  dataType: "json",
                  contentType: 'application/x-www-urlform-encoded',
-                 success: function (xhr, data) {
+                 success: function (data, status) {
                      if (data != null && data.error !== undefined)
                          controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                          );
@@ -1053,7 +1053,7 @@ var OpenIZ = OpenIZ || {
                 },
                 dataType: "json",
                 contentType: 'application/x-www-urlform-encoded',
-                success: function (xhr, data) {
+                success: function (data, status) {
                     if (data != null && data.error !== undefined)
                         controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                         );
@@ -1122,7 +1122,7 @@ var OpenIZ = OpenIZ || {
                 url: "/__auth/abandon",
                 dataType: "json",
                 contentType: 'application/x-www-urlform-encoded',
-                success: function (xhr, data) {
+                success: function (data, status) {
                     controlData.continueWith(data, controlData.state);
 
                     if (controlData.finally !== undefined) {
@@ -1172,7 +1172,7 @@ var OpenIZ = OpenIZ || {
                  },
                  dataType: "json",
                  contentType: 'application/x-www-urlform-encoded',
-                 success: function (xhr, data) {
+                 success: function (data, status) {
                      if (data != null && data.error !== undefined)
                          controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
                          );
@@ -1271,6 +1271,7 @@ var OpenIZ = OpenIZ || {
          * @method
          */
         interpretObservation: function (obs, patient, ruleSet) {
+            if (!obs.value) return;
             obs.participation = obs.participation || {};
             obs.participation.RecordTarget = obs.participation.RecordTarget || {};
             obs.participation.RecordTarget.playerModel = patient;
@@ -2727,11 +2728,11 @@ $.ajaxSetup({
 
 $(document).ajaxError(function (e, data, setting, err) {
     if ((data.status == 401 || data.status == 403)) {
-        if (document.cookie == "" && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined ||
-            OpenIZ.Authentication.$session.exp < new Date() ) {
+        if (OpenIZ.Authentication.$session && OpenIZ.Authentication.$elevationCredentials.continueWith == undefined && (OpenIZ.Authentication.$session && OpenIZ.Authentication.$session.exp < new Date() || document.cookie == "")) {
             window.location.reload(true);
+            //console.log('hi');
         }
-        else // The session is active
+        else if(OpenIZ.Authentication.$elevationCredentials.continueWith) // The session is active
             OpenIZ.Authentication.showElevationDialog();
     }
     else

@@ -277,6 +277,8 @@ angular.module('openiz', [])
                                     else
                                         options[options.length] = new Option(text, eval(dataKey));
 
+                                    if (i == 0 && defaultFirst)
+                                        defaultValue = defaultValue || dataKey == null ? data.item[i].id : eval(dataKey);
 
                                 }
 
@@ -284,7 +286,7 @@ angular.module('openiz', [])
                                 if (currentValue && currentValue.indexOf("? string:") == 0) {
                                     $(element).val(currentValue.substring(9, currentValue.length - 2));
                                 }
-                                else if (defaultValue) {
+                                if (defaultValue) {
                                     $(element).val(defaultValue);
                                     $(element).trigger('change');
                                 }
@@ -298,7 +300,7 @@ angular.module('openiz', [])
                             if (watchTargetString !== null && newValue !== undefined) {
                                 filter[watchTargetString] = newValue;
                                 if (defaultValueExpression)
-                                    defaultValue = eval(defaultValueExpression);
+                                    defaultValue = eval(defaultValueExpression) || defaultValue;
                             }
                             bind();
                         });

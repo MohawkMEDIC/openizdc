@@ -67,7 +67,7 @@
                         </span>
                     </button>
                     <div class="btn-group">
-                        <button ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-success">
+                        <button id="submitBugButton" ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-success">
                             <span>
                                 <span class="glyphicon glyphicon-ok"></span> {{ 'locale.debug.submit' | i18n }}
                             </span>

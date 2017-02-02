@@ -135,7 +135,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
 							ParameterExpression parmExpr = Expression.Parameter(typeof(AlertMessage), "a");
 							Expression timeExpression = Expression.GreaterThanOrEqual(
-								Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")),
+								Expression.Convert(Expression.MakeMemberAccess(parmExpr, parmExpr.Type.GetRuntimeProperty("CreationTime")), typeof(DateTimeOffset)),
 								Expression.Constant(syncTime)
 							),
 							// this tablet expression

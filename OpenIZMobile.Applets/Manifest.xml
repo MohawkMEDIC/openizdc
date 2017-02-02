@@ -359,6 +359,10 @@
     <string key="AUTH_INV">Invalid username or password</string>
     <string key="AUTH_LCK">Account is locked</string>
     <string key="AUTH_TFA">Account requires two-factor authentication</string>
+  <string key="locale.session.aboutToExpirePrefix">Your session is about to expire in </string>
+  <string key="locale.session.aboutToExpireSuffix">. Tap this message to extend your session.</string>
+  <string key="locale.session.expiration">Session Warning</string>
+  
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
