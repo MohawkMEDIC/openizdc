@@ -45,37 +45,45 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label" for="deviceName" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}</label>
-                                            <div class="col-sm-10">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="deviceName" id="deviceNameLabel">{{ 'locale.settings.deviceName' | i18n }}</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
                                                 <input ng-model="config.security.deviceName" ng-required="true" placeholder="tabletid" ng-pattern="/^[A-Za-z][A-Za-z.0-9-]+$/i" autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false" class="form-control" type="text" name="deviceName" id="deviceName" aria-describedby="deviceNameLabel" />
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.deviceName' | i18n }}" data-content="{{ 'locale.settings.deviceName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-2 control-label" for="realmName" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}</label>
-                                            <div class="col-sm-10">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="realmName" id="realmServerLabel">{{ 'locale.settings.realmName' | i18n }}</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
                                                 <input ng-model="config.security.domain" ng-required="true" placeholder="demo.openiz.org" ng-pattern="/^[A-Za-z0-9.-]*$/i" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmServer" id="realmServer" aria-describedby="realmServerLabel" />
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmName' | i18n }}" data-content="{{ 'locale.settings.realmName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                </span>
                                             </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label class="col-sm-10 col-offset-sm-2">
-                                                <input type="checkbox" ng-model="config.security.enableTrace"/>
-                                                {{ 'locale.settings.enableTracing' | i18n }}
-                                            </label>
-                                        </div>
-                                        <div class="btn-group pull-right">
-                                            <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
-                                                <span>
-                                                    <span class="glyphicon glyphicon-resize-full"></span> {{ 'locale.settings.leaveRealm' | i18n }}
-                                                </span>
-                                            </button>
-                                            <button class="btn-success btn btn-lg" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
-                                                <span>
-                                                    <span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.settings.joinRealm' | i18n }}
-                                                </span>
-                                            </button>
-                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-10 col-sm-offset-2">
+                                            <input type="checkbox" ng-model="config.security.enableTrace"/>
+                                            {{ 'locale.settings.enableTracing' | i18n }}
+                                        </label>
+                                    </div>
+                                    <div class="btn-group pull-right">
+                                        <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
+                                            <span>
+                                                <span class="glyphicon glyphicon-resize-full"></span> {{ 'locale.settings.leaveRealm' | i18n }}
+                                            </span>
+                                        </button>
+                                        <button class="btn-success btn btn-lg" ng-click="joinRealm(config.security)" ng-disabled="realmForm.$invalid || config.realmName != null">
+                                            <span>
+                                                <span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.settings.joinRealm' | i18n }}
+                                            </span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>

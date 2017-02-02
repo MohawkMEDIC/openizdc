@@ -135,7 +135,8 @@ fieldset{
 .has-error .form-control, .has-error .select2-container {
     border:1px solid #843534;
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
     border-radius: 0;
     background: #ebeff5;
     border: none;
@@ -149,6 +150,9 @@ fieldset{
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-width: 10px 8px 0 8px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: none;
 }
 
 .input-group { width:100%; }
