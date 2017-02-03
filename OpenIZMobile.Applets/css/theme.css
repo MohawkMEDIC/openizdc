@@ -621,6 +621,20 @@ body{
     position: relative;
     font-size: 16px;
  }
+
+
+ .card-left-border-safe{
+     border-left: solid 10px #009933;
+     
+ }
+
+ .card-left-border-warning{
+     border-left: solid 10px #E9D460;
+ }
+
+ .card-left-border-danger{
+     border-left: solid 10px #D24D57;
+ }
  .circle-quantity{
     border-radius: 20px;
     width: 32px;
