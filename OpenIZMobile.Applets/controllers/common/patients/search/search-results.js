@@ -52,6 +52,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.startEncounter = startEncounter;
 
     scope.search.searchSubmitted = false;
+    var onlineOnly = false;
     
     //function updateResultEncounters() {
     //    for (var i in scope.search.results.item) {
@@ -75,7 +76,9 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     /** 
      * @summary Advances to the next set of results
      */
-    function search(onlineOnly) {
+    function search(searchOnlineOnly) {
+        onlineOnly = searchOnlineOnly
+        console.log(onlineOnly);
         scope.search.searchSubmitted = true;
 
         if (!scope.searchForm || scope.searchForm.$valid) {
