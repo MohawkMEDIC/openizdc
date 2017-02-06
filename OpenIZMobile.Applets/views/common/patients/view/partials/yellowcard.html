@@ -72,7 +72,7 @@
                                         <span class="glyphicon glyphicon-tasks"></span> 
                                     </div>
                                     <div class="text-danger" ng-if="sequence.isNegated">
-                                        <span class="glyphicon glyphicon-question-sign"></span>
+                                        <span class="glyphicon glyphicon-question-sign"></span> {{ 'locale.encounters.notDone' | i18n }} ({{ sequence.reasonConceptModel | oizConcept }})
                                     </div>
                                 </div>
                             </div>
