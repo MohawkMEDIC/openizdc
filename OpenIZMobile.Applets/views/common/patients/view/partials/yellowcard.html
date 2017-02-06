@@ -66,7 +66,7 @@
                                 <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747">
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-ok"></span> 
-                                        {{ sequence.actTime | date: 'dd-MM-yyyy' }}
+                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | date: 'dd-MM-yyyy' }}</div>
                                     </div>
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-tasks"></span> 
