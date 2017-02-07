@@ -30,10 +30,12 @@
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
-                <span ng-if="::$root.page.onlineState" class="circle-online"></span>
-                <span ng-if="::$root.page.onlineState">Online</span>
-                <span ng-if="!::$root.page.onlineState" class="circle-offline"></span>
-                <span ng-if="!::$root.page.onlineState">Offline</span>
+                <span ng-if="$root.page.onlineState">
+                    <span ng-if="$root.page.onlineState" class="circle-online"></span>
+                    <span ng-if="$root.page.onlineState">Online</span>
+                    <span ng-if="!$root.page.onlineState" class="circle-offline"></span>
+                    <span ng-if="!$root.page.onlineState">Offline</span>
+                </span>
             </a>
             
         </div>
