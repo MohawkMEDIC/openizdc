@@ -21,7 +21,7 @@
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group"
           ng-controller="PatientIdentifiersController">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
-    <div class="row" ng-repeat="identifier in identifiers track by $index">
+    <div ng-repeat="identifier in identifiers track by $index">
         <div class="form-group">
             <div class="col-xs-3">
                 <div class="input-group">
@@ -48,10 +48,12 @@
         </div>
     </div>
     <div class="form-group">
-        <button class="btn btn-default pull-right" type="button" ng-if="addIdentifier" ng-click="addIdentifier(identifiers)">
-            <span>
-                <span class="glyphicon glyphicon-plus"></span> {{ 'locale.patient.identifiers.addIdentifier' | i18n }}
-            </span>
-        </button>
+        <div class="col-xs-12">
+            <button class="btn btn-default pull-right" type="button" ng-if="addIdentifier" ng-click="addIdentifier(identifiers)">
+                <span>
+                    <span class="glyphicon glyphicon-plus"></span> {{ 'locale.patient.identifiers.addIdentifier' | i18n }}
+                </span>
+            </button>
+        </div>
     </div>
 </fieldset>
