@@ -189,7 +189,6 @@ a.not-active {
     border:none;
 }
 .input-group-btn >.btn{
-    height: 100% !important;
     padding: 0px !important;
 }
 .input-group-btn > .btn >span {
