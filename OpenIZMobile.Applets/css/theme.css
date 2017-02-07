@@ -527,6 +527,25 @@ body{
     font-weight: 600;
     padding-left: 55px;
 }
+
+.circle-offline{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #db1f2e; 
+}
+
+.circle-online{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #2cb14b; 
+}
+
 .order-list-delete-button-container{
     position: absolute;
     right: 0;
@@ -625,7 +644,6 @@ body{
 
  .card-left-border-safe{
      border-left: solid 10px #009933;
-     
  }
 
  .card-left-border-warning{
