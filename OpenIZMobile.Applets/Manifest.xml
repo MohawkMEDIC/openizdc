@@ -137,6 +137,7 @@
     <string key="locale.action.remove">Remove</string>
     <string key="locale.action.search">Search</string>
     <string key="locale.action.confirm">Confirm</string>
+    <string key="locale.action.onlineOnly">Online Only</string>
 
     <!-- Alerts -->
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
