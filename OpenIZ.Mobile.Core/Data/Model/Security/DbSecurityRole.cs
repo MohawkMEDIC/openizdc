@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
@@ -27,6 +28,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Represents a security role
 	/// </summary>
 	[Table("security_role")]
+    [AssociativeTable(typeof(DbSecurityPolicy), typeof(DbSecurityRolePolicy))]
 	public class DbSecurityRole : DbIdentified
 	{
 		/// <summary>

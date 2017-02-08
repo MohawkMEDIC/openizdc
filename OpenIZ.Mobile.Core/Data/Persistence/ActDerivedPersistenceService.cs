@@ -31,9 +31,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persistence service which is derived from an act
     /// </summary>
-    public class ActDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class ActDerivedPersistenceService<TModel, TData, TQueryResult> : IdentifiedPersistenceService<TModel, TData, TQueryResult>
         where TModel : Act, new()
         where TData : DbIdentified, new()
+        where TQueryResult : DbIdentified
     {
         // act persister
         protected ActPersistenceService m_actPersister = new ActPersistenceService();

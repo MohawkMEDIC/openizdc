@@ -41,13 +41,14 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Data.Connection;
 using System.Diagnostics;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data
 {
     /// <summary>
     /// Represents a data persistence service which stores data in the local SQLite data store
     /// </summary>
-    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData> where TData : IdentifiedData, new()
+    public abstract class LocalPersistenceServiceBase<TData> : IDataPersistenceService<TData>, ILocalPersistenceService where TData : IdentifiedData, new()
     {
 
         // Get tracer
@@ -59,11 +60,15 @@ namespace OpenIZ.Mobile.Core.Data
         // Mapper
         protected static ModelMapper m_mapper;
 
+        // Builder
+        protected static QueryBuilder m_builder;
+
         // Static CTOR
         static LocalPersistenceServiceBase()
         {
 
             m_mapper = LocalPersistenceService.Mapper;
+            m_builder = new QueryBuilder(m_mapper);
         }
 
         public LocalPersistenceServiceBase()
@@ -320,7 +325,7 @@ namespace OpenIZ.Mobile.Core.Data
                 return existing as TData;
             int toss = 0;
             this.m_tracer.TraceInfo("GET: {0}", key);
-            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty)?.SingleOrDefault();
+            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty, false)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -330,7 +335,7 @@ namespace OpenIZ.Mobile.Core.Data
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
-            return this.Query(query, 0, null, out totalResults, Guid.Empty);
+            return this.Query(query, 0, null, out totalResults, Guid.Empty, false);
         }
 
         /// <summary>
@@ -339,6 +344,14 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="query">Query.</param>
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
+            return this.Query(query, offset, count, out totalResults, queryId, true);
+        }
+
+        /// <summary>
+        /// Query function returning results and count control
+        /// </summary>
+        private IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool countResults)
+        { 
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
 
@@ -364,7 +377,7 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     this.m_tracer.TraceVerbose("QUERY {0}", query);
 
-                    results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId);
+                    results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults);
                 }
 
                 var postData = new DataQueryResultEventArgs<TData>(query, results, offset, count, totalResults);
@@ -378,7 +391,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                 // Remove from the cache
                 foreach (var itm in context.CacheOnCommit)
-                    ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
+                    ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
                 return postData.Results;
 
@@ -432,7 +445,7 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms)
         {
             int totalResults = 0;
-            return this.Query(storedQueryName, parms, 0, null, out totalResults, Guid.Empty);
+            return this.Query(storedQueryName, parms, 0, null, out totalResults, Guid.Empty, false);
         }
 
         /// <summary>
@@ -450,7 +463,14 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public virtual IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults, Guid queryId)
         {
+            return this.Query(storedQueryName, parms, offset, count, out totalResults, queryId, true);
+        }
 
+        /// <summary>
+        /// Perform query with control
+        /// </summary>
+        private IEnumerable<TData> Query(String storedQueryName, IDictionary<String, Object> parms, int offset, int? count, out int totalResults, Guid queryId, bool countResults)
+        { 
             if (String.IsNullOrEmpty(storedQueryName))
                 throw new ArgumentNullException(nameof(storedQueryName));
             else if (parms == null)
@@ -475,7 +495,7 @@ namespace OpenIZ.Mobile.Core.Data
                 {
                     this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 
-                    results = this.Query(context, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId).ToList();
+                    results = this.Query(context, storedQueryName, parms, offset, count ?? -1, out totalResults, queryId, countResults).ToList();
                 }
 
                 var postArgs = new DataStoredQueryResultEventArgs<TData>(storedQueryName, parms, results, offset, count, totalResults);
@@ -573,9 +593,9 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId)
+        public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
-            var retVal = this.QueryInternal(context, query, offset, count, out totalResults, queryId);
+            var retVal = this.QueryInternal(context, query, offset, count, out totalResults, queryId, countResults);
             foreach(var i in retVal)
                 context.AddCacheCommit(i);
             return retVal;
@@ -586,9 +606,9 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        public IEnumerable<TData> Query(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId)
+        public IEnumerable<TData> Query(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
-            var retVal = this.QueryInternal(context, storedQueryName, parms, offset, count, out totalResults, queryId);
+            var retVal = this.QueryInternal(context, storedQueryName, parms, offset, count, out totalResults, queryId, countResults);
             foreach (var i in retVal)
                 context.AddCacheCommit(i);
             return retVal;
@@ -633,13 +653,13 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        protected abstract IEnumerable<TData> QueryInternal(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId);
+        protected abstract IEnumerable<TData> QueryInternal(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults);
         /// <summary>
         /// Performs the actual query
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        protected abstract IEnumerable<TData> QueryInternal(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId);
+        protected abstract IEnumerable<TData> QueryInternal(LocalDataContext context, String storedQueryName, IDictionary<String, Object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults);
 
         /// <summary>
         /// Query internal without caring about limiting
@@ -650,7 +670,7 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> expr)
         {
             int t;
-            return this.QueryInternal(context, expr, 0, -1, out t, Guid.Empty);
+            return this.QueryInternal(context, expr, 0, -1, out t, Guid.Empty, false);
         }
 
         /// <summary>
@@ -663,7 +683,7 @@ namespace OpenIZ.Mobile.Core.Data
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
-            return this.QueryInternal(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty)?.SingleOrDefault();
+            return this.QueryInternal(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty, false)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -704,6 +724,46 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
         {
             return this.Query((Expression<Func<TData, bool>>)query, offset, count, out totalResults, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Insert the specified data
+        /// </summary>
+        object ILocalPersistenceService.Insert(LocalDataContext context, object data)
+        {
+            return this.Insert(context, (TData)data);
+        }
+
+        /// <summary>
+        /// Update
+        /// </summary>
+        object ILocalPersistenceService.Update(LocalDataContext context, object data)
+        {
+            return this.Update(context, (TData)data);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        object ILocalPersistenceService.Obsolete(LocalDataContext context, object data)
+        {
+            return this.Obsolete(context, (TData)data);
+        }
+
+        /// <summary>
+        /// Get the specified data
+        /// </summary>
+        object ILocalPersistenceService.Get(LocalDataContext context, Guid id)
+        {
+            return this.Get(context, id);
+        }
+
+        /// <summary>
+        /// To model instance
+        /// </summary>
+        object ILocalPersistenceService.ToModelInstance(object domainInstance, LocalDataContext context)
+        {
+            return this.ToModelInstance(domainInstance, context, true);
         }
     }
 }

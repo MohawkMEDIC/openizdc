@@ -36,7 +36,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
 
     $scope.saveProfile = function (userEntity) {
 
-        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#saveUserProfileButton');
 
         // Fix the type of telecom
         var telKey = Object.keys(userEntity.telecom)[0];
@@ -59,14 +59,15 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
                 if (data.language !== undefined)
                 {
                     OpenIZ.Localization.setLocale(data.language[0].languageCode);
+                    window.location.reload(true);
                 }
-                $window.location.reload();
             },
             onException: function (ex) {
                 console.log(ex);
-                OpenIZ.App.hideWait();
-
                 OpenIZ.App.toast("Unable to update profile");
+            },
+            finally: function () {
+                OpenIZ.App.hideWait('#saveUserProfileButton');
             }
         });
     };

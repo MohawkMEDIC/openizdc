@@ -17,6 +17,10 @@
  * User: justi
  * Date: 2016-7-1
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Mobile.Core.Data.Model.Extensibility;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -31,12 +35,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
     /// Represents a table which can store act data
     /// </summary>
     [Table("act")]
+    [AssociativeTable(typeof(DbSecurityPolicy), typeof(DbActSecurityPolicy))]
     public class DbAct : DbVersionedData
     {
         /// <summary>
         /// Gets or sets the template
         /// </summary>
-        [Column("template"), MaxLength(16)]
+        [Column("template"), MaxLength(16), ForeignKey(typeof(DbTemplateDefinition), nameof(DbTemplateDefinition.Uuid))]
         public byte[] TemplateUuid { get; set; }
 
         /// <summary>
@@ -66,31 +71,31 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Identifies the class concept
         /// </summary>
-        [Column("classConcept"), MaxLength(16), NotNull]
+        [Column("classConcept"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ClassConceptUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the mood of the act
         /// </summary>
-        [Column("moodConcept"), MaxLength(16), NotNull]
+        [Column("moodConcept"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] MoodConceptUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the reason concept
         /// </summary>
-        [Column("reasonConcept"), MaxLength(16)]
+        [Column("reasonConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ReasonConceptUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the status concept
         /// </summary>
-        [Column("statusConcept"), MaxLength(16), NotNull]
+        [Column("statusConcept"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] StatusConceptUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the type concept
         /// </summary>
-        [Column("typeConcept"), MaxLength(16)]
+        [Column("typeConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] TypeConceptUuid { get; set; }
 
     }

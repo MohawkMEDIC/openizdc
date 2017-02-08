@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Persistence service for matrials
     /// </summary>
-    public class MaterialPersistenceService : EntityDerivedPersistenceService<Material, DbMaterial>
+    public class MaterialPersistenceService : EntityDerivedPersistenceService<Material, DbMaterial, DbMaterial.QueryResult>
     {
 
         /// <summary>
@@ -50,8 +50,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             where TModel : Material, new()
         {
             var iddat = rawInstance as DbIdentified;
-            var dataInstance = rawInstance as DbMaterial ?? context.Connection.Table<DbMaterial>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = rawInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == dataInstance.Uuid).First();
+            var dataInstance = rawInstance as DbMaterial ?? rawInstance.GetInstanceOf<DbMaterial>() ?? context.Connection.Table<DbMaterial>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = rawInstance.GetInstanceOf<DbEntity>() ?? rawInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == dataInstance.Uuid).First();
             var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context, loadFast);
             retVal.ExpiryDate = dataInstance.ExpiryDate;
             retVal.IsAdministrative = dataInstance.IsAdministrative;
@@ -70,8 +70,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Material InsertInternal(LocalDataContext context, Material data)
         {
-            data.FormConcept?.EnsureExists(context);
-            data.QuantityConcept?.EnsureExists(context);
+            if(data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context);
+            if(data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context);
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
             return base.InsertInternal(context, data);
@@ -82,8 +82,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Material UpdateInternal(LocalDataContext context, Material data)
         {
-            data.FormConcept?.EnsureExists(context);
-            data.QuantityConcept?.EnsureExists(context);
+            if (data.FormConcept != null) data.FormConcept = data.FormConcept?.EnsureExists(context);
+            if (data.QuantityConcept != null) data.QuantityConcept = data.QuantityConcept?.EnsureExists(context);
             data.FormConceptKey = data.FormConcept?.Key ?? data.FormConceptKey;
             data.QuantityConceptKey = data.QuantityConcept?.Key ?? data.QuantityConceptKey;
             return base.UpdateInternal(context, data);

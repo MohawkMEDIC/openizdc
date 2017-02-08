@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -34,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the telecom use.
 		/// </summary>
 		/// <value>The telecom use.</value>
-		[Column("use"), MaxLength(16)]
+		[Column("use"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] TelecomUseUuid {
 			get;
 			set;

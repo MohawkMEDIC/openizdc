@@ -20,6 +20,9 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.DataType
 {
@@ -42,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the type identifier.
 		/// </summary>
 		/// <value>The type identifier.</value>
-		[Column("type"), MaxLength(16)]
+		[Column("type"), MaxLength(16), ForeignKey(typeof(DbIdentifierType), nameof(DbIdentifierType.Uuid))]
 		public byte[] TypeUuid {
 			get;
 			set;
@@ -52,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
 		/// Gets or sets the authority identifier.
 		/// </summary>
 		/// <value>The authority identifier.</value>
-		[Column("authority"), NotNull, MaxLength(16)]
+		[Column("authority"), NotNull, MaxLength(16), ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Uuid))]
 		public byte[] AuthorityUuid {
 			get;
 			set;
@@ -70,8 +73,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("entity_uuid"), Indexed, MaxLength(16)]
-        public byte[] EntityUuid
+        [Column("entity_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;
@@ -88,8 +91,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_uuid"), Indexed, MaxLength(16)]
-        public byte[] ActUuid
+        [Column("act_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;

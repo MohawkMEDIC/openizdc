@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -34,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the use concept.
 		/// </summary>
 		/// <value>The use concept.</value>
-		[Column("use"), MaxLength(16)]
+		[Column("use"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] UseConceptUuid {
 			get;
 			set;
@@ -52,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the name identifier.
 		/// </summary>
 		/// <value>The name identifier.</value>
-		[Column("name_uuid"), MaxLength(16), NotNull]
+		[Column("name_uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Uuid))]
 		public byte[] NameUuid {
 			get;
 			set;

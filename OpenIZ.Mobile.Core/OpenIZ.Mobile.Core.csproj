@@ -30,8 +30,18 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataModelExtensions.cs" />
+    <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
+    <Compile Include="Data\QueryBuilder\AlwaysJoinAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\AssociativeTableAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\ColumnMapping.cs" />
+    <Compile Include="Data\QueryBuilder\ForeignKeyAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\QueryBuilder.cs" />
+    <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
+    <Compile Include="Data\QueryBuilder\SqlStatement.cs" />
+    <Compile Include="Data\QueryBuilder\TableMapping.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />

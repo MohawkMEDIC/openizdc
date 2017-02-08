@@ -43,309 +43,34 @@ using OpenIZ.Core.Model.DataTypes;
 namespace OpenIZ.Mobile.Core.Data
 {
 
-    /// <summary>
-    /// Ensure the data exists
-    /// </summary>
-    public static class ModelExtensions
-    {
-        // Lock 
-        private static Object s_lock = new object();
-
-        private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
-        private static Dictionary<Type, Object> s_idpInstances = new Dictionary<Type, object>(20);
-        //private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
-
-            // Readonly types
-        private static readonly List<Type> m_readonlyTypes = new List<Type>()
-        {
-            typeof(Concept),
-            typeof(AssigningAuthority),
-            typeof(IdentifierType),
-            typeof(ConceptName)
-        };
-
-        /// <summary>
-        /// Load specified associations
-        /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
-        {
-
-            if (me == null)
-                throw new ArgumentNullException(nameof(me));
-            else if (context.Connection.IsInTransaction) return;
-
-#if DEBUG
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-            var classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
-            String classValue = null;
-            if (classProperty != null)
-            {
-                classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
-                classValue = classProperty.GetValue(me)?.ToString();
-            }
-            // Load associations
-            foreach (var pi in me.GetType().GetRuntimeProperties())
-            {
-                if (pi.GetCustomAttribute<DataIgnoreAttribute>() != null ||
-                    pi.GetCustomAttributes<AutoLoadAttribute>().Count(p => p.ClassCode == classValue || p.ClassCode == null) == 0)
-                    continue;
-
-
-                var value = pi.GetValue(me);
-                if (value == null)
-                {
-                    var keyProperty = pi.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty;
-                    if (keyProperty == null) continue;
-                    var keyValue = me.GetType().GetRuntimeProperty(keyProperty)?.GetValue(me);
-                    if (keyValue == null) continue; // no key
-
-
-                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(pi.PropertyType);
-                    var idpInstance = ApplicationContext.Current.GetService(idpType);
-                    var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
-                    if (getMethod != null)
-                        pi.SetValue(me, getMethod.Invoke(idpInstance, new object[] { context, keyValue }) as IIdentifiedEntity);
-                }
-                else if (value is IdentifiedData)
-                    pi.SetValue(me, TryGetExisting(value as IIdentifiedEntity, context));
-                else if (value is IList)
-                {
-                    if ((value as IList).Count > 0) continue;
-
-                    Type entryType = pi.PropertyType.GetTypeInfo().GenericTypeArguments[0],
-                        predicateType = typeof(Func<,>).MakeGenericType(entryType, typeof(bool));
-
-                    if (!typeof(ISimpleAssociation).GetTypeInfo().IsAssignableFrom(entryType.GetTypeInfo()))
-                        continue;
-
-                    ParameterExpression parameterExpr = Expression.Parameter(entryType, "o");
-                    var memberExpr = Expression.MakeMemberAccess(parameterExpr, entryType.GetRuntimeProperty("SourceEntityKey"));
-                    var lambda = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, memberExpr, Expression.Convert(Expression.Constant(me.Key), typeof(Guid?))), parameterExpr);
-
-                    // Get the query method
-                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(entryType);
-                    var idpInstance = ApplicationContext.Current.GetService(idpType);
-                    if (idpInstance == null) continue;
-                    var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
-
-                    // Execute query
-                    if (queryMethod == null) continue;
-                    else
-                    {
-                        var results = queryMethod.Invoke(idpInstance, new object[] { context, lambda }) as IEnumerable;
-                        var lValue = value as IList;
-                        //var lValue = Activator.CreateInstance(pi.PropertyType) as IList;
-                        //pi.SetValue(me, lValue);
-                        foreach (var itm in results)
-                        {
-                            var idm = itm as IIdentifiedEntity;
-                            if (!lValue.OfType<IIdentifiedEntity>().Any(o => o.Key == idm.Key)) // not already added
-                            {
-                                (itm as IIdentifiedEntity).LoadAssociations(context);
-                                lValue.Add(itm);
-                            }
-                        }
-                    }
-                }
-            }
-
-#if DEBUG
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: LoadAssociations ({0} ms)", sw.ElapsedMilliseconds);
-#endif
-
-            ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);      
-        }
-
-        /// <summary>
-        /// Try get by classifier
-        /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context)
-        {
-
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-
-            IIdentifiedEntity existing = null;
-
-            // First, is the object a concept?
-            Guid meKey = Guid.Empty;
-            //Concept conceptMe = me as Concept;
-            //if (conceptMe != null && s_conceptDictionary.TryGetValue(conceptMe.Mnemonic, out meKey))
-            //    me.Key = meKey;
-
-            // Have we already loaded the data provider?
-            object idpInstance = null;
-            if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
-            {
-                lock (s_lock)
-                {
-                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-                    idpInstance = ApplicationContext.Current.GetService(idpType);
-                    if (!s_idpInstances.ContainsKey(me.GetType()))
-                        s_idpInstances.Add(me.GetType(), idpInstance);
-                }
-            }
-            if (idpInstance == null) return null;
-
-
-            // Is the key not null?
-            if (me.Key != Guid.Empty && me.Key != null)
-            {
-#if PERFMON
-                sw.Stop();
-                s_tracer.TraceVerbose("Using FAST GET method on ID {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-                sw.Start();
-#endif              
-                //existing = idpInstance.Get(me.Key.Value) as IIdentifiedEntity;
-                //// We have to find it
-                var getMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Get" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
-                if (getMethod == null) return null;
-                existing = getMethod.Invoke(idpInstance, new object[] { context, me.Key }) as IIdentifiedEntity;
-            }
-
-            var classAtt = me.GetType().GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
-            if (classAtt != null && existing == null)
-            {
-#if PERFMON
-                sw.Stop();
-                s_tracer.TraceVerbose("Using SLOW QUERY method on ID {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-                sw.Start();
-#endif        
-                object classifierValue = me;// me.GetType().GetProperty(classAtt.ClassifierProperty).GetValue(me);
-                                            // Follow the classifier
-                Type predicateType = typeof(Func<,>).MakeGenericType(me.GetType(), typeof(bool));
-                ParameterExpression parameterExpr = Expression.Parameter(me.GetType(), "o");
-                Expression accessExpr = parameterExpr;
-                while (classAtt != null)
-                {
-                    var property = accessExpr.Type.GetRuntimeProperty(classAtt.UniqueProperty);
-                    accessExpr = Expression.MakeMemberAccess(accessExpr, property);
-                    classifierValue = property.GetValue(classifierValue);
-
-                    classAtt = accessExpr.Type.GetTypeInfo().GetCustomAttribute<KeyLookupAttribute>();
-
-                }
-
-                // public abstract IQueryable<TData> Query(ModelDataContext context, Expression<Func<TData, bool>> query, IPrincipal principal);
-                var queryMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Query" && o.GetParameters().Length == 2 && o.GetParameters()[0].ParameterType == typeof(LocalDataContext));
-                var expression = Expression.Lambda(predicateType, Expression.MakeBinary(ExpressionType.Equal, accessExpr, Expression.Constant(classifierValue)), new ParameterExpression[] { parameterExpr });
-
-                if (queryMethod == null) return null;
-                var iq = queryMethod.Invoke(idpInstance, new object[] { context, expression }) as IEnumerable;
-                foreach (var i in iq)
-                {
-                    existing = i as IIdentifiedEntity;
-                    me.Key = existing.Key;
-                    if (me is IVersionedEntity)
-                        (me as IVersionedEntity).VersionKey = (existing as IVersionedEntity)?.VersionKey ?? Guid.Empty;
-                    break;
-                }
-            }
-
-            // Add to concept dictionary
-            //if (existing != null && conceptMe != null && !s_conceptDictionary.ContainsKey(conceptMe.Mnemonic))
-            //    lock (s_lock)
-            //        s_conceptDictionary.Add(conceptMe.Mnemonic, conceptMe.Key.Value);
-
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: TryGetExisting {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-#endif
-
-            return existing;
-
-        }
-
-        /// <summary>
-        /// Ensure the specified object exists
-        /// </summary>
-        public static TModel EnsureExists<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
-        {
-
-            // Me
-            var vMe = me as IVersionedEntity;
-
-            // We have to find it
-            object idpInstance = null;
-            if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
-            {
-                lock (s_lock)
-                {
-                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-                    idpInstance = ApplicationContext.Current.GetService(idpType);
-                    s_idpInstances.Add(me.GetType(), idpInstance);
-                }
-            }
-
-            var existing = me.TryGetExisting(context);
-
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-
-            // Existing exists?
-            if (existing == null && !m_readonlyTypes.Contains(typeof(TModel)))
-            {
-                var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
-                if (insertMethod != null)
-                {
-                    IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me }) as IIdentifiedEntity;
-                    me.Key = inserted.Key;
-
-                    if (vMe != null)
-                        vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
-                    existing = inserted;
-                }
-
-            }
-            else if (existing == null)
-                throw new KeyNotFoundException($"Object {me} not found in database and is restricted for creation");
-
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-#endif
-            return existing == null ? me : (TModel)existing;
-
-        }
-
-        ///// <summary>
-        ///// Updates a keyed delay load field if needed
-        ///// </summary>
-        public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
-        {
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-            var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
-            if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
-                return;
-            var value = field.GetValue(instance) as IIdentifiedEntity;
-            if (value == null)
-                return;
-            // Get the delay load key property!
-            var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
-            keyField.SetValue(instance, value.Key);
-
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: UpdateParentKeys {0} ({1} ms)", instance, sw.ElapsedMilliseconds);
-#endif
-        }
-    }
-
+    
     /// <summary>
     /// Represents a dummy service which just adds the persistence services to the context
     /// </summary>
     public class LocalPersistenceService
     {
+
+        // Cache
+        private static Dictionary<Type, ILocalPersistenceService> s_persistenceCache = new Dictionary<Type, ILocalPersistenceService>();
+
+
+        /// <summary>
+        /// Get the specified persister type
+        /// </summary>
+        public static ILocalPersistenceService GetPersister(Type tDomain)
+        {
+            ILocalPersistenceService retVal = null;
+            if (!s_persistenceCache.TryGetValue(tDomain, out retVal))
+            {
+                var idpType = typeof(IDataPersistenceService<>).MakeGenericType(tDomain);
+                retVal = ApplicationContext.Current.GetService(idpType) as ILocalPersistenceService;
+                if (retVal != null)
+                    lock (s_persistenceCache)
+                        if (!s_persistenceCache.ContainsKey(tDomain))
+                            s_persistenceCache.Add(tDomain, retVal);
+            }
+            return retVal;
+        }
 
         /// <summary>
         /// Generic versioned persister service for any non-customized persister
@@ -367,7 +92,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var instance = rp.GetValue(data);
                     if (instance != null)
                     {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        instance = ModelExtensions.TryGetExisting(instance as IIdentifiedEntity, context);
                         if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
@@ -387,7 +112,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var instance = rp.GetValue(data);
                     if (instance != null)
                     {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        instance = ModelExtensions.TryGetExisting(instance as IIdentifiedEntity, context);
                         if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
@@ -472,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Data
                     var instance = rp.GetValue(data);
                     if (instance != null)
                     {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        instance = ModelExtensions.TryGetExisting(instance as IIdentifiedEntity, context);
                         if (instance != null) rp.SetValue(data, instance);
 
                         ModelExtensions.UpdateParentKeys(data, rp);
@@ -496,13 +221,31 @@ namespace OpenIZ.Mobile.Core.Data
                     var instance = rp.GetValue(data);
                     if (instance != null && rp.Name != "SourceEntity") // HACK: Prevent infinite loops on associtive entities
                     {
-                        ModelExtensions.EnsureExists(instance as IIdentifiedEntity, context);
+                        instance = ModelExtensions.TryGetExisting(instance as IIdentifiedEntity, context);
                         if (instance != null) rp.SetValue(data, instance);
                         ModelExtensions.UpdateParentKeys(data, rp);
                     }
 
                 }
                 return base.UpdateInternal(context, data);
+            }
+        }
+
+        /// <summary>
+        /// Generic association persistence service
+        /// </summary>
+        internal class GenericIdentityAssociationPersistenceService<TModel, TDomain> :
+            GenericIdentityPersistenceService<TModel, TDomain>, ILocalAssociativePersistenceService
+            where TModel : IdentifiedData, ISimpleAssociation, new()
+            where TDomain : DbIdentified, new()
+        {
+            /// <summary>
+            /// Get all the matching TModel object from source
+            /// </summary>
+            public IEnumerable GetFromSource(LocalDataContext context, Guid sourceId, decimal? versionSequenceId)
+            {
+                int tr = 0;
+                return this.Query(context, o => o.SourceEntityKey == sourceId, 0, 100, out tr, Guid.Empty, false);
             }
         }
 
@@ -600,7 +343,13 @@ namespace OpenIZ.Mobile.Core.Data
                     else
                     {
                         // Construct a type
-                        var pclass = typeof(GenericIdentityPersistenceService<,>);
+                        Type pclass = null;
+                        if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IVersionedAssociation)))
+                            pclass = typeof(GenericIdentityAssociationPersistenceService<,>);
+                        else if (modelClassType.GetTypeInfo().ImplementedInterfaces.Contains(typeof(ISimpleAssociation)))
+                            pclass = typeof(GenericIdentityAssociationPersistenceService<,>);
+                        else
+                            pclass = typeof(GenericIdentityPersistenceService<,>);
                         pclass = pclass.MakeGenericType(modelClassType, domainClassType);
                         appSection.Services.Add(Activator.CreateInstance(pclass));
                     }

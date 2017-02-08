@@ -19,6 +19,9 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         private Dictionary<Guid, IdentifiedData> m_cacheCommit = new Dictionary<Guid, IdentifiedData>();
 
+        // Data dictionary
+        private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
+
         /// <summary>
         /// Local data context
         /// </summary>
@@ -45,6 +48,11 @@ namespace OpenIZ.Mobile.Core.Data
         }
 
         /// <summary>
+        /// Data dictionary
+        /// </summary>
+        public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
+
+        /// <summary>
         /// Add cache commit
         /// </summary>
         public void AddCacheCommit(IdentifiedData data)
@@ -53,6 +61,16 @@ namespace OpenIZ.Mobile.Core.Data
                 this.m_cacheCommit.Add(data.Key.Value, data);
         }
 
-        
+        /// <summary>
+        /// Adds data in a safe way
+        /// </summary>
+        public void AddData(string key, object value)
+        {
+            lock (this.m_dataDictionary)
+                if (!this.m_dataDictionary.ContainsKey(key))
+                    this.m_dataDictionary.Add(key, value);
+        }
+
+
     }
 }

@@ -17,6 +17,8 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -38,8 +40,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Gets or sets the entity identifier.
         /// </summary>
         /// <value>The entity identifier.</value>
-        [Column("entity_uuid"), MaxLength(16), NotNull, Indexed]
-        public byte[] EntityUuid
+        [Column("entity_uuid"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;
@@ -48,14 +50,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the target entity
         /// </summary>
-        [Column("target"), MaxLength(16), NotNull, Indexed]
+        [Column("target"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public byte[] TargetUuid { get; set; }
 
 
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("relationshipType"), MaxLength(16), NotNull]
+        [Column("relationshipType"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] RelationshipTypeUuid { get; set; }
 
         /// <summary>

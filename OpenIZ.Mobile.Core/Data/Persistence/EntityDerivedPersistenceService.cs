@@ -26,9 +26,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Entity derived persistence services
     /// </summary>
-    public class EntityDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class EntityDerivedPersistenceService<TModel, TData, TQueryResult> : IdentifiedPersistenceService<TModel, TData, TQueryResult>
         where TModel : Entity, new()
         where TData : DbIdentified, new()
+        where TQueryResult : DbIdentified
     {
 
         // Entity persister

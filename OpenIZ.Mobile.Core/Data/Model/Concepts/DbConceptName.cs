@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
@@ -34,7 +35,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the concept identifier.
 		/// </summary>
 		/// <value>The concept identifier.</value>
-		[Column("concept_uuid"), Indexed, NotNull, MaxLength(16)]
+		[Column("concept_uuid"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] ConceptUuid {
 			get;
 			set;

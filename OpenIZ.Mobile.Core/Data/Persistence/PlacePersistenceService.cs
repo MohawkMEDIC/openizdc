@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persister which persists places
     /// </summary>
-    public class PlacePersistenceService : EntityDerivedPersistenceService<Place, DbPlace>
+    public class PlacePersistenceService : EntityDerivedPersistenceService<Place, DbPlace, DbPlace.QueryResult>
     {
         /// <summary>
         /// Load to a model instance
@@ -40,8 +40,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Place ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var place = dataInstance as DbPlace?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
+            var place = dataInstance as DbPlace?? dataInstance.GetInstanceOf<DbPlace>() ?? context.Connection.Table<DbPlace>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == place.Uuid).First();
 
             var retVal = m_entityPersister.ToModelInstance<Place>(dbe, context, loadFast);
             retVal.IsMobile = place.IsMobile;
@@ -79,7 +79,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             byte[] sourceKey = data.Key.Value.ToByteArray();
             if (data.Services != null)
                 base.UpdateAssociatedItems<PlaceService, Entity>(
-                    context.Connection.Table<DbPlaceService>().Where(o => o.EntityUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),
+                    context.Connection.Table<DbPlaceService>().Where(o => o.SourceUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPlaceService, PlaceService>(o)).ToList(),
                     data.Services,
                     data.Key,
                     context);

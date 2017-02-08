@@ -17,6 +17,9 @@
  * User: justi
  * Date: 2016-7-1
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -36,19 +39,19 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Gets or sets the act identifier
         /// </summary>
-        [Column("act_uuid"), MaxLength(16), Indexed, NotNull]
+        [Column("act_uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
         public byte[] ActUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the act identifier
         /// </summary>
-        [Column("entity_uuid"), MaxLength(16), Indexed, NotNull]
+        [Column("entity_uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public byte[] EntityUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the role that the player plays in the act
         /// </summary>
-        [Column("participationRole"), MaxLength(16)]
+        [Column("participationRole"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ParticipationRoleUuid { get; set; }
 
         /// <summary>

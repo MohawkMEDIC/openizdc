@@ -63,8 +63,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override Concept InsertInternal(LocalDataContext context, Concept data)
         {
             // Ensure exists
-            data.Class?.EnsureExists(context);
-            //data.StatusConcept?.EnsureExists(context);
+            if(data.Class != null) data.Class = data.Class?.EnsureExists(context);
+            if(data.StatusConcept != null) data.StatusConcept?.EnsureExists(context);
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 
@@ -115,8 +115,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Concept UpdateInternal(LocalDataContext context, Concept data)
         {
-            data.Class?.EnsureExists(context);
-            //data.StatusConcept?.EnsureExists(context);
+            if(data.Class != null) data.Class = data.Class?.EnsureExists(context);
+            if(data.StatusConcept != null) data.StatusConcept = data.StatusConcept?.EnsureExists(context);
             data.ClassKey = data.Class?.Key ?? data.ClassKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
 

@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents an organization persistence service
     /// </summary>
-    public class OrganizationPersistenceService : EntityDerivedPersistenceService<Organization, DbOrganization>
+    public class OrganizationPersistenceService : EntityDerivedPersistenceService<Organization, DbOrganization, DbOrganization.QueryResult>
     {
 
        
@@ -42,8 +42,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Organization ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var organization = dataInstance as DbOrganization ?? context.Connection.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
+            var organization = dataInstance as DbOrganization ?? dataInstance.GetInstanceOf<DbOrganization>() ?? context.Connection.Table<DbOrganization>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == organization.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Organization>(dbe, context, loadFast);
             retVal.IndustryConceptKey = organization.IndustryConceptUuid  != null ? (Guid?)new Guid(organization.IndustryConceptUuid) : null;
             return retVal;
@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override Organization InsertInternal(LocalDataContext context, Organization data)
         {
             // ensure industry concept exists
-            data.IndustryConcept?.EnsureExists(context);
+            if(data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
 
             return base.InsertInternal(context, data);
@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Organization UpdateInternal(LocalDataContext context, Organization data)
         {
-            data.IndustryConcept?.EnsureExists(context);
+            if(data.IndustryConcept != null) data.IndustryConcept = data.IndustryConcept?.EnsureExists(context);
             data.IndustryConceptKey = data.IndustryConcept?.Key ?? data.IndustryConceptKey;
             return base.UpdateInternal(context, data);
         }

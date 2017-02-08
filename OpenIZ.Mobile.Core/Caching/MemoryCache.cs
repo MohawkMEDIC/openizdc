@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Caching
 
         // Entry table for the cache
         private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
-        
+
         // True if the object is disposed
         private bool m_disposed = false;
 
@@ -159,7 +159,7 @@ namespace OpenIZ.Mobile.Core.Caching
 #if PERFMON
                         this.m_tracer.TraceVerbose("Update cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
 #endif
-                        entry.Update(data);
+                        entry.Update(data as IdentifiedData);
                     }
                 else
                     lock (this.m_lock)
@@ -168,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Caching
 #if PERFMON
                             this.m_tracer.TraceVerbose("Add cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
 #endif
-                            cache.Add(key, new CacheEntry(DateTime.Now, data));
+                            cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
                             this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
 
                         }
@@ -237,6 +237,10 @@ namespace OpenIZ.Mobile.Core.Caching
                     this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
 #endif
                     return candidate.Data;
+                }
+                else /// try get entry slow
+                {
+                    return this.m_entryTable.Values.SelectMany(o => o.Values).FirstOrDefault(o => o.Data.Key == key);
                 }
             }
 

@@ -851,6 +851,16 @@
             Packages the objects into a bundle
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Collection.ILockable">
+            <summary>
+            Represents a lockable collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.ILockable.GetLocked">
+            <summary>
+            Get a locked version of the collection
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1">
             <summary>
             Represents a collection of entities
@@ -1012,6 +1022,12 @@
             <summary>
             Copy the specified data to an array
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.OpenIZ#Core#Model#Collection#ILockable#GetLocked">
+            <summary>
+            Get locked version
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.SimpleAssociationCollection{`0}">
             <summary>
@@ -4479,6 +4495,16 @@
             Byte[] > GUID
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.BooleanToInt(System.Boolean)">
+            <summary>
+            Boolean to int
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.IntToBoolean(System.Int32)">
+            <summary>
+            Boolean to int
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.GuidToByte(System.Guid)">
             <summary>
             Guid > Byte[]
@@ -4507,6 +4533,26 @@
         <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.DateTimeOffsetToDateTime(System.DateTimeOffset)">
             <summary>
             DTO > DT
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ToDateTime(System.DateTime)">
+            <summary>
+            Parse a date time into an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ParseDateTime(System.Int32)">
+            <summary>
+            Parse a date time from an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ToDateTimeOffset(System.DateTimeOffset)">
+            <summary>
+            Parse a date time into an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ParseDateTimeOffset(System.Int32)">
+            <summary>
+            Parse a date time from an object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Map.PropertyMap">

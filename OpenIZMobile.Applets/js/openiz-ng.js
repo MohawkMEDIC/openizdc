@@ -213,6 +213,8 @@ angular.module('openiz', [])
                     delimiter: ' ,',
                     createTokensOnBlur: true
                 });
+
+
             }
         }
     })

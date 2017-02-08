@@ -39,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Creates a new cache entry
         /// </summary>
-        public CacheEntry(DateTime loadTime, Object data)
+        public CacheEntry(DateTime loadTime, IdentifiedData data)
         {
             this.m_lastReadTime = this.LastUpdateTime = loadTime.Ticks;
             this.Data = data;
@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// The data that was loaded
         /// </summary>
-        public Object Data { get; set; }
+        public IdentifiedData Data { get; set; }
 
         /// <summary>
         /// Touches the cache entry
@@ -71,9 +71,9 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Update the cache entry
         /// </summary>
-        internal void Update(object data)
+        internal void Update(IdentifiedData data)
         {
-            this.Data = data;
+            this.Data = data; // TODO: This should be a copy maybe?
             this.Touch();
         }
 

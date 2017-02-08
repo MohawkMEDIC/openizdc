@@ -28,7 +28,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persistence service for substance administrations
     /// </summary>
-    public class SubstanceAdministrationPersistenceService : ActDerivedPersistenceService<SubstanceAdministration, DbSubstanceAdministration>
+    public class SubstanceAdministrationPersistenceService : ActDerivedPersistenceService<SubstanceAdministration, DbSubstanceAdministration, DbSubstanceAdministration.QueryResult>
     {
         /// <summary>
         /// Convert databased model to model
@@ -36,8 +36,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override SubstanceAdministration ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var dbSbadm = dataInstance as DbSubstanceAdministration ?? context.Connection.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(a => a.Uuid == dbSbadm.Uuid).First();
+            var dbSbadm = dataInstance as DbSubstanceAdministration ?? dataInstance.GetInstanceOf<DbSubstanceAdministration>() ?? context.Connection.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(a => a.Uuid == dbSbadm.Uuid).First();
             var retVal = m_actPersister.ToModelInstance<SubstanceAdministration>(dba, context, loadFast);
 
             if (dbSbadm.DoseUnitConceptUuid != null)
@@ -56,8 +56,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override SubstanceAdministration InsertInternal(LocalDataContext context, SubstanceAdministration data)
         {
-            data.DoseUnit?.EnsureExists(context);
-            data.Route?.EnsureExists(context);
+            if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context);
+            if(data.Route != null) data.Route = data.Route?.EnsureExists(context);
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.InsertInternal(context, data);
@@ -69,8 +69,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override SubstanceAdministration UpdateInternal(LocalDataContext context, SubstanceAdministration data)
         {
-            data.DoseUnit?.EnsureExists(context);
-            data.Route?.EnsureExists(context);
+            if(data.DoseUnit != null) data.DoseUnit = data.DoseUnit?.EnsureExists(context);
+            if(data.Route != null) data.Route = data.Route?.EnsureExists(context);
             data.DoseUnitKey = data.DoseUnit?.Key ?? data.DoseUnitKey;
             data.RouteKey = data.Route?.Key ?? data.RouteKey;
             return base.UpdateInternal(context, data);

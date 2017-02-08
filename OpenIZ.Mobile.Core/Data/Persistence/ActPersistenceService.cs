@@ -230,17 +230,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         internal Act UpdateCoreProperties(LocalDataContext context, Act data)
         {
-            data.ClassConcept?.EnsureExists(context);
-            data.MoodConcept?.EnsureExists(context);
-            data.ReasonConcept?.EnsureExists(context);
-            data.StatusConcept?.EnsureExists(context);
-            data.TypeConcept?.EnsureExists(context);
+            if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
+            if (data.MoodConcept != null) data.MoodConcept = data.MoodConcept.EnsureExists(context);
+            if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
+            if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
+            if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
-            data.TypeConcept?.EnsureExists(context);
+//            data.TypeConcept?.EnsureExists(context);
 
             // Do the update
             var retVal = base.UpdateInternal(context, data);
@@ -262,21 +262,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (retVal.Extensions != null)
                 base.UpdateAssociatedItems<ActExtension, Act>(
-                    context.Connection.Table<DbActExtension>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActExtension, ActExtension>(o)).ToList(),
+                    context.Connection.Table<DbActExtension>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActExtension, ActExtension>(o)).ToList(),
                     retVal.Extensions,
                     retVal.Key,
                     context);
 
             if (retVal.Identifiers != null)
                 base.UpdateAssociatedItems<ActIdentifier, Act>(
-                    context.Connection.Table<DbActIdentifier>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActIdentifier, ActIdentifier>(o)).ToList(),
+                    context.Connection.Table<DbActIdentifier>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActIdentifier, ActIdentifier>(o)).ToList(),
                     retVal.Identifiers,
                     retVal.Key,
                     context);
 
             if (retVal.Notes != null)
                 base.UpdateAssociatedItems<ActNote, Act>(
-                    context.Connection.Table<DbActNote>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActNote, ActNote>(o)).ToList(),
+                    context.Connection.Table<DbActNote>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActNote, ActNote>(o)).ToList(),
                     retVal.Notes,
                     retVal.Key,
                     context);
@@ -290,14 +290,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (retVal.Relationships != null)
                 base.UpdateAssociatedItems<ActRelationship, Act>(
-                    context.Connection.Table<DbActRelationship>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActRelationship, ActRelationship>(o)).ToList(),
+                    context.Connection.Table<DbActRelationship>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActRelationship, ActRelationship>(o)).ToList(),
                     retVal.Relationships,
                     retVal.Key,
                     context);
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<ActTag, Act>(
-                    context.Connection.Table<DbActTag>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActTag, ActTag>(o)).ToList(),
+                    context.Connection.Table<DbActTag>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActTag, ActTag>(o)).ToList(),
                     retVal.Tags,
                     retVal.Key,
                     context);
@@ -305,7 +305,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             if (retVal.Protocols != null)
                 base.UpdateAssociatedItems<ActProtocol, Act>(
-                    context.Connection.Table<DbActProtocol>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActProtocol, ActProtocol>(o)).ToList(),
+                    context.Connection.Table<DbActProtocol>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActProtocol, ActProtocol>(o)).ToList(),
                     retVal.Protocols,
                     retVal.Key,
                     context);

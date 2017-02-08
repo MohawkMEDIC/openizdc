@@ -28,9 +28,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Persistence class for observations
     /// </summary>
-    public abstract class ObservationPersistenceService<TObservation, TDbObservation> : ActDerivedPersistenceService<TObservation, TDbObservation>
+    public abstract class ObservationPersistenceService<TObservation, TDbObservation, TQueryResult> : ActDerivedPersistenceService<TObservation, TDbObservation, TQueryResult>
         where TObservation : Observation, new()
         where TDbObservation : DbIdentified, new()
+        where TQueryResult : DbIdentified
     {
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TObservation InsertInternal(LocalDataContext context, TObservation data)
         {
-            data.InterpretationConcept?.EnsureExists(context);
+            if(data.InterpretationConcept != null) data.InterpretationConcept = data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
             
             var inserted = base.InsertInternal(context, data);
@@ -83,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TObservation UpdateInternal(LocalDataContext context, TObservation data)
         {
-            data.InterpretationConcept?.EnsureExists(context);
+            if (data.InterpretationConcept != null) data.InterpretationConcept = data.InterpretationConcept?.EnsureExists(context);
             data.InterpretationConceptKey = data.InterpretationConcept?.Key ?? data.InterpretationConceptKey;
 
             var updated = base.UpdateInternal(context, data);
@@ -99,7 +100,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Text observation service
     /// </summary>
-    public class TextObservationPersistenceService : ObservationPersistenceService<TextObservation, DbTextObservation>
+    public class TextObservationPersistenceService : ObservationPersistenceService<TextObservation, DbTextObservation, DbTextObservation.QueryResult>
     {
         /// <summary>
         /// Convert the specified object to a model instance
@@ -117,9 +118,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override TextObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var textObs = dataInstance as DbTextObservation ?? context.Connection.Table<DbTextObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbo = context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var textObs = dataInstance as DbTextObservation ?? dataInstance.GetInstanceOf<DbTextObservation>() ?? context.Connection.Table<DbTextObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
             return this.ToModelInstance(textObs, dba, dbo, context, loadFast);
         }
     }
@@ -127,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Coded observation service
     /// </summary>
-    public class CodedObservationPersistenceService : ObservationPersistenceService<CodedObservation, DbCodedObservation>
+    public class CodedObservationPersistenceService : ObservationPersistenceService<CodedObservation, DbCodedObservation, DbCodedObservation.QueryResult>
     {
         /// <summary>
         /// Convert the specified object to a model instance
@@ -146,9 +147,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override CodedObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var codeObs = dataInstance as DbCodedObservation ?? context.Connection.Table<DbCodedObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbo = context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var codeObs = dataInstance as DbCodedObservation ?? dataInstance.GetInstanceOf<DbCodedObservation>() ?? context.Connection.Table<DbCodedObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
             return this.ToModelInstance(codeObs, dba, dbo, context, loadFast);
         }
 
@@ -157,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override CodedObservation InsertInternal(LocalDataContext context, CodedObservation data)
         {
-            data.Value?.EnsureExists(context);
+            if(data.Value != null) data.Value = data.Value?.EnsureExists(context);
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
             return base.InsertInternal(context, data);
         }
@@ -167,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override CodedObservation UpdateInternal(LocalDataContext context, CodedObservation data)
         {
-            data.Value?.EnsureExists(context);
+            if(data.Value != null) data.Value = data.Value?.EnsureExists(context);
             data.ValueKey = data.Value?.Key ?? data.ValueKey;
             return base.UpdateInternal(context, data);
         }
@@ -176,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Quantity observation persistence service
     /// </summary>
-    public class QuantityObservationPersistenceService : ObservationPersistenceService<QuantityObservation, DbQuantityObservation>
+    public class QuantityObservationPersistenceService : ObservationPersistenceService<QuantityObservation, DbQuantityObservation, DbQuantityObservation.QueryResult>
     {
 
         /// <summary>
@@ -197,9 +198,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override QuantityObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var qObs = dataInstance as DbQuantityObservation ?? context.Connection.Table<DbQuantityObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dba = dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == qObs.Uuid).First();
-            var dbo = context.Connection.Table<DbObservation>().Where(o => o.Uuid == qObs.Uuid).First();
+            var qObs = dataInstance as DbQuantityObservation ?? dataInstance.GetInstanceOf<DbQuantityObservation>() ?? context.Connection.Table<DbQuantityObservation>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == qObs.Uuid).First();
+            var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == qObs.Uuid).First();
             return this.ToModelInstance(qObs, dba, dbo, context, loadFast);
         }
 
@@ -208,7 +209,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override QuantityObservation InsertInternal(LocalDataContext context, QuantityObservation data)
         {
-            data.UnitOfMeasure?.EnsureExists(context);
+            if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context);
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             return base.InsertInternal(context, data);
         }
@@ -218,7 +219,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override QuantityObservation UpdateInternal(LocalDataContext context, QuantityObservation data)
         {
-            data.UnitOfMeasure?.EnsureExists(context);
+            if(data.UnitOfMeasure != null) data.UnitOfMeasure = data.UnitOfMeasure?.EnsureExists(context);
             data.UnitOfMeasureKey = data.UnitOfMeasure?.Key ?? data.UnitOfMeasureKey;
             return base.UpdateInternal(context, data);
         }

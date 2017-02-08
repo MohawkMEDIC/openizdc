@@ -1819,7 +1819,10 @@ var OpenIZ = OpenIZ || {
          */
         getString: function (stringId) {
             try {
-                return OpenIZApplicationService.GetString(stringId);
+                var retVal = OpenIZApplicationService.GetString(stringId);
+                if (retVal == undefined)
+                    return stringId || "";
+                return retVal;
             }
             catch (e) {
                 console.error(e);

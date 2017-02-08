@@ -25,14 +25,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
     /// <summary>
     /// Represents a persister which is a act relationship 
     /// </summary>
-    public class ActRelationshipPersistenceService : IdentifiedPersistenceService<ActRelationship, DbActRelationship>
+    public class ActRelationshipPersistenceService : IdentifiedPersistenceService<ActRelationship, DbActRelationship>, ILocalAssociativePersistenceService
     {
+
+        /// <summary>
+        /// Get from source
+        /// </summary>
+        public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
+        {
+            return this.Query(context, o => o.SourceEntityKey == id);
+        }
 
         /// <summary>
         /// Insert the relationship
@@ -49,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.ActUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
+            var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
             if (existing == null)
                 return base.InsertInternal(context, data);
             else

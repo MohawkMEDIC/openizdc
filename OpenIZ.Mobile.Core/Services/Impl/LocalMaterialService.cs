@@ -30,14 +30,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents a material repository service.
 	/// </summary>
-	public class LocalMaterialService : IMaterialRepositoryService
+	public class LocalMaterialService : IMaterialRepositoryService, IRepositoryService<Material>,
+        IRepositoryService<ManufacturedMaterial>
 	{
-		/// <summary>
-		/// Finds a specific manufactured material based on a specific query.
-		/// </summary>
-		/// <param name="expression">The query to use to find the manufactured materials.</param>
-		/// <returns>Returns a list of manufactured materials which match the specific query.</returns>
-		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression)
+
+        /// <summary>
+        /// Finds a specific manufactured material based on a specific query.
+        /// </summary>
+        /// <param name="expression">The query to use to find the manufactured materials.</param>
+        /// <returns>Returns a list of manufactured materials which match the specific query.</returns>
+        public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 			if (pers == null)
@@ -48,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <summary>
 		/// Find manufactured material with the specified controls
 		/// </summary>
-		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int count, out int totalCount)
+		public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 			if (pers == null)
@@ -61,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// </summary>
 		/// <param name="expression">The query to use to search for the material.</param>
 		/// <returns>Returns a list of materials.</returns>
-		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression)
+		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -81,7 +83,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <param name="count">The count of the query.</param>
 		/// <param name="totalCount">The total count of the query.</param>
 		/// <returns>Returns a list of materials.</returns>
-		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int count, out int totalCount)
+		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -92,14 +94,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			return persistenceService.Query(expression, offset, count, out totalCount, Guid.Empty);
 		}
+        
 
-		/// <summary>
-		/// Gets a manufactured material by id and version id.
-		/// </summary>
-		/// <param name="id">The id of the manufactured material to be retrieved.</param>
-		/// <param name="versionId">The version id of the manufactured material to be retrieved.</param>
-		/// <returns>Returns a manufactured material.</returns>
-		public ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId)
+        /// <summary>
+        /// Gets a manufactured material by id and version id.
+        /// </summary>
+        /// <param name="id">The id of the manufactured material to be retrieved.</param>
+        /// <param name="versionId">The version id of the manufactured material to be retrieved.</param>
+        /// <returns>Returns a manufactured material.</returns>
+        public ManufacturedMaterial GetManufacturedMaterial(Guid id, Guid versionId)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -129,12 +132,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return persistenceService.Get(id);
 		}
 
-		/// <summary>
-		/// Inserts a manufactured material.
-		/// </summary>
-		/// <param name="manufacturedMaterial">The manufactured material to be inserted.</param>
-		/// <returns>Returns the inserted manufactured material.</returns>
-		public ManufacturedMaterial InsertManufacturedMaterial(ManufacturedMaterial manufacturedMaterial)
+        /// <summary>
+        /// Inserts a manufactured material.
+        /// </summary>
+        /// <param name="manufacturedMaterial">The manufactured material to be inserted.</param>
+        /// <returns>Returns the inserted manufactured material.</returns>
+        public ManufacturedMaterial Insert(ManufacturedMaterial manufacturedMaterial)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -155,7 +158,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// </summary>
 		/// <param name="material">The material to be inserted.</param>
 		/// <returns>Returns the inserted material.</returns>
-		public Material InsertMaterial(Material material)
+		public Material Insert(Material material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -171,12 +174,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return result;
 		}
 
-		/// <summary>
-		/// Obsoletes a manufactured material.
-		/// </summary>
-		/// <param name="key">The key of the manufactured material to be obsoleted.</param>
-		/// <returns>Returns the obsoleted manufactured material.</returns>
-		public ManufacturedMaterial ObsoleteManufacturedMaterial(Guid key)
+        /// <summary>
+        /// Obsoletes a manufactured material.
+        /// </summary>
+        /// <param name="key">The key of the manufactured material to be obsoleted.</param>
+        /// <returns>Returns the obsoleted manufactured material.</returns>
+        public ManufacturedMaterial ObsoleteManufacturedMaterial(Guid key)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -227,12 +230,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			return result;
 		}
 
-		/// <summary>
-		/// Saves or inserts a manufactured material.
-		/// </summary>
-		/// <param name="manufacturedMaterial">The manufactured material to be saved.</param>
-		/// <returns>Returns the saved manufactured material.</returns>
-		public ManufacturedMaterial SaveManufacturedMaterial(ManufacturedMaterial manufacturedMaterial)
+        /// <summary>
+        /// Saves or inserts a manufactured material.
+        /// </summary>
+        /// <param name="manufacturedMaterial">The manufactured material to be saved.</param>
+        /// <returns>Returns the saved manufactured material.</returns>
+        public ManufacturedMaterial Save(ManufacturedMaterial manufacturedMaterial)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 
@@ -264,7 +267,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// </summary>
 		/// <param name="material">The material to be saved.</param>
 		/// <returns>Returns the saved material.</returns>
-		public Material SaveMaterial(Material material)
+		public Material Save(Material material)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -290,5 +293,39 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			return result;
 		}
-	}
+
+        /// <summary>
+        /// Get the specified material
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        Material IRepositoryService<Material>.Get(Guid key)
+        {
+            return this.GetMaterial(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        Material IRepositoryService<Material>.Obsolete(Guid key)
+        {
+            return this.ObsoleteMaterial(key);
+        }
+
+        /// <summary>
+        /// Get manufactured material
+        /// </summary>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Get(Guid key)
+        {
+            return this.GetManufacturedMaterial(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Obsolete
+        /// </summary>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Obsolete(Guid key)
+        {
+            return this.ObsoleteManufacturedMaterial(key);
+        }
+    }
 }

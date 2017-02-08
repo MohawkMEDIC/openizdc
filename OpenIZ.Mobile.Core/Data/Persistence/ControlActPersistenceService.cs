@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Control act persistence service
     /// </summary>
-    public class ControlActPersistenceService : ActDerivedPersistenceService<ControlAct, DbControlAct>
+    public class ControlActPersistenceService : ActDerivedPersistenceService<ControlAct, DbControlAct, DbControlAct>
     {
         /// <summary>
         /// Convert to model instance

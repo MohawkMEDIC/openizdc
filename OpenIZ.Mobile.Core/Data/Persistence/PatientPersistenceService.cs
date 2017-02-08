@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Persistence service which is used to persist patients
     /// </summary>
-    public class PatientPersistenceService : IdentifiedPersistenceService<Patient, DbPatient>
+    public class PatientPersistenceService : IdentifiedPersistenceService<Patient, DbPatient, DbPatient.QueryResult>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
@@ -58,9 +58,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             var iddat = dataInstance as DbVersionedData;
-            var patient = dataInstance as DbPatient ?? context.Connection.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
-            var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
+            var patient = dataInstance as DbPatient ?? dataInstance.GetInstanceOf<DbPatient>() ?? context.Connection.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
+            var dbp = dataInstance.GetInstanceOf<DbPerson>() ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context, loadFast);
             retVal.DateOfBirth = dbp.DateOfBirth.HasValue ? (DateTime?)dbp.DateOfBirth.Value.ToLocalTime() : null;
             // Reverse lookup
@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Patient InsertInternal(LocalDataContext context, Patient data)
         {
-            data.GenderConcept?.EnsureExists(context);
+            if(data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context);
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             var inserted = this.m_personPersister.Insert(context, data);
@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override Patient UpdateInternal(LocalDataContext context, Patient data)
         {
             // Ensure exists
-            data.GenderConcept?.EnsureExists(context);
+            if(data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context);
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             this.m_personPersister.Update(context, data);

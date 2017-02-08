@@ -35,15 +35,27 @@ using System.Diagnostics;
 using System.Reflection;
 using SQLite.Net.Attributes;
 using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
+
+    /// <summary>
+    /// Generic persistence service
+    /// </summary>
+    public abstract class IdentifiedPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain, TDomain>
+        where TModel : IdentifiedData, new()
+        where TDomain : DbIdentified, new()
+    {
+    }
+
     /// <summary>
     /// Generic persistence service which can persist between two simple types.
     /// </summary>
-    public abstract class IdentifiedPersistenceService<TModel, TDomain> : LocalPersistenceServiceBase<TModel>
-        where TModel : IdentifiedData, new()
-        where TDomain : DbIdentified, new()
+    public abstract class IdentifiedPersistenceService<TModel, TDomain, TQueryResult> : LocalPersistenceServiceBase<TModel>
+    where TModel : IdentifiedData, new()
+    where TDomain : DbIdentified, new()
+    where TQueryResult : DbIdentified
     {
 
         // Query persistence
@@ -94,7 +106,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
 
             // Does this already exist?
-            if (!context.Connection.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).Any())
+            if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
                 context.Connection.Insert(domainObject);
             else
                 context.Connection.Update(domainObject);
@@ -131,7 +143,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="query">Query.</param>
-        protected override System.Collections.Generic.IEnumerable<TModel> QueryInternal(LocalDataContext context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults, Guid queryId)
+        protected override System.Collections.Generic.IEnumerable<TModel> QueryInternal(LocalDataContext context, Expression<Func<TModel, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
 
             // Query has been registered?
@@ -141,19 +153,79 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p)).ToList();
             }
 
-            var domainQuery = m_mapper.MapModelExpression<TModel, TDomain>(query);
+            SqlStatement queryStatement = null;
+            try
+            {
+                queryStatement = new SqlStatement<TDomain>().SelectFrom();
+                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
 
-            m_tracer.TraceVerbose("Domain Query: {0}", domainQuery);
+                if (typeof(TQueryResult) != typeof(TDomain))
+                {
+                    var tableMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TDomain));
+                    var fkStack = new Stack<OpenIZ.Core.Data.QueryBuilder.TableMapping>();
+                    fkStack.Push(tableMap);
+                    var scopedTables = new HashSet<Object>();
+                    // Always join tables?
+                    do
+                    {
+                        var dt = fkStack.Pop();
+                        foreach (var jt in dt.Columns.Where(o => o.IsAlwaysJoin))
+                        {
+                            var fkTbl = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(jt.ForeignKey.Table);
+                            var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
+                            queryStatement.InnerJoin(dt.OrmType,fkTbl.OrmType);
+                            if (!scopedTables.Contains(fkTbl))
+                                fkStack.Push(fkTbl);
+                            scopedTables.Add(fkAtt.Table);
+                        }
+                    } while (fkStack.Count > 0);
 
-            var retVal = context.Connection.Table<TDomain>().Where(domainQuery);
+
+                }
+
+                //queryStatement = new SqlStatement<TDomain>().SelectFrom()
+                queryStatement = queryStatement.Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
+                m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
+
+            }
+            catch
+            {
+                queryStatement = m_builder.CreateQuery(query).Build();
+                m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
+            }
+
+            var args = queryStatement.Arguments.Select(o =>
+            {
+                if (o is Guid || o is Guid?)
+                    return ((Guid)o).ToByteArray();
+                else if (o is DateTime || o is DateTime?)
+                    return ((DateTime)o).Ticks;
+                else if (o is DateTimeOffset || o is DateTimeOffset?)
+                    return ((DateTimeOffset)o).Ticks;
+                else if (o is bool || o is bool?)
+                    return ((bool)o) ? 1 : 0;
+                else
+                    return o;
+            }).ToArray();
+
 
             // Total count
-            totalResults = retVal.Count();
+            if (countResults)
+                totalResults = context.Connection.ExecuteScalar<Int32>("SELECT COUNT(*) FROM (" + queryStatement.SQL + ")", args);
+            else
+                totalResults = 0;
 
-            // Skip
-            retVal = retVal.Skip(offset);
             if (count > 0)
-                retVal = retVal.Take(count);
+                queryStatement.Append($" LIMIT {count} ");
+            if (offset > 0)
+            {
+                if (count == 0)
+                    queryStatement.Append($" LIMIT 100 OFFSET {offset} ");
+                else
+                    queryStatement.Append($" OFFSET {offset} ");
+            }
+
+            var retVal = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
 
             if (queryId != Guid.Empty)
                 this.m_queryPersistence?.RegisterQuerySet(queryId, retVal.Select(o => o.Key), query);
@@ -166,14 +238,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected TModel CacheConvert(TDomain o, LocalDataContext context, bool loadFast)
+        protected TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
             {
                 cacheItem = this.ToModelInstance(o, context, loadFast);
-                if(!context.Connection.IsInTransaction)
+                if (!context.Connection.IsInTransaction)
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
             return cacheItem;
@@ -186,7 +258,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="query">Query.</param>
         /// <param name="storedQueryName">Stored query name.</param>
         /// <param name="parms">Parms.</param>
-        protected override IEnumerable<TModel> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<TModel> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
 
 
@@ -199,7 +271,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             var useIntersect = parms.Keys.Count(o => o.StartsWith("relationship")) > 1 ||
                 parms.Keys.Count(o => o.StartsWith("participation")) > 1;
-            
+
             // Build a query
             StringBuilder sb = new StringBuilder();
 
@@ -207,7 +279,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             List<Object> vals = new List<Object>();
             if (parms.Count > 0)
             {
-                if(!useIntersect)
+                if (!useIntersect)
                     sb.AppendFormat("SELECT uuid FROM {0} WHERE ", storedQueryName);
 
                 foreach (var s in parms)
@@ -324,13 +396,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 vals.Add(gValue.ToByteArray());
                             else if (DateTime.TryParse(value.ToString(), out tdateTime))
                                 vals.Add(tdateTime);
-                            else 
+                            else
                                 vals.Add(value);
                         }
                         sb.Remove(sb.Length - 4, 4);
                     } // exist or value
 
-                    if(useIntersect)
+                    if (useIntersect)
                         sb.Append(") INTERSECT ");
                     else
                         sb.Append(") AND ");
@@ -360,12 +432,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // First get total results before we reduce the result-set size
             var retVal = context.Connection.Query<TDomain>(sb.ToString(), vals.ToArray()).ToList();
 
-            if(queryId != Guid.Empty)
+            if (queryId != Guid.Empty)
                 this.m_queryPersistence.RegisterQuerySet(queryId, retVal.Select(o => o.Key), parms);
 
             // Retrieve the results
-            totalResults = retVal.Count();
-
+            if (countResults)
+                totalResults = retVal.Count();
+            else
+                totalResults = 0;
 #if DEBUG
             sw.Stop();
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
@@ -386,9 +460,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             try
             {
                 var kuuid = key.ToByteArray();
-                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o=>o.Uuid == kuuid).FirstOrDefault(), context, true);
+                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context, true);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }

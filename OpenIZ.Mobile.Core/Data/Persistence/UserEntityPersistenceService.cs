@@ -46,8 +46,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override UserEntity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var userEntity = dataInstance as DbUserEntity ?? context.Connection.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
+            var userEntity = dataInstance as DbUserEntity ?? dataInstance.GetInstanceOf<DbUserEntity>() ?? context.Connection.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
             var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == userEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<UserEntity>(dbe, context, loadFast);
             retVal.SecurityUserKey = new Guid(userEntity.SecurityUserUuid);
@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override UserEntity InsertInternal(LocalDataContext context, UserEntity data)
         {
-            data.SecurityUser?.EnsureExists(context);
+            if(data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context);
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             var inserted = this.m_personPersister.Insert(context, data);
 

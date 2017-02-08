@@ -21,6 +21,7 @@ using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,8 +32,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persistence service for entity addresses
     /// </summary>
-    public class EntityAddressPersistenceService : IdentifiedPersistenceService<EntityAddress, DbEntityAddress>
+    public class EntityAddressPersistenceService : IdentifiedPersistenceService<EntityAddress, DbEntityAddress>, ILocalAssociativePersistenceService
     {
+
+
+        /// <summary>
+        /// Get from source
+        /// </summary>
+        public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
+        {
+            return this.Query(context, o => o.SourceEntityKey == id);
+        }
 
         /// <summary>
         /// Override model instance
@@ -51,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            data.AddressUse?.EnsureExists(context);
+            if(data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context);
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.InsertInternal(context, data);
@@ -74,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            data.AddressUse?.EnsureExists(context);
+            if (data.AddressUse != null) data.AddressUse = data.AddressUse?.EnsureExists(context);
             data.AddressUseKey = data.AddressUse?.Key ?? data.AddressUseKey;
 
             var retVal = base.UpdateInternal(context, data);

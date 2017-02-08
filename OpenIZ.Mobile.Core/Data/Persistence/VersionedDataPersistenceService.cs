@@ -28,12 +28,19 @@ using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
+    public abstract class VersionedDataPersistenceService<TModel, TDomain> : VersionedDataPersistenceService<TModel, TDomain, TDomain>
+    where TDomain : DbVersionedData, new()
+    where TModel : VersionedEntityData<TModel>, new()
+    {
+    }
+
     /// <summary>
     /// Versioned domain data
     /// </summary>
-    public abstract class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> 
-        where TDomain : DbVersionedData, new() 
-        where TModel : VersionedEntityData<TModel>, new()
+    public abstract class VersionedDataPersistenceService<TModel, TDomain, TQueryResult> : BaseDataPersistenceService<TModel, TDomain, TQueryResult>
+    where TDomain : DbVersionedData, new()
+    where TModel : VersionedEntityData<TModel>, new()
+    where TQueryResult : DbIdentified
     {
 
         /// <summary>
@@ -41,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey ;
+            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey;
             return base.InsertInternal(context, data);
         }
 
@@ -54,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var key = data.Key?.ToByteArray();
             if (!data.VersionKey.HasValue)
                 data.VersionKey = Guid.NewGuid();
-            else if (context.Connection.Table<TDomain>().Where(o=>o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
+            else if (context.Connection.Table<TDomain>().Where(o => o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
                 data.VersionKey = Guid.NewGuid();
             data.VersionSequence++;
             return base.UpdateInternal(context, data);

@@ -26,14 +26,24 @@ using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
     /// <summary>
     /// Entity name persistence service
     /// </summary>
-    public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>
+    public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
+
+        /// <summary>
+        /// Get from source
+        /// </summary>
+        public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
+        {
+            return this.Query(context, o => o.SourceEntityKey == id);
+        }
+
         /// <summary>
         /// Override model instance
         /// </summary>
@@ -51,7 +61,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            data.NameUse?.EnsureExists(context);
+            if(data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.InsertInternal(context, data);
 
@@ -72,7 +82,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override EntityName UpdateInternal(LocalDataContext context, EntityName data)
         {
             // Ensure exists
-            data.NameUse?.EnsureExists(context);
+            if (data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
 
             var retVal = base.UpdateInternal(context, data);

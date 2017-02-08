@@ -281,7 +281,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Identifiers
             if (data.Identifiers != null)
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
-                    context.Connection.Table<DbEntityIdentifier>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
+                    context.Connection.Table<DbEntityIdentifier>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
                     data.Identifiers,
                     retVal.Key,
                     context);
@@ -289,7 +289,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Relationships
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
-                    context.Connection.Table<DbEntityRelationship>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
+                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
                     data.Relationships.Where(o => !o.InversionIndicator).ToList(),
                     retVal.Key,
                     context);
@@ -297,7 +297,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Telecoms
             if (data.Telecoms != null)
                 base.UpdateAssociatedItems<EntityTelecomAddress, Entity>(
-                    context.Connection.Table<DbTelecomAddress>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbTelecomAddress, EntityTelecomAddress>(o)).ToList(),
+                    context.Connection.Table<DbTelecomAddress>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbTelecomAddress, EntityTelecomAddress>(o)).ToList(),
                     data.Telecoms,
                     retVal.Key,
                     context);
@@ -305,7 +305,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Extensions
             if (data.Extensions != null)
                 base.UpdateAssociatedItems<EntityExtension, Entity>(
-                    context.Connection.Table<DbEntityExtension>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityExtension, EntityExtension>(o)).ToList(),
+                    context.Connection.Table<DbEntityExtension>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityExtension, EntityExtension>(o)).ToList(),
                     data.Extensions,
                     retVal.Key,
                     context);
@@ -313,7 +313,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Names
             if (data.Names != null)
                 base.UpdateAssociatedItems<EntityName, Entity>(
-                    context.Connection.Table<DbEntityName>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityName, EntityName>(o)).ToList(),
+                    context.Connection.Table<DbEntityName>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityName, EntityName>(o)).ToList(),
                     data.Names,
                     retVal.Key,
                     context);
@@ -321,7 +321,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Addresses
             if (data.Addresses != null)
                 base.UpdateAssociatedItems<EntityAddress, Entity>(
-                    context.Connection.Table<DbEntityAddress>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddress, EntityAddress>(o)).ToList(),
+                    context.Connection.Table<DbEntityAddress>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddress, EntityAddress>(o)).ToList(),
                     data.Addresses,
                     retVal.Key,
                     context);
@@ -337,7 +337,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Tags
             if (data.Tags != null)
                 base.UpdateAssociatedItems<EntityTag, Entity>(
-                    context.Connection.Table<DbEntityTag>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityTag, EntityTag>(o)).ToList(),
+                    context.Connection.Table<DbEntityTag>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityTag, EntityTag>(o)).ToList(),
                     data.Tags,
                     retVal.Key,
                     context);

@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Cannot query for bundles
         /// </summary>
-        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             totalResults = 0;
             return new List<Bundle>();
@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Connot query bundles
         /// </summary>
-        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             totalResults = 0;
             return new List<Bundle>();

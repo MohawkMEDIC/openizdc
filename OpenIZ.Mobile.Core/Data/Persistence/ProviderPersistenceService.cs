@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Provider persistence service
     /// </summary>
-    public class ProviderPersistenceService : IdentifiedPersistenceService<Provider, DbProvider>
+    public class ProviderPersistenceService : IdentifiedPersistenceService<Provider, DbProvider, DbProvider.QueryResult>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
@@ -46,8 +46,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Provider ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var provider = dataInstance as DbProvider ?? context.Connection.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == provider.Uuid).First();
+            var provider = dataInstance as DbProvider ?? dataInstance.GetInstanceOf<DbProvider>()?? context.Connection.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == provider.Uuid).First();
             var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == provider.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Provider>(dbe, context, loadFast);
 
@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Provider InsertInternal(LocalDataContext context, Provider data)
         {
-            data.ProviderSpecialty?.EnsureExists(context);
+            if(data.ProviderSpecialty != null) data.ProviderSpecialty?.EnsureExists(context);
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             var inserted = this.m_personPersister.Insert(context, data);
@@ -80,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override Provider UpdateInternal(LocalDataContext context, Provider data)
         {
             // Ensure exists
-            data.ProviderSpecialty?.EnsureExists(context);
+            if(data.ProviderSpecialty != null) data.ProviderSpecialty = data.ProviderSpecialty?.EnsureExists(context);
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             this.m_personPersister.Update(context, data);

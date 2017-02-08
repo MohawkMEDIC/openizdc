@@ -31,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persistence service for a device entity
     /// </summary>
-    public class DeviceEntityPersistenceService : EntityDerivedPersistenceService<DeviceEntity, DbDeviceEntity>
+    public class DeviceEntityPersistenceService : EntityDerivedPersistenceService<DeviceEntity, DbDeviceEntity, DbDeviceEntity>
     {
         /// <summary>
         /// Convert the database representation to a model instance
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override DeviceEntity InsertInternal(LocalDataContext context, DeviceEntity data)
         {
-            data.SecurityDevice?.EnsureExists(context);
+            if(data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
 
             return base.InsertInternal(context, data);
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override DeviceEntity UpdateInternal(LocalDataContext context, DeviceEntity data)
         {
-            data.SecurityDevice?.EnsureExists(context);
+            if (data.SecurityDevice != null) data.SecurityDevice = data.SecurityDevice?.EnsureExists(context);
             data.SecurityDeviceKey = data.SecurityDevice?.Key ?? data.SecurityDeviceKey;
             return base.UpdateInternal(context, data);
         }

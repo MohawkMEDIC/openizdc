@@ -20,6 +20,9 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 {
@@ -61,8 +64,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("entity_uuid"), NotNull, Indexed, MaxLength(16)]
-        public byte[] EntityUuid
+        [Column("entity_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;
@@ -79,8 +82,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source.
         /// </summary>
         /// <value>The source.</value>
-        [Column("act_uuid"), NotNull, Indexed, MaxLength(16)]
-        public byte[] ActUuid
+        [Column("act_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;

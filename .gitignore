@@ -50,3 +50,8 @@ Thumbs.db
 /Solution Items/OpenIZ.Messaging.IMSI.Client.dll.mdb
 /Solution Items/OpenIZ.Core.PCL.dll.mdb
 /Solution Items/OpenIZ.Core.Model.dll.mdb
+
+# Performance Profiler
+*.vspx
+*.etl
+*.psess

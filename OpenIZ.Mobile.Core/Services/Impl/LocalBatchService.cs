@@ -51,7 +51,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             breService?.AfterInsert(data) ;
 
             // Insert bundle to the master queue
-            SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert);
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=> SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert));
 
             return data;
 		}

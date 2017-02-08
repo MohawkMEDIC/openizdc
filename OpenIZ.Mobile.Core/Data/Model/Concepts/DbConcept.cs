@@ -22,6 +22,7 @@ using System.Linq;
 using SQLite.Net;
 using System.Collections.Generic;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
@@ -29,6 +30,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 	/// Physical data layer implemntation of concept
 	/// </summary>
 	[Table("concept")]
+    [AssociativeTable(typeof(DbConceptSet), typeof(DbConceptSetConceptAssociation))]
 	public class DbConcept : DbVersionedData
 	{
 
@@ -54,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("statusConcept"), Indexed, NotNull, MaxLength(16)]
+		[Column("statusConcept"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] StatusUuid {
 			get;
 			set;
@@ -63,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the concept classification
 		/// </summary>
-		[Column("class"), NotNull, MaxLength(16)]
+		[Column("class"), NotNull, MaxLength(16), ForeignKey(typeof(DbConceptClass), nameof(DbConceptClass.Uuid))]
 		public byte[] ClassUuid {
 			get;
 			set;

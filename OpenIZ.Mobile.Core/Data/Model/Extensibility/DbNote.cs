@@ -20,6 +20,9 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 {
@@ -33,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 		/// Gets or sets the author identifier.
 		/// </summary>
 		/// <value>The author identifier.</value>
-		[Column("author"), MaxLength(16), NotNull]
+		[Column("author"), MaxLength(16), NotNull, ForeignKey(typeof(DbPerson), nameof(DbPerson.Uuid))]
 		public byte[] AuthorUuid {
 			get;
 			set;
@@ -60,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("entity_uuid"), Indexed, NotNull, MaxLength(16)]
+        [Column("entity_uuid"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public byte[] EntityUuid
         {
             get;
@@ -79,8 +82,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_uuid"), Indexed, NotNull, MaxLength(16)]
-        public byte[] ActUuid
+        [Column("act_uuid"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid
         {
             get;
             set;

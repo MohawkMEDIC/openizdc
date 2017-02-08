@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 {
@@ -33,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the source concept.
 		/// </summary>
-		[Column("source_concept"), Indexed, NotNull, MaxLength(16)]
-		public byte[] SourceConceptUuid {
+		[Column("source_concept"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+		public byte[] SourceUuid {
 			get;
 			set;
 		}
@@ -43,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the target concept identifier.
 		/// </summary>
 		/// <value>The target concept identifier.</value>
-		[Column("targetConcept"), Indexed, NotNull, MaxLength(16)]
+		[Column("targetConcept"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] TargetConceptUuid {
 			get;
 			set;
@@ -53,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the relationship type identifier.
 		/// </summary>
 		/// <value>The relationship type identifier.</value>
-		[Column("relationshipType"), NotNull, MaxLength(16)]
+		[Column("relationshipType"), NotNull, MaxLength(16), ForeignKey(typeof(DbConceptRelationshipType), nameof(DbConceptRelationshipType.Uuid))]
 		public byte[] RelationshipTypeUuid {
 			get;
 			set;

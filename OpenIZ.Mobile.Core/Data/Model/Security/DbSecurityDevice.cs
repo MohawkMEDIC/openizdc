@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
@@ -27,6 +28,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Represents a security device. This table should only have one row (the current device)
 	/// </summary>
 	[Table("security_device")]
+    [AssociativeTable(typeof(DbSecurityPolicy), typeof(DbSecurityDevicePolicy))]
 	public class DbSecurityDevice : DbBaseData
 	{
 		

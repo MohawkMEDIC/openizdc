@@ -87,7 +87,40 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetEntity()
         {
-            var entityService = ApplicationContext.Current.GetService<IEntityRepositoryService>();
+            return this.GetEntity<Entity>();
+        }
+
+        /// <summary>
+        /// Gets an entity
+        /// </summary>
+        /// <returns>Returns an entity.</returns>
+        [RestOperation(Method = "GET", UriPath = "/Material", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetMaterial()
+        {
+            return this.GetEntity<Material>();
+        }
+
+        /// <summary>
+        /// Gets an entity
+        /// </summary>
+        /// <returns>Returns an entity.</returns>
+        [RestOperation(Method = "GET", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetManufacturedMaterial()
+        {
+            return this.GetEntity<ManufacturedMaterial>();
+        }
+
+        /// <summary>
+        /// Get entity internal
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
+        private IdentifiedData GetEntity<TEntity>() where TEntity : Entity { 
+            var entityService = ApplicationContext.Current.GetService<IRepositoryService<TEntity>>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             if (search.ContainsKey("_id"))
@@ -95,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Force load from DB
                 MemoryCache.Current.RemoveObject(typeof(Entity), Guid.Parse(search["_id"].FirstOrDefault()));
                 var entityId = Guid.Parse(search["_id"].FirstOrDefault());
-                var entity = entityService.Get(entityId, Guid.Empty);
+                var entity = entityService.Get(entityId);
                 return entity;
             }
             else
@@ -123,7 +156,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
                     {
-                        var predicate = QueryExpressionParser.BuildLinqExpression<Entity>(search);
+                        var predicate = QueryExpressionParser.BuildLinqExpression<TEntity>(search);
                         this.m_tracer.TraceVerbose("Searching Entities : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
                         var tret = entityService.Find(predicate, offset, count, out totalResults);
@@ -191,71 +224,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
             }
         }
-
-        /// <summary>
-		/// Get manufactured materials.
-		/// </summary>
-		/// <returns>Returns a list of manufactured materials.</returns>
-        [RestOperation(Method = "GET", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
-        [Demand(PolicyIdentifiers.Login)]
-        [return: RestMessage(RestMessageFormat.SimpleJson)]
-        public Bundle GetManufacturedMaterial()
-        {
-            var bundle = new Bundle();
-
-            try
-            {
-                var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-                var predicate = QueryExpressionParser.BuildLinqExpression<ManufacturedMaterial>(search);
-                var manufacturedMaterialService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
-
-                if (search.ContainsKey("id"))
-                {
-                    // Force load from DB
-                    MemoryCache.Current.RemoveObject(typeof(ManufacturedMaterial), Guid.Parse(search["id"].FirstOrDefault()));
-
-                    var manufacturedMaterialId = Guid.Parse(search["id"].FirstOrDefault());
-                    var manufacturedMaterial = manufacturedMaterialService.GetManufacturedMaterial(manufacturedMaterialId, Guid.Empty);
-
-                    manufacturedMaterial = manufacturedMaterial;
-
-                    if (manufacturedMaterial != null)
-                    {
-                        bundle.Count = 1;
-                        bundle.Item = new List<IdentifiedData> { manufacturedMaterial };
-                        bundle.Reconstitute();
-                        bundle.TotalResults = 1;
-                    }
-
-                    return bundle;
-                }
-
-                this.m_tracer.TraceVerbose("Searching MMAT : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
-
-
-                int totalResults = 0,
-                    offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
-                    count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
-
-                var manufacturedMaterials = manufacturedMaterialService.FindManufacturedMaterial(predicate, offset, count, out totalResults);
-
-                // Serialize the response
-                bundle.Count = manufacturedMaterials.Count(x => x.GetType() == typeof(IdentifiedData));
-                bundle.Item = manufacturedMaterials.OfType<IdentifiedData>().ToList();
-                bundle.Offset = offset;
-                bundle.TotalResults = totalResults;
-            }
-            catch (Exception e)
-            {
-#if DEBUG
-                this.m_tracer.TraceError("{0}", e);
-#endif
-                this.m_tracer.TraceError("{0}", e.Message);
-            }
-
-            return bundle;
-        }
-
+        
         /// <summary>
         /// Get a template
         /// </summary>
@@ -478,7 +447,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 {
                     var manufacturedMaterialRepositoryService = ApplicationContext.Current.GetService<IMaterialRepositoryService>();
 
-                    return manufacturedMaterialRepositoryService.SaveManufacturedMaterial(manufacturedMaterial);
+                    return manufacturedMaterialRepositoryService.Save(manufacturedMaterial);
                 }
                 else
                 {

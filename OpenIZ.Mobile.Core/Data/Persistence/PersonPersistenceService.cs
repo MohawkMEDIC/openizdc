@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <remarks>This is a little different than the other persisters as we have to 
     /// persist half the object in one set of tables ane the other fields in this
     /// table</remarks>
-    public class PersonPersistenceService : EntityDerivedPersistenceService<Person, DbPerson>
+    public class PersonPersistenceService : EntityDerivedPersistenceService<Person, DbPerson, DbPerson.QueryResult>
     {
         // Map
         public static readonly Dictionary<DatePrecision, String> PrecisionMap = new Dictionary<DatePrecision, String>()
@@ -67,8 +67,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Person ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbIdentified;
-            var person = iddat as DbPerson ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = context.Connection.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
+            var person = iddat as DbPerson ?? iddat.GetInstanceOf<DbPerson>() ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = iddat.GetInstanceOf<DbEntity>() ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == person.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Person>(dbe, context, loadFast);
             retVal.DateOfBirth = person.DateOfBirth.HasValue ? (DateTime?)person.DateOfBirth.Value.ToLocalTime() : null;
 
@@ -112,7 +112,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Language communication
             if (data.LanguageCommunication != null)
                 base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
-                    context.Connection.Table<DbPersonLanguageCommunication>().Where(o=>o.EntityUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
+                    context.Connection.Table<DbPersonLanguageCommunication>().Where(o=>o.SourceUuid == sourceKey).ToList().Select(o=>m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
                     data.LanguageCommunication,
                     retVal.Key,
                     context);

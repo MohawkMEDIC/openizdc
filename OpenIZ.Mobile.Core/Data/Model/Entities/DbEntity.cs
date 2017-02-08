@@ -20,6 +20,9 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Extensibility;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -32,14 +35,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the template
         /// </summary>
-        [Column("template"), MaxLength(16)]
+        [Column("template"), MaxLength(16), ForeignKey(typeof(DbTemplateDefinition), nameof(DbTemplateDefinition.Uuid))]
         public byte[] TemplateUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the class concept identifier.
         /// </summary>
         /// <value>The class concept identifier.</value>
-        [Column("classConcept"), MaxLength(16), NotNull, Indexed]
+        [Column("classConcept"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] ClassConceptUuid {
 			get;
 			set;
@@ -49,7 +52,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the determiner concept identifier.
 		/// </summary>
 		/// <value>The determiner concept identifier.</value>
-		[Column("determinerConcept"), MaxLength(16)]
+		[Column("determinerConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] DeterminerConceptUuid {
 			get;
 			set;
@@ -59,7 +62,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the status concept identifier.
 		/// </summary>
 		/// <value>The status concept identifier.</value>
-		[Column("statusConcept"), MaxLength(16), Indexed]
+		[Column("statusConcept"), MaxLength(16), Indexed, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] StatusConceptUuid {
 			get;
 			set;
@@ -69,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the type concept identifier.
 		/// </summary>
 		/// <value>The type concept identifier.</value>
-		[Column("typeConcept"), MaxLength(16)]
+		[Column("typeConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] TypeConceptUuid {
 			get;
 			set;

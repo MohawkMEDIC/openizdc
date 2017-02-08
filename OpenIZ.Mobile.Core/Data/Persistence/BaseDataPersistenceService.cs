@@ -29,12 +29,21 @@ using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
-	/// <summary>
-	/// Base data persistence service
-	/// </summary>
-	public abstract class BaseDataPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain>
+    /// <summary>
+    /// Base data persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain, TDomain>
+        where TModel : BaseEntityData, new()
+        where TDomain : DbBaseData, new()
+    { }
+
+    /// <summary>
+    /// Base data persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain, TQueryResult> : IdentifiedPersistenceService<TModel, TDomain, TQueryResult>
 		where TModel : BaseEntityData, new()
 		where TDomain : DbBaseData, new()
+        where TQueryResult : DbIdentified
 	{
         /// <summary>
         /// Perform the actual insert.
@@ -49,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 				data.Key = domainObject.Key = Guid.NewGuid ();
 
             // Ensure created by exists
-            data.CreatedBy?.EnsureExists(context);
+            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context);
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
@@ -78,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             existing.CopyObjectData(domainObject);
             domainObject = existing;
             domainObject.CreatedByUuid = existing.CreatedByUuid;
-            data.CreatedBy?.EnsureExists(context);
+            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;
 			context.Connection.Update(domainObject);
@@ -94,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override TModel ObsoleteInternal (LocalDataContext context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
-            data.ObsoletedBy?.EnsureExists(context);
+            if(data.ObsoletedBy != null) data.ObsoletedBy = data.ObsoletedBy?.EnsureExists(context);
             data.ObsoletedByKey = domainObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? domainObject.ObsoletedByKey ?? base.CurrentUserUuid(context);
             domainObject.ObsoletionTime = domainObject.ObsoletionTime ?? DateTime.Now;
 			data.ObsoletionTime = (DateTimeOffset)domainObject.ObsoletionTime;

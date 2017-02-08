@@ -31,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents the persistence service for application eneities
     /// </summary>
-    public class ApplicationEntityPersistenceService : EntityDerivedPersistenceService<ApplicationEntity, DbApplicationEntity>
+    public class ApplicationEntityPersistenceService : EntityDerivedPersistenceService<ApplicationEntity, DbApplicationEntity, DbApplicationEntity>
     {
         /// <summary>
         /// To model instance
@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override ApplicationEntity InsertInternal(LocalDataContext context, ApplicationEntity data)
         {
-            data.SecurityApplication?.EnsureExists(context);
+            if(data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
             return base.InsertInternal(context, data);
         }
@@ -64,7 +64,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override ApplicationEntity UpdateInternal(LocalDataContext context, ApplicationEntity data)
         {
-            data.SecurityApplication?.EnsureExists(context);
+            if (data.SecurityApplication != null) data.SecurityApplication = data.SecurityApplication?.EnsureExists(context);
             data.SecurityApplicationKey = data.SecurityApplication?.Key ?? data.SecurityApplicationKey;
             return base.UpdateInternal(context, data);
         }

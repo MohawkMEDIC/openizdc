@@ -1,4 +1,5 @@
-﻿using SQLite.Net.Attributes;
+﻿using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using SQLite.Net.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Gets or sets the act UUID
         /// </summary>
-        [Column("act_uuid"), MaxLength(16), Indexed]
-        public byte[] ActUuid { get; set; }
+        [Column("act_uuid"), MaxLength(16), Indexed, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the protocol uuid
