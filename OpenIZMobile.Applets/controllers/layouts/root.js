@@ -33,6 +33,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             hasStartup |= state.url == '/';
             $stateProvider.state(state);
         });
+
         if (!hasStartup)
             $stateProvider.state({
                 name: 'org-openiz-core-index', url: '/', abstract: false, views: {
@@ -63,6 +64,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
 
         $rootScope.$on("$stateChangeError", console.log.bind(console));
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            if ($('.modal.in').length > 0) {
+                $('.modal-open').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            }
             $rootScope.isLoading = true;
         });
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
