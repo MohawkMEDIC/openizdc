@@ -58,8 +58,11 @@
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
                             <div class="col-xs-9 no-padding-right no-wrap">
-                                <span ng-repeat="(dmn, id) in patient.identifier">
-                                    {{ id.value }} <span class="label label-info">{{ dmn }}</span>
+                                <span ng-if="patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID']">
+                                    <span >{{ patient.identifier['TIMR-BARCODE'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TIMR-BARCODE"))}}</span></span>                                    
+                                </span>
+                                <span ng-if="patient.identifier['NATID']">
+                                    <span>{{ patient.identifier['NATID'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.NATID"))}}</span></span>
                                 </span>
                             </div>
                         </div>
@@ -77,12 +80,15 @@
                             </div>
                         </div>
 
-                        <div class="row" ng-if="patient.deceasedDate">
+                        <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.deceasedDate' | i18n }}
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-9" ng-if="patient.deceasedDate">
                                 {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
+                            </div>
+                            <div class="col-xs-9" ng-if="!patient.deceasedDate">
+                                {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
 
