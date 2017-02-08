@@ -34,6 +34,7 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
         }
 
         // Do an authentication that is not session binding
+        OpenIZ.App.showWait('#loginButton');
         OpenIZ.Authentication.loginAsync({
             userName: $scope.username,
             password: $scope.password,
@@ -55,7 +56,8 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
                 }
             },
             onException: function(error) {
-                if(error.error != null)
+                OpenIZ.App.hideWait('#loginButton');
+                if (error.error != null)
                     alert(error.error);
                 else if(error.message != null)
                     alert(error.message);
