@@ -59,8 +59,7 @@
                             oiz-databind="ManufacturedMaterial" 
                             data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}"  }' 
                             data-display="scope.lotNumber" 
-                            data-defaultFirst="true"
-                            data-default="$root.session.prefs['default.lot.' + newValue]"
+                            data-defaultEmpty="true"
                             >
                     </select>
                 </div>
@@ -70,7 +69,6 @@
                     </div>
                     <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
-                        {{ editEncounterForm['consumable_' + act.targetModel.id].$error | json }}
                     </div>
                     <div class="col-xs-10 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
                         {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}

@@ -229,6 +229,7 @@ angular.module('openiz', [])
                     var modelBinding = $(element).attr('ng-model');
                     var defaultFirst = $(element).attr('data-defaultFirst');
                     var defaultValueExpression = $(element).attr('data-default');
+                    var defaultEmpty = $(element).attr('data-defaultEmpty');
                     var $root = scope.$root;
                     var defaultValue = null;
 
@@ -258,8 +259,12 @@ angular.module('openiz', [])
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
 
-                                if (!data.item || !defaultFirst)
-                                    options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                                if (!data.item || !defaultFirst) {
+                                    if (!defaultEmpty)
+                                        options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
+                                    else
+                                        options[options.length] = new Option("");
+                                }
 
                                 for (var i in data.item) {
                                     var text = null;
