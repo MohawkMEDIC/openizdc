@@ -26,13 +26,22 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+            
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
+                <span ng-if="$root.page.onlineState">
+                    <span ng-if="$root.page.onlineState" class="circle-online"></span>
+                    <span ng-if="$root.page.onlineState">Online</span>
+                    <span ng-if="!$root.page.onlineState" class="circle-offline"></span>
+                    <span ng-if="!$root.page.onlineState">Offline</span>
+                </span>
             </a>
+            
         </div>
         <div class="navbar-collapse collapse" ng-class="{'navbar-collapse-small' : windowWidth &lt; 768}">
             <ul class="nav navbar-nav navbar-right">
+                
                 <li ng-repeat="m in menuItems">
                     <a ng-if="!m.menu" ng-href="{{::m.action}}" data-toggle="collapse" data-target=".navbar-collapse-small">
                         <img ng-if="m.icon" class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> <span class="oiz-menu-text">{{::m.text}}</span>
@@ -49,7 +58,6 @@
                             </a>
                         </li>
                     </ul>
-
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="$root.session.user === undefined">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

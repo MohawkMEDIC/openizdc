@@ -135,7 +135,8 @@ fieldset{
 .has-error .form-control, .has-error .select2-container {
     border:1px solid #843534;
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
     border-radius: 0;
     background: #ebeff5;
     border: none;
@@ -149,6 +150,9 @@ fieldset{
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-width: 10px 8px 0 8px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: none;
 }
 
 .input-group { width:100%; }
@@ -185,7 +189,6 @@ a.not-active {
     border:none;
 }
 .input-group-btn >.btn{
-    height: 100% !important;
     padding: 0px !important;
 }
 .input-group-btn > .btn >span {
@@ -523,10 +526,29 @@ body{
     font-weight: 600;
     padding-left: 55px;
 }
+
+.circle-offline{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #db1f2e; 
+}
+
+.circle-online{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #2cb14b; 
+}
+
 .order-list-delete-button-container{
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 0;
+    top: 0;
     z-index:50;
 }
 .order-list-delete-button{
@@ -616,6 +638,19 @@ body{
     color: white;
     position: relative;
     font-size: 16px;
+ }
+
+
+ .card-left-border-safe{
+     border-left: solid 10px #009933;
+ }
+
+ .card-left-border-warning{
+     border-left: solid 10px #E9D460;
+ }
+
+ .card-left-border-danger{
+     border-left: solid 10px #D24D57;
  }
  .circle-quantity{
     border-radius: 20px;
@@ -904,7 +939,8 @@ body{
     color: white;
     padding: 10px 0 !important;
 }
-.fc-widget-header a{
+.fc-widget-header a,
+.fc-widget-header span{
     color:white;
     padding:0 10px;
 }

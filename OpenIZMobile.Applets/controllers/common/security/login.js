@@ -57,7 +57,6 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     //OpenIZ.App.hideWait('#loginButton');
                     OpenIZ.App.hideWait('#loginButton');
 
-
                 if (typeof (ex) == "string")
                     console.log(ex);
                 else if (ex.message != undefined)

@@ -15,25 +15,37 @@
             </div>
         </div>
         <div class="row">
-            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
-            <div class="col-xs-4">
-                <span>
-                    {{ patient.identifier | oizEntityIdentifier }}
-                </span>
-
-            </div>
-            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
-            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
-
-
-        </div>
-        <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
             <div class="col-xs-4">
                 <span ng-model="patient.dateOfBirth" oiz-editor="date">
                     {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
                 </span>
             </div>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
+            <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale].charAt(0).toUpperCase() + patient.genderConceptModel.name[$root.page.locale].slice(1) }}</div>
+
+
+        </div>
+        <div class="row" ng-if="patient.deceasedDate">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
+            <div class="col-xs-4">
+                <span ng-model="patient.deceasedDate" oiz-editor="date">
+                    {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
+            <div class="col-xs-4">
+                <span>
+                    <span ng-repeat="(dmn, id) in patient.identifier">
+                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span></span>
+                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span><br /></span>
+                    </span>
+                </span>
+
+            </div>
+            
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}:</label>
             <div class="col-xs-4 no-wrap"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
         </div>
@@ -43,8 +55,7 @@
                 <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
             </div>
 
-            <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
-            <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
             <div class="col-xs-4">
                 <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
                     <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
@@ -55,14 +66,7 @@
                 </span>
             </div>
         </div>
-        <div class="row" ng-if="patient.deceasedDate">
-            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
-            <div class="col-xs-4">
-                <span ng-model="patient.deceasedDate" oiz-editor="date">
-                    {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
-                </span>
-            </div>
-        </div>
+        
     </div>
     <div class="col-xs-2 text-right">
         <div class="dropdown">

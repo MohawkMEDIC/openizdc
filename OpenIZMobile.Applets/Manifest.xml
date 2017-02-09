@@ -137,6 +137,7 @@
     <string key="locale.action.remove">Remove</string>
     <string key="locale.action.search">Search</string>
     <string key="locale.action.confirm">Confirm</string>
+    <string key="locale.action.onlineOnly">Online Only</string>
 
     <!-- Alerts -->
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
@@ -207,7 +208,7 @@
     <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
     <string key="locale.settings.deviceName">Device Name:</string>
     <string key="locale.settings.realmName">Realm ID:</string>
-    <string key="locale.settings.dataTitle">Data Settings</string>
+    <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
     <string key="locale.settings.dataMode">Data Mode:</string>
     <string key="locale.settings.enableTracing">Enable Tracing</string>

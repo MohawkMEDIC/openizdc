@@ -40,7 +40,9 @@
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
                         <div class="col-xs-4">
                             <span>
-                                {{ patient.identifier | oizEntityIdentifier }}
+                                <span ng-repeat="(dmn, id) in patient.identifier">
+                                    {{ id.value }} <span class="label label-info">{{ dmn }}</span>
+                                </span>
                             </span>
 
                         </div>

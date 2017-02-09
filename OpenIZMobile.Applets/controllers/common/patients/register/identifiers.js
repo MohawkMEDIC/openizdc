@@ -29,63 +29,79 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
-    // Rebind the domain scope
-    function rebindDomain(authority, identifier) {
-        if ($scope.patient.identifier[identifier.authority.domainName] !== undefined) { // Already have one, add another
-        
-            var current = $scope.patient.identifier[identifier.authority.domainName];
-            if (!Array.isArray(current))
-                current = $scope.patient.identifier[identifier.authority.domainName] = [
-                    $scope.patient.identifier[identifier.authority.domainName]
-                ];
-            else if(current == undefined)
-                current = $scope.patient.identifier[identifier.authority.domainName] = [];
+    var once = true;
 
-            current.push(identifier);
+    $scope.$watch('patient.identifier', function (identifier, o) {
+        if (identifier && identifier != o && once) {
+            once = false;
+            $scope.identifiers = [];
+            for (key in identifier) {
+                if (identifier[key]) {
+                    if (!Array.isArray(identifier[key])) {
+                        var value = identifier[key].value || "";
+                        $scope.identifiers.push({ domainName: key, value: value });
+                    } else {
+                        for (var i = 0; i < identifier[key].length; i++) {
+                            $scope.identifiers.push({ domainName: key, value: identifier[key][i].value });
+                        }
+                    }
+                }
+               
+            }
+            if ($scope.identifiers.length === 0) {
+                $scope.identifier.push({});
+            }
         }
-        else
-            $scope.patient.identifier[identifier.authority.domainName] = identifier;
+    }, true);
 
-        // Remove the identifier from the current list
-        if (Array.isArray($scope.patient.identifier[authority]))
-            ;
-        else
-            delete $scope.patient.identifier[authority];
+    //builds the identifier back onto the patient
+    $scope.$watch('identifiers', function (identifiers, o) {
+        if (identifiers && identifiers != o) {
+            $scope.patient.identifier = {};
+            for (key in identifiers) {
+                domainName = identifiers[key].domainName;
+                value = identifiers[key].value;
+                if (Array.isArray($scope.patient.identifier[domainName])) {
+                    $scope.patient.identifier[domainName].push({
+                        authority: {
+                            domainName: domainName
+                        },
+                        value: value
+                    })
+                } else {
+                    $scope.patient.identifier[domainName] = [{
+                        authority: {
+                            domainName: domainName
+                        },
+                        value: value
+                    }]
+                }
+            }
+        }
+    }, true);
 
+    // Rebind the domain scope
+    function rebindDomain(authority, identifier, index) {
+        
     };
     
     // Scan the specified barcode
 
-    function scanBarcode(authority, identifier) {
+    function scanBarcode(identifier) {
         identifier.value = OpenIZ.App.scanBarcode();
     };
 
     // Add identifier
-    function addIdentifier() {
-            if ($scope.patient.identifier["NEW"] != null &&
-                $scope.patient.identifier["NEW"].authority.domainName != "NEW") {
-                $scope.patient.identifier[$scope.patient.identifier["NEW"].authority] = $scope.patient.identifier["NEW"];
-                $scope.patient.identifier["NEW"] = { authority: { domainName: "NEW" }, value: null };
-            }
-            else if ($scope.patient.identifier["NEW"] == null)
-                $scope.patient.identifier["NEW"] = { authority: { domainName: "NEW" }, value: null };
+    function addIdentifier(identifiers) {
+        identifiers.push({});
         
-    };
+    }
 
     // Remove identifier
-    function removeIdentifier(authority, index) {
-
-        // Remove one from collection of ids
-        if (Array.isArray($scope.patient.identifier[authority])) {
-            $scope.patient.identifier[authority].splice(index, 1);
-            if ($scope.patient.identifier[authority].length == 1)
-                $scope.patient.identifier[authority] = $scope.patient.identifier[authority][0];
+    function removeIdentifier(identifiers, index) {
+        if (identifiers && identifiers.length > 1) {
+            identifiers.splice(index, 1);
         }
-        else
-            delete $scope.patient.identifier[authority];
-
-        if (Object.keys($scope.patient.identifier) == 0)
-            $scope.addIdentifier();
     };
     
 }]);

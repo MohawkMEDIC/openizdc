@@ -53,6 +53,18 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                 var oldIndex = oldValue == undefined ? 0 : oldValue;
                 var newEncounters = scope.encounters.slice(oldIndex, newValue);
                 
+            	// Sort based on dose
+                newEncounters.sort(function (a, b)
+                {
+                	if (a.actTime > b.actTime)
+                		return 1;
+                	else if (a.actTime < b.actTime)
+                		return -1;
+                	else
+                	{
+                		return 0;
+                	}
+                });
 
                 // Record target
 
