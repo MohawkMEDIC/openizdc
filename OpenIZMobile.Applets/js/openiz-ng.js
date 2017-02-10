@@ -232,6 +232,7 @@ angular.module('openiz', [])
                     var defaultFirst = $(element).attr('data-defaultFirst');
                     var defaultValueExpression = $(element).attr('data-default');
                     var defaultEmpty = $(element).attr('data-defaultEmpty');
+                    var defaultKey = attrs.defaultKey;
                     var $root = scope.$root;
                     var defaultValue = null;
 
@@ -260,9 +261,12 @@ angular.module('openiz', [])
                                 var currentValue = $(element).val();
                                 var options = $(element)[0].options;
                                 $('option', element[0]).remove(); // clear existing 
+                                
 
                                 if (!data.item || !defaultFirst) {
-                                    if (!defaultEmpty)
+                                    if (defaultKey)
+                                        options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"), defaultKey);
+                                    else if (!defaultEmpty)
                                         options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
                                     else
                                         options[options.length] = new Option("");
