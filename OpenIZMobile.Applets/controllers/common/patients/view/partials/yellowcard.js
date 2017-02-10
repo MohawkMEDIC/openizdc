@@ -102,9 +102,20 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                             scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
                         //               scope.$apply();
                     }
+                    
                     ;;
                    
                 }
+                $scope.vaccineArray = [];
+                $.each(scope.display._vaccineAdministrations, function (index, value) {
+                    $scope.vaccineArray.push(scope.display._vaccineAdministrations[index])
+                    $scope.vaccineArray[$scope.vaccineArray.length-1].antigenName = index
+                });
+                $scope.vaccineArray.sort(function (a, b) {
+                    var textOne = a.antigenName;
+                    var textTwo = b.antigenName;
+                    return (textOne < textTwo) ? -1 : (textOne > textTwo) ? 1 : 0;
+                });
 
             }
         }
