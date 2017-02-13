@@ -126,6 +126,11 @@
             Gets the template definition
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.AppletCollection.GetViewModelDescription(System.String)">
+            <summary>
+            Gets the template definition
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.AppletCollection.ResolveAsset(System.String,OpenIZ.Core.Applets.Model.AppletAsset,System.String)">
             <summary>
             Resolve the asset 
@@ -270,6 +275,26 @@
         <member name="P:OpenIZ.Core.Applets.Model.AppletView.Controller">
             <summary>
             Gets or sets the controller for the object
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.Model.AppletViewModelDefinition">
+            <summary>
+            Represents a view model definition
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewModelDefinition.ViewModelId">
+            <summary>
+            Gets or sets the mnemonic
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewModelDefinition.Definition">
+            <summary>
+            Gets or sets the definition
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletViewModelDefinition.DefinitionContent">
+            <summary>
+            The content loaded
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Applets.Model.AppletViewState">
@@ -590,6 +615,11 @@
             Gets or ets the templates for use in the applet
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletManifest.ViewModel">
+            <summary>
+            Gets or sets the view model definitions 
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletManifest.Assets">
             <summary>
             Gets or sets the assets which are to be used in the applet
@@ -908,6 +938,11 @@
         <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.#ctor">
             <summary>
             Defaut ctor
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Include">
+            <summary>
+            Includes
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Name">

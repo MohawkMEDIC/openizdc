@@ -188,6 +188,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     }
                 }
 
+	            if (retVal == null)
+	            {
+		            retVal = new List<Patient>();
+	            }
+
                 retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
                 if (search.ContainsKey("_onlineOnly"))
                     retVal.ToList().ForEach((o) => {
