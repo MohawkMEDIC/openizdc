@@ -355,7 +355,7 @@
     <string key="locale.alerts.newAlerts">New alerts</string>
   <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
-
+    <string key="locale.network.online">Online</string>
     <string key="invalid_grant">Can't login</string>
     <string key="AUTH_INV">Invalid username or password</string>
     <string key="AUTH_LCK">Account is locked</string>
