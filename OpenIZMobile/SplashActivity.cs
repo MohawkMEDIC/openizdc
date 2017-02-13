@@ -89,7 +89,6 @@ namespace OpenIZMobile
 
             Task startupWork = new Task(() =>
             {
-                Task.Delay(1000);
                 if(XamarinApplicationContext.Current == null)
                     if (!this.DoConfigure())
                         ctSource.Cancel();

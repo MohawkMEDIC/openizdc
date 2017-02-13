@@ -54,6 +54,8 @@ namespace OpenIZ.Mobile.Core.Protocol
         // Represents a promise to perform a care plan
         private HashSet<Guid> m_actCarePlanPromise = new HashSet<Guid>();
 
+        private DatamartDefinition m_dataMart = null;
+
         /// <summary>
         /// True when running
         /// </summary>
@@ -107,11 +109,12 @@ namespace OpenIZ.Mobile.Core.Protocol
                         this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
                     }
                     // Deploy schema?
-                    if (this.m_warehouseService.GetDatamart("oizcp") == null)
+                    this.m_dataMart = this.m_warehouseService.GetDatamart("oizcp");
+                    if (this.m_dataMart == null)
                     {
                         this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
-                        var dm = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
-                        this.m_tracer.TraceVerbose("Datamart {0} created", dm.Id);
+                        this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
+                        this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
 
                     // Subscribe to persistence
@@ -216,7 +219,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     IEnumerable<Act> carePlan = null;
                     var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
                     var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                    var dataMart = warehouseService.GetDatamart("oizcp");
+                    var dataMart = this.m_dataMart;
                     var patient = this.EnsureParticipations(ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient);
                      
 
@@ -309,7 +312,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // First, we clear the warehouse
                     var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                    var dataMart = warehouseService.GetDatamart("oizcp");
+                    var dataMart = this.m_dataMart;
                     warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
                     var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
 

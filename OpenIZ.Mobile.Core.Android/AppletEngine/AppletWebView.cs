@@ -94,9 +94,9 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine
 
 			WebView.SetWebContentsDebuggingEnabled(true);
 
-			this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
-            this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
-            this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
+		    this.AddJavascriptInterface(new AppletFunctionBridge(context, this), "OpenIZApplicationService");
+            //this.AddJavascriptInterface(new ConfigurationServiceBridge(), "OpenIZConfigurationService");
+            //this.AddJavascriptInterface(new SessionServiceBridge(), "OpenIZSessionService");
             this.SetWebViewClient(new AppletWebViewClient());
             this.RequestFocus(A.Views.FocusSearchDirection.Down);
             this.SetWebChromeClient(new AppletWebChromeClient(this.Context));

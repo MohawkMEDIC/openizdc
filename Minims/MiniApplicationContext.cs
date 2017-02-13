@@ -509,7 +509,7 @@ namespace Minims
             {
                 tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
                 // Version
-                tw.WriteLine("OpenIZSessionService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
+                tw.WriteLine("OpenIZApplicationService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
                 tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
                 tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
                 tw.WriteLine("\tswitch(key) {");
@@ -522,7 +522,7 @@ namespace Minims
 
                 tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
                 tw.WriteLine("OpenIZApplicationService._UUIDS = [");
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 100; i++)
                     tw.WriteLine("\t'{0}',", Guid.NewGuid());
                 tw.WriteLine("\t''];");
 

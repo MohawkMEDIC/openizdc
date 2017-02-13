@@ -240,7 +240,10 @@ namespace OpenIZ.Mobile.Core.Caching
                 }
                 else /// try get entry slow
                 {
-                    return this.m_entryTable.Values.SelectMany(o => o.Values).FirstOrDefault(o => o.Data.Key == key);
+                    var entryTabl = this.m_entryTable.FirstOrDefault(o => objectType.GetTypeInfo().IsAssignableFrom(o.Key.GetTypeInfo()) && o.Value.ContainsKey(key.Value));
+                    if (entryTabl.Value == null) return null;
+                    else
+                        return entryTabl.Value[key.Value];
                 }
             }
 

@@ -64,6 +64,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         private AppletWebView m_view;
         private Tracer m_tracer = Tracer.GetTracer(typeof(AppletFunctionBridge));
         private Assembly m_appAssembly;
+        private bool m_zxingInitialized;
 
         /// <summary>
         /// Gets the context of the function
@@ -71,8 +72,6 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         /// <param name="context">Context.</param>
         public AppletFunctionBridge(Context context, AppletWebView view)
         {
-            if((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication != null)
-                ZXing.Mobile.MobileBarcodeScanner.Initialize((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication);
             ApplicationContext.ProgressChanged += (o, e) => this.m_applicationStatus = new KeyValuePair<string, float>(e.ProgressText, e.Progress);
             this.m_context = context;
             this.m_view = view;
@@ -394,6 +393,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
+                if (!this.m_zxingInitialized && (XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication != null)
+                {
+                    ZXing.Mobile.MobileBarcodeScanner.Initialize((XamarinApplicationContext.Current as AndroidApplicationContext).AndroidApplication);
+                    this.m_zxingInitialized = true;
+                }
                 var scanner = new ZXing.Mobile.MobileBarcodeScanner();
                 String retVal = String.Empty;
                 var result = scanner.Scan().ContinueWith((o) => retVal = o.Result?.Text);
@@ -457,6 +461,16 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 this.m_tracer.TraceError("Error setting locale to {0}: {1}", locale, e);
             }
             return this.m_context.Resources.Configuration.Locale.Language;
+        }
+
+        /// <summary>
+        /// Get magic
+        /// </summary>
+        [Export]
+        [JavascriptInterface]
+        public String GetMagic()
+        {
+            return ApplicationContext.Current.ExecutionUuid.ToString();
         }
     }
 }

@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the name identifier.
 		/// </summary>
 		/// <value>The name identifier.</value>
-		[Column("name_uuid"), MaxLength(16), NotNull, ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Uuid))]
+		[Column("name_uuid"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Uuid))]
 		public byte[] NameUuid {
 			get;
 			set;

@@ -55,7 +55,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the address identifier.
 		/// </summary>
 		/// <value>The address identifier.</value>
-		[Column("address_uuid"), MaxLength(16), ForeignKey(typeof(DbEntityAddress), nameof(DbEntityAddress.Uuid))]
+		[Column("address_uuid"), MaxLength(16), Indexed, ForeignKey(typeof(DbEntityAddress), nameof(DbEntityAddress.Uuid))]
 		public byte[] AddressUuid {
 			get;
 			set;

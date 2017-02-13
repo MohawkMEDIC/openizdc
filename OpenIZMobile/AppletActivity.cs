@@ -34,6 +34,7 @@ using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
 using System.Xml;
+using System.Threading.Tasks;
 
 namespace OpenIZMobile
 {
@@ -80,7 +81,10 @@ namespace OpenIZMobile
             
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
-            
+            //this.m_webView.Asset = asset;
+            var assetLink = this.Intent.Extras.Get("assetLink").ToString();
+            this.m_webView.LoadUrl(assetLink);
+
             // Progress bar
             this.m_progressBar = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal);
             this.m_textView = new TextView(this, null);
@@ -91,7 +95,6 @@ namespace OpenIZMobile
             decorView.AddView(this.m_progressBar);
             decorView.AddView(this.m_textView);
 
-            var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
             // Find the applet
             //AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
             //             assetLink, language: this.Resources.Configuration.Locale.Language);
@@ -131,8 +134,6 @@ namespace OpenIZMobile
             };
             this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
 
-            //this.m_webView.Asset = asset;
-            this.m_webView.LoadUrl(assetLink);
 
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
 

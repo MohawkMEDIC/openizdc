@@ -54,7 +54,6 @@
 /// <reference path="~/lib/jquery.min.js"/>
 // SHIM
 var OpenIZApplicationService = window.OpenIZApplicationService || {};
-var OpenIZSessionService = window.OpenIZSessionService || {};
 
 /**
  * @callback OpenIZ~continueWith
@@ -2725,7 +2724,7 @@ $.ajaxSetup({
             data.setRequestHeader("Authorization", "BASIC " +
                 btoa(OpenIZ.Authentication.$elevationCredentials.userName + ":" + OpenIZ.Authentication.$elevationCredentials.password));
         }
-        data.setRequestHeader("X-OIZMagic", OpenIZSessionService.GetMagic());
+        data.setRequestHeader("X-OIZMagic", OpenIZApplicationService.GetMagic());
     }
 });
 
