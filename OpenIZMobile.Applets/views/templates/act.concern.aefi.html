@@ -11,9 +11,17 @@
                     <label>
                         {{ 'locale.encounters.aefi.drug' | i18n }}
                     </label>
-                    <select ng-class="{'has-error':(editEncounterForm['aefiDrug_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiDrug_' + act.targetModel.id].$invalid}" name="aefiDrug_{{act.targetModel.id}}" required="required" class="form-control" ng-model="act.targetModel.relationship.RefersTo.target" 
+                    <select ng-class="{'has-error':(editEncounterForm['aefiDrug_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiDrug_' + act.targetModel.id].$invalid}" 
+                            name="aefiDrug_{{act.targetModel.id}}" 
+                            required="required" 
+                            class="form-control" 
+                            data-default-key="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6"
+                            ng-model="act.targetModel.relationship.RefersTo.target" 
                             ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = act.relationship.RefersTo.targetModel.participation.Consumable.playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
-                            oiz-databind="Act" data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450" }' data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + scope.doseSequence" data-key="scope.id">
+                            oiz-databind="Act" 
+                            data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450" }' 
+                            data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + scope.doseSequence" 
+                            data-key="scope.id">
                         <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
                     </select>
                 </div>
