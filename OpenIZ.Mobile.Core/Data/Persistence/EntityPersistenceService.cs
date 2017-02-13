@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -152,7 +153,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
-        protected override Entity InsertInternal(LocalDataContext context, Entity data)
+        internal Entity InsertCoreProperties(LocalDataContext context, Entity data)
         {
 
             // Ensure FK exists
@@ -247,7 +248,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified entity
         /// </summary>
-        protected override Entity UpdateInternal(LocalDataContext context, Entity data)
+        internal Entity UpdateCoreProperties(LocalDataContext context, Entity data)
         {
             // Esnure exists
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
@@ -376,6 +377,78 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
             return base.ObsoleteInternal(context, data);
+        }
+
+        /// <summary>
+        /// Insert the object
+        /// </summary>
+        protected override Entity InsertInternal(LocalDataContext context, Entity data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Insert(context, data as DeviceEntity);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Insert(context, data as ApplicationEntity);
+                case Person:
+                    return new PersonPersistenceService().Insert(context, data as Person);
+                case Patient:
+                    return new PatientPersistenceService().Insert(context, data as Patient);
+                case Provider:
+                    return new ProviderPersistenceService().Insert(context, data as Provider);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Insert(context, data as Place);
+                case Organization:
+                    return new OrganizationPersistenceService().Insert(context, data as Organization);
+                case Material:
+                    return new MaterialPersistenceService().Insert(context, data as Material);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Insert(context, data as ManufacturedMaterial);
+                default:
+                    return this.InsertCoreProperties(context, data);
+
+            }
+        }
+
+        /// <summary>
+        /// Insert the object
+        /// </summary>
+        protected override Entity UpdateInternal(LocalDataContext context, Entity data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Update(context, data as DeviceEntity);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Update(context, data as ApplicationEntity);
+                case Person:
+                    return new PersonPersistenceService().Update(context, data as Person);
+                case Patient:
+                    return new PatientPersistenceService().Update(context, data as Patient);
+                case Provider:
+                    return new ProviderPersistenceService().Update(context, data as Provider);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Update(context, data as Place);
+                case Organization:
+                    return new OrganizationPersistenceService().Update(context, data as Organization);
+                case Material:
+                    return new MaterialPersistenceService().Update(context, data as Material);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Update(context, data as ManufacturedMaterial);
+                default:
+                    return this.UpdateCoreProperties(context, data);
+
+            }
         }
     }
 }

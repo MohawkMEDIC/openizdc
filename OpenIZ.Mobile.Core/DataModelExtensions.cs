@@ -4,6 +4,7 @@ using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Data;
@@ -29,7 +30,6 @@ namespace OpenIZ.Mobile.Core
         private static Object s_lock = new object();
 
         private static Tracer s_tracer = Tracer.GetTracer(typeof(ModelExtensions));
-        private static Dictionary<Type, Object> s_idpInstances = new Dictionary<Type, object>(20);
         //private static Dictionary<String, Guid> s_conceptDictionary = new Dictionary<string, Guid>(20);
         // Lock object
         private static Object s_lockObject = new object();
@@ -46,7 +46,10 @@ namespace OpenIZ.Mobile.Core
             typeof(Concept),
             typeof(AssigningAuthority),
             typeof(IdentifierType),
-            typeof(ConceptName)
+            typeof(ConceptName),
+            typeof(Material),
+            typeof(ManufacturedMaterial),
+            typeof(Place)
         };
 
         /// <summary>
@@ -182,7 +185,7 @@ namespace OpenIZ.Mobile.Core
             // Is there a classifier?
             var idpInstance = LocalPersistenceService.GetPersister(me.GetType()) as ILocalPersistenceService;
 
-            IIdentifiedEntity existing = context.CacheOnCommit.FirstOrDefault(o=>o.Key == me.Key);
+            IIdentifiedEntity existing = context.CacheOnCommit.FirstOrDefault(o => o.Key == me.Key);
             if (existing != null) return existing;
 
             // Is the key not null?
@@ -235,16 +238,7 @@ namespace OpenIZ.Mobile.Core
             var vMe = me as IVersionedEntity;
 
             // We have to find it
-            object idpInstance = null;
-            if (!s_idpInstances.TryGetValue(me.GetType(), out idpInstance))
-            {
-                lock (s_lock)
-                {
-                    var idpType = typeof(IDataPersistenceService<>).MakeGenericType(me.GetType());
-                    idpInstance = ApplicationContext.Current.GetService(idpType);
-                    s_idpInstances.Add(me.GetType(), idpInstance);
-                }
-            }
+            var idpInstance = LocalPersistenceService.GetPersister(me.GetType());
 
             var existing = me.TryGetExisting(context);
 
@@ -256,16 +250,12 @@ namespace OpenIZ.Mobile.Core
             // Existing exists?
             if (existing == null && !m_readonlyTypes.Contains(typeof(TModel)))
             {
-                var insertMethod = idpInstance.GetType().GetRuntimeMethods().SingleOrDefault(o => o.Name == "Insert" && o.GetParameters().Length == 2);
-                if (insertMethod != null)
-                {
-                    IIdentifiedEntity inserted = insertMethod.Invoke(idpInstance, new object[] { context, me }) as IIdentifiedEntity;
-                    me.Key = inserted.Key;
+                IIdentifiedEntity inserted = ((TModel)idpInstance.Insert(context, me)) as IIdentifiedEntity;
+                me.Key = inserted.Key;
 
-                    if (vMe != null)
-                        vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
-                    existing = inserted;
-                }
+                if (vMe != null)
+                    vMe.VersionKey = (inserted as IVersionedEntity).VersionKey;
+                existing = inserted;
 
             }
             else if (existing == null)

@@ -20,6 +20,7 @@
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model;
 using SQLite.Net;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -40,8 +41,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            var inserted = this.m_entityPersister.Insert(context, data);
-            data.Key = inserted.Key;
+            if (typeof(TModel).GetTypeInfo().BaseType == typeof(Entity))
+            {
+                var inserted = this.m_entityPersister.InsertCoreProperties(context, data);
+                data.Key = inserted.Key;
+            }
             return base.InsertInternal(context, data);
         }
 
@@ -50,7 +54,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
-            this.m_entityPersister.Update(context, data);
+            if(typeof(TModel).GetTypeInfo().BaseType == typeof(Entity))
+                this.m_entityPersister.UpdateCoreProperties(context, data);
             return base.UpdateInternal(context, data);
         }
 
