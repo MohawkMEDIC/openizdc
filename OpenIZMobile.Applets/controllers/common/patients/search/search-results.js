@@ -96,7 +96,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 query: scope.search.query,
                 continueWith: function (r) {
 
-                    if (start !== null && start !== undefined && end != null && end != undefined) {//Temporary fix until the query string can take a range
+                    if (start !== null && start !== undefined && end != null && end != undefined && r.totalResults>0) {//Temporary fix until the query string can take a range
                         var inRange = [];
                         for (var i = 0; i < r.item.length; i++) {
                             if (r.item[i].dateOfBirth <= end && r.item[i].dateOfBirth >= start) {
