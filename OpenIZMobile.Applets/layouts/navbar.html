@@ -30,11 +30,13 @@
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
-                <span ng-if="$root.page.onlineState">
-                    <span ng-if="$root.page.onlineState" class="circle-online"></span>
-                    <span ng-if="$root.page.onlineState">Online</span>
-                    <span ng-if="!$root.page.onlineState" class="circle-offline"></span>
-                    <span ng-if="!$root.page.onlineState">Offline</span>
+                <span ng-if="$root.page.onlineState &amp;&amp; $root.session.method != 'LOCAL'">
+                    <span class="circle-online"></span>
+                    <span>Online</span>
+                 </span>
+                 <span ng-if="!$root.page.onlineState  || $root.session.method == 'LOCAL'">
+                    <span class="circle-offline"></span>
+                    <span>Offline</span>
                 </span>
             </a>
             
@@ -116,9 +118,6 @@
         <hr />
         <div class="container">
             <p class="text-muted text-center">(C){{ 'locale.layout.footer' | i18n }}</p>
-        </div>
-        <div class="sticky-footer" style="position:fixed; bottom:0; z-index:999" ng-if="!$root.page.onlineState  || $root.session.method == 'LOCAL'">
-            <img src="~/img/appbar.network.disconnect.png" /> {{ 'locale.network.offline' | i18n }}
         </div>
     </footer>
 
