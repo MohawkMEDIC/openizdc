@@ -146,7 +146,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.search.paging.current++;
         scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
         scope.search.query["_count"] = scope.search.paging.size;
-
+        delete scope.search.results;
+        scope.search.isSearching = true;
         // Find async
         OpenIZ.Patient.findAsync({
             query: scope.search.query, 
@@ -158,6 +159,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
+                scope.search.isSearching = false;
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
                 scope.$apply();
 
@@ -178,6 +180,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.search.paging.current--;
         scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
         scope.search.query["_count"] = scope.search.paging.size;
+        delete scope.search.results;
+        scope.search.isSearching = true;
 
         // Find async
         OpenIZ.Patient.findAsync({
@@ -190,6 +194,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
+                scope.search.isSearching = false;
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
                 scope.$apply();
 
@@ -208,6 +213,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.search.paging.current = pageNo;
         scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
         scope.search.query["_count"] = scope.search.paging.size;
+        delete scope.search.results;
+        scope.search.isSearching = true;
 
         // Find async
         OpenIZ.Patient.findAsync({
@@ -220,6 +227,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                 OpenIZ.App.toast(e.message);
             },
             finally: function () {
+                scope.search.isSearching = false;
                 $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
                 scope.$apply();
 
