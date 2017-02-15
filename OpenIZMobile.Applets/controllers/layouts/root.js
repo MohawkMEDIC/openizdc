@@ -68,6 +68,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 $('.modal-open').removeClass('modal-open');
                 $('.modal-backdrop').remove();
             }
+            window.scrollTo(0, 0);
             $rootScope.isLoading = true;
         });
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {

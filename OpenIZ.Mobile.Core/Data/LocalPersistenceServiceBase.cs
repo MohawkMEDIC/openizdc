@@ -387,7 +387,12 @@ namespace OpenIZ.Mobile.Core.Data
 
                 // Set delay load
                 foreach (var i in postData.Results)
-                    i.SetDelayLoad(true);
+                {
+                    if (i != null)
+                    {
+                        i.SetDelayLoad(true);
+                    }
+                }
 
                 // Remove from the cache
                 foreach (var itm in context.CacheOnCommit)
@@ -596,8 +601,10 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TData> Query(LocalDataContext context, Expression<Func<TData, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             var retVal = this.QueryInternal(context, query, offset, count, out totalResults, queryId, countResults);
-            foreach(var i in retVal)
+            foreach (var i in retVal.Where(i => i != null))
+            {
                 context.AddCacheCommit(i);
+            }
             return retVal;
 
         }
