@@ -62,11 +62,16 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                 		return -1;
                 	else
                 	{
-                	    if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
-                	        return 1;
-                	    }
-                	    else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
-                	        return -1;
+                	    if (a.actModel !== null && a.actModel !== undefined) {
+                	        if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return 1;
+                	        }
+                	        else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return -1;
+                	        }
+                	        else {
+                	            return 0;
+                	        }
                 	    }
                 	    else {
                 	        return 0;
