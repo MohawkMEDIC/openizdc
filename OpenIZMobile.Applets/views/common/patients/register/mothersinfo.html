@@ -54,7 +54,7 @@
         </div>
         <div class="col-xs-5">
             <div class="input-group">
-                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" class="form-control" />
+                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
                 <span class="input-group-btn">
                     <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>

@@ -62,7 +62,20 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                 		return -1;
                 	else
                 	{
-                		return 0;
+                	    if (a.actModel !== null && a.actModel !== undefined) {
+                	        if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return 1;
+                	        }
+                	        else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return -1;
+                	        }
+                	        else {
+                	            return 0;
+                	        }
+                	    }
+                	    else {
+                	        return 0;
+                	    }
                 	}
                 });
 
@@ -106,16 +119,6 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                     ;;
                    
                 }
-                $scope.vaccineArray = [];
-                $.each(scope.display._vaccineAdministrations, function (index, value) {
-                    $scope.vaccineArray.push(scope.display._vaccineAdministrations[index])
-                    $scope.vaccineArray[$scope.vaccineArray.length-1].antigenName = index
-                });
-                $scope.vaccineArray.sort(function (a, b) {
-                    var textOne = a.antigenName;
-                    var textTwo = b.antigenName;
-                    return (textOne < textTwo) ? -1 : (textOne > textTwo) ? 1 : 0;
-                });
 
             }
         }

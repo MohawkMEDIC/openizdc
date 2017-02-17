@@ -358,6 +358,11 @@ a.not-active {
     border-radius: 12px;
     padding: 4px 12px;
 }
+
+.label-large{
+    font-size: 110%
+}
+
 .nav-tabs{
     background: #007fd1;
 }
