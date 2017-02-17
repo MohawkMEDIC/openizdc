@@ -53,6 +53,7 @@
                             ng-required="act._enabled" 
                             name="consumable_{{act.targetModel.id}}" 
                             class="form-control" 
+                            ng-init="act.targetModel.participation.Consumable.player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
                             ng-model="act.targetModel.participation.Consumable.player" 
                             data-watch="act.targetModel.participation.Product.player" 
                             data-watch-target="relationship[ManufacturedProduct].source" 

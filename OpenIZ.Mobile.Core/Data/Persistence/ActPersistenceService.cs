@@ -88,7 +88,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Act ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
-            var dbAct = dataInstance as DbAct;
+            var dbAct = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct;
 
             switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {

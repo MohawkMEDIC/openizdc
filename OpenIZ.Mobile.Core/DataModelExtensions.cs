@@ -57,6 +57,8 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         public static TDomain GetInstanceOf<TDomain>(this Object me) where TDomain : new()
         {
+            if (me.GetType() == typeof(TDomain)) return (TDomain)me;
+
             TDomain retVal = new TDomain();
 
             foreach (var prop in typeof(TDomain).GetRuntimeProperties())

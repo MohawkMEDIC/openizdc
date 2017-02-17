@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenIZ.Messaging.RISI.Client</name>
+    </assembly>
+    <members>
+        <member name="T:OpenIZ.Messaging.RISI.Client.RisiServiceClient">
+            <summary>
+            Represents a RISI service client for interfacing with the RISI engine.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.#ctor(OpenIZ.Core.Http.IRestClient)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Messaging.RISI.Client.RisiServiceClient"/> class
+            with a specified <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
+            </summary>
+            <param name="restClient">The REST client instance.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.CreateParameterType(OpenIZ.Core.Model.RISI.ParameterType)">
+            <summary>
+            Creates a new report parameter type definition.
+            </summary>
+            <param name="parameterTypeDefinition">The report parameter type definition to create.</param>
+            <returns>Returns the created report parameter type definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.CreateReportDefinition(OpenIZ.Core.Model.RISI.ReportDefinition)">
+            <summary>
+            Creates a new report definition.
+            </summary>
+            <param name="reportDefinition">The report definition to create.</param>
+            <returns>Returns the created report definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.CreateReportFormat(OpenIZ.Core.Model.RISI.ReportFormat)">
+            <summary>
+            Creates a report format.
+            </summary>
+            <param name="reportFormat">The report format to create.</param>
+            <returns>Returns the created report format.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.DeleteParameterType(System.String)">
+            <summary>
+            Deletes a report parameter type.
+            </summary>
+            <param name="id">The id of the report parameter type to delete.</param>
+            <returns>Returns the deleted report parameter type.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.DeleteReportDefinition(System.String)">
+            <summary>
+            Deletes a report definition.
+            </summary>
+            <param name="id">The id of the report definition to delete.</param>
+            <returns>Returns the deleted report definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.DeleteReportFormat(System.String)">
+            <summary>
+            Deletes a report format.
+            </summary>
+            <param name="id">The id of the report format.</param>
+            <returns>Returns the report deleted report format.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.Dispose">
+            <summary>
+            Dispose of any managed resources.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.Dispose(System.Boolean)">
+            <summary>
+            Dispose of any managed resources.
+            </summary>
+            <param name="disposing">Whether the current invocation is disposing.</param>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetAllReportParamterTypes">
+            <summary>
+            Gets a list of all report parameter types.
+            </summary>
+            <returns>Returns a list of report parameter types.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportDefinition(System.String)">
+            <summary>
+            Gets a report definition by id.
+            </summary>
+            <param name="id">The id of the report definition to retrieve.</param>
+            <returns>Returns a report definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportDefintions">
+            <summary>
+            Gets a list of report definitions based on a specific query.
+            </summary>
+            <returns>Returns a list of report definitions.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportFormat(System.String)">
+            <summary>
+            Gets a report format by id.
+            </summary>
+            <param name="id">The id of the report format to retrieve.</param>
+            <returns>Returns a report format.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportParameter(System.String)">
+            <summary>
+            Gets a report parameter by id.
+            </summary>
+            <param name="id">The id of the report parameter to retrieve.</param>
+            <returns>Returns a report parameter.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportParameters(System.String)">
+            <summary>
+            Gets a list of report parameters.
+            </summary>
+            <param name="id">The id of the report for which to retrieve parameters.</param>
+            <returns>Returns a list of parameters.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportParameterValues(System.String,System.String)">
+            <summary>
+            Gets a list of auto-complete parameters which are applicable for the specified parameter.
+            </summary>
+            <param name="id">The id of the report.</param>
+            <param name="parameterId">The id of the parameter for which to retrieve detailed information.</param>
+            <returns>Returns an auto complete source definition of valid parameters values for a given parameter.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.GetReportSource(System.String)">
+            <summary>
+            Gets the report source.
+            </summary>
+            <param name="id">The id of the report for which to retrieve the source.</param>
+            <returns>Returns the report source.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.RunReport(System.String,System.String,OpenIZ.Core.Model.RISI.RisiCollection{OpenIZ.Core.Model.RISI.ReportParameter})">
+            <summary>
+            Executes a report.
+            </summary>
+            <param name="id">The id of the report.</param>
+            <param name="format">The output format of the report.</param>
+            <param name="parameters">The list of parameters of the report.</param>
+            <returns>Returns the report in raw format.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.UpdateParameterTypeDefinition(System.String,OpenIZ.Core.Model.RISI.ParameterType)">
+            <summary>
+            Updates a parameter type definition.
+            </summary>
+            <param name="id">The id of the parameter type.</param>
+            <param name="parameterTypeDefinition"></param>
+            <returns>Returns the updated parameter type definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.UpdateReportDefinition(System.String,OpenIZ.Core.Model.RISI.ReportDefinition)">
+            <summary>
+            Updates a report definition.
+            </summary>
+            <param name="id">The id of the report definition to update.</param>
+            <param name="reportDefinition">The updated report definition.</param>
+            <returns>Returns the updated report definition.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.RISI.Client.RisiServiceClient.UpdateReportFormat(System.String,OpenIZ.Core.Model.RISI.ReportFormat)">
+            <summary>
+            Updates a report format.
+            </summary>
+            <param name="id">The id of the report format to update.</param>
+            <param name="reportFormat">The updated report format.</param>
+            <returns>Returns the update report format.</returns>
+        </member>
+    </members>
+</doc>
