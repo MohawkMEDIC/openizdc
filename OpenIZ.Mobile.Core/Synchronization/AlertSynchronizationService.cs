@@ -110,12 +110,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 							// When was the last time we polled an alert?
 							var lastTime = SynchronizationLog.Current.GetLastTime(typeof(AlertMessage));
 
-							DateTimeOffset? syncTime = null;
-
-							if (lastTime.HasValue)
-							{
-								syncTime = new DateTimeOffset(lastTime.Value);
-							}
+							var syncTime = lastTime.HasValue ? new DateTimeOffset(lastTime.Value) : DateTimeOffset.Now.AddHours(-1);
 
 							// Poll action for all alerts to "everyone"
 							AmiCollection<AlertMessageInfo> serverAlerts = amiClient.GetAlerts(a => a.CreationTime >= lastTime && a.To.Contains("everyone"));
