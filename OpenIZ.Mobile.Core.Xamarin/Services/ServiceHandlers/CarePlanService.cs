@@ -87,6 +87,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var plan = new List<Act>(protocolService.CreateCarePlan(p, asAppointments));
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
+
+            
+            // Assign location to all
+            var sdlKey = (AuthenticationContext.Current.Session.UserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || o.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation") ??
+                        p.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || o.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation"))?.TargetEntityKey;
+
+            if(sdlKey.HasValue)
+                foreach (var itm in plan)
+                    if (!itm.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location"))
+                        itm.Participations.Add(new ActParticipation(ActParticipationKey.Location, sdlKey));
+
             // Instructions?
             if (search.Count > 0)
             {

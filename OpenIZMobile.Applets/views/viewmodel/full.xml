@@ -155,13 +155,33 @@
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
-    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="typeConceptModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
     <property name="statusConceptModel" behavior="never"/>
-    <property name="doseUnitModel" ref="Concept" behavior="always"/>
-    <property name="interpretationConceptModel" ref="Concept" behavior="always"/>
-    <property name="routeModel" ref="Concept" behavior="always"/>
-    <property name="siteModel" ref="Concept" behavior="always"/>
-    <property name="reasonConceptModel" ref="Concept" behavior="always"/>
+    <property name="doseUnitModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
+    <property name="moodConceptModel" behavior="never"/>
+    <property name="interpretationConceptModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
+    <property name="protocol" behavior="never"/>
+    <property name="routeModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
+    <property name="siteModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
+    <property name="reasonConceptModel" behavior="always" all="false">
+      <property name="mnemonic" all="true"/>
+      <property name="name" behavior="always"/>
+    </property>
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true" ref="ActRelationship"/>
     </property>

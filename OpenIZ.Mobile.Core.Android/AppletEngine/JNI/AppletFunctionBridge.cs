@@ -42,6 +42,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Text;
+using OpenIZ.Core.Applets;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -176,7 +177,11 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public void ShowToast(String toastText)
         {
-            Toast.MakeText(this.m_context, toastText, ToastLength.Short).Show();
+            try
+            {
+                Toast.MakeText(this.m_context, toastText, ToastLength.Short).Show();
+            }
+            catch { }
         }
 
         /// <summary>
@@ -380,6 +385,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
             Application.SynchronizationContext.Post(_ =>
             {
                 ApplicationContext.Current.Stop();
+                AppletCollection.ClearCaches();
                 (this.m_context as Activity).Finish();
             }, null);
         }

@@ -1312,7 +1312,6 @@ var OpenIZ = OpenIZ || {
          * });
          */
         getCarePlanAsync: function (controlData) {
-            console.log(controlData);
             var url = "/__plan/patient?moodConcept=ACF7BAF2-221F-4BC2-8116-CEB5165BE079";
             if (controlData.minDate !== undefined)
                 url += "&actTime=>" + controlData.minDate.toISOString();
