@@ -117,74 +117,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
 
-                    // Subscribe to persistence
-                    var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-                    if (patientPersistence != null)
-                    {
-                        patientPersistence.Inserted += (o, e) => this.UpdateCarePlan(e.Data);
-                        patientPersistence.Updated += (o, e) => this.UpdateCarePlan(e.Data);
-                        patientPersistence.Obsoleted += (o, e) =>
-                        {
-                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                            var dataMart = warehouseService.GetDatamart("oizcp");
-                            warehouseService.Delete(dataMart.Id, new { patient_id = e.Data.Key.Value });
-                        };
-
-                    }
-
-                    // Subscribe to acts
-                    var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
-                    if (bundlePersistence != null)
-                    {
-                        bundlePersistence.Inserted += (o, e) =>
-                        {
-                            foreach (var i in e.Data.Item.OfType<Patient>())
-                                this.UpdateCarePlan(i);
-                            foreach (var i in e.Data.Item.OfType<Act>())
-                                this.UpdateCarePlan(i);
-                        };
-                        bundlePersistence.Updated += (o, e) =>
-                        {
-                            foreach (var i in e.Data.Item.OfType<Patient>())
-                                this.UpdateCarePlan(i);
-                            foreach (var i in e.Data.Item.OfType<Act>())
-                                this.UpdateCarePlan(i);
-                        };
-                        bundlePersistence.Obsoleted += (o, e) =>
-                        {
-                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                            var dataMart = warehouseService.GetDatamart("oizcp");
-                            foreach (var i in e.Data.Item.OfType<Patient>())
-                                warehouseService.Delete(dataMart.Id, new { patient_id = i.Key.Value });
-                            foreach (var i in e.Data.Item.OfType<Act>())
-                                this.UpdateCarePlan(i);
-                        };
-
-                    }
-
-                    // Act persistence services
-                    foreach (var t in typeof(Act).GetTypeInfo().Assembly.ExportedTypes.Where(o => o == typeof(Act) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
-                    {
-                        var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
-                        var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
-
-                        // Create a delegate which calls UpdateCarePlan
-                        // Construct the delegate
-                        var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
-                        var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
-                        var senderParm = Expression.Parameter(typeof(Object), "o");
-                        var eventParm = Expression.Parameter(ppeArgType, "e");
-                        var eventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data")), typeof(Act));
-                        var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(UpdateCarePlan), new Type[] { typeof(Act) }), eventData), senderParm, eventParm).Compile();
-                        var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(UpdateCarePlan), new Type[] { typeof(Act) }), eventData), senderParm, eventParm).Compile();
-                        var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(UpdateCarePlan), new Type[] { typeof(Act) }), eventData), senderParm, eventParm).Compile();
-
-                        // Bind to events
-                        pType.GetRuntimeEvent("Inserted").AddEventHandler(pInstance, insertInstanceDelegate);
-                        pType.GetRuntimeEvent("Updated").AddEventHandler(pInstance, updateInstanceDelegate);
-                        pType.GetRuntimeEvent("Obsoleted").AddEventHandler(pInstance, obsoleteInstanceDelegate);
-
-                    }
+                  
 
                 }
                 catch (Exception e)

@@ -223,20 +223,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection()
             {
                 TraceWriter = new List<TraceWriterConfiguration>() {
-                    new TraceWriterConfiguration () {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
-                        InitializationData = "OpenIZ",
-                        TraceWriter = new LogTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-                    },
                     new TraceWriterConfiguration() {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                        Filter = System.Diagnostics.Tracing.EventLevel.Warning,
                         InitializationData = "OpenIZ",
                         TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
-                    },
-                    new TraceWriterConfiguration() {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
-                        InitializationData = "OpenIZ",
-                        TraceWriter = new AndroidLogTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
                     }
                 }
             };
