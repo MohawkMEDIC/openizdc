@@ -103,12 +103,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
 
             lock (this.m_logBacklog)
             {
-                //this.m_logBacklog.Enqueue(String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args)));
-                string dq = String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args));
-                using (TextWriter tw = File.AppendText(this.m_logFile))
-                    tw.WriteLine(dq); // This allows other threads to add to the write queue
+                this.m_logBacklog.Enqueue(String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args)));
+                //string dq = String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args));
+                //using (TextWriter tw = File.AppendText(this.m_logFile))
+                //    tw.WriteLine(dq); // This allows other threads to add to the write queue
 
-                //Monitor.Pulse(this.m_logBacklog);
+                Monitor.Pulse(this.m_logBacklog);
             }
         }
         #endregion
@@ -118,39 +118,39 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
         /// </summary>
         private void LogDispatcherLoop()
         {
-            //while(true)
-            //{
-            //    while (true)
-            //    {
-            //        try
-            //        {
-            //            Monitor.Enter(this.m_logBacklog);
-            //            if (this.m_disposing) return; // shutdown dispatch
-            //            while (this.m_logBacklog.Count == 0)
-            //                Monitor.Wait(this.m_logBacklog);
-            //            if (this.m_disposing) return;
+            while (true)
+            {
+                while (true)
+                {
+                    try
+                    {
+                        Monitor.Enter(this.m_logBacklog);
+                        if (this.m_disposing) return; // shutdown dispatch
+                        while (this.m_logBacklog.Count == 0)
+                            Monitor.Wait(this.m_logBacklog);
+                        if (this.m_disposing) return;
 
-            //            using (TextWriter tw = File.AppendText(this.m_logFile))
-            //                while (this.m_logBacklog.Count > 0)
-            //                {
-            //                    var dq = this.m_logBacklog.Dequeue();
-            //                    Monitor.Exit(this.m_logBacklog);
-            //                    tw.WriteLine(dq); // This allows other threads to add to the write queue
-            //                    Monitor.Enter(this.m_logBacklog);
-            //                }
-            //        }
-            //        catch
-            //        {
-            //            ;
-            //        }
-            //        finally
-            //        {
-            //            if(Monitor.IsEntered(this.m_logBacklog))
-            //                Monitor.Exit(this.m_logBacklog);
-            //        }
-            //    }
+                        using (TextWriter tw = File.AppendText(this.m_logFile))
+                            while (this.m_logBacklog.Count > 0)
+                            {
+                                var dq = this.m_logBacklog.Dequeue();
+                                Monitor.Exit(this.m_logBacklog);
+                                tw.WriteLine(dq); // This allows other threads to add to the write queue
+                                Monitor.Enter(this.m_logBacklog);
+                            }
+                    }
+                    catch
+                    {
+                        ;
+                    }
+                    finally
+                    {
+                        if (Monitor.IsEntered(this.m_logBacklog))
+                            Monitor.Exit(this.m_logBacklog);
+                    }
+                }
 
-            //}
+            }
         }
 
         /// <summary>
