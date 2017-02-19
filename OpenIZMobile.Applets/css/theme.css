@@ -1614,3 +1614,7 @@ fieldset[disabled] .btn-danger.active {
 }
 /*# sourceMappingURL=bootstrap-theme.css.map */
 
+.menu-disabled a {
+    pointer-events: none;
+    color: grey !important;
+}

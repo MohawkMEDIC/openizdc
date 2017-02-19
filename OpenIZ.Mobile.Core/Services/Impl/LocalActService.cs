@@ -74,11 +74,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
 			if (persistenceService == null)
 			{
-				throw new InvalidOperationException(string.Format("{0} not found", nameof(IDataPersistenceService<TAct>)));
+				throw new InvalidOperationException($"{nameof(IDataPersistenceService<TAct>)} not found");
 			}
 
 			var result = persistenceService.Get(key);
-            result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
+
+	        if (result != null)
+	        {
+				result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
+			}
+
             return result;
 		}
 

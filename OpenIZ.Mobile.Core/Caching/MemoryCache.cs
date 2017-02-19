@@ -243,7 +243,7 @@ namespace OpenIZ.Mobile.Core.Caching
                     var entryTabl = this.m_entryTable.FirstOrDefault(o => objectType.GetTypeInfo().IsAssignableFrom(o.Key.GetTypeInfo()) && o.Value.ContainsKey(key.Value));
                     if (entryTabl.Value == null) return null;
                     else
-                        return entryTabl.Value[key.Value];
+                        return entryTabl.Value[key.Value].Data;
                 }
             }
 
