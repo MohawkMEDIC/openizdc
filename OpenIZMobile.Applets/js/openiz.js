@@ -757,7 +757,7 @@ var OpenIZ = OpenIZ || {
 
             var address = entity.component !== undefined ? entity :
                 entity.address !== undefined ? (entity.address.Direct || entity.address.HomeAddress) :
-                (entity.Direct || entity.HomeAddress);
+                (entity.Direct || entity.HomeAddress || entity.$other);
             var retVal = "";
             if (address.component.AdditionalLocator)
                 retVal += address.component.AdditionalLocator + ", ";
