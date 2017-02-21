@@ -52,7 +52,7 @@
                                     </div>
                                     <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
                                         {{ sequence.actTime | date: 'dd-MM-yyyy' }}
-                                        <!--<span class="glyphicon glyphicon glyphicon-th-large"></span>-->
+                                        <span class="glyphicon glyphicon glyphicon-th-large"></span>
                                     </div>
                                 </div>
                                 <div ng-switch-when="099bcc5e-8e2f-4d50-b509-9f9d5bbeb58e" class="text-info">
@@ -83,5 +83,5 @@
             </tbody>
         </table>
     </div>
-    <chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend"></chart-legend>
+    <!--chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend"></chart-legend-->
 </div>
