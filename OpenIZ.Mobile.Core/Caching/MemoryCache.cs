@@ -346,7 +346,7 @@ namespace OpenIZ.Mobile.Core.Caching
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc)
+                            foreach (var g in gc.ToArray())
                                 lock (this.m_lock)
                                     itm.Value.Remove(g);
                         }, garbageBin);
