@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 {
                     patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null);
                     // Add this to the cache
-                    ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
+                    //ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
                     patient.Tags.Add(new EntityTag("onlineResult", "true"));
                 }
                 else

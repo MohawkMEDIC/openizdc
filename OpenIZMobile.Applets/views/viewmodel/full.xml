@@ -16,7 +16,7 @@
   <type type="ActRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="targetModel" all="true" ref="Act"/>
+    <property name="targetModel" all="true" ref="Act" behavior="always"/>
     <property name="relationshipType" all="true"/>
     <property name="holderModel" behavior="never"/>
     <property name="sourceModel" behavior="never"/>

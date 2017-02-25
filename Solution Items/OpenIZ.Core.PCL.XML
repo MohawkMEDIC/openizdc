@@ -2062,6 +2062,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Finds the specified data
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Insert(`0)">
             <summary>
             Inserts the specified data
@@ -2186,22 +2192,22 @@
             Represents the repository handler for materials
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
             <summary>
             Finds the specified ManufacturedMaterial
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified ManufacturedMaterial with the specified restrictions
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
             <summary>
             Finds the specified material
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified material with the specified restrictions
             </summary>
@@ -2216,12 +2222,12 @@
             Gets the specified material from the database
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.InsertManufacturedMaterial(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Insert(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
             <summary>
             Inserts the ManufacturedMaterial in the persistence layer
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.InsertMaterial(OpenIZ.Core.Model.Entities.Material)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Insert(OpenIZ.Core.Model.Entities.Material)">
             <summary>
             Inserts the material in the persistence layer
             </summary>
@@ -2236,12 +2242,12 @@
             Obsoletes the specified material
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.SaveManufacturedMaterial(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Save(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
             <summary>
             Saves the specified ManufacturedMaterial from data layer
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.SaveMaterial(OpenIZ.Core.Model.Entities.Material)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Save(OpenIZ.Core.Model.Entities.Material)">
             <summary>
             Saves the specified material from data layer
             </summary>
@@ -2953,6 +2959,12 @@
         <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Update(OpenIZ.Core.Model.Roles.Patient,System.Collections.Generic.List{OpenIZ.Core.Model.Acts.Act})">
             <summary>
             Update the care plan based on new data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Initialize(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Called prior to performing calculation of the care protocol allowing the object to prepare the object for whatever 
+            pre-requisite data is needed for the protocol
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Protocol.SimpleCarePlanService">
