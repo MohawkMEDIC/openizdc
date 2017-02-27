@@ -1618,3 +1618,8 @@ fieldset[disabled] .btn-danger.active {
     pointer-events: none;
     color: grey !important;
 }
+
+.tab-disabled a {
+    pointer-events: none;
+    color: grey !important;
+}
