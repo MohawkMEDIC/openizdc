@@ -23,28 +23,32 @@
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
     <div ng-repeat="identifier in identifiers track by $index">
         <div class="form-group">
-            <div class="col-xs-3">
-                <div class="input-group">
-                    <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)"
-                            bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
-                    <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+            <ng-form name="identifierForm">
+                <div class="col-xs-3">
+                    <div class="input-group">
+                        <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)"
+                                bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
+                        <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
+                    </div>
                 </div>
-            </div>
-            <div class="col-xs-9">
-                <div class="input-group">
-                    <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" />
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
-                            <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
-                        </button>
+                <div class="col-xs-9">
+                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength}">
+                        <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" ng-maxlength="10" name="identifier" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
+                                <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
+                            </button>
 
-                        <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                        <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
-                    </span>
+                            <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                            <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                        
+                    </div>
                 </div>
-            </div>
+                <p class="col-xs-offset-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifier.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+            </ng-form>
         </div>
     </div>
     <div class="form-group">
