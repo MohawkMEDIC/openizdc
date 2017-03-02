@@ -53,8 +53,8 @@
             </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group">
-                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.maxlength}">
+                <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
                 <span class="input-group-btn">
                     <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
@@ -63,6 +63,7 @@
                 </span>
             </div>
         </div>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
