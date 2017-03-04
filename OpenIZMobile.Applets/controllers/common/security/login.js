@@ -60,7 +60,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                 if (typeof (ex) == "string")
                     console.log(ex);
                 else if (ex.message != undefined)
-                    alert("" + OpenIZ.Localization.getString(ex.message) + " - " + OpenIZ.Localization.getString(ex.details));
+                    alert("" + OpenIZ.Localization.getString(ex.message) + " - " + OpenIZ.Localization.getString(ex.details.statusText));
                 else
                     console.log(ex);
                 },

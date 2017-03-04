@@ -34,6 +34,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OpenIZ.Mobile.Core.Protocol
@@ -52,9 +53,16 @@ namespace OpenIZ.Mobile.Core.Protocol
         private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanManagerService));
 
         // Represents a promise to perform a care plan
-        private HashSet<Guid> m_actCarePlanPromise = new HashSet<Guid>();
+        private List<IdentifiedData> m_actCarePlanPromise = new List<IdentifiedData>();
 
+        // Data mart
         private DatamartDefinition m_dataMart = null;
+
+        // Lock
+        private object m_lock = new object();
+
+        // Running state
+        private bool m_running = false;
 
         /// <summary>
         /// True when running
@@ -63,7 +71,7 @@ namespace OpenIZ.Mobile.Core.Protocol
         {
             get
             {
-                return true;
+                return m_running;
             }
         }
 
@@ -117,7 +125,76 @@ namespace OpenIZ.Mobile.Core.Protocol
                         this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
 
-                  
+                    // Subscribe to persistence
+                    var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                    if (patientPersistence != null)
+                    {
+                        patientPersistence.Inserted += (o, e) => this.QueueWorkItem(e.Data);
+                        patientPersistence.Updated += (o, e) => this.QueueWorkItem(e.Data);
+                        patientPersistence.Obsoleted += (o, e) =>
+                        {
+                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                            var dataMart = warehouseService.GetDatamart("oizcp");
+                            warehouseService.Delete(dataMart.Id, new { patient_id = e.Data.Key.Value });
+                        };
+
+                    }
+
+                    // Subscribe to acts
+                    var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+                    if (bundlePersistence != null)
+                    {
+                        bundlePersistence.Inserted += (o, e) =>
+                        {
+                            if (e.Data.EntryKey.HasValue)
+                            {
+                                if (e.Data.Entry is Patient)
+                                    this.QueueWorkItem(e.Data.Entry as Patient);
+                                else
+                                    this.QueueWorkItem(e.Data.Entry as Act);
+                            }
+                            else
+                            {
+                                this.QueueWorkItem(e.Data.Item.ToArray());
+                            }
+                        };
+                        bundlePersistence.Updated += (o, e) =>
+                        {
+                            if (e.Data.EntryKey.HasValue)
+                            {
+                                this.QueueWorkItem(e.Data.Entry);
+                            }
+                            else
+                            {
+                                this.QueueWorkItem(e.Data.Item.ToArray());
+                            }
+                        };
+
+                    }
+
+                    // Act persistence services
+                    foreach (var t in typeof(Act).GetTypeInfo().Assembly.ExportedTypes.Where(o => o == typeof(Act) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
+                    {
+                        var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
+                        var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
+
+                        // Create a delegate which calls UpdateCarePlan
+                        // Construct the delegate
+                        var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
+                        var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
+                        var senderParm = Expression.Parameter(typeof(Object), "o");
+                        var eventParm = Expression.Parameter(ppeArgType, "e");
+                        var eventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data")), typeof(Act));
+                        var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+                        var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+                        var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+
+                        // Bind to events
+                        pType.GetRuntimeEvent("Inserted").AddEventHandler(pInstance, insertInstanceDelegate);
+                        pType.GetRuntimeEvent("Updated").AddEventHandler(pInstance, updateInstanceDelegate);
+                        pType.GetRuntimeEvent("Obsoleted").AddEventHandler(pInstance, obsoleteInstanceDelegate);
+
+                    }
 
                 }
                 catch (Exception e)
@@ -125,8 +202,66 @@ namespace OpenIZ.Mobile.Core.Protocol
                     this.m_tracer.TraceError("Could not bind clinical protocols: {0}", e);
                 }
             };
+
+            this.m_running = true;
+
+            // Polling for the doing of work
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem((o) =>
+            {
+                try
+                {
+                    while (this.m_running)
+                    {
+                        lock (this.m_lock)
+                        {
+                            Monitor.Wait(this.m_lock);
+                            // de-queue
+                            while (this.m_actCarePlanPromise.Count > 0)
+                            {
+                                IdentifiedData qitm = null;
+                                lock (this.m_actCarePlanPromise)
+                                {
+                                    qitm = this.m_actCarePlanPromise.First();
+                                    this.m_actCarePlanPromise.RemoveAt(0);
+                                }
+                                if (qitm is Patient)
+                                {
+                                    this.UpdateCarePlan(qitm as Patient);
+                                    // We can also remove all acts that are for a patient
+                                    lock (this.m_actCarePlanPromise)
+                                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == qitm.Key));
+                                }
+                                else if (qitm is Act)
+                                    this.UpdateCarePlan(qitm as Act);
+
+                                // Drop everything else in the queue
+                                lock (this.m_actCarePlanPromise)
+                                    this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error polling warehouse service: {0}", e);
+                }
+            }, null);
+
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Queue the work item
+        /// </summary>
+        private void QueueWorkItem(params IdentifiedData[] data)
+        {
+            lock (this.m_actCarePlanPromise)
+            {
+                this.m_actCarePlanPromise.AddRange(data);
+                lock (this.m_lock)
+                    Monitor.Pulse(this.m_lock);
+            }
         }
 
         /// <summary>
@@ -134,153 +269,121 @@ namespace OpenIZ.Mobile.Core.Protocol
         /// </summary>
         public void UpdateCarePlan(Act a)
         {
-            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((d) =>
+            var act = a;
+
+            // First step, we delete all acts in the warehouse for the specified patient in the protocol
+            var patientId = act.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget)?.PlayerEntityKey;
+            if (patientId == null)
             {
-                var act = d as Act;
+                this.m_tracer.TraceWarning("Cannot update care plan for act as it seems to have no RecordTarget");
+                return;
+            }
 
-                // First step, we delete all acts in the warehouse for the specified patient in the protocol
-                var patientId = act.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget)?.PlayerEntityKey;
-                if (patientId == null)
+            try
+            {
+
+                IEnumerable<Act> carePlan = null;
+                var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
+                var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                var dataMart = this.m_dataMart;
+                var patient = this.EnsureParticipations(ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient);
+
+                // Is there a protocol for this act?
+                if (act.Protocols.Count() == 0)
                 {
-                    this.m_tracer.TraceWarning("Cannot update care plan for act as it seems to have no RecordTarget");
-                    return;
+                    // Need to re-calculate the entire care plan
+                    this.m_tracer.TraceWarning("Will need to calculate the entire care plan for patient {0}", patientId);
+
+                    this.m_tracer.TraceVerbose("Calculating care plan for {0}", patient.Key);
+
+                    // First, we clear the warehouse
+                    warehouseService.Delete(dataMart.Id, new { patient_id = patient.Key.Value });
+
+                    // Now calculate
+                    carePlan = careplanService.CreateCarePlan(patient, false);
                 }
-
-                try
+                else
                 {
-
-                    IEnumerable<Act> carePlan = null;
-                    var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
-                    var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                    var dataMart = this.m_dataMart;
-                    var patient = this.EnsureParticipations(ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient);
-                     
-
-                    // Is there a protocol for this act?
-                    if (act.Protocols.Count() == 0)
+                    warehouseService.Delete(dataMart.Id, new
                     {
-                        if (this.m_actCarePlanPromise.Contains(patient.Key.Value)) return;
-                        else lock (this.m_actCarePlanPromise)
-                            {
-                                if (this.m_actCarePlanPromise.Contains(patient.Key.Value)) return;
-                                else this.m_actCarePlanPromise.Add(patient.Key.Value);
-                            }
-
-                        // Need to re-calculate the entire care plan
-                        this.m_tracer.TraceWarning("Will need to calculate the entire care plan for patient {0}", patientId);
-
-                        this.m_tracer.TraceVerbose("Calculating care plan for {0}", patient.Key);
-
-                        // First, we clear the warehouse
-                        warehouseService.Delete(dataMart.Id, new { patient_id = patient.Key.Value });
-
-                        // Now calculate
-                        carePlan = careplanService.CreateCarePlan(patient, false);
-                    }
-                    else
-                    {
-                        warehouseService.Delete(dataMart.Id, new
-                        {
-                            patient_id = patientId.Value,
-                            protocol_id = act.Protocols.FirstOrDefault()?.ProtocolKey
-                        });
-
-                        carePlan = careplanService.CreateCarePlan(patient, false, act.Protocols.FirstOrDefault().ProtocolKey);
-                    }
-
-
-                    /// Create a plan for the warehouse
-                    var warehousePlan = carePlan.Select(o => new
-                    {
-                        creation_date = DateTime.Now,
-                        patient_id = patient.Key.Value,
-                        location_id = patient.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
-                        act_id = o.Key.Value,
-                        protocol_id = o.Protocols.FirstOrDefault().ProtocolKey,
-                        class_id = o.ClassConceptKey.Value,
-                        type_id = o.TypeConceptKey.Value,
-                        min_date = o.StartTime?.DateTime,
-                        max_date = o.StopTime?.DateTime,
-                        act_date = o.ActTime.DateTime,
-                        product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value
+                        patient_id = patientId.Value,
+                        protocol_id = act.Protocols.FirstOrDefault()?.ProtocolKey
                     });
 
-                    // Insert plans
-                    warehouseService.Add(dataMart.Id, warehousePlan);
+                    carePlan = careplanService.CreateCarePlan(patient, false, act.Protocols.FirstOrDefault().ProtocolKey);
                 }
-                catch (Exception ex)
+
+
+                /// Create a plan for the warehouse
+                var warehousePlan = carePlan.Select(o => new
                 {
-                    this.m_tracer.TraceError("Could not update care plan based on Act {0}: {1}", act, ex);
-                }
-                finally
-                {
-                    lock (this.m_actCarePlanPromise)
-                        this.m_actCarePlanPromise.Remove(patientId.Value);
-                }
-            }, a.Clone());
+                    creation_date = DateTime.Now,
+                    patient_id = patient.Key.Value,
+                    location_id = patient.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
+                    act_id = o.Key.Value,
+                    protocol_id = o.Protocols.FirstOrDefault().ProtocolKey,
+                    class_id = o.ClassConceptKey.Value,
+                    type_id = o.TypeConceptKey.Value,
+                    min_date = o.StartTime?.DateTime,
+                    max_date = o.StopTime?.DateTime,
+                    act_date = o.ActTime.DateTime,
+                    product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value
+                });
+
+                // Insert plans
+                warehouseService.Add(dataMart.Id, warehousePlan);
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Could not update care plan based on Act {0}: {1}", act, ex);
+            }
+
 
         }
 
         /// <summary>
         /// Update the care plan for the specified patient
         /// </summary>
-        private void UpdateCarePlan(Patient p)
+        private void UpdateCarePlan(Patient data)
         {
-            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((d) =>
+
+            try
             {
-                var data = d as Patient;
+                this.m_tracer.TraceVerbose("Calculating care plan for {0}", data.Key);
+                data = this.EnsureParticipations(data);
 
-                try
+                // First, we clear the warehouse
+                var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                var dataMart = this.m_dataMart;
+                warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
+                var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
+
+                // Now calculate
+                var carePlan = careplanService.CreateCarePlan(data, false);
+                var warehousePlan = carePlan.Select(o => new
                 {
-                    if (this.m_actCarePlanPromise.Contains(data.Key.Value)) return;
-                    else lock (this.m_actCarePlanPromise)
-                        {
-                            if (this.m_actCarePlanPromise.Contains(data.Key.Value)) return;
-                            else this.m_actCarePlanPromise.Add(data.Key.Value);
-                        }
+                    creation_date = DateTime.Now,
+                    patient_id = data.Key.Value,
+                    location_id = data.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
+                    act_id = o.Key.Value,
+                    class_id = o.ClassConceptKey.Value,
+                    type_id = o.TypeConceptKey.Value,
+                    protocol_id = o.Protocols.FirstOrDefault()?.ProtocolKey,
+                    min_date = o.StartTime?.DateTime,
+                    max_date = o.StopTime?.DateTime,
+                    act_date = o.ActTime.DateTime,
+                    product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value
+                });
 
+                // Insert plans
+                warehouseService.Add(dataMart.Id, warehousePlan);
 
-                    this.m_tracer.TraceVerbose("Calculating care plan for {0}", data.Key);
-                    data = this.EnsureParticipations(data);
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Could not update care plan for Patient {0}: {1}", data, ex);
+            }
 
-                    // First, we clear the warehouse
-                    var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                    var dataMart = this.m_dataMart;
-                    warehouseService.Delete(dataMart.Id, new { patient_id = data.Key.Value });
-                    var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
-
-                    // Now calculate
-                    var carePlan = careplanService.CreateCarePlan(data, false);
-                    var warehousePlan = carePlan.Select(o => new
-                    {
-                        creation_date = DateTime.Now,
-                        patient_id = data.Key.Value,
-                        location_id = data.Relationships.FirstOrDefault(r => r.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || r.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation")?.TargetEntityKey.Value,
-                        act_id = o.Key.Value,
-                        class_id = o.ClassConceptKey.Value,
-                        type_id = o.TypeConceptKey.Value,
-                        protocol_id = o.Protocols.FirstOrDefault()?.ProtocolKey,
-                        min_date = o.StartTime?.DateTime,
-                        max_date = o.StopTime?.DateTime,
-                        act_date = o.ActTime.DateTime,
-                        product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value
-                    });
-
-                    // Insert plans
-                    warehouseService.Add(dataMart.Id, warehousePlan);
-
-                }
-                catch (Exception ex)
-                {
-                    this.m_tracer.TraceError("Could not update care plan for Patient {0}: {1}", p, ex);
-                }
-                finally
-                {
-                    lock (this.m_actCarePlanPromise)
-                        this.m_actCarePlanPromise.Remove(data.Key.Value);
-                }
-
-            }, p.Clone());
         }
 
         /// <summary>
@@ -306,6 +409,9 @@ namespace OpenIZ.Mobile.Core.Protocol
         public bool Stop()
         {
             this.Stopping?.Invoke(this, EventArgs.Empty);
+            this.m_running = false;
+            lock (this.m_lock)
+                Monitor.Pulse(this.m_lock);
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
         }

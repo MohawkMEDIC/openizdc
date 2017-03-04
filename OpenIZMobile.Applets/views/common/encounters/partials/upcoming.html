@@ -1,0 +1,52 @@
+﻿<div id="upcomingAppointments" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
+     xmlns:bind="http://openiz.org/applet/binding" ng-controller="UpcomingAppointmentController" >
+    <oiz:script>~/controllers/common/encounters/partials/upcoming.js</oiz:script>
+
+    <div class="container-fluid">
+        <div class="row" ng-repeat="apt in appointments">
+            <div class="col-sm-12">
+                <div class="container-fluid">
+                    <div class="row">
+                        <label class="col-xs-12 col-sm-2 control-label" style="text-align:right">{{ 'locale.encounters.schedule.recommenddate' | i18n }}</label>
+                        <div class="col-xs-12 col-sm-10">
+                            {{ apt.startTime | date: 'yyyy-MM-dd' }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-xs-12 col-sm-2 control-label" style="text-align:right">{{ 'locale.encounters.schedule.due' | i18n }}</label>
+                        <div class="col-xs-12 col-sm-10">
+                            <div ng-repeat="action in apt.relationship.HasComponent">
+                                <span ng-switch="action.targetModel.$type">
+                                    <span ng-switch-when="SubstanceAdministration">
+                                        <img src="/org.openiz.core/img/appbar.syringe.png" style="height:24px" ng-if="action.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1'" />
+                                        <img src="/org.openiz.core/img/appbar.pipette.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type != '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        <img src="/org.openiz.core/img/appbar.pill.png" style="height:24px" ng-if="action.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838' &amp;&amp; action.targetModel.$type == '7D84A057-1FCC-4054-A51F-B77D230FC6D1'" />
+                                        {{ action.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ action.targetModel.doseSequence }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                    </span>
+                                    <span ng-switch-when="QuantityObservation">
+                                        <img src="/org.openiz.core/img/appbar.scale.png" style="height:24px" ng-if="action.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        <img src="/org.openiz.core/img/appbar.eye.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                    </span>
+                                    <span ng-switch-default="ng-switch-default">
+                                        <img src="/org.openiz.core/img/appbar.blank.png" style="height:24px" ng-if="action.targetModel.typeConcept != 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                        {{ action.targetModel.typeConceptModel | oizConcept }} ({{ action.targetModel.startTime | date: 'yyyy-MMM-dd' }} - {{ action.targetModel.stopTime | date: 'yyyy-MMM-dd' }})
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 col-md-offset-8">
+                            <a ng-if="$index == 0" class="btn btn-primary" ng-click="patientEdit.appointment()">
+                                <span class="glyphicon glyphicon-calendar"></span> {{ 'locale.patient.action.appointment' | i18n }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>

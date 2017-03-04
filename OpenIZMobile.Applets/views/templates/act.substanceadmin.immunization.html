@@ -17,7 +17,8 @@
  - User: justi
  - Date: 2016-8-17
  -->
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}"
+     id="{{act.id}}">
     <div class="row">
         <div class="control-label col-xs-12">
             <div class="input-group">
@@ -58,9 +59,11 @@
                             data-watch="act.targetModel.participation.Product.player" 
                             data-watch-target="relationship[ManufacturedProduct].source" 
                             oiz-databind="ManufacturedMaterial" 
-                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}"  }' 
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }' 
                             data-display="scope.lotNumber" 
                             data-defaultEmpty="true"
+                            data-defaultFirst="true"
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"
                             >
                     </select>
                 </div>

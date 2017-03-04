@@ -232,8 +232,10 @@ angular.module('openiz', [])
                     var defaultFirst = $(element).attr('data-defaultFirst');
                     var defaultValueExpression = $(element).attr('data-default');
                     var defaultEmpty = $(element).attr('data-defaultEmpty');
+                    var whenEmpty = $(element).attr('data-whenEmpty');
                     var defaultKey = attrs.defaultKey;
                     var $root = scope.$root;
+                    var $scope = scope;
                     var defaultValue = null;
 
                     // Try to set defaut value
@@ -270,6 +272,11 @@ angular.module('openiz', [])
                                         options[options.length] = new Option(OpenIZ.Localization.getString("locale.common.unknown"));
                                     else
                                         options[options.length] = new Option("");
+                                }
+                                if ((!data.item || data.count == 0) && whenEmpty) {
+                                    // when no items and a whenempty is used
+                                    var scp = $scope; // frce JS closure
+                                    eval(whenEmpty);
                                 }
 
                                 for (var i in data.item) {

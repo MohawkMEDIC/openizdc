@@ -181,41 +181,44 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         private Guid InsertObject(IDbTransaction tx, String path, IDatamartSchemaPropertyContainer pcontainer, dynamic obj, Guid? scope = null)
         {
             // Conver to expando
-            IDictionary<String, Object> tuple = new ExpandoObject();
-            foreach (var pi in obj.GetType().GetProperties())
-                tuple.Add(pi.Name, pi.GetValue(obj, null));
-                 
-            tuple.Add("uuid", Guid.NewGuid());
-            tuple.Add("cont_id", scope);
-            tuple.Add("extraction_time", DateTime.Now);
+            lock (this.m_lock)
+            {
+                IDictionary<String, Object> tuple = new ExpandoObject();
+                foreach (var pi in obj.GetType().GetProperties())
+                    tuple.Add(pi.Name, pi.GetValue(obj, null));
 
-            // Create the properties
-            List<Object> parameters = new List<object>() { tuple["uuid"] };
-            if (scope != null)
-                parameters.Add(scope);
-            parameters.Add(tuple["extraction_time"]);
+                tuple.Add("uuid", Guid.NewGuid());
+                tuple.Add("cont_id", scope);
+                tuple.Add("extraction_time", DateTime.Now);
 
-            foreach (var p in pcontainer.Properties.Where(o => o.Type != SchemaPropertyType.Object))
-                parameters.Add(tuple[p.Name]);
+                // Create the properties
+                List<Object> parameters = new List<object>() { tuple["uuid"] };
+                if (scope != null)
+                    parameters.Add(scope);
+                parameters.Add(tuple["extraction_time"]);
 
-            // Now time to store
-            StringBuilder sbQuery = new StringBuilder("INSERT INTO ");
-            sbQuery.Append(path);
-            sbQuery.Append(" VALUES (");
-            foreach (var itm in parameters)
-                sbQuery.Append("?, ");
-            sbQuery.Remove(sbQuery.Length - 2, 2);
-            sbQuery.Append(")");
+                foreach (var p in pcontainer.Properties.Where(o => o.Type != SchemaPropertyType.Object))
+                    parameters.Add(tuple[p.Name]);
 
-            // Database command
-            using (var dbc = this.CreateCommand(tx, sbQuery.ToString(), parameters.ToArray()))
-                dbc.ExecuteNonQuery();
+                // Now time to store
+                StringBuilder sbQuery = new StringBuilder("INSERT INTO ");
+                sbQuery.Append(path);
+                sbQuery.Append(" VALUES (");
+                foreach (var itm in parameters)
+                    sbQuery.Append("?, ");
+                sbQuery.Remove(sbQuery.Length - 2, 2);
+                sbQuery.Append(")");
 
-            // Sub-properties
-            foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
-                this.InsertObject(tx, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
+                // Database command
+                using (var dbc = this.CreateCommand(tx, sbQuery.ToString(), parameters.ToArray()))
+                    dbc.ExecuteNonQuery();
 
-            return (Guid)tuple["uuid"];
+                // Sub-properties
+                foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
+                    this.InsertObject(tx, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
+
+                return (Guid)tuple["uuid"];
+            }
         }
 
         /// <summary>
@@ -391,10 +394,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             createSql.AppendFormat(")");
 
             // Now execute SQL create statement
-            using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
-            foreach (var idx in indexes)
-                using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
-
+            lock (this.m_lock)
+            {
+                using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
+                foreach (var idx in indexes)
+                    using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
+            }
         }
 
         /// <summary>
@@ -661,10 +666,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
             sb.AppendFormat(" LIMIT {1}  OFFSET {0}", offset, count);
 
-            using (var dbc = this.CreateCommand(null, sb.ToString(), vals.ToArray()))
-            using (var rdr = dbc.ExecuteReader())
-                while (rdr.Read())
-                    retVal.Add(this.CreateDynamic(rdr));
+            lock (this.m_lock)
+            {
+                using (var dbc = this.CreateCommand(null, sb.ToString(), vals.ToArray()))
+                using (var rdr = dbc.ExecuteReader())
+                    while (rdr.Read())
+                        retVal.Add(this.CreateDynamic(rdr));
+            }
+
             return retVal;
         }
 
@@ -881,18 +890,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         private DatamartSchema LoadSchema(Guid id)
         {
             DatamartSchema retVal = null;
-            using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_schemas WHERE uuid = ?", id.ToByteArray()))
-            using (var rdr = dbc.ExecuteReader())
-                if (rdr.Read())
-                {
-                    retVal = new DatamartSchema()
+            lock (this.m_lock)
+            {
+                using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_schemas WHERE uuid = ?", id.ToByteArray()))
+                using (var rdr = dbc.ExecuteReader())
+                    if (rdr.Read())
                     {
-                        Id = id,
-                        Name = (string)rdr["name"]
-                    };
-                }
-                else
-                    return null;
+                        retVal = new DatamartSchema()
+                        {
+                            Id = id,
+                            Name = (string)rdr["name"]
+                        };
+                    }
+                    else
+                        return null;
+            }
 
             retVal.Properties = this.LoadProperties(id);
             // TODO: load schema
