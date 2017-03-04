@@ -68,7 +68,7 @@
         </div>
         
     </div>
-    <div class="col-xs-2 text-right">
+    <div class="col-xs-2 text-right" ng-show="patient.id">
         <div class="dropdown">
             <a id="patientMenuButton" data-toggle="dropdown"
                class="btn btn-edit white-text" style="top: -5px;"
@@ -76,17 +76,17 @@
                 <span class="glyphicon glyphicon-option-vertical"></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
-                <li role="presentation" ng-if="patient.tag.onlineResult">
+                <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined}">
                     <a ng-click="patientEdit.download()">
                         <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                     </a>
                 </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
+                <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined}">
                     <a ng-click="patientEdit.showPatient()">
                         <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                     </a>
                 </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult">
+                <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined}">
                     <a ng-click="patientEdit.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>

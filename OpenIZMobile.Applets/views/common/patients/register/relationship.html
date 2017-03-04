@@ -60,23 +60,24 @@
             <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
             <div class="col-xs-4">
                 <div class="input-group">
-                    <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
+                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
                             bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
-                    <select name="realtivePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
+                    <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
                             bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
             </div>
             <div class="col-xs-5">
-                <div class="input-group">
-                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" />
-                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" />
+                <div class="input-group" ng-class="{ 'has-error': editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern}">
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" ng-pattern="phoneRegex"/>
+                    <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex"/>
                     <span class="input-group-btn">
                         <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                     </span>
 
                 </div>
             </div>
+            <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
         </div>
     </div>
 </fieldset>

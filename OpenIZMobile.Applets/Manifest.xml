@@ -289,6 +289,7 @@
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
+    <string key="locale.preferences.password.onlineOnly">Password Reset Can Only Be Done When Online</string>
     <string key="locale.preferences.passwordReset.title">Password Recovery Options</string>
     <string key="locale.preferences.passwordReset.description">The settings below will be used to contact you in case your user account needs to be reset. You must enter your password above to change this data</string>
     <string key="locale.preferences.email">E-Mail</string>

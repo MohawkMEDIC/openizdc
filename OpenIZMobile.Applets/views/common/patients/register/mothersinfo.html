@@ -53,8 +53,8 @@
             </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group">
-                <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.maxlength}">
+                <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
                 <span class="input-group-btn">
                     <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
@@ -63,6 +63,7 @@
                 </span>
             </div>
         </div>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
@@ -76,13 +77,14 @@
              </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group">
-                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value" class="form-control" />
-                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersPhoneNumber.$error.pattern || editMotherForm.mothersPhoneNumber.$error.pattern}">
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value" class="form-control" ng-pattern="phoneRegex"/>
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex"/>
                 <span class="input-group-btn">
                     <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersPhoneNumber.$error.pattern || editMotherForm.mothersPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
     </div>
 </fieldset>
