@@ -32,7 +32,7 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
                             );
 
                     for (var i in $scope.appointments)
-                        if (!Array.isArray($scope.appointments[i].relationship.HasComponent))
+                        if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
                             $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
 
                     $scope.$apply();

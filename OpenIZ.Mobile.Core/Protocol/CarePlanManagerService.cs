@@ -53,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Protocol
         private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanManagerService));
 
         // Represents a promise to perform a care plan
-        private List<IdentifiedData> m_actCarePlanPromise = new List<IdentifiedData>();
+        private readonly List<IdentifiedData> m_actCarePlanPromise = new List<IdentifiedData>();
 
         // Data mart
         private DatamartDefinition m_dataMart = null;
@@ -256,13 +256,10 @@ namespace OpenIZ.Mobile.Core.Protocol
         /// </summary>
         private void QueueWorkItem(params IdentifiedData[] data)
         {
-            lock (this.m_actCarePlanPromise)
-            {
-                this.m_actCarePlanPromise.AddRange(data);
-                lock (this.m_lock)
-                    Monitor.Pulse(this.m_lock);
-            }
-        }
+			this.m_actCarePlanPromise.AddRange(data);
+			lock (this.m_lock)
+				Monitor.Pulse(this.m_lock);
+		}
 
         /// <summary>
         /// Update the care plan given that a new act exists
