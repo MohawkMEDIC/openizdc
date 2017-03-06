@@ -3,17 +3,17 @@
     <oiz:script>~/controllers/common/encounters/partials/upcoming.js</oiz:script>
 
     <div class="container-fluid">
-        <div class="row" ng-repeat="apt in appointments">
-            <div class="col-sm-12">
-                <div class="container-fluid">
-                    <div class="row">
-                        <label class="col-xs-12 col-sm-2 control-label" style="text-align:right">{{ 'locale.encounters.schedule.recommenddate' | i18n }}</label>
-                        <div class="col-xs-12 col-sm-10">
+        <div class="row" ng-repeat="apt in appointments track by $index">
+            <div class="col-sm-12 panel" ng-if="apt.relationship.HasComponent">
+                <div class="margin-top-10">
+                    <div class="row encounter-group-title panel-heading" data-toggle="collagpse" data-target="appointment-{{$index}}">
+                        <label class="col-xs-4 control-label">{{ 'locale.encounters.schedule.recommenddate' | i18n }}</label>
+                        <div class="col-xs-8">
                             {{ apt.startTime | date: 'yyyy-MM-dd' }}
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-xs-12 col-sm-2 control-label" style="text-align:right">{{ 'locale.encounters.schedule.due' | i18n }}</label>
+                        <label class="col-xs-12 col-sm-2 control-label">{{ 'locale.encounters.schedule.due' | i18n }}</label>
                         <div class="col-xs-12 col-sm-10">
                             <div ng-repeat="action in apt.relationship.HasComponent">
                                 <span ng-switch="action.targetModel.$type">
@@ -36,16 +36,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4 col-md-offset-8">
-                            <a ng-if="$index == 0" class="btn btn-primary" ng-click="patientEdit.appointment()">
-                                <span class="glyphicon glyphicon-calendar"></span> {{ 'locale.patient.action.appointment' | i18n }}
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             
+        </div>
+        <div class="row panel-body">
+            <div class="btn-group pull-right">
+                <a class="btn btn-primary" ng-click="patientEdit.appointment()">
+                    <span class="glyphicon glyphicon-calendar"></span> {{ 'locale.patient.action.appointment' | i18n }}
+                </a>
+            </div>
         </div>
     </div>
 
