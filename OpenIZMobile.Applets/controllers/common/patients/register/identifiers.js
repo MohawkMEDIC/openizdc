@@ -30,7 +30,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
     var once = true;
-
     $scope.$watch('patient.identifier', function (identifier, o) {
         if (identifier && identifier != o && once) {
             once = false;
@@ -51,6 +50,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
             if ($scope.identifiers.length === 0) {
                 $scope.identifier.push({});
             }
+            activatePopovers();
         }
     }, true);
 
@@ -77,6 +77,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
                     }]
                 }
             }
+            activatePopovers();
         }
     }, true);
 
@@ -85,6 +86,12 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
         
     };
     
+    function activatePopovers() {
+        
+        setTimeout(function(){ $(".btn-popover").popover({ placement: 'left' }); }, 100);
+
+    }
+
     // Scan the specified barcode
 
     function scanBarcode(identifier) {
@@ -94,7 +101,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     // Add identifier
     function addIdentifier(identifiers) {
         identifiers.push({});
-        
     }
 
     // Remove identifier
