@@ -42,7 +42,15 @@
                             <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
-                            <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+
+                            <a class="btn btn-default btn-popover" 
+                               data-toggle="popover" 
+                               tabindex="0" 
+                               data-trigger="focus" 
+                               title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" 
+                               data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}">
+                                <span class="glyphicon glyphicon-question-sign"></span>
+                            </a>
                         </span>
                         
                     </div>
