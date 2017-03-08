@@ -293,6 +293,7 @@
     <string key="locale.preferences.passwordReset.title">Password Recovery Options</string>
     <string key="locale.preferences.passwordReset.description">The settings below will be used to contact you in case your user account needs to be reset. You must enter your password above to change this data</string>
     <string key="locale.preferences.email">E-Mail</string>
+    <string key="locale.preferences.recoveryOptions.success">Recovery Options Successfully Changed</string>
     <string key="locale.preferences.phone">Mobile</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
     <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>

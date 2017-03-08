@@ -112,12 +112,12 @@
 
                         <div class="row" style="height:auto;">
                             <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
+                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
                                     {{ 'locale.patient.action.startEncounter' | i18n }}
                                 </a>
                             </div>
                             <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
+                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
                                     {{ 'locale.patient.action.weight' | i18n }}
                                 </a>
                             </div>

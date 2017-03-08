@@ -6,7 +6,7 @@
     <property name="source" all="true"/>
     <property name="target" all="true"/>
     <property name="targetModel" all="true" behavior="always" ref="Entity"/>
-    <property name="relationshipType" all="true"/>
+    <property name="relationshipType" all="true" behavior="always"/>
     <property name="holderModel" behavior="never"/>
     <property name="sourceModel" behavior="never"/>
     <property name="relationshipTypeModel" behavior="never"/>
@@ -107,7 +107,7 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
-    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="typeConceptModel" all="true" behavior="always" ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
       <property name="Parent" all="true">
         <property name="holderModel" behavior="never"/>
@@ -123,7 +123,7 @@
       <property name="OwnedEntity" all="true">
         <property name="holderModel" behavior="never"/>
         <property name="relationshipTypeModel" behavior="never"/>
-        <property name="targetModel" behavior="always" all="false">
+        <property name="targetModel" behavior="always" all="true">
           <property name="id"/>
           <property name="version"/>
           <property name="lotNumber"/>
