@@ -58,16 +58,11 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10">
-            <select ng-disabled="true" style="width:100%; height:100%" 
-                    id="encounterPerformer" name="encounterPerformer" 
-                    class="form-control" ng-model="encounter.participation.Performer.player"
-                    oiz-entitysearch="UserEntity">
-                <option selected="selected" value="{{encounter.participation.Performer.player}}">
-                    {{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}
-                </option>
-            </select>
+        <label class="col-xs-2">{{ 'locale.encounters.performer' | i18n }}</label>
+        <div class="col-xs-9">
+            <div class="input-group">
+                <input type="text" autocomplete="off" autocapitalize="off"  disabled="disabled" value="{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName}}" class="form-control" />
+            </div>
         </div>
     </div>
     <!--<div class="form-group row">
