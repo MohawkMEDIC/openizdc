@@ -49,6 +49,9 @@ namespace OpenIZ.Mobile.Core.Protocol
         // Warehouse service
         private IAdHocDatawarehouseService m_warehouseService;
 
+        // m_reset event
+        private ManualResetEvent m_resetEvent = new ManualResetEvent(false);
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(CarePlanManagerService));
 
@@ -212,33 +215,29 @@ namespace OpenIZ.Mobile.Core.Protocol
                 {
                     while (this.m_running)
                     {
-                        lock (this.m_lock)
+                        this.m_resetEvent.WaitOne();
+                        // de-queue
+                        while (this.m_actCarePlanPromise.Count > 0)
                         {
-                            Monitor.Wait(this.m_lock);
-                            // de-queue
-                            while (this.m_actCarePlanPromise.Count > 0)
+                            IdentifiedData qitm = null;
+                            qitm = this.m_actCarePlanPromise.First();
+                            lock (this.m_lock)
+                                this.m_actCarePlanPromise.RemoveAt(0);
+                            if (qitm is Patient)
                             {
-                                IdentifiedData qitm = null;
-                                lock (this.m_actCarePlanPromise)
-                                {
-                                    qitm = this.m_actCarePlanPromise.First();
-                                    this.m_actCarePlanPromise.RemoveAt(0);
-                                }
-                                if (qitm is Patient)
-                                {
-                                    this.UpdateCarePlan(qitm as Patient);
-                                    // We can also remove all acts that are for a patient
-                                    lock (this.m_actCarePlanPromise)
-                                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == qitm.Key));
-                                }
-                                else if (qitm is Act)
-                                    this.UpdateCarePlan(qitm as Act);
-
-                                // Drop everything else in the queue
-                                lock (this.m_actCarePlanPromise)
-                                    this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
+                                this.UpdateCarePlan(qitm as Patient);
+                                // We can also remove all acts that are for a patient
+                                lock (this.m_lock)
+                                    this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == qitm.Key));
                             }
+                            else if (qitm is Act)
+                                this.UpdateCarePlan(qitm as Act);
+
+                            // Drop everything else in the queue
+                            lock (this.m_lock)
+                                this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
                         }
+                        this.m_resetEvent.Reset();
                     }
                 }
                 catch (Exception e)
@@ -256,12 +255,9 @@ namespace OpenIZ.Mobile.Core.Protocol
         /// </summary>
         private void QueueWorkItem(params IdentifiedData[] data)
         {
-            lock (this.m_actCarePlanPromise)
-            {
+            lock (this.m_lock)
                 this.m_actCarePlanPromise.AddRange(data);
-                lock (this.m_lock)
-                    Monitor.Pulse(this.m_lock);
-            }
+            this.m_resetEvent.Set();
         }
 
         /// <summary>

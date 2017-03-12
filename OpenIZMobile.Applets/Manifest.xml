@@ -93,10 +93,6 @@
       <icon>/org.openiz.core/img/appbar.shield.png</icon>
       <text lang="en">Settings</text>
     </menuItem>
-    <menuItem asset="/org.openiz.core/views/settings/data.html" launch="#/core/data">
-      <icon>/org.openiz.core/img/appbar.database.png</icon>
-      <text lang="en">Data Manager</text>
-    </menuItem>
   </menuItem>
   <menuItem order="99">
     <icon>/tz.timr.applet/img/appbar.code.xml.png</icon>
