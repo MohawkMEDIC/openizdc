@@ -59,10 +59,13 @@
                             </div>
                             <div class="col-xs-9 no-padding-right no-wrap">
                                 <span ng-if="patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID']">
-                                    <span >{{ patient.identifier['TIMR-BARCODE'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TIMR-BARCODE"))}}</span></span>                                    
+                                    <span >{{ patient.identifier['TIMR-BARCODE'].value ||  patient.identifier['TIMR-BARCODE'][0].value}} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TIMR-BARCODE"))}}</span></span>                                    
                                 </span>
                                 <span ng-if="patient.identifier['NATID']">
-                                    <span>{{ patient.identifier['NATID'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.NATID"))}}</span></span>
+                                    <span>{{ patient.identifier['NATID'].value || patient.identifier['NATID'][0].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.NATID"))}}</span></span>
+                                </span>
+                                <span ng-if="!patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID'] &amp;&amp; patient.identifier['TEMP']">
+                                    <span>{{ patient.identifier['TEMP'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TEMP"))}}</span></span>
                                 </span>
                             </div>
                         </div>
@@ -112,12 +115,12 @@
 
                         <div class="row" style="height:auto;">
                             <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
+                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
                                     {{ 'locale.patient.action.startEncounter' | i18n }}
                                 </a>
                             </div>
                             <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
+                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
                                     {{ 'locale.patient.action.weight' | i18n }}
                                 </a>
                             </div>

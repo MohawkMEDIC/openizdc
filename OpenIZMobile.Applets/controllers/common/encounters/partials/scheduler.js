@@ -3,7 +3,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
+layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', '$rootScope', function ($scope, $rootScope, $stateParams, $rootScope) {
     $scope._isCalendarInitialized = false;
 
     // Scheduling assistant shown
@@ -82,6 +82,12 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
                                       }
                                     );
                             $scope.appointment = $scope.appointments[0];
+                            if ($scope.appointment.actTime < $rootScope.page.loadTime) {
+                                $scope.appointment.actTime = $rootScope.page.loadTime;
+                            }
+                            if ($scope.appointment.startTime < $rootScope.page.loadTime) {
+                                $scope.appointment.startTime = $rootScope.page.loadTime;
+                            }
                             if (Array.isArray($scope.appointment.relationship.HasComponent))
                                 $.each($scope.appointment.relationship.HasComponent, function (i, e) {
                                     e._enabled = true;

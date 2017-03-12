@@ -30,7 +30,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
     var once = true;
-
     $scope.$watch('patient.identifier', function (identifier, o) {
         if (identifier && identifier != o && once) {
             once = false;
@@ -84,7 +83,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     function rebindDomain(authority, identifier, index) {
         
     };
-    
     // Scan the specified barcode
 
     function scanBarcode(identifier) {
@@ -94,7 +92,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     // Add identifier
     function addIdentifier(identifiers) {
         identifiers.push({});
-        
     }
 
     // Remove identifier

@@ -79,6 +79,7 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
                                     phoneNumber: telephone
                                 }),
                                 continueWith: function (result) {
+                                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.recoveryOptions.success"));
                                     $rootScope.session.user = result;
                                 }
                             });
