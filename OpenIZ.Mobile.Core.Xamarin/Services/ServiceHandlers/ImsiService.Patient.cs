@@ -164,7 +164,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // There is additional filter parameters
                 if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
                 {
-                    var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+                    var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search, null, false);
                     this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
                     if (search.ContainsKey("_onlineOnly"))
