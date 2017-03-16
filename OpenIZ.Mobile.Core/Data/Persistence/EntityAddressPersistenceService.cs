@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-6-14
  */
+using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
@@ -104,5 +105,82 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
     }
 
+    /// <summary>
+    /// Entity address component persistence service
+    /// </summary>
+    public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<EntityAddressComponent, DbEntityAddressComponent, DbEntityAddressComponent.QueryResult>, ILocalAssociativePersistenceService
+    {
+        
+        /// <summary>
+        /// To model instance
+        /// </summary>
+        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        {
+            if (dataInstance == null) return null;
 
+            var addrComp = (dataInstance as DbEntityAddressComponent.QueryResult)?.GetInstanceOf<DbEntityAddressComponent>() ?? dataInstance as DbEntityAddressComponent;
+            var addrValue = (dataInstance as DbEntityAddressComponent.QueryResult)?.GetInstanceOf<DbAddressValue>() ?? context.Connection.Table<DbAddressValue>().Where(o => o.Uuid == addrComp.ValueUuid).FirstOrDefault();
+            return new EntityAddressComponent()
+            {
+                ComponentTypeKey = new Guid(addrComp.ComponentTypeUuid),
+                Value = addrValue.Value,
+                Key = addrComp.Key,
+                SourceEntityKey = new Guid(addrComp.AddressUuid)
+            };
+        }
+
+        /// <summary>
+        /// From the model instance
+        /// </summary>
+        public override object FromModelInstance(EntityAddressComponent modelInstance, LocalDataContext context)
+        {
+            var retVal = base.FromModelInstance(modelInstance, context) as DbEntityAddressComponent;
+
+            // Address component already exists?
+            var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+            if (existing != null && existing.Key != retVal.Key)
+                retVal.ValueUuid = existing.Uuid;
+            else
+            {
+                retVal.ValueUuid = Guid.NewGuid().ToByteArray();
+                context.Connection.Insert(new DbAddressValue()
+                {
+                    Uuid = retVal.ValueUuid,
+                    Value = modelInstance.Value
+                });
+            }
+            return retVal;
+        }
+
+        /// <summary>
+        /// Entity address component
+        /// </summary>
+        protected override EntityAddressComponent InsertInternal(LocalDataContext context, EntityAddressComponent data)
+        {
+            if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context) as Concept;
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.InsertInternal(context, data);
+        }
+
+        /// <summary>
+        /// Update 
+        /// </summary>
+        protected override EntityAddressComponent UpdateInternal(LocalDataContext context, EntityAddressComponent data)
+        {
+            if (data.ComponentType != null) data.ComponentType = data.ComponentType?.EnsureExists(context) as Concept;
+
+            data.ComponentTypeKey = data.ComponentType?.Key ?? data.ComponentTypeKey;
+            return base.UpdateInternal(context, data);
+        }
+
+        /// <summary>
+        /// Get components from source
+        /// </summary>
+        public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
+        {
+            int tr = 0;
+            return this.QueryInternal(context, o=>o.SourceEntityKey == id, 0, -1, out tr, Guid.Empty, false);
+        }
+
+    }
 }

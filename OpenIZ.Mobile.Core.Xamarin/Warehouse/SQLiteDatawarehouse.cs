@@ -26,6 +26,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
     /// </summary>
     public class SQLiteDatawarehouse : IAdHocDatawarehouseService, IDaemonService, IDisposable
     {
+        // Epoch
+        private readonly DateTime m_epoch = new DateTime(1970, 1, 1).ToUniversalTime();
 
         // Lock 
         private Object m_lock = new object();
@@ -189,7 +191,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                 tuple.Add("uuid", Guid.NewGuid());
                 tuple.Add("cont_id", scope);
-                tuple.Add("extraction_time", DateTime.Now);
+                tuple.Add("extraction_time", DateTime.Now.ToUniversalTime().Subtract(this.m_epoch).TotalSeconds);
 
                 // Create the properties
                 List<Object> parameters = new List<object>() { tuple["uuid"] };
@@ -305,7 +307,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             CreationTime = DateTime.Now,
                             Schema = dmSchema
                         };
-                        using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_datamarts VALUES (?, ?, ?, ?)", retVal.Id.ToByteArray(), name, retVal.CreationTime, retVal.Schema.Id))
+                        using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_datamarts VALUES (?, ?, ?, ?)", retVal.Id.ToByteArray(), name, retVal.CreationTime.ToUniversalTime().Subtract(this.m_epoch).TotalSeconds, retVal.Schema.Id))
                             dbc.ExecuteNonQuery();
 
                         foreach (var itm in dmSchema.Queries)
@@ -334,7 +336,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             // Create the property container table
             StringBuilder createSql = new StringBuilder();
             createSql.AppendFormat("CREATE TABLE {0} (", pathName);
-            createSql.Append("uuid blob(16) not null primary key, extraction_time datetime not null default current_timestamp, ");
+            createSql.Append("uuid blob(16) not null primary key, extraction_time bigint not null default current_timestamp, ");
             if (container is DatamartSchemaProperty)
                 createSql.Append("entity_uuid blob(16) not null, ");
 
@@ -357,7 +359,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                         typeString = "boolean";
                         break;
                     case SchemaPropertyType.Date:
-                        typeString = "datetime";
+                        typeString = "bigint";
                         break;
                     case SchemaPropertyType.Decimal:
                         typeString = "decimal";
@@ -417,7 +419,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 var parm = retVal.CreateParameter();
                 parm.Value = itm;
                 if (itm is String) parm.DbType = System.Data.DbType.String;
-                else if (itm is DateTime || itm is DateTimeOffset) parm.DbType = System.Data.DbType.DateTime;
+                else if (itm is DateTime || itm is DateTimeOffset)
+                {
+                    parm.DbType = System.Data.DbType.Int64;
+                    if (itm is DateTime)
+                        parm.Value = ((DateTime)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                    else
+                        parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                }
                 else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
                 else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
                 else if (itm is byte[])
@@ -425,7 +434,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     parm.DbType = System.Data.DbType.Binary;
                     parm.Value = itm;
                 }
-                else if(itm is Guid || itm is Guid?)
+                else if (itm is Guid || itm is Guid?)
                 {
                     parm.DbType = System.Data.DbType.Binary;
                     if (itm != null)
@@ -554,7 +563,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                         {
                             Id = new Guid((byte[])rdr["uuid"]),
                             Name = (string)rdr["name"],
-                            CreationTime = (DateTime)rdr["creation_time"],
+                            CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
                             Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
                         };
                     }
@@ -585,7 +594,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             {
                                 Id = new Guid((byte[])rdr["uuid"]),
                                 Name = (string)rdr["name"],
-                                CreationTime = (DateTime)rdr["creation_time"],
+                                CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
                                 Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
                             });
                         }
@@ -867,7 +876,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             {
                                 Id = new Guid((byte[])rdr["uuid"]),
                                 Name = (string)rdr["name"],
-                                CreationTime = (DateTime)rdr["creation_time"],
+                                CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
                                 Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
                             };
                         }

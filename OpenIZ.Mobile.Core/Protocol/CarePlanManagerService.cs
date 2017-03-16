@@ -127,6 +127,12 @@ namespace OpenIZ.Mobile.Core.Protocol
                         this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
                         this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
+                    else // prune datamart
+                    {
+                        this.m_warehouseService.Delete(this.m_dataMart.Id, new {
+                            max_date = String.Format("<=", DateTime.Now.AddDays(-90))
+                        });
+                    }
 
                     // Subscribe to persistence
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
@@ -219,6 +225,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         // de-queue
                         while (this.m_actCarePlanPromise.Count > 0)
                         {
+                            ApplicationContext.Current.SetProgress(Strings.locale_calculatingCarePlan, 1 / this.m_actCarePlanPromise.Count);
                             IdentifiedData qitm = null;
                             qitm = this.m_actCarePlanPromise.First();
                             lock (this.m_lock)
@@ -308,10 +315,9 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     carePlan = careplanService.CreateCarePlan(patient, false, act.Protocols.FirstOrDefault().ProtocolKey);
                 }
-
-
+                
                 /// Create a plan for the warehouse
-                var warehousePlan = carePlan.Select(o => new
+                var warehousePlan = carePlan.Where(c => c.StopTime == null || c.StopTime >= DateTime.Now.AddDays(-90)).Select(o => new
                 {
                     creation_date = DateTime.Now,
                     patient_id = patient.Key.Value,
@@ -356,7 +362,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                 // Now calculate
                 var carePlan = careplanService.CreateCarePlan(data, false);
-                var warehousePlan = carePlan.Select(o => new
+                var warehousePlan = carePlan.Where(a=>a.StopTime == null || a.StopTime >= DateTime.Now.AddDays(-90)).Select(o => new
                 {
                     creation_date = DateTime.Now,
                     patient_id = data.Key.Value,

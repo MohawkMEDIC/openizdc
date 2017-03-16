@@ -168,7 +168,7 @@ namespace Minims
                         retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletDir, e.ToString());
                         throw;
                     }
-                retVal.LoadedApplets.CachePages = true;
+                retVal.LoadedApplets.CachePages = false;
                 retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                 retVal.Start();

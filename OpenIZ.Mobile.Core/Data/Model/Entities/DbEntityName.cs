@@ -43,23 +43,54 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		}
 	}
 
-	/// <summary>
-	/// Represents a component of a name
-	/// </summary>
-	[Table("entity_name_comp")]
-	public class DbEntityNameComponent : DbGenericNameComponent
-	{
+    /// <summary>
+    /// Represents a component of a name
+    /// </summary>
+    [Table("entity_name_comp")]
+    public class DbEntityNameComponent : DbGenericNameComponent
+    {
 
-		/// <summary>
-		/// Gets or sets the name identifier.
-		/// </summary>
-		/// <value>The name identifier.</value>
-		[Column("name_uuid"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Uuid))]
-		public byte[] NameUuid {
-			get;
-			set;
-		}
-        
+        /// <summary>
+        /// Gets or sets the name identifier.
+        /// </summary>
+        /// <value>The name identifier.</value>
+        [Column("name_uuid"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbEntityName), nameof(DbEntityName.Uuid))]
+        public byte[] NameUuid {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the value identifier of the name value
+        /// </summary>
+        [Column("value_id"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbPhoneticValue), nameof(DbPhoneticValue.Uuid)), AlwaysJoin]
+        public override byte[] ValueUuid
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbEntityNameComponent
+        {
+
+            /// <summary>
+            /// Gets or sets the value of the address component
+            /// </summary>
+            [Column("value")]
+            public String Value { get; set; }
+
+        }
+    }
+
+    /// <summary>
+    /// Phonetic value table
+    /// </summary>
+    [Table("phonetic_value")]
+    public class DbPhoneticValue : DbIdentified
+    {
+
 		/// <summary>
 		/// Gets or sets the phonetic code.
 		/// </summary>
@@ -79,7 +110,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			get;
 			set;
 		}
-	}
+
+        /// <summary>
+        /// Value of the phonetic table
+        /// </summary>
+        [Column("value"), NotNull]
+        public String Value { get; set; }
+    }
 
 }
 

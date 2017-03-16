@@ -180,6 +180,9 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbPlaceService>();
                     db.CreateTable<DbPersonLanguageCommunication>();
                     db.CreateTable<DbAuthorityScope>();
+                    db.CreateTable<DbPhoneticValue>();
+                    db.CreateTable<DbAddressValue>();
+
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();
                     db.CreateTable<DbProvider>();

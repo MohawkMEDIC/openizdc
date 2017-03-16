@@ -94,7 +94,7 @@
                 <li id="syncCtrDropDown" ng-show="$root.session.user">
                     <a ui-sref="org-openiz-core.sync()">
                         <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon"/> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
-                        <span ng-if="conflicts" class="glyphicon glyphicon-exclamation-sign"></span>
+                        <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
                     </a>
                 </li>
                 <li class="dropdown" ng-show="$root.session.user">

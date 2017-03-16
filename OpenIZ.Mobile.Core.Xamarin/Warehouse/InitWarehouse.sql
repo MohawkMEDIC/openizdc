@@ -1,7 +1,7 @@
 ﻿CREATE TABLE IF NOT EXISTS dw_datamarts (
 	uuid  blob(16) not null primary key,
 	name varchar(64) not null unique,
-	creation_time datetime not null default current_timestamp,
+	creation_time bigint not null,
 	schema_id blob(16) not null
 );
 

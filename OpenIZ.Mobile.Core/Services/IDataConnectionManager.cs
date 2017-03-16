@@ -11,7 +11,9 @@ namespace OpenIZ.Mobile.Core.Services
     /// </summary>
     public interface IDataConnectionManager : IDaemonService
     {
-
-    
+        /// <summary>
+        /// Instructs the data connection manager to compact data
+        /// </summary>
+        void Compact();
     }
 }
