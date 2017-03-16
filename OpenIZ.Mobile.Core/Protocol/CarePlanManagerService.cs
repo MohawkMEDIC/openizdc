@@ -159,12 +159,12 @@ namespace OpenIZ.Mobile.Core.Protocol
                             {
                                 if (e.Data.Entry is Patient)
                                     this.QueueWorkItem(e.Data.Entry as Patient);
-                                else
+                                else if(e.Data.Entry is Act)
                                     this.QueueWorkItem(e.Data.Entry as Act);
                             }
                             else
                             {
-                                this.QueueWorkItem(e.Data.Item.ToArray());
+                                this.QueueWorkItem(e.Data.Item.Where(c=>c is Patient || c is Act).ToArray());
                             }
                         };
                         bundlePersistence.Updated += (o, e) =>
