@@ -1,0 +1,48 @@
+﻿<div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
+    <openiz:script>/org.openiz.core/controllers/settings/sync.js</openiz:script>
+    <openiz:state name="org-openiz-core.sync">
+        <openiz:url>/sync</openiz:url>
+        <openiz:view>
+            <openiz:controller>SyncCentreController</openiz:controller>
+            <openiz:demand>1.3.6.1.4.1.33349.3.1.5.9.2.1</openiz:demand>
+            <openiz:title lang="en">Synchronization Centre</openiz:title>
+            <openiz:title lang="fr"></openiz:title>
+            <openiz:title lang="sw"></openiz:title>
+        </openiz:view>
+    </openiz:state>
+
+    <div class="row prevent-scroll">
+        <div class="col-portrait-12 col-sm-3 padding-10 padding-top-15 no-padding-right" ng-class="{'hidden-portrait' : selectedMessageID != null}">
+            <h3 class="no-margin-top padding-left-10">{{ 'locale.sync.queue' | i18n }}</h3>
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active">
+                    <a ng-click="queue.current = queue.dead"><span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.sync.conflicted' | i18n }} <span class="badge">{{ queue.dead.CollectionItem.length }}</span></a>
+                </li>
+                <li>
+                    <a ng-click="queue.current = queue.outbound"><span class="glyphicon glyphicon-export"></span> {{ 'locale.sync.outbound' | i18n }} <span class="badge">{{ queue.outbound.CollectionItem.length }}</span></a>
+                </li>
+                <li>
+                    <a ng-click="queue.current = queue.inbound"><span class="glyphicon glyphicon-import"></span> {{ 'locale.sync.inbound' | i18n }} <span class="badge">{{ queue.inbound.CollectionItem.length }}</span></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="hidden-xs col-sm-9 padding-10 padding-top-15" ng-class="{'force-show full-width-portrait' : selectedMessageID != null}">
+            <h3 class="no-margin-top padding-left-10">{{ 'locale.sync.objects' | i18n }}</h3>
+            <div class="inner-scroll" style="height: calc(100% - 35px);">
+                <table class="table table-striped">
+                    <tr class="row" ng-repeat="obj in queue.current.CollectionItem">
+                        <td>I</td>
+                        <td>{{ obj.creationTime | date : 'yyyy-MMM-dd HH:mm:ss' }}</td>
+                        <td>{{ obj.type }}</td>
+                        <td>
+                            <a class="btn btn-primary"><span class="glyphicon glyphicon-zoom-in"></span> {{ 'locale.sync.resolve.resolve' | i18n }}</a>
+                            <a class="btn btn-info"><span class="glyphicon glyphicon-ok"></span> {{ 'locale.sync.resolve.takeMine' | i18n }}</a>
+                            <a class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> {{ 'locale.sync.resolve.leaveServer' | i18n }}</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

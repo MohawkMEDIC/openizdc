@@ -132,7 +132,6 @@
     <property modelName="Key" domainName="Uuid"/>
     <property modelName="SourceEntityKey" domainName="NameUuid"/>
     <property modelName="ComponentTypeKey" domainName="ComponentTypeUuid"/>
-    <property modelName="PhoneticAlgorithmKey" domainName="PhoneticAlgorithmUuid"/>
   </class>
 
   <class modelClass="OpenIZ.Core.Model.Entities.EntityAddress, OpenIZ.Core.Model, Version=1.0.0.0"

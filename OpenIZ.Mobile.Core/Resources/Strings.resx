@@ -197,4 +197,7 @@ Sincerely,
   <data name="locale_starting" xml:space="preserve">
     <value>Loading protocol {0}...</value>
   </data>
+  <data name="locale_calculatingCarePlan" xml:space="preserve">
+    <value>Calculating Care-plans...</value>
+  </data>
 </root>

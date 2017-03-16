@@ -2,6 +2,19 @@
 /// <reference path="../../js/openiz.js"/>
 layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
 
+    // Compact the database
+    $scope.doCompact = function () {
+        OpenIZ.App.showWait("#compactButton");
+        OpenIZ.App.compactAsync({
+            onException: function(ex) {
+                alert(ex.message);
+            },
+            finally: function () {
+                OpenIZ.App.hideWait("#compactButton");
+            }
+        });
+    };
+
     $scope.doPurge = function (override, backup) {
 
         // Confirm purge

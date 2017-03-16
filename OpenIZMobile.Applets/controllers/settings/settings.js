@@ -31,6 +31,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     OpenIZ.Configuration.getConfigurationAsync({
         continueWith: function (config) {
             $scope.config = config;
+            $scope.config.security.port = 8080;
             $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
             $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
             $scope.ui = {
@@ -81,7 +82,8 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,
-                enableTrace : realm.enableTrace,
+                enableTrace: realm.enableTrace,
+                enableSSL : realm.enableSSL,
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;

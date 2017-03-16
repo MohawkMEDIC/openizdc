@@ -73,6 +73,23 @@
                                             {{ 'locale.settings.enableTracing' | i18n }}
                                         </label>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="realmPort" id="realmPortLabel">{{ 'locale.settings.realmPort' | i18n }}</label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <input ng-model="config.security.port" ng-required="true"  class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text" name="realmPort" id="realmPort" aria-describedby="realmPortLabel" />
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="2" data-trigger="focus" title="{{ 'locale.settings.realmPort' | i18n }}" data-content="{{ 'locale.settings.realmPort.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-10 col-sm-offset-2">
+                                            <input type="checkbox" ng-model="config.security.enableSSL" />
+                                            {{ 'locale.settings.enableSSL' | i18n }}
+                                        </label>
+                                    </div>
                                     <div class="btn-group pull-right">
                                         <button class="btn-danger btn btn-lg" ng-disabled="config.realmName == null" ng-click="leaveRealm(config.security)">
                                             <span>

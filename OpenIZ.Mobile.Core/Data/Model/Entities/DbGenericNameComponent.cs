@@ -41,8 +41,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// Gets or sets the value.
         /// </summary>
         /// <value>The value.</value>
-        [Column("value"), NotNull, Indexed]
-        public String Value
+        [Column("value_id"), MaxLength(16), NotNull, Indexed]
+        public virtual byte[] ValueUuid
         {
             get;
             set;

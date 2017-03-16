@@ -225,17 +225,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
                     // TODO: Customize this and clean it up ... It is very hackish
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient", "Act" })
+                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Person", "Act" })
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = res == "UserEntity" || res == "Patient" || res == "Act" ? SynchronizationPullTriggerType.Always :
+                            Triggers = res == "UserEntity" || res == "Person" || res == "Act" ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
-
-
-
+                        
                         // Subscription
                         if (optionObject["data"]["sync"]["subscribe"] == null)
                         {
@@ -258,8 +256,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
                                         syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
-                                    case "Patient":
+                                    case "Person":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
                                         syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
@@ -366,11 +365,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
-            List<string> enableTrace = null, noTimeout = null;
+            List<string> enableTrace = null, noTimeout = null, enableSSL = null;
             realmData.TryGetValue("enableTrace", out enableTrace);
             enableTrace = enableTrace ?? new List<String>();
             realmData.TryGetValue("noTimeout", out noTimeout);
             noTimeout = noTimeout ?? new List<String>();
+            realmData.TryGetValue("enableSSL", out enableSSL);
+            enableSSL = enableSSL ?? new List<string>();
 
             // Stage 1 - Demand access admin policy
             try
@@ -399,9 +400,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
 
-                String imsiUri = String.Format("http://{0}:8080/imsi", realmUri),
-                    oauthUri = String.Format("http://{0}:8080/auth", realmUri),
-                    amiUri = String.Format("http://{0}:8080/ami", realmUri);
+                string scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
+                string portScheme = scheme == "http" ? "8080" : "8443";
+                String imsiUri = String.Format("{0}://{1}:{2}/imsi", scheme, realmUri, portScheme),
+                    oauthUri = String.Format("{0}://{1}:{2}/auth", scheme, realmUri, portScheme),
+                    amiUri = String.Format("{0}://{1}:{2}/ami", scheme, realmUri, portScheme);
 
                 // Parse IMSI URI
                 serviceClientSection.Client.Clear();

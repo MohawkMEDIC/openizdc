@@ -80,6 +80,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculating Care-plans....
+        /// </summary>
+        internal static string locale_calculatingCarePlan {
+            get {
+                return ResourceManager.GetString("locale_calculatingCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error Downloading Remote Data.
         /// </summary>
         internal static string locale_downloadError {

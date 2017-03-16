@@ -60,9 +60,45 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			get;
 			set;
 		}
-	
 
-	}
+        /// <summary>
+        /// Gets or sets the value identifier of the name value
+        /// </summary>
+        [Column("value_id"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAddressValue), nameof(DbAddressValue.Uuid)), AlwaysJoin]
+        public override byte[] ValueUuid
+        {
+            get; set;
+        }
 
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbEntityAddressComponent
+        {
+
+            /// <summary>
+            /// Gets or sets the value of the address component
+            /// </summary>
+            [Column("value")]
+            public String Value { get; set; }
+
+        }
+
+    }
+
+
+    /// <summary>
+    /// Represents unique values
+    /// </summary>
+    [Table("entity_addr_val")]
+    public class DbAddressValue : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the value of the address
+        /// </summary>
+        [Column("value"), NotNull]
+        public String Value { get; set; }
+    }
 }
 

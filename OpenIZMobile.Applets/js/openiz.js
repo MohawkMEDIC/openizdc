@@ -1406,7 +1406,23 @@ var OpenIZ = OpenIZ || {
     * @memberof OpenIZ
     */
     App: {
-        _originalText:{},
+        _originalText: {},
+        /**
+         * @summary Instructs the mini ims to compact all databases related to the OpenIZ data structures
+         * @method
+         * @memberof OpenIZ.App
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {bool} controlData.backup Whether a backup should be taken
+         */
+        compactAsync: function(controlData) {
+            OpenIZ.Util.simplePost("/__app/data", {
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
         /**
          * @summary Purges all data from the application
          * @method
@@ -2418,7 +2434,8 @@ var OpenIZ = OpenIZ || {
                          realmUri: controlData.domain,
                          deviceName: controlData.deviceName,
                          force: controlData.force,
-                         enableTrace: controlData.enableTrace
+                         enableTrace: controlData.enableTrace,
+                         enableSSL: controlData.enableSSL
                      },
                      dataType: "json",
                      contentType: 'application/x-www-urlform-encoded',
@@ -2704,6 +2721,45 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 data: controlData.data,
+                state: controlData.state
+            });
+        }
+    },
+    /**
+     * @static
+     * @class
+     * @summary Provides utilities for interacting with the queues in OpenIZ
+     * @memberof OpenIZ
+     */
+    Queue: {
+        /**
+         * @summary Represents a list of names of queue objects
+         * @enum
+         * @static
+         * @memberof OpenIZ
+         */
+        QueueNames : {
+            InboundQueue: "inbound",
+            OutboundQueue: "outbound",
+            DeadLetterQueue: "dead",
+            AdminQueue: "admin"
+        },
+        /** 
+         * @summary Retrieves a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueName The name of the queue to retrieve
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        getQueueAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__app/queue", {
+                query: { _queue: controlData.queueName, id: "!null" },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
                 state: controlData.state
             });
         }
