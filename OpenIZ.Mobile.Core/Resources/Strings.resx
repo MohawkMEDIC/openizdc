@@ -186,7 +186,7 @@
     <value>Error sending object to the server</value>
   </data>
   <data name="locale_welcomeMessageBody" xml:space="preserve">
-    <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the sycnrhonization is complete. We'll let you know when the synchronization operation is done!
+    <value>Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don't have data. That is normal until the synchronizing is complete. We'll let you know when the synchronization operation is done!
 
 Sincerely,
 - OpenIZ Community</value>

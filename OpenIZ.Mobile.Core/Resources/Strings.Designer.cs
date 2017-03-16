@@ -271,7 +271,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don&apos;t have data. That is normal until the sycnrhonization is complete. We&apos;ll let you know when the synchronization operation is done!
+        ///   Looks up a localized string similar to Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don&apos;t have data. That is normal until the synchronizing is complete. We&apos;ll let you know when the synchronization operation is done!
         ///
         ///Sincerely,
         ///- OpenIZ Community.
