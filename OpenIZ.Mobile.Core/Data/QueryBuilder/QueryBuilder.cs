@@ -214,7 +214,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
                         var subTableType = m_mapper.MapModelType(propertyType);
                         var subTableMap = TableMapping.Get(subTableType);
                         var linkColumns = subTableMap.Columns.Where(o => scopedTables.Any(s => s.OrmType == o.ForeignKey?.Table));
-                        var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o => subProperty == "source" ? o.SourceProperty.Name != "SourceUuid" : o.SourceProperty.Name == "SourceUuid") : linkColumns.FirstOrDefault();
+                        var linkColumn = linkColumns.Count() > 1 ? linkColumns.FirstOrDefault(o => subProperty.StartsWith( "source") ? o.SourceProperty.Name != "SourceUuid" : o.SourceProperty.Name == "SourceUuid") : linkColumns.FirstOrDefault();
                         // Link column is null, is there an assoc attrib?
                         SqlStatement subQueryStatement = new SqlStatement();
 

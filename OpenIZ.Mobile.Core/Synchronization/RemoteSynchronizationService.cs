@@ -230,16 +230,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             infopt.Add(itm.Key, itm.Value);
                     }
                     result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
-                    if (result.TotalResults > 10000) // "Big! Very Big... It is Bigly... " - @POTUS
-                        count = 500;
-                    else if (result.TotalResults > 5000)
-                        count = 300;
-                    else if (result.TotalResults > 1000)
-                        count = 150;
 
                     // Queue the act of queueing
                     if (result != null)
                     {
+                        if (result.TotalResults > 10000) // "Big! Very Big... It is Bigly... " - @POTUS
+                            count = 500;
+                        else if (result.TotalResults > 5000)
+                            count = 300;
+                        else if (result.TotalResults > 1000)
+                            count = 150;
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);

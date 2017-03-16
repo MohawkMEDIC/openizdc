@@ -129,7 +129,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                     }
                     else // prune datamart
                     {
-                        this.m_warehouseService.Delete(this.m_dataMart.Id, new {
+                        this.m_warehouseService.Delete(this.m_dataMart.Id, new
+                        {
                             max_date = String.Format("<=", DateTime.Now.AddDays(-90))
                         });
                     }
@@ -159,12 +160,12 @@ namespace OpenIZ.Mobile.Core.Protocol
                             {
                                 if (e.Data.Entry is Patient)
                                     this.QueueWorkItem(e.Data.Entry as Patient);
-                                else
+                                else if (e.Data.Entry is Act)
                                     this.QueueWorkItem(e.Data.Entry as Act);
                             }
                             else
                             {
-                                this.QueueWorkItem(e.Data.Item.ToArray());
+                                this.QueueWorkItem(e.Data.Item.Where(c => c is Patient || c is Act).ToArray());
                             }
                         };
                         bundlePersistence.Updated += (o, e) =>
@@ -315,7 +316,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     carePlan = careplanService.CreateCarePlan(patient, false, act.Protocols.FirstOrDefault().ProtocolKey);
                 }
-                
+
                 /// Create a plan for the warehouse
                 var warehousePlan = carePlan.Where(c => c.StopTime == null || c.StopTime >= DateTime.Now.AddDays(-90)).Select(o => new
                 {
@@ -362,7 +363,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                 // Now calculate
                 var carePlan = careplanService.CreateCarePlan(data, false);
-                var warehousePlan = carePlan.Where(a=>a.StopTime == null || a.StopTime >= DateTime.Now.AddDays(-90)).Select(o => new
+                var warehousePlan = carePlan.Where(a => a.StopTime == null || a.StopTime >= DateTime.Now.AddDays(-90)).Select(o => new
                 {
                     creation_date = DateTime.Now,
                     patient_id = data.Key.Value,

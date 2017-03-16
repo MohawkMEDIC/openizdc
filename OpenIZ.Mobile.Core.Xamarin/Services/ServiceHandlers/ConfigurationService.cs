@@ -239,7 +239,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             var efield = typeof(EntityClassKeys).GetField(res);
 
-                            if (efield != null && res != "Place")
+                            if(res == "Person")
+                            {
+                                syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient);
+                                syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient);
+                            }
+                            else if (efield != null && res != "Place")
                                 syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
                         }
                         else
@@ -258,7 +263,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         break;
                                     case "Person":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
                                         syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
