@@ -142,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
             if (existing != null && existing.Key != retVal.Key)
                 retVal.ValueUuid = existing.Uuid;
-            else
+            else if(!String.IsNullOrEmpty(modelInstance.Value))
             {
                 var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
                 retVal.ValueUuid = Guid.NewGuid().ToByteArray();

@@ -140,7 +140,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
             if (existing != null && existing.Key != retVal.Key)
                 retVal.ValueUuid = existing.Uuid;
-            else
+            else if(!String.IsNullOrEmpty(modelInstance.Value))
             {
                 retVal.ValueUuid = Guid.NewGuid().ToByteArray();
                 context.Connection.Insert(new DbAddressValue()
