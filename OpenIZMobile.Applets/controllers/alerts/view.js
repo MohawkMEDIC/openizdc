@@ -104,6 +104,9 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state',
             {
                 OpenIZ.App.showWait();
                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+                $state.transitionTo($state.current, {alertId: "" }, {
+                    reload: true, inherit: false
+                });
             },
             onException: function (ex)
             {
