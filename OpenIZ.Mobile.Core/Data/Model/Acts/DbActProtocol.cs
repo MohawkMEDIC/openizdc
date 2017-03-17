@@ -27,5 +27,10 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         [Column("proto_uuid"), MaxLength(16), Indexed]
         public byte[] ProtocolUuid { get; set; }
 
+        /// <summary>
+        /// Represents the sequence of the item
+        /// </summary>
+        [Column("sequence")]
+        public int Sequence { get; set; }
     }
 }

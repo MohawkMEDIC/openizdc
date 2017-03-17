@@ -322,11 +322,13 @@ namespace OpenIZ.Mobile.Core.Search
                             // Load all entities in database and index them
                             int tr = 101, ofs = 0;
                             var patientService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                            Guid queryId = Guid.NewGuid();
+
                             while (tr > ofs + 50)
                             {
 
                                 if (patientService == null) break;
-                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, Guid.Empty);
+                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
 
                                 // Index 
                                 entities.Select(e => this.IndexEntity(e)).ToList();
