@@ -11,19 +11,27 @@
   <property name="max_date" type="date" attributes="none"/>
   <property name="act_date" type="date" attributes="index"/>
   <property name="product_id" type="uuid" attributes="index"/>
+  <property name="sequence_id" type="int" />
   <sqp name="bymonth" provider="sqlite">
+    <property name="location_id" type="uuid"/>
+    <property name="product_id" type="uuid"/>
+    <property name="act_date" type="date"/>
+    <property name="acts" type="int"/>
     <![CDATA[SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM oizcp 
     GROUP BY location_id, product_id, act_date]]>
   </sqp>
   <sqp name="defaulters_aggregate" provider="sqlite">
+    <property name="days_overdue" type="int"/>
+    <property name="location_id" type="uuid"/>
+    <property name="num_children" type="int"/>
     <![CDATA[
-    SELECT -overdue AS days_overdue, location_id, COUNT(patient_id) AS num_children FROM
-    (SELECT patient_id, location_id, max_date - CURRENT_TIMESTAMP AS overdue FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < CURRENT_TIMESTAMP GROUP BY patient_id) WHERE overdue > 0 GROUP BY overdue, location_id
+    SELECT -overdue / 86400 AS days_overdue, location_id, COUNT(patient_id) AS num_children FROM
+    (SELECT patient_id, location_id, max_date - strftime('%s', 'now') AS overdue FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') GROUP BY patient_id) WHERE overdue > 0 GROUP BY overdue, location_id
     ]]>
   </sqp>
   <sqp name="defaulters" provider="sqlite">
     <![CDATA[
-    SELECT patient_id, location_id, CURRENT_TIMESTAMP - max_date AS overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < CURRENT_TIMESTAMP 
+    SELECT patient_id, location_id, strftime('%s', 'now') AS overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
     ]]>
   </sqp>
 </DatamartSchema>

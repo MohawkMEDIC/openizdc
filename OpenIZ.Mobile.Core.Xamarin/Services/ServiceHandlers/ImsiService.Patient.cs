@@ -241,11 +241,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 DateOfBirth = DateTime.Now,
                 Identifiers = new List<EntityIdentifier>()
                 {
-                    new EntityIdentifier(null, null)
-                    {
-                        Authority = new AssigningAuthority() { DomainName = "NEW" },
-                        Value = ""
-                    }
+                    new EntityIdentifier("NEW", "")
                 },
                 Relationships = new List<EntityRelationship>()
                 {
