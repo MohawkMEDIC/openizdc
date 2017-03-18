@@ -86,7 +86,7 @@
                         <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                     </a>
                 </li>
-                <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined}">
+                <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length &gt; 0" ng-class="{'tab-disabled': patient.deceasedDate!==undefined}">
                     <a ng-click="patientEdit.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>

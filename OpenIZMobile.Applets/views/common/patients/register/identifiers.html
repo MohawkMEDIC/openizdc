@@ -25,14 +25,14 @@
         <div class="form-group">
             <ng-form name="identifierForm">
                 <div class="col-xs-3">
-                    <div class="input-group">
-                        <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)"
+                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifierType.$error.required || editIdentifiersForm.identifierType.$error.required}">
+                        <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)" name="identifierType" ng-required="identifier.value"
                                 bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
                         <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                     </div>
                 </div>
                 <div class="col-xs-9">
-                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength}">
+                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength}">
                         <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" ng-maxlength="10" name="identifier" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
@@ -48,7 +48,8 @@
                         
                     </div>
                 </div>
-                <p class="col-xs-offset-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifier.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+                <p class="col-xs-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifierType.$error.required || editIdentifiersForm.identifierType.$error.required">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
+                <p class="col-xs-offset-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
             </ng-form>
         </div>
     </div>

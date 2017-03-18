@@ -45,15 +45,15 @@
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-4">
-            <div class="input-group">
-                <select name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.required || editMotherForm.mothersIdentifierValue.$error.required}">
+                <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
                         bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA">
                 </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
             </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.maxlength}">
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.maxlength || editMotherForm.mothersIdentifierValue.$error.maxlength}">
                 <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
                 <span class="input-group-btn">
                     <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
@@ -63,7 +63,8 @@
                 </span>
             </div>
         </div>
-        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+        <p class="col-xs-offset-3 col-xs-4 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierType.$error.required || editMotherForm.mothersIdentifierType.$error.required">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierValue.$error.maxlength || editMotherForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
