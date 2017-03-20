@@ -79,19 +79,6 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     function search(searchOnlineOnly) {
         onlineOnly = searchOnlineOnly
         scope.search.searchSubmitted = true;
-        console.log(!scope.search.query.any ||
-            scope.search.query.any.length == 0 ||
-            (scope.search.query.any.length == 1 && scope.search.query.any[0] == "*"))
-
-        if (!scope.search.query.any ||
-            scope.search.query.any.length == 0 ||
-            (scope.search.query.any.length == 1 && scope.search.query.any[0] == "*")) {
-            scope.search.isSearching = true;
-            scope.search.results = [];
-            scope.search.isSearching = false;
-            scope.$applyAsync();
-            return;
-        }
 
         if (!scope.searchForm || scope.searchForm.$valid) {
             if (onlineOnly)
