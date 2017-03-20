@@ -28,6 +28,7 @@ layoutApp.controller('SyncCentreController', ['$scope', function ($scope) {
 
 
     $scope.queue = {};
+    $scope.closeQueue = closeQueue;
 
     function getQueue(queueName) {
         OpenIZ.Queue.getQueueAsync({
@@ -42,7 +43,13 @@ layoutApp.controller('SyncCentreController', ['$scope', function ($scope) {
             }
         });
     }
-   
+
+    function closeQueue() {
+        console.log("close");
+        $scope.queue.current = null;
+        delete $scope.queue.current;
+    }
+
     getQueue(OpenIZ.Queue.QueueNames.InboundQueue);
     getQueue(OpenIZ.Queue.QueueNames.OutboundQueue);
     getQueue(OpenIZ.Queue.QueueNames.DeadLetterQueue);
