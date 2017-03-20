@@ -14,11 +14,6 @@
             Represents a collection of applets
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Applets.AppletCollection.tracer">
-            <summary>
-            The tracer.
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Applets.AppletCollection.CachePages">
             <summary>
             Gets or sets whether caching is enabled
@@ -1133,7 +1128,7 @@
             Get property information for the specified type
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo,System.Boolean)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo)">
             <summary>
             Get property name
             </summary>
@@ -1332,136 +1327,6 @@
             Loads the specified related object
             </summary>
         </member>
-        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.INullTypeFormatter">
-            <summary>
-            View model serializer which is a null view model serializer
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.INullTypeFormatter.Serialize(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext)">
-            <summary>
-            Serialize specified object <paramref name="o"/> into the oblivion known as null
-            </summary>
-            <param name="o">The object to be graphed</param>
-            <param name="context">The current serialization context</param>
-        </member>
-        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter">
-            <summary>
-            Memory based reflection type formatter
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.#ctor(System.Type)">
-            <summary>
-            Constructs a new reflection type formatter
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.HandlesType">
-            <summary>
-            Gets the type this handles
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo)">
-            <summary>
-            Get property name
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.Serialize(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext)">
-            <summary>
-            Serialize the specified instance
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext">
-            <summary>
-            Serialization context
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
-            <summary>
-            Serialization context
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext.NullContext">
-            <summary>
-            Null context
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer">
-            <summary>
-            Represents a serializer that 
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.ViewModel">
-            <summary>
-            Gets or sets the view model definnition
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.DeSerialize(System.IO.Stream,System.Type)">
-            <summary>
-            Deserialize a memory stream obbject
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.DeSerialize``1(System.IO.Stream)">
-            <summary>
-            Deserialize the memory stream
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadRelated(System.Type,System.Guid)">
-            <summary>
-            Load related object
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadCollection(System.Type,System.Guid)">
-            <summary>
-            Load collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadCollection``1(System.Guid)">
-            <summary>
-            Delay loads the specified collection association
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadRelated``1(System.Nullable{System.Guid})">
-            <summary>
-            Load the related information
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadSerializerAssembly(System.Reflection.Assembly)">
-            <summary>
-            Load a serializer assembly (not supported)
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.GetFormatter(System.Type)">
-            <summary>
-            Get the specified formatter
-            </summary>
-            <param name="type">The type to retrieve the formatter for</param>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.GetClassifier(System.Type)">
-            <summary>
-            Gets the appropriate classifier for the specified type
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.WritePropertyUtil(System.String,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext,System.Boolean)">
-            <summary>
-            Write property utility
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(System.IO.TextWriter,OpenIZ.Core.Model.IdentifiedData)">
-            <summary>
-            Serializer the object to the specified text writer
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(System.IO.Stream,OpenIZ.Core.Model.IdentifiedData)">
-            <summary>
-            Serialize the specified object to the stream (null writer doesn't do anything)
-            </summary>
-            <param name="s"></param>
-            <param name="data"></param>
-        </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(OpenIZ.Core.Model.IdentifiedData)">
-            <summary>
-            Serialize
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.SerializationContext">
             <summary>
             Represents a serialization context
@@ -1475,11 +1340,6 @@
         <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
             <summary>
             Gets the serialization context
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.DebugView">
-            <summary>
-            Get the debug view
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.PropertyName">
