@@ -113,8 +113,13 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state',
                 console.log(ex);
                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateUnsuccessful"));
             },
-            finally: function ()
-            {
+            finally: function () {
+                for (var i = 0; i < $scope.messages.length; i++) {
+                    if ($scope.messages[i].id == $scope.alert.id) {
+                        $scope.messages.splice(i, 1);
+                        break;
+                    }
+                }
                 OpenIZ.App.hideWait();
             }
         });
