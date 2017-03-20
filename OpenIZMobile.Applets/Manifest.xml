@@ -371,6 +371,10 @@
   <string key="locale.sync.outbound">Local to Server (Outbox)</string>
   <string key="locale.sync.inbound">Server to Local (Inbox)</string>
   <string key="locale.sync.objects">Items in Queue</string>
+  <string key="locale.sync.resolve.resolve">Resolve</string>
+  <string key="locale.sync.resolve.takeMine">Take Mine</string>
+  <string key="locale.sync.resolve.leaveServer">Leave Server</string>
+  <string key="locale.sync.conflict">Conflict</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
