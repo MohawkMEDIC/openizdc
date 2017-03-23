@@ -209,9 +209,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }).ToArray();
 
 
+            if (queryId != Guid.Empty)
+                this.m_queryPersistence?.RegisterQuerySet(queryId, context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args).Select(o => o.Key), query);
             // Total count
-            if (countResults)
+            if (countResults && queryId == Guid.Empty)
                 totalResults = context.Connection.ExecuteScalar<Int32>("SELECT COUNT(*) FROM (" + queryStatement.SQL + ")", args);
+            else if (countResults)
+                totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
             else
                 totalResults = 0;
 
@@ -226,9 +230,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             var retVal = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
-
-            if (queryId != Guid.Empty)
-                this.m_queryPersistence?.RegisterQuerySet(queryId, retVal.Select(o => o.Key), query);
 
             var domainList = retVal.ToList();
 

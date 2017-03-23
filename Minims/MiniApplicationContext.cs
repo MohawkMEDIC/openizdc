@@ -54,6 +54,7 @@ namespace Minims
     /// </summary>
     public class MiniApplicationContext : XamarinApplicationContext
     {
+        
         // XSD OpenIZ
         private static readonly XNamespace xs_openiz = "http://openiz.org/applet";
 

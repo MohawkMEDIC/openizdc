@@ -262,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             parms.Add(itm.Name, itm.GetValue(queryParameters, null));
                     }
 
-                    return this.QueryInternal(mart.Schema.Name, parms, offset, count, out totalResults);
+                    return this.QueryInternal(mart.Schema.Name, mart.Schema.Properties, parms, offset, count, out totalResults);
                 }
                 catch (Exception e)
                 {
@@ -311,7 +311,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             dbc.ExecuteNonQuery();
 
                         foreach (var itm in dmSchema.Queries)
-                            this.CreateStoredQuery(retVal.Id, itm);
+                            this.CreateStoredQueryInternal(tx, retVal.Id, itm);
 
                         tx.Commit();
                         return retVal;
@@ -335,6 +335,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
             // Create the property container table
             StringBuilder createSql = new StringBuilder();
+
             createSql.AppendFormat("CREATE TABLE {0} (", pathName);
             createSql.Append("uuid blob(16) not null primary key, extraction_time bigint not null default current_timestamp, ");
             if (container is DatamartSchemaProperty)
@@ -396,12 +397,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             createSql.AppendFormat(")");
 
             // Now execute SQL create statement
-            lock (this.m_lock)
-            {
-                using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
-                foreach (var idx in indexes)
-                    using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
-            }
+            if(!(container is DatamartStoredQuery))
+                lock (this.m_lock)
+                {
+                    using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
+                    foreach (var idx in indexes)
+                        using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
+                }
         }
 
         /// <summary>
@@ -643,8 +645,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             parms.Add(itm.Name, itm.GetValue(queryParameters, null));
                     }
 
+                    var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
+
                     int tr = 0;
-                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), parms, 0, 100, out tr);
+                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 100, out tr);
                 }
                 catch (Exception e)
                 {
@@ -658,7 +662,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Query the specified object with the specified parameters
         /// </summary>
-        private IEnumerable<dynamic> QueryInternal(string objectName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
+        private IEnumerable<dynamic> QueryInternal(string objectName, List<DatamartSchemaProperty> properties, IDictionary<string, object> parms, int offset, int count, out int totalResults)
         {
             // Build a query
             StringBuilder sb = new StringBuilder();
@@ -680,7 +684,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 using (var dbc = this.CreateCommand(null, sb.ToString(), vals.ToArray()))
                 using (var rdr = dbc.ExecuteReader())
                     while (rdr.Read())
-                        retVal.Add(this.CreateDynamic(rdr));
+                        retVal.Add(this.CreateDynamic(rdr, properties));
             }
 
             return retVal;
@@ -798,17 +802,73 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Create a dynamic object
         /// </summary>
-        private dynamic CreateDynamic(IDataReader rdr)
+        private dynamic CreateDynamic(IDataReader rdr, List<DatamartSchemaProperty> properties)
         {
             var retVal = new ExpandoObject() as IDictionary<String, Object>;
             for (int i = 0; i < rdr.FieldCount; i++)
             {
                 var value = rdr[i];
-                if (rdr[i] is byte[] && (rdr[i] as byte[]).Length == 16)
+                var name = rdr.GetName(i);
+                var property = properties?.FirstOrDefault(o => o.Name == name);
+
+                if (rdr[i] == DBNull.Value)
+                    ;
+                else if (rdr[i] is byte[] && (rdr[i] as byte[]).Length == 16 ||
+                    property?.Type == SchemaPropertyType.Uuid)
                     value = new Guid(rdr[i] as byte[]);
+                else if((rdr[i] is int || rdr[i] is long) && 
+                    property?.Type == SchemaPropertyType.Date)
+                {
+                    value = Convert.ToInt64(rdr[i]);
+                    value = this.m_epoch.AddSeconds((Int64)value);
+                }
                 retVal.Add(rdr.GetName(i), value);
             }
             return retVal;
+        }
+
+        /// <summary>
+        /// Create stored query internally 
+        /// </summary>
+        private void CreateStoredQueryInternal(IDbTransaction tx, Guid datamartId, object queryDefinition)
+        {
+            var dmQuery = queryDefinition as DatamartStoredQuery;
+            if (queryDefinition is ExpandoObject)
+                dmQuery = JsonConvert.DeserializeObject<DatamartStoredQuery>(JsonConvert.SerializeObject(queryDefinition));
+
+            // Not interested
+            if (dmQuery == null) throw new ArgumentOutOfRangeException(nameof(queryDefinition));
+
+            var mySql = dmQuery.Definition.FirstOrDefault(o => o.ProviderId == this.DataProvider);
+
+            if (mySql == null) return;
+            else if (!mySql.Query.Trim().StartsWith("select", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Only SELECT allowed for stored queries");
+
+            try
+            {
+                this.m_tracer.TraceInfo("Creating stored query {0}", dmQuery.Name);
+
+                var mart = this.GetDatamart(datamartId);
+                if (mart == null) throw new KeyNotFoundException(datamartId.ToString());
+
+                using (var dbc = this.CreateCommand(tx, String.Format("DROP VIEW IF EXISTS sqp_{0}_{1}", mart.Schema.Name, dmQuery.Name))) dbc.ExecuteNonQuery();
+                // Create the data in the DMART
+                StringBuilder queryBuilder = new StringBuilder("CREATE VIEW IF NOT EXISTS ");
+                queryBuilder.AppendFormat("sqp_{0}_{1} AS SELECT * FROM ({2})", mart.Schema.Name, dmQuery.Name, mySql.Query);
+
+                using (var dbc = this.CreateCommand(tx, queryBuilder.ToString())) dbc.ExecuteNonQuery();
+
+                // Register the stored query and properties
+                dmQuery.Id = Guid.NewGuid();
+                using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_st_query VALUES (?, ?, ?)", dmQuery.Id.ToByteArray(), mart.Schema.Id.ToByteArray(), dmQuery.Name)) dbc.ExecuteNonQuery();
+                this.CreateProperties(String.Empty, tx, dmQuery);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error creating stored query {0} : {1}", dmQuery.Name, e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -818,16 +878,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         {
             this.ThrowIfDisposed();
             
-            var dmQuery = queryDefinition as DatamartStoredQuery;
-            if (queryDefinition is ExpandoObject)
-                dmQuery = JsonConvert.DeserializeObject<DatamartStoredQuery>(JsonConvert.SerializeObject(queryDefinition));
-
-            // Not interested
-            if (dmQuery == null) throw new ArgumentOutOfRangeException(nameof(queryDefinition));
-            else if (dmQuery.ProviderId != this.DataProvider) return;
-            else if (!dmQuery.Definition.Trim().StartsWith("select", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Only SELECT allowed for stored queries");
-
+           
             // Now create / register the data schema
             lock (this.m_lock)
             {
@@ -835,24 +886,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                 {
                     try
                     {
-                        this.m_tracer.TraceInfo("Creating stored query {0}", dmQuery.Name);
-
-                        var mart = this.GetDatamart(datamartId);
-                        if (mart == null) throw new KeyNotFoundException(datamartId.ToString());
-
-                        using (var dbc = this.CreateCommand(tx, String.Format("DROP VIEW IF EXISTS sqp_{0}_{1}", mart.Schema.Name, dmQuery.Name))) dbc.ExecuteNonQuery();
-                        // Create the data in the DMART
-                        StringBuilder queryBuilder = new StringBuilder("CREATE VIEW IF NOT EXISTS ");
-                        queryBuilder.AppendFormat("sqp_{0}_{1} AS SELECT * FROM ({2})", mart.Schema.Name, dmQuery.Name, dmQuery.Definition);
-
-                        using (var dbc = this.CreateCommand(tx, queryBuilder.ToString())) dbc.ExecuteNonQuery();
+                        this.CreateStoredQueryInternal(tx, datamartId, queryDefinition);
                         tx.Commit();
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        this.m_tracer.TraceError("Error creating stored query {0} : {1}", dmQuery.Name, e);
                         tx.Rollback();
-                        throw;
                     }
                 }
             }
@@ -913,9 +952,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     }
                     else
                         return null;
+
+                // Queries
+                using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_st_query WHERE schema_id = ?", retVal.Id))
+                using (var rdr = dbc.ExecuteReader())
+                    while(rdr.Read())
+                    {
+                        retVal.Queries.Add(new DatamartStoredQuery()
+                        {
+                            Id = new Guid((byte[])rdr["uuid"]),
+                            Name = rdr["name"].ToString()
+                        });
+                    }
             }
 
             retVal.Properties = this.LoadProperties(id);
+            foreach (var itm in retVal.Queries)
+                itm.Properties = this.LoadProperties(itm.Id);
+
             // TODO: load schema
             return retVal;
         }

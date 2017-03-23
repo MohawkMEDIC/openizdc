@@ -125,6 +125,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         ApplicationContext.Current.SetProgress(String.Format(Strings.locale_starting, cp.Name), 0);
                         this.m_tracer.TraceInfo("Loaded {0}...", cp.Name);
                     }
+
                     // Deploy schema?
                     this.m_dataMart = this.m_warehouseService.GetDatamart("oizcp");
                     if (this.m_dataMart == null)
@@ -141,8 +142,22 @@ namespace OpenIZ.Mobile.Core.Protocol
                         });
                     }
 
-                    // Subscribe to persistence
+                    // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+
+                    var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
+                    Guid queryId = Guid.NewGuid();
+                    int tr = 1, ofs = 0;
+                    while(ofs < tr)
+                    {
+                        ApplicationContext.Current.SetProgress(Strings.locale_calculatingCarePlan, ofs / (float)tr);
+                        var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
+                        ofs += 50;
+                        foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
+                            this.QueueWorkItem(p);
+                    }
+
+                    // Stage 3. Subscribe to persistence
                     if (patientPersistence != null)
                     {
                         patientPersistence.Inserted += (o, e) => this.QueueWorkItem(e.Data);
@@ -231,7 +246,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         // de-queue
                         while (this.m_actCarePlanPromise.Count > 0)
                         {
-                            ApplicationContext.Current.SetProgress(Strings.locale_calculatingCarePlan, 1 / this.m_actCarePlanPromise.Count);
+                            ApplicationContext.Current.SetProgress(Strings.locale_calculatingCarePlan, 1 / (float)this.m_actCarePlanPromise.Count);
                             IdentifiedData qitm = null;
                             qitm = this.m_actCarePlanPromise.First();
                             if (qitm is Patient)
@@ -240,7 +255,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                 // Get all patients
                                 lock (this.m_lock)
                                 {
-                                    patients = this.m_actCarePlanPromise.OfType<Patient>().Take(50).ToArray();
+                                    patients = this.m_actCarePlanPromise.OfType<Patient>().Take(25).ToArray();
                                     this.m_actCarePlanPromise.RemoveAll(d => patients.Contains(d));
                                 }
                                 this.UpdateCarePlan(patients);
