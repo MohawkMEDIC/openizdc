@@ -46,10 +46,20 @@
                             </div>
                             <div class="col-xs-9">
                                 {{ patient.name.OfficialRecord | oizEntityName }}
-                                <small ng-if="patient.relationship.Mother.targetModel">
-                                    <br />
-                                    {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }} <span class="label label-primary">{{ 'locale.patient.relationship.mother' | i18n }}</span>
-                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-xs-3 search-tile-label">
+                                {{ 'locale.patient.search.header.mother' | i18n }}
+                            </div>
+                            <div class="col-xs-9">
+                                <span ng-if="patient.relationship.Mother.targetModel">
+                                    {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
+                                </span>
+                                <span ng-if="!patient.relationship.Mother.targetModel">
+                                    {{ 'locale.common.na' | i18n }}
+                                </span>
                             </div>
                         </div>
 
