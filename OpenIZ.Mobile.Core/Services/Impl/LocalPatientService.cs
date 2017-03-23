@@ -17,9 +17,11 @@
  * User: justi
  * Date: 2016-7-8
  */
+using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
@@ -220,6 +222,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, patient);
 
+                    // HACK: Are there any patch items which are a relationship?
+                    var newRelationships = diff.Operation.Where(o => o.OperationType == OpenIZ.Core.Model.Patch.PatchOperationType.Add && o.Path == "relationship" && (o.Value as EntityRelationship).TargetEntity is Person);
+                    if(newRelationships.Count() > 0)
+                    {
+                        // We better let the server know about this if it is a person
+                        SynchronizationQueue.Outbound.Enqueue(new Bundle()
+                        {
+                            Item = newRelationships.Select(o => (o.Value as EntityRelationship).TargetEntity).OfType<IdentifiedData>().ToList()
+                        }, DataOperationType.Insert);
+                    }
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
                     //MemoryCache.Current.RemoveObject(typeof(Patient), p.Key);
 

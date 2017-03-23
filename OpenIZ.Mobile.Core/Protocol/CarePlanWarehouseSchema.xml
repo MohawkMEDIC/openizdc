@@ -39,7 +39,7 @@
     <property name="days_overdue" type="int"/>
     <sql provider="sqlite">
       <![CDATA[
-    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
+    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
     ]]>
     </sql>
   </sqp>

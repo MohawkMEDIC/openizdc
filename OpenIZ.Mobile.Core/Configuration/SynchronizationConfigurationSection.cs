@@ -78,6 +78,10 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("subscribe"), JsonProperty("subscribe")]
         public List<String> Facilities { get; set; }
+
+
+        [XmlElement("safePatchOnly"), JsonProperty("safePatch")]
+        public bool SafePatchOnly { get; set; }
     }
 
     /// <summary>

@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 		/// Gets or sets the extension identifier.
 		/// </summary>
 		/// <value>The extension identifier.</value>
-		[Column ("extensionType"), MaxLength(16), ForeignKey(typeof(DbExtensionType), nameof(DbExtensionType.Uuid))]
+		[Column ("extensionType"), NotNull, MaxLength(16), ForeignKey(typeof(DbExtensionType), nameof(DbExtensionType.Uuid))]
 		public byte[] ExtensionTypeUuid {
 			get;
 			set;
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("entity_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+        [Column("entity_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public byte[] SourceUuid
         {
             get;
@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// Gets or sets the source identifier.
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        [Column("act_uuid"), NotNull, Indexed, MaxLength(16), ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
         public byte[] SourceUuid
         {
             get;
