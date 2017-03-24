@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/js/openiz-model.js"/>
 
 /*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -16,8 +16,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-7-23
+ * User: yendtr
+ * Date: 2016-9-9
  */
 
 /// <reference path="~/js/openiz.js"/>
@@ -214,7 +214,7 @@ angular.element(document).ready(function () {
 });
 
 layoutApp.factory('encounterFactory', ['$q',function ($q) {
-    var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false };
+    var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false, gettingCarePlan: false, carePlan: null };
 
     encounterFactory.setPageTime = function (value) {
         encounterFactory.pageTime = value;
@@ -226,61 +226,43 @@ layoutApp.factory('encounterFactory', ['$q',function ($q) {
 
     encounterFactory.getUpcoming = function() {
         var deferred = $q.defer();
-        if(!encounterFactory.gettingUpcoming){
+        if (!encounterFactory.gettingUpcoming) {
+            console.time("upcoming")
             encounterFactory.gettingUpcoming = true;
             OpenIZ.CarePlan.getCarePlanAsync({
-            query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
-            onDate: new Date(),
+                query: "_patientId=" + encounterFactory.patientId + "&_state=" + OpenIZ.App.newGuid() + "&classConcept=" + OpenIZModel.ActClassKeys.Encounter + "&_appointments=true&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
+            minDate: new Date(),
+            maxDate: new Date().addDays(90),
             /** @param {OpenIZModel.Bundle} proposals */
-            continueWith: function (proposalsToday) {
-                OpenIZ.CarePlan.getCarePlanAsync({
-                    query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full",
-                    minDate: new Date().tomorrow(),
-                    maxDate: new Date().addDays(90),
-                    continueWith: function (proposals) {
-                        console.log(proposals)
-                        if (proposals) {
-                            if (Array.isArray(proposalsToday.item))
-                                for (var i = 0; i < proposals.item.length; i++){
-                                    proposalsToday.item.push(proposals.item[i]);
+            continueWith: function (proposals) {
+                console.log(proposals)
+                if (proposals) {
+                        encounterFactory.appointments = proposals.item;
+                        if (encounterFactory.appointments) {
+                            encounterFactory.appointments.sort(
+                                        function (a, b) {
+                                            return a.actTime > b.actTime ? 1 : -1;
+                                        }
+                                    );
+
+                            for (var i in encounterFactory.appointments)
+                                if (encounterFactory.appointments[i].startTime < encounterFactory.pageTime) {
+                                    encounterFactory.appointments[i].startTime = encounterFactory.pageTime
                                 }
-                            else
-                                proposalsToday = proposals;
-
-                            // Grab the first appointment
-                            encounterFactory.appointments = proposalsToday.item;
-                            if (encounterFactory.appointments) {
-                                encounterFactory.appointments.sort(
-                                          function (a, b) {
-                                              return a.actTime > b.actTime ? 1 : -1;
-                                          }
-                                        );
-
-                                for (var i in encounterFactory.appointments)
-                                    if (encounterFactory.appointments[i].startTime < encounterFactory.pageTime) {
-                                        encounterFactory.appointments[i].startTime = encounterFactory.pageTime
-                                    }
-                                if (!Array.isArray(encounterFactory.appointments[i]) && !Array.isArray(encounterFactory.appointments[i].relationship.HasComponent))
-                                    encounterFactory.appointments[i].relationship.HasComponent = [encounterFactory.appointments[i].relationship.HasComponent];
-                                deferred.resolve(encounterFactory.appointments);
-                                encounterFactory.gettingUpcoming = false;
-                            }
+                            if (!Array.isArray(encounterFactory.appointments[i]) && !Array.isArray(encounterFactory.appointments[i].relationship.HasComponent))
+                                encounterFactory.appointments[i].relationship.HasComponent = [encounterFactory.appointments[i].relationship.HasComponent];
+                            deferred.resolve(encounterFactory.appointments);
+                            encounterFactory.gettingUpcoming = false;
                         }
-                    },
-                    onException: function (ex) {
-                        if (ex.message)
-                            alert(ex.message);
-                        else
-                            console.error(ex);
-                        deferred.reject(ex);
                     }
-                });
-            },
+                    console.timeEnd("upcoming")
+                },
             onException: function (ex) {
                 if (ex.message)
                     alert(ex.message);
                 else
                     console.error(ex);
+                deferred.reject(ex);
             }
             });
             
@@ -293,6 +275,40 @@ layoutApp.factory('encounterFactory', ['$q',function ($q) {
         }
         return deferred.promise;
         
+    }
+
+    encounterFactory.getCarePlan = function () {
+        var deferred = $q.defer();
+        if (!encounterFactory.gettingCarePlan) {
+            
+            encounterFactory.gettingCarePlan = true;
+            console.time("careplan")
+            OpenIZ.CarePlan.getCarePlanAsync({
+                query: "_patientId=" + encounterFactory.patientId + "&_viewmodel=min" + "&_state=" + OpenIZ.App.newGuid(),
+                continueWith: function (encounters) {
+                    console.log(encounters)
+                    encounterFactory.carePlan = encounters.item;
+                    deferred.resolve(encounterFactory.carePlan);
+                    encounterFactory.gettingCarePlan = false;
+                    console.timeEnd("careplan")
+                },
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
+                    deferred.reject(ex);
+                }
+            });
+        }
+        else if (encounterFactory.carePlan !== null && encounterFactory.carePlan !== undefined) {
+            deferred.resolve(encounterFactory.carePlan);
+        }
+        else {
+            deferred.reject("In Progress");
+        }
+        return deferred.promise;
+
     }
 
     return encounterFactory;
