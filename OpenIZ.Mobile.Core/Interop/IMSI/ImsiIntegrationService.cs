@@ -60,7 +60,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             "creationTime",
             "obsoletionTime",
-            "previousVersion"
+            "previousVersion",
+            "sequence"
         };
 
         /// <summary>
@@ -308,7 +309,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 // Force an update
                 if (unsafeUpdate)
-                    client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-OpenIZ-Unsafe"] = "true";
+                    client.Client.Requesting += (o, e) => e.AdditionalHeaders["X-Patch-Force"] = "true";
 
                 // Special case = Batch submit of data with an entry point
                 var submission = (data as Bundle)?.Entry ?? data;
@@ -352,25 +353,32 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                         {
                             this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
 
-                            // First, let's grab the item
-                            var serverCopy = this.Get(patch.AppliesTo.Type, patch.AppliesTo.Key.Value, null);
                             // Condition 1: Can we apply the patch without causing any issues (ignoring version)
                             client.Client.Requesting += (o, evt) =>
                             {
                                 evt.AdditionalHeaders["X-Patch-Force"] = "true";
                             };
 
-                            if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
-                                newUuid = client.Patch(patch);
-                            else
+                            // Configuration dictates only safe patch
+                            if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SafePatchOnly)
                             {
-                                // There are no intersections of properties between the object we have and the server copy
-                                var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
-                                if (!serverDiff.Operation.Any(sd => patch.Operation.Any(po => po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                // First, let's grab the item
+                                var serverCopy = this.Get(patch.AppliesTo.Type, patch.AppliesTo.Key.Value, null);
+                                if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
                                     newUuid = client.Patch(patch);
                                 else
-                                    throw;
+                                {
+                                    // There are no intersections of properties between the object we have and the server copy
+                                    var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
+                                    if (!serverDiff.Operation.Any(sd => patch.Operation.Any(po => po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                        newUuid = client.Patch(patch);
+                                    else
+                                        throw;
+                                }
                             }
+                            else /// unsafe patch ... meh
+                                newUuid = client.Patch(patch);
+
 
                         }
 

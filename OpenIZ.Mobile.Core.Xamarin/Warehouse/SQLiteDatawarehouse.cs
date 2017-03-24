@@ -497,7 +497,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                         // First, we delete the record
                         List<object> vals = new List<object>();
-                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} {1} ", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, vals)), vals.ToArray()))
+                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} {1} ", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, mart.Schema.Properties, vals)), vals.ToArray()))
                             dbc.ExecuteNonQuery();
                         this.DeleteProperties(tx, mart.Schema.Name, mart.Schema);
                         
@@ -668,7 +668,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("SELECT DISTINCT * FROM {0} ", objectName);
             List<Object> vals = new List<Object>();
-            sb.Append(this.ParseFilterDictionary(objectName, parms, vals));
+            sb.Append(this.ParseFilterDictionary(objectName, parms, properties, vals));
 
             // Construct the result set
             List<dynamic> retVal = new List<dynamic>();
@@ -693,7 +693,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Parses a filter dictionary and creates the necessary SQL
         /// </summary>
-        private String ParseFilterDictionary(String objectName, IDictionary<string, object> parms, List<object> vals)
+        private String ParseFilterDictionary(String objectName, IDictionary<string, object> parms, List<DatamartSchemaProperty> properties, List<object> vals)
         {
             StringBuilder sb = new StringBuilder();
             if (parms.Count() > 0)
@@ -711,6 +711,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 
                     string key = s.Key.Replace(".", "_").Replace("[]",""),
                         scopedQuery = objectName + ".";
+
+                    // Property info
+                    var pi = properties.FirstOrDefault(o => o.Name == key);
 
                     foreach (var itm in rValue as IList)
                     {
@@ -786,6 +789,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                             vals.Add(gValue.ToByteArray());
                         else if (DateTime.TryParse(value.ToString(), out tdateTime))
                             vals.Add(tdateTime);
+                        else if (pi?.Type == SchemaPropertyType.Integer)
+                            vals.Add(Int32.Parse(value.ToString()));
+                        else if (pi?.Type == SchemaPropertyType.Decimal)
+                            vals.Add(Decimal.Parse(value.ToString()));
                         else
                             vals.Add(value);
                     }

@@ -149,6 +149,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                             var set = prefs.application.setting[p];
                             $rootScope.session.prefs[set.key] = set.value;
                         }
+                        $rootScope.$apply();
                     }
                 });
                 $rootScope.$apply();

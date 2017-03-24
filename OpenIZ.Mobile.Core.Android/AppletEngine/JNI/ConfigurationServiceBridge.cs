@@ -120,7 +120,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     // TODO: Customize this
-                    foreach(var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial"  })
+                    foreach(var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ExtensionType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial"  })
                     {
                         var syncSetting = new SynchronizationResource()
                         {

@@ -564,16 +564,17 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="data">Data.</param>
         public TData Update(LocalDataContext context, TData data)
         {
+            // JF- Probably no need to do this now
             // Make sure we're updating the right thing
-            if (data.Key.HasValue)
-            {
-                var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(data.GetType(), data.Key.Value);
-                if (cacheItem != null)
-                {
-                    cacheItem.CopyObjectData(data);
-                    data = cacheItem as TData;
-                }
-            }
+            //if (data.Key.HasValue)
+            //{
+            //    var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem(data.GetType(), data.Key.Value);
+            //    if (cacheItem != null)
+            //    {
+            //        cacheItem.CopyObjectData(data);
+            //        data = cacheItem as TData;
+            //    }
+            //}
 
             var retVal = this.UpdateInternal(context, data);
             //if (retVal != data) System.Diagnostics.Debugger.Break();
