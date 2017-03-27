@@ -253,9 +253,10 @@
     <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
     <string key="locale.settings.localAdminName">Local Admin Username:</string>
     <string key="locale.actions.save">Save</string>
-    <string key="locale.settings.data.restore">Restore DB</string>
-    <string key="locale.settings.data.purge">Purge DB</string>
-    <string key="locale.settings.data.pull">Pull from Central</string>
+    <string key="locale.settings.data.restore">Restore Data</string>
+    <string key="locale.settings.data.purge">Purge Data</string>
+    <string key="locale.settings.data.pull">Synchronize Now</string>
+    <string key="locale.settings.data.compact">Compact Data</string>
     <string key="locale.settings.enableSSL">Enable TLS/SSL for connection</string>
     <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
     <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
@@ -329,6 +330,8 @@
     <string key="locale.about.versions.applet">Name</string>
     <string key="locale.about.versions.author">Author</string>
     <string key="locale.about.versions.id">Package ID</string>
+    <string key="locale.about.versions.update">Updgrade to </string>
+    <string key="locale.about.versions.update.confirm">Are you sure you wish to upgrade this applet? Your application will restart after the update is applied</string>
     <string key="locale.about.versions.assemblies.title">Loaded DLLs</string>
     <string key="locale.about.versions.assembly">Assembly</string>
     <string key="locale.about.versions.version">Version</string>

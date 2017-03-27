@@ -1437,7 +1437,7 @@ var OpenIZ = OpenIZ || {
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,
-                data: { "backup": controlData.backup }
+                query: "backup=" + controlData.backup 
             });
         },
         /**

@@ -51,8 +51,9 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
                         continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith
                     };
                     OpenIZ.Authentication.hideElevationDialog();
-                    if(OpenIZ.Authentication.$elevationCredentials.continueWith != null)
+                    if (OpenIZ.Authentication.$elevationCredentials.continueWith != null) {
                         OpenIZ.Authentication.$elevationCredentials.continueWith();
+                    }
                 }
             },
             onException: function(error) {

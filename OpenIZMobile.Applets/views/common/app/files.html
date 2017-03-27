@@ -99,7 +99,7 @@
         <div class="btn-group">
             <button ng-if="hasBackup()" ng-click="doRestore()" class="btn btn-warning btn-lg">
                 <span>
-                    <span class="glyphicon glyphicon-download-alt"></span> {{ 'locale.settings.data.restore' | i18n }}
+                    <span class="glyphicon glyphicon-upload"></span> {{ 'locale.settings.data.restore' | i18n }}
                 </span>
             </button>
             <button ng-click="doCompact()" class="btn btn-primary btn-lg" id="compactButton">
@@ -107,12 +107,7 @@
                     <span class="glyphicon glyphicon-save"></span> {{ 'locale.settings.data.compact' | i18n }}
                 </span>
             </button>
-            <button ng-click="doPull()" class="btn btn-info btn-lg">
-                <span>
-                    <span class="glyphicon glyphicon-cloud-download"></span> {{ 'locale.settings.data.pull' | i18n }}
-                </span>
-            </button>
-            <button ng-click="doPurge()" class="btn btn-warning btn-lg">
+            <button ng-click="doPurge()" class="btn btn-danger btn-lg">
                 <span>
                     <span class="glyphicon glyphicon-floppy-remove"></span> {{ 'locale.settings.data.purge' | i18n }}
                 </span>

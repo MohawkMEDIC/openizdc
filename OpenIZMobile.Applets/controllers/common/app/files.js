@@ -4,15 +4,31 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
 
     // Compact the database
     $scope.doCompact = function () {
-        OpenIZ.App.showWait("#compactButton");
-        OpenIZ.App.compactAsync({
-            onException: function(ex) {
-                alert(ex.message);
-            },
-            finally: function () {
-                OpenIZ.App.hideWait("#compactButton");
-            }
-        });
+
+        var doAction = function () {
+            OpenIZ.App.showWait("#compactButton");
+            OpenIZ.App.compactAsync({
+                continueWith: function() {
+                    OpenIZ.Authentication.$elevationCredentials = {};
+                    OpenIZ.App.getInfoAsync({
+                        continueWith: function (data) {
+                            $scope.about = data;
+                            $scope.$apply();
+                        }
+                    });
+                },
+                onException: function (ex) {
+                    if(ex.type != "PolicyViolationException")
+                        alert(ex.message);
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait("#compactButton");
+                }
+            });
+        }
+        OpenIZ.Authentication.$elevationCredentials.continueWith = doAction;
+        doAction();
+
     };
 
     $scope.doPurge = function (override, backup) {
@@ -30,6 +46,7 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
             OpenIZ.App.purgeDataAsync({
                 continueWith: function () {
                     OpenIZ.App.close();
+                    OpenIZ.Authentication.$elevationCredentials = {};
                 },
                 backup: backup,
                 finally: function () {
@@ -56,13 +73,14 @@ layoutApp.controller("DatabaseController", ["$scope", function ($scope) {
             $("#restoreConfirmModal").modal("hide");
 
         var doAction = function () {
-            OpenIZ.App.showWait();
+            OpenIZ.App.showWait('#purgeButton');
             OpenIZ.App.restoreDataAsync({
                 continueWith: function () {
                     OpenIZ.App.close();
+                    OpenIZ.Authentication.$elevationCredentials = {};
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait();
+                    OpenIZ.App.hideWait('#purgeButton');
                 },
                 onException: function (ex) {
                     if (ex.type != "PolicyViolationException")

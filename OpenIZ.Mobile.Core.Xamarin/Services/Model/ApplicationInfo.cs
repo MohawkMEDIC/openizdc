@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
                     // Existing path
                     if(File.Exists(Path.ChangeExtension(con.Value, "bak")))
                     {
-                        fi = new FileInfo(con.Value);
+                        fi = new FileInfo(Path.ChangeExtension(con.Value, "bak"));
                         this.FileInfo.Add(new DiagnosticAttachmentInfo() { FileDescription = con.Name + " Backup", FileName = fi.FullName, LastWriteDate = fi.LastWriteTime, FileSize = fi.Length, Id = "bak" });
                     }
                 }
