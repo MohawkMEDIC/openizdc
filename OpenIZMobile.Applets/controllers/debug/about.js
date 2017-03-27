@@ -63,4 +63,9 @@ layoutApp.controller('AboutApplicationController', ['$scope', function ($scope) 
             }
         });
     };
+
+    // Update the version
+    $scope.update = function (appId) {
+
+    }
 }]);

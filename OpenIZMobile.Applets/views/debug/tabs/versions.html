@@ -34,12 +34,16 @@
                 <tr>
                     <th></th>
                     <th>{{ 'locale.about.versions.applet' | i18n }}</th>
+                    <th>{{ 'locale.about.versions.version' | i18n }}</th>
                     <th>{{ 'locale.about.versions.author' | i18n }}</th>
                     <th>{{ 'locale.about.versions.id' | i18n }}</th>
                 </tr>
                 <tr ng-repeat="app in about.applet">
                     <td><img src="{{ app.icon }}" alt="logo" /></td>
-                    <td>{{ app.name[0].value }} v.{{app.version}}</td>
+                    <td>{{ app.name[0].value }} </td>
+                    <td>v.{{app.version}} 
+                        <a ng-if="app.update" ng-click="update(app.id)" class="btn btn-primary">{{ 'locale.about.versions.update' | i18n }} v.{{app.update}}</a>
+                    </td>
                     <td>{{ app.author }}</td>
                     <td>{{ app.id }}</td>
                 </tr>
