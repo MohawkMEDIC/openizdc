@@ -257,6 +257,11 @@
             Gets or sets the protocol data related to the protocol
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.Sequence">
+            <summary>
+            Represents the sequence of the act in the protocol
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.StateData">
             <summary>
             Represents any state data related to the act / protocol link
@@ -480,6 +485,11 @@
         <member name="P:OpenIZ.Core.Model.Acts.Protocol.Definition">
             <summary>
             Contains instructions which the handler class can understand
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.Oid">
+            <summary>
+            Gets or sets the OID
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.Protocol.SemanticEquals(System.Object)">
@@ -2159,6 +2169,11 @@
             Gets concept sets to which this concept is a member
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ToMinimal">
+            <summary>
+            Represent the AA as a minimal info
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.Refresh">
             <summary>
             Force reloading of delay load properties
@@ -2167,6 +2182,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.SemanticEquals(System.Object)">
             <summary>
             Gets the equals of this object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ShouldSerializeAssigningDeviceKey">
+            <summary>
+            Should serialize assigning device key
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.CodeSystem">
@@ -2353,6 +2373,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.Refresh">
             <summary>
             Refresh the object's delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.ShouldSerializePhoneticAlgorithmKey">
+            <summary>
+            Should serialize 
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm">
@@ -2613,6 +2638,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.EntityIdentifier.#ctor(OpenIZ.Core.Model.DataTypes.AssigningAuthority,System.String)">
             <summary>
             Creates a new entity identifier
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.EntityIdentifier.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new entity identifier with specified nsid
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ActIdentifier">
@@ -3198,6 +3228,16 @@
             Semantic equality function
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeCreationActKey">
+            <summary>
+            Should serialize creation act
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTypeConcept">
+            <summary>
+            Should serialize type concept
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddress">
             <summary>
             Entity address
@@ -3372,6 +3412,11 @@
             Value of the name
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.ShouldSerializePhoneticAlgorithmKey">
+            <summary>
+            Should serialize 
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityRelationship">
             <summary>
             Represents an association between two entities
@@ -3452,6 +3497,16 @@
         <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.SemanticEquals(System.Object)">
             <summary>
             Determine semantic equality
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ShouldSerializeInversionIndicator">
+            <summary>
+            Should serialize inversion indicator?
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ShouldSerializeQuantity">
+            <summary>
+            Should serialize quantity?
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityTelecomAddress">
@@ -3555,6 +3610,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ShouldSerializeComponentTypeKey">
+            <summary>
+            Should serialize component type key
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.ManufacturedMaterial">
@@ -4914,6 +4974,13 @@
             Reflection tools
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Convert``1(System.Object)">
+            <summary>
+            The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why? 
+            Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
+            so we have to copy.
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.ExtensionMethods.HashCode(System.Byte[])">
             <summary>
             Compute a basic hash string
@@ -5401,6 +5468,11 @@
         <member name="P:OpenIZ.Core.Model.VersionedEntityData`1.PreviousVersionKey">
             <summary>
             Gets or sets the previous version key
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.VersionedEntityData`1.ShouldSerializePreviousVersionKey">
+            <summary>
+            Should serialize previous version?
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.VersionedEntityData`1.PreviousVersion">
