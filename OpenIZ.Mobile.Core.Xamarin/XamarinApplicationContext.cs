@@ -106,10 +106,6 @@ namespace OpenIZ.Mobile.Core.Xamarin
 			this.m_applets.Add (applet);
 		}
 
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
         /// Get the registered applets

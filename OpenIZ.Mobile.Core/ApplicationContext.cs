@@ -31,6 +31,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -270,6 +271,11 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
+
+        /// <summary>
+        /// Perform platform specific installation
+        /// </summary>
+        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
         /// Add service 

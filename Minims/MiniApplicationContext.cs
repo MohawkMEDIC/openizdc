@@ -303,6 +303,8 @@ namespace Minims
                 baseDirectory += Path.DirectorySeparatorChar.ToString();
             applet.Assets.AddRange(this.ProcessDirectory(baseDirectory, baseDirectory));
             applet.Initialize();
+            if (applet.Info.Version.Contains("*"))
+                applet.Info.Version = applet.Info.Version.Replace("*", "0000");
             base.LoadApplet(applet);
         }
 

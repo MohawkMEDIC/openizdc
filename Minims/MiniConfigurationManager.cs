@@ -152,6 +152,7 @@ namespace Minims
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
+                    typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,

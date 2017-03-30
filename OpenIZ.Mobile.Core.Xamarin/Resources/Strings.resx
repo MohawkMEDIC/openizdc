@@ -171,4 +171,7 @@
   <data name="flushing_logFile" xml:space="preserve">
     <value>Flusing diagnostics queue...</value>
   </data>
+  <data name="locale_updating" xml:space="preserve">
+    <value>Updating package {0}....</value>
+  </data>
 </root>

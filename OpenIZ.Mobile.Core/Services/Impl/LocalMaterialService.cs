@@ -39,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         /// <param name="expression">The query to use to find the manufactured materials.</param>
         /// <returns>Returns a list of manufactured materials which match the specific query.</returns>
-        public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression)
+        public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 			if (pers == null)
@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <summary>
 		/// Find manufactured material with the specified controls
 		/// </summary>
-		public IEnumerable<ManufacturedMaterial> Find(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount)
+		public IEnumerable<ManufacturedMaterial> FindManufacturedMaterial(Expression<Func<ManufacturedMaterial, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var pers = ApplicationContext.Current.GetService<IDataPersistenceService<ManufacturedMaterial>>();
 			if (pers == null)
@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// </summary>
 		/// <param name="expression">The query to use to search for the material.</param>
 		/// <returns>Returns a list of materials.</returns>
-		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression)
+		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -83,7 +83,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <param name="count">The count of the query.</param>
 		/// <param name="totalCount">The total count of the query.</param>
 		/// <returns>Returns a list of materials.</returns>
-		public IEnumerable<Material> Find(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount)
+		public IEnumerable<Material> FindMaterial(Expression<Func<Material, bool>> expression, int offset, int? count, out int totalCount)
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Material>>();
 
@@ -327,5 +327,42 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             return this.ObsoleteManufacturedMaterial(key);
         }
+
+        /// <summary>
+        /// Find material
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IEnumerable<Material> IRepositoryService<Material>.Find(Expression<Func<Material, bool>> query)
+        {
+            return this.FindMaterial(query);
+        }
+
+        /// <summary>
+        /// Find material
+        /// </summary>
+        IEnumerable<Material> IRepositoryService<Material>.Find(Expression<Func<Material, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.FindMaterial(query, offset, count, out totalResults);
+        }
+
+        /// <summary>
+        /// Find mmat
+        /// </summary>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        IEnumerable<ManufacturedMaterial> IRepositoryService<ManufacturedMaterial>.Find(Expression<Func<ManufacturedMaterial, bool>> query)
+        {
+            return this.FindManufacturedMaterial(query);
+        }
+
+        /// <summary>
+        /// Find mmat
+        /// </summary>
+        IEnumerable<ManufacturedMaterial> IRepositoryService<ManufacturedMaterial>.Find(Expression<Func<ManufacturedMaterial, bool>> query, int offset, int? count, out int totalResults)
+        {
+            return this.FindManufacturedMaterial(query, offset, count, out totalResults);
+        }
+
     }
 }
