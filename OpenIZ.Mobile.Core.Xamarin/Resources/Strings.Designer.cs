@@ -221,5 +221,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
                 return ResourceManager.GetString("flushing_logFile", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking for updates....
+        /// </summary>
+        internal static string locale_updateCheck {
+            get {
+                return ResourceManager.GetString("locale_updateCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating package {0}.....
+        /// </summary>
+        internal static string locale_updating {
+            get {
+                return ResourceManager.GetString("locale_updating", resourceCulture);
+            }
+        }
     }
 }

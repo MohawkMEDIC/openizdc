@@ -198,6 +198,6 @@ Sincerely,
     <value>Loading protocol {0}...</value>
   </data>
   <data name="locale_calculatingCarePlan" xml:space="preserve">
-    <value>Calculating Care-plans...</value>
+    <value>Calculating Care-plans ({0} remaining)...</value>
   </data>
 </root>

@@ -949,6 +949,7 @@ var OpenIZ = OpenIZ || {
          * @memberof OpenIZ.Authentication
          */
         hideElevationDialog: function () {
+            OpenIZ.App.hideWait('#loginButton');
             $("#authenticationDialog").modal('hide');
         },
         /**
@@ -1407,6 +1408,23 @@ var OpenIZ = OpenIZ || {
     */
     App: {
         _originalText: {},
+        /**
+         * @summary Instructs the update service to perform the update of the software
+         * @memberof OpenIZ.App
+         * @method
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.appId The application identifier to be updated
+         */
+        doUpdateAsync: function(controlData) {
+            OpenIZ.Util.simplePost("/__app/update", {
+                continueWith: controlData.continueWith,
+                data: { appId: controlData.appId },
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
         /**
          * @summary Instructs the mini ims to compact all databases related to the OpenIZ data structures
          * @method

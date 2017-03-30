@@ -80,7 +80,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculating Care-plans....
+        ///   Looks up a localized string similar to Calculating Care-plans ({0} remaining)....
         /// </summary>
         internal static string locale_calculatingCarePlan {
             get {

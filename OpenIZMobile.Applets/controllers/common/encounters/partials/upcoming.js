@@ -38,7 +38,6 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
                         if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
                             $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
 
-                    $scope.$apply();
                 },
                 onException: function (ex) {
                     if (ex.message)

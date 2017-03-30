@@ -42,6 +42,7 @@
     <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
     <Compile Include="Data\QueryBuilder\SqlStatement.cs" />
     <Compile Include="Data\QueryBuilder\TableMapping.cs" />
+    <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />

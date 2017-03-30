@@ -42,7 +42,7 @@
                     <td><img src="{{ app.icon }}" alt="logo" /></td>
                     <td>{{ app.name[0].value }} </td>
                     <td>v.{{app.version}} 
-                        <a ng-if="app.update" ng-click="update(app.id)" class="btn btn-primary">{{ 'locale.about.versions.update' | i18n }} v.{{app.update}}</a>
+                        <a id="btnUpdate{{app.id}}" ng-show="app.update" ng-click="update(app.id)" class="btn btn-primary">{{ 'locale.about.versions.update' | i18n }} v.{{app.update.version}}</a>
                     </td>
                     <td>{{ app.author }}</td>
                     <td>{{ app.id }}</td>

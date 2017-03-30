@@ -513,6 +513,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Create user
                         amiClient.CreateUser(new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo(new OpenIZ.Core.Model.Security.SecurityUser()
                         {
+							CreationTime = DateTimeOffset.Now,
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
                             UserClass = UserClassKeys.ApplictionUser,
@@ -521,7 +522,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Roles = new List<OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo>()
                             {
-                                role
+								role
                             },
                             Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
                         });
@@ -537,7 +538,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Device = new OpenIZ.Core.Model.Security.SecurityDevice()
                             {
-                                Name = deviceName,
+								CreationTime = DateTimeOffset.Now,
+								Name = deviceName,
                                 DeviceSecret = Guid.NewGuid().ToString()
                             }
                         });

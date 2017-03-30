@@ -104,12 +104,9 @@ namespace OpenIZ.Mobile.Core.Xamarin
             if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
                 this.m_applets.DefaultApplet = applet;
 			this.m_applets.Add (applet);
+            AppletCollection.ClearCaches();
 		}
 
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
         /// Get the registered applets

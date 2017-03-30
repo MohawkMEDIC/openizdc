@@ -45,102 +45,101 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     });
      
      
-     // Gather the care plan
-     $scope.getAppointment = function(){
+    // Gather the care plan
+    $scope.getAppointment = function(){
         
-         OpenIZ.CarePlan.getCarePlanAsync({
-             query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
-             onDate: new Date(),
-             /** @param {OpenIZModel.Bundle} proposals */
-             continueWith: function (proposalsToday) {
-                 OpenIZ.CarePlan.getCarePlanAsync({
-                     query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
-                     minDate: new Date().tomorrow(),
-                     maxDate: new Date().addDays(90),
-                     continueWith: function (proposals) {
-                         if (!proposals.item) // There are no proposals, at the end of the planning process
-                         {
-                             OpenIZ.CarePlan.getActTemplateAsync({
-                                 templateId: "act.patientencounter.appointment",
-                                 continueWith: function (appointment) {
-                                     $scope.appointment = appointment;
-                                 },
-                                 onException: function (ex) {
-                                     if (ex.message)
-                                         alert(ex.message);
-                                     else
-                                         console.error(ex);
-                                 }
-                             });
-                         }
-                         else {
-                             if (Array.isArray(proposalsToday.item))
-                                 proposalsToday.item.push(proposals.item);
-                             else
-                                 proposalsToday = proposals;
+        OpenIZ.CarePlan.getCarePlanAsync({
+            query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
+            onDate: new Date(),
+            /** @param {OpenIZModel.Bundle} proposals */
+            continueWith: function (proposalsToday) {
+                OpenIZ.CarePlan.getCarePlanAsync({
+                    query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
+                    minDate: new Date().tomorrow(),
+                    maxDate: new Date().addDays(90),
+                    continueWith: function (proposals) {
+                        if (!proposals.item) // There are no proposals, at the end of the planning process
+                        {
+                            OpenIZ.CarePlan.getActTemplateAsync({
+                                templateId: "act.patientencounter.appointment",
+                                continueWith: function (appointment) {
+                                    $scope.appointment = appointment;
+                                },
+                                onException: function (ex) {
+                                    if (ex.message)
+                                        alert(ex.message);
+                                    else
+                                        console.error(ex);
+                                }
+                            });
+                        }
+                        else {
+                            if (Array.isArray(proposalsToday.item))
+                                proposalsToday.item.push(proposals.item);
+                            else
+                                proposalsToday = proposals;
 
-                             // Grab the first appointment
-                             $scope.appointments = proposalsToday.item;
-                             $scope.appointments.sort(
-                                       function (a, b) {
-                                           return a.actTime > b.actTime ? 1 : -1;
-                                       }
-                                     );
-                             $scope.appointment = $scope.appointments[0];
-                             if ($scope.appointment.actTime < $rootScope.page.loadTime) {
-                                 $scope.appointment.actTime = $rootScope.page.loadTime;
-                             }
-                             if ($scope.appointment.startTime < $rootScope.page.loadTime) {
-                                 $scope.appointment.startTime = $rootScope.page.loadTime;
-                             }
-                             if (Array.isArray($scope.appointment.relationship.HasComponent))
-                                 $.each($scope.appointment.relationship.HasComponent, function (i, e) {
-                                     e._enabled = true;
-                                 });
-                             else {
-                                 $scope.appointment.relationship.HasComponent = [
-                                     $scope.appointment.relationship.HasComponent
-                                 ];
-                                 $scope.appointment.relationship.HasComponent[0]._enabled = true;
-                             }
-                         }
+                            // Grab the first appointment
+                            $scope.appointments = proposalsToday.item;
+                            $scope.appointments.sort(
+                                      function (a, b) {
+                                          return a.actTime > b.actTime ? 1 : -1;
+                                      }
+                                    );
+                            $scope.appointment = $scope.appointments[0];
+                            if ($scope.appointment.actTime < $rootScope.page.loadTime) {
+                                $scope.appointment.actTime = $rootScope.page.loadTime;
+                            }
+                            if ($scope.appointment.startTime < $rootScope.page.loadTime) {
+                                $scope.appointment.startTime = $rootScope.page.loadTime;
+                            }
+                            if (Array.isArray($scope.appointment.relationship.HasComponent))
+                                $.each($scope.appointment.relationship.HasComponent, function (i, e) {
+                                    e._enabled = true;
+                                });
+                            else {
+                                $scope.appointment.relationship.HasComponent = [
+                                    $scope.appointment.relationship.HasComponent
+                                ];
+                                $scope.appointment.relationship.HasComponent[0]._enabled = true;
+                            }
+                        }
 
-                         // Updates the scheduling assistant view
-                         $scope.$watch('appointment.actTime', function (newvalue, oldvalue) {
-                             if (newvalue != null && $scope._isCalendarInitialized &&
-                                 newvalue != oldvalue)
-                                 $("#schedulingAssistantCalendar").fullCalendar('select', newvalue);
-                         });
+                        // Updates the scheduling assistant view
+                        $scope.$watch('appointment.actTime', function (newvalue, oldvalue) {
+                            if (newvalue != null && $scope._isCalendarInitialized &&
+                                newvalue != oldvalue)
+                                $("#schedulingAssistantCalendar").fullCalendar('select', newvalue);
+                        });
 
-                         $scope.$apply();
-                     },
-                     onException: function (ex) {
-                         if (ex.message)
-                             alert(ex.message);
-                         else
-                             console.error(ex);
-                     }
-                 });
-             },
-             onException: function (ex) {
-                 if (ex.message)
-                     alert(ex.message);
-                 else
-                     console.error(ex);
-             }
-         });
+                    },
+                    onException: function (ex) {
+                        if (ex.message)
+                            alert(ex.message);
+                        else
+                            console.error(ex);
+                    }
+                });
+            },
+            onException: function (ex) {
+                if (ex.message)
+                    alert(ex.message);
+                else
+                    console.error(ex);
+            }
+        });
 
-     };
+    };
 
-     $scope.getAppointments = function () {
-         $scope.encounterFactory.getUpcoming().then(function (appointments) {
-             $scope.isLoading = false;
-         }, function (ex){
-             console.log(ex);
-             $scope.isLoading = false;
-         })
+    $scope.getAppointments = function () {
+        $scope.encounterFactory.getUpcoming().then(function (appointments) {
+            $scope.isLoading = false;
+        }, function (ex){
+            console.log(ex);
+            $scope.isLoading = false;
+        })
          
-     };
+    };
 
 
     $scope.renderAppointments = function (start, end, timezone, callback) {

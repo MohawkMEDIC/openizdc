@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
+layoutApp.controller('YellowCardController', ['$scope', 'encounterFactory' , function ($scope, encounterFactory) {
     //    $('.oiz-vaccination-history').each(function (i, e) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();
@@ -33,7 +33,7 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
     scope.patient = scope.patient || new OpenIZModel.Patient({});
     scope.patient.participation = scope.patient.participation || {};
     scope.display = scope.display || {};
-
+    $scope.encounterFactory = encounterFactory;
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
@@ -45,20 +45,19 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
     ];
 
 
-
-    $scope.$watch("$scope.encounters.length", function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
-
-    scope.$watch(function (s) { return s.encounters != undefined ? s.encounters.length : null; }, function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
-
+    scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+    scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     var refreshYellowCard = function (newValue, oldValue) {
-        if (newValue != null && newValue != 0) {
+        
+        if (newValue !== null && newValue !== undefined && $scope.encounters) {
 
             if ($scope.encounters) {
                 // Sort based on dose
-                var oldIndex = oldValue == undefined ? 0 : oldValue;
+                delete scope.display;
+                scope.display = {};
+                scope.display._vaccineAdministrations = {};
                 var newEncounters = $scope.encounters;
-                
             	// Sort based on dose
                 newEncounters.sort(function (a, b)
                 {
@@ -103,8 +102,7 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
 
                         var model = acts[act];
                         // Ignore anything except substance admins
-                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization') ||
-                            !model.participation.Product)
+                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization') || !model.participation || !model.participation.Product)
                             continue;
                         var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
                         if (scope.display._vaccineAdministrations[antigenId] == null) {
@@ -118,7 +116,6 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                             (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence)
                             )
                             scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
-                        //               scope.$apply();
                     }
                     
                     ;;
