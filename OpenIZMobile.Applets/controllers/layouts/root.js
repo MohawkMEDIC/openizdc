@@ -214,3 +214,88 @@ angular.element(document).ready(function () {
     //OpenIZ.locale = OpenIZ.Localization.getLocale();
 });
 
+
+layoutApp.factory('encounterFactory', ['$q', function ($q) {
+    var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false };
+
+    encounterFactory.setPageTime = function (value) {
+        encounterFactory.pageTime = value;
+    };
+
+    encounterFactory.setPatientId = function (value) {
+        encounterFactory.patientId = value;
+    };
+
+    encounterFactory.getUpcoming = function () {
+        var deferred = $q.defer();
+        if (!encounterFactory.gettingUpcoming) {
+            encounterFactory.gettingUpcoming = true;
+            OpenIZ.CarePlan.getCarePlanAsync({
+                query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
+                onDate: new Date(),
+                /** @param {OpenIZModel.Bundle} proposals */
+                continueWith: function (proposalsToday) {
+                    OpenIZ.CarePlan.getCarePlanAsync({
+                        query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full",
+                        minDate: new Date().tomorrow(),
+                        maxDate: new Date().addDays(90),
+                        continueWith: function (proposals) {
+                            console.log(proposals)
+                            if (proposals) {
+                                if (Array.isArray(proposalsToday.item))
+                                    for (var i = 0; i < proposals.item.length; i++) {
+                                        proposalsToday.item.push(proposals.item[i]);
+                                    }
+                                else
+                                    proposalsToday = proposals;
+
+                                // Grab the first appointment
+                                encounterFactory.appointments = proposalsToday.item;
+                                if (encounterFactory.appointments) {
+                                    encounterFactory.appointments.sort(
+                                              function (a, b) {
+                                                  return a.actTime > b.actTime ? 1 : -1;
+                                              }
+                                            );
+
+                                    for (var i in encounterFactory.appointments)
+                                        if (encounterFactory.appointments[i].startTime < encounterFactory.pageTime) {
+                                            encounterFactory.appointments[i].startTime = encounterFactory.pageTime
+                                        }
+                                    if (!Array.isArray(encounterFactory.appointments[i]) && !Array.isArray(encounterFactory.appointments[i].relationship.HasComponent))
+                                        encounterFactory.appointments[i].relationship.HasComponent = [encounterFactory.appointments[i].relationship.HasComponent];
+                                    deferred.resolve(encounterFactory.appointments);
+                                    encounterFactory.gettingUpcoming = false;
+                                }
+                            }
+                        },
+                        onException: function (ex) {
+                            if (ex.message)
+                                alert(ex.message);
+                            else
+                                console.error(ex);
+                            deferred.reject(ex);
+                        }
+                    });
+                },
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
+                }
+            });
+
+        }
+        else if (encounterFactory.appointments !== null && encounterFactory.appointments !== undefined) {
+            deferred.resolve(encounterFactory.appointments);
+        }
+        else {
+            deferred.reject("In Progress");
+        }
+        return deferred.promise;
+
+    }
+
+    return encounterFactory;
+}]);
