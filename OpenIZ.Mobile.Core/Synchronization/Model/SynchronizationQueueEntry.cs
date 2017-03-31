@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-10-25
+ * User: justi
+ * Date: 2016-6-14
  */
 using System;
 using SQLite.Net;

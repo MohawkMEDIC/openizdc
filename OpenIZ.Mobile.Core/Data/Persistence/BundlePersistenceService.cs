@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-11-14
+ * User: justi
+ * Date: 2017-2-4
  */
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Mobile.Core.Data.Model.DataType;

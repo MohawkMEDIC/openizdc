@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-11-14
+ * User: justi
+ * Date: 2016-6-28
  */
 using OpenIZ.Core.Http;
 using OpenIZ.Mobile.Core.Configuration;

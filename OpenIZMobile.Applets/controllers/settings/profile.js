@@ -1,5 +1,4 @@
 ﻿/// <reference path="../../js/openiz-model.js"/>
-
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
@@ -16,8 +15,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-11-14
+ * User: justi
+ * Date: 2016-8-17
  */
 
 /// <reference path="~/lib/angular.min.js"/>

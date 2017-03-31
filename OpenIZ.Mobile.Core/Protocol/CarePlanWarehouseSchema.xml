@@ -15,8 +15,8 @@
  - License for the specific language governing permissions and limitations under 
  - the License.
  - 
- - User: fyfej
- - Date: 2017-1-16
+ - User: justi
+ - Date: 2017-3-31
  -->
 <DatamartSchema xmlns="http://openiz.org/warehousing" name="oizcp" id="07BA63B4-50FA-41D5-9D24-7FB41606A961">
   <property name="creation_date" type="date" attributes="nonnull"/>
