@@ -136,9 +136,10 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
             $scope.isLoading = false;
         }, function (ex){
             console.log(ex);
-            $scope.isLoading = false;
+            if ($scope.encounterFactory.gettingUpcoming = false) {
+                $scope.isLoading = false;
+            }
         })
-         
     };
 
 

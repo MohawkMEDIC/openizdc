@@ -215,6 +215,25 @@ angular.element(document).ready(function () {
 });
 
 
+layoutApp.service('uiHelperService', [function () {
+    function setDropdownPosition(dropdownButton, dropdownMenu) {
+        if (dropdownMenu.outerWidth() > (dropdownButton.parent().width() + dropdownButton.offset().left)) {
+            dropdownMenu.addClass('dropdown-menu-left');
+            dropdownMenu.removeClass('dropdown-menu-right');
+        }
+        else {
+            dropdownMenu.addClass('dropdown-menu-right');
+            dropdownMenu.removeClass('dropdown-menu-left');
+        }
+    }
+
+    var uiHelperService = {
+        setDropdownPosition: setDropdownPosition
+    }
+
+    return uiHelperService;
+}]);
+
 layoutApp.factory('encounterFactory', ['$q', function ($q) {
     var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false };
 
