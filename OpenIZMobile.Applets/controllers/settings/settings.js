@@ -78,6 +78,14 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
         var doJoin = function (force) {
             OpenIZ.App.showWait('#joinRealmButton');
+
+            var backupCredentials = {
+                continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith,
+                userName: OpenIZ.Authentication.$elevationCredentials.userName,
+                password: OpenIZ.Authentication.$elevationCredentials.password,
+                $enabled: OpenIZ.Authentication.$elevationCredentials.$enabled
+            };
+
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,
@@ -91,8 +99,11 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 },
                 onException: function (error) {
                     if (error.type == 'DuplicateNameException')
-                        if (confirm(OpenIZ.Localization.getString('locale.settings.status.duplicateName')))
+                        if (confirm(OpenIZ.Localization.getString('locale.settings.status.duplicateName'))) {
+                            OpenIZ.Authentication.$elevationCredentials = backupCredentials;
+
                             doJoin(true);
+                        }
                         else {
                             if (error.message != null)
                                 alert(error.message);

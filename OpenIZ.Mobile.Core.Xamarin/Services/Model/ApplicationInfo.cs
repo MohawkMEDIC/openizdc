@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
             try
             {
                 this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
-                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) < 0);
+                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
             }
             catch { }
 

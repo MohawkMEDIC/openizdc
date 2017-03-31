@@ -210,10 +210,7 @@
   </ItemGroup>
   <PropertyGroup>
     <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml"  
-"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
  copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\org.openiz.core.xml"
- copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
- copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
-</PreBuildEvent>
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"</PreBuildEvent>
   </PropertyGroup>
 </Project>

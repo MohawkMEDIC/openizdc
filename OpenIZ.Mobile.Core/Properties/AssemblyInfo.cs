@@ -28,7 +28,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany("Mohawk College of Applied Arts and Technology")]
 [assembly: AssemblyProduct("Open Immunize Disconnected Client")]
-[assembly: AssemblyCopyright ("Copyright (C) 2015-2017")]
+[assembly: AssemblyCopyright ("(C) 2015-2017")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
