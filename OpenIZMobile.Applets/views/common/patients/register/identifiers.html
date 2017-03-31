@@ -24,14 +24,15 @@
     <div ng-repeat="identifier in identifiers track by $index">
         <div class="form-group">
             <ng-form name="identifierForm">
-                <div class="col-xs-3">
+                <div class="col-xs-12 col-sm-3">
                     <div class="input-group" ng-class="{ 'has-error': identifierForm.identifierType.$error.required || editIdentifiersForm.identifierType.$error.required}">
                         <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)" name="identifierType" ng-required="identifier.value"
                                 bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
                         <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                     </div>
                 </div>
-                <div class="col-xs-9">
+                <div class="col-xs-12 col-sm-9">
+                    <div class="margin-top-15 visible-xs"></div>
                     <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength}">
                         <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" ng-maxlength="10" name="identifier" />
                         <span class="input-group-btn">
