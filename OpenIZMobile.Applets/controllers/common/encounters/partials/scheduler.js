@@ -3,10 +3,9 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', 'encounterFactory', function ($scope, $rootScope, $stateParams, encounterFactory) {
+layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
     $scope._isCalendarInitialized = false;
     $scope.isLoading = true;
-    $scope.encounterFactory = encounterFactory;
     // Scheduling assistant shown
     $('a[data-target="#schedulingAssistant"]').on('shown.bs.tab', function () {
         if (!$scope._isCalendarInitialized) {
@@ -130,18 +129,6 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
         });
 
     };
-
-    $scope.getAppointments = function () {
-        $scope.encounterFactory.getUpcoming().then(function (appointments) {
-            $scope.isLoading = false;
-        }, function (ex){
-            console.log(ex);
-            if ($scope.encounterFactory.gettingUpcoming = false) {
-                $scope.isLoading = false;
-            }
-        })
-    };
-
 
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
@@ -293,5 +280,6 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
         }
 
     }
-    $scope.getAppointments();
+
+    //$scope.getAppointment();
 }]);

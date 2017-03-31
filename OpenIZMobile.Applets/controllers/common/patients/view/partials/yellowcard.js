@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('YellowCardController', ['$scope', 'encounterFactory' , function ($scope, encounterFactory) {
+layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
     //    $('.oiz-vaccination-history').each(function (i, e) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();
@@ -33,7 +33,7 @@ layoutApp.controller('YellowCardController', ['$scope', 'encounterFactory' , fun
     scope.patient = scope.patient || new OpenIZModel.Patient({});
     scope.patient.participation = scope.patient.participation || {};
     scope.display = scope.display || {};
-    $scope.encounterFactory = encounterFactory;
+
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
@@ -43,7 +43,6 @@ layoutApp.controller('YellowCardController', ['$scope', 'encounterFactory' , fun
     { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
     { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
     ];
-
 
     scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
     scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });

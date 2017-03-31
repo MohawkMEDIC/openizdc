@@ -151,7 +151,6 @@ namespace OpenIZ.Mobile.Core.Test.Persistence
 				}
 			};
 			var afterInsert = base.DoTestInsert(underTest);
-			afterInsert.SetDelayLoad(true);
 			Assert.AreEqual(ActClassKeys.Observation, afterInsert.ClassConcept.Key);
 			Assert.AreEqual(1, underTest.Identifiers.Count);
 			Assert.AreEqual("10293", underTest.Identifiers[0].Value);

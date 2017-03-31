@@ -189,7 +189,10 @@ namespace OpenIZ.Core.Data.QueryBuilder
                     subProperty = matches.Groups[SubPropertyRegexGroup].Value;
 
                 // Next, we want to construct the 
-                var otherParms = workingParameters.Where(o => re.Match(o.Key).Groups[PropertyRegexGroup].Value == propertyPath).ToArray();
+                var otherParms = workingParameters.Where(o => {
+                    var sm = re.Match(o.Key);
+                    return sm.Groups[PropertyRegexGroup].Value == propertyPath && sm.Groups[CastRegexGroup].Value == castAs;
+                }).ToArray();
 
                 // Remove the working parameters if the column is FK then all parameters
                 if (otherParms.Any() || !String.IsNullOrEmpty(guard) || !String.IsNullOrEmpty(subProperty))
@@ -297,9 +300,22 @@ namespace OpenIZ.Core.Data.QueryBuilder
                         var fkColumnDef = fkTableDef.GetColumn(linkColumn.ForeignKey.Column);
 
                         // Create the sub-query
-                        var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
-                        SqlStatement subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        SqlStatement subQueryStatement = null;
+                        if (String.IsNullOrEmpty(castAs))
+                        {
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { subProp.PropertyType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
+                            subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        }
+                        else // we need to cast!
+                        {
+                            var castAsType = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder().BindToType("OpenIZ.Core.Model", castAs);
+
+                            var genMethod = typeof(QueryBuilder).GetGenericMethod("CreateQuery", new Type[] { castAsType }, new Type[] { subQuery.GetType(), typeof(ColumnMapping[]) });
+                            subQueryStatement = genMethod.Invoke(this, new Object[] { subQuery, new ColumnMapping[] { fkColumnDef } }) as SqlStatement;
+                        }
+
                         cteStatements.Add(new SqlStatement($"{tablePrefix}cte{cteStatements.Count} AS (").Append(subQueryStatement).Append(")"));
+
                         //subQueryStatement.And($"{tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {sqName}{fkTableDef.TableName}.{fkColumnDef.Name} ");
 
                         selectStatement.Append($"INNER JOIN {tablePrefix}cte{cteStatements.Count - 1} ON ({tablePrefix}{tableMapping.TableName}.{linkColumn.Name} = {tablePrefix}cte{cteStatements.Count - 1}.{fkColumnDef.Name})");

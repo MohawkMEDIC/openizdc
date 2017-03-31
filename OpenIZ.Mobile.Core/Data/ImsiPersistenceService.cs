@@ -160,9 +160,7 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Insert(TModel data)
 			{
-				data.SetDelayLoad(false);
 				var retVal = this.m_client.Create(data);
-				retVal.SetDelayLoad(true);
 				return retVal;
 			}
 
@@ -179,9 +177,7 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Obsolete(TModel data)
 			{
-				data.SetDelayLoad(false);
 				var retVal = this.m_client.Obsolete(data);
-				retVal.SetDelayLoad(true);
 				return retVal;
 			}
 
@@ -213,9 +209,6 @@ namespace OpenIZ.Mobile.Core.Data
 				count = (data as Bundle)?.Count ?? count;
 				totalResults = (data as Bundle)?.TotalResults ?? 1;
 
-				// Set delay load
-				foreach (var i in (data as Bundle)?.Item.OfType<IdentifiedData>())
-					i.SetDelayLoad(true);
 
 				return (data as Bundle)?.Item.OfType<TModel>() ?? new List<TModel>() { data as TModel };
 			}
@@ -241,9 +234,7 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public TModel Update(TModel data)
 			{
-				data.SetDelayLoad(false);
 				var retVal = this.m_client.Update(data);
-				retVal.SetDelayLoad(true);
 				return retVal;
 			}
 

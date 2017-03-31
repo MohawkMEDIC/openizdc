@@ -152,9 +152,7 @@ namespace OpenIZ.Mobile.Core.Data
                         this.m_tracer.TraceVerbose("INSERT {0}", data);
 
                         context.Connection.BeginTransaction();
-                        data.SetDelayLoad(false);
                         data = this.Insert(context, data);
-                        data.SetDelayLoad(true);
                         context.Connection.Commit();
                         // Remove from the cache
                         foreach (var itm in context.CacheOnCommit)
@@ -216,9 +214,7 @@ namespace OpenIZ.Mobile.Core.Data
                         this.m_tracer.TraceVerbose("UPDATE {0}", data);
                         context.Connection.BeginTransaction();
 
-                        data.SetDelayLoad(false);
                         data = this.Update(context, data);
-                        data.SetDelayLoad(true);
 
                         context.Connection.Commit();
 
@@ -281,9 +277,7 @@ namespace OpenIZ.Mobile.Core.Data
                         this.m_tracer.TraceVerbose("OBSOLETE {0}", data);
                         context.Connection.BeginTransaction();
 
-                        data.SetDelayLoad(false);
                         data = this.Obsolete(context, data);
-                        data.SetDelayLoad(true);
 
                         context.Connection.Commit();
 
@@ -384,15 +378,6 @@ namespace OpenIZ.Mobile.Core.Data
                 this.Queried?.Invoke(this, postData);
 
                 totalResults = postData.TotalResults;
-
-                // Set delay load
-                foreach (var i in postData.Results)
-                {
-                    if (i != null)
-                    {
-                        i.SetDelayLoad(true);
-                    }
-                }
 
                 // Remove from the cache
                 foreach (var itm in context.CacheOnCommit)
@@ -507,8 +492,6 @@ namespace OpenIZ.Mobile.Core.Data
                 this.Queried?.Invoke(this, postArgs);
 
                 totalResults = postArgs.TotalResults;
-                foreach (var i in postArgs.Results)
-                    i.SetDelayLoad(true);
 
 
                 // Remove from the cache

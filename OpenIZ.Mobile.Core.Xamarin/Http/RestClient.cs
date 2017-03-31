@@ -177,7 +177,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
                                 throw new ArgumentNullException(nameof(contentType));
 
                             serializer = this.Description.Binding.ContentTypeMapper.GetSerializer(contentType, typeof(TBody));
-                            (body as IdentifiedData)?.SetDelayLoad(false);
                             // Serialize and compress with deflate
                             using(MemoryStream ms = new MemoryStream())
                             {
@@ -295,7 +294,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
                             }
 
-                            (retVal as IdentifiedData)?.SetDelayLoad(true);
                             return retVal;
                         }
                     }

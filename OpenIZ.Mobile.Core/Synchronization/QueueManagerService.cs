@@ -324,8 +324,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
             try
             {
                 var existing = svc.Get(data.Key.Value) as IdentifiedData;
-                (existing as IdentifiedData)?.SetDelayLoad(false);
-                data?.SetDelayLoad(false);
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
                 if (existing == null)

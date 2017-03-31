@@ -268,10 +268,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     new EntityRelationship(EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation, Guid.Parse("d0f4a878-13cb-4509-9b4f-80b2c1548d2b")) // TODO: Get user's current location
                 }
             };
-            retVal.SetDelayLoad(true);
-            // HACK: For form which is expecting $0ther
-            (retVal.Relationships[1].TargetEntity as Entity).Telecoms[0].SetDelayLoad(false);
-            (retVal.Relationships[0].TargetEntity as Entity).Telecoms[0].SetDelayLoad(false);
             // Serialize the response
             return retVal;
         }

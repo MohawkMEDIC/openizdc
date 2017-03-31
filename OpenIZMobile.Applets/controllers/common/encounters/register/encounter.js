@@ -31,7 +31,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
     /** 
     * Add sub-encounter sub-encounter
     */
-    scope.addSubEncounter = scope.addSubEncounter || function (bind, templateName) {
+    scope.addSubEncounter = scope.addSubEncounter || function (bind, templateName, relateTo, relateAs) {
         OpenIZ.CarePlan.getActTemplateAsync({
             templateId: templateName,
             continueWith: function (d) {
@@ -40,6 +40,11 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
                     _enabled: true,
                     targetModel: d
                 });
+
+                if (relateTo && relateAs)
+                    relateTo[relateAs] = new OpenIZModel.ActRelationship({
+                        target: d.id
+                    });
                 scope.$apply();
             }
         });
@@ -73,12 +78,15 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
     /** 
      * Delete sub-encounter
      */
-    scope.delSubEncounter = function (bind, index) {
+    scope.delSubEncounter = function (bind, index, removeFrom, removeAs) {
         if (isNaN(index)) {
             for (var i in bind) {
                 try {
                     if (bind[i].targetModel.template.mnemonic == index)
                         bind.splice(i, 1);
+
+                    if (removeFrom && removeAs)
+                        delete (removeFrom[removeAs]);
                 } catch (e) { }
             }
         }
