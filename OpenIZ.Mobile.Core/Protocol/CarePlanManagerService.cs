@@ -244,9 +244,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                     {
                         this.m_resetEvent.WaitOne();
                         // de-queue
+                        int promiseCount = this.m_actCarePlanPromise.Count;
                         while (this.m_actCarePlanPromise.Count > 0)
                         {
-                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, this.m_actCarePlanPromise.Count), 1 / (float)this.m_actCarePlanPromise.Count);
+                            if (this.m_actCarePlanPromise.Count > promiseCount)
+                                promiseCount = this.m_actCarePlanPromise.Count;
+
+                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, this.m_actCarePlanPromise.Count), (promiseCount - this.m_actCarePlanPromise.Count) / (float)promiseCount);
                             IdentifiedData qitm = null;
                             qitm = this.m_actCarePlanPromise.First();
                             if (qitm is Patient)
@@ -273,14 +277,18 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     this.m_actCarePlanPromise.RemoveAt(0);
 
                                 //// Remove all acts which are same protocol and same patient
-                                //lock (this.m_lock)
-                                //    this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Protocols.Any(p=> (qitm as Act).Protocols.Any(q=>q.ProtocolKey == p.ProtocolKey)) && (i as Act).Participations.Any(p => p.PlayerEntityKey == (qitm as Act).Participations.FirstOrDefault(c=>c.ParticipationRoleKey == ActParticipationKey.RecordTarget).PlayerEntityKey));
+                                lock (this.m_lock)
+                                    this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Protocols.Any(p=> (qitm as Act).Protocols.Any(q=>q.ProtocolKey == p.ProtocolKey)) && (i as Act).Participations.Any(p => p.PlayerEntityKey == (qitm as Act).Participations.FirstOrDefault(c=>c.ParticipationRoleKey == ActParticipationKey.RecordTarget || c.ParticipationRole?.Mnemonic == "RecordTarget").PlayerEntityKey));
                             }
 
                             // Drop everything else in the queue
                             lock (this.m_lock)
                                 this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
                         }
+
+                        if(promiseCount > 0)
+                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, 0), 0);
+
                         this.m_resetEvent.Reset();
 
                     }
@@ -354,6 +362,11 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // Now calculate
                     carePlan = careplanService.CreateCarePlan(patient, false, this.m_parameters);
+
+                    // Remove for all on this patient
+                    lock(this.m_lock)
+                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == patient.Key.Value || i is Patient && (i as Patient).Key == patient.Key.Value));
+
                 }
                 else
                 {
