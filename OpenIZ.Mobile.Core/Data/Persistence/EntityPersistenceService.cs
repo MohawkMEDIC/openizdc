@@ -33,6 +33,7 @@ using OpenIZ.Core.Model.Acts;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Core.Model.Roles;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -65,9 +66,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, SQLiteConnectionWithLock context, bool loadFast) where TEntityType : Entity, new()
+        public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, LocalDataContext context, bool loadFast) where TEntityType : Entity, new()
         {
-            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.IsInTransaction);
+            var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.Connection.IsInTransaction);
             
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
@@ -114,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Entity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Entity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
@@ -152,7 +153,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified entity into the data context
         /// </summary>
-        public override Entity Insert(SQLiteConnectionWithLock context, Entity data)
+        internal Entity InsertCoreProperties(LocalDataContext context, Entity data)
         {
 
             // Ensure FK exists
@@ -167,7 +168,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
 
             // Identifiers
@@ -247,7 +248,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified entity
         /// </summary>
-        public override Entity Update(SQLiteConnectionWithLock context, Entity data)
+        internal Entity UpdateCoreProperties(LocalDataContext context, Entity data)
         {
             // Esnure exists
             if (data.ClassConcept != null) data.ClassConcept = data.ClassConcept.EnsureExists(context);
@@ -260,7 +261,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
 
 
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             byte[] entityUuid = retVal.Key.Value.ToByteArray();
 
@@ -281,7 +282,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Identifiers
             if (data.Identifiers != null)
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
-                    context.Table<DbEntityIdentifier>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
+                    context.Connection.Table<DbEntityIdentifier>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
                     data.Identifiers,
                     retVal.Key,
                     context);
@@ -289,7 +290,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Relationships
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
-                    context.Table<DbEntityRelationship>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
+                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
                     data.Relationships.Where(o => !o.InversionIndicator).ToList(),
                     retVal.Key,
                     context);
@@ -297,7 +298,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Telecoms
             if (data.Telecoms != null)
                 base.UpdateAssociatedItems<EntityTelecomAddress, Entity>(
-                    context.Table<DbTelecomAddress>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbTelecomAddress, EntityTelecomAddress>(o)).ToList(),
+                    context.Connection.Table<DbTelecomAddress>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbTelecomAddress, EntityTelecomAddress>(o)).ToList(),
                     data.Telecoms,
                     retVal.Key,
                     context);
@@ -305,7 +306,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Extensions
             if (data.Extensions != null)
                 base.UpdateAssociatedItems<EntityExtension, Entity>(
-                    context.Table<DbEntityExtension>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityExtension, EntityExtension>(o)).ToList(),
+                    context.Connection.Table<DbEntityExtension>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityExtension, EntityExtension>(o)).ToList(),
                     data.Extensions,
                     retVal.Key,
                     context);
@@ -313,7 +314,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Names
             if (data.Names != null)
                 base.UpdateAssociatedItems<EntityName, Entity>(
-                    context.Table<DbEntityName>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityName, EntityName>(o)).ToList(),
+                    context.Connection.Table<DbEntityName>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityName, EntityName>(o)).ToList(),
                     data.Names,
                     retVal.Key,
                     context);
@@ -321,7 +322,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Addresses
             if (data.Addresses != null)
                 base.UpdateAssociatedItems<EntityAddress, Entity>(
-                    context.Table<DbEntityAddress>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddress, EntityAddress>(o)).ToList(),
+                    context.Connection.Table<DbEntityAddress>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityAddress, EntityAddress>(o)).ToList(),
                     data.Addresses,
                     retVal.Key,
                     context);
@@ -329,7 +330,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Notes
             if (data.Notes != null)
                 base.UpdateAssociatedItems<EntityNote, Entity>(
-                    context.Table<DbEntityNote>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityNote, EntityNote>(o)).ToList(),
+                    context.Connection.Table<DbEntityNote>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityNote, EntityNote>(o)).ToList(),
                     data.Notes,
                     retVal.Key,
                     context);
@@ -337,7 +338,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Tags
             if (data.Tags != null)
                 base.UpdateAssociatedItems<EntityTag, Entity>(
-                    context.Table<DbEntityTag>().Where(o => o.EntityUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityTag, EntityTag>(o)).ToList(),
+                    context.Connection.Table<DbEntityTag>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityTag, EntityTag>(o)).ToList(),
                     data.Tags,
                     retVal.Key,
                     context);
@@ -372,10 +373,82 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsoleted status key
         /// </summary>
-        public override Entity Obsolete(SQLiteConnectionWithLock context, Entity data)
+        protected override Entity ObsoleteInternal(LocalDataContext context, Entity data)
         {
             data.StatusConceptKey = StatusKeys.Obsolete;
-            return base.Obsolete(context, data);
+            return base.ObsoleteInternal(context, data);
+        }
+
+        /// <summary>
+        /// Insert the object
+        /// </summary>
+        protected override Entity InsertInternal(LocalDataContext context, Entity data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Insert(context, data as DeviceEntity);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Insert(context, data as ApplicationEntity);
+                case Person:
+                    return new PersonPersistenceService().Insert(context, data as Person);
+                case Patient:
+                    return new PatientPersistenceService().Insert(context, data as Patient);
+                case Provider:
+                    return new ProviderPersistenceService().Insert(context, data as Provider);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Insert(context, data as Place);
+                case Organization:
+                    return new OrganizationPersistenceService().Insert(context, data as Organization);
+                case Material:
+                    return new MaterialPersistenceService().Insert(context, data as Material);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Insert(context, data as ManufacturedMaterial);
+                default:
+                    return this.InsertCoreProperties(context, data);
+
+            }
+        }
+
+        /// <summary>
+        /// Insert the object
+        /// </summary>
+        protected override Entity UpdateInternal(LocalDataContext context, Entity data)
+        {
+            switch (data.ClassConceptKey.ToString().ToUpper())
+            {
+                case Device:
+                    return new DeviceEntityPersistenceService().Update(context, data as DeviceEntity);
+                case NonLivingSubject:
+                    return new ApplicationEntityPersistenceService().Update(context, data as ApplicationEntity);
+                case Person:
+                    return new PersonPersistenceService().Update(context, data as Person);
+                case Patient:
+                    return new PatientPersistenceService().Update(context, data as Patient);
+                case Provider:
+                    return new ProviderPersistenceService().Update(context, data as Provider);
+                case Place:
+                case CityOrTown:
+                case Country:
+                case CountyOrParish:
+                case State:
+                case ServiceDeliveryLocation:
+                    return new PlacePersistenceService().Update(context, data as Place);
+                case Organization:
+                    return new OrganizationPersistenceService().Update(context, data as Organization);
+                case Material:
+                    return new MaterialPersistenceService().Update(context, data as Material);
+                case ManufacturedMaterial:
+                    return new ManufacturedMaterialPersistenceService().Update(context, data as ManufacturedMaterial);
+                default:
+                    return this.UpdateCoreProperties(context, data);
+
+            }
         }
     }
 }

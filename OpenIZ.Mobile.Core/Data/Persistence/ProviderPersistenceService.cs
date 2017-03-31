@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Provider persistence service
     /// </summary>
-    public class ProviderPersistenceService : IdentifiedPersistenceService<Provider, DbProvider>
+    public class ProviderPersistenceService : IdentifiedPersistenceService<Provider, DbProvider, DbProvider.QueryResult>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
@@ -43,12 +43,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Provider ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Provider ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var provider = dataInstance as DbProvider ?? context.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == provider.Uuid).First();
-            var dbp = context.Table<DbPerson>().Where(o => o.Uuid == provider.Uuid).First();
+            var provider = dataInstance as DbProvider ?? dataInstance.GetInstanceOf<DbProvider>()?? context.Connection.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == provider.Uuid).First();
+            var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == provider.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Provider>(dbe, context, loadFast);
 
             retVal.DateOfBirth = dbp.DateOfBirth;
@@ -65,32 +65,32 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified person into the database
         /// </summary>
-        public override Provider Insert(SQLiteConnectionWithLock context, Provider data)
+        protected override Provider InsertInternal(LocalDataContext context, Provider data)
         {
-            data.ProviderSpecialty?.EnsureExists(context);
+            if(data.ProviderSpecialty != null) data.ProviderSpecialty?.EnsureExists(context);
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             var inserted = this.m_personPersister.Insert(context, data);
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the specified person
         /// </summary>
-        public override Provider Update(SQLiteConnectionWithLock context, Provider data)
+        protected override Provider UpdateInternal(LocalDataContext context, Provider data)
         {
             // Ensure exists
-            data.ProviderSpecialty?.EnsureExists(context);
+            if(data.ProviderSpecialty != null) data.ProviderSpecialty = data.ProviderSpecialty?.EnsureExists(context);
             data.ProviderSpecialtyKey = data.ProviderSpecialty?.Key ?? data.ProviderSpecialtyKey;
 
             this.m_personPersister.Update(context, data);
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Provider Obsolete(SQLiteConnectionWithLock context, Provider data)
+        protected override Provider ObsoleteInternal(LocalDataContext context, Provider data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

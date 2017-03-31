@@ -19,20 +19,114 @@
  -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" >
     <div class="panel-group">
-        <div class="header-dock" ng-class="patientViewScrollHeight > 55 ? 'static-dock' : 'row'">
+        <div class="header-dock static-dock row">
             <div class="col-xs-12">
-                <div class="col-xs-10" ng-if="patientViewScrollHeight > 55">
-                    <h4 class="panel-title">
-                        <a data-toggle="collapse" data-target="#patientSummaryPanel">
-                            <span ng-if="patient.name.OfficialRecord">{{ patient.name.OfficialRecord | oizEntityName }} </span>
-                            <span ng-if="!patient.name.OfficialRecord">{{ 'locale.patient.unnamed' | i18n }}</span><small style="color:white">({{patient.genderConceptModel.name[$root.page.locale] }}) - {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}}</small>
-                            <span class="pull-right">
-                                {{ 'locale.patient.identifiers' | i18n }} {{ patient.identifier | oizEntityIdentifier }}
+                <div class="col-xs-10" >
+                    <div class="row">
+                        {{encounterFactory.appointments.length}}
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
+                        <div class="col-xs-4">
+                            <span ng-model="patient.name.OfficialRecord.given" oiz-editor="tag">
+                                {{ patient.name.OfficialRecord.component.Given | oizEntityName }}
                             </span>
-                        </a>
-                    </h4>
+                        </div>
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.familyName' | i18n }}:</label>
+                        <div class="col-xs-4">
+                            <span ng-model="patient.name.OfficialRecord.family" oiz-editor="tag">
+                                {{ patient.name.OfficialRecord.component.Family | oizEntityName }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
+                        <div class="col-xs-4">
+                            <span>
+                                <span ng-repeat="(dmn, id) in patient.identifier">
+                                    {{ id.value }} <span class="label label-info">{{ dmn }}</span>
+                                </span>
+                            </span>
+
+                        </div>
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.gender' | i18n }}:</label>
+                        <div class="col-xs-4">{{ patient.genderConceptModel.name[$root.page.locale] }}</div>
+
+
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfBirth' | i18n }}:</label>
+                        <div class="col-xs-4">
+                            <span ng-model="patient.dateOfBirth" oiz-editor="date">
+                                {{ patient.dateOfBirth | date : 'yyyy-MM-dd' }}
+                            </span>
+                        </div>
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.facility' | i18n }}:</label>
+                        <div class="col-xs-4 no-wrap"><span class="glyphicon glyphicon-map-marker"></span> {{ patient.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</div>
+                    </div>
+                    <div class="row">
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
+                        <div class="col-xs-4 padding-left-30">
+                            <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
+                        </div>
+
+                        <!--<label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}:</label>-->
+                        <label class="col-xs-2 header-dock-labels">Mothers Info</label>
+                        <div class="col-xs-4">
+                            <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
+                                <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                                <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                                <span ng-repeat="contact in rel.targetModel.telecom">
+                                    <small>Contact: {{contact.value}}</small>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="patient.deceasedDate">
+                        <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.dateOfDeath' | i18n }}:</label>
+                        <div class="col-xs-4">
+                            <span ng-model="patient.deceasedDate" oiz-editor="date">
+                                {{ patient.deceasedDate | date : 'yyyy-MM-dd' }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-xs-10" ng-if="!(patientViewScrollHeight > 55)">
+                <div class="col-xs-2 text-right">
+                    <div class="dropdown">
+                        <a id="patientMenuButton" data-toggle="dropdown"
+                           class="btn btn-edit white-text" style="top: -5px;"
+                           aria-haspopup="true" aria-expanded="true">
+                            <span class="glyphicon glyphicon-option-vertical"></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li role="presentation" ng-if="patient.tag.onlineResult">
+                                <a ng-click="patientEdit.download()">
+                                    <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
+                                </a>
+                            </li>
+                            <li role="presentation" ng-if="!patient.tag.onlineResult">
+                                <a ng-click="patientEdit.showPatient()">
+                                    <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
+                                </a>
+                            </li>
+                            
+                            <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length">
+                                <a ng-click="patientEdit.appointment()">
+                                    <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
+                                </a>
+                            </li>
+                            <li role="presentation" ng-if="!patient.tag.onlineResult">
+                                <a ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
+                                    <span class="glyphicon glyphicon-eye-open margin-right-10"></span> {{ 'locale.patient.tabs.view' | i18n }}
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-dock row">
+            <div class="col-xs-12">
+                <div class="col-xs-10">
                     <div class="row">
                         <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.givenName' | i18n }}:</label>
                         <div class="col-xs-4">
@@ -111,21 +205,12 @@
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                <a ng-click="patientEdit.show()">
+                                <a ng-click="patientEdit.showPatient()">
                                     <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                                 </a>
                             </li>
                             <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id})">
-                                    <span class="glyphicon glyphicon-check margin-right-10"></span> {{ 'locale.patient.action.startEncounter' | i18n }}
-                                </a>
-                            </li>
-                            <li role="presentation" ng-if="!patient.tag.onlineResult">
-                                <a ui-sref="tz-timr-applet.encounter-entry({patientId: patient.id , weightsOnly: true})">
-                                    <span class="glyphicon glyphicon-scale margin-right-10"></span> {{ 'locale.patient.tabs.weight' | i18n }}
-                                </a>
-                            </li>
-                            <li role="presentation" ng-if="!patient.tag.onlineResult">
+                                {{patientEdit}}
                                 <a ng-click="patientEdit.appointment()">
                                     <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                                 </a>
@@ -141,6 +226,7 @@
                 </div>
             </div>
         </div>
+
         <!-- #include virtual="content" -->
     </div>
 </div>

@@ -31,22 +31,18 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
             $scope.$applyAsync();
         }
     });
-    
-    
+
+
     // Perform a logout of the session
-    $scope.logout = $scope.logout || function ()
-    {
-        if (confirm(OpenIZ.Localization.getString('locale.layout.navbar.logout.confirm')))
-        {
+    $scope.logout = $scope.logout || function () {
+        if (confirm(OpenIZ.Localization.getString('locale.layout.navbar.logout.confirm'))) {
             OpenIZ.Authentication.abandonSession({
-                continueWith: function(data)
-                {
+                continueWith: function (data) {
                     console.log(data);
                     window.location.hash = "#/";
                     $window.location.reload();
                 },
-                onException: function(ex)
-                {
+                onException: function (ex) {
                     console.log(ex);
                 }
             });
@@ -63,19 +59,51 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
     $scope.checkMessages = function () {
         OpenIZ.App.getAlertsAsync({
             query: {
-                flags: "!2",
-                _count: 5
+                flags: "!2"
             },
             continueWith: function (d) {
                 if ($scope.messages == null || d.length != $scope.messages.length) {
-                    $scope.messages = d;
-                    $scope.$apply();
-                }
+                    var nmsg = d.length - ($scope.messages == null ? 0 : $scope.messages.length);
 
+                    if ($rootScope.session != null) {
+                        var title = null;
+                        var alertBody = null;
+                        var alertOptions = {
+                            "preventDuplicates": true,
+                            "showDuration": 150,
+                            "hideDuration": 250,
+                            "timeout": 2000
+                        };
+
+                        if ($scope.messages) {
+                            if (nmsg == 1)
+                                toastr.success(d[0].subject + "...", d[0].from, alertOptions);
+                            else
+                                toastr.success(OpenIZ.Localization.getString("locale.alerts.newAlerts"), alertOptions);
+                        }
+                        $scope.messages = d;
+                        $scope.$apply();
+                    }
+                }
                 setTimeout($scope.checkMessages, 30000);
             }
+        });
+        OpenIZ.Queue.getQueueAsync({
+            queueName: OpenIZ.Queue.QueueNames.DeadLetterQueue,
+            continueWith: function (data) {
+                $scope.conflicts = data;
+            },
+            onException: function() {}
         });
     };
     setTimeout($scope.checkMessages, 30000);
     $scope.checkMessages();
+    /**
+     * Window resize event handling
+     */
+    $scope.$watch(function () {
+        return window.innerWidth;
+    }, function (value) {
+        $scope.windowWidth = value;
+    });
 }]);

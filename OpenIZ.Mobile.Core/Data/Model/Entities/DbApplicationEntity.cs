@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -27,13 +29,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents an entity which is used to represent an application
 	/// </summary>
 	[Table("application")]
-	public class DbApplicationEntity : DbIdentified
+	public class DbApplicationEntity : DbEntitySubTable
     {
 		/// <summary>
 		/// Gets or sets the security application.
 		/// </summary>
 		/// <value>The security application.</value>
-		[Column("securityApplication"), MaxLength(16), NotNull]
+		[Column("securityApplication"), MaxLength(16), NotNull, ForeignKey(typeof(DbSecurityApplication), nameof(DbSecurityApplication.Uuid))]
 		public byte[] SecurityApplicationUuid {
 			get;
 			set;

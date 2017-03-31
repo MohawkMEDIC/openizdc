@@ -25,7 +25,7 @@
             <div class="input-group">
                 <input type="text" name="givenName" id="givenName" class="tagEntry form-control" aria-describedby="givenNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Given" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.givenName' | i18n }}" data-content="{{ 'locale.patient.demographics.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.demographics.givenName' | i18n }}" data-content="{{ 'locale.patient.demographics.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -36,7 +36,7 @@
             <div class="input-group">
                 <input type="text" name="familyName" id="familyName" class="tagEntry form-control" aria-describedby="familyNameAddon" oiz-tag="oiz-tag" ng-model="patient.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.familyName' | i18n }}" data-content="{{ 'locale.patient.demographics.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.demographics.familyName' | i18n }}" data-content="{{ 'locale.patient.demographics.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -48,16 +48,18 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-readonly="patient.readonly.dateOfBirth" type="date" 
+                <input ng-disabled="patientBackup.tag.hasBirthCertificate || patient.hasVaccines"
+                       ng-readonly="patient.readonly.dateOfBirth" type="date" 
                        name="dateOfBirth" id="dobInput" 
                        class="form-control" 
                        ng-model="patient.dateOfBirth" 
-                       ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
+                       max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" 
                        ng-required="true"/>
                 <span class="input-group-addon input-group-addon-approx">
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
+                               ng-disabled="patient.tag.hasBirthCertificate"
                                ng-model="patient.dateOfBirthPrecision"
                                value="1"
                                name="approximateDob" />
@@ -65,10 +67,13 @@
                     </label>
                 </span>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.dateOfBirthPrecision' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted)">
+            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
+                {{ 'locale.patient.demographics.dateOfBirth.hasCertificateOrVaccines' | i18n }}
+            </p>
+            <p ng-if="(editPatientForm.dateOfBirth.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.dateOfBirth.$invalid">
                 <span ng-show="editPatientForm.dateOfBirth.$error.required"
                    class="help-block text-danger">
                     {{ 'locale.patient.errors.dob.required' | i18n }}
@@ -85,38 +90,60 @@
         </div>
     </div>
 
-    <div class="form-group" ng-if="patient.version">
+    <div class="form-group" ng-show="patient.version">
         <label class="col-xs-3 control-label ng-cloak" for="deathDate">
         {{ 'locale.patient.demographics.deceasedDate' | i18n }}*
         </label>
-        <div class="col-xs-9">
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid }">
             <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox" ng-model="patient.isDeceased" />
+                <span class="input-group-addon input-group-addon-no-label">
+                    <label class="control control--checkbox">
+                        <input type="checkbox"
+                               ng-model="patient.isDeceased"
+                               value="1" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
                 </span>
                 <input ng-readonly="patient.readonly.deceasedDate" 
                        ng-disabled="!patient.isDeceased" type="date" 
                        ng-required="patient.isDeceased" name="deceasedDate" 
                        id="deathDate" class="form-control" 
                        ng-model="patient.deceasedDate"
-                       ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
-                       ng-min="patient.dateOfBirth | date : 'yyyy-MM-dd'" />
-                <span class="input-group-addon">
-                    <input ng-disabled="!patient.isDeceased" 
-                           ng-readonly="patient.readonly.deceasedDate" 
-                           type="checkbox" name="approximateDeath" 
-                           ng-model="patient.deceaseDatePrecision" value="1" />
-                    <label for="approxDeath" class="ng-cloak">
-                        {{ 'locale.patient.demographics.dob.fuzzy' | i18n }}
+                       max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" 
+                       min="{{patient.dateOfBirth | date : 'yyyy-MM-dd'}}" />
+                <span class="input-group-addon input-group-addon-approx">
+                    <label class="control control--checkbox">
+                        <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                        <input type="checkbox"
+                               ng-disabled="!patient.isDeceased"
+                               ng-readonly="patient.readonly.deceasedDate"
+                               ng-model="patient.deceaseDatePrecision"
+                               value="1"
+                               name="approximateDeath" />
+                        <div class="control__indicator" style="top: 8px;"></div>
                     </label>
                 </span>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="3" data-trigger="focus" title="{{ 'locale.patient.demographics.deceasedDate' | i18n }}" data-content="{{ 'locale.patient.demographics.deceasedDate.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-show="(editPatientForm.deceasedDate.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.deceasedDate.$invalid" 
-               class="help-block text-danger">
-                {{ 'locale.patient.errors.dob' | i18n }}
+            <p ng-if="(editPatientForm.deceasedDate.$touched || editPatientForm.$submitted) &amp;&amp; editPatientForm.deceasedDate.$invalid">
+                <span ng-show="editPatientForm.deceasedDate.$error.required"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.deceasedDate.required' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.date"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.date' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.max"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.max' | i18n }}
+                </span>
+                <span ng-show="editPatientForm.deceasedDate.$error.min"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.deceasedDate.min' | i18n }}
+                </span>
             </p>
         </div>
     </div>
@@ -127,7 +154,7 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.gender.$touched||editPatientForm.$submitted) &amp;&amp; editPatientForm.gender.$invalid }">
             <div class="input-group">
-                <select ng-disabled="patient.readonly.genderConcept" name="gender" 
+                <select ng-disabled="patient.readonly.genderConcept || patientBackup.tag.hasBirthCertificate || patient.hasVaccines" name="gender" 
                         ng-model="patient.genderConcept" 
                         ng-required="true" id="genderSelect" 
                         class="form-control"
@@ -137,9 +164,12 @@
                     <span class="select-arrow" role="presentation"></span>
                 </span>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="4" data-trigger="focus" title="{{ 'locale.patient.demographics.gender' | i18n }}" data-content="{{ 'locale.patient.demographics.gender.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
+            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
+                {{ 'locale.patient.demographics.gender.hasCertificateOrVaccines' | i18n }}
+            </p>
             <p ng-show="(editPatientForm.gender.$touched||editPatientForm.$submitted)&amp;&amp;editPatientForm.gender.$invalid" class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.gender' | i18n }}</p>
         </div>
     </div>

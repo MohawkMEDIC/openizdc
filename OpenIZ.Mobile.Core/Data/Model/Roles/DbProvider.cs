@@ -21,6 +21,8 @@ using System;
 using OpenIZ.Mobile.Core.Data.Model.Entities;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Roles
 {
@@ -28,19 +30,34 @@ namespace OpenIZ.Mobile.Core.Data.Model.Roles
 	/// Represents a health care provider in the database
 	/// </summary>
 	[Table("provider")]
-	public class DbProvider : DbIdentified
+	public class DbProvider : DbPersonSubTable
     {
 
 		/// <summary>
 		/// Gets or sets the specialty.
 		/// </summary>
 		/// <value>The specialty.</value>
-		[Column("specialty"), MaxLength(16)]
+		[Column("specialty"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] Specialty {
 			get;
 			set;
 		}
 
-	}
+        public class QueryResult : DbPerson.QueryResult
+        {
+
+            /// <summary>
+            /// Gets or sets the specialty.
+            /// </summary>
+            /// <value>The specialty.</value>
+            [Column("specialty"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            public byte[] Specialty
+            {
+                get;
+                set;
+            }
+
+        }
+    }
 }
 

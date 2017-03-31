@@ -31,7 +31,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
     /// Represents controlling actions
     /// </summary>
     [Table("control_act")]
-    public class DbControlAct : DbIdentified
+    public class DbControlAct : DbActSubTable
     {
     }
 }

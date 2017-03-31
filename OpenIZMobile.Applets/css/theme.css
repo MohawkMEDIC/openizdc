@@ -1,6 +1,36 @@
 ﻿/*----------------------------------------------------*/
 /*-------------- Bootstrap Alterations ---------------*/
 /*----------------------------------------------------*/
+.spinloader {
+    width: 24px;
+    height: 24px;
+}
+
+@media screen and (orientation:landscape) {
+    .hidden-landscape{
+        display:none!important;
+    }
+    .no-margin-right-landscape{
+        margin-right:0;
+    }
+}
+@media screen and (orientation:portrait) {
+    .hidden-xs, .hidden-portrait {
+        display:none !important;
+    }
+    .full-width-portrait{
+        width:100%;
+    }
+    .col-portrait-12{
+        width:100% !important;
+    }
+    .margin-right-10-portrait{
+        margin-right:10px;
+    }
+}
+.force-show{
+    display:block !important;
+}
 
 .ellipsis{
     text-overflow: ellipsis;
@@ -11,6 +41,13 @@
 select{
     -webkit-appearance: none;
     -moz-appearance: none;
+}
+
+.pull-right{
+    float:right;
+}
+.pull-left{
+    float:left;
 }
 fieldset{
     margin-right:30px;
@@ -81,9 +118,8 @@ fieldset{
 .tokenfield .token-input{
     margin-bottom: 0;
     height: initial;
+    width:auto !important;
 }
-
-
 
 .tokenfield .token .close{
     opacity: 0.3;
@@ -99,7 +135,8 @@ fieldset{
 .has-error .form-control, .has-error .select2-container {
     border:1px solid #843534;
 }
-.select2-container--default .select2-selection--single {
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--multiple {
     border-radius: 0;
     background: #ebeff5;
     border: none;
@@ -113,6 +150,9 @@ fieldset{
 }
 .select2-container--default .select2-selection--single .select2-selection__arrow b {
     border-width: 10px 8px 0 8px;
+}
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: none;
 }
 
 .input-group { width:100%; }
@@ -149,7 +189,6 @@ a.not-active {
     border:none;
 }
 .input-group-btn >.btn{
-    height: 100% !important;
     padding: 0px !important;
 }
 .input-group-btn > .btn >span {
@@ -175,6 +214,9 @@ a.not-active {
     }
     .oiz-menu-text {
         display: inline
+    }
+    .navbar-collapse-small{
+
     }
 }
 
@@ -252,6 +294,7 @@ a.not-active {
     vertical-align:middle;
 }
 
+
 /**Panels*/
 .panel-default > .panel-heading{
     background: #3BA2E4;
@@ -315,6 +358,11 @@ a.not-active {
     border-radius: 12px;
     padding: 4px 12px;
 }
+
+.label-large{
+    font-size: 110%
+}
+
 .nav-tabs{
     background: #007fd1;
 }
@@ -336,6 +384,15 @@ a.not-active {
 /*----------------------------------------------------*/
 /*-------------------- Custom CSS --------------------*/
 /*----------------------------------------------------*/
+.prevent-scroll{
+    height: calc(100% - 150px);
+    overflow: hidden;
+}
+.inner-scroll{
+    height:100%;
+    overflow:scroll;
+}
+
 .white-text{
     color:white;
 }
@@ -382,20 +439,50 @@ body{
 .no-margin-all{
     margin:0;
 }
+.no-margin-top{
+    margin-top:0;
+}
+.no-margin-left{
+    margin-left:0;
+}
+.no-margin-right{
+    margin-right:0;
+}
+.no-margin-bottom{
+    margin-bottom:0;
+}
 .padding-10{
     padding: 10px;
+}
+.padding-bottom-10{
+    padding-bottom:10px !important;
+}
+.padding-top-5{
+    padding-top: 5px;
 }
 .padding-top-10{
     padding-top: 10px;
 }
+.padding-top-15{
+    padding-top: 15px;
+}
 .padding-right-10{
     padding-right: 10px;
+}
+.padding-left-10{
+    padding-left:10px;
 }
 .padding-left-30{
     padding-left: 30px;
 }
+.no-border-all{
+    border:none !important;
+}
 .margin-15{
     margin:15px;
+}
+.margin-left-5{
+    margin-left:5px;
 }
 .margin-left-100{
     margin-left:100px;
@@ -423,8 +510,6 @@ body{
     white-space:nowrap;
 }
 
-
-
 .btn-custom {
     padding-top: 9px;
     padding-bottom: 9px;
@@ -446,10 +531,29 @@ body{
     font-weight: 600;
     padding-left: 55px;
 }
+
+.circle-offline{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #db1f2e; 
+}
+
+.circle-online{
+    display:inline-block;
+    border: 2px solid white;
+	border-radius: 7px;
+	width: 14px;
+	height: 14px;
+    background-color: #2cb14b; 
+}
+
 .order-list-delete-button-container{
     position: absolute;
-    right: 5px;
-    top: 5px;
+    right: 0;
+    top: 0;
     z-index:50;
 }
 .order-list-delete-button{
@@ -500,8 +604,8 @@ body{
     background: white;
     border-radius: 15px;
     position: absolute;
-    right: 15px;
-    top: 15px;
+    right: 7px;
+    top: 7px;
     padding-top: 5px;
 }
 
@@ -520,7 +624,7 @@ body{
  }
 
  .tile-btn{
-    color: white;
+    color: white !important;
     font-size: 17px;
     border: none;
     border-radius: 0;
@@ -528,6 +632,7 @@ body{
     margin: auto;
     padding: 9px;
     height: 35px;
+    background: none;
  }
 
 
@@ -537,7 +642,20 @@ body{
     background: #386582;
     color: white;
     position: relative;
-    font-size: 15px;
+    font-size: 16px;
+ }
+
+
+ .card-left-border-safe{
+     border-left: solid 10px #009933;
+ }
+
+ .card-left-border-warning{
+     border-left: solid 10px #E9D460;
+ }
+
+ .card-left-border-danger{
+     border-left: solid 10px #D24D57;
  }
  .circle-quantity{
     border-radius: 20px;
@@ -555,6 +673,14 @@ body{
     padding-top:5px;
  }
 
+ /**History*/
+ .encounter-group-title{
+    background:#146396;
+    padding: 12px 20px;
+    color: white;
+    margin-bottom: 10px;
+ }
+
  /**Vaccination queue*/
  .queue-tile{
     padding: 13px 15px 10px 15px;
@@ -564,9 +690,70 @@ body{
     font-size: 15px;
     margin-bottom:10px;
  }
+.ad-hoc-title{
+        font-weight: 600;
+    font-size: 18px;
+    color: white;
+    background: #5d8db1;
+    padding: 20px;
+    margin-bottom: 10px !important;
+}
 
+ 
+ /**History tab*/
+ .history-tile{
+     background:white;
+     margin:10px 0;
+     padding:10px;
+     position: relative;
+     font-size: 16px;
+}
+.history-tile-status{
+    position: absolute;
+    right:15px;
+    top:15px;
+}
 
- /**Vaccinations */
+/**Alerts*/
+.message-content-tile{
+    background:white;
+    padding: 0 20px;
+}
+
+.message-content-icon{
+    height: 66px;
+    padding-top: 20px;
+}
+
+.alerts-tile{
+    background: white;
+    margin-bottom: 10px;
+    padding: 10px 0px;
+}
+.alerts-tile-selected{
+    background: #0e8cdf;
+    color: white;
+}
+.alerts-tile-selected img {
+    -webkit-filter: invert(100%); 
+    filter: invert(100%);
+}
+.alerts-tile-selected .text-muted{
+    color:#DDD;
+}
+
+.alerts-icon {
+    height: 42px;
+    width: 42px;
+    vertical-align:middle;
+}
+.alerts-icon-container{
+    height: 60px;
+    padding-top: 8px;
+    padding-left: 20px;
+}
+
+/**Vaccinations */
 
 .vaccinations-tile{
     background:white;
@@ -592,8 +779,9 @@ body{
 }
 .static-dock{
     position: fixed;
-    width: 100%;
-    z-index: 10;
+    left: 0;
+    right:0;
+    z-index: 24;
 }
 .header-dock.static-dock {
     box-shadow: none !important;
@@ -704,12 +892,15 @@ body{
 .glyphicon-chevron-down{
     font-size:15px;
 }
-.input-group-addon-approx{
+.input-group-addon-approx,
+.input-group-addon-no-label{
     vertical-align: top;
     border: none;
     background: #ccd4e0;
-    width: 110px;
     position: relative;
+}
+.input-group-addon-approx{
+    width: 110px;
 }
 .header-dock-labels{
     padding: 0;
@@ -753,7 +944,8 @@ body{
     color: white;
     padding: 10px 0 !important;
 }
-.fc-widget-header a{
+.fc-widget-header a,
+.fc-widget-header span{
     color:white;
     padding:0 10px;
 }
@@ -816,8 +1008,14 @@ body{
 .vis-proposal{
     background: #007fd1;
 }
+.vis-appointment{
+    background: rgba(184, 184 , 0, 0.7); 
+}
 .vis-event{
     background: #5cb85c; 
+}
+.vis-overdue{
+    background: #d13333; 
 }
 .vis-panel.vis-bottom{
     border:none;
@@ -832,6 +1030,24 @@ body{
 .vis-current-time{
     height: 90% !important;
 }
+
+/* Chart legend styles */
+.chart-legend {
+    margin: 10px 0 10px 0;
+}
+.legend-item {
+    display: inline-block;
+    margin-right: 5px;
+}
+.legend-item-color {
+    vertical-align: middle;
+    width: 40px;
+    height: 20px;
+}
+.legend-item-icon {
+    font-size: 16px;
+}
+
 /*!
  * Bootstrap v3.3.6 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -1397,3 +1613,13 @@ fieldset[disabled] .btn-danger.active {
           box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05), 0 1px 0 rgba(255, 255, 255, .1);
 }
 /*# sourceMappingURL=bootstrap-theme.css.map */
+
+.menu-disabled a {
+    pointer-events: none;
+    color: grey !important;
+}
+
+.tab-disabled a {
+    pointer-events: none;
+    color: grey !important;
+}

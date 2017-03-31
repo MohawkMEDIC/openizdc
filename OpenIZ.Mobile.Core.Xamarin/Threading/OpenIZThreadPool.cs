@@ -122,6 +122,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         }
 
         /// <summary>
+        /// Queues a non-pooled work item
+        /// </summary>
+        public void QueueNonPooledWorkItem(Action<object> action, object parm)
+        {
+            Thread thd = new Thread(new ParameterizedThreadStart(action));
+            thd.IsBackground = true;
+            thd.Name = $"OpenIZBackground-{action}";
+            thd.Start(parm);
+        }
+
+        /// <summary>
         /// Perform queue of workitem internally
         /// </summary>
         private void QueueWorkItemInternal(Action<Object> callback, object state, bool isPriority = false)

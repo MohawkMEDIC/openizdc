@@ -29,6 +29,10 @@ using OpenIZ.Mobile.Core.Configuration;
 using System.IO;
 using System.Xml.Serialization;
 using OpenIZ.Core.Diagnostics;
+using OpenIZ.Core.Applets.Model;
+using System.Xml.Linq;
+using OpenIZ.Protocol.Xml.Model;
+using OpenIZ.Protocol.Xml;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -49,23 +53,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         public SimpleClinicalProtocolRepositoryService()
         {
-            try
-            {
-                var section = ApplicationContext.Current.Configuration.GetSection<ForecastingConfigurationSection>();
-
-                if (!Directory.Exists(section.ProtocolSourceDirectory))
-                    Directory.CreateDirectory(section.ProtocolSourceDirectory);
-                foreach (var f in Directory.GetFiles(section.ProtocolSourceDirectory))
-                {
-                    XmlSerializer xsz = new XmlSerializer(typeof(OpenIZ.Core.Model.Acts.Protocol));
-                    using (var stream = File.OpenRead(f))
-                        this.m_protocols.Add(xsz.Deserialize(stream) as OpenIZ.Core.Model.Acts.Protocol);
-                }
-            }
-            catch(Exception e)
-            {
-                this.m_tracer.TraceError("Error loading protocols: {0}", e);
-            }
+            
         }
 
         /// <summary>
@@ -74,9 +62,47 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// <returns></returns>
         public IEnumerable<OpenIZ.Core.Model.Acts.Protocol> FindProtocol(Expression<Func<OpenIZ.Core.Model.Acts.Protocol, bool>> predicate, int offset, int? count, out int totalResults)
         {
+            if (this.m_protocols == null || this.m_protocols.Count == 0)
+                this.LoadProtocols();
             var retVal = this.m_protocols.Where(predicate.Compile()).Skip(offset).Take(count ?? 100);
             totalResults = retVal.Count();
             return retVal;
+        }
+
+        /// <summary>
+        /// Load protocols
+        /// </summary>
+        private void LoadProtocols()
+        {
+            try
+            {
+                // Get protocols from the applet
+                var protocols = XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("protocols/"));
+
+                foreach (var f in protocols)
+                {
+
+                    XmlSerializer xsz = new XmlSerializer(typeof(ProtocolDefinition));
+                    var content = f.Content ?? XamarinApplicationContext.Current.LoadedApplets.Resolver(f);
+                    if (content is String)
+                        using (var rStream = new StringReader(content as String))
+                            this.m_protocols.Add(
+                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtcolData()
+                            );
+                    else if (content is byte[])
+                        using (var rStream = new MemoryStream(content as byte[]))
+                            this.m_protocols.Add(new XmlClinicalProtocol(ProtocolDefinition.Load(rStream)).GetProtcolData());
+                    else if (content is XElement)
+                        using (var rStream = (content as XElement).CreateReader())
+                            this.m_protocols.Add(
+                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtcolData()
+                                );
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error loading protocols: {0}", e);
+            }
         }
 
         /// <summary>
@@ -90,16 +116,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             if (data.Key == null) data.Key = Guid.NewGuid();
             data.CreationTime = DateTime.Now;
 
-            // Section and save
-            var section = ApplicationContext.Current.Configuration.GetSection<ForecastingConfigurationSection>();
-            if (!Directory.Exists(section.ProtocolSourceDirectory))
-                Directory.CreateDirectory(section.ProtocolSourceDirectory);
-
-            XmlSerializer xsz = new XmlSerializer(typeof(OpenIZ.Core.Model.Acts.Protocol));
-            using (var stream = File.Create(Path.Combine(section.ProtocolSourceDirectory, data.Key.ToString())))
-                xsz.Serialize(stream, data);
-
-            if(!this.m_protocols.Any(o=>o.Key == data.Key))
+            if (!this.m_protocols.Any(o => o.Key == data.Key))
                 this.m_protocols.Add(data);
 
             return data;

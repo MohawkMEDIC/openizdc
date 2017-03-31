@@ -50,15 +50,5 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(SessionServiceBridge));
 
-      
-        /// <summary>
-        /// Get magic
-        /// </summary>
-        [Export]
-        [JavascriptInterface]
-        public String GetMagic()
-        {
-            return ApplicationContext.Current.ExecutionUuid.ToString();
-        }
     }
 }

@@ -1,40 +1,53 @@
 ﻿<!--
- - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ - Copyright 2015-2016 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
- - User: fyfej
- - Date: 2016-11-14
+ -
+ - User: justi
+ - Date: 2016-7-23
  -->
 <div id="layout-navbar" xmlns:oiz="http://openiz.org/applet" xmlns="http://www.w3.org/1999/xhtml" oiz:layout="/org.openiz.core/layouts/root.html" ng-controller="LayoutController">
     <oiz:script>/org.openiz.core/controllers/layouts/navbar.js</oiz:script>
     <div class="navbar navbar-inverse">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-small">
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
+                <span ng-if="$root.page.onlineState">
+
+                    <span ng-if="$root.page.onlineState &amp;&amp; $root.session.method != 'LOCAL'">
+                        <span class="circle-online"></span>
+                        {{ 'locale.network.online' | i18n }}
+                    </span>
+                    <span ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'">
+                        <span class="circle-offline"></span>
+                        {{ 'locale.network.offline' | i18n }}
+                    </span>
+                </span>
             </a>
         </div>
-        <div class="navbar-collapse collapse">
+        <div class="navbar-collapse collapse" ng-class="{'navbar-collapse-small' : windowWidth &lt; 768}">
             <ul class="nav navbar-nav navbar-right">
+
                 <li ng-repeat="m in menuItems">
-                    <a ng-if="!m.menu" ng-href="{{::m.action}}">
+                    <a ng-if="!m.menu" ng-href="{{::m.action}}" data-toggle="collapse" data-target=".navbar-collapse-small">
                         <img ng-if="m.icon" class="navbar-icon" ng-src="{{::m.icon}}" ng-alt="{{::m.text}}" ng-title="{{::m.text}}" /> <span class="oiz-menu-text">{{::m.text}}</span>
                     </a>
                     <a ng-if="m.menu" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -42,14 +55,13 @@
                     </a>
                     <ul class="dropdown-menu" ng-if="m.menu">
                         <li ng-repeat="c in ::m.menu" ng-class="{ 'disabled menu-disabled' : c.action == '#/encounter/search/test'} ">
-                            <a ng-href="{{::c.action}}">
+                            <a ng-href="{{::c.action}}" data-toggle="collapse" data-target=".navbar-collapse-small">
                                 <img class="navbar-icon" ng-if="::c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}" />
                                 <img class="navbar-icon" ng-if="::!c.icon" src="/org.openiz.core/img/appbar.blank.png" />
                                 {{::c.text}}
                             </a>
                         </li>
                     </ul>
-
                 </li>
                 <li class="dropdown" id="langDropDown" ng-if="$root.session.user === undefined">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -57,47 +69,33 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
-                            <a href="#" rel="en" ng-click="setLocale('en');">
+                            <a href="#" rel="en" ng-click="setLocale('en');" data-toggle="collapse" data-target=".navbar-collapse-small">
                                 English
                             </a>
                         </li>
                         <li role="presentation">
-                            <a href="#" rel="sw" ng-click="setLocale('fr');">
-                                Francais
+                            <a href="#" rel="sw" ng-click="setLocale('sw');" data-toggle="collapse" data-target=".navbar-collapse-small">
+                                Kiswahili
                             </a>
                         </li>
                     </ul>
                 </li>
-                <li class="dropdown" ng-show="$root.session.user">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <li ng-show="$root.session.user">
+                    <a href="#" ui-sref="org-openiz-core.alert()"
+                       class="dropdown-toggle" role="button"
+                       data-toggle="collapse" data-target=".navbar-collapse-small"
+                       aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.email.png" class="navbar-icon" /> <span class="oiz-menu-text">{{ 'locale.alerts.title' | i18n }}</span>
                         <span ng-if="messages" class="badge">
                             {{messages.length}}
                         </span>
                     </a>
-                    <ul class="dropdown-menu">
-                        <li class="message-summary-panel" role="presentation" ng-repeat="msg in messages" style="padding-right:10px; min-width:350px">
-                            <a style="padding-left:0px" ui-sref="org-openiz-core.alert({alertId: msg.id})" >
-                                <div style="padding-left:0px" class="container-fluid">
-                                    <div class="col-xs-2">
-                                        <img class="navbar-icon" src="/org.openiz.core/img/msg/{{msg.flags}}.png" />
-                                    </div>
-                                    <div class="col-xs-10">
-                                        <span>
-                                            <span class="subject">{{msg.subject}}</span><br />
-                                            <span class="sender">{{msg.from}}</span><span class="text-muted">{{msg.time | date: 'yyyy-MM-dd HH:mm'}}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </a>
-
-                            
-
-                        </li>
-                        <li role="presentation" ng-if="!messages">
-                            {{ 'locale.alerts.noalerts' | i18n }}
-                        </li>
-                    </ul>
+                </li>
+                <li id="syncCtrDropDown" ng-show="$root.session.user">
+                    <a ui-sref="org-openiz-core.sync()">
+                        <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon"/> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
+                        <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
+                    </a>
                 </li>
                 <li class="dropdown" ng-show="$root.session.user">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -105,12 +103,12 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation">
-                            <a ui-sref="org-openiz-core.preferences">
+                            <a ui-sref="org-openiz-core.preferences" data-toggle="collapse" data-target=".navbar-collapse-small">
                                 <img src="/org.openiz.core/img/appbar.cog.png" class="navbar-icon" /> {{ 'locale.layout.navbar.preferences' | i18n }}
                             </a>
                         </li>
                         <li role="presentation">
-                            <a href="#" ng-click="logout();">
+                            <a href="#" ng-click="logout();" data-toggle="collapse" data-target=".navbar-collapse-small">
                                 <img src="/org.openiz.core/img/appbar.man.suitcase.fast.png" class="navbar-icon" /> {{ 'locale.layout.navbar.logout' | i18n }}
                             </a>
                         </li>
@@ -127,13 +125,7 @@
     <footer class="footer">
         <hr />
         <div class="container">
-            <p class="text-muted text-center">
-                &#169;
-                {{ 'locale.layout.footer' | i18n }}
-            </p>
-        </div>
-        <div class="sticky-footer" style="position:fixed; bottom:0; z-index:999" ng-if="!$root.page.onlineState  || $root.session.method == 'LOCAL'">
-            <img src="~/img/appbar.network.disconnect.png" /> {{ 'locale.network.offline' | i18n }}
+            <p class="text-muted text-center">(C){{ 'locale.layout.footer' | i18n }}</p>
         </div>
     </footer>
 

@@ -69,6 +69,7 @@ namespace OpenIZ.Mobile.Core.Android.Diagnostics
                     Log.Verbose(source, String.Format(format, args));
                     break;
             }
+            Console.WriteLine(format, args);
         }
     }
 }

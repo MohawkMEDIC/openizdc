@@ -50,7 +50,7 @@ using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
-using OpenIZ.Mobile.Core.Data.Warehouse;
+using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -130,12 +130,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 AuthenticationAsset = "/org/openiz/core/views/security/login.html"
             };
 
-            // Protocol 
-            ForecastingConfigurationSection forecastingSection = new ForecastingConfigurationSection()
-            {
-                ProtocolSourceDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "protocols"),
-            };
-
             // Initial applet style
             ApplicationConfigurationSection appSection = new ApplicationConfigurationSection()
             {
@@ -147,7 +141,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
-                    typeof(LocalAlertService).AssemblyQualifiedName,
+                    //typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
@@ -170,6 +164,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                 },
@@ -229,10 +224,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             DiagnosticsConfigurationSection diagSection = new DiagnosticsConfigurationSection()
             {
                 TraceWriter = new List<TraceWriterConfiguration>() {
-                    new TraceWriterConfiguration () {
-                        Filter = System.Diagnostics.Tracing.EventLevel.LogAlways,
+                    new TraceWriterConfiguration() {
+                        Filter = System.Diagnostics.Tracing.EventLevel.Warning,
                         InitializationData = "OpenIZ",
-                        TraceWriter = new FileTraceWriter (System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
+                        TraceWriter = new FileTraceWriter(System.Diagnostics.Tracing.EventLevel.LogAlways, "OpenIZ")
                     }
                 }
             };
@@ -243,7 +238,6 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             retVal.Sections.Add(appSection);
             retVal.Sections.Add(secSection);
             retVal.Sections.Add(serviceSection);
-            retVal.Sections.Add(forecastingSection);
             retVal.Sections.Add(new SynchronizationConfigurationSection()
             {
                 PollInterval = new TimeSpan(0, 5, 0)

@@ -39,10 +39,5 @@ namespace Minims
         [Parameter("applet")]
         public StringCollection AppletDirectories { get; set; }
 
-        /// <summary>
-        /// Protocol directory
-        /// </summary>
-        [Parameter("protocols")]
-        public StringCollection ProtocolDirectory { get; set; }
     }
 }

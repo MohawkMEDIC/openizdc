@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -33,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the entity identifier.
 		/// </summary>
 		/// <value>The entity identifier.</value>
-		[Column("entity_uuid"), Indexed, MaxLength(16), NotNull]
-		public byte[] EntityUuid {
+		[Column("entity_uuid"), Indexed, MaxLength(16), NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
+		public byte[] SourceUuid {
 			get;
 			set;
 		}

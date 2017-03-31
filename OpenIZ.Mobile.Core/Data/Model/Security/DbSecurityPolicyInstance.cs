@@ -20,6 +20,9 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
@@ -51,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("entity_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull]
+        [Column("entity_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid))]
         public int EntityId
         {
             get;
@@ -62,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull]
+        [Column("policy_id"), Indexed(Name = "entity_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
         public int PolicyId
         {
             get;
@@ -82,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("act_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull]
+        [Column("act_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
         public int ActId
         {
             get;
@@ -93,7 +96,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull]
+        [Column("policy_id"), Indexed(Name = "act_security_policy_source_policy", Unique = true), NotNull, ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
         public int PolicyId
         {
             get;
@@ -112,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("role_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("role_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityRole), nameof(DbSecurityRole.Uuid))]
         public byte[] RoleId
         {
             get;
@@ -123,7 +126,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("policy_id"), Indexed(Name = "security_role_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
         public byte[] PolicyId
         {
             get;
@@ -141,7 +144,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("application_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("application_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityApplication), nameof(DbSecurityApplication.Uuid))]
         public byte[] ApplicationId
         {
             get;
@@ -152,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("policy_id"), Indexed(Name = "security_application_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
         public byte[] PolicyId
         {
             get;
@@ -170,7 +173,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the source
         /// </summary>
         /// <value>The source identifier.</value>
-        [Column("device_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("device_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Uuid))]
         public byte[] DeviceId
         {
             get;
@@ -181,7 +184,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
         /// Gets or sets the policy identifier.
         /// </summary>
         /// <value>The policy identifier.</value>
-        [Column("policy_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16)]
+        [Column("policy_id"), Indexed(Name = "security_device_policy_source_policy", Unique = true), NotNull, MaxLength(16), ForeignKey(typeof(DbSecurityPolicy), nameof(DbSecurityPolicy.Uuid))]
         public byte[] PolicyId
         {
             get;

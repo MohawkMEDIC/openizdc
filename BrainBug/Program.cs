@@ -61,8 +61,14 @@ namespace BrainBug
             if (parameters.PackageId != null)
             {
                 var exeFile = Path.Combine(parameters.SdkPath, "platform-tools", "adb.exe");
-                StringBuilder argStr = new StringBuilder("backup ");
+                StringBuilder argStr = new StringBuilder();
+
+                if (!String.IsNullOrEmpty(parameters.DeviceId))
+                    argStr.AppendFormat(" -s {0} ", parameters.DeviceId);
+                argStr.Append("backup ");
+
                 argStr.AppendFormat("-f \"backup.ab\"", parameters.BackupFile);
+
                 argStr.Append(" -noapk -noobb ");
                 argStr.Append(parameters.PackageId);
                 Console.WriteLine("Starting {0} {1}", exeFile, argStr.ToString());

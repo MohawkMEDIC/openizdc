@@ -12,11 +12,19 @@
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.#ctor(OpenIZ.Core.Http.IRestClient)">
             <summary>
             Initializes a new instance of the <see cref="T:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient"/> class
-            with a specified <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
+            with a specific <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.
             </summary>
             <param name="client">The <see cref="T:OpenIZ.Core.Http.IRestClient"/> instance.</param>
         </member>
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Create``1(``0)">
+            <summary>
+            Creates specified data.
+            </summary>
+            <typeparam name="TModel">The type of data to be created.</typeparam>
+            <param name="data">The data to be created.</param>
+            <returns>Returns the newly created data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Create``1(``0,System.Boolean)">
             <summary>
             Creates specified data.
             </summary>
@@ -57,12 +65,26 @@
             <param name="query">The query parameters as a LINQ expression.</param>
             <returns>Returns a Bundle containing the data.</returns>
         </member>
-        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32})">
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Boolean)">
             <summary>
             Performs a query.
             </summary>
             <typeparam name="TModel">The type of object to query.</typeparam>
             <param name="query">The query parameters as a LINQ expression.</param>
+            <param name="offset">The offset of the query.</param>
+            <param name="count">The count of the query results.</param>
+            <param name="all">Whether the query should return all nested properties.</param>
+            <returns>Returns a Bundle containing the data.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Query``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.String)">
+            <summary>
+            Performs a query.
+            </summary>
+            <typeparam name="TModel">The type of object to query.</typeparam>
+            <param name="query">The query parameters as a LINQ expression.</param>
+            <param name="offset">The offset of the query.</param>
+            <param name="count">The count of the query results.</param>
+            <param name="expandProperties">An property traversal for which to expand upon.</param>
             <returns>Returns a Bundle containing the data.</returns>
         </member>
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Update``1(``0)">
@@ -73,9 +95,24 @@
             <param name="data">The data to be updated.</param>
             <returns>Returns the updated data.</returns>
         </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Update``1(``0,System.Boolean)">
+            <summary>
+            Updates a specified object.
+            </summary>
+            <typeparam name="TModel">The type of data to be updated.</typeparam>
+            <param name="data">The data to be updated.</param>
+            <returns>Returns the updated data.</returns>
+        </member>
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Patch(OpenIZ.Core.Model.Patch.Patch)">
             <summary>
-            Sends a patch operation to the server
+            Sends a patch operation to the server.
+            </summary>
+            <param name="patch">The patch containing the information to be patched.</param>
+            <returns>Returns the updated version GUID.</returns>
+        </member>
+        <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Options">
+            <summary>
+            Gets the options for the IMS
             </summary>
         </member>
         <member name="M:OpenIZ.Messaging.IMSI.Client.ImsiServiceClient.Dispose(System.Boolean)">

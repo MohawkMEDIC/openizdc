@@ -88,6 +88,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unfortunately compact is not permitted at this time.
+        /// </summary>
+        internal static string err_compactNotPermitted {
+            get {
+                return ResourceManager.GetString("err_compactNotPermitted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Device has already been registered..
         /// </summary>
         internal static string err_duplicate_deviceName {
@@ -210,6 +219,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         internal static string flushing_logFile {
             get {
                 return ResourceManager.GetString("flushing_logFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checking for updates....
+        /// </summary>
+        internal static string locale_updateCheck {
+            get {
+                return ResourceManager.GetString("locale_updateCheck", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Updating package {0}.....
+        /// </summary>
+        internal static string locale_updating {
+            get {
+                return ResourceManager.GetString("locale_updating", resourceCulture);
             }
         }
     }

@@ -50,7 +50,7 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
         }
 
         // Submit
-        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#submitBugButton');
         OpenIZ.App.submitBugReportAsync({
             data: $scope.report,
             continueWith: function (data) {
@@ -64,7 +64,7 @@ layoutApp.controller('ReportBugController', ['$scope', '$rootScope', function ($
                     console.log(error);
             },
             finally: function () {
-                OpenIZ.App.hideWait();
+                OpenIZ.App.hideWait('#submitBugButton');
             }
         });
     }

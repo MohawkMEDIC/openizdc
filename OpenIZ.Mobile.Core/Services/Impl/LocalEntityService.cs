@@ -51,6 +51,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             throw new NotImplementedException();
         }
 
+
+        public IEnumerable<EntityRelationship> Find(Expression<Func<EntityRelationship, bool>> query, int offset, int? count, out int totalResults)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Finds a list of entities.
         /// </summary>

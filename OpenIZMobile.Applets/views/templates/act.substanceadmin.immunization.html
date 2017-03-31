@@ -17,12 +17,16 @@
  - User: fyfej
  - Date: 2016-11-14
  -->
-<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}"
+     id="{{act.id}}">
     <div class="row">
         <div class="control-label col-xs-12">
             <div class="input-group">
                 <label class="control-label">
-                    {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{act.targetModel.doseSequence}}
+                    {{ 'locale.encounters.immunization.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} {{ 'locale.encounters.immunization.doseSequence' | i18n }} {{ act.targetModel.doseSequence }}
+                <span ng-if="act._created">
+                    ({{ 'locale.encounters.immunization.isBooster' | i18n }})
+                </span>
 
                 </label><br />
                 <span ng-if="act.targetModel._overdue">
@@ -39,16 +43,28 @@
             <div class="col-xs-7" ng-show="act._enabled">
                 <div class="input-group" ng-show="act._created">
                     <label>{{ 'locale.encounters.immunizations.antigen' | i18n }}</label>
-                    <select ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
-                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.antigen' | i18n }}</option>
+                    <select data-defaultFirst="true" ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;determinerConcept.mnemonic=Described" bind:value="name[Assigned].component[null].value">
                     </select>
                 </div>
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" ng-required="act._enabled" name="consumable_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.participation.Consumable.player" data-watch="act.targetModel.participation.Product.player" data-watch-target="relationship[ManufacturedProduct].source" oiz-databind="ManufacturedMaterial" data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}" }' data-display="scope.lotNumber">
-                        <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.lot' | i18n }}</option>
+                    <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
+                            ng-required="act._enabled" 
+                            name="consumable_{{act.targetModel.id}}" 
+                            class="form-control" 
+                            ng-init="act.targetModel.participation.Consumable.player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
+                            ng-model="act.targetModel.participation.Consumable.player" 
+                            data-watch="act.targetModel.participation.Product.player" 
+                            data-watch-target="relationship[ManufacturedProduct].source" 
+                            oiz-databind="ManufacturedMaterial" 
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.participation.Product.player }}", "expiryDate" : "&gt;{{ $root.page.loadTime | date: "yyyy-MM-dd" }}", "relationship[OwnedEntity].source" : "{{ $root.session.entity.relationship.DedicatedServiceDeliveryLocation.target }}","relationship[OwnedEntity].quantity" : ">0" }' 
+                            data-display="scope.lotNumber" 
+                            data-defaultEmpty="true"
+                            data-defaultFirst="true"
+                            data-whenEmpty="var scp = $scope; while(!scp.act) scp = scp.parent; var act = scp.act; act._enabled = false; act.targetModel.reasonConcept = 'c7469fad-f190-40a2-a28d-f97d1863e8cf';"
+                            >
                     </select>
                 </div>
                 <div class="row">
@@ -81,7 +97,7 @@
                     <label>
                         {{ 'locale.encounters.protocolViolation.reason' | i18n }}
                     </label>
-                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                     </select>
                 </div>

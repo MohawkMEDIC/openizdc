@@ -21,7 +21,7 @@
     <div class="row">
         <div class="control-label col-xs-12">
             <label class="control-label">
-                {{ 'locale.encounters.supplement.title' | i18n }}
+                {{ 'locale.encounters.supplement.title' | i18n }}: {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
 
             </label><br />
             <span ng-if="act.targetModel._overdue">

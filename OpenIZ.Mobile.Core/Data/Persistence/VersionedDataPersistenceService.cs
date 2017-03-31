@@ -28,46 +28,53 @@ using SQLite.Net;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
+    public abstract class VersionedDataPersistenceService<TModel, TDomain> : VersionedDataPersistenceService<TModel, TDomain, TDomain>
+    where TDomain : DbVersionedData, new()
+    where TModel : VersionedEntityData<TModel>, new()
+    {
+    }
+
     /// <summary>
     /// Versioned domain data
     /// </summary>
-    public abstract class VersionedDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain> 
-        where TDomain : DbVersionedData, new() 
-        where TModel : VersionedEntityData<TModel>, new()
+    public abstract class VersionedDataPersistenceService<TModel, TDomain, TQueryResult> : BaseDataPersistenceService<TModel, TDomain, TQueryResult>
+    where TDomain : DbVersionedData, new()
+    where TModel : VersionedEntityData<TModel>, new()
+    where TQueryResult : DbIdentified
     {
 
         /// <summary>
         /// Insert the data
         /// </summary>
-        public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey ;
-            return base.Insert(context, data);
+            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey;
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the data with new version information
         /// </summary>
-        public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
             var key = data.Key?.ToByteArray();
             if (!data.VersionKey.HasValue)
                 data.VersionKey = Guid.NewGuid();
-            else if (context.Table<TDomain>().Where(o=>o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
+            else if (context.Connection.Table<TDomain>().Where(o => o.Uuid == key).ToList().FirstOrDefault()?.VersionKey == data.VersionKey)
                 data.VersionKey = Guid.NewGuid();
             data.VersionSequence++;
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the specified data
         /// </summary>
-        public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel ObsoleteInternal(LocalDataContext context, TModel data)
         {
             data.PreviousVersionKey = data.VersionKey;
             data.VersionKey = Guid.NewGuid();
-            return base.Obsolete(context, data);
+            return base.ObsoleteInternal(context, data);
         }
     }
 }

@@ -31,6 +31,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Applets.Model;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -173,6 +174,16 @@ namespace OpenIZ.Mobile.Core
         public abstract void SaveConfiguration();
 
         /// <summary>
+        /// Gets user preference application
+        /// </summary>
+        public abstract OpenIZConfiguration GetUserConfiguration(String userId);
+
+        /// <summary>
+        /// Save user configuration
+        /// </summary>
+        public abstract void SaveUserConfiguration(String userId, OpenIZConfiguration config);
+
+        /// <summary>
         /// Gets the policy decision service.
         /// </summary>
         /// <value>The policy decision service.</value>
@@ -223,7 +234,8 @@ namespace OpenIZ.Mobile.Core
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));
-            foreach (var d in daemons.Distinct())
+            var nonChangeDaemons = daemons.Distinct().ToArray();
+            foreach (var d in nonChangeDaemons)
             {
                 tracer.TraceInfo("Starting {0}", d.GetType().Name);
                 if (!d.Start())
@@ -259,6 +271,11 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
+
+        /// <summary>
+        /// Perform platform specific installation
+        /// </summary>
+        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
         /// Add service 

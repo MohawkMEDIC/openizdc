@@ -28,7 +28,6 @@
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <RunCodeAnalysis>false</RunCodeAnalysis>
-    <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
     <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
@@ -37,6 +36,9 @@
     <Debugger>Xamarin</Debugger>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <AndroidStoreUncompressedFileExtensions>.pak</AndroidStoreUncompressedFileExtensions>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <EnableProguard>False</EnableProguard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -58,8 +60,9 @@
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <DebugSymbols>False</DebugSymbols>
     <AndroidLinkSkip>System.Xml.Linq;mscorlib;System</AndroidLinkSkip>
-    <AndroidSupportedAbis>armeabi-v7a,x86</AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi-v7a;x86;arm64-v8a</AndroidSupportedAbis>
     <DefineConstants>TRACE</DefineConstants>
+    <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
@@ -68,16 +71,20 @@
     <Reference Include="ExpressionEvaluator">
       <HintPath>..\Solution Items\ExpressionEvaluator.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Data.Sqlite" />
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="OpenIZ.Core.Model, Version=0.6.14.39571, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.PCL">
+      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Messaging.AMI.Client, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -86,14 +93,27 @@
     <Reference Include="OpenIZ.Protocol.Xml">
       <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="SQLitePCL.raw, Version=0.7.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solution Items\OpenIZ.Core.PCL.dll</HintPath>
-    </Reference>
     <Reference Include="OpenIZ.Protocol.Xml">
       <HintPath>..\Solution Items\OpenIZ.Protocol.Xml.dll</HintPath>
     </Reference>
+    <Reference Include="SQLite.Net.Platform.XamarinAndroid, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\Android\SQLite.Net.Platform.XamarinAndroid.dll</HintPath>
+    </Reference>
+    <Reference Include="SQLitePCL.raw">
+      <HintPath>..\Solution Items\Android\SQLitePCL.raw.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\System.Data.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Transactions.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\System.Transactions.Portable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="Mono.Android" />
@@ -130,6 +150,7 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
+    <AndroidAsset Include="Assets\Applets\tz.timr.applet.pak" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
@@ -189,10 +210,10 @@
     <AndroidEnvironment Include="environment.txt" />
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml" 
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml"  
 "C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" --deploy=C:\inetpub\wwwroot --lang=en 
- copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\openiz.core.applet.xml"
- copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\openiz.core.applet.pak"
+ copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\org.openiz.core.xml"
+ copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
  copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
 </PreBuildEvent>
   </PropertyGroup>

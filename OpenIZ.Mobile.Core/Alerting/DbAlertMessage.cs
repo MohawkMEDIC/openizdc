@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Alerting
             this.Body = am.Body;
             this.To = am.To;
             this.CreatedBy = AuthenticationContext.Current.Principal?.Identity.Name ?? "SYSTEM";
-            this.Flags = am.Flags;
+            this.Flags = (int)am.Flags;
             this.Id = am.Key.HasValue ? am.Key.Value.ToByteArray() : Guid.NewGuid().ToByteArray();
         }
 
@@ -59,10 +59,11 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// </summary>
         public AlertMessage ToAlert()
         {
-            return new AlertMessage(this.From, this.To, this.Subject, this.Body, this.Flags)
+            return new AlertMessage(this.From, this.To, this.Subject, this.Body, (AlertMessageFlags)this.Flags)
             {
                 Key = new Guid(this.Id),
-				CreationTime = this.TimeStamp
+				CreationTime = this.TimeStamp.GetValueOrDefault(),
+                UpdatedTime = this.TimeStamp
             };
         }
 
@@ -76,13 +77,13 @@ namespace OpenIZ.Mobile.Core.Alerting
         /// Gets or sets the time
         /// </summary>
         [Column("time")]
-        public DateTime TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
 
         /// <summary>
         /// Gets or sets the status of the alert
         /// </summary>
         [Column("flags"), Indexed]
-        public AlertMessageFlags Flags { get; set; }
+        public int Flags { get; set; }
 
         /// <summary>
         /// The principal that created the message

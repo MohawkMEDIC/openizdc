@@ -31,6 +31,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     OpenIZ.Configuration.getConfigurationAsync({
         continueWith: function (config) {
             $scope.config = config;
+            $scope.config.security.port = 8080;
             $scope.config.network.useProxy = $scope.config.network.proxyAddress != null;
             $scope.config.network.proxyAddress = $scope.config.network.proxyAddress || null;
             $scope.ui = {
@@ -77,16 +78,17 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     $scope.joinRealm = function (realm) {
 
         var doJoin = function (force) {
-            OpenIZ.App.showWait();
-
+            OpenIZ.App.showWait('#joinRealmButton');
             OpenIZ.Configuration.joinRealmAsync({
                 domain: realm.domain,
                 deviceName: realm.deviceName,
-                enableTrace : realm.enableTrace,
+                enableTrace: realm.enableTrace,
+                enableSSL : realm.enableSSL,
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
                     alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
+                    OpenIZ.App.hideWait('#joinRealmButton');
                 },
                 onException: function (error) {
                     if (error.type == 'DuplicateNameException')
@@ -100,7 +102,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                         }
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait();
+                    OpenIZ.App.hideWait('#joinRealmButton');
                 }
             });
         };
@@ -115,9 +117,11 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
             alert(OpenIZ.Localization.getString("locale.settings.error.noRealm"));
         else {
             OpenIZ.App.showWait();
+            OpenIZ.App.showWait('#saveConfigButton');
             OpenIZ.Configuration.saveAsync({
                 data: config,
                 continueWith: function () {
+                    OpenIZ.App.hideWait('#saveConfigButton');
                     OpenIZ.App.close();
                 }
             });

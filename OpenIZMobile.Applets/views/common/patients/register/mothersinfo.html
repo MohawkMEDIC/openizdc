@@ -26,7 +26,7 @@
             <div class="input-group">
                 <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.givenName' | i18n }}" data-content="{{ 'locale.patient.mother.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.mother.givenName' | i18n }}" data-content="{{ 'locale.patient.mother.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -37,7 +37,7 @@
             <div class="input-group">
                 <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.familyName' | i18n }}" data-content="{{ 'locale.patient.mother.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.familyName' | i18n }}" data-content="{{ 'locale.patient.mother.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
@@ -45,41 +45,47 @@
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-4">
-            <div class="input-group">
-                <select disabled="disabled" name="mothersIdentifierType" id="mothersIdentifierType" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.$other.authority"
-                        bind:source="AssigningAuthority" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA">
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.required || editMotherForm.mothersIdentifierValue.$error.required}">
+                <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
+                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA">
                 </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
             </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group">
-                <input disabled="disabled" placeholder="(Under development)" type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.$other.value" class="form-control" />
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersIdentifierValue.$error.maxlength || editMotherForm.mothersIdentifierValue.$error.maxlength}">
+                <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" />
                 <span class="input-group-btn">
-                    <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.$other.value)">
+                    <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
+        <p class="col-xs-offset-3 col-xs-4 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierType.$error.required || editMotherForm.mothersIdentifierType.$error.required">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersIdentifierValue.$error.maxlength || editMotherForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
         <div class="col-xs-4">
             <div class="input-group">
-                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].use"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
                         bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
              </div>
         </div>
         <div class="col-xs-5">
-            <div class="input-group">
-                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" />
+            <div class="input-group" ng-class="{ 'has-error': editPatientForm.mothersPhoneNumber.$error.pattern || editMotherForm.mothersPhoneNumber.$error.pattern}">
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value" class="form-control" ng-pattern="phoneRegex"/>
+                <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex"/>
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-toggle="popover" data-placement="left" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></button>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>
+        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.mothersPhoneNumber.$error.pattern || editMotherForm.mothersPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
     </div>
 </fieldset>

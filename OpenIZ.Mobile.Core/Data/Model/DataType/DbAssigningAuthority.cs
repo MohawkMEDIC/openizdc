@@ -17,6 +17,9 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -31,6 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
     /// Represents an assigning authority
     /// </summary>
     [Table("assigning_authority")]
+    [AssociativeTable(typeof(DbConcept), typeof(DbAuthorityScope))]
     public class DbAssigningAuthority : DbBaseData
     {
 
@@ -67,8 +71,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// <summary>
         /// Assigning device identifier
         /// </summary>
-        [Column("assigningDevice")]
+        [Column("assigningDevice"), ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Uuid))]
         public byte[] AssigningDeviceUuid { get; set; }
+
+        /// <summary>
+        /// Validation regex
+        /// </summary>
+        [Column("val_rgx")]
+        public String ValidationRegex { get; set; }
 
     }
 
@@ -82,13 +92,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("authority"), MaxLength(16), NotNull]
+        [Column("authority"), MaxLength(16), NotNull, ForeignKey(typeof(DbAssigningAuthority), nameof(DbAssigningAuthority.Uuid))]
         public byte[] AssigningAuthorityUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the scope of the auhority
         /// </summary>
-        [Column("concept"), MaxLength(16), NotNull]
+        [Column("concept"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ScopeConceptUuid { get; set; }
 
     }

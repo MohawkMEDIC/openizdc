@@ -104,14 +104,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
             lock (this.m_logBacklog)
             {
                 this.m_logBacklog.Enqueue(String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args)));
+                //string dq = String.Format("{0}@{1} <{2}> [{3:o}]: {4}", source, Thread.CurrentThread.Name, level, DateTime.Now, String.Format(format, args));
+                //using (TextWriter tw = File.AppendText(this.m_logFile))
+                //    tw.WriteLine(dq); // This allows other threads to add to the write queue
+
                 Monitor.Pulse(this.m_logBacklog);
             }
         }
         #endregion
 
+        /// <summary>
+        /// Log dispatcher loop.
+        /// </summary>
         private void LogDispatcherLoop()
         {
-            while(true)
+            while (true)
             {
                 while (true)
                 {
@@ -138,7 +145,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Diagnostics
                     }
                     finally
                     {
-                        if(Monitor.IsEntered(this.m_logBacklog))
+                        if (Monitor.IsEntered(this.m_logBacklog))
                             Monitor.Exit(this.m_logBacklog);
                     }
                 }

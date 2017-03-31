@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Cannot query for bundles
         /// </summary>
-        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, Expression<Func<Bundle, bool>> query, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             totalResults = 0;
             return new List<Bundle>();
@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Connot query bundles
         /// </summary>
-        public override IEnumerable<Bundle> Query(SQLiteConnectionWithLock context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId)
+        protected override IEnumerable<Bundle> QueryInternal(LocalDataContext context, string storedQueryName, IDictionary<string, object> parms, int offset, int count, out int totalResults, Guid queryId, bool countResults)
         {
             totalResults = 0;
             return new List<Bundle>();
@@ -59,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the bundle
         /// </summary>
-        public override Bundle Insert(SQLiteConnectionWithLock context, Bundle data)
+        protected override Bundle InsertInternal(LocalDataContext context, Bundle data)
         {
             foreach (var itm in data.Item)
             {
@@ -68,7 +68,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 String method = "Insert";
                 if (itm.TryGetExisting(context) != null)
                     method = "Update";
-                var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(SQLiteConnectionWithLock), itm.GetType() });
+                var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(LocalDataContext), itm.GetType() });
                 itm.CopyObjectData(mi.Invoke(svc, new object[] { context, itm }));
             }
             return data;
@@ -77,7 +77,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update everything in the bundle
         /// </summary>
-        public override Bundle Update(SQLiteConnectionWithLock context, Bundle data)
+        protected override Bundle UpdateInternal(LocalDataContext context, Bundle data)
         {
             foreach (var itm in data.Item)
             {
@@ -91,7 +91,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Obsolete everything in the bundle
         /// </summary>
-        public override Bundle Obsolete(SQLiteConnectionWithLock context, Bundle data)
+        protected override Bundle ObsoleteInternal(LocalDataContext context, Bundle data)
         {
             foreach (var itm in data.Item)
             {

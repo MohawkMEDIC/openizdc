@@ -24,6 +24,11 @@
             Gets or sets the stop time of the act
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Act.TemplateKey">
+            <summary>
+            Gets the template key
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.Act.Template">
             <summary>
             Gets or sets the template identifier 
@@ -252,6 +257,11 @@
             Gets or sets the protocol data related to the protocol
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.Sequence">
+            <summary>
+            Represents the sequence of the act in the protocol
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.ActProtocol.StateData">
             <summary>
             Represents any state data related to the act / protocol link
@@ -475,6 +485,11 @@
         <member name="P:OpenIZ.Core.Model.Acts.Protocol.Definition">
             <summary>
             Contains instructions which the handler class can understand
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Protocol.Oid">
+            <summary>
+            Gets or sets the OID
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.Protocol.SemanticEquals(System.Object)">
@@ -846,6 +861,16 @@
             Packages the objects into a bundle
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Collection.ILockable">
+            <summary>
+            Represents a lockable collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.ILockable.GetLocked">
+            <summary>
+            Get a locked version of the collection
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1">
             <summary>
             Represents a collection of entities
@@ -1007,6 +1032,12 @@
             <summary>
             Copy the specified data to an array
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.OpenIZ#Core#Model#Collection#ILockable#GetLocked">
+            <summary>
+            Get locked version
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.SimpleAssociationCollection{`0}">
             <summary>
@@ -2123,6 +2154,11 @@
             Assigning device identifier
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ValidationRegex">
+            <summary>
+            Gets or sets the validation regex
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDevice">
             <summary>
             Gets or sets the assigning device
@@ -2133,6 +2169,11 @@
             Gets concept sets to which this concept is a member
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ToMinimal">
+            <summary>
+            Represent the AA as a minimal info
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.Refresh">
             <summary>
             Force reloading of delay load properties
@@ -2141,6 +2182,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.SemanticEquals(System.Object)">
             <summary>
             Gets the equals of this object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ShouldSerializeAssigningDeviceKey">
+            <summary>
+            Should serialize assigning device key
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.CodeSystem">
@@ -2327,6 +2373,11 @@
         <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.Refresh">
             <summary>
             Refresh the object's delay load properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.ShouldSerializePhoneticAlgorithmKey">
+            <summary>
+            Should serialize 
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm">
@@ -2589,6 +2640,11 @@
             Creates a new entity identifier
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.EntityIdentifier.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new entity identifier with specified nsid
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.ActIdentifier">
             <summary>
             Act identifier
@@ -2810,12 +2866,7 @@
             Display name of a code system or reference term
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ReferenceTermKey">
-            <summary>
-            Back-reference to reference term
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeReferenceTermKey">
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeSourceEntityKey">
             <summary>
             Should serialize reference term key
             </summary>
@@ -3031,7 +3082,7 @@
             Gets or sets the security device
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.ManufacturedModelName">
+        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.ManufacturerModelName">
             <summary>
             Gets or sets the manufacturer model name
             </summary>
@@ -3059,6 +3110,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.Entity.#ctor">
             <summary>
             Creates a new instance of the entity class
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.TemplateKey">
+            <summary>
+            Gets the template key
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
@@ -3170,6 +3226,16 @@
         <member name="M:OpenIZ.Core.Model.Entities.Entity.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeCreationActKey">
+            <summary>
+            Should serialize creation act
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTypeConcept">
+            <summary>
+            Should serialize type concept
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddress">
@@ -3346,6 +3412,11 @@
             Value of the name
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.ShouldSerializePhoneticAlgorithmKey">
+            <summary>
+            Should serialize 
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityRelationship">
             <summary>
             Represents an association between two entities
@@ -3426,6 +3497,16 @@
         <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.SemanticEquals(System.Object)">
             <summary>
             Determine semantic equality
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ShouldSerializeInversionIndicator">
+            <summary>
+            Should serialize inversion indicator?
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ShouldSerializeQuantity">
+            <summary>
+            Should serialize quantity?
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityTelecomAddress">
@@ -3529,6 +3610,11 @@
         <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ShouldSerializeComponentTypeKey">
+            <summary>
+            Should serialize component type key
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.ManufacturedMaterial">
@@ -3650,6 +3736,11 @@
         <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirth">
             <summary>
             Gets or sets the person's date of birth
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthXml">
+            <summary>
+            Gets the date of birth as XML
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthPrecision">
@@ -3877,7 +3968,7 @@
             True if the class is currently loading associations when accessed
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.IdentifiedData.SetDelayLoad(System.Boolean)">
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.SetDelayLoad(System.Boolean,System.Collections.Generic.HashSet{System.Nullable{System.Guid}})">
             <summary>
             Set delay load
             </summary>
@@ -4235,6 +4326,11 @@
             Visit a binary method
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelExpressionVisitor.GetConstantValue(System.Linq.Expressions.Expression)">
+            <summary>
+            Attempt to get constant value
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Map.ModelExpressionVisitor.#ctor(OpenIZ.Core.Model.Map.ModelMapper,System.Linq.Expressions.ParameterExpression[])">
             <summary>
             Model conversion visitor 
@@ -4358,6 +4454,16 @@
             Primitive types
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelProperty(System.Type,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps a model property at a root level only
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelProperty(System.Type,System.Type,System.Reflection.PropertyInfo)">
+            <summary>
+            Maps a model property at a root level only
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Map.ModelMapper.#ctor(System.IO.Stream)">
             <summary>
             Creates a new mapper from source stream
@@ -4408,7 +4514,7 @@
             Gets the domain type for the specified model type
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.CreateLambdaMemberAdjustmentExpression(System.Linq.Expressions.MemberExpression,System.Linq.Expressions.ParameterExpression)">
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.CreateLambdaMemberAdjustmentExpression(System.Linq.Expressions.Expression,System.Linq.Expressions.ParameterExpression)">
             <summary>
             Create a traversal expression for a lambda expression
             </summary>
@@ -4429,6 +4535,11 @@
             Map model instance
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapDomainInstance(System.Type,System.Type,System.Object,System.Boolean,System.Collections.Generic.HashSet{System.Guid})">
+            <summary>
+            Map domain instance
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Map.OpenIZConvert">
             <summary>
             OpenIZ conversion helper functions
@@ -4442,6 +4553,16 @@
         <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ByteToNullGuid(System.Byte[])">
             <summary>
             Byte[] > GUID
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.BooleanToInt(System.Boolean)">
+            <summary>
+            Boolean to int
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.IntToBoolean(System.Int32)">
+            <summary>
+            Boolean to int
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.GuidToByte(System.Guid)">
@@ -4472,6 +4593,26 @@
         <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.DateTimeOffsetToDateTime(System.DateTimeOffset)">
             <summary>
             DTO > DT
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ToDateTime(System.DateTime)">
+            <summary>
+            Parse a date time into an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ParseDateTime(System.Int32)">
+            <summary>
+            Parse a date time from an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ToDateTimeOffset(System.DateTimeOffset)">
+            <summary>
+            Parse a date time into an object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Map.OpenIZConvert.ParseDateTimeOffset(System.Int32)">
+            <summary>
+            Parse a date time from an object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Map.PropertyMap">
@@ -4742,6 +4883,11 @@
             </summary>
             <param name="workingDictionary">Working dictionary.</param>
         </member>
+        <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.HttpQueryExpressionVisitor.AddCondition(System.String,System.Object)">
+            <summary>
+            Add a condition if not already present
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Query.QueryExpressionBuilder.HttpQueryExpressionVisitor.Visit(System.Linq.Expressions.Expression)">
             <summary>
             Visit a query expression
@@ -4828,6 +4974,13 @@
             Reflection tools
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Convert``1(System.Object)">
+            <summary>
+            The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why? 
+            Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
+            so we have to copy.
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.ExtensionMethods.HashCode(System.Byte[])">
             <summary>
             Compute a basic hash string
@@ -4853,7 +5006,7 @@
             Update property data if required
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive``1(System.Linq.Expressions.Expression,``0)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression,System.Object)">
             <summary>
             Create a version filter
             </summary>
@@ -4886,6 +5039,11 @@
             Get generic method
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.GetXmlProperty(System.Type,System.String,System.Boolean)">
+            <summary>
+            Get a property based on XML property and/or serialization redirect
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Roles.Patient">
             <summary>
             Represents an entity which is a patient
@@ -4899,6 +5057,11 @@
         <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDate">
             <summary>
             Gets or sets the date the patient was deceased
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDateXml">
+            <summary>
+            Deceased date XML
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Roles.Patient.DeceasedDatePrecision">
@@ -5305,6 +5468,11 @@
         <member name="P:OpenIZ.Core.Model.VersionedEntityData`1.PreviousVersionKey">
             <summary>
             Gets or sets the previous version key
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.VersionedEntityData`1.ShouldSerializePreviousVersionKey">
+            <summary>
+            Should serialize previous version?
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.VersionedEntityData`1.PreviousVersion">

@@ -34,6 +34,7 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
         }
 
         // Do an authentication that is not session binding
+        OpenIZ.App.showWait('#loginButton');
         OpenIZ.Authentication.loginAsync({
             userName: $scope.username,
             password: $scope.password,
@@ -50,15 +51,19 @@ layoutApp.controller('AuthenticationDialogController', ['$scope', function ($sco
                         continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith
                     };
                     OpenIZ.Authentication.hideElevationDialog();
-                    if(OpenIZ.Authentication.$elevationCredentials.continueWith != null)
+                    $scope.userName = null; $scope.password = null;
+                    if (OpenIZ.Authentication.$elevationCredentials.continueWith != null) {
                         OpenIZ.Authentication.$elevationCredentials.continueWith();
+                        OpenIZ.Authentication.$elevationCredentials = {};
+                    }
                 }
             },
             onException: function(error) {
-                if(error.error != null)
-                    alert(error.error);
+                OpenIZ.App.hideWait('#loginButton');
+                if (error.error != null)
+                    alert(OpenIZ.Localization.getString(error.error));
                 else if(error.message != null)
-                    alert(error.message);
+                    alert(OpenIZ.Localization.getString(error.message));
                 else
                     console.log(error);
             }

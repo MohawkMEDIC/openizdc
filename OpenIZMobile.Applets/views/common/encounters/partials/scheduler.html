@@ -23,19 +23,20 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
                 <h4 class="modal-title">{{ 'locale.encounters.schedule.title' | i18n }}</h4>
             </div>
             <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <ul class="col-sm-3 col-xs-12 nav nav-pills nav-stacked" role="tablist" ng-class="{'nav-tabs-fixed' : patientViewScrollHeight > 55}">
-                            <li role="presentation" class="active"><a data-target="#appointmentBooking" data-toggle="tab"><span class="glyphicon glyphicon-asterisk"></span> {{ 'locale.encounters.schedule.appointment' | i18n }}</a></li>
-                            <li role="presentation"><a data-target="#schedulingAssistant" data-toggle="tab"><span class="glyphicon glyphicon-calendar"></span> {{ 'locale.encounters.schedule.assistant' | i18n }}</a></li>
-                        </ul>
-                        <div class="col-sm-9 col-xs-12 tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="appointmentBooking">
-                                <form class="form form-horizontal" ng-submit="scheduleAppointment(appointmentForm)" name="appointmentForm">
+                <form class="form form-horizontal" ng-submit="scheduleAppointment(appointmentForm)" name="appointmentForm">
+
+                    <div class="container-fluid">
+                        <div class="row">
+                            <ul class="col-sm-3 col-xs-12 nav nav-pills nav-stacked" role="tablist" ng-class="{'nav-tabs-fixed' : patientViewScrollHeight > 55}">
+                                <li role="presentation" class="active"><a data-target="#appointmentBooking" data-toggle="tab"><span class="glyphicon glyphicon-asterisk"></span> {{ 'locale.encounters.schedule.appointment' | i18n }}</a></li>
+                                <li role="presentation"><a data-target="#schedulingAssistant" data-toggle="tab"><span class="glyphicon glyphicon-calendar"></span> {{ 'locale.encounters.schedule.assistant' | i18n }}</a></li>
+                            </ul>
+                            <div class="col-sm-9 col-xs-12 tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="appointmentBooking">
                                     <div class="form-group row">
                                         <div class="col-md-12">
                                             {{ 'locale.encounters.schedule.description' | i18n }}
@@ -90,19 +91,27 @@
                                                       class="form-control"></textarea>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
-                            <div role="tabpanel" class="tab-pane" id="schedulingAssistant">
-                                <div id="schedulingAssistantCalendar" style="min-height:80%;" />
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="schedulingAssistant">
+                                    <div id="schedulingAssistantCalendar" style="min-height:80%;" />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
-                    <button type="submit" class="btn btn-primary">{{ 'locale.action.save' | i18n }}</button>
-                </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">
+                            <span>
+                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                            </span>
+                        </button>
+                        <button type="submit" class="btn btn-lg btn-success">
+                            <span>
+                                <span class="glyphicon glyphicon-check"></span> {{ 'locale.action.save' | i18n }}
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

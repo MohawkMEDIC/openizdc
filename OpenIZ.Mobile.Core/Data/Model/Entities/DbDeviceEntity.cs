@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Security;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -27,14 +29,14 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents the entity representation of an object
 	/// </summary>
 	[Table("device")]
-	public class DbDeviceEntity : DbIdentified
+	public class DbDeviceEntity : DbEntitySubTable
     {
 
 		/// <summary>
 		/// Gets or sets the security device identifier.
 		/// </summary>
 		/// <value>The security device identifier.</value>
-		[Column("securityDevice"), MaxLength(16), NotNull]
+		[Column("securityDevice"), MaxLength(16), NotNull, ForeignKey(typeof(DbSecurityDevice), nameof(DbSecurityDevice.Uuid))]
 		public byte[] SecurityDeviceUuid {
 			get;
 			set;

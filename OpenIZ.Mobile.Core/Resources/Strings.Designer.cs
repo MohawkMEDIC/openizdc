@@ -80,6 +80,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculating Care-plans ({0} remaining)....
+        /// </summary>
+        internal static string locale_calculatingCarePlan {
+            get {
+                return ResourceManager.GetString("locale_calculatingCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error Downloading Remote Data.
         /// </summary>
         internal static string locale_downloadError {
@@ -226,6 +235,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading protocol {0}....
+        /// </summary>
+        internal static string locale_starting {
+            get {
+                return ResourceManager.GetString("locale_starting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Initiating pull request....
         /// </summary>
         internal static string locale_startingPoll {
@@ -262,7 +280,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don&apos;t have data. That is normal until the sycnrhonization is complete. We&apos;ll let you know when the synchronization operation is done!
+        ///   Looks up a localized string similar to Your application has been installed successfully. The application is currently downloading remote data it needs to operate from the back-end system (known as the IMS). During this time, you may notice the application operates very slowly or some screens don&apos;t have data. That is normal until the synchronizing is complete. We&apos;ll let you know when the synchronization operation is done!
         ///
         ///Sincerely,
         ///- OpenIZ Community.

@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -27,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a material in the database
 	/// </summary>
 	[Table("material")]
-	public class DbMaterial : DbIdentified
+	public class DbMaterial : DbEntitySubTable
     {
 
 		/// <summary>
@@ -44,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("form_concept_uuid"), Indexed, MaxLength(16)]
+		[Column("form_concept_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] FormConceptUuid {
 			get;
 			set;
@@ -54,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the quantity concept.
 		/// </summary>
 		/// <value>The quantity concept.</value>
-		[Column("quantity_concept_uuid"), MaxLength(16)]
+		[Column("quantity_concept_uuid"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] QuantityConceptUuid {
 			get;
 			set;
@@ -79,13 +81,74 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			get;
 			set;
 		}
+
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbEntity
+        {
+            /// <summary>
+            /// Gets or sets the quantity of an entity within its container.
+            /// </summary>
+            /// <value>The quantity.</value>
+            [Column("quantity")]
+            public decimal Quantity
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets the form concept.
+            /// </summary>
+            /// <value>The form concept.</value>
+            [Column("form_concept_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            public byte[] FormConceptUuid
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets the quantity concept.
+            /// </summary>
+            /// <value>The quantity concept.</value>
+            [Column("quantity_concept_uuid"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            public byte[] QuantityConceptUuid
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets the expiry date.
+            /// </summary>
+            /// <value>The expiry date.</value>
+            [Column("expiry")]
+            public DateTime ExpiryDate
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether this instance is administrative.
+            /// </summary>
+            /// <value><c>true</c> if this instance is administrative; otherwise, <c>false</c>.</value>
+            [Column("isAdministrative")]
+            public bool IsAdministrative
+            {
+                get;
+                set;
+            }
+        }
 	}
 
 	/// <summary>
 	/// Manufactured material.
 	/// </summary>
 	[Table("manufactured_material")]
-	public class DbManufacturedMaterial : DbIdentified
+	public class DbManufacturedMaterial : DbMaterialSubTable
 	{
 
 		/// <summary>
@@ -97,6 +160,20 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 			get;
 			set;
 		}
+
+        public class QueryResult : DbMaterial.QueryResult
+        {
+            /// <summary>
+            /// Gets or sets the lot number.
+            /// </summary>
+            /// <value>The lot number.</value>
+            [Column("lotNumber"), Indexed, Collation("NOCASE")]
+            public String LotNumber
+            {
+                get;
+                set;
+            }
+        }
 	}
 
 }

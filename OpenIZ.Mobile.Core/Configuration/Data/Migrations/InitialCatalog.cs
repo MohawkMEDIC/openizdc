@@ -95,6 +95,7 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     tracer.TraceInfo("Installing Extensibility Tables...");
                     db.CreateTable<DbActExtension>();
                     db.CreateTable<DbActNote>();
+                    db.CreateTable<DbActProtocol>();
                     db.CreateTable<DbEntityExtension>();
                     db.CreateTable<DbEntityNote>();
                     db.CreateTable<DbExtensionType>();
@@ -179,6 +180,9 @@ namespace OpenIZ.Mobile.Core.Configuration.Data.Migrations
                     db.CreateTable<DbPlaceService>();
                     db.CreateTable<DbPersonLanguageCommunication>();
                     db.CreateTable<DbAuthorityScope>();
+                    db.CreateTable<DbPhoneticValue>();
+                    db.CreateTable<DbAddressValue>();
+
                     tracer.TraceInfo("Installing Role Tables...");
                     db.CreateTable<DbPatient>();
                     db.CreateTable<DbProvider>();

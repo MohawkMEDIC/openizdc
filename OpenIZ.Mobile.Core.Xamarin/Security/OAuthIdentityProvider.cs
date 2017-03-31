@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2017-1-16
+ * User: justi
+ * Date: 2017-2-4
  */
 using System;
 using System.Linq;
@@ -150,6 +150,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             throw new SecurityException(Strings.err_offline_use_cache_creds);
                         }
                     }
+                    catch (SecurityException ex)
+                    {
+                        this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex);
+                        throw;
+                    }
                     catch (Exception ex) // fallback to local
                     {
                         try
@@ -216,7 +221,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             if (localUser == null)
                                 localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
                             else
+                            {
                                 localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                                localIdp.Authenticate(principal, password);
+                            }
                         }
                         catch(Exception ex)
                         {

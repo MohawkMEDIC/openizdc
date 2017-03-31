@@ -25,6 +25,9 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Configuration;
 using SQLite.Net.Attributes;
 using OpenIZ.Mobile.Core.Data.Connection;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Acts;
+using OpenIZ.Mobile.Core.Data.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Data.Model
 {
@@ -45,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Data.Model
 		/// Gets or sets the universal identifier for the object
 		/// </summary>
 		[PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull]
-		public byte[] Uuid {
+		public virtual byte[] Uuid {
 			get;
 			set;
 		}
@@ -63,5 +66,76 @@ namespace OpenIZ.Mobile.Core.Data.Model
 
 
     }
+
+    /// <summary>
+    /// Act sub table
+    /// </summary>
+    public class DbActSubTable : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the uuid pointing to the act
+        /// </summary>
+        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid)), AlwaysJoin]
+        public override byte[] Uuid { get; set; }
+
+    }
+
+    /// <summary>
+    /// Observation sub class table
+    /// </summary>
+    public class DbObservationSubTable : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the uuid pointing to the act
+        /// </summary>
+        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbObservation), nameof(DbObservation.Uuid)), AlwaysJoin]
+        public override byte[] Uuid { get; set; }
+
+    }
+
+    /// <summary>
+    /// Entity sub table
+    /// </summary>
+    public class DbEntitySubTable : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the uuid pointing to the act
+        /// </summary>
+        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbEntity), nameof(DbEntity.Uuid)), AlwaysJoin]
+        public override byte[] Uuid { get; set; }
+
+    }
+
+    /// <summary>
+    /// Person sub class table
+    /// </summary>
+    public class DbPersonSubTable : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the uuid pointing to the act
+        /// </summary>
+        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbPerson), nameof(DbPerson.Uuid)), AlwaysJoin]
+        public override byte[] Uuid { get; set; }
+
+    }
+
+    /// <summary>
+    /// Materialsub class table
+    /// </summary>
+    public class DbMaterialSubTable : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the uuid pointing to the act
+        /// </summary>
+        [PrimaryKey, Column("uuid"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbMaterial), nameof(DbMaterial.Uuid)), AlwaysJoin]
+        public override byte[] Uuid { get; set; }
+
+    }
+
 }
 

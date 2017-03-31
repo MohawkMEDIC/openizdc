@@ -212,18 +212,19 @@ namespace OpenIZ.Mobile.Core.Security
 		{
 			var conn = this.CreateConnection();
 			IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
-			DbSecurityUser dbu = new DbSecurityUser()
-			{
-				PasswordHash = hash.ComputeHash(password),
-				SecurityHash = Guid.NewGuid().ToString(),
-				CreationTime = DateTime.Now,
-				CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
-				UserName = userName,
-				Key = sid
-			};
+			
 			using (conn.Lock())
 			{
-				conn.Insert(dbu);
+                DbSecurityUser dbu = new DbSecurityUser()
+                {
+                    PasswordHash = hash.ComputeHash(password),
+                    SecurityHash = Guid.NewGuid().ToString(),
+                    CreationTime = DateTime.Now,
+                    CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
+                    UserName = userName,
+                    Key = sid
+                };
+                conn.Insert(dbu);
 			}
 			return new SQLiteIdentity(userName, false);
 		}

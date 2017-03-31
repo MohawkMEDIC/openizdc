@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
+layoutApp.controller('YellowCardController', ['$scope', 'encounterFactory' , function ($scope, encounterFactory) {
     //    $('.oiz-vaccination-history').each(function (i, e) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();
@@ -33,25 +33,60 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
     scope.patient = scope.patient || new OpenIZModel.Patient({});
     scope.patient.participation = scope.patient.participation || {};
     scope.display = scope.display || {};
-
+    $scope.encounterFactory = encounterFactory;
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
 
-    scope.$watch(function (s) { return s.encounters != undefined ? s.encounters.length : null; }, function (newValue, oldValue) {
-        
-        if (newValue != null && newValue != 0) {
+    $scope.yellowcardLegend = [
+    { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
+    { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
+    { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
+    ];
 
-            if (scope.encounters) {
+
+    scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+    scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+
+    var refreshYellowCard = function (newValue, oldValue) {
+        
+        if (newValue !== null && newValue !== undefined && $scope.encounters) {
+
+            if ($scope.encounters) {
                 // Sort based on dose
-                var oldIndex = oldValue == undefined ? 0 : oldValue;
-                var newEncounters = scope.encounters.slice(oldIndex, newValue);
-                
+                delete scope.display;
+                scope.display = {};
+                scope.display._vaccineAdministrations = {};
+                var newEncounters = $scope.encounters;
+            	// Sort based on dose
+                newEncounters.sort(function (a, b)
+                {
+                	if (a.actTime > b.actTime)
+                		return 1;
+                	else if (a.actTime < b.actTime)
+                		return -1;
+                	else
+                	{
+                	    if (a.actModel !== null && a.actModel !== undefined) {
+                	        if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value > b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return 1;
+                	        }
+                	        else if (a.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value < b.actModel.participation["Product"].playerModel.name.Assigned.component.$other.value) {
+                	            return -1;
+                	        }
+                	        else {
+                	            return 0;
+                	        }
+                	    }
+                	    else {
+                	        return 0;
+                	    }
+                	}
+                });
 
                 // Record target
-
                 for (var ptcpt in newEncounters) {
-
+                    
                     var acts = [];
 
                     // Patient encounters are the grouping of objects
@@ -67,7 +102,7 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
 
                         var model = acts[act];
                         // Ignore anything except substance admins
-                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization'))
+                        if (model.$type != 'SubstanceAdministration' || model.typeConceptModel == undefined || (model.typeConceptModel.mnemonic != 'InitialImmunization' && model.typeConceptModel.mnemonic != 'Immunization' && model.typeConceptModel.mnemonic != 'BoosterImmunization') || !model.participation || !model.participation.Product)
                             continue;
                         var antigenId = model.participation.Product.playerModel.name.Assigned.component.$other.value;
                         if (scope.display._vaccineAdministrations[antigenId] == null) {
@@ -81,13 +116,13 @@ layoutApp.controller('YellowCardController', ['$scope', function ($scope) {
                             (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence)
                             )
                             scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
-                        //               scope.$apply();
                     }
+                    
                     ;;
                    
                 }
 
             }
         }
-    });
+    };
 }]);

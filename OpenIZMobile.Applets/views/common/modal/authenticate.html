@@ -24,8 +24,8 @@
         <div class="modal-content">
             <form ng-submit="authenticate(masterForm)" name="masterForm" novalidate="novalidate">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">X</span></button>
-                    <h4 class="modal-title">{{ 'locale.security.authenticateHeader' | i18n }} - {{ $root.system.config.realmName }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                    <h4 class="modal-title">{{ 'locale.security.authenticateHeader' | i18n }}<span ng-if="$root.system.config.realmName"> - {{ $root.system.config.realmName }}</span></h4>
                 </div>
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -33,8 +33,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'locale.action.cancel' | i18n }}</button>
-                    <button type="submit" class="btn btn-primary">{{ 'locale.security.login.button.login' | i18n }}</button>
+                    <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
+                        <span>
+                            <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                        </span>
+                    </button>
+                    <button type="submit" id="loginButton" class="btn btn-primary btn-lg">
+                        {{ 'locale.security.login.button.login' | i18n }}
+                    </button>
                 </div>
             </form>
         </div>

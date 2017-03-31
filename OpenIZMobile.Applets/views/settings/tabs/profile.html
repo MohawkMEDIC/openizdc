@@ -28,7 +28,7 @@
             <label class="col-xs-12 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
             <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Family" /> </div>
         </div>
-        <div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
+        <!--<div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
             <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
             <div class="col-xs-4">
                 <select name="telephone" id="telephone" class="form-control" ng-model="tel.use"
@@ -37,13 +37,13 @@
             <div class="col-xs-6">
                 <input type="text" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-model="tel.value" class="form-control" />
             </div>
-        </div>
+        </div>-->
         <div class="form-group">
             <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
             <div class="col-xs-12 col-sm-10">
                 <div class="input-group">
-                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
-                        <option value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
+                    <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
+                        <option selected="selected" value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
                     </select>
                 </div>
             </div>
@@ -62,7 +62,11 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="btn-group pull-right">
-                    <button type="submit" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-check"></span>{{ 'locale.actions.save' | i18n }}</button>
+                    <button type="submit" class="btn btn-lg btn-success" id="saveUserProfileButton">
+                        <span>
+                            <span class="glyphicon glyphicon-check"></span> {{ 'locale.actions.save' | i18n }}
+                        </span>
+                    </button>
                 </div>
             </div>
         </div>

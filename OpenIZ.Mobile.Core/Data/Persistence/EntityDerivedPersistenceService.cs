@@ -20,15 +20,17 @@
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Mobile.Core.Data.Model;
 using SQLite.Net;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
     /// <summary>
     /// Entity derived persistence services
     /// </summary>
-    public class EntityDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class EntityDerivedPersistenceService<TModel, TData, TQueryResult> : IdentifiedPersistenceService<TModel, TData, TQueryResult>
         where TModel : Entity, new()
         where TData : DbIdentified, new()
+        where TQueryResult : DbIdentified
     {
 
         // Entity persister
@@ -37,26 +39,30 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
-        public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            var inserted = this.m_entityPersister.Insert(context, data);
-            data.Key = inserted.Key;
-            return base.Insert(context, data);
+            if (typeof(TModel).GetTypeInfo().BaseType == typeof(Entity))
+            {
+                var inserted = this.m_entityPersister.InsertCoreProperties(context, data);
+                data.Key = inserted.Key;
+            }
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the specified TModel
         /// </summary>
-        public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
-            this.m_entityPersister.Update(context, data);
-            return base.Update(context, data);
+            if(typeof(TModel).GetTypeInfo().BaseType == typeof(Entity))
+                this.m_entityPersister.UpdateCoreProperties(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel ObsoleteInternal(LocalDataContext context, TModel data)
         {
             var retVal = this.m_entityPersister.Obsolete(context, data);
             return data;

@@ -17,6 +17,8 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -43,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the service concept
         /// </summary>
-        [Column("serviceConcept"), MaxLength(16)]
+        [Column("serviceConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ServiceConceptUuid { get; set; }
 
     }

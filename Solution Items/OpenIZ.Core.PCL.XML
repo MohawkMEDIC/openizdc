@@ -14,6 +14,207 @@
             Gets or sets the current application service context
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DatamartDefinition">
+            <summary>
+            Represents a datamart definition which contains the definition of fields for a datamart
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartDefinition.Id">
+            <summary>
+            Gets or sets the identifier of the data mart
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartDefinition.Name">
+            <summary>
+            Gets or sets the name of the data mart
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartDefinition.CreationTime">
+            <summary>
+            Gets or sets the time that the data mart was created
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartDefinition.Schema">
+            <summary>
+            Gets or sets the datamart schema
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DatamartSchema">
+            <summary>
+            Represents a datamart schema which gives hints to the properties to be stored from 
+            a dynamic object
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchema.Id">
+            <summary>
+            Gets or sets the unique identifier for the schema itself
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchema.Name">
+            <summary>
+            Gets or sets the name of the element in the database
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchema.Properties">
+            <summary>
+            Gets or sets the property names for the schema element
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchema.Queries">
+            <summary>
+            Gets or sets the query associated with the schema
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DatamartSchema.Load(System.IO.Stream)">
+            <summary>
+            Load a datamart schema from a stream
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty">
+            <summary>
+            Represents a single property on the data mart schema
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty.Id">
+            <summary>
+            Gets or sets the identifier of the warehouse property
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty.Name">
+            <summary>
+            Gets or sets the name of the property
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty.Type">
+            <summary>
+            Gets or sets the type of property
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty.Attributes">
+            <summary>
+            Gets or sets the attributes associated with the property
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartSchemaProperty.Properties">
+            <summary>
+            Gets or sets the sub-properties of this property
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.SchemaPropertyAttributes">
+            <summary>
+            Identifies the type which a schema property carries
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyAttributes.None">
+            <summary>
+            No attributes
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyAttributes.Indexed">
+            <summary>
+            Indexed
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyAttributes.NotNull">
+            <summary>
+            Not null
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyAttributes.Unique">
+            <summary>
+            Unique
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.SchemaPropertyType">
+            <summary>
+            Identifies the type which a schema property carries
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.String">
+            <summary>
+            The object represents a string
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Integer">
+            <summary>
+            The object represents an integer
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Float">
+            <summary>
+            The object represents a floating point number
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Date">
+            <summary>
+            Date
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Boolean">
+            <summary>
+            Identifies the column is a boolean
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Uuid">
+            <summary>
+            Identifies the column is a UUID
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Binary">
+            <summary>
+            Identifies the column as binary
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Decimal">
+            <summary>
+            Decimal
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Data.Warehouse.SchemaPropertyType.Object">
+            <summary>
+            Identifies the column is an object which has other data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery">
+            <summary>
+            Represents a stored query creation statement
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.ProviderId">
+            <summary>
+            Gets or sets the provider identifier
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Name">
+            <summary>
+            Definition of the query
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Definition">
+            <summary>
+            Definition of the query
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer">
+            <summary>
+            Datamart schema property container
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer.Id">
+            <summary>
+            Gets the id
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer.Name">
+            <summary>
+            Gets the name
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer.Properties">
+            <summary>
+            Gets the sub-properties
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Diagnostics.Tracer">
             <summary>
             Represents a logger
@@ -1077,6 +1278,11 @@
             Execute a lambda
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Test that a patch can be applied
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.Impl.BaseBusinessRulesService`1">
             <summary>
             Represents a business rules service with no behavior, but intended to help in the implementation of another
@@ -1343,9 +1549,19 @@
             Gets the list of protocols which can be or should be used to create the care plans
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
             <summary>
             Create a care plam
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
+            <summary>
+            Create a care plan controlling the creation of encounters
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.ICarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+            <summary>
+            Creates a care plan for the patient with the specified protocolsonly
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IClinicalProtocolRepositoryService">
@@ -1651,6 +1867,108 @@
             Adds the specified item to the cache
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.Remove(System.Type,System.Guid)">
+            <summary>
+            Removes an object from the cache
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IAdHocDatawarehouseService">
+            <summary>
+            Represents a simple data warehousing service which allows business rules to stash
+            pre-computed values.
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Services.IAdHocDatawarehouseService.DataProvider">
+            <summary>
+            Gets the provider mnemonic
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.CreateDatamart(System.String,System.Object)">
+            <summary>
+            Creates an ad-hoc datamart which is not based on an ETL process, rather created
+            by a trigger.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.GetDatamarts">
+            <summary>
+            Gets a list of all registered adhoc data marts
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.GetDatamart(System.String)">
+            <summary>
+            Gets the specified datamart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.DeleteDatamart(System.Guid)">
+            <summary>
+            Deletes a datamart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Get(System.Guid,System.Guid)">
+            <summary>
+            Gets data from an ad-hoc data mart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.AdhocQuery(System.Guid,System.Object)">
+            <summary>
+            Perform an adhoc query on data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.AdhocQuery(System.Guid,System.Object,System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Performs an adhoc query with the specified query control
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.CreateStoredQuery(System.Guid,System.Object)">
+            <summary>
+            Create the specified stored query on the warehouse provider
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.StoredQuery(System.Guid,System.String,System.Object)">
+            <summary>
+            Executes a predefined query against a datamart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Add(System.Guid,System.Object)">
+            <summary>
+            Adds the specified object to the specified datamart returning the tupleId
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Delete(System.Guid,System.Object)">
+            <summary>
+            Delete a tuple from the datamart
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IDataPersistenceService">
+            <summary>
+            Non-generic form of the data persistene service
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataPersistenceService.Insert(System.Object)">
+            <summary>
+            Inserts the specified object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataPersistenceService.Update(System.Object)">
+            <summary>
+            Updates the specified data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataPersistenceService.Obsolete(System.Object)">
+            <summary>
+            Obsoletes the specified data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataPersistenceService.Get(System.Guid)">
+            <summary>
+            Gets the specified data
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IDataPersistenceService.Query(System.Linq.Expressions.Expression,System.Int32,System.Nullable{System.Int32},System.Int32@)">
+            <summary>
+            Query based on the expression given
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Services.IPatchService">
             <summary>
             Represents a patch service which can calculate and apply patches
@@ -1665,6 +1983,11 @@
         <member name="M:OpenIZ.Core.Services.IPatchService.Patch(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Apples the specified <paramref name="patch"/> onto <paramref name="data"/> returning the updated object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Tests that the patch can be applied on the specified object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IPersonRepositoryService">
@@ -1734,6 +2057,12 @@
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            Finds the specified data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IRepositoryService`1.Find(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified data
             </summary>
@@ -1863,22 +2192,22 @@
             Represents the repository handler for materials
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}})">
             <summary>
             Finds the specified ManufacturedMaterial
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindManufacturedMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.ManufacturedMaterial,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified ManufacturedMaterial with the specified restrictions
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}})">
             <summary>
             Finds the specified material
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.FindMaterial(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Int32,System.Int32@)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Find(System.Linq.Expressions.Expression{System.Func{OpenIZ.Core.Model.Entities.Material,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@)">
             <summary>
             Finds the specified material with the specified restrictions
             </summary>
@@ -1893,12 +2222,12 @@
             Gets the specified material from the database
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.InsertManufacturedMaterial(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Insert(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
             <summary>
             Inserts the ManufacturedMaterial in the persistence layer
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.InsertMaterial(OpenIZ.Core.Model.Entities.Material)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Insert(OpenIZ.Core.Model.Entities.Material)">
             <summary>
             Inserts the material in the persistence layer
             </summary>
@@ -1913,12 +2242,12 @@
             Obsoletes the specified material
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.SaveManufacturedMaterial(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Save(OpenIZ.Core.Model.Entities.ManufacturedMaterial)">
             <summary>
             Saves the specified ManufacturedMaterial from data layer
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.SaveMaterial(OpenIZ.Core.Model.Entities.Material)">
+        <member name="M:OpenIZ.Core.Services.IMaterialRepositoryService.Save(OpenIZ.Core.Model.Entities.Material)">
             <summary>
             Saves the specified material from data layer
             </summary>
@@ -2632,6 +2961,12 @@
             Update the care plan based on new data
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Protocol.IClinicalProtocol.Initialize(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Called prior to performing calculation of the care protocol allowing the object to prepare the object for whatever 
+            pre-requisite data is needed for the protocol
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Protocol.SimpleCarePlanService">
             <summary>
             Represents a care plan service that can bundle protocol acts together 
@@ -2648,12 +2983,27 @@
             Gets the protocols
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create a care plan for the specified patient
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean)">
             <summary>
             Create a care plan
             </summary>
             <param name="p"></param>
             <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateCarePlan(OpenIZ.Core.Model.Roles.Patient,System.Boolean,System.Guid[])">
+            <summary>
+            Create a care plan with the specified protocols only
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Protocol.SimpleCarePlanService.CreateEncounter(OpenIZ.Core.Model.Acts.Act,OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create an encounter
+            </summary>
         </member>
     </members>
 </doc>

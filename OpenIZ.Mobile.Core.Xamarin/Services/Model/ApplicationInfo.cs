@@ -32,6 +32,7 @@ using OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.AMI.Diagnostics;
+using OpenIZ.Mobile.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 {
@@ -46,13 +47,28 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
 
         /// <summary>
+        /// Updates
+        /// </summary>
+        [JsonProperty("update")]
+        public List<AppletInfo> Updates { get; private set; }
+
+        /// <summary>
         /// Application information
         /// </summary>
         public ApplicationInfo() : base(AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(o => o.DefinedTypes.Any(t => t.Name == "SplashActivity")) ?? typeof(OpenIZConfiguration).Assembly)
         {
             this.OpenIZ = new DiagnosticVersionInfo(typeof(OpenIZ.Mobile.Core.ApplicationContext).Assembly);
+
             this.Applets = XamarinApplicationContext.Current.LoadedApplets.Select(o => o.Info).ToList();
+            try
+            {
+                this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
+                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) < 0);
+            }
+            catch { }
+
             this.Assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(o => new DiagnosticVersionInfo(o)).ToList();
+            
             this.Configuration = ApplicationContext.Current.Configuration;
             this.EnvironmentInfo = new DiagnosticEnvironmentInfo()
             { 
@@ -86,7 +102,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
                     // Existing path
                     if(File.Exists(Path.ChangeExtension(con.Value, "bak")))
                     {
-                        fi = new FileInfo(con.Value);
+                        fi = new FileInfo(Path.ChangeExtension(con.Value, "bak"));
                         this.FileInfo.Add(new DiagnosticAttachmentInfo() { FileDescription = con.Name + " Backup", FileName = fi.FullName, LastWriteDate = fi.LastWriteTime, FileSize = fi.Length, Id = "bak" });
                     }
                 }

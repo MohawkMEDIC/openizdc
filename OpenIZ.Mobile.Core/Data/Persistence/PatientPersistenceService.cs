@@ -33,7 +33,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Persistence service which is used to persist patients
     /// </summary>
-    public class PatientPersistenceService : IdentifiedPersistenceService<Patient, DbPatient>
+    public class PatientPersistenceService : IdentifiedPersistenceService<Patient, DbPatient, DbPatient.QueryResult>
     {
         // Entity persisters
         private PersonPersistenceService m_personPersister = new PersonPersistenceService();
@@ -42,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// From model instance
         /// </summary>
-        public override object FromModelInstance(Patient modelInstance, SQLiteConnectionWithLock context)
+        public override object FromModelInstance(Patient modelInstance, LocalDataContext context)
         {
             var dbPatient = base.FromModelInstance(modelInstance, context) as DbPatient;
 
@@ -54,13 +54,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Patient ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override Patient ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
 
             var iddat = dataInstance as DbVersionedData;
-            var patient = dataInstance as DbPatient ?? context.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
-            var dbp = context.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
+            var patient = dataInstance as DbPatient ?? dataInstance.GetInstanceOf<DbPatient>() ?? context.Connection.Table<DbPatient>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == patient.Uuid).First();
+            var dbp = dataInstance.GetInstanceOf<DbPerson>() ?? context.Connection.Table<DbPerson>().Where(o => o.Uuid == patient.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<Patient>(dbe, context, loadFast);
             retVal.DateOfBirth = dbp.DateOfBirth.HasValue ? (DateTime?)dbp.DateOfBirth.Value.ToLocalTime() : null;
             // Reverse lookup
@@ -82,32 +82,32 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified person into the database
         /// </summary>
-        public override Patient Insert(SQLiteConnectionWithLock context, Patient data)
+        protected override Patient InsertInternal(LocalDataContext context, Patient data)
         {
-            data.GenderConcept?.EnsureExists(context);
+            if(data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context);
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             var inserted = this.m_personPersister.Insert(context, data);
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the specified person
         /// </summary>
-        public override Patient Update(SQLiteConnectionWithLock context, Patient data)
+        protected override Patient UpdateInternal(LocalDataContext context, Patient data)
         {
             // Ensure exists
-            data.GenderConcept?.EnsureExists(context);
+            if(data.GenderConcept != null) data.GenderConcept = data.GenderConcept?.EnsureExists(context);
             data.GenderConceptKey = data.GenderConcept?.Key ?? data.GenderConceptKey;
 
             this.m_personPersister.Update(context, data);
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override Patient Obsolete(SQLiteConnectionWithLock context, Patient data)
+        protected override Patient ObsoleteInternal(LocalDataContext context, Patient data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

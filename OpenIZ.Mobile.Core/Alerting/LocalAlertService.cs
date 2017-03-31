@@ -173,13 +173,17 @@ namespace OpenIZ.Mobile.Core.Alerting
 							msg.Id = Guid.NewGuid().ToByteArray();
 							msg.CreatedBy = AuthenticationContext.Current.Principal?.Identity?.Name;
 							conn.Insert(msg);
-						}
+                            alert.Key = new Guid(msg.Id);
+
+                        }
 						else
 						{
 							conn.Update(msg);
 						}
 
 						conn.Commit();
+
+                        this.Committed?.Invoke(this, new AlertEventArgs(alert));
 					}
 					catch (SQLite.Net.SQLiteException e)
 					{

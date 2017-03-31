@@ -24,8 +24,8 @@
     <div class="form-group row" ng-class="{'has-error' : (editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.encounterDate.$invalid}">
         <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
-            <input required="required" type="datetime-local" 
-                   name="encounterDate" max="{{$root.page.loadTime | date: 'yyyy-MM-ddTHH:mm:SS'}}" 
+            <input required="required" type="datetime-local"
+                   name="encounterDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
                    class="form-control" ng-model="encounter.actTime" />
         </div>
     </div>
@@ -36,10 +36,14 @@
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
             <div class="input-group">
-                <span class="input-group-addon">
-                    <input type="checkbox"
-                           ng-model="encounter.participation.Location._enabled"
-                           value="1" />
+                <span class="input-group-addon input-group-addon-no-label">
+                    <label class="control control--checkbox">
+                        <input type="checkbox"
+                               ng-model="encounter.participation.Location._enabled"
+                               value="1"
+                               name="approximateDob" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
                 </span>
                 <select style="width:100%; height:100%" ng-disabled="!encounter.participation.Location._enabled" 
                         id="encounterFacility" name="encounterFacility" ng-model="encounter.participation.Location.player" 
@@ -54,16 +58,11 @@
         </div>
     </div>
     <div class="form-group row">
-        <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.performer' | i18n }}</label>
-        <div class="col-xs-12 col-sm-10">
-            <select ng-disabled="true" style="width:100%; height:100%" 
-                    id="encounterPerformer" name="encounterPerformer" 
-                    class="form-control" ng-model="encounter.participation.Performer.player"
-                    oiz-entitysearch="UserEntity">
-                <option selected="selected" value="{{encounter.participation.Performer.player}}">
-                    {{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName }}
-                </option>
-            </select>
+        <label class="col-xs-2">{{ 'locale.encounters.performer' | i18n }}</label>
+        <div class="col-xs-9">
+            <div class="input-group">
+                <input type="text" autocomplete="off" autocapitalize="off"  disabled="disabled" value="{{encounter.participation.Performer.playerModel.name.OfficialRecord | oizEntityName}}" class="form-control" />
+            </div>
         </div>
     </div>
     <!--<div class="form-group row">

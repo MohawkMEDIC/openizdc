@@ -25,19 +25,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
     /// <summary>
     /// Entity relationship persistence service
     /// </summary>
-    public class EntityRelationshipPersistenceService : IdentifiedPersistenceService<EntityRelationship, DbEntityRelationship>
+    public class EntityRelationshipPersistenceService : IdentifiedPersistenceService<EntityRelationship, DbEntityRelationship>, ILocalAssociativePersistenceService
     {
+
+
+        /// <summary>
+        /// Get from source
+        /// </summary>
+        public IEnumerable GetFromSource(LocalDataContext context, Guid id, decimal? versionSequenceId)
+        {
+            return this.Query(context, o => o.SourceEntityKey == id);
+        }
 
         /// <summary>
         /// Insert the relationship
         /// </summary>
-        public override EntityRelationship Insert(SQLiteConnectionWithLock context, EntityRelationship data)
+        protected override EntityRelationship InsertInternal(LocalDataContext context, EntityRelationship data)
         {
             
             // Ensure we haven't already persisted this
@@ -50,9 +60,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            var existing = context.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.EntityUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
+            var existing = context.Connection.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
             if (existing == null)
-                return base.Insert(context, data);
+                return base.InsertInternal(context, data);
             else
             {
                 data.Key = new Guid(existing.Uuid);
@@ -63,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the specified object
         /// </summary>
-        public override EntityRelationship Update(SQLiteConnectionWithLock context, EntityRelationship data)
+        protected override EntityRelationship UpdateInternal(LocalDataContext context, EntityRelationship data)
         {
             // Ensure we haven't already persisted this
             if (data.TargetEntity != null) data.TargetEntity = data.TargetEntity.EnsureExists(context);
@@ -71,7 +81,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
 
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
     }
 }

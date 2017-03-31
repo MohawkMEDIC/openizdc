@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         // Thread pool
         private IThreadPoolService m_threadPool;
         // Network service
-        private IIntegrationService m_integrationService;
+        private IClinicalIntegrationService m_integrationService;
         // Network information service
         private INetworkInformationService m_networkInfoService;
 
@@ -103,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             // Get configuration
             this.m_configuration = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>();
             this.m_threadPool = ApplicationContext.Current.GetService<IThreadPoolService>();
-            this.m_integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+            this.m_integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
             this.m_networkInfoService = ApplicationContext.Current.GetService<INetworkInformationService>();
 
             this.m_networkInfoService.NetworkStatusChanged += (o, e) => this.Pull(SynchronizationPullTriggerType.OnNetworkChange);
@@ -140,11 +140,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
             this.m_threadPool.QueueUserWorkItem((state) =>
             {
 
-
-                try
+                bool initialSync = !SynchronizationLog.Current.GetAll().Any();
+                if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
                 {
-                    if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
+                    try
                     {
+
                         if (!this.m_integrationService.IsAvailable()) return;
 
                         int totalResults = 0;
@@ -158,23 +159,23 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         }
 
-                        if (totalResults > 0)
+                        if (totalResults > 0 && initialSync)
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                            alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "ALL", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
+                            alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                         }
+
+
                     }
-
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Cannot process startup command: {0}", e);
+                    }
+                    finally
+                    {
+                        Monitor.Exit(this.m_lock);
+                    }
                 }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Cannot process startup command: {0}", e);
-                }
-                finally
-                {
-                    Monitor.Exit(this.m_lock);
-                }
-
             });
 
         }
@@ -214,6 +215,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var result = new Bundle() { TotalResults = 1 };
                 var eTag = String.Empty;
                 var retVal = 0;
+                int count = 75;
                 // Enqueue
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
@@ -227,12 +229,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
                             infopt.Add(itm.Key, itm.Value);
                     }
-                    result = this.m_integrationService.Find(modelType, filter, i, 75, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
-
+                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
 
                     // Queue the act of queueing
                     if (result != null)
                     {
+                        if (result.TotalResults > 10000) // "Big! Very Big... It is Bigly... " - @POTUS
+                            count = 500;
+                        else if (result.TotalResults > 5000)
+                            count = 300;
+                        else if (result.TotalResults > 1000)
+                            count = 150;
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
@@ -253,7 +260,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "ALL", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.HighPriorityAlert));
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
 
                 return 0;
             }

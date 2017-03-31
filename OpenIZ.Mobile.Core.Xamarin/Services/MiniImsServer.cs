@@ -57,9 +57,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         // Default view model
         private ViewModelDescription m_defaultViewModel;
 
-        // JSON View model serializer
-        private JsonViewModelSerializer m_serializer;
-
         // Current context
         [ThreadStatic]
         public static HttpListenerContext CurrentContext;
@@ -102,7 +99,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 XamarinApplicationContext.Current.SetProgress("IMS Service Bus", 0);
                 this.m_listener = new HttpListener();
                 this.m_defaultViewModel = ViewModelDescription.Load(typeof(MiniImsServer).Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Resources.ViewModel.xml"));
-                this.m_serializer = this.CreateSerializer(null);
 
                 // Scan for services
                 foreach (var a in AppDomain.CurrentDomain.GetAssemblies())
@@ -155,8 +151,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             //var iAsyncResult = this.m_listener.BeginGetContext(null, null);
                             //iAsyncResult.AsyncWaitHandle.WaitOne();
                             var context = this.m_listener.GetContext(); //this.m_listener.EndGetContext(iAsyncResult);
-                            //new Thread(this.HandleRequest).Start(context);
-                            this.m_threadPool.QueueUserWorkItem(TimeSpan.MinValue ,this.HandleRequest, context);
+                            this.m_threadPool.QueueUserWorkItem(TimeSpan.MinValue, this.HandleRequest, context);
                         }
                         catch (Exception e)
                         {
@@ -228,6 +223,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
             try
             {
+                if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
+                                !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
+                    throw new UnauthorizedAccessException("Only local access allowed");
+
                 MiniImsServer.CurrentContext = context;
 
                 // Session cookie?
@@ -314,7 +313,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             {
                                 using (StreamReader sr = new StreamReader(request.InputStream))
                                 {
-                                    var pValue = this.m_serializer.DeSerialize(sr, parmInfo[0].ParameterType);
+                                    var pValue = this.CreateSerializer(null).DeSerialize(sr, parmInfo[0].ParameterType);
                                     result = invoke.Method.Invoke(invoke.BindObject, new object[] { pValue });
                                 }
                             }
@@ -369,13 +368,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         if(request.QueryString["_viewModel"] != null)
                                         {
                                             var viewModelDescription = XamarinApplicationContext.Current.LoadedApplets.GetViewModelDescription(request.QueryString["_viewModel"]);
-                                            var serializer = this.m_serializer;
-                                            if(viewModelDescription != null)
-                                                serializer = this.CreateSerializer(viewModelDescription);
+                                            var serializer = this.CreateSerializer(viewModelDescription);
                                             serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
                                         }
                                         else
-                                            this.m_serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
+                                        {
+                                            this.CreateSerializer(null).Serialize(sw, (result as IdentifiedData).GetLocked());
+
+                                        }
                                     }
                                 }
                                 else if(result != null)
@@ -470,6 +470,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             if(e is SecurityException)
             {
                 response.StatusCode = 401;
+                return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
+            }
+            else if(e is FileNotFoundException)
+            {
+                response.StatusCode = 404;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
             else if (e is UnauthorizedAccessException)

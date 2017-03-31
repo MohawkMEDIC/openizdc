@@ -16,13 +16,14 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: fyfej
- * Date: 2016-11-14
+ * User: yendtr
+ * Date: 2016-9-9
  */
 
 /// <reference path="~/js/openiz.js"/>
+/// <reference path="~/lib/toastr.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
-var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
+var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', 'angular.filter'])
     .config(['$compileProvider', '$stateProvider', '$urlRouterProvider', function ($compileProvider, $stateProvider, $urlRouterProvider) {
         $compileProvider.aHrefSanitizationWhitelist(/^\s*(http|tel):/);
         $compileProvider.imgSrcSanitizationWhitelist(/^\s*(http|tel):/);
@@ -32,18 +33,21 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
             hasStartup |= state.url == '/';
             $stateProvider.state(state);
         });
+
         if (!hasStartup)
             $stateProvider.state({
-                name: 'org-openiz-core', url: '/', abstract: false, views: {
+                name: 'org-openiz-core-index', url: '/', abstract: false, views: {
                     '': { controller: '', templateUrl: '/org.openiz.core/views/landing.html' },
                 }
             });
+
         //$urlRouterProvider.otherwise('/');
 
     }])
     .run(function ($rootScope) {
 
         $rootScope.isLoading = true;
+        $rootScope.extendToast = null;
 
         // HACK: Sometimes HASH is empty ... ugh... 
         // Once we fix the panels and tabs in BS this can be removed
@@ -56,9 +60,15 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
                 $rootScope.system.config = config;
                 $rootScope.$apply();
             }
-        })
+        });
+
         $rootScope.$on("$stateChangeError", console.log.bind(console));
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            if ($('.modal.in').length > 0) {
+                $('.modal-open').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            }
+            window.scrollTo(0, 0);
             $rootScope.isLoading = true;
         });
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
@@ -77,6 +87,47 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
 
         setInterval(function () {
             $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+
+            if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000))
+            {
+                var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
+                var mins = Math.trunc(expiry / 60),
+                    secs = expiry % 60;
+                if (("" + secs).length < 2)
+                    secs = "0" + secs;
+                expiryStr = mins + ":" + secs;
+                var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+
+                if(expiry < 0)
+                    window.location.reload(true);
+                else if (!$rootScope.extendToast)
+                    $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"),  {
+                        closeButton: false,
+                        preventDuplicates: true,
+                        onclick: function () {
+                            OpenIZ.Authentication.refreshSessionAsync({
+                                continueWith: function (s) {
+                                    $rootScope.session = s;
+                                },
+                                onException: function (e) {
+                                    if (e.message) OpenIZ.App.toast(e.message);
+                                    else console.error(e);
+                                }
+                            });
+                            $rootScope.extendToast = null;
+                            toastr.clear();
+                        },
+                        positionClass: "toast-bottom-center",
+                        timeOut: 0,
+                        extendedTimeOut: 0
+                    });
+                else
+                    $($rootScope.extendToast).children('.toast-message').html(authString);
+                    //$rootScope.extendToast.show();
+            }
+            else {
+                
+            }
             $rootScope.$applyAsync();
         }, 10000);
 
@@ -90,6 +141,17 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router'])
                     if (Object.keys(session.entity.telecom).length == 0)
                         session.entity.telecom.MobilePhone = { value: "" };
                 }
+
+                OpenIZ.Configuration.getUserPreferencesAsync({
+                    continueWith: function (prefs) {
+                        $rootScope.session.prefs = {};
+                        for (var p in prefs.application.setting) {
+                            var set = prefs.application.setting[p];
+                            $rootScope.session.prefs[set.key] = set.value;
+                        }
+                        $rootScope.$apply();
+                    }
+                });
                 $rootScope.$apply();
             }
         });
@@ -151,3 +213,89 @@ angular.element(document).ready(function () {
     $('#waitModal').removeAttr('style');
     //OpenIZ.locale = OpenIZ.Localization.getLocale();
 });
+
+
+layoutApp.factory('encounterFactory', ['$q', function ($q) {
+    var encounterFactory = { appointments: null, patientId: null, pageTime: null, gettingUpcoming: false };
+
+    encounterFactory.setPageTime = function (value) {
+        encounterFactory.pageTime = value;
+    };
+
+    encounterFactory.setPatientId = function (value) {
+        encounterFactory.patientId = value;
+    };
+
+    encounterFactory.getUpcoming = function () {
+        var deferred = $q.defer();
+        if (!encounterFactory.gettingUpcoming) {
+            encounterFactory.gettingUpcoming = true;
+            OpenIZ.CarePlan.getCarePlanAsync({
+                query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
+                onDate: new Date(),
+                /** @param {OpenIZModel.Bundle} proposals */
+                continueWith: function (proposalsToday) {
+                    OpenIZ.CarePlan.getCarePlanAsync({
+                        query: "_patientId=" + encounterFactory.patientId + "&_appointments=true&_viewModel=full",
+                        minDate: new Date().tomorrow(),
+                        maxDate: new Date().addDays(90),
+                        continueWith: function (proposals) {
+                            console.log(proposals)
+                            if (proposals) {
+                                if (Array.isArray(proposalsToday.item))
+                                    for (var i = 0; i < proposals.item.length; i++) {
+                                        proposalsToday.item.push(proposals.item[i]);
+                                    }
+                                else
+                                    proposalsToday = proposals;
+
+                                // Grab the first appointment
+                                encounterFactory.appointments = proposalsToday.item;
+                                if (encounterFactory.appointments) {
+                                    encounterFactory.appointments.sort(
+                                              function (a, b) {
+                                                  return a.actTime > b.actTime ? 1 : -1;
+                                              }
+                                            );
+
+                                    for (var i in encounterFactory.appointments)
+                                        if (encounterFactory.appointments[i].startTime < encounterFactory.pageTime) {
+                                            encounterFactory.appointments[i].startTime = encounterFactory.pageTime
+                                        }
+                                    if (!Array.isArray(encounterFactory.appointments[i]) && !Array.isArray(encounterFactory.appointments[i].relationship.HasComponent))
+                                        encounterFactory.appointments[i].relationship.HasComponent = [encounterFactory.appointments[i].relationship.HasComponent];
+                                    deferred.resolve(encounterFactory.appointments);
+                                    encounterFactory.gettingUpcoming = false;
+                                }
+                            }
+                        },
+                        onException: function (ex) {
+                            if (ex.message)
+                                alert(ex.message);
+                            else
+                                console.error(ex);
+                            deferred.reject(ex);
+                        }
+                    });
+                },
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
+                }
+            });
+
+        }
+        else if (encounterFactory.appointments !== null && encounterFactory.appointments !== undefined) {
+            deferred.resolve(encounterFactory.appointments);
+        }
+        else {
+            deferred.reject("In Progress");
+        }
+        return deferred.promise;
+
+    }
+
+    return encounterFactory;
+}]);

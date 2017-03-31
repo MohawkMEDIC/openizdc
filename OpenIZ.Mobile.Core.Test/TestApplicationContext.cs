@@ -35,13 +35,16 @@ using System.Diagnostics;
 using System.Security.Principal;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Xamarin.Threading;
+using OpenIZ.Mobile.Core.Xamarin;
+using OpenIZ.Core.Applets.Model;
+using OpenIZ.Mobile.Core.Xamarin.Configuration;
 
 namespace OpenIZ.Mobile.Core.Test
 {
     /// <summary>
     /// Test application context
     /// </summary>
-    public class TestApplicationContext : ApplicationContext
+    public class TestApplicationContext : XamarinApplicationContext
     {
         // Configuration
         private OpenIZConfiguration m_configuration;
@@ -207,12 +210,30 @@ namespace OpenIZ.Mobile.Core.Test
             }
         }
 
+        public override IConfigurationManager ConfigurationManager
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
         public override void SaveConfiguration()
         {
             throw new NotImplementedException();
         }
 
         public override void Exit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override object ResolveAppletAsset(AppletAsset navigateAsset)
         {
             throw new NotImplementedException();
         }

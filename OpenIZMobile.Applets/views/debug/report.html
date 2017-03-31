@@ -63,17 +63,13 @@
                 <div class="pull-right btn-group">
                     <button type="button" class="btn btn-lg btn-danger" ng-click="close(masterForm)">
                         <span>
-                            <span class="glyphicon glyphicon-remove">
-                            </span>
-                            {{ 'locale.action.cancel' | i18n }}
+                            <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
                         </span>
                     </button>
                     <div class="btn-group">
-                        <button ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-primary">
+                        <button id="submitBugButton" ng-disabled="!$root.page.onlineState  || $root.session.method == 'LOCAL'" type="submit" class="btn btn-lg btn-success">
                             <span>
-                                <span class="glyphicon glyphicon-ok">
-                                </span>
-                                {{ 'locale.debug.submit' | i18n }}
+                                <span class="glyphicon glyphicon-ok"></span> {{ 'locale.debug.submit' | i18n }}
                             </span>
                         </button>
                     </div>

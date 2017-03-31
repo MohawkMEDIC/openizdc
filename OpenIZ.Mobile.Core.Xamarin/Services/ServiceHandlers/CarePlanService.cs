@@ -32,6 +32,7 @@ using System.Linq.Expressions;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.DataTypes;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -60,20 +61,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
                 p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty).Clone() as Patient;
-                p.Participations = new List<ActParticipation>(p.Participations);
+                p.Participations = new List<ActParticipation>();
             }
+
             if(p.Participations.Count == 0)
             {
                 var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
                 int tr = 0;
                 IEnumerable<Act> acts = null;
-                if (actService is IPersistableQueryProvider && search.ContainsKey("_state"))
-                    acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, Guid.Parse(search["_state"][0]));
-                else
-                    acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
+                Guid searchState = Guid.Empty;
 
-                p.Participations = acts.Select(a=>new ActParticipation(ActParticipationKey.RecordTarget, p) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
+				if (actService is IPersistableQueryProvider && search.ContainsKey("_state") && Guid.TryParse(search["_state"][0], out searchState))
+					acts = (actService as IPersistableQueryProvider).Query<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr, searchState);
+				else
+					acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == p.Key), 0, 200, out tr);
 
+                p.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, p)
+                {
+	                Act = a,
+					ParticipationRole = new Concept { Mnemonic = "RecordTarget" },
+					SourceEntity = actService.Get<Act>(a.Key.Value, Guid.Empty)
+                }).ToList();
             }
 
             // As appointments
@@ -85,6 +93,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var plan = new List<Act>(protocolService.CreateCarePlan(p, asAppointments));
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
+
+            
+            // Assign location to all
+            var sdlKey = (AuthenticationContext.Current.Session.UserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || o.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation") ??
+                        p.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation || o.RelationshipType?.Mnemonic == "DedicatedServiceDeliveryLocation"))?.TargetEntityKey;
+
+            if(sdlKey.HasValue)
+                foreach (var itm in plan)
+                    if (!itm.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location"))
+                        itm.Participations.Add(new ActParticipation(ActParticipationKey.Location, sdlKey));
+
             // Instructions?
             if (search.Count > 0)
             {

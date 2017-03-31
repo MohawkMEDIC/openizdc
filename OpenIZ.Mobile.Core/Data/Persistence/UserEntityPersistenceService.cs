@@ -43,12 +43,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override UserEntity ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override UserEntity ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var iddat = dataInstance as DbVersionedData;
-            var userEntity = dataInstance as DbUserEntity ?? context.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
-            var dbe = dataInstance as DbEntity ?? context.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
-            var dbp = context.Table<DbPerson>().Where(o => o.Uuid == userEntity.Uuid).First();
+            var userEntity = dataInstance as DbUserEntity ?? dataInstance.GetInstanceOf<DbUserEntity>() ?? context.Connection.Table<DbUserEntity>().Where(o => o.Uuid == iddat.Uuid).First();
+            var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == userEntity.Uuid).First();
+            var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == userEntity.Uuid).First();
             var retVal = m_entityPersister.ToModelInstance<UserEntity>(dbe, context, loadFast);
             retVal.SecurityUserKey = new Guid(userEntity.SecurityUserUuid);
             retVal.DateOfBirth = dbp.DateOfBirth;
@@ -64,30 +64,30 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Inserts the user entity
         /// </summary>
-        public override UserEntity Insert(SQLiteConnectionWithLock context, UserEntity data)
+        protected override UserEntity InsertInternal(LocalDataContext context, UserEntity data)
         {
-            data.SecurityUser?.EnsureExists(context);
+            if(data.SecurityUser != null) data.SecurityUser = data.SecurityUser?.EnsureExists(context);
             data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             var inserted = this.m_personPersister.Insert(context, data);
 
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the specified user entity
         /// </summary>
-        public override UserEntity Update(SQLiteConnectionWithLock context, UserEntity data)
+        protected override UserEntity UpdateInternal(LocalDataContext context, UserEntity data)
         {
 //            data.SecurityUser?.EnsureExists(context);
 //            data.SecurityUserKey = data.SecurityUser?.Key ?? data.SecurityUserKey;
             this.m_personPersister.Update(context, data);
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the specified user instance
         /// </summary>
-        public override UserEntity Obsolete(SQLiteConnectionWithLock context, UserEntity data)
+        protected override UserEntity ObsoleteInternal(LocalDataContext context, UserEntity data)
         {
             var retVal = this.m_personPersister.Obsolete(context, data);
             return data;

@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents a place in the local database
 	/// </summary>
 	[Table("place")]
-	public class DbPlace : DbIdentified
+	public class DbPlace : DbEntitySubTable
     {
         /// <summary>
         /// Identifies whether the place is mobile
@@ -47,6 +47,27 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         [Column("lng")]
         public float Lng { get; set; }
 
+        public class QueryResult :DbEntity
+        {
+            /// <summary>
+            /// Identifies whether the place is mobile
+            /// </summary>
+            [Column("isMobile")]
+            public bool IsMobile { get; set; }
+
+            /// <summary>
+            /// Identifies the known latitude of the place
+            /// </summary>
+            [Column("lat")]
+            public float Lat { get; set; }
+
+            /// <summary>
+            /// Identifies the known longitude of the place
+            /// </summary>
+            [Column("lng")]
+            public float Lng { get; set; }
+
+        }
     }
 }
 

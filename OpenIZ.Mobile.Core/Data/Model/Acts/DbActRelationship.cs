@@ -17,6 +17,8 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -37,19 +39,19 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Gets or sets the source act of the relationship
         /// </summary>
-        [Column("act_uuid"), MaxLength(16), NotNull, Indexed]
-        public byte[] ActUuid { get; set; }
+        [Column("act_uuid"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        public byte[] SourceUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the target entity
         /// </summary>
-        [Column("target"), MaxLength(16), NotNull, Indexed]
+        [Column("target"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
         public byte[] TargetUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the link type concept
         /// </summary>
-        [Column("relationshipType"), MaxLength(16), NotNull]
+        [Column("relationshipType"), MaxLength(16), NotNull, ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] RelationshipTypeUuid { get; set; }
 
     }

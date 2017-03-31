@@ -36,7 +36,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
 
     $scope.saveProfile = function (userEntity) {
 
-        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#saveUserProfileButton');
 
         // Fix the type of telecom
         var telKey = Object.keys(userEntity.telecom)[0];
@@ -44,7 +44,9 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
         delete userEntity.telecom[telKey];
         
         // When we update the facility we clear the model properties
-        userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel = null;
+        if (userEntity.relationship &&
+            userEntity.relationship.DedicatedServiceDeliveryLocation)
+            delete (userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel);
         userEntity.securityUser = $rootScope.session.user.id;
         userEntity.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
@@ -57,14 +59,15 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
                 if (data.language !== undefined)
                 {
                     OpenIZ.Localization.setLocale(data.language[0].languageCode);
+                    window.location.reload(true);
                 }
-                $window.location.reload();
             },
             onException: function (ex) {
                 console.log(ex);
-                OpenIZ.App.hideWait();
-
                 OpenIZ.App.toast("Unable to update profile");
+            },
+            finally: function () {
+                OpenIZ.App.hideWait('#saveUserProfileButton');
             }
         });
     };

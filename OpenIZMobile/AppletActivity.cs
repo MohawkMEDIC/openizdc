@@ -34,6 +34,8 @@ using OpenIZ.Mobile.Core.Android;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Applets;
 using System.Xml;
+using System.Threading.Tasks;
+using OpenIZ.Mobile.Core.Diagnostics;
 
 namespace OpenIZMobile
 {
@@ -50,6 +52,7 @@ namespace OpenIZMobile
         private AppletWebView m_webView;
         private ProgressBar m_progressBar;
         private TextView m_textView;
+        private Tracer m_tracer = Tracer.GetTracer(typeof(AppletActivity));
 
         /// <summary>
 		/// Called when the activity has detected the user's press of the back
@@ -76,11 +79,15 @@ namespace OpenIZMobile
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
-
-            
+                        
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
-            
+            //this.m_webView.Asset = asset;
+            var assetLink = this.Intent.Extras.Get("assetLink").ToString();
+            this.m_tracer.TraceInfo("Navigating to {0}", assetLink);
+            if(!String.IsNullOrEmpty(assetLink))
+                this.m_webView.LoadUrl(assetLink);
+
             // Progress bar
             this.m_progressBar = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal);
             this.m_textView = new TextView(this, null);
@@ -91,7 +98,6 @@ namespace OpenIZMobile
             decorView.AddView(this.m_progressBar);
             decorView.AddView(this.m_textView);
 
-            var assetLink = this.Intent.Extras.Get ("assetLink").ToString();
             // Find the applet
             //AppletAsset asset = AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(
             //             assetLink, language: this.Resources.Configuration.Locale.Language);
@@ -131,8 +137,6 @@ namespace OpenIZMobile
             };
             this.m_progressBar.ViewTreeObserver.GlobalLayout += observer;
 
-            //this.m_webView.Asset = asset;
-            this.m_webView.LoadUrl(assetLink);
 
 			//this.m_webView.LoadDataWithBaseURL ("applet:index", "<html><body>Hi!</body></html>", "text/html", "UTF-8", null);
 

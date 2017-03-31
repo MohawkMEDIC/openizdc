@@ -161,7 +161,7 @@ namespace OpenIZ.Mobile.Core.Search
                     conn.BeginTransaction();
 
                     var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
-                        .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value))
+                        .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value.ToLower()))
                         .Union((e.Addresses ?? new List<EntityAddress>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
                         .Union((e.Telecoms ?? new List<EntityTelecomAddress>()).Select(o => o.Value.ToLower()))
                         .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component?.Select(c => c.Value?.Trim().ToLower()))))
@@ -249,39 +249,45 @@ namespace OpenIZ.Mobile.Core.Search
             // After start then we want to start up the indexer
             ApplicationContext.Current.Started += (so, se) =>
             {
-
-                // Subscribe to persistence events which will have an impact on the index
-                var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-                var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
-
-                // Bind entity
-                if (patientPersistence != null && !this.m_patientBound)
-                {
-                    patientPersistence.Inserted += (o, e) => this.IndexBackground(e.Data);
-                    patientPersistence.Updated += (o, e) => this.IndexBackground(e.Data);
-                    patientPersistence.Obsoleted += (o, e) => this.DeleteEntity(e.Data);
-                    this.m_patientBound = true;
-                }
-
-                // Bind entity
-                if (bundlePersistence != null && !this.m_bundleBound)
-                {
-                    bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                    bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                    bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity)).ToList();
-                    this.m_bundleBound = true;
-                }
-
-
                 try
                 {
-                    // Not Indexed
-                    if (ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.search.lastIndex") == null)
-                        this.Index();
-                }
-                catch { }
+                    // Subscribe to persistence events which will have an impact on the index
+                    var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                    var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
 
-                this.Started?.Invoke(this, EventArgs.Empty);
+                    // Bind entity
+                    if (patientPersistence != null && !this.m_patientBound)
+                    {
+                        patientPersistence.Inserted += (o, e) => this.IndexBackground(e.Data);
+                        patientPersistence.Updated += (o, e) => this.IndexBackground(e.Data);
+                        patientPersistence.Obsoleted += (o, e) => this.DeleteEntity(e.Data);
+                        this.m_patientBound = true;
+                    }
+
+                    // Bind entity
+                    if (bundlePersistence != null && !this.m_bundleBound)
+                    {
+                        bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
+                        bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
+                        bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity)).ToList();
+                        this.m_bundleBound = true;
+                    }
+
+
+                    try
+                    {
+                        // Not Indexed
+                        if (ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.search.lastIndex") == null)
+                            this.Index();
+                    }
+                    catch { }
+
+                    this.Started?.Invoke(this, EventArgs.Empty);
+                }
+                catch(Exception e)
+                {
+                    this.m_tracer.TraceError("Error starting search index: {0}", e);
+                }
 
             };
 
@@ -316,11 +322,13 @@ namespace OpenIZ.Mobile.Core.Search
                             // Load all entities in database and index them
                             int tr = 101, ofs = 0;
                             var patientService = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                            Guid queryId = Guid.NewGuid();
+
                             while (tr > ofs + 50)
                             {
 
                                 if (patientService == null) break;
-                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, Guid.Empty);
+                                var entities = patientService.Query(e => e.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
 
                                 // Index 
                                 entities.Select(e => this.IndexEntity(e)).ToList();

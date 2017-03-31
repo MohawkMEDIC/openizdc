@@ -104,12 +104,9 @@ namespace OpenIZ.Mobile.Core.Xamarin
             if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
                 this.m_applets.DefaultApplet = applet;
 			this.m_applets.Add (applet);
+            AppletCollection.ClearCaches();
 		}
 
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
 
         /// <summary>
         /// Get the registered applets
@@ -159,12 +156,73 @@ namespace OpenIZ.Mobile.Core.Xamarin
 				};
 			}
 		}
-
+        
         /// <summary>
         /// Get applet asset
         /// </summary>
         public abstract object ResolveAppletAsset(AppletAsset navigateAsset);
-        
+
+
+        /// <summary>
+        /// Loads the user configuration for the specified user key
+        /// </summary>
+        public override OpenIZConfiguration GetUserConfiguration(string userId)
+        {
+            try
+            {
+                var userPrefDir = this.Configuration.GetSection<ApplicationConfigurationSection>().UserPrefDir;
+                if (!Directory.Exists(userPrefDir))
+                    Directory.CreateDirectory(userPrefDir);
+
+                // Now we want to load
+                String configFile = Path.ChangeExtension(Path.Combine(userPrefDir, userId), "userpref");
+                if (!File.Exists(configFile))
+                    return new OpenIZConfiguration()
+                    {
+                        Sections = new System.Collections.Generic.List<object>()
+                        {
+                            new AppletConfigurationSection(),
+                            new ApplicationConfigurationSection()
+                        }
+                    };
+                else
+                    using (var fs = File.OpenRead(configFile))
+                        return OpenIZConfiguration.Load(fs);
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error getting user configuration data {0}: {1}", userId, ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Save user configuration
+        /// </summary>
+        public override void SaveUserConfiguration(string userId, OpenIZConfiguration config)
+        {
+            if (userId == null) throw new ArgumentNullException(nameof(userId));
+            else if (config == null) throw new ArgumentNullException(nameof(config));
+
+            // Try-catch for save
+            try
+            {
+                var userPrefDir = this.Configuration.GetSection<ApplicationConfigurationSection>().UserPrefDir;
+                if (!Directory.Exists(userPrefDir))
+                    Directory.CreateDirectory(userPrefDir);
+
+                // Now we want to load
+                String configFile = Path.ChangeExtension(Path.Combine(userPrefDir, userId), "userpref");
+                using (var fs = File.Create(configFile))
+                    config.Save(fs);
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error saving user configuration data {0}: {1}", userId, ex);
+                throw;
+            }
+        }
+
         #endregion
     }
 }

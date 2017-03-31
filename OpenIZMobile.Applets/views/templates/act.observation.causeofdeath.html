@@ -33,8 +33,15 @@
         </div>
         <div class="col-xs-5">
             <label> {{ 'locale.patient.demographics.deceasedDate' | i18n }}</label>
-            <input required="required" ng-init="patient.deceasedDate = $root.page.loadTime" type="date" ng-model="patient.deceasedDate" class="form-control" />
+            <input ng-required="true" name="deceasedDate" ng-init="act.targetModel.relationship.HasComponent.targetModel.actTime = $root.page.loadTime" type="date" ng-model="act.targetModel.relationship.HasComponent.targetModel.actTime" ng-min="patient.dateOfBirth" class="form-control" />
+            
         </div>
-
+        <div class="col-xs-12 help-block text-danger" ng-if="(editEncounterForm.deceasedDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.deceasedDate.$error.min">
+            {{ 'locale.encounters.immunizations.errors.invalidDeceaseDate' | i18n }}
+        </div>
+        <div class="col-xs-12 help-block text-danger" ng-if="(editEncounterForm.deceasedDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.deceasedDate.$error.required">
+            {{ 'locale.encounters.immunizations.errors.requiredDeceaseDate' | i18n }}
+        </div>
+        
     </div>
 </div>

@@ -29,19 +29,28 @@ using OpenIZ.Core.Model.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
-	/// <summary>
-	/// Base data persistence service
-	/// </summary>
-	public abstract class BaseDataPersistenceService<TModel, TDomain> : IdentifiedPersistenceService<TModel, TDomain>
+    /// <summary>
+    /// Base data persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain> : BaseDataPersistenceService<TModel, TDomain, TDomain>
+        where TModel : BaseEntityData, new()
+        where TDomain : DbBaseData, new()
+    { }
+
+    /// <summary>
+    /// Base data persistence service
+    /// </summary>
+    public abstract class BaseDataPersistenceService<TModel, TDomain, TQueryResult> : IdentifiedPersistenceService<TModel, TDomain, TQueryResult>
 		where TModel : BaseEntityData, new()
 		where TDomain : DbBaseData, new()
+        where TQueryResult : DbIdentified
 	{
         /// <summary>
         /// Perform the actual insert.
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Insert (SQLiteConnectionWithLock context, TModel data)
+        protected override TModel InsertInternal (LocalDataContext context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
 
@@ -49,15 +58,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 				data.Key = domainObject.Key = Guid.NewGuid ();
 
             // Ensure created by exists
-            data.CreatedBy?.EnsureExists(context);
+            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context);
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
-            if (!context.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
-                context.Insert(domainObject);
+            if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+                context.Connection.Insert(domainObject);
             else
-                context.Update(domainObject);
+                context.Connection.Update(domainObject);
 
 			return data;
 		}
@@ -67,20 +76,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Update (SQLiteConnectionWithLock context, TModel data)
+        protected override TModel UpdateInternal (LocalDataContext context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
-            var existing = context.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).FirstOrDefault();
+            var existing = context.Connection.Table<TDomain>().Where(o=>o.Uuid == domainObject.Uuid).FirstOrDefault();
             if (existing == null)
                 throw new KeyNotFoundException(data.Key.ToString());
 
             // Created by is the updated by
-            domainObject.CopyObjectData(existing);
+            existing.CopyObjectData(domainObject);
+            domainObject = existing;
             domainObject.CreatedByUuid = existing.CreatedByUuid;
-            data.CreatedBy?.EnsureExists(context);
+            if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context);
 			domainObject.UpdatedByKey = domainObject.CreatedByKey == Guid.Empty || domainObject.CreatedByKey == null ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
 			domainObject.UpdatedTime = DateTime.Now;
-			context.Update(domainObject);
+			context.Connection.Update(domainObject);
 
             return data;
 		}
@@ -90,14 +100,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <param name="context">Context.</param>
         /// <param name="data">Data.</param>
-        public override TModel Obsolete (SQLiteConnectionWithLock context, TModel data)
+        protected override TModel ObsoleteInternal (LocalDataContext context, TModel data)
 		{
 			var domainObject = this.FromModelInstance (data, context) as TDomain;
-            data.ObsoletedBy?.EnsureExists(context);
+            if(data.ObsoletedBy != null) data.ObsoletedBy = data.ObsoletedBy?.EnsureExists(context);
             data.ObsoletedByKey = domainObject.ObsoletedByKey = data.ObsoletedBy?.Key ?? domainObject.ObsoletedByKey ?? base.CurrentUserUuid(context);
             domainObject.ObsoletionTime = domainObject.ObsoletionTime ?? DateTime.Now;
 			data.ObsoletionTime = (DateTimeOffset)domainObject.ObsoletionTime;
-			context.Update (domainObject);
+			context.Connection.Update (domainObject);
 			return data;
 		}
 

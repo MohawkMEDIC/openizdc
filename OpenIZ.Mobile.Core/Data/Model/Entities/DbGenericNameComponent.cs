@@ -17,6 +17,8 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -32,15 +34,15 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
         /// <summary>
         /// Gets or sets the type of the component
         /// </summary>
-        [Column("type"), MaxLength(16)]
+        [Column("type"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] ComponentTypeUuid { get; set; }
 
         /// <summary>
         /// Gets or sets the value.
         /// </summary>
         /// <value>The value.</value>
-        [Column("value"), NotNull, Indexed]
-        public String Value
+        [Column("value_id"), MaxLength(16), NotNull, Indexed]
+        public virtual byte[] ValueUuid
         {
             get;
             set;

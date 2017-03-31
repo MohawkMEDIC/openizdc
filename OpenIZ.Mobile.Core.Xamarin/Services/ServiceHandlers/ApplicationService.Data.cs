@@ -37,6 +37,7 @@ using OpenIZ.Mobile.Core.Services;
 using System.IO;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using Newtonsoft.Json.Linq;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -56,10 +57,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Close all connections
             var conmgr = ApplicationContext.Current.GetService<IDataConnectionManager>();
+            var warehouse = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
             if (conmgr == null)
                 throw new InvalidOperationException(Strings.err_restoreNotPermitted);
 
             conmgr.Stop();
+            (warehouse as IDaemonService)?.Stop();
 
             // Perform a backup if possible
             foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
@@ -76,6 +79,25 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ApplicationContext.Current.SaveConfiguration();
         }
 
+
+        /// <summary>
+        /// Instructs the service to compact all databases
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/data")]
+        [Demand(PolicyIdentifiers.UnrestrictedAdministration)]
+        public void Compact()
+        {
+
+            // Run the specified command vaccuum command on each database
+            var conmgr = ApplicationContext.Current.GetService<IDataConnectionManager>();
+            if (conmgr == null)
+                throw new InvalidOperationException(Strings.err_compactNotPermitted);
+
+            // Iterate compact open connections
+            conmgr.Compact();
+            
+        }
+
         /// <summary>
         /// Delete queue entry
         /// </summary>
@@ -88,10 +110,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Close all connections
             var conmgr = ApplicationContext.Current.GetService<IDataConnectionManager>();
+            var warehouse = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
             if (conmgr == null)
                 throw new InvalidOperationException(Strings.err_purgeNotPermitted);
                 
             conmgr.Stop();
+            (warehouse as IDaemonService)?.Stop();
 
             // Perform a backup if possible
             foreach (var itm in ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().ConnectionString)
@@ -137,7 +162,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Delete queue entry
         /// </summary>
         [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "PUT", UriPath = "/queue")]
-        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.Json)]
         public void ReQueueDead()
         {
@@ -170,7 +195,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         /// <returns></returns>
         [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "GET", UriPath = "/queue")]
-        [Demand(PolicyIdentifiers.AccessClientAdministrativeFunction)]
+        [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.Json)]
         public AmiCollection<SynchronizationQueueEntry> GetQueueEntry()
         {

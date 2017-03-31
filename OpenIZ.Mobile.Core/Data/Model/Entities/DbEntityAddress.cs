@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -34,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the use concept identifier.
 		/// </summary>
 		/// <value>The use concept identifier.</value>
-		[Column("use"), MaxLength(16)]
+		[Column("use"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] UseConceptUuid {
 			get;
 			set;
@@ -53,14 +55,50 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the address identifier.
 		/// </summary>
 		/// <value>The address identifier.</value>
-		[Column("address_uuid"), MaxLength(16)]
+		[Column("address_uuid"), MaxLength(16), Indexed, ForeignKey(typeof(DbEntityAddress), nameof(DbEntityAddress.Uuid))]
 		public byte[] AddressUuid {
 			get;
 			set;
 		}
-	
 
-	}
+        /// <summary>
+        /// Gets or sets the value identifier of the name value
+        /// </summary>
+        [Column("value_id"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAddressValue), nameof(DbAddressValue.Uuid)), AlwaysJoin]
+        public override byte[] ValueUuid
+        {
+            get; set;
+        }
 
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbEntityAddressComponent
+        {
+
+            /// <summary>
+            /// Gets or sets the value of the address component
+            /// </summary>
+            [Column("value")]
+            public String Value { get; set; }
+
+        }
+
+    }
+
+
+    /// <summary>
+    /// Represents unique values
+    /// </summary>
+    [Table("entity_addr_val")]
+    public class DbAddressValue : DbIdentified
+    {
+
+        /// <summary>
+        /// Gets or sets the value of the address
+        /// </summary>
+        [Column("value"), NotNull]
+        public String Value { get; set; }
+    }
 }
 

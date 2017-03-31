@@ -25,7 +25,7 @@
     <property name="source" all="true"/>
     <property name="target" all="true"/>
     <property name="targetModel" all="true" behavior="always" ref="Entity"/>
-    <property name="relationshipType" all="true"/>
+    <property name="relationshipType" all="true" behavior="always"/>
     <property name="holderModel" behavior="never"/>
     <property name="sourceModel" behavior="never"/>
     <property name="relationshipTypeModel" behavior="never"/>
@@ -35,7 +35,7 @@
   <type type="ActRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="targetModel" all="true" ref="Act"/>
+    <property name="targetModel" all="true" ref="Act" behavior="always"/>
     <property name="relationshipType" all="true"/>
     <property name="holderModel" behavior="never"/>
     <property name="sourceModel" behavior="never"/>
@@ -126,7 +126,7 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
-    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="typeConceptModel" all="true" behavior="always" ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
       <property name="Parent" all="true">
         <property name="holderModel" behavior="never"/>
@@ -142,7 +142,7 @@
       <property name="OwnedEntity" all="true">
         <property name="holderModel" behavior="never"/>
         <property name="relationshipTypeModel" behavior="never"/>
-        <property name="targetModel" behavior="always" all="false">
+        <property name="targetModel" behavior="always" all="true">
           <property name="id"/>
           <property name="version"/>
           <property name="lotNumber"/>
@@ -176,11 +176,13 @@
     <property name="previousVersionModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
     <property name="statusConceptModel" behavior="never"/>
-    <property name="doseUnitModel" ref="Concept" behavior="always"/>
-    <property name="interpretationConceptModel" ref="Concept" behavior="always"/>
-    <property name="routeModel" ref="Concept" behavior="always"/>
-    <property name="siteModel" ref="Concept" behavior="always"/>
-    <property name="reasonConceptModel" ref="Concept" behavior="always"/>
+    <property name="doseUnitModel" behavior="always" ref="Concept"/>
+    <property name="moodConceptModel" behavior="never"/>
+    <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
+    <property name="protocol" behavior="never"/>
+    <property name="routeModel" behavior="always"  ref="Concept"/>
+    <property name="siteModel" behavior="always"  ref="Concept"/>
+    <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
       <property name="*" all="true" ref="ActRelationship"/>
     </property>

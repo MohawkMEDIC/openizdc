@@ -23,9 +23,9 @@
   <type type="EntityRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="participationRole" all="true"/>
     <property name="key" all="true"/>
     <property name="quantity" all="true"/>
+    <property name="relationshipType" all="true"/>
   </type>
   <type type="IdentifiedData" all="true">
     <property name="etag" behavior="never"/>
@@ -94,6 +94,7 @@
       <property name="Mother" all="true">
         <property name="target" all="true"/>
         <property name="targetModel" all="true" behavior="always"/>
+        <property name="relationshipTypeModel" behavior="never"/>
       </property>
       <property name="*" all="true">
         <property name="targetModel" all="true" behavior="always">

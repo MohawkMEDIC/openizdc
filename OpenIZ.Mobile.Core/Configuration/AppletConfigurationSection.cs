@@ -98,7 +98,12 @@ namespace OpenIZ.Mobile.Core.Configuration
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Auto-update applet
+        /// </summary>
+        [XmlElement("autoUpdate"), JsonProperty("autoUpdate")]
+        public bool AutoUpdateApplets { get; set; }
+    }
 
 	/// <summary>
 	/// Represents a configuration of an applet

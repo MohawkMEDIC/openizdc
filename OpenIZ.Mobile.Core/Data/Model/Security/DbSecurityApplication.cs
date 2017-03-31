@@ -20,6 +20,7 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Security
 {
@@ -27,6 +28,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Security
 	/// Security application data. Should only be one entry here as well
 	/// </summary>
 	[Table("security_application")]
+    [AssociativeTable(typeof(DbSecurityPolicy), typeof(DbSecurityApplicationPolicy))]
 	public class DbSecurityApplication : DbBaseData
 	{
 

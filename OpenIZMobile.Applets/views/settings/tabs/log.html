@@ -18,7 +18,7 @@
  - Date: 2017-1-16
  -->
 <div class="container-fluid" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet">
-    <div class="container-fluid">
+    <div class="form-horizontal">
         <div class="row">
             <div class="col-md-2 col-xs-2">
                 <img src="~/img/appbar.book.list.png" alt="log" class="left" />
@@ -27,23 +27,29 @@
                 <em>{{ 'locale.settings.logDescription' | i18n }}</em>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2">{{ 'locale.settings.logMode' | i18n }}</label>
-        <div class="col-sm-10">
-            <select class="form-control" ng-model="config.log.mode">
-                <optgroup label="Debugging">
-                    <option value="LogAlways">{{ 'locale.settings.log.always' | i18n }}</option>
-                    <option value="Information">{{ 'locale.settings.log.informational' | i18n }}</option>
-                    <option value="Verbose">{{ 'locale.settings.log.verbose' | i18n }}</option>
-                </optgroup>
-                <optgroup label="Production">
-                    <option value="Critical">{{ 'locale.settings.log.critical' | i18n }}</option>
-                    <option value="Error">{{ 'locale.settings.log.error' | i18n }}</option>
-                    <option value="Warning">{{ 'locale.settings.log.warning' | i18n }}</option>
-
-                </optgroup>
-            </select>
+        <div class="row">
+            <div class="form-group">
+                <label class="control-label col-sm-2">{{ 'locale.settings.logMode' | i18n }}</label>
+                <div class="col-sm-10">
+                    <div class="input-group">
+                        <select class="form-control" ng-model="config.log.mode">
+                            <optgroup label="Debugging">
+                                <option value="LogAlways">{{ 'locale.settings.log.always' | i18n }}</option>
+                                <option value="Information">{{ 'locale.settings.log.informational' | i18n }}</option>
+                                <option value="Verbose">{{ 'locale.settings.log.verbose' | i18n }}</option>
+                            </optgroup>
+                            <optgroup label="Production">
+                                <option value="Critical">{{ 'locale.settings.log.critical' | i18n }}</option>
+                                <option value="Error">{{ 'locale.settings.log.error' | i18n }}</option>
+                                <option value="Warning">{{ 'locale.settings.log.warning' | i18n }}</option>
+                            </optgroup>
+                        </select>
+                        <span class="input-group-btn">
+                            <a class="btn btn-default" data-toggle="popover" data-placement="top" tabindex="1" data-trigger="focus" title="{{ 'locale.settings.logMode' | i18n }}" data-content="{{ 'locale.settings.logMode.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

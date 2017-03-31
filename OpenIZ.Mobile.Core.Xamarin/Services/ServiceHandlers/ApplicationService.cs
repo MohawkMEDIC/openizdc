@@ -42,6 +42,7 @@ using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using System.IO.Compression;
+using Newtonsoft.Json.Linq;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -297,6 +298,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Perform an update operation
+        /// </summary>
+        [RestOperation(Method = "POST", UriPath = "/update", FaultProvider = nameof(ApplicationServiceFault))]
+        [Demand(PolicyIdentifiers.UnrestrictedAdministration)]
+        public void DoUpdate(JObject appObject)
+        {
+
+            if (appObject["appId"] == null)
+                throw new InvalidOperationException("Missing application id");
+
+            var appId = appObject["appId"].Value<String>();
+            // Update
+            ApplicationContext.Current.GetService<IUpdateManager>().Install(appId);
+        }
+
+        /// <summary>
         /// Get the alerts from the service
         /// </summary>
         [RestOperation(UriPath = "/alerts", Method = "GET")]
@@ -339,7 +356,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get the alerts from the service
         /// </summary>
         [RestOperation(UriPath = "/alerts", Method = "POST")]
-        public AlertMessage SaveAlert(AlertMessage alert)
+        public AlertMessage SaveAlert([RestMessage(RestMessageFormat.SimpleJson)]AlertMessage alert)
         {
             try
             {

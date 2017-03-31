@@ -46,11 +46,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<Bundle>>();
 
             data = breService?.BeforeInsert(data) ?? data;
+
 			data = persistence.Insert(data);
             breService?.AfterInsert(data) ;
 
             // Insert bundle to the master queue
-            SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert);
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=> SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert));
 
             return data;
 		}

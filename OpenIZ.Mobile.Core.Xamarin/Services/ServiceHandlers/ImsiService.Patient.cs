@@ -86,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var patientService = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-            var integrationService = ApplicationContext.Current.GetService<IIntegrationService>();
+            var integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
 
             if (search.ContainsKey("_id"))
             {
@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 {
                     patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null);
                     // Add this to the cache
-                    ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
+                    //ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
                     patient.Tags.Add(new EntityTag("onlineResult", "true"));
                 }
                 else
@@ -147,7 +147,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         if (bundle != null && bundle.TotalResults > 0)
                         {
                             totalResults = bundle.TotalResults;
-                            bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
                             bundle.Reconstitute();
                             retVal = bundle.Item.OfType<Patient>();
                         }
@@ -165,14 +164,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // There is additional filter parameters
                 if (search.Keys.Count(o => !o.StartsWith("_")) > 0)
                 {
-                    var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search);
+                    var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(search, null, false);
                     this.m_tracer.TraceVerbose("Searching Patients : {0} / {1}", MiniImsServer.CurrentContext.Request.Url.Query, predicate);
 
                     if (search.ContainsKey("_onlineOnly"))
                     {
                         var bundle = integrationService.Find(predicate, offset, count);
                         totalResults = bundle.TotalResults;
-                        bundle.Item.OfType<Patient>().ToList().ForEach((o) => o.Tags.Add(new EntityTag("onlineResult", "true")));
                         bundle.Reconstitute();
                         if (retVal == null)
                             retVal = bundle.Item.OfType<Patient>();
@@ -189,6 +187,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         }
                     }
                 }
+
+				if (retVal == null)
+				{
+					retVal = new List<Patient>();
+				}
+
+				retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
+                if (search.ContainsKey("_onlineOnly"))
+                    retVal.ToList().ForEach((o) => {
+                        MemoryCache.Current.RemoveObject(o.GetType(), o.Key);
+                        if (patientService.Get(o.Key.Value, Guid.Empty) == null)
+                            o.Tags.Add(new EntityTag("onlineResult", "true"));
+                    });
 
                 // Serialize the response
                 return new Bundle()
@@ -230,11 +241,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 DateOfBirth = DateTime.Now,
                 Identifiers = new List<EntityIdentifier>()
                 {
-                    new EntityIdentifier(null, null)
-                    {
-                        Authority = new AssigningAuthority() { DomainName = "NEW" },
-                        Value = ""
-                    }
+                    new EntityIdentifier("NEW", "")
                 },
                 Relationships = new List<EntityRelationship>()
                 {

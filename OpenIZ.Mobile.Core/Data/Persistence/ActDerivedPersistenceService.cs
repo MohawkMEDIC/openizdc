@@ -31,9 +31,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Represents a persistence service which is derived from an act
     /// </summary>
-    public class ActDerivedPersistenceService<TModel, TData> : IdentifiedPersistenceService<TModel, TData>
+    public class ActDerivedPersistenceService<TModel, TData, TQueryResult> : IdentifiedPersistenceService<TModel, TData, TQueryResult>
         where TModel : Act, new()
         where TData : DbIdentified, new()
+        where TQueryResult : DbIdentified
     {
         // act persister
         protected ActPersistenceService m_actPersister = new ActPersistenceService();
@@ -41,28 +42,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
-        public override TModel Insert(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            var inserted = this.m_actPersister.InsertInternal(context, data);
+            var inserted = this.m_actPersister.InsertCoreProperties(context, data);
             data.Key = inserted.Key;
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Update the specified TModel
         /// </summary>
-        public override TModel Update(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
-            this.m_actPersister.UpdateInternal(context, data);
-            return base.Update(context, data);
+            this.m_actPersister.UpdateCoreProperties(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the object
         /// </summary>
-        public override TModel Obsolete(SQLiteConnectionWithLock context, TModel data)
+        protected override TModel ObsoleteInternal(LocalDataContext context, TModel data)
         {
-            var retVal = this.m_actPersister.ObsoleteInternal(context, data);
+            var retVal = this.m_actPersister.ObsoleteCoreProperties(context, data);
             return data;
         }
     }

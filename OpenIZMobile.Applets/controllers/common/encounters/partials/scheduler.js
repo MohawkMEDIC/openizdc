@@ -23,9 +23,10 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
+layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', 'encounterFactory', function ($scope, $rootScope, $stateParams, encounterFactory) {
     $scope._isCalendarInitialized = false;
-
+    $scope.isLoading = true;
+    $scope.encounterFactory = encounterFactory;
     // Scheduling assistant shown
     $('a[data-target="#schedulingAssistant"]').on('shown.bs.tab', function () {
         if (!$scope._isCalendarInitialized) {
@@ -46,7 +47,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
                 header: {
                     left: "prev, today, next",
                     center: "title",
-                    right:null
+                    right: null
                 },
                 eventLimit: false, // allow "more" link when too many events
                 eventSources: [
@@ -60,59 +61,85 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
 
     // Modal shown
     $("#appointmentScheduler").on('show.bs.modal', function () {
+        $scope.getAppointment();
+    });
+     
+     
+    // Gather the care plan
+    $scope.getAppointment = function(){
         
-        
-        // Gather the care plan
         OpenIZ.CarePlan.getCarePlanAsync({
-            query: "_patientId=" + $stateParams.patientId + "&_appointments=true",
-            minDate: new Date().tomorrow(),
-            maxDate: new Date().addDays(90),
+            query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
+            onDate: new Date(),
             /** @param {OpenIZModel.Bundle} proposals */
-            continueWith: function (proposals) {
-                if (!proposals.item) // There are no proposals, at the end of the planning process
-                {
-                    OpenIZ.CarePlan.getActTemplateAsync({
-                        templateId: "act.patientencounter.appointment",
-                        continueWith: function (appointment) {
-                            $scope.appointment = appointment;
-                        },
-                        onException: function (ex) {
-                            if (ex.message)
-                                alert(ex.message);
-                            else
-                                console.error(ex);
+            continueWith: function (proposalsToday) {
+                OpenIZ.CarePlan.getCarePlanAsync({
+                    query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
+                    minDate: new Date().tomorrow(),
+                    maxDate: new Date().addDays(90),
+                    continueWith: function (proposals) {
+                        if (!proposals.item) // There are no proposals, at the end of the planning process
+                        {
+                            OpenIZ.CarePlan.getActTemplateAsync({
+                                templateId: "act.patientencounter.appointment",
+                                continueWith: function (appointment) {
+                                    $scope.appointment = appointment;
+                                },
+                                onException: function (ex) {
+                                    if (ex.message)
+                                        alert(ex.message);
+                                    else
+                                        console.error(ex);
+                                }
+                            });
                         }
-                    });
-                }
-                else {
-                    // Grab the first appointment
-                    $scope.appointments = proposals.item;
-                    $scope.appointments.sort(
-                              function (a, b) {
-                                  return a.actTime > b.actTime ? 1 : -1;
-                              }
-                            );
-                    $scope.appointment = $scope.appointments[0];
-                    if (Array.isArray($scope.appointment.relationship.HasComponent))
-                        $.each($scope.appointment.relationship.HasComponent, function (i, e) {
-                            e._enabled = true;
+                        else {
+                            if (Array.isArray(proposalsToday.item))
+                                proposalsToday.item.push(proposals.item);
+                            else
+                                proposalsToday = proposals;
+
+                            // Grab the first appointment
+                            $scope.appointments = proposalsToday.item;
+                            $scope.appointments.sort(
+                                      function (a, b) {
+                                          return a.actTime > b.actTime ? 1 : -1;
+                                      }
+                                    );
+                            $scope.appointment = $scope.appointments[0];
+                            if ($scope.appointment.actTime < $rootScope.page.loadTime) {
+                                $scope.appointment.actTime = $rootScope.page.loadTime;
+                            }
+                            if ($scope.appointment.startTime < $rootScope.page.loadTime) {
+                                $scope.appointment.startTime = $rootScope.page.loadTime;
+                            }
+                            if (Array.isArray($scope.appointment.relationship.HasComponent))
+                                $.each($scope.appointment.relationship.HasComponent, function (i, e) {
+                                    e._enabled = true;
+                                });
+                            else {
+                                $scope.appointment.relationship.HasComponent = [
+                                    $scope.appointment.relationship.HasComponent
+                                ];
+                                $scope.appointment.relationship.HasComponent[0]._enabled = true;
+                            }
+                        }
+
+                        // Updates the scheduling assistant view
+                        $scope.$watch('appointment.actTime', function (newvalue, oldvalue) {
+                            if (newvalue != null && $scope._isCalendarInitialized &&
+                                newvalue != oldvalue)
+                                $("#schedulingAssistantCalendar").fullCalendar('select', newvalue);
                         });
-                    else {
-                        $scope.appointment.relationship.HasComponent = [
-                            $scope.appointment.relationship.HasComponent
-                        ];
-                        $scope.appointment.relationship.HasComponent[0]._enabled = true;
+
+                    },
+                    onException: function (ex) {
+                        if (ex.message)
+                            alert(ex.message);
+                        else
+                            console.error(ex);
                     }
-                }
-
-                // Updates the scheduling assistant view
-                $scope.$watch('appointment.actTime', function (newvalue, oldvalue) {
-                    if (newvalue != null && $scope._isCalendarInitialized &&
-                        newvalue != oldvalue)
-                        $("#schedulingAssistantCalendar").fullCalendar('select', newvalue);
                 });
-
-                $scope.$apply();
             },
             onException: function (ex) {
                 if (ex.message)
@@ -122,19 +149,29 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
             }
         });
 
-    });
+    };
+
+    $scope.getAppointments = function () {
+        $scope.encounterFactory.getUpcoming().then(function (appointments) {
+            $scope.isLoading = false;
+        }, function (ex){
+            console.log(ex);
+            $scope.isLoading = false;
+        })
+         
+    };
+
 
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
 
-        // First we're going to push onto the calendar the safe time for the appointment
-        var items = [{
+        var appointments = [{
             id: $scope.appointment.id,
             title: OpenIZ.Localization.getString("locale.encounters.appointment.recommended"),
-            backgroundColor: "rgba(75, 192, 192, 0.4)",
+            backgroundColor: "rgba(75, 192, 192, 0.6)",
             textColor: "#fff",
             start: OpenIZ.Util.toDateInputString($scope.appointment.startTime),
-            end: OpenIZ.Util.toDateInputString( $scope.appointment.stopTime),
+            end: OpenIZ.Util.toDateInputString($scope.appointment.stopTime),
             rendering: 'background'
         },
         {
@@ -146,34 +183,134 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$stateParams'
             end: OpenIZ.Util.toDateInputString($scope.appointment.actTime)
         }];
 
+        // Use the datawarehouse data
+        OpenIZ.Material.findMaterialAsync({
+            continueWith: function (materials) {
+                var refs = {};
+                for (var i in materials.item)
+                    refs[materials.item[i].id] = OpenIZ.Util.renderName(materials.item[i].name.Assigned);
 
-        // Now gather other load times
-        var date = $scope.appointment.startTime;
-        while(date < $scope.appointment.stopTime)
-        {
-            var title = "";
-            // HACK: This should be an aggregate query when local RISI services are available
-            for(var i in $scope.appointment.relationship.HasComponent)
-            {
-                var comp = $scope.appointment.relationship.HasComponent[i].targetModel;
-                if(comp.$type == 'SubstanceAdministration') {
-                    title += "0 " + OpenIZ.Util.renderName(comp.participation.Product.playerModel.name.Assigned) + "\r\n";
-                }
+                OpenIZWarehouse.Adhoc.query({
+                    martId: "oizcp",
+                    queryId: "bymonth",
+                    parameters: {
+                        "act_date": [">" + OpenIZ.Util.toDateInputString($scope.appointment.startTime), "<" + OpenIZ.Util.toDateInputString($scope.appointment.stopTime)],
+                        "location_id": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
+                    },
+                    /** @param {OpenIZModel.Material} state */
+                    continueWith: function (data) {
+                        var aptDates = {};
+                        for (var apt in data) {
+                            if (data[apt].product_id) {
+                                var dateStr = OpenIZ.Util.toDateInputString(data[apt].act_date);
+                                var dateApt = aptDates[dateStr];
+                                if (dateApt)
+                                    dateApt.title += "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]);
+                                else {
+                                    dateApt = {
+                                        title: OpenIZ.Localization.getString("locale.encounters.appointment.planned") + "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]),
+                                        start: OpenIZ.Util.toDateInputString(data[apt].act_date),
+                                        end: OpenIZ.Util.toDateInputString(data[apt].act_date)
+                                    };
+                                    appointments.push(dateApt);
+                                    aptDates[dateStr] = dateApt;
+                                }
+                            }
+                        }
+
+                        callback(appointments);
+                    }
+                });
             }
-            items.push({
-                id: $scope.appointment.id,
-                title: title,
-                backgroundColor: "rgba(54, 162, 235, 0.4)",
-                textColor: "#fff",
-                start: OpenIZ.Util.toDateInputString(date),
-                end: OpenIZ.Util.toDateInputString(date)
-            });
-            date = date.addDays(1);
-        }
+        });
 
-        callback(items);
 
     };
 
-   
+    /**
+     * Schedule an appointment
+     */
+    $scope.scheduleAppointment = function (form) {
+        if (form.$invalid) return;
+
+        OpenIZ.App.showWait();
+        try {
+            var bundle = new OpenIZModel.Bundle();
+
+            // schedule the appointment
+            var encounter = new OpenIZModel.PatientEncounter($scope.appointment);
+            encounter.moodConcept = OpenIZModel.ActMoodKeys.Appointment;
+            encounter.startTime = encounter.stopTime = null;
+            encounter.participation.Location = new OpenIZModel.ActParticipation({
+                player: $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
+            });
+            encounter.participation.Authororiginator = new OpenIZModel.ActParticipation({
+                player: $rootScope.session.entity.id
+            });
+            if (encounter.note && encounter.note.text) {
+                encounter.note.author = encounter.participation.Authororiginator.player;
+            };
+            bundle.item = [encounter];
+
+            // Iterate through the has-components and turn them to INT or remove them if not selected
+            if (!Array.isArray(encounter.relationship.HasComponent))
+                encounter.relationship.HasComponent = [encounter.relationship.HasComponent];
+
+            for (var i in encounter.relationship.HasComponent) {
+                /** @type {OpenIZModel.ActParticipation} */
+                var actRelationship = encounter.relationship.HasComponent[i];
+                if (!actRelationship._enabled) {
+                    encounter.relationship.HasComponent.splice(i, 1);
+                }
+                else {
+                    actRelationship.targetModel.moodConcept = OpenIZModel.ActMoodKeys.Intent;
+                    actRelationship.targetModel.actTime = encounter.actTime;
+                    //actRelationship.targetModel.startTime = actRelationship.targetModel.stopTime = null;
+                    actRelationship.targetModel.participation.RecordTarget = encounter.participation.RecordTarget;
+                    actRelationship.targetModel.participation.Location = encounter.participation.Location;
+                    actRelationship.targetModel.participation.Authororiginator = encounter.participation.Authororiginator;
+                    if (actRelationship.targetModel.participation && actRelationship.targetModel.participation.Product)
+                        delete (actRelationship.targetModel.participation.Product.playerModel);
+
+                    delete (actRelationship.targetModel.moodConceptModel);
+                    // Now push the act relationship into the submission bundle
+                    bundle.item.push(actRelationship.targetModel);
+                    delete (actRelationship.targetModel);
+                }
+            }
+
+            // Is there an encounters collection above us? if so we should probably push this up
+            if ($scope.$parent.encounters)
+                $scope.$parent.encounters.push(encounter);
+
+            // Now submit the bundle
+            OpenIZ.Bundle.insertAsync({
+                data: bundle,
+                continueWith: function (data) {
+                    $scope.getAppointments();
+                    $scope.$parent.encounters = null;
+                    $scope.$parent.refreshEncounters();
+                    $("#appointmentScheduler").modal("hide");
+                    
+                },
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait();
+                }
+            });
+        }
+        catch (e) {
+            console.error(e);
+        }
+        finally {
+            OpenIZ.App.hideWait();
+        }
+
+    }
+    $scope.getAppointments();
 }]);

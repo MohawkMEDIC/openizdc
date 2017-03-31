@@ -31,6 +31,15 @@ layoutApp.controller('AboutApplicationController', ['$scope', function ($scope) 
     OpenIZ.App.getInfoAsync({
         continueWith: function (data) {
             $scope.about = data;
+
+            // Updates 
+            if(data.update)
+                for (var i in data.applet) {
+                    data.applet[i].update = $.grep(data.update, function (e) { return e.id == data.applet[i].id; });
+                    if (Array.isArray(data.applet[i].update))
+                        data.applet[i].update = data.applet[i].update[0];
+                }
+
             $scope.$apply();
             OpenIZ.App.getLogInfoAsync({
                 continueWith: function (data) {
@@ -63,4 +72,35 @@ layoutApp.controller('AboutApplicationController', ['$scope', function ($scope) 
             }
         });
     };
+
+    // Update the version
+    $scope.update = function (appId) {
+        if (confirm(OpenIZ.Localization.getString('locale.about.versions.update.confirm')) && 
+            !$scope.isUpdating) {
+
+            var doUpdate = function () {
+                OpenIZ.App.showWait("a[id='btnUpdate" + appId + "']");
+                $scope.isUpdating = true;
+                OpenIZ.App.doUpdateAsync({
+                    appId: appId,
+                    continueWith: function (d) {
+                        OpenIZ.App.close();
+                    },
+                    onException: function (e) {
+                        if (e.type != "PolicyViolationException" && e.message)
+                            alert(e.message);
+                        else
+                            console.error(e);
+                    },
+                    finally: function () {
+                        OpenIZ.App.hideWait("a[id='btnUpdate" + appId + "']");
+                    }
+                });
+            };
+
+            OpenIZ.Authentication.$elevationCredentials = { continueWith: doUpdate };
+            doUpdate();
+
+        }
+    }
 }]);

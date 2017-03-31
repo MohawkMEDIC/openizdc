@@ -39,7 +39,7 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                 console.log(OpenIZ.Localization.getString("locale.security.login.invalid"));
                 return;
             }
-            OpenIZ.App.showWait();
+            OpenIZ.App.showWait('#loginButton');
             OpenIZ.Authentication.loginAsync({
                 userName: username,
                 password: password,
@@ -54,16 +54,18 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
                     }
                 },
                 onException: function (ex) {
-                    OpenIZ.App.hideWait();
-
+                    //OpenIZ.App.hideWait('#loginButton');
+                    OpenIZ.App.hideWait('#loginButton');
 
                 if (typeof (ex) == "string")
                     console.log(ex);
                 else if (ex.message != undefined)
-                    alert("" + ex.message + " - " + ex.details);
+                    alert("" + OpenIZ.Localization.getString(ex.message) + " - " + OpenIZ.Localization.getString(ex.details.statusText || ex.details));
                 else
                     console.log(ex);
-            }
+                },
+                finally: function () {
+                }
         });
     }; // scope.login
 

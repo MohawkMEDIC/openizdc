@@ -33,24 +33,24 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class SecurityUserPersistenceService : BaseDataPersistenceService<SecurityUser, DbSecurityUser>
     {
-        public override SecurityUser ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override SecurityUser ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var dbUser = dataInstance as DbSecurityUser;
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
-            retVal.Roles = context.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?", dbUser.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
+            retVal.Roles = context.Connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?", dbUser.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityRole, SecurityRole>(o)).ToList();
             foreach (var itm in retVal.Roles)
             {
                 var ruuid = itm.Key.Value.ToByteArray();
-                itm.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == ruuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
+                itm.Policies = context.Connection.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == ruuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
             }
             return retVal;
         }
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityUser Insert(SQLiteConnectionWithLock context, SecurityUser data)
+        protected override SecurityUser InsertInternal(LocalDataContext context, SecurityUser data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Roles
             if (retVal.Roles != null)
@@ -58,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 {
                     r.EnsureExists(context);
 
-                    context.Insert(new DbSecurityUserRole()
+                    context.Connection.Insert(new DbSecurityUserRole()
                     {
                         Uuid = Guid.NewGuid().ToByteArray(),
                         UserUuid = retVal.Key.Value.ToByteArray(),
@@ -72,18 +72,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityUser Update(SQLiteConnectionWithLock context, SecurityUser data)
+        protected override SecurityUser UpdateInternal(LocalDataContext context, SecurityUser data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             byte[] keyuuid = retVal.Key.Value.ToByteArray();
 
             if (retVal.Roles != null)
             {
-                var existingRoles = context.Table<DbSecurityUserRole>().Where(o => o.UserUuid == keyuuid).Select(o=>o.RoleUuid);
+                var existingRoles = context.Connection.Table<DbSecurityUserRole>().Where(o => o.UserUuid == keyuuid).Select(o=>o.RoleUuid);
                 foreach (var r in retVal.Roles.Where(r=>!existingRoles.Any(o=>new Guid(o) == r.Key)))
                 {
                     r.EnsureExists(context);
-                    context.Insert(new DbSecurityUserRole()
+                    context.Connection.Insert(new DbSecurityUserRole()
                     {
                         Uuid = Guid.NewGuid().ToByteArray(),
                         UserUuid = retVal.Key.Value.ToByteArray(),
@@ -106,22 +106,22 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityRole ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override SecurityRole ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbRole = dataInstance as DbSecurityRole;
-            retVal.Policies = context.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
+            retVal.Policies = context.Connection.Table<DbSecurityRolePolicy>().Where(o => o.RoleId == dbRole.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityRolePolicy, SecurityPolicyInstance>(o)).ToList();
 
-            retVal.Users = context.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user_role.role_id = ?", dbRole.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityUser, SecurityUser>(o)).ToList();
+            retVal.Users = context.Connection.Query<DbSecurityUser>("SELECT security_user.* FROM security_user_role INNER JOIN security_user ON (security_user.uuid = security_user_role.user_id) WHERE security_user_role.role_id = ?", dbRole.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityUser, SecurityUser>(o)).ToList();
             return retVal;
         }
 
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityRole Insert(SQLiteConnectionWithLock context, SecurityRole data)
+        protected override SecurityRole InsertInternal(LocalDataContext context, SecurityRole data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Roles
             //if (retVal.Policies != null)
@@ -137,9 +137,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityRole Update(SQLiteConnectionWithLock context, SecurityRole data)
+        protected override SecurityRole UpdateInternal(LocalDataContext context, SecurityRole data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             var entityUuid = retVal.Key.Value.ToByteArray();
 
             // Roles
@@ -163,20 +163,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityDevice ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override SecurityDevice ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbDevice = dataInstance as DbSecurityDevice;
-            retVal.Policies = context.Table<DbSecurityDevicePolicy>().Where(o=>o.DeviceId == dbDevice.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o)).ToList();
+            retVal.Policies = context.Connection.Table<DbSecurityDevicePolicy>().Where(o=>o.DeviceId == dbDevice.Uuid).ToList().Select(o => m_mapper.MapDomainInstance<DbSecurityDevicePolicy, SecurityPolicyInstance>(o)).ToList();
             return retVal;
         }
 
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityDevice Insert(SQLiteConnectionWithLock context, SecurityDevice data)
+        protected override SecurityDevice InsertInternal(LocalDataContext context, SecurityDevice data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Roles
             //if (retVal.Policies != null)
@@ -193,9 +193,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityDevice Update(SQLiteConnectionWithLock context, SecurityDevice data)
+        protected override SecurityDevice UpdateInternal(LocalDataContext context, SecurityDevice data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
             var entityUuid = retVal.Key.Value.ToByteArray();
 
             // Roles
@@ -220,20 +220,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Represent as model instance
         /// </summary>
-        public override SecurityApplication ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override SecurityApplication ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
             var retVal = base.ToModelInstance(dataInstance, context, loadFast);
             var dbApplication = dataInstance as DbSecurityApplication;
-            retVal.Policies = context.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == dbApplication.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o)).ToList();
+            retVal.Policies = context.Connection.Table<DbSecurityApplicationPolicy>().Where(o => o.ApplicationId == dbApplication.Uuid).Select(o => m_mapper.MapDomainInstance<DbSecurityApplicationPolicy, SecurityPolicyInstance>(o)).ToList();
             return retVal;
         }
 
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public override SecurityApplication Insert(SQLiteConnectionWithLock context, SecurityApplication data)
+        protected override SecurityApplication InsertInternal(LocalDataContext context, SecurityApplication data)
         {
-            var retVal = base.Insert(context, data);
+            var retVal = base.InsertInternal(context, data);
 
             // Roles
             //if (retVal.Policies != null)
@@ -250,9 +250,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Update the roles to security user
         /// </summary>
-        public override SecurityApplication Update(SQLiteConnectionWithLock context, SecurityApplication data)
+        protected override SecurityApplication UpdateInternal(LocalDataContext context, SecurityApplication data)
         {
-            var retVal = base.Update(context, data);
+            var retVal = base.UpdateInternal(context, data);
 
             var entityUuid = retVal.Key.Value.ToByteArray();
             // Roles

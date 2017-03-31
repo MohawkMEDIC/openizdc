@@ -17,6 +17,8 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Security;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -31,13 +33,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
     /// User entity ORM
     /// </summary>
     [Table("user")]
-    public class DbUserEntity : DbIdentified
+    public class DbUserEntity : DbPersonSubTable
     {
 
         /// <summary>
         /// Gets or sets the security user which is associated with this entity
         /// </summary>
-        [Column("securityUser"), MaxLength(16), Indexed, NotNull]
+        [Column("securityUser"), MaxLength(16), Indexed, NotNull, ForeignKey(typeof(DbSecurityUser), nameof(DbSecurityUser.Uuid))]
         public byte[] SecurityUserUuid { get; set; }
 
     }

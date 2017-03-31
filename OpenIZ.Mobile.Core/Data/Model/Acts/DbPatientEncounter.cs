@@ -17,6 +17,8 @@
  * User: fyfej
  * Date: 2016-11-14
  */
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using SQLite.Net;
 using SQLite.Net.Attributes;
 using System;
@@ -31,13 +33,26 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
     /// Represents storage class for a patient encounter
     /// </summary>
     [Table("encounter")]
-    public class DbPatientEncounter : DbIdentified
+    public class DbPatientEncounter : DbActSubTable
     {
 
         /// <summary>
         /// Identifies the manner in which the patient was discharged
         /// </summary>
-        [Column("dischargeDisposition"), MaxLength(16)]
+        [Column("dischargeDisposition"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
         public byte[] DischargeDispositionUuid { get; set; }
+
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbAct
+        {
+            /// <summary>
+            /// Identifies the manner in which the patient was discharged
+            /// </summary>
+            [Column("dischargeDisposition"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            public byte[] DischargeDispositionUuid { get; set; }
+
+        }
     }
 }

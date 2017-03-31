@@ -20,6 +20,8 @@
 using System;
 using SQLite.Net;
 using SQLite.Net.Attributes;
+using OpenIZ.Core.Data.QueryBuilder.Attributes;
+using OpenIZ.Mobile.Core.Data.Model.Concepts;
 
 namespace OpenIZ.Mobile.Core.Data.Model.Entities
 {
@@ -27,17 +29,31 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 	/// Represents an organization in the data store
 	/// </summary>
 	[Table("organization")]
-	public class DbOrganization : DbIdentified
+	public class DbOrganization : DbEntitySubTable
 	{
 		/// <summary>
 		/// Gets or sets the industry concept.
 		/// </summary>
 		/// <value>The industry concept.</value>
-		[Column("industryConcept"), MaxLength(16)]
+		[Column("industryConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] IndustryConceptUuid {
 			get;
 			set;
 		}
+
+        public class QueryResult : DbEntity
+        {
+            /// <summary>
+            /// Gets or sets the industry concept.
+            /// </summary>
+            /// <value>The industry concept.</value>
+            [Column("industryConcept"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            public byte[] IndustryConceptUuid
+            {
+                get;
+                set;
+            }
+        }
 
 	}
 }

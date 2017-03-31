@@ -165,6 +165,18 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;
         }
+
+        /// <summary>
+        /// Compact all items 
+        /// </summary>
+        public void Compact()
+        {
+            foreach(var itm in this.m_connections)
+            {
+                using (itm.Value.Lock())
+                    itm.Value.Execute("VACUUM");
+            }
+        }
     }
 
     /// <summary>

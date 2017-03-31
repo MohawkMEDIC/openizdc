@@ -25,35 +25,49 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/controllers/layouts/navbar.js"/>
 
-layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function ($scope, $stateParams)
+layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state', function ($scope, $stateParams, $state)
 {
+    $scope.selectedMessageID = null;
 
-    OpenIZ.App.getAlertsAsync({
-        query: {
-            id: $stateParams.alertId,
-            _count: 1
-        },
-        onException: function (ex)
-        {
-            OpenIZ.App.hideWait();
+    $scope.deleteAlert = deleteAlert;
+    $scope.updateAlert = updateAlert;
+    $scope.closeMessage = closeMessage;
 
-            if (typeof (ex) == "string")
-                console.log(ex);
-            else if (ex.message != undefined)
-                console.log("" + ex.message + " - " + ex.details);
-            else
-                console.log(ex);
-        },
-        continueWith: function (data)
+    init();
+
+    function init() {
+        $scope.selectedMessageID = $stateParams.alertId == '' ? null : $stateParams.alertId;
+
+        if ($scope.selectedMessageID !== null)
         {
-            $scope.alert = data[0];
-            console.log($scope.alert);
-            $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
-            $scope.$apply();
+            OpenIZ.App.getAlertsAsync({
+                query: {
+                    id: $stateParams.alertId,
+                    _count: 1
+                },
+                onException: function (ex)
+                {
+                    OpenIZ.App.hideWait();
+
+                    if (typeof (ex) == "string")
+                        console.log(ex);
+                    else if (ex.message != undefined)
+                        console.log("" + ex.message + " - " + ex.details);
+                    else
+                        console.log(ex);
+                },
+                continueWith: function (data)
+                {
+                    $scope.alert = data[0];
+                    console.log($scope.alert);
+                    $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
+                    $scope.$apply();
+                }
+            });
         }
-    });
+    }    
 
-    $scope.deleteAlert = function (alert)
+    function deleteAlert(alert)
     {
         alert.flags = 2;
 
@@ -78,7 +92,7 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
         });
     };
 
-    $scope.updateAlert = function ()
+    function updateAlert()
     {
         $scope.alert.flags = 2;
 
@@ -90,6 +104,9 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
             {
                 OpenIZ.App.showWait();
                 OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+                $state.transitionTo($state.current, {alertId: "" }, {
+                    reload: true, inherit: false
+                });
             },
             onException: function (ex)
             {
@@ -98,9 +115,20 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', function 
             },
             finally: function ()
             {
+                for (var i = 0; i < $scope.messages.length; i++) {
+                    if ($scope.messages[i].id == $scope.alert.id) {
+                        $scope.messages.splice(i, 1);
+                        break;
+                    }
+                }
                 OpenIZ.App.hideWait();
             }
         });
     };
 
+    function closeMessage() {
+        $scope.selectedMessageID = null;
+        delete $scope.alert;
+        $state.go('.', { alertId: undefined });
+    }
 }]);

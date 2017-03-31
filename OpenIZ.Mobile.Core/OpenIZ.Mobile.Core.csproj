@@ -30,6 +30,20 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataModelExtensions.cs" />
+    <Compile Include="Data\ILocalPersistenceService.cs" />
+    <Compile Include="Data\LocalDataContext.cs" />
+    <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
+    <Compile Include="Data\QueryBuilder\AlwaysJoinAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\AssociativeTableAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\ColumnMapping.cs" />
+    <Compile Include="Data\QueryBuilder\ForeignKeyAttribute.cs" />
+    <Compile Include="Data\QueryBuilder\QueryBuilder.cs" />
+    <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
+    <Compile Include="Data\QueryBuilder\SqlStatement.cs" />
+    <Compile Include="Data\QueryBuilder\TableMapping.cs" />
+    <Compile Include="Services\IUpdateManager.cs" />
+    <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />
     <Compile Include="Alerting\LocalAlertService.cs" />
     <Compile Include="AuthenticationContext.cs" />
@@ -37,7 +51,6 @@
     <Compile Include="Caching\MemoryCache.cs" />
     <Compile Include="Caching\MemoryCacheService.cs" />
     <Compile Include="Configuration\Data\Migrations\InitialSearchCatalog.cs" />
-    <Compile Include="Configuration\ForecastingConfigurationSection.cs" />
     <Compile Include="Configuration\SynchronizationConfigurationSection.cs" />
     <Compile Include="Data\Connection\SQLiteConnectionManager.cs" />
     <Compile Include="Data\ImsiPersistenceService.cs" />
@@ -85,9 +98,9 @@
     <Compile Include="Data\Persistence\SubstanceAdministrationPersistenceService.cs" />
     <Compile Include="Data\Persistence\UserEntityPersistenceService.cs" />
     <Compile Include="Data\Persistence\VersionedDataPersistenceService.cs" />
-    <Compile Include="Data\Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="Exceptions\InvalidVersionException.cs" />
     <Compile Include="Exceptions\SessionExpiredException.cs" />
+    <Compile Include="Interop\AMI\AmiIntegrationService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
     <Compile Include="Protocol\CarePlanManagerService.cs" />
     <Compile Include="Search\Model\SearchEntityType.cs" />
@@ -223,9 +236,6 @@
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\Solution Items\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Solution Items\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -237,6 +247,9 @@
     </Reference>
     <Reference Include="OpenIZ.Core.Applets">
       <HintPath>..\Solution Items\OpenIZ.Core.Applets.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenIZ.Core.Model">
+      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
     </Reference>
     <Reference Include="OpenIZ.Core.Model.AMI">
       <HintPath>..\Solution Items\OpenIZ.Core.Model.AMI.dll</HintPath>
@@ -250,17 +263,8 @@
     <Reference Include="OpenIZ.Messaging.IMSI.Client">
       <HintPath>..\Solution Items\OpenIZ.Messaging.IMSI.Client.dll</HintPath>
     </Reference>
-    <Reference Include="OpenIZ.Core.Model">
-      <HintPath>..\Solution Items\OpenIZ.Core.Model.dll</HintPath>
-    </Reference>
     <Reference Include="SQLite.Net">
       <HintPath>..\Solution Items\SQLite.Net.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.Portable">
-      <HintPath>..\Solution Items\System.Data.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions.Portable">
-      <HintPath>..\Solution Items\System.Transactions.Portable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -272,6 +276,7 @@
     <EmbeddedResource Include="Resources\Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ProjectExtensions>
@@ -290,7 +295,6 @@
     <EmbeddedResource Include="Data\Sql\000_init_openiz_algonquin.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Data\Warehouse\InitWarehouse.sql" />
     <EmbeddedResource Include="Protocol\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
@@ -299,9 +303,6 @@
     <None Include="..\OpenIZDC.licenseheader">
       <Link>OpenIZDC.licenseheader</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup />
 </Project>

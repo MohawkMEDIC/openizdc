@@ -17,6 +17,7 @@
  * User: fyfej
  * Date: 2017-1-16
  */
+using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Core.Services.Impl;
 using OpenIZ.Mobile.Core.Alerting;
@@ -24,7 +25,6 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
-using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;
@@ -122,12 +122,6 @@ namespace Minims
                 AuthenticationAsset = "/org/openiz/core/views/security/login.html"
             };
 
-            // Protocol 
-            ForecastingConfigurationSection forecastingSection = new ForecastingConfigurationSection()
-            {
-                ProtocolSourceDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MINIMS", "protocols"),
-            };
-
             // Initial applet style
             ApplicationConfigurationSection appSection = new ApplicationConfigurationSection()
             {
@@ -138,7 +132,7 @@ namespace Minims
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
-                    typeof(LocalAlertService).AssemblyQualifiedName,
+                    //typeof(LocalAlertService).AssemblyQualifiedName,
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
@@ -158,6 +152,7 @@ namespace Minims
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
+                    typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
@@ -237,7 +232,6 @@ namespace Minims
             retVal.Sections.Add(appSection);
             retVal.Sections.Add(secSection);
             retVal.Sections.Add(serviceSection);
-            retVal.Sections.Add(forecastingSection);
             retVal.Sections.Add(new SynchronizationConfigurationSection()
             {
                 PollInterval = new TimeSpan(0, 5, 0)

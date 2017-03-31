@@ -21,7 +21,7 @@
           xmlns:bind="http://openiz.org/applet/binding"
           ng-controller="YellowCardController">
     <oiz:script>/org.openiz.core/controllers/common/patients/view/partials/yellowcard.js</oiz:script>
-
+    
     <!-- TODO: Call the forecaster for this -->
     <div class="table-responsive">
         <table class="table table-stripd oiz-vaccination-history-table">
@@ -42,8 +42,8 @@
                     {{ antigenName }}</td>
                     <td ng-repeat="sequence in event track by $index" class="vaccine-table-icon">
                         <a data-toggle="tab" data-target="#vaccinations">
-                            <div ng-if="sequence != null" class="input-group">
-                                <div ng-if="sequence.moodConcept == 'acf7baf2-221f-4bc2-8116-ceb5165be079'">
+                            <div ng-if="sequence != null" class="input-group" ng-switch="sequence.moodConcept">
+                                <div ng-switch-when="acf7baf2-221f-4bc2-8116-ceb5165be079">
                                     <div class="text-danger" ng-if="sequence.stopTime != null &amp;&amp; sequence.stopTime &lt; $root.page.loadTime">
                                         <span class="glyphicon glyphicon-exclamation-sign"></span>
                                     </div>
@@ -51,18 +51,28 @@
                                         <span class="glyphicon glyphicon-info-sign"></span>
                                     </div>
                                     <div class="text-info" ng-if="sequence.startTime != null &amp;&amp; sequence.startTime &gt; $root.page.maxEventTime">
+                                        {{ sequence.actTime | date: 'dd-MM-yyyy' }}
+                                        <span class="glyphicon glyphicon glyphicon-th-large"></span>
+                                    </div>
+                                </div>
+                                <div ng-switch-when="099bcc5e-8e2f-4d50-b509-9f9d5bbeb58e" class="text-info">
+                                    <div class="text-danger" ng-if="sequence.actTime != null &amp;&amp; sequence.actTime &lt; $root.page.loadTime">
+                                        <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                    </div>
+                                    <div class="text-info" ng-if="sequence.actTime != null &amp;&amp; sequence.actTime &gt; $root.page.maxEventTime">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </div>
                                 </div>
-                                <div ng-if="sequence.moodConcept != 'acf7baf2-221f-4bc2-8116-ceb5165be079'" class="text-success">
-                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                <div ng-switch-when="ec74541f-87c4-4327-a4b9-97f325501747">
+                                    <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-ok"></span> 
+                                        <div ng-if="sequence.actTime != null">{{ sequence.actTime | date: 'dd-MM-yyyy' }}</div>
                                     </div>
-                                    <div class="text-success" ng-if="!sequence.negationInd &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                                    <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                                         <span class="glyphicon glyphicon-tasks"></span> 
                                     </div>
-                                    <div class="text-warn" ng-if="sequence.negationInd">
-                                        <span class="glyphicon glyphicon-question-sign"></span>
+                                    <div class="text-danger" ng-if="sequence.isNegated">
+                                        <span class="glyphicon glyphicon-question-sign"></span> {{ 'locale.encounters.notDone' | i18n }} ({{ sequence.reasonConceptModel | oizConcept }})
                                     </div>
                                 </div>
                             </div>
@@ -73,4 +83,5 @@
             </tbody>
         </table>
     </div>
+    <!--chart-legend class="chart-legend" ng-repeat="item in yellowcardLegend"></chart-legend-->
 </div>

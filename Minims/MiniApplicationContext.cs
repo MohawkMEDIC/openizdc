@@ -54,6 +54,7 @@ namespace Minims
     /// </summary>
     public class MiniApplicationContext : XamarinApplicationContext
     {
+        
         // XSD OpenIZ
         private static readonly XNamespace xs_openiz = "http://openiz.org/applet";
 
@@ -168,7 +169,7 @@ namespace Minims
                         retVal.m_tracer.TraceError("Loading applet {0} failed: {1}", appletDir, e.ToString());
                         throw;
                     }
-                retVal.LoadedApplets.CachePages = true;
+                retVal.LoadedApplets.CachePages = false;
                 retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                 retVal.Start();
@@ -200,6 +201,8 @@ namespace Minims
                 try
                 {
                     retVal.ConfigurationManager.Load();
+                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
+
                     // Set master application context
                     ApplicationContext.Current = retVal;
                     retVal.m_tracer = Tracer.GetTracer(typeof(MiniApplicationContext), retVal.ConfigurationManager.Configuration);
@@ -265,32 +268,19 @@ namespace Minims
                     if(!retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Any(o=>o.TraceWriterClassXml.Contains("Console")))
                         retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()
                         {
-                            TraceWriter = new ConsoleTraceWriter(EventLevel.LogAlways, "")
+                            TraceWriter = new ConsoleTraceWriter(EventLevel.Warning, "")
                         });
 
-                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
-                    // Load clinical protocols
-                    retVal.m_tracer.TraceInfo("Loading clinical protocols..");
-
-                    if(consoleParms.ProtocolDirectory != null)
-                        foreach (var dir in consoleParms.ProtocolDirectory)
-                            foreach (var f in Directory.GetFiles(dir))
-                            {
-                                retVal.m_tracer.TraceVerbose("Installing {0}...", f);
-                                using (var stream = File.OpenRead(f))
-                                {
-                                    var pd = ProtocolDefinition.Load(stream);
-                                    retVal.InstallProtocol(new XmlClinicalProtocol(pd));
-                                }
-                            }
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
                     {
                         OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
                     }
                     // Start daemons
-                    retVal.Start();
+                    retVal.GetService<IThreadPoolService>().QueueUserWorkItem(o => { retVal.Start(); });
+
+                    //retVal.Start();
                     
                 }
                 catch (Exception e)
@@ -313,6 +303,8 @@ namespace Minims
                 baseDirectory += Path.DirectorySeparatorChar.ToString();
             applet.Assets.AddRange(this.ProcessDirectory(baseDirectory, baseDirectory));
             applet.Initialize();
+            if (applet.Info.Version.Contains("*"))
+                applet.Info.Version = applet.Info.Version.Replace("*", "0000");
             base.LoadApplet(applet);
         }
 
@@ -520,7 +512,7 @@ namespace Minims
             {
                 tw.WriteLine("/// START OPENIZ MINI IMS SHIM");
                 // Version
-                tw.WriteLine("OpenIZSessionService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
+                tw.WriteLine("OpenIZApplicationService.GetMagic = function() {{ return '{0}'; }}", ApplicationContext.Current.ExecutionUuid);
                 tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
                 tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
                 tw.WriteLine("\tswitch(key) {");
@@ -533,7 +525,7 @@ namespace Minims
 
                 tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
                 tw.WriteLine("OpenIZApplicationService._UUIDS = [");
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 100; i++)
                     tw.WriteLine("\t'{0}',", Guid.NewGuid());
                 tw.WriteLine("\t''];");
 
@@ -567,7 +559,15 @@ namespace Minims
         /// </summary>
         public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
         {
-            throw new NotImplementedException();
+            // In-memory only
+            using (var ms = new MemoryStream(package.Manifest))
+            {
+                var applet = AppletManifest.Load(ms);
+                applet.Initialize();
+                base.LoadApplet(applet);
+            }
+                
+            //throw new NotImplementedException();
         }
 
         /// <summary>

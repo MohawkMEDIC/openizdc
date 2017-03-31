@@ -32,7 +32,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// <summary>
     /// Manufactured material persistence service
     /// </summary>
-    public class ManufacturedMaterialPersistenceService : IdentifiedPersistenceService<ManufacturedMaterial, DbManufacturedMaterial>
+    public class ManufacturedMaterialPersistenceService : IdentifiedPersistenceService<ManufacturedMaterial, DbManufacturedMaterial, DbManufacturedMaterial.QueryResult>
     {
         // Material persister
         private MaterialPersistenceService m_materialPersister = new MaterialPersistenceService();
@@ -44,12 +44,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="principal"></param>
         /// <returns></returns>
-        public override ManufacturedMaterial ToModelInstance(object dataInstance, SQLiteConnectionWithLock context, bool loadFast)
+        public override ManufacturedMaterial ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
         {
 
             var iddat = dataInstance as DbIdentified;
-            var domainMmat = dataInstance as DbManufacturedMaterial ?? context.Table<DbManufacturedMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
-            var domainMat = dataInstance as DbMaterial ?? context.Table<DbMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
+            var domainMmat = dataInstance as DbManufacturedMaterial ?? dataInstance.GetInstanceOf<DbManufacturedMaterial>() ?? context.Connection.Table<DbManufacturedMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
+            var domainMat = dataInstance as DbMaterial ?? dataInstance.GetInstanceOf<DbMaterial>() ?? context.Connection.Table<DbMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
             //var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
             var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(domainMat, context, loadFast);
             retVal.LotNumber = domainMmat.LotNumber;
@@ -60,25 +60,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Insert the specified manufactured material
         /// </summary>
-        public override ManufacturedMaterial Insert(SQLiteConnectionWithLock context, ManufacturedMaterial data)
+        protected override ManufacturedMaterial InsertInternal(LocalDataContext context, ManufacturedMaterial data)
         {
             var retVal = this.m_materialPersister.Insert(context, data);
-            return base.Insert(context, data);
+            return base.InsertInternal(context, data);
         }
 
         /// <summary>
         /// Updates the manufactured material
         /// </summary>
-        public override ManufacturedMaterial Update(SQLiteConnectionWithLock context, ManufacturedMaterial data)
+        protected override ManufacturedMaterial UpdateInternal(LocalDataContext context, ManufacturedMaterial data)
         {
             var updated = this.m_materialPersister.Update(context, data);
-            return base.Update(context, data);
+            return base.UpdateInternal(context, data);
         }
 
         /// <summary>
         /// Obsolete the specified manufactured material
         /// </summary>
-        public override ManufacturedMaterial Obsolete(SQLiteConnectionWithLock context, ManufacturedMaterial data)
+        protected override ManufacturedMaterial ObsoleteInternal(LocalDataContext context, ManufacturedMaterial data)
         {
             var obsoleted = this.m_materialPersister.Obsolete(context, data);
             return data;

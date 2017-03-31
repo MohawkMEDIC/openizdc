@@ -19,6 +19,7 @@
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Services;
 using OpenIZ.Messaging.IMSI.Client;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -29,6 +30,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Collections;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -68,6 +70,7 @@ namespace OpenIZ.Mobile.Core.Data
 				throw e;
 			}
 		}
+
 
 		/// <summary>
 		/// Generic versioned persister service for any non-customized persister
@@ -243,6 +246,14 @@ namespace OpenIZ.Mobile.Core.Data
 				retVal.SetDelayLoad(true);
 				return retVal;
 			}
-		}
+
+            /// <summary>
+            /// Query the specified object
+            /// </summary>
+            public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
+            {
+                return this.Query((Expression<Func<TModel, bool>>)query, offset, count, out totalResults, Guid.Empty);
+            }
+        }
 	}
 }

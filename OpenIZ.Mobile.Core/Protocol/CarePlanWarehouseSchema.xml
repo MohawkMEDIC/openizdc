@@ -22,16 +22,50 @@
   <property name="creation_date" type="date" attributes="nonnull"/>
   <property name="patient_id" type="uuid" attributes="nonnull index"/>
   <property name="location_id" type="uuid" attributes="index"/>
+  <property name="protocol_id" type="uuid" attributes="index"/>
   <property name="act_id" type="uuid" attributes="nonnull"/>
   <property name="class_id" type="uuid" attributes="nonnull"/>
   <property name="type_id" type="uuid" attributes="nonnull"/>
-  <property name="protocol_id" type="uuid" attributes="nonnull"/>
   <property name="min_date" type="date" attributes="nonnull"/>
   <property name="max_date" type="date" attributes="none"/>
   <property name="act_date" type="date" attributes="index"/>
   <property name="product_id" type="uuid" attributes="index"/>
-  <sqp name="bymonth" provider="sqlite">
-    SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM oizcp 
-    GROUP BY location_id, product_id, act_date
+  <property name="sequence_id" type="int" />
+  <sqp name="bymonth">
+    <property name="location_id" type="uuid"/>
+    <property name="product_id" type="uuid"/>
+    <property name="act_date" type="date"/>
+    <property name="acts" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM oizcp 
+    GROUP BY location_id, product_id, act_date]]>
+    </sql>
+  </sqp>
+  <sqp name="defaulters_aggregate">
+    <property name="days_overdue" type="int"/>
+    <property name="location_id" type="uuid"/>
+    <property name="num_children" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[
+    SELECT overdue / 86400 AS days_overdue, location_id, COUNT(patient_id) AS num_children FROM
+    (SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) AS overdue FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') GROUP BY patient_id) WHERE overdue > 0 GROUP BY overdue, location_id
+    ]]>
+    </sql>
+  </sqp>
+  <sqp name="defaulters">
+    <property name="patient_id" type="uuid"/>
+    <property name="location_id" type="uuid"/>
+    <property name="days_overdue" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[
+    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
+    ]]>
+    </sql>
+  </sqp>
+  <sqp name="consistency" >
+    <property name="patient_id" type="uuid"/>
+    <sql provider="sqlite">
+      <![CDATA[SELECT DISTINCT patient_id FROM oizcp]]>
+    </sql>
   </sqp>
 </DatamartSchema>

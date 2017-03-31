@@ -53,6 +53,8 @@ using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Alerting;
+using OpenIZ.Mobile.Core.Interop.AMI;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -73,7 +75,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <param name="config"></param>
         public ConfigurationViewModel(OpenIZConfiguration config)
         {
-            this.RealmName = config.GetSection<SecurityConfigurationSection>().Domain;
+            if (config == null) return;
+
+            this.RealmName = config.GetSection<SecurityConfigurationSection>()?.Domain;
             this.Security = config.GetSection<SecurityConfigurationSection>();
             this.Data = config.GetSection<DataConfigurationSection>();
             this.Applet = config.GetSection<AppletConfigurationSection>();
@@ -132,6 +136,38 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private Tracer m_tracer = Tracer.GetTracer(typeof(ConfigurationService));
 
         /// <summary>
+        /// Gets the currently authenticated user's configuration
+        /// </summary>
+        [RestOperation(UriPath = "/user", Method = "GET", FaultProvider = nameof(ConfigurationFaultProvider))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        [Demand(PolicyIdentifiers.Login)]
+        public ConfigurationViewModel GetUserConfiguration()
+        {
+            String userId = MiniImsServer.CurrentContext.Request.QueryString["_id"] ?? AuthenticationContext.Current.Principal.Identity.Name;
+            return new ConfigurationViewModel(XamarinApplicationContext.Current.GetUserConfiguration(userId));
+
+        }
+
+        /// <summary>
+        /// Gets the currently authenticated user's configuration
+        /// </summary>
+        [RestOperation(UriPath = "/user", Method = "POST", FaultProvider = nameof(ConfigurationFaultProvider))]
+        public void SaveUserConfiguration([RestMessage(RestMessageFormat.Json)]ConfigurationViewModel model)
+        {
+            String userId = MiniImsServer.CurrentContext.Request.QueryString["_id"] ?? AuthenticationContext.Current.Principal.Identity.Name;
+            XamarinApplicationContext.Current.SaveUserConfiguration(userId,
+                new OpenIZConfiguration()
+                {
+                    Sections = new List<object>()
+                    {
+                        model.Application,
+                        model.Applet
+                    }
+                }
+            );
+        }
+
+        /// <summary>
         /// Gets the specified forecast
         /// </summary>
         [RestOperation(UriPath = "/all", Method = "GET", FaultProvider = nameof(ConfigurationFaultProvider))]
@@ -176,33 +212,39 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
 
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAlertService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(QueueManagerService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(RemoteSynchronizationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(ImsiIntegrationService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiIntegrationService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AmiTwoFactorRequestService).AssemblyQualifiedName);
+                    ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(AlertSynchronizationService).AssemblyQualifiedName);
 
                     // Sync settings
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
                     // TODO: Customize this and clean it up ... It is very hackish
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Patient", "Act" })
+                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ExtensionType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Person", "Act" })
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = res == "UserEntity" || res == "Patient" || res == "Act" ? SynchronizationPullTriggerType.Always :
+                            Triggers = res == "UserEntity" || res == "Person" || res == "Act" ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
-
-
-
+                        
                         // Subscription
                         if (optionObject["data"]["sync"]["subscribe"] == null)
                         {
                             var efield = typeof(EntityClassKeys).GetField(res);
 
-                            if (efield != null && res != "Place")
+                            if(res == "Person")
+                            {
+                                syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient);
+                                syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient);
+                            }
+                            else if (efield != null && res != "Place")
                                 syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
                         }
                         else
@@ -219,12 +261,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
                                         syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
-                                    case "Patient":
+                                    case "Person":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
-                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[PrimaryInformationRecipient].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Place":
                                         if (syncSetting.Filters.Count == 0)
@@ -325,11 +370,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             String deviceName = realmData["deviceName"][0];
             this.m_tracer.TraceInfo("Joining {0}", realmUri);
 
-            List<string> enableTrace = null, noTimeout = null;
+            List<string> enableTrace = null, noTimeout = null, enableSSL = null;
             realmData.TryGetValue("enableTrace", out enableTrace);
             enableTrace = enableTrace ?? new List<String>();
             realmData.TryGetValue("noTimeout", out noTimeout);
             noTimeout = noTimeout ?? new List<String>();
+            realmData.TryGetValue("enableSSL", out enableSSL);
+            enableSSL = enableSSL ?? new List<string>();
 
             // Stage 1 - Demand access admin policy
             try
@@ -358,9 +405,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
 
-                String imsiUri = String.Format("http://{0}:8080/imsi", realmUri),
-                    oauthUri = String.Format("http://{0}:8080/auth", realmUri),
-                    amiUri = String.Format("http://{0}:8080/ami", realmUri);
+                string scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
+                string portScheme = scheme == "http" ? "8080" : "8443";
+                String imsiUri = String.Format("{0}://{1}:{2}/imsi", scheme, realmUri, portScheme),
+                    oauthUri = String.Format("{0}://{1}:{2}/auth", scheme, realmUri, portScheme),
+                    amiUri = String.Format("{0}://{1}:{2}/ami", scheme, realmUri, portScheme);
 
                 // Parse IMSI URI
                 serviceClientSection.Client.Clear();
@@ -464,6 +513,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Create user
                         amiClient.CreateUser(new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo(new OpenIZ.Core.Model.Security.SecurityUser()
                         {
+							CreationTime = DateTimeOffset.Now,
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
                             UserClass = UserClassKeys.ApplictionUser,
@@ -472,7 +522,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Roles = new List<OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo>()
                             {
-                                role
+								role
                             },
                             Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
                         });
@@ -488,7 +538,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Device = new OpenIZ.Core.Model.Security.SecurityDevice()
                             {
-                                Name = deviceName,
+								CreationTime = DateTimeOffset.Now,
+								Name = deviceName,
                                 DeviceSecret = Guid.NewGuid().ToString()
                             }
                         });

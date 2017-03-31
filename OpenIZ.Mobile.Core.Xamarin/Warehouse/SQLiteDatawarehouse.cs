@@ -30,20 +30,23 @@ using System.IO;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Mobile.Core;
 using System.Dynamic;
-using Newtonsoft.Json;
 using OpenIZ.Mobile.Core.Services;
 using System.Reflection;
 using System.Collections;
-using OpenIZ.Core.Model.Query;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Query;
+using Newtonsoft.Json;
+using System.Data;
 
-namespace OpenIZ.Mobile.Core.Data.Warehouse
+namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 {
     /// <summary>
     /// Represents a simple SQLite ad-hoc data warehouse
     /// </summary>
     public class SQLiteDatawarehouse : IAdHocDatawarehouseService, IDaemonService, IDisposable
     {
+        // Epoch
+        private readonly DateTime m_epoch = new DateTime(1970, 1, 1).ToUniversalTime();
 
         // Lock 
         private Object m_lock = new object();
@@ -55,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         private Tracer m_tracer = Tracer.GetTracer(typeof(SQLiteDatawarehouse));
 
         // Connection to the data-warehouse
-        private SqliteConnection m_connection;
+        private IDbConnection m_connection;
 
         public event EventHandler Starting;
         public event EventHandler Started;
@@ -100,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             try
             {
                 this.m_tracer.TraceInfo("Connecting datawarehouse to {0}", dbFile);
-                this.m_connection = new SqliteConnection(String.Format("Data Source={0}", dbFile));
+                this.m_connection = new SqliteConnection("Data Source=" + dbFile);
                 this.m_connection.Open();
             }
             catch (Exception e)
@@ -114,28 +117,35 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// </summary>
         private void InitializeDatabase(string dbFile)
         {
-            lock (this.m_lock)
+            try
             {
-                this.InitializeConnection(dbFile);
-
-                // Initialize the warehouse
-                using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Warehouse.InitWarehouse.sql"))
-                using (var sr = new StreamReader(initStream))
+                lock (this.m_lock)
                 {
-                    var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
-                    for (int i = 0; i < stmts.Length; i++)
+                    this.InitializeConnection(dbFile);
+
+                    // Initialize the warehouse
+                    using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Warehouse.InitWarehouse.sql"))
+                    using (var sr = new StreamReader(initStream))
                     {
-                        var stmt = stmts[i];
-                        if (String.IsNullOrEmpty(stmt)) continue;
-                        this.m_tracer.TraceVerbose("EXECUTE: {0}", stmt);
-                        using (var cmd = this.m_connection.CreateCommand())
+                        var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
+                        for (int i = 0; i < stmts.Length; i++)
                         {
-                            cmd.CommandText = stmt;
-                            cmd.CommandType = System.Data.CommandType.Text;
-                            cmd.ExecuteNonQuery();
+                            var stmt = stmts[i];
+                            if (String.IsNullOrEmpty(stmt)) continue;
+                            this.m_tracer.TraceVerbose("EXECUTE: {0}", stmt);
+                            using (var cmd = this.m_connection.CreateCommand())
+                            {
+                                cmd.CommandText = stmt;
+                                cmd.CommandType = System.Data.CommandType.Text;
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                this.m_tracer.TraceError("Error initializing database connection to {0} : {1}", dbFile, ex);
             }
         }
 
@@ -189,44 +199,47 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// <summary>
         /// Insert specified object
         /// </summary>
-        private Guid InsertObject(SqliteTransaction tx, String path, IDatamartSchemaPropertyContainer pcontainer, dynamic obj, Guid? scope = null)
+        private Guid InsertObject(IDbTransaction tx, String path, IDatamartSchemaPropertyContainer pcontainer, dynamic obj, Guid? scope = null)
         {
             // Conver to expando
-            IDictionary<String, Object> tuple = new ExpandoObject();
-            foreach (var pi in obj.GetType().GetProperties())
-                tuple.Add(pi.Name, pi.GetValue(obj, null));
-                 
-            tuple.Add("uuid", Guid.NewGuid());
-            tuple.Add("cont_id", scope);
-            tuple.Add("extraction_time", DateTime.Now);
+            lock (this.m_lock)
+            {
+                IDictionary<String, Object> tuple = new ExpandoObject();
+                foreach (var pi in obj.GetType().GetProperties())
+                    tuple.Add(pi.Name, pi.GetValue(obj, null));
 
-            // Create the properties
-            List<Object> parameters = new List<object>() { tuple["uuid"] };
-            if (scope != null)
-                parameters.Add(scope);
-            parameters.Add(tuple["extraction_time"]);
+                tuple.Add("uuid", Guid.NewGuid());
+                tuple.Add("cont_id", scope);
+                tuple.Add("extraction_time", DateTime.Now.ToUniversalTime().Subtract(this.m_epoch).TotalSeconds);
 
-            foreach (var p in pcontainer.Properties.Where(o => o.Type != SchemaPropertyType.Object))
-                parameters.Add(tuple[p.Name]);
+                // Create the properties
+                List<Object> parameters = new List<object>() { tuple["uuid"] };
+                if (scope != null)
+                    parameters.Add(scope);
+                parameters.Add(tuple["extraction_time"]);
 
-            // Now time to store
-            StringBuilder sbQuery = new StringBuilder("INSERT INTO ");
-            sbQuery.Append(path);
-            sbQuery.Append(" VALUES (");
-            foreach (var itm in parameters)
-                sbQuery.Append("?, ");
-            sbQuery.Remove(sbQuery.Length - 2, 2);
-            sbQuery.Append(")");
+                foreach (var p in pcontainer.Properties.Where(o => o.Type != SchemaPropertyType.Object))
+                    parameters.Add(tuple[p.Name]);
 
-            // Database command
-            using (var dbc = this.CreateCommand(tx, sbQuery.ToString(), parameters.ToArray()))
-                dbc.ExecuteNonQuery();
+                // Now time to store
+                StringBuilder sbQuery = new StringBuilder("INSERT INTO ");
+                sbQuery.Append(path);
+                sbQuery.Append(" VALUES (");
+                foreach (var itm in parameters)
+                    sbQuery.Append("?, ");
+                sbQuery.Remove(sbQuery.Length - 2, 2);
+                sbQuery.Append(")");
 
-            // Sub-properties
-            foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
-                this.InsertObject(tx, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
+                // Database command
+                using (var dbc = this.CreateCommand(tx, sbQuery.ToString(), parameters.ToArray()))
+                    dbc.ExecuteNonQuery();
 
-            return (Guid)tuple["uuid"];
+                // Sub-properties
+                foreach (var p in pcontainer.Properties.Where(o => o.Type == SchemaPropertyType.Object))
+                    this.InsertObject(tx, String.Format("{0}_{1}", path, p.Name), p, obj[p.Name], (Guid)tuple["uuid"]);
+
+                return (Guid)tuple["uuid"];
+            }
         }
 
         /// <summary>
@@ -268,7 +281,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             parms.Add(itm.Name, itm.GetValue(queryParameters, null));
                     }
 
-                    return this.QueryInternal(mart.Schema.Name, parms, offset, count, out totalResults);
+                    return this.QueryInternal(mart.Schema.Name, mart.Schema.Properties, parms, offset, count, out totalResults);
                 }
                 catch (Exception e)
                 {
@@ -313,11 +326,11 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             CreationTime = DateTime.Now,
                             Schema = dmSchema
                         };
-                        using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_datamarts VALUES (?, ?, ?, ?)", retVal.Id.ToByteArray(), name, retVal.CreationTime, retVal.Schema.Id))
+                        using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_datamarts VALUES (?, ?, ?, ?)", retVal.Id.ToByteArray(), name, retVal.CreationTime.ToUniversalTime().Subtract(this.m_epoch).TotalSeconds, retVal.Schema.Id))
                             dbc.ExecuteNonQuery();
 
                         foreach (var itm in dmSchema.Queries)
-                            this.CreateStoredQuery(retVal.Id, itm);
+                            this.CreateStoredQueryInternal(tx, retVal.Id, itm);
 
                         tx.Commit();
                         return retVal;
@@ -335,14 +348,15 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// <summary>
         /// Create properties for the specified container
         /// </summary>
-        private void CreateProperties(String pathName, SqliteTransaction tx, IDatamartSchemaPropertyContainer container)
+        private void CreateProperties(String pathName, IDbTransaction tx, IDatamartSchemaPropertyContainer container)
         {
             List<String> indexes = new List<string>();
 
             // Create the property container table
             StringBuilder createSql = new StringBuilder();
+
             createSql.AppendFormat("CREATE TABLE {0} (", pathName);
-            createSql.Append("uuid blob(16) not null primary key, extraction_time datetime not null default current_timestamp, ");
+            createSql.Append("uuid blob(16) not null primary key, extraction_time bigint not null default current_timestamp, ");
             if (container is DatamartSchemaProperty)
                 createSql.Append("entity_uuid blob(16) not null, ");
 
@@ -365,7 +379,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                         typeString = "boolean";
                         break;
                     case SchemaPropertyType.Date:
-                        typeString = "datetime";
+                        typeString = "bigint";
                         break;
                     case SchemaPropertyType.Decimal:
                         typeString = "decimal";
@@ -402,16 +416,19 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
             createSql.AppendFormat(")");
 
             // Now execute SQL create statement
-            using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
-            foreach (var idx in indexes)
-                using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
-
+            if(!(container is DatamartStoredQuery))
+                lock (this.m_lock)
+                {
+                    using (var dbc = this.CreateCommand(tx, createSql.ToString())) dbc.ExecuteNonQuery();
+                    foreach (var idx in indexes)
+                        using (var dbc = this.CreateCommand(tx, idx)) dbc.ExecuteNonQuery();
+                }
         }
 
         /// <summary>
         /// Create a command with the specified parameters
         /// </summary>
-        private SqliteCommand CreateCommand(SqliteTransaction tx, string sql, params object[] parameters)
+        private IDbCommand CreateCommand(IDbTransaction tx, string sql, params object[] parameters)
         {
             
             var retVal = this.m_connection.CreateCommand();
@@ -423,7 +440,14 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 var parm = retVal.CreateParameter();
                 parm.Value = itm;
                 if (itm is String) parm.DbType = System.Data.DbType.String;
-                else if (itm is DateTime || itm is DateTimeOffset) parm.DbType = System.Data.DbType.DateTime;
+                else if (itm is DateTime || itm is DateTimeOffset)
+                {
+                    parm.DbType = System.Data.DbType.Int64;
+                    if (itm is DateTime)
+                        parm.Value = ((DateTime)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                    else
+                        parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Subtract(this.m_epoch).TotalSeconds;
+                }
                 else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
                 else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
                 else if (itm is byte[])
@@ -431,7 +455,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     parm.DbType = System.Data.DbType.Binary;
                     parm.Value = itm;
                 }
-                else if(itm is Guid || itm is Guid?)
+                else if (itm is Guid || itm is Guid?)
                 {
                     parm.DbType = System.Data.DbType.Binary;
                     if (itm != null)
@@ -492,7 +516,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                         // First, we delete the record
                         List<object> vals = new List<object>();
-                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} WHERE uuid IN ({1})", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, vals)), vals.ToArray()))
+                        using (var dbc = this.CreateCommand(tx, String.Format("DELETE FROM {0} {1} ", mart.Schema.Name, this.ParseFilterDictionary(mart.Schema.Name, parms, mart.Schema.Properties, vals)), vals.ToArray()))
                             dbc.ExecuteNonQuery();
                         this.DeleteProperties(tx, mart.Schema.Name, mart.Schema);
                         
@@ -510,7 +534,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// <summary>
         /// Delete property values
         /// </summary>
-        private void DeleteProperties(SqliteTransaction tx, String path, IDatamartSchemaPropertyContainer container)
+        private void DeleteProperties(IDbTransaction tx, String path, IDatamartSchemaPropertyContainer container)
         {
             foreach (var p in container.Properties.Where(o => o.Type == SchemaPropertyType.Object))
             {
@@ -549,23 +573,26 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// </summary>
         public DatamartDefinition GetDatamart(String name)
         {
-            DatamartDefinition retVal = null;
-            using (var cmd = this.CreateCommand(null, "SELECT * FROM dw_datamarts WHERE name = ?", name))
-            using (var rdr = cmd.ExecuteReader())
-                if (rdr.Read())
-                {
-                    retVal = new DatamartDefinition()
+            lock (this.m_lock)
+            {
+                DatamartDefinition retVal = null;
+                using (var cmd = this.CreateCommand(null, "SELECT * FROM dw_datamarts WHERE name = ?", name))
+                using (var rdr = cmd.ExecuteReader())
+                    if (rdr.Read())
                     {
-                        Id = new Guid((byte[])rdr["uuid"]),
-                        Name = (string)rdr["name"],
-                        CreationTime = (DateTime)rdr["creation_time"],
-                        Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
-                    };
-                }
-                else return null;
+                        retVal = new DatamartDefinition()
+                        {
+                            Id = new Guid((byte[])rdr["uuid"]),
+                            Name = (string)rdr["name"],
+                            CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
+                            Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
+                        };
+                    }
+                    else return null;
 
-            retVal.Schema = this.LoadSchema(retVal.Schema.Id);
-            return retVal;
+                retVal.Schema = this.LoadSchema(retVal.Schema.Id);
+                return retVal;
+            }
         }
 
         /// <summary>
@@ -588,7 +615,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             {
                                 Id = new Guid((byte[])rdr["uuid"]),
                                 Name = (string)rdr["name"],
-                                CreationTime = (DateTime)rdr["creation_time"],
+                                CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
                                 Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
                             });
                         }
@@ -637,8 +664,10 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             parms.Add(itm.Name, itm.GetValue(queryParameters, null));
                     }
 
+                    var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
+
                     int tr = 0;
-                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), parms, 0, 100, out tr);
+                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 100, out tr);
                 }
                 catch (Exception e)
                 {
@@ -652,41 +681,43 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// <summary>
         /// Query the specified object with the specified parameters
         /// </summary>
-        private IEnumerable<dynamic> QueryInternal(string objectName, IDictionary<string, object> parms, int offset, int count, out int totalResults)
+        private IEnumerable<dynamic> QueryInternal(string objectName, List<DatamartSchemaProperty> properties, IDictionary<string, object> parms, int offset, int count, out int totalResults)
         {
             // Build a query
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("SELECT DISTINCT * FROM {0} WHERE uuid IN (", objectName);
+            sb.AppendFormat("SELECT DISTINCT * FROM {0} ", objectName);
             List<Object> vals = new List<Object>();
-            sb.Append(this.ParseFilterDictionary(objectName, parms, vals));
-
-            sb.Append(") ");
+            sb.Append(this.ParseFilterDictionary(objectName, parms, properties, vals));
 
             // Construct the result set
             List<dynamic> retVal = new List<dynamic>();
 
 
             using (var dbc = this.CreateCommand(null, String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray()))
-                totalResults = (int)dbc.ExecuteScalar();
+                totalResults = Convert.ToInt32(dbc.ExecuteScalar());
 
-            sb.AppendFormat(" OFFSET {0} LIMIT {1}", offset, count);
+            sb.AppendFormat(" LIMIT {1}  OFFSET {0}", offset, count);
 
-            using (var dbc = this.CreateCommand(null, sb.ToString(), vals))
-            using (var rdr = dbc.ExecuteReader())
-                while (rdr.Read())
-                    retVal.Add(this.CreateDynamic(rdr));
+            lock (this.m_lock)
+            {
+                using (var dbc = this.CreateCommand(null, sb.ToString(), vals.ToArray()))
+                using (var rdr = dbc.ExecuteReader())
+                    while (rdr.Read())
+                        retVal.Add(this.CreateDynamic(rdr, properties));
+            }
+
             return retVal;
         }
 
         /// <summary>
         /// Parses a filter dictionary and creates the necessary SQL
         /// </summary>
-        private String ParseFilterDictionary(String objectName, IDictionary<string, object> parms, List<object> vals)
+        private String ParseFilterDictionary(String objectName, IDictionary<string, object> parms, List<DatamartSchemaProperty> properties, List<object> vals)
         {
             StringBuilder sb = new StringBuilder();
             if (parms.Count() > 0)
             {
-                sb.AppendFormat("SELECT uuid FROM {0} WHERE ", objectName);
+                sb.AppendFormat(" WHERE ", objectName);
 
                 foreach (var s in parms)
                 {
@@ -697,8 +728,11 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                     sb.Append("(");
 
-                    string key = s.Key.Replace(".", "_"),
+                    string key = s.Key.Replace(".", "_").Replace("[]",""),
                         scopedQuery = objectName + ".";
+
+                    // Property info
+                    var pi = properties.FirstOrDefault(o => o.Name == key);
 
                     foreach (var itm in rValue as IList)
                     {
@@ -774,17 +808,19 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             vals.Add(gValue.ToByteArray());
                         else if (DateTime.TryParse(value.ToString(), out tdateTime))
                             vals.Add(tdateTime);
+                        else if (pi?.Type == SchemaPropertyType.Integer)
+                            vals.Add(Int32.Parse(value.ToString()));
+                        else if (pi?.Type == SchemaPropertyType.Decimal)
+                            vals.Add(Decimal.Parse(value.ToString()));
                         else
                             vals.Add(value);
                     }
                     sb.Remove(sb.Length - 4, 4);
+                    sb.Append(") AND ");
                 } // exist or value
-
-                sb.Append(") AND ");
-
             }
             else
-                sb.Append("SELECT uuid FROM sqp_{0}_{1}    ");
+                sb.AppendFormat("    ", objectName);
             sb.Remove(sb.Length - 4, 4);
             return sb.ToString();
         }
@@ -792,12 +828,73 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// <summary>
         /// Create a dynamic object
         /// </summary>
-        private dynamic CreateDynamic(SqliteDataReader rdr)
+        private dynamic CreateDynamic(IDataReader rdr, List<DatamartSchemaProperty> properties)
         {
-            dynamic retVal = new ExpandoObject();
+            var retVal = new ExpandoObject() as IDictionary<String, Object>;
             for (int i = 0; i < rdr.FieldCount; i++)
-                retVal[rdr.GetName(i)] = rdr[i];
+            {
+                var value = rdr[i];
+                var name = rdr.GetName(i);
+                var property = properties?.FirstOrDefault(o => o.Name == name);
+
+                if (rdr[i] == DBNull.Value)
+                    ;
+                else if (rdr[i] is byte[] && (rdr[i] as byte[]).Length == 16 ||
+                    property?.Type == SchemaPropertyType.Uuid)
+                    value = new Guid(rdr[i] as byte[]);
+                else if((rdr[i] is int || rdr[i] is long) && 
+                    property?.Type == SchemaPropertyType.Date)
+                {
+                    value = Convert.ToInt64(rdr[i]);
+                    value = this.m_epoch.AddSeconds((Int64)value);
+                }
+                retVal.Add(rdr.GetName(i), value);
+            }
             return retVal;
+        }
+
+        /// <summary>
+        /// Create stored query internally 
+        /// </summary>
+        private void CreateStoredQueryInternal(IDbTransaction tx, Guid datamartId, object queryDefinition)
+        {
+            var dmQuery = queryDefinition as DatamartStoredQuery;
+            if (queryDefinition is ExpandoObject)
+                dmQuery = JsonConvert.DeserializeObject<DatamartStoredQuery>(JsonConvert.SerializeObject(queryDefinition));
+
+            // Not interested
+            if (dmQuery == null) throw new ArgumentOutOfRangeException(nameof(queryDefinition));
+
+            var mySql = dmQuery.Definition.FirstOrDefault(o => o.ProviderId == this.DataProvider);
+
+            if (mySql == null) return;
+            else if (!mySql.Query.Trim().StartsWith("select", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Only SELECT allowed for stored queries");
+
+            try
+            {
+                this.m_tracer.TraceInfo("Creating stored query {0}", dmQuery.Name);
+
+                var mart = this.GetDatamart(datamartId);
+                if (mart == null) throw new KeyNotFoundException(datamartId.ToString());
+
+                using (var dbc = this.CreateCommand(tx, String.Format("DROP VIEW IF EXISTS sqp_{0}_{1}", mart.Schema.Name, dmQuery.Name))) dbc.ExecuteNonQuery();
+                // Create the data in the DMART
+                StringBuilder queryBuilder = new StringBuilder("CREATE VIEW IF NOT EXISTS ");
+                queryBuilder.AppendFormat("sqp_{0}_{1} AS SELECT * FROM ({2})", mart.Schema.Name, dmQuery.Name, mySql.Query);
+
+                using (var dbc = this.CreateCommand(tx, queryBuilder.ToString())) dbc.ExecuteNonQuery();
+
+                // Register the stored query and properties
+                dmQuery.Id = Guid.NewGuid();
+                using (var dbc = this.CreateCommand(tx, "INSERT INTO dw_st_query VALUES (?, ?, ?)", dmQuery.Id.ToByteArray(), mart.Schema.Id.ToByteArray(), dmQuery.Name)) dbc.ExecuteNonQuery();
+                this.CreateProperties(String.Empty, tx, dmQuery);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error creating stored query {0} : {1}", dmQuery.Name, e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -807,16 +904,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         {
             this.ThrowIfDisposed();
             
-            var dmQuery = queryDefinition as DatamartStoredQuery;
-            if (queryDefinition is ExpandoObject)
-                dmQuery = JsonConvert.DeserializeObject<DatamartStoredQuery>(JsonConvert.SerializeObject(queryDefinition));
-
-            // Not interested
-            if (dmQuery == null) throw new ArgumentOutOfRangeException(nameof(queryDefinition));
-            else if (dmQuery.ProviderId != this.DataProvider) return;
-            else if (!dmQuery.Definition.Trim().StartsWith("select", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("Only SELECT allowed for stored queries");
-
+           
             // Now create / register the data schema
             lock (this.m_lock)
             {
@@ -824,24 +912,12 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                 {
                     try
                     {
-                        this.m_tracer.TraceInfo("Creating stored query {0}", dmQuery.Name);
-
-                        var mart = this.GetDatamart(datamartId);
-                        if (mart == null) throw new KeyNotFoundException(datamartId.ToString());
-
-                        using (var dbc = this.CreateCommand(tx, String.Format("DROP VIEW IF EXISTS sqp_{0}_{1}", mart.Schema.Name, dmQuery.Name))) dbc.ExecuteNonQuery();
-                        // Create the data in the DMART
-                        StringBuilder queryBuilder = new StringBuilder("CREATE VIEW IF NOT EXISTS ");
-                        queryBuilder.AppendFormat("sqp_{0}_{1} AS SELECT * FROM ({2})", mart.Schema.Name, dmQuery.Name, dmQuery.Definition);
-
-                        using (var dbc = this.CreateCommand(tx, queryBuilder.ToString())) dbc.ExecuteNonQuery();
+                        this.CreateStoredQueryInternal(tx, datamartId, queryDefinition);
                         tx.Commit();
                     }
-                    catch (Exception e)
+                    catch
                     {
-                        this.m_tracer.TraceError("Error creating stored query {0} : {1}", dmQuery.Name, e);
                         tx.Rollback();
-                        throw;
                     }
                 }
             }
@@ -865,7 +941,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                             {
                                 Id = new Guid((byte[])rdr["uuid"]),
                                 Name = (string)rdr["name"],
-                                CreationTime = (DateTime)rdr["creation_time"],
+                                CreationTime = this.m_epoch.AddSeconds((long)rdr["creation_time"]).ToLocalTime(),
                                 Schema = new DatamartSchema() { Id = new Guid((byte[])rdr["schema_id"]) }
                             };
                         }
@@ -888,20 +964,38 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         private DatamartSchema LoadSchema(Guid id)
         {
             DatamartSchema retVal = null;
-            using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_schemas WHERE uuid = ?", id.ToByteArray()))
-            using (var rdr = dbc.ExecuteReader())
-                if (rdr.Read())
-                {
-                    retVal = new DatamartSchema()
+            lock (this.m_lock)
+            {
+                using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_schemas WHERE uuid = ?", id.ToByteArray()))
+                using (var rdr = dbc.ExecuteReader())
+                    if (rdr.Read())
                     {
-                        Id = id,
-                        Name = (string)rdr["name"]
-                    };
-                }
-                else
-                    return null;
+                        retVal = new DatamartSchema()
+                        {
+                            Id = id,
+                            Name = (string)rdr["name"]
+                        };
+                    }
+                    else
+                        return null;
+
+                // Queries
+                using (var dbc = this.CreateCommand(null, "SELECT * FROM dw_st_query WHERE schema_id = ?", retVal.Id))
+                using (var rdr = dbc.ExecuteReader())
+                    while(rdr.Read())
+                    {
+                        retVal.Queries.Add(new DatamartStoredQuery()
+                        {
+                            Id = new Guid((byte[])rdr["uuid"]),
+                            Name = rdr["name"].ToString()
+                        });
+                    }
+            }
 
             retVal.Properties = this.LoadProperties(id);
+            foreach (var itm in retVal.Queries)
+                itm.Properties = this.LoadProperties(itm.Id);
+
             // TODO: load schema
             return retVal;
         }
