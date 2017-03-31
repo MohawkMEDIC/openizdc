@@ -308,6 +308,7 @@
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
     <string key="locale.patient.search.header.mother">Mother</string>
+    <string key="locale.patient.schedule.none">No Scheduled Appointments</string>
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
