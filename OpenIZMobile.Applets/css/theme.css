@@ -368,7 +368,6 @@ a.not-active {
 }
 .nav-tabs>li>a {
     color: white;
-    border: none;
     border-radius: 0;
     padding: 20px;
     cursor: pointer;
@@ -777,7 +776,8 @@ body{
 .header-dock h4{
     font-size:20px;
 }
-.static-dock{
+.static-dock,
+.static-dock-wrapper > ul {
     position: fixed;
     left: 0;
     right:0;
