@@ -31,8 +31,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lnkMain = new System.Windows.Forms.LinkLabel();
             this.lblProgress = new System.Windows.Forms.Label();
             this.pgMain = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -67,29 +65,10 @@
             this.lblVersion.TabIndex = 2;
             this.lblVersion.Text = "label2";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(128, 72);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(158, 20);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Open User Interface:";
-            // 
-            // lnkMain
-            // 
-            this.lnkMain.AutoSize = true;
-            this.lnkMain.Location = new System.Drawing.Point(292, 72);
-            this.lnkMain.Name = "lnkMain";
-            this.lnkMain.Size = new System.Drawing.Size(80, 20);
-            this.lnkMain.TabIndex = 4;
-            this.lnkMain.TabStop = true;
-            this.lnkMain.Text = "linkLabel1";
-            // 
             // lblProgress
             // 
             this.lblProgress.AutoSize = true;
-            this.lblProgress.Location = new System.Drawing.Point(12, 125);
+            this.lblProgress.Location = new System.Drawing.Point(126, 75);
             this.lblProgress.Name = "lblProgress";
             this.lblProgress.Size = new System.Drawing.Size(102, 20);
             this.lblProgress.TabIndex = 5;
@@ -97,20 +76,18 @@
             // 
             // pgMain
             // 
-            this.pgMain.Location = new System.Drawing.Point(16, 148);
+            this.pgMain.Location = new System.Drawing.Point(126, 98);
             this.pgMain.Name = "pgMain";
-            this.pgMain.Size = new System.Drawing.Size(640, 23);
+            this.pgMain.Size = new System.Drawing.Size(530, 24);
             this.pgMain.TabIndex = 6;
             // 
             // frmDisconnectedClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(668, 177);
+            this.ClientSize = new System.Drawing.Size(668, 137);
             this.Controls.Add(this.pgMain);
             this.Controls.Add(this.lblProgress);
-            this.Controls.Add(this.lnkMain);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
@@ -127,8 +104,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblVersion;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.LinkLabel lnkMain;
         private System.Windows.Forms.Label lblProgress;
         private System.Windows.Forms.ProgressBar pgMain;
     }
