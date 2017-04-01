@@ -151,8 +151,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                             //var iAsyncResult = this.m_listener.BeginGetContext(null, null);
                             //iAsyncResult.AsyncWaitHandle.WaitOne();
                             var context = this.m_listener.GetContext(); //this.m_listener.EndGetContext(iAsyncResult);
-                            //new Thread(this.HandleRequest).Start(context);
-                            this.m_threadPool.QueueUserWorkItem(TimeSpan.MinValue ,this.HandleRequest, context);
+                            this.m_threadPool.QueueUserWorkItem(TimeSpan.MinValue, this.HandleRequest, context);
                         }
                         catch (Exception e)
                         {
@@ -224,6 +223,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
             try
             {
+                if (!request.RemoteEndPoint.Address.Equals(IPAddress.Loopback) &&
+                                !request.RemoteEndPoint.Address.Equals(IPAddress.IPv6Loopback))
+                    throw new UnauthorizedAccessException("Only local access allowed");
+
                 MiniImsServer.CurrentContext = context;
 
                 // Session cookie?

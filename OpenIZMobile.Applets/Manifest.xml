@@ -371,6 +371,7 @@
     <string key="locale.session.expiration">Session Warning</string>
 
     <!-- Sync Centre -->
+    <string key="locale.sync.title">Sync</string>
     <string key="locale.sync.queue">Queue</string>
     <string key="locale.sync.conflicted">Server &amp; Tablet Conflict</string>
     <string key="locale.sync.outbound">Local to Server (Outbox)</string>
