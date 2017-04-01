@@ -58,7 +58,7 @@
         </div>
         <div class="form-group">
             <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
-            <div class="col-xs-4">
+            <div class="col-xs-9 col-sm-4">
                 <div class="input-group">
                     <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
                             bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
@@ -67,7 +67,8 @@
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
             </div>
-            <div class="col-xs-5">
+            <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
+                <div class="margin-top-15 visible-xs"></div>
                 <div class="input-group" ng-class="{ 'has-error': editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern}">
                     <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" ng-pattern="phoneRegex"/>
                     <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex"/>

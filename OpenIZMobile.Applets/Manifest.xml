@@ -263,7 +263,7 @@
     <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
     <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
     <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
-    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock">&lt;/span> User Elevation Required</string>
+    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
     <string key="locale.settings.networkTitle">Network Settings</string>
     <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
     <string key="locale.settings.useProxy">Use a Proxy</string>
@@ -308,6 +308,7 @@
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
     <string key="locale.patient.search.header.mother">Mother</string>
+    <string key="locale.patient.schedule.none">No Scheduled Appointments</string>
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
@@ -370,15 +371,16 @@
     <string key="locale.session.expiration">Session Warning</string>
 
     <!-- Sync Centre -->
-      <string key="locale.sync.queue">Queue</string>
-  <string key="locale.sync.conflicted">Server &amp; Tablet Conflict</string>
-  <string key="locale.sync.outbound">Local to Server (Outbox)</string>
-  <string key="locale.sync.inbound">Server to Local (Inbox)</string>
-  <string key="locale.sync.objects">Items in Queue</string>
-  <string key="locale.sync.resolve.resolve">Resolve</string>
-  <string key="locale.sync.resolve.takeMine">Take Mine</string>
-  <string key="locale.sync.resolve.leaveServer">Leave Server</string>
-  <string key="locale.sync.conflict">Conflict</string>
+    <string key="locale.sync.title">Sync</string>
+    <string key="locale.sync.queue">Queue</string>
+    <string key="locale.sync.conflicted">Server &amp; Tablet Conflict</string>
+    <string key="locale.sync.outbound">Local to Server (Outbox)</string>
+    <string key="locale.sync.inbound">Server to Local (Inbox)</string>
+    <string key="locale.sync.objects">Items in Queue</string>
+    <string key="locale.sync.resolve.resolve">Resolve</string>
+    <string key="locale.sync.resolve.takeMine">Take Mine</string>
+    <string key="locale.sync.resolve.leaveServer">Leave Server</string>
+    <string key="locale.sync.conflict">Conflict</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
@@ -388,7 +390,7 @@
     <string key="locale.error.403.title">Interdit</string>
     <string key="locale.error.403.description">Vous ne possedez pas de privileges suffisants pour voir la page.</string>
   </strings>
- <strings lang="sw">
+  <strings lang="sw">
     <string key="AUTH_INV">Wezesha polling:</string>
     <string key="AUTH_LCK">Usajili wa kituo</string>
     <string key="AUTH_TFA">Idadi ya Processor kwenye CPU</string>
@@ -424,7 +426,7 @@
     <string key="locale.about.versions.version">Toleo la .NET Runtime</string>
     <string key="locale.action.acknowledge">Siwezi kuendelea kwasababu ya hitilafu hii</string>
     <string key="locale.action.back">Hii namba ni batili</string>
-    <string key="locale.action.cancel">&lt;h2&gt;Karibu OpenIZ Disconnected Client Core!&lt;/h2&gt;&lt;p&gt;Itakuwa huoni skrini za usajili chanjo kwa sasa, tumia njia sahihi ya kusakinisha(install) upya! Ili uanze kutengeneza progamu zako kwenye OpenIZ, tumia templeti ifatayo&lt;a href="http://openizdctpl.codeplex.com/"&gt;here&lt;/a&gt;&lt;/p&gt;</string>
+    <string key="locale.action.cancel">kufuta</string>
     <string key="locale.action.confirm">Hifadhi</string>
     <string key="locale.action.delete">Tumia sehemu hii kusanidi/kuelekeza mfumo jinsi ya kulinda usiri wa taarifa kwenye kifaa</string>
     <string key="locale.action.done">Inayokuja</string>
@@ -440,8 +442,7 @@
     <string key="locale.action.view">Programu yako imeuganishwa sasa</string>
     <string key="locale.actions.save">Inayofata</string>
     <string key="locale.alert.updateSuccessful">Futa</string>
-    <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa
-na server(hifadhi) </string>
+    <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
     <string key="locale.alerts.alerts">Ninaweza kuendelea licha ya hii hitilafu ingawa inaingilia ufanisi wangu</string>
     <string key="locale.alerts.details">Bonyeza hapa kuongeza kipindi chako</string>
     <string key="locale.alerts.newAlerts">Tafadhali ingiza neno siri la sasa</string>
@@ -462,7 +463,7 @@ na server(hifadhi) </string>
     <string key="locale.debug.sendLogs">Tafadhali ingiza jina la mtumiaji</string>
     <string key="locale.debug.submit">Acha</string>
     <string key="locale.dialog.wait.text">Maelekezo ya faili kumbukumbu</string>
-  <string key="locale.encounters.addEntry">Jina la mtumiaji:</string>
+    <string key="locale.encounters.addEntry">Jina la mtumiaji:</string>
     <string key="locale.encounters.overdue">Namba ya package</string>
     <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
@@ -493,14 +494,12 @@ na server(hifadhi) </string>
     <string key="locale.forgotPassword.userName.help">Ingiza jina la mtumiaji</string>
     <string key="locale.forgotPassword.userName.label">Maelezo ya toleo</string>
     <string key="locale.forgotPassword.userName.placeholder">Kipindi chako kinakaribia kuisha</string>
-    <string key="locale.forgotPassword.userName.title">Jina la kifaa tayari limesajiliwa. Je, unataka kubadilisha huu usajili?(kama ndio, kifaa kingine 
-chenye jina hili kitashindwa kuunga)</string>
+    <string key="locale.forgotPassword.userName.title">Jina la kifaa tayari limesajiliwa. Je, unataka kubadilisha huu usajili?(kama ndio, kifaa kingine chenye jina hili kitashindwa kuunga)</string>
     <string key="locale.legend.completed">Tafuta</string>
     <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.legend.upcoming">Tahadhari</string>
     <string key="locale.login.doLogin">Faili kumbukumbu</string>
-    <string key="locale.login.header">Ruhusu idhini ya kuingia kupitia kifaa pekee, hii itaruhusu kuingia kwenye mfumo iwapo hakuna
-intaneti</string>
+    <string key="locale.login.header">Ruhusu idhini ya kuingia kupitia kifaa pekee, hii itaruhusu kuingia kwenye mfumo iwapo hakuna intaneti</string>
     <string key="locale.login.password">Neno siri</string>
     <string key="locale.login.username">Hii hitilafu ni kikwazo kikubwa na siwezi kuendelea</string>
     <string key="locale.network.offline">Maelezo</string>
@@ -535,8 +534,7 @@ intaneti</string>
     <string key="locale.security.errors.usernameRequired">Jina la mtumiaji Local Admin</string>
     <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>
     <string key="locale.security.forgotPassword.changePassword">Hii barua pepe ni batili</string>
-    <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka
-kwenye realm?</string>
+    <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka kwenye realm?</string>
     <string key="locale.security.forgotPassword.title">Maelekezo</string>
     <string key="locale.security.forgotPassword.userName">Imepita muda</string>
     <string key="locale.security.login.button.forgotPassword">Mwandishi</string>
@@ -616,5 +614,5 @@ kwenye realm?</string>
     <string key="locale.settings.syncEvents.stop">Mtandao</string>
     <string key="locale.settings.useProxy">Thibitisha neno siri</string>
     <string key="locale.settings.useProxyDescription">Mpangilio Usalama wa mfumo</string>
-    </strings>
+  </strings>
 </AppletManifest>

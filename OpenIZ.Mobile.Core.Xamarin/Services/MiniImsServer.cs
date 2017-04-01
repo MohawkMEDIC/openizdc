@@ -409,9 +409,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_tracer.TraceError(ex.ToString());
                 if (AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
                 {
+                    // Is there an authentication asset in the configuration
+                    var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;
+                    if (String.IsNullOrEmpty(authentication))
+                        authentication = XamarinApplicationContext.Current.LoadedApplets.AuthenticationAssets.FirstOrDefault();
+                    if (String.IsNullOrEmpty(authentication))
+                        authentication = "/org/openiz/core/views/security/login.html";
+
                     string redirectLocation = String.Format("{0}",
-                        XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset
-                        , request.RawUrl);
+                        authentication, request.RawUrl);
                     response.Redirect(redirectLocation);
                 }
                 else

@@ -118,8 +118,7 @@ namespace Minims
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "tz.timr.applet",
-                AuthenticationAsset = "/tz/timr/applet/views/security/login.html"
+                StartupAsset = "tz.timr.applet"
             };
 
             // Initial applet style
