@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -14,8 +14,8 @@
  * License for the specific language governing permissions and limitations under 
  * the License.
  * 
- * User: justi
- * Date: 2016-10-11
+ * User: fyfej
+ * Date: 2016-10-25
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -24,12 +24,12 @@ using Android.App;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("OpenIZMobile")]
-[assembly: AssemblyDescription ("OpenIZ Disconnected Client Host App Container")]
+[assembly: AssemblyTitle ("OpenIZ Disconnected Client")]
+[assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
-[assembly: AssemblyCompany ("Mohawk College of Applied Arts and Technology")]
-[assembly: AssemblyProduct ("Tanzania Immunization Registry (TImR)")]
-[assembly: AssemblyCopyright ("2016")]
+[assembly: AssemblyCompany ("")]
+[assembly: AssemblyProduct ("")]
+[assembly: AssemblyCopyright ("Open IZ Community")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -37,18 +37,12 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.7.2.*")]
-[assembly: AssemblyInformationalVersion("RC2-PRE")]
+[assembly: AssemblyVersion ("0.7.17.*")]
+[assembly: AssemblyInformationalVersion("Dalhousie")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
 
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
-
-#if DEBUG
-[assembly: Application(Debuggable=true)]
-#else
-[assembly: Application(Debuggable = false)]
-#endif
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-10-22
+ * Date: 2017-3-31
  */
 using Newtonsoft.Json;
 using OpenIZ.Core.Applets.Model;
@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
             try
             {
                 this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
-                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) < 0);
+                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
             }
             catch { }
 

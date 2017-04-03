@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-10-11
+ * Date: 2017-3-31
  */
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -24,8 +24,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Minims")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Mini IMS Disconnected Client Debugger")]
+[assembly: AssemblyDescription("Disconnected client debugging tool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Minims")]

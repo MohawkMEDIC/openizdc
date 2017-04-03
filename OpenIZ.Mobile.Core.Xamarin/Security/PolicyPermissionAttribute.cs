@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-10-11
+ * Date: 2017-3-31
  */
 using System;
 using System.Security.Permissions;

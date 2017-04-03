@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
+ * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you 
@@ -15,7 +15,7 @@
  * the License.
  * 
  * User: justi
- * Date: 2016-10-11
+ * Date: 2017-3-31
  */
 using OpenIZ.Core.Data.Warehouse;
 using OpenIZ.Core.Model;
@@ -150,7 +150,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     int tr = 1, ofs = 0;
                     while(ofs < tr)
                     {
-                        ApplicationContext.Current.SetProgress(Strings.locale_calculatingCarePlan, ofs / (float)tr);
+                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, tr - ofs), ofs / (float)tr);
                         var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
                         ofs += 50;
                         foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
