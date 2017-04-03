@@ -58,8 +58,8 @@
             <div class="col-xs-4">
                 <span>
                     <span ng-repeat="(dmn, id) in patient.identifier">
-                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span></span>
-                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers." + dmn))}}</span><br /></span>
+                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info"> {{ i.authority.name }}</span><br /></span>
                     </span>
                 </span>
 

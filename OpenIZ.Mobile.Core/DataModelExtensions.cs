@@ -159,7 +159,7 @@ namespace OpenIZ.Mobile.Core
                     // Is there not a value?
                     var assocPersister = adoPersister as ILocalAssociativePersistenceService;
 
-                    // We want to query based on our PK and version if applicable
+                    // We want to que   ry based on our PK and version if applicable
                     decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
                     var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence);
                     var listValue = Activator.CreateInstance(pi.PropertyType, assoc);

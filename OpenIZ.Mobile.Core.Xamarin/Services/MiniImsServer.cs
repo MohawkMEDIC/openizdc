@@ -364,8 +364,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 if (result is IdentifiedData)
                                 {
 
-                                    response.AddHeader("Content-Encoding", "gzip");
-                                    using(var gzs = new GZipStream(response.OutputStream, CompressionMode.Compress))
+                                    response.AddHeader("Content-Encoding", "deflate");
+                                    using(var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
                                     using (StreamWriter sw = new StreamWriter(gzs))
                                     {
                                         if(request.QueryString["_viewModel"] != null)

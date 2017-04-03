@@ -28,20 +28,31 @@
     <property name="etag" behavior="never"/>
   </type>
 
-  <type type="EntityName" all="true">
+  <type type="EntityName" all="false">
     <property name="source" behavior="never"/>
+    <property name="use" />
+    <property name="id"  />
     <property name="component" all="true">
       <property name="*" all="true"/>
     </property>
   </type>
-  <type type="EntityAddress" all="true">
+  <type type="EntityAddress" all="false">
     <property name="source" behavior="never"/>
+    <property name="use" />
+    <property name="id"  />
     <property name="component" all="true">
       <property name="*" all="true"/>
     </property>
   </type>
-  <type type="EntityIdentifier" all="true">
+  <type type="EntityIdentifier" all="false">
     <property name="source" behavior="never"/>
+    <property name="id"/>
+    <property name="value"/>
+    <property name="authority" all="false" behavior="always">
+      <property name="name"/>
+      <property name="domainName"/>
+      <property name="oid"/>
+    </property>
   </type>
   <type type="Bundle" all="true">
     <property name="item" all="true"/>
@@ -53,7 +64,9 @@
     <property name="mnemonic"/>
     <property name="id"/>
   </type>
-
+  <type type="EntityNameComponent" all="false">
+    <property name="value"/>
+  </type>
   <!-- Session information -->
   <type type="SessionInfo" all="true">
     <property name="entity" all="true">

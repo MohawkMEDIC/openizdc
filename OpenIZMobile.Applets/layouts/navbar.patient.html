@@ -42,7 +42,7 @@
                         <div class="col-xs-4">
                             <span>
                                 <span ng-repeat="(dmn, id) in patient.identifier">
-                                    {{ id.value }} <span class="label label-info">{{ dmn }}</span>
+                                    {{ id.value }} <span class="label label-info">{{ id.authority.name }}</span>
                                 </span>
                             </span>
 

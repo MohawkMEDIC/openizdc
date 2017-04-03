@@ -68,14 +68,9 @@
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
                             <div class="col-xs-9 no-padding-right no-wrap">
-                                <span ng-if="patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID']">
-                                    <span >{{ patient.identifier['TIMR-BARCODE'].value ||  patient.identifier['TIMR-BARCODE'][0].value}} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TIMR-BARCODE"))}}</span></span>                                    
-                                </span>
-                                <span ng-if="patient.identifier['NATID']">
-                                    <span>{{ patient.identifier['NATID'].value || patient.identifier['NATID'][0].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.NATID"))}}</span></span>
-                                </span>
-                                <span ng-if="!patient.identifier['TIMR-BARCODE'] &amp;&amp; !patient.identifier['NATID'] &amp;&amp; patient.identifier['TEMP']">
-                                    <span>{{ patient.identifier['TEMP'].value }} <span class="label label-info">{{OpenIZ.Localization.getString(("locale.patient.identifiers.TEMP"))}}</span></span>
+                                <span ng-repeat="(dmn, id) in patient.identifier">
+                                    <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
+                                    <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ id.authority.name }}</span><br /></span>
                                 </span>
                             </div>
                         </div>

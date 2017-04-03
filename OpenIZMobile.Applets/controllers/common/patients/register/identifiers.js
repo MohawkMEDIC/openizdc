@@ -30,6 +30,8 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
     var once = true;
+
+    // JF- ??? Why does this need to exist?
     $scope.$watch('patient.identifier', function (identifier, o) {
         if (identifier && identifier != o && once) {
             once = false;
@@ -38,17 +40,17 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
                 if (identifier[key]) {
                     if (!Array.isArray(identifier[key])) {
                         var value = identifier[key].value || "";
-                        $scope.identifiers.push({ domainName: key, value: value });
+                        $scope.identifiers.push({ domainName: key, value: value, authority: identifier[key].authority });
                     } else {
                         for (var i = 0; i < identifier[key].length; i++) {
-                            $scope.identifiers.push({ domainName: key, value: identifier[key][i].value });
+                            $scope.identifiers.push({ domainName: key, value: identifier[key][i].value, authority: identifier[key][i].authority });
                         }
                     }
                 }
                
             }
             if ($scope.identifiers.length === 0) {
-                $scope.identifier.push({});
+                $scope.identifiers.push({});
             }
         }
     }, true);
@@ -58,20 +60,17 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
         if (identifiers && identifiers != o) {
             $scope.patient.identifier = {};
             for (key in identifiers) {
+                authority = identifiers[key].authority;
                 domainName = identifiers[key].domainName;
                 value = identifiers[key].value;
                 if (Array.isArray($scope.patient.identifier[domainName])) {
                     $scope.patient.identifier[domainName].push({
-                        authority: {
-                            domainName: domainName
-                        },
+                        authority: authority,
                         value: value
                     })
                 } else {
                     $scope.patient.identifier[domainName] = [{
-                        authority: {
-                            domainName: domainName
-                        },
+                        authority: authority,
                         value: value
                     }]
                 }
