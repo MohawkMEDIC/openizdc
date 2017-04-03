@@ -63,9 +63,10 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
 
         $rootScope.$on("$stateChangeError", console.log.bind(console));
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            if ($('.modal.in').length > 0) {
+            if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
                 $('.modal-open').removeClass('modal-open');
                 $('.modal-backdrop').remove();
+                $('body').css('padding-right', '');
             }
             window.scrollTo(0, 0);
             $rootScope.isLoading = true;
