@@ -67,14 +67,9 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     // Gather the care plan
     $scope.getAppointment = function () {
 
-        OpenIZ.CarePlan.getCarePlanAsync({
-            query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
-            onDate: new Date(),
-            /** @param {OpenIZModel.Bundle} proposals */
-            continueWith: function (proposalsToday) {
                 OpenIZ.CarePlan.getCarePlanAsync({
                     query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
-                    minDate: new Date().tomorrow(),
+                    minDate: new Date().addDays(-30),
                     maxDate: new Date().addDays(90),
                     continueWith: function (proposals) {
                         if (!proposals.item) // There are no proposals, at the end of the planning process
@@ -94,13 +89,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                             });
                         }
                         else {
-                            if (Array.isArray(proposalsToday.item))
-                                proposalsToday.item.push(proposals.item);
-                            else
-                                proposalsToday = proposals;
-
                             // Grab the first appointment
-                            $scope.appointment = $scope.appointments[0];
+                            $scope.appointment = proposals.item[0];
                             if ($scope.appointment.actTime < $rootScope.page.loadTime) {
                                 $scope.appointment.actTime = $rootScope.page.loadTime;
                             }
@@ -136,14 +126,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                             console.error(ex);
                     }
                 });
-            },
-            onException: function (ex) {
-                if (ex.message)
-                    alert(ex.message);
-                else
-                    console.error(ex);
-            }
-        });
+            
 
     };
 

@@ -34,7 +34,7 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
     //    continueWith: function (proposalsToday) {
             OpenIZ.CarePlan.getCarePlanAsync({
                 query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
-                minDate: new Date().addDays(-20),
+                minDate: new Date().addDays(-30),
                 maxDate: new Date().addDays(90),
                 continueWith: function (proposals) {
                     
