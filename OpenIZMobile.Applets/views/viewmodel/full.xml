@@ -21,6 +21,15 @@
 <ViewModel xmlns="http://openiz.org/model/view">
   <include>base</include>
 
+  <type type="ActProtocol" all="false">
+    <property name="protocol" behavior="always"/>
+    <property name="protocolModel" behavior="always" all="false">
+      <property name="name"/>
+      <property name="handlerClass" behavior="never"/>
+      <property name="definition" behavior="never"/>
+    </property>
+  </type>
+  
   <type type="EntityRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
@@ -58,6 +67,11 @@
     <property name="previousVersionModel" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+
     <property name="relationship" all="true" behavior="always">
       <property name="*" ref="EntityRelationship"/>
     </property>
@@ -71,6 +85,11 @@
   </type>
 
   <type type="Patient" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -108,6 +127,11 @@
   </type>
 
   <type type="Material" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -122,6 +146,11 @@
   </type>
 
   <type type="Place" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -171,6 +200,12 @@
 
   <!-- Act Information -->
   <type type="Act" all="true">
+
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>

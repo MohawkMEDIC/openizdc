@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Xamarin
         {
             try
             {
-                this.GetService<IClinicalProtocolRepositoryService>().InsertProtocol(pdf.GetProtcolData());
+                this.GetService<IClinicalProtocolRepositoryService>().InsertProtocol(pdf.GetProtocolData());
             }
             catch(Exception e)
             {

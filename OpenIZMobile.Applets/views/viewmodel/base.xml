@@ -21,7 +21,9 @@
 <ViewModel xmlns="http://openiz.org/model/view">
 
   <!-- Base types -->
-
+  <type type="TemplateDefinition" all="false">
+    <property name="mnemonic"/>
+  </type>
   <type type="IdentifiedData" all="true">
     <property name="etag" behavior="never"/>
   </type>
@@ -46,15 +48,10 @@
   </type>
 
   <!-- Concepts -->
-  <type type="Concept" all="true">
+  <type type="Concept" all="false">
     <property name="name" behavior="always" all="true"/>
-    <property name="conceptClass" behavior="never"/>
-    <property name="conceptClassModel" behavior="never"/>
-    <property name="conceptSet" behavior="never"/>
-    <property name="statusConceptModel" behavior="never"/>
-    <property name="previousVersion" behavior="never"/>
-    <property name="previousVersionModel" behavior="never"/>
-    <property name="referenceTerm" behavior="never"/>
+    <property name="mnemonic"/>
+    <property name="id"/>
   </type>
 
   <!-- Session information -->

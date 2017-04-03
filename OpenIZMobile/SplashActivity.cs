@@ -145,7 +145,7 @@ namespace OpenIZMobile
 
                                 try
                                 {
-                                    using (var gzs = new GZipStream(Assets.Open("Applets/openiz.core.applet.pak"), CompressionMode.Decompress))
+                                    using (var gzs = new GZipStream(Assets.Open("Applets/org.openiz.core.pak"), CompressionMode.Decompress))
                                     {
                                         // Write data to assets directory
                                         var package = AppletPackage.Load(gzs);

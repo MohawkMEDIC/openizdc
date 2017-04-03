@@ -87,15 +87,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     if (content is String)
                         using (var rStream = new StringReader(content as String))
                             this.m_protocols.Add(
-                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtcolData()
+                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtocolData()
                             );
                     else if (content is byte[])
                         using (var rStream = new MemoryStream(content as byte[]))
-                            this.m_protocols.Add(new XmlClinicalProtocol(ProtocolDefinition.Load(rStream)).GetProtcolData());
+                            this.m_protocols.Add(new XmlClinicalProtocol(ProtocolDefinition.Load(rStream)).GetProtocolData());
                     else if (content is XElement)
                         using (var rStream = (content as XElement).CreateReader())
                             this.m_protocols.Add(
-                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtcolData()
+                                new XmlClinicalProtocol(xsz.Deserialize(rStream) as ProtocolDefinition).GetProtocolData()
                                 );
                 }
             }

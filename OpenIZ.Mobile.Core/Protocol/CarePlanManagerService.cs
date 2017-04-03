@@ -113,6 +113,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
             // Application context has started
             ApplicationContext.Current.Started += (ao, ae) =>
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(xo=>
             {
                 try
                 {
@@ -231,7 +232,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                 {
                     this.m_tracer.TraceError("Could not bind clinical protocols: {0}", e);
                 }
-            };
+            });
 
             this.m_running = true;
 

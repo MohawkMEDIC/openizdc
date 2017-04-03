@@ -113,9 +113,14 @@ namespace OpenIZMobile
                 {
                     try
                     {
-                        this.m_textView.Visibility = e.Progress > 0 && e.Progress < 1.0 ? ViewStates.Visible : ViewStates.Invisible;
-                        this.m_progressBar.Progress = (int)(this.m_progressBar.Max * e.Progress);
-                        this.m_textView.Text = String.Format("{0} {1}", e.ProgressText, e.Progress > 0 ? String.Format("({0:0%})", e.Progress) : null);
+                        if (!String.IsNullOrEmpty(e.ProgressText))
+                        {
+                            this.m_textView.Visibility = ViewStates.Visible;
+                            this.m_progressBar.Progress = (int)(this.m_progressBar.Max * e.Progress);
+                            this.m_textView.Text = String.Format("{0} {1}", e.ProgressText, e.Progress > 0 ? String.Format("({0:0%})", e.Progress) : null);
+                        }
+                        else
+                            this.m_textView.Visibility = ViewStates.Invisible;
                     }
                     catch { }
                 });

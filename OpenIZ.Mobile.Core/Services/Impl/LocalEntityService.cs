@@ -33,18 +33,6 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// </summary>
 	public class LocalEntityRepositoryService : IEntityRepositoryService, IRepositoryService<Entity>, IRepositoryService<EntityRelationship>
 	{
-		/// <summary>
-		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
-		/// </summary>
-		private IDataPersistenceService<Entity> persistenceService;
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocalEntityRepositoryService"/> class.
-		/// </summary>
-		public LocalEntityRepositoryService()
-		{
-			ApplicationContext.Current.Started += (o, e) => { this.persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>(); };
-		}
 
         public IEnumerable<EntityRelationship> Find(Expression<Func<EntityRelationship, bool>> query)
         {
@@ -64,7 +52,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns>Returns a list of entities.</returns>
         public IEnumerable<Entity> Find(Expression<Func<Entity, bool>> query)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
@@ -82,7 +71,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns a list of entities.</returns>
 		public IEnumerable<Entity> Find(Expression<Func<Entity, bool>> query, int offSet, int? count, out int totalCount)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
@@ -106,7 +96,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns>Returns an entity.</returns>
         public Entity Get(Guid key, Guid versionKey)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
@@ -132,12 +123,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns>Returns the inserted entity.</returns>
         public Entity Insert(Entity entity)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			var result = this.persistenceService.Insert(entity);
+			var result = persistenceService.Insert(entity);
 
 			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
 
@@ -151,12 +143,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		/// <returns>Returns the obsoleted entity.</returns>
 		public Entity Obsolete(Guid key)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}
 
-			var result = this.persistenceService.Obsolete(new Entity { Key = key });
+			var result = persistenceService.Obsolete(new Entity { Key = key });
 
 			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
 
@@ -196,7 +189,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <returns>Returns the saved entity.</returns>
         public Entity Save(Entity entity)
 		{
-			if (this.persistenceService == null)
+            var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Entity>>();
+            if (persistenceService == null)
 			{
 				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Entity>)));
 			}

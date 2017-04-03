@@ -62,11 +62,11 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     $("#appointmentScheduler").on('show.bs.modal', function () {
         $scope.getAppointment();
     });
-     
-     
+
+
     // Gather the care plan
-    $scope.getAppointment = function(){
-        
+    $scope.getAppointment = function () {
+
         OpenIZ.CarePlan.getCarePlanAsync({
             query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
             onDate: new Date(),
@@ -83,6 +83,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                                 templateId: "act.patientencounter.appointment",
                                 continueWith: function (appointment) {
                                     $scope.appointment = appointment;
+                                    $scope.$apply();
                                 },
                                 onException: function (ex) {
                                     if (ex.message)
@@ -99,12 +100,6 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                                 proposalsToday = proposals;
 
                             // Grab the first appointment
-                            $scope.appointments = proposalsToday.item;
-                            $scope.appointments.sort(
-                                      function (a, b) {
-                                          return a.actTime > b.actTime ? 1 : -1;
-                                      }
-                                    );
                             $scope.appointment = $scope.appointments[0];
                             if ($scope.appointment.actTime < $rootScope.page.loadTime) {
                                 $scope.appointment.actTime = $rootScope.page.loadTime;
@@ -122,6 +117,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                                 ];
                                 $scope.appointment.relationship.HasComponent[0]._enabled = true;
                             }
+
+                            $scope.$apply(); // must call apply so UI doesn't look like it is hanging
                         }
 
                         // Updates the scheduling assistant view
@@ -150,6 +147,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
 
     };
 
+    var refs = {};
+
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
 
@@ -171,47 +170,55 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
             end: OpenIZ.Util.toDateInputString($scope.appointment.actTime)
         }];
 
-        // Use the datawarehouse data
-        OpenIZ.Material.findMaterialAsync({
-            continueWith: function (materials) {
-                var refs = {};
-                for (var i in materials.item)
-                    refs[materials.item[i].id] = OpenIZ.Util.renderName(materials.item[i].name.Assigned);
-
-                OpenIZWarehouse.Adhoc.query({
-                    martId: "oizcp",
-                    queryId: "bymonth",
-                    parameters: {
-                        "act_date": [">" + OpenIZ.Util.toDateInputString($scope.appointment.startTime), "<" + OpenIZ.Util.toDateInputString($scope.appointment.stopTime)],
-                        "location_id": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
-                    },
-                    /** @param {OpenIZModel.Material} state */
-                    continueWith: function (data) {
-                        var aptDates = {};
-                        for (var apt in data) {
-                            if (data[apt].product_id) {
-                                var dateStr = OpenIZ.Util.toDateInputString(data[apt].act_date);
-                                var dateApt = aptDates[dateStr];
-                                if (dateApt)
-                                    dateApt.title += "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]);
-                                else {
-                                    dateApt = {
-                                        title: OpenIZ.Localization.getString("locale.encounters.appointment.planned") + "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]),
-                                        start: OpenIZ.Util.toDateInputString(data[apt].act_date),
-                                        end: OpenIZ.Util.toDateInputString(data[apt].act_date)
-                                    };
-                                    appointments.push(dateApt);
-                                    aptDates[dateStr] = dateApt;
-                                }
+        // Function using closures to query the warehouse data
+        var queryWarehouse = function () {
+            OpenIZWarehouse.Adhoc.query({
+                martId: "oizcp",
+                queryId: "bymonth",
+                parameters: {
+                    "act_date": [">" + OpenIZ.Util.toDateInputString($scope.appointment.startTime), "<" + OpenIZ.Util.toDateInputString($scope.appointment.stopTime)],
+                    "location_id": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target
+                },
+                /** @param {OpenIZModel.Material} state */
+                continueWith: function (data) {
+                    var aptDates = {};
+                    for (var apt in data) {
+                        if (data[apt].product_id) {
+                            var dateStr = OpenIZ.Util.toDateInputString(data[apt].act_date);
+                            var dateApt = aptDates[dateStr];
+                            if (dateApt)
+                                dateApt.title += "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]);
+                            else {
+                                dateApt = {
+                                    title: OpenIZ.Localization.getString("locale.encounters.appointment.planned") + "\r\n" + data[apt].acts + " " + OpenIZ.Util.renderName(refs[data[apt].product_id]),
+                                    start: OpenIZ.Util.toDateInputString(data[apt].act_date),
+                                    end: OpenIZ.Util.toDateInputString(data[apt].act_date)
+                                };
+                                appointments.push(dateApt);
+                                aptDates[dateStr] = dateApt;
                             }
                         }
+                    }
 
-                        callback(appointments);
+                    callback(appointments);
+                }
+            });
+        };
+
+        // Use the datawarehouse data
+        if (Object.keys(refs).length == 0)
+            OpenIZ.Material.findMaterialAsync(
+                {
+                    query: { "typeConcept.mnemonic": "~VaccineType", "obsoletionTime": "null", "relationship[ManufacturedProduct].target.relationship[OwnedEntity].source": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target, "relationship[ManufacturedProduct].target@Material.expiryDate": ">" + OpenIZ.Util.toDateInputString(new Date()) },
+                    continueWith: function (materials) {
+                        for (var i in materials.item)
+                            refs[materials.item[i].id] = OpenIZ.Util.renderName(materials.item[i].name.Assigned);
+
+                        queryWarehouse();
                     }
                 });
-            }
-        });
-
+        else
+            queryWarehouse();
 
     };
 
@@ -279,7 +286,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                     $scope.$parent.encounters = null;
                     $scope.$parent.refreshEncounters();
                     $("#appointmentScheduler").modal("hide");
-                    
+
                 },
                 onException: function (ex) {
                     if (ex.message)

@@ -45,6 +45,7 @@ using OpenIZ.Core.Applets.ViewModel.Description;
 using System.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Applets.ViewModel.Json;
+using System.IO.Compression;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -363,7 +364,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 if (result is IdentifiedData)
                                 {
 
-                                    using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                                    response.AddHeader("Content-Encoding", "gzip");
+                                    using(var gzs = new GZipStream(response.OutputStream, CompressionMode.Compress))
+                                    using (StreamWriter sw = new StreamWriter(gzs))
                                     {
                                         if(request.QueryString["_viewModel"] != null)
                                         {
