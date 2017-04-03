@@ -25,6 +25,7 @@
     <link rel="stylesheet" type="text/css" href="~/css/vis.css" />
     <link rel="stylesheet" type="text/css" href="~/css/fullcalendar.css" />
     <link rel="stylesheet" type="text/css" href="~/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/pageloader.css" />
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-tokenfield.min.css"/>
     <!--<link rel="stylesheet" type="text/css" href="~/css/fullcalendar.print.css" />-->
 
@@ -56,6 +57,12 @@
 <body>
     <!-- #include virtual="content" -->
     <!-- #include virtual="/org.openiz.core/views/common/modal/authenticate.html" -->
-
+    <div ng-if="$root.isLoading" class="pageloader">
+        <div class="cssload-loader">
+            <div class="cssload-inner cssload-one"></div>
+            <div class="cssload-inner cssload-two"></div>
+            <div class="cssload-inner cssload-three"></div>
+        </div>
+    </div>
 </body>
 </html>

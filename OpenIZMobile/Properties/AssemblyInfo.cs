@@ -24,12 +24,12 @@ using Android.App;
 // Information about this assembly is defined by the following attributes.
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle ("OpenIZ Disconnected Client")]
+[assembly: AssemblyTitle ("Tanzania Immunization Registry")]
 [assembly: AssemblyDescription ("")]
 [assembly: AssemblyConfiguration ("")]
 [assembly: AssemblyCompany ("")]
-[assembly: AssemblyProduct ("")]
-[assembly: AssemblyCopyright ("Open IZ Community")]
+[assembly: AssemblyProduct ("Tanzania Immunization Registry (TImR)")]
+[assembly: AssemblyCopyright ("2016/2017 PATH Tanzania")]
 [assembly: AssemblyTrademark ("")]
 [assembly: AssemblyCulture ("")]
 
@@ -37,8 +37,8 @@ using Android.App;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion ("0.7.17.*")]
-[assembly: AssemblyInformationalVersion("Dalhousie")]
+[assembly: AssemblyVersion ("0.8.0.*")]
+[assembly: AssemblyInformationalVersion("RC3")]
 
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
