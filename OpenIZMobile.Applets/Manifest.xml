@@ -172,11 +172,15 @@
     <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
     <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
     <string key="locale.forgotPassword.challenge.placeholder">Enter the secret code</string>
-    <string key="locale.forgotPassword.challengeRequest.placeholder">Enter the first part of your e-mail</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Enter the first part of your e-mail</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
     <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
     <string key="locale.forgotPassword.challenge.resend">Send</string>
     <string key="locale.forgotPassword.challenge.response">A secret has been sent to you, enter the secret below. If you do not receive the secret you can press "send" to get a new secret sent to you.</string>
+    <string key="locale.forgotPassword.error.onlineOnly">To reset your password you must be Online</string>
+    <string key="locale.forgotPassword.error.validation">Your identity could not be validated</string>
+    <string key="locale.forgotPassword.error.invalidCode">Your secret code was invalid</string>
     <string key="locale.security.errors.usernameRequired">Please enter a username</string>
     <string key="locale.security.errors.passwordRequired">Please enter a password</string>
     <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
