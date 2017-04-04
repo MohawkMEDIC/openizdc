@@ -89,6 +89,21 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
         };
     });
 
+    /**
+     * Reset the forgot password wizard on close
+     */
+    $("#passwordResetDialog").on('hidden.bs.modal', function () {
+        $(':input', '#passwordResetDialog')
+            .not(':button, :submit, :reset')
+            .val('')
+            .removeAttr('selected')
+            .removeAttr('checked');
+
+        // Set to first tab
+        $("#forgotPasswordWizard li:first a").tab('show');
+        $scope.nextEnabled(false);
+    });
+
     /** 
      * Set the reset mechanism
      */
