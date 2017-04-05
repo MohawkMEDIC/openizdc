@@ -21,7 +21,7 @@
 
 /// <reference path="../../js/openiz.js"/>
 
-layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function ($scope, $rootScope) {
+layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexService', function ($scope, $rootScope, regexService) {
 
     $rootScope.$watch('session', function (nv, ov) {
         $scope.changeData = {
@@ -29,6 +29,8 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', function
             email: $rootScope.session.user.email
         };
     });
+
+    $scope.regexService = regexService;
 
     $scope.changePassword = function (userName, existing, password, confirmation, email, telephone) {
 

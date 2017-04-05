@@ -20,7 +20,7 @@
  */
 
 /// <reference path="~/js/openiz.js"/>
-layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function ($scope, $window) {
+layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexService', function ($scope, $window, regexService) {
 
     var controller = this;
 
@@ -28,6 +28,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
         purpose: "PasswordReset"
     };
 
+    $scope.regexService = regexService;
     $scope.displayPage = "#usernameTab";
     $scope.verificationPlaceholder = "";
 
@@ -137,8 +138,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                     $scope.onNext = null;
                     $scope.nextWizard();
 
-                    $state.reload();
-                    $scope.$apply();
+                    // TODO: reset scope or hash window location here
                 },
                 onException: function (exception) {
                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.invalidCode"));
