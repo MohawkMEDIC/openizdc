@@ -181,7 +181,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
 
             // Remove from the memory cache
-            MemoryCache.Current.RemoveObject(typeof(Patient), key);
+            ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Patient), key);
 			return result;
 		}
 

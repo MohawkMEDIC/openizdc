@@ -34,6 +34,8 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using OpenIZ.Core.Model.Roles;
+using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -148,6 +150,80 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
 
             }
+        }
+
+
+        /// <summary>
+        /// Conversion based on type
+        /// </summary>
+        protected override Entity CacheConvert(DbIdentified dataInstance, LocalDataContext context, bool loadFast)
+        {
+            return this.DoCacheConvert(dataInstance, context, loadFast);
+        }
+
+        /// <summary>
+        /// Perform the cache convert
+        /// </summary>
+        internal Entity DoCacheConvert(DbIdentified dataInstance, LocalDataContext context, bool loadFast)
+        {
+            if (dataInstance == null)
+                return null;
+            // Alright first, which type am I mapping to?
+            var dbEntity = dataInstance as DbEntity;
+            Entity retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
+                switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case Device:
+                        retVal = cache?.GetCacheItem<DeviceEntity>(dbEntity.Key);
+                        break;
+                    case NonLivingSubject:
+                        retVal = cache?.GetCacheItem<ApplicationEntity>(dbEntity.Key);
+                        break;
+                    case Person:
+                        retVal = cache?.GetCacheItem<UserEntity>(dbEntity.Key);
+                        if(retVal == null)
+                            retVal = cache?.GetCacheItem<Person>(dbEntity.Key);
+                        break;
+                    case Patient:
+                        retVal = cache?.GetCacheItem<Patient>(dbEntity.Key);
+                        break;
+                    case Provider:
+                        retVal = cache?.GetCacheItem<Provider>(dbEntity.Key);
+
+                        break;
+                    case Place:
+                    case CityOrTown:
+                    case Country:
+                    case CountyOrParish:
+                    case State:
+                    case ServiceDeliveryLocation:
+                        retVal = cache?.GetCacheItem<Place>(dbEntity.Key);
+
+                        break;
+                    case Organization:
+                        retVal = cache?.GetCacheItem<Organization>(dbEntity.Key);
+
+                        break;
+                    case Material:
+                        retVal = cache?.GetCacheItem<Material>(dbEntity.Key);
+
+                        break;
+                    case ManufacturedMaterial:
+                        retVal = cache?.GetCacheItem<ManufacturedMaterial>(dbEntity.Key);
+
+                        break;
+                    default:
+                        retVal = cache?.GetCacheItem<Entity>(dbEntity.Key);
+                        break;
+                }
+
+            // Return cache value
+            if (retVal != null)
+                return retVal;
+            else
+                return base.CacheConvert(dataInstance, context, loadFast);
         }
 
         /// <summary>

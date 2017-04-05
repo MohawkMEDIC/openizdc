@@ -239,7 +239,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));

@@ -21,6 +21,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Synchronization;
@@ -109,6 +110,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             insert = breService?.BeforeInsert(insert) ?? insert;
 			insert = persistenceService.Insert(insert);
+            
             breService?.AfterInsert(insert);
             
             // Patient relationships
@@ -148,6 +150,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			act = persistenceService.Obsolete(act);
             act = breService?.AfterObsolete(act) ?? act;
 
+            
             SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
 
             return act;
@@ -205,12 +208,12 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                     // First after update
                     breService?.AfterUpdate(act);
-
+                    
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
 
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
-                    MemoryCache.Current.RemoveObject(typeof(TAct), act.Key);
-                    MemoryCache.Current.RemoveObject(typeof(Act), act.Key);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(TAct), act.Key.Value);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), act.Key.Value);
                 }
                 else throw new KeyNotFoundException();
                 return act;
@@ -223,7 +226,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 act = persistenceService.Insert(act);
 
                 breService?.AfterInsert(act);
-
+                
                 // Patient relationships
                 if (act.Relationships.Count > 0 || act.Participations.Count > 0)
                     SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(act), DataOperationType.Insert);

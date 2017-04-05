@@ -37,6 +37,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected EntityPersistenceService m_entityPersister = new EntityPersistenceService();
 
         /// <summary>
+        /// Do cache convert
+        /// </summary>
+        protected override TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        {
+            return (TModel)this.m_entityPersister.DoCacheConvert(o, context, loadFast);
+        }
+
+        /// <summary>
         /// Insert the specified TModel into the database
         /// </summary>
         protected override TModel InsertInternal(LocalDataContext context, TModel data)

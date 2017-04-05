@@ -55,6 +55,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
         private IThreadPoolService m_threadPool = null;
 
+        /// <summary>
+        /// Queue has been exhuasted
+        /// </summary>
+        public event EventHandler<QueueExhaustedEventArgs> QueueExhausted;
+
         // Queue manager 
         private Tracer m_tracer = Tracer.GetTracer(typeof(QueueManagerService));
         public event EventHandler Started;
@@ -106,6 +111,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     remain = SynchronizationQueue.Inbound.Count();
                 }
+                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound"));
             }
             catch (TimeoutException e)
             {
@@ -204,6 +210,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         throw;
                     }
                 }
+                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("admin"));
+
             }
             finally
             {
@@ -298,6 +306,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         throw;
                     }
                 }
+                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("outbound"));
+
             }
             finally
             {
@@ -463,6 +473,25 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             return true;
 
+        }
+    }
+
+    /// <summary>
+    /// Queue has been exhausted
+    /// </summary>
+    public class QueueExhaustedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The queue which has been exhausted
+        /// </summary>
+        public String Queue { get; private set; }
+
+        /// <summary>
+        /// Queue has been exhausted
+        /// </summary>
+        public QueueExhaustedEventArgs(String queueName)
+        {
+            this.Queue = queueName;
         }
     }
 }

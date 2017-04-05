@@ -27,6 +27,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -51,6 +52,9 @@ namespace OpenIZ.Mobile.Core.Protocol
         {
             { "isBackground", true }
         };
+
+        // True when the object is subscribed
+        private bool m_isSubscribed = false;
 
         // Warehouse service
         private IAdHocDatawarehouseService m_warehouseService;
@@ -149,7 +153,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
                     Guid queryId = Guid.NewGuid();
                     int tr = 1, ofs = 0;
-                    while(ofs < tr)
+                    while (ofs < tr)
                     {
                         ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, tr - ofs), ofs / (float)tr);
                         var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
@@ -157,75 +161,38 @@ namespace OpenIZ.Mobile.Core.Protocol
                         foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
                             this.QueueWorkItem(p);
                     }
-
+                    
                     // Stage 3. Subscribe to persistence
-                    if (patientPersistence != null)
+                    ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
                     {
-                        patientPersistence.Inserted += (o, e) => this.QueueWorkItem(e.Data);
-                        patientPersistence.Updated += (o, e) => this.QueueWorkItem(e.Data);
-                        patientPersistence.Obsoleted += (o, e) =>
+                        if (e.Type == null) // General subscribption is done
+                            this.SubscribeEvents();
+                        else if(!this.m_isSubscribed && typeof(Act).GetTypeInfo().IsAssignableFrom(e.Type.GetTypeInfo())) // Acts were synchronized, add their patients
                         {
-                            var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
-                            //var dataMart = warehouseService.GetDatamart("oizcp");
-                            warehouseService.Delete(this.m_dataMart.Id, new { patient_id = e.Data.Key.Value });
-                        };
-                    }
-
-                    // Subscribe to acts
-                    var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
-                    if (bundlePersistence != null)
-                    {
-                        bundlePersistence.Inserted += (o, e) =>
-                        {
-                            if (e.Data.EntryKey.HasValue)
+                            // Wait for the inbound queue to exhaust itself
+                            EventHandler<QueueExhaustedEventArgs> evtHandler = null;
+                            evtHandler = (qo, qe) =>
                             {
-                                if (e.Data.Entry is Patient)
-                                    this.QueueWorkItem(e.Data.Entry as Patient);
-                                else if (e.Data.Entry is Act)
-                                    this.QueueWorkItem(e.Data.Entry as Act);
-                            }
-                            else
-                            {
-                                this.QueueWorkItem(e.Data.Item.Where(c => c is Patient || c is Act).ToArray());
-                            }
-                        };
-                        bundlePersistence.Updated += (o, e) =>
-                        {
-                            if (e.Data.EntryKey.HasValue)
-                            {
-                                this.QueueWorkItem(e.Data.Entry);
-                            }
-                            else
-                            {
-                                this.QueueWorkItem(e.Data.Item.ToArray());
-                            }
-                        };
+                                if(qe.Queue == "inbound")
+                                {
+                                    queryId = Guid.NewGuid();
+                                    tr = 1;
+                                    ofs = 0;
+                                    while (ofs < tr)
+                                    {
+                                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, tr - ofs), ofs / (float)tr);
+                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && (p.CreationTime >= e.FromDate || p.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.Act.CreationTime >= e.FromDate)), ofs, 50, out tr, queryId);
+                                        this.QueueWorkItem(prodPatients.ToArray());
+                                        ofs += 50;
+                                    }
+                                    ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted -= evtHandler;
+                                }
+                            };
+                            ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += evtHandler;
 
-                    }
+                        }
 
-                    // Act persistence services
-                    foreach (var t in typeof(Act).GetTypeInfo().Assembly.ExportedTypes.Where(o => o == typeof(Act) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
-                    {
-                        var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
-                        var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
-
-                        // Create a delegate which calls UpdateCarePlan
-                        // Construct the delegate
-                        var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
-                        var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
-                        var senderParm = Expression.Parameter(typeof(Object), "o");
-                        var eventParm = Expression.Parameter(ppeArgType, "e");
-                        var eventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data")), typeof(Act));
-                        var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
-                        var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
-                        var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
-
-                        // Bind to events
-                        pType.GetRuntimeEvent("Inserted").AddEventHandler(pInstance, insertInstanceDelegate);
-                        pType.GetRuntimeEvent("Updated").AddEventHandler(pInstance, updateInstanceDelegate);
-                        pType.GetRuntimeEvent("Obsoleted").AddEventHandler(pInstance, obsoleteInstanceDelegate);
-
-                    }
+                    };
 
                 }
                 catch (Exception e)
@@ -274,12 +241,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                                 // Get all patients
                                 var act = this.m_actCarePlanPromise.OfType<Act>().First();
                                 this.UpdateCarePlan(act);
-                                lock (this.m_lock)
-                                    this.m_actCarePlanPromise.RemoveAt(0);
 
                                 //// Remove all acts which are same protocol and same patient
                                 lock (this.m_lock)
-                                    this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Protocols.Any(p=> (qitm as Act).Protocols.Any(q=>q.ProtocolKey == p.ProtocolKey)) && (i as Act).Participations.Any(p => p.PlayerEntityKey == (qitm as Act).Participations.FirstOrDefault(c=>c.ParticipationRoleKey == ActParticipationKey.RecordTarget || c.ParticipationRole?.Mnemonic == "RecordTarget").PlayerEntityKey));
+                                {
+                                    this.m_actCarePlanPromise.Remove(act);
+                                    this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Protocols.Any(p => (qitm as Act).Protocols.Any(q => q.ProtocolKey == p.ProtocolKey)) && (i as Act).Participations.Any(p => p.PlayerEntityKey == (qitm as Act).Participations.FirstOrDefault(c => c.ParticipationRoleKey == ActParticipationKey.RecordTarget || c.ParticipationRole?.Mnemonic == "RecordTarget").PlayerEntityKey));
+                                }
                             }
 
                             // Drop everything else in the queue
@@ -302,6 +270,88 @@ namespace OpenIZ.Mobile.Core.Protocol
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        private void QueueWorkItem(object importedData)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Subscribes to all events
+        /// </summary>
+        private void SubscribeEvents()
+        {
+            if (this.m_isSubscribed) return;
+
+            var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            if (patientPersistence != null)
+            {
+                patientPersistence.Inserted += (o, e) => this.QueueWorkItem(e.Data);
+                patientPersistence.Updated += (o, e) => this.QueueWorkItem(e.Data);
+                patientPersistence.Obsoleted += (o, e) =>
+                {
+                    var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+                    //var dataMart = warehouseService.GetDatamart("oizcp");
+                    warehouseService.Delete(this.m_dataMart.Id, new { patient_id = e.Data.Key.Value });
+                };
+            }
+
+            // Subscribe to acts
+            var bundlePersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+            if (bundlePersistence != null)
+            {
+                bundlePersistence.Inserted += (o, e) =>
+                {
+                    if (e.Data.EntryKey.HasValue)
+                    {
+                        if (e.Data.Entry is Patient)
+                            this.QueueWorkItem(e.Data.Entry as Patient);
+                        else if (e.Data.Entry is Act)
+                            this.QueueWorkItem(e.Data.Entry as Act);
+                    }
+                    else
+                    {
+                        this.QueueWorkItem(e.Data.Item.Where(c => c is Patient || c is Act).ToArray());
+                    }
+                };
+                bundlePersistence.Updated += (o, e) =>
+                {
+                    if (e.Data.EntryKey.HasValue)
+                    {
+                        this.QueueWorkItem(e.Data.Entry);
+                    }
+                    else
+                    {
+                        this.QueueWorkItem(e.Data.Item.ToArray());
+                    }
+                };
+
+            }
+
+            // Act persistence services
+            foreach (var t in typeof(Act).GetTypeInfo().Assembly.ExportedTypes.Where(o => o == typeof(Act) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) && !o.GetTypeInfo().IsAbstract))
+            {
+                var pType = typeof(IDataPersistenceService<>).MakeGenericType(t);
+                var pInstance = ApplicationContext.Current.GetService(pType) as IDataPersistenceService;
+
+                // Create a delegate which calls UpdateCarePlan
+                // Construct the delegate
+                var ppeArgType = typeof(DataPersistenceEventArgs<>).MakeGenericType(t);
+                var evtHdlrType = typeof(EventHandler<>).MakeGenericType(ppeArgType);
+                var senderParm = Expression.Parameter(typeof(Object), "o");
+                var eventParm = Expression.Parameter(ppeArgType, "e");
+                var eventData = Expression.Convert(Expression.MakeMemberAccess(eventParm, ppeArgType.GetRuntimeProperty("Data")), typeof(Act));
+                var insertInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+                var updateInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+                var obsoleteInstanceDelegate = Expression.Lambda(evtHdlrType, Expression.Call(Expression.Constant(this), typeof(CarePlanManagerService).GetRuntimeMethod(nameof(QueueWorkItem), new Type[] { typeof(IdentifiedData) }), eventData), senderParm, eventParm).Compile();
+
+                // Bind to events
+                pType.GetRuntimeEvent("Inserted").AddEventHandler(pInstance, insertInstanceDelegate);
+                pType.GetRuntimeEvent("Updated").AddEventHandler(pInstance, updateInstanceDelegate);
+                pType.GetRuntimeEvent("Obsoleted").AddEventHandler(pInstance, obsoleteInstanceDelegate);
+
+            }
         }
 
         /// <summary>
@@ -348,7 +398,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     return;
                 }
 
-                var patient = this.EnsureParticipations(ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value).Clone() as Patient);
+                var patient = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(patientId.Value);
 
                 // Is there a protocol for this act?
                 if (act.Protocols.Count() == 0)
@@ -360,7 +410,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // First, we clear the warehouse
                     warehouseService.Delete(this.m_dataMart.Id, new { patient_id = patient.Key.Value });
-
+                    
                     // Now calculate
                     carePlan = careplanService.CreateCarePlan(patient, false, this.m_parameters);
 
@@ -376,7 +426,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                         patient_id = patientId.Value,
                         protocol_id = act.Protocols.FirstOrDefault()?.ProtocolKey
                     });
+                    
                     carePlan = careplanService.CreateCarePlan(patient, false, this.m_parameters, act.Protocols.FirstOrDefault().ProtocolKey);
+
+                    // Remove for all on this patient
+                    lock (this.m_lock)
+                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == patient.Key.Value || i is Patient && (i as Patient).Key == patient.Key.Value) && (i as Act).Protocols.First().ProtocolKey == act.Protocols.First().ProtocolKey);
+
                 }
 
                 /// Create a plan for the warehouse
@@ -420,10 +476,10 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                 List<Object> warehousePlan = new List<Object>();
 
-                foreach (var p in patients)
+                foreach (var p in patients.AsParallel())
                 {
                     this.m_tracer.TraceVerbose("Calculating care plan for {0}", p.Key);
-                    var data = this.EnsureParticipations(p);
+                    var data = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
 
                     // First, we clear the warehouse
                     warehouseService.Delete(this.m_dataMart.Id, new { patient_id = data.Key.Value });
@@ -462,19 +518,19 @@ namespace OpenIZ.Mobile.Core.Protocol
         /// <summary>
         /// Ensure participations are loaded
         /// </summary>
-        private Patient EnsureParticipations(Patient patient)
-        {
-            patient = patient.Clone() as Patient;
-            var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
-            int tr = 0;
-            IEnumerable<Act> acts = null;
-            Guid searchState = Guid.Empty;
+        //private Patient EnsureParticipations(Patient patient)
+        //{
+        //    patient = patient.Clone() as Patient;
+        //    var actService = ApplicationContext.Current.GetService<IActRepositoryService>();
+        //    int tr = 0;
+        //    IEnumerable<Act> acts = null;
+        //    Guid searchState = Guid.Empty;
 
-            acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == patient.Key), 0, 200, out tr);
+        //    acts = actService.Find<Act>(o => o.Participations.Any(guard => guard.ParticipationRole.Mnemonic == "RecordTarget" && guard.PlayerEntityKey == patient.Key), 0, 200, out tr);
 
-            patient.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, patient) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
-            return patient;
-        }
+        //    patient.Participations = acts.Select(a => new ActParticipation(ActParticipationKey.RecordTarget, patient) { Act = a, ParticipationRole = new OpenIZ.Core.Model.DataTypes.Concept() { Mnemonic = "RecordTarget" } }).ToList();
+        //    return patient;
+        //}
 
         /// <summary>
         /// Stops the daemon service

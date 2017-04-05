@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Caching
     /// </summary>
     public class MemoryCache : IDisposable
     {
-
+        
         // Entry table for the cache
         private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
 
@@ -78,7 +78,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Bind types
         /// </summary>
-        private Type[] bindTypes = 
+        private Type[] bindTypes =
         {
             typeof(Concept),
             typeof(AssigningAuthority),
@@ -99,7 +99,7 @@ namespace OpenIZ.Mobile.Core.Caching
             foreach (var t in this.bindTypes)
             {
                 this.RegisterCacheType(t);
-                
+
             }
         }
 
@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         public void AddUpdateEntry(object data)
         {
-            
+
             // Throw if disposed
             this.ThrowIfDisposed();
 
@@ -150,28 +150,26 @@ namespace OpenIZ.Mobile.Core.Caching
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
-                Guid key = idData?.Key ?? Guid.Empty;
-                CacheEntry entry = null;
-
-                if (cache.TryGetValue(key, out entry))
-                    lock (this.m_lock)
-                    {
-#if PERFMON
-                        this.m_tracer.TraceVerbose("Update cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
-#endif
-                        entry.Update(data as IdentifiedData);
-                    }
-                else
-                    lock (this.m_lock)
-                        if (!cache.ContainsKey(key))
+                // We want to cascade up the type heirarchy this is a do/while with IF instead of while
+                // because the ELSE-IF clause
+                do
+                {
+                    Guid key = idData?.Key ?? Guid.Empty;
+                    if (cache.ContainsKey(key))
+                        lock (this.m_lock)
                         {
-#if PERFMON
-                            this.m_tracer.TraceVerbose("Add cache object ({0}) - {1} [@{2}]", objData, data, data.GetHashCode());
-#endif
-                            cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
-                            this.m_tracer.TraceVerbose("Cache {0} is now {1} large", objData, cache.Count);
-
+                            cache[key].Update(data as IdentifiedData);
                         }
+                    else
+                        lock (this.m_lock)
+                            if (!cache.ContainsKey(key))
+                            {
+                                cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
+                                this.m_tracer.TraceVerbose("Cache for {0} contains {1} entries...", objData, cache.Count);
+                            }
+
+                    objData = objData.GetTypeInfo().BaseType;
+                } while (this.m_entryTable.TryGetValue(objData, out cache));
             }
             else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
                 this.RegisterCacheType(data.GetType());
@@ -192,18 +190,23 @@ namespace OpenIZ.Mobile.Core.Caching
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objectType, out cache))
             {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
+                do
                 {
-                    lock (this.m_lock)
+                    CacheEntry candidate = default(CacheEntry);
+                    if (cache.TryGetValue(key.Value, out candidate))
                     {
+                        lock (this.m_lock)
+                        {
 #if PERFMON
                         this.m_tracer.TraceVerbose("Remove cache object ({0}) - {1}", objectType, key);
 #endif
 
-                        cache.Remove(key.Value);
+                            cache.Remove(key.Value);
+                        }
                     }
-                }
+
+                    objectType = objectType.GetTypeInfo().BaseType;
+                } while (this.m_entryTable.TryGetValue(objectType, out cache));
             }
             return;
         }
@@ -225,7 +228,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 throw new ArgumentNullException(nameof(objectType));
 
             Dictionary<Guid, CacheEntry> cache = null;
-            if(this.m_entryTable.TryGetValue(objectType, out cache))
+            if (this.m_entryTable.TryGetValue(objectType, out cache))
             {
                 CacheEntry candidate = default(CacheEntry);
                 if (cache.TryGetValue(key.Value, out candidate))
@@ -258,7 +261,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// Sets the minimum age
         /// </summary>
         /// <param name="age"></param>
-        public  void SetMinAge(TimeSpan age)
+        public void SetMinAge(TimeSpan age)
         {
             this.ThrowIfDisposed();
 
@@ -271,10 +274,11 @@ namespace OpenIZ.Mobile.Core.Caching
         public void ReducePressure()
         {
             this.ThrowIfDisposed();
-            
+
 
             // Entry table clean
-            try {
+            try
+            {
                 if (!Monitor.TryEnter(this.m_lock))
                     return; // Something else is locking the process
 
@@ -326,7 +330,7 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-           
+
             long nowTicks = DateTime.Now.Ticks;
             try// This time wait for a lock
             {
@@ -481,7 +485,7 @@ namespace OpenIZ.Mobile.Core.Caching
         //    foreach (var item in properties)
         //    {
         //        var value = item.GetValue(data);
-                
+
         //        if (value is IList && (value as IList).Count > 0)
         //        {
         //            foreach (var listItem in value as IList)

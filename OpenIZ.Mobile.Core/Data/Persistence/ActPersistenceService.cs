@@ -30,6 +30,8 @@ using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Mobile.Core.Data.Model.Extensibility;
 using OpenIZ.Mobile.Core.Data.Model.DataType;
 using OpenIZ.Core.Model.Map;
+using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Core.Services;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -51,6 +53,56 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String CareProvision = "1071D24E-6FE9-480F-8A20-B1825AE4D707";
         private const String AccountManagement = "CA44A469-81D7-4484-9189-CA1D55AFECBC";
         private const String Supply = "A064984F-9847-4480-8BEA-DDDF64B3C77C";
+
+        /// <summary>
+        /// Cache convert an act version
+        /// </summary>
+        protected override Act CacheConvert(DbIdentified dataInstance, LocalDataContext context, bool loadFast)
+        {
+            if (dataInstance == null) return null;
+            DbAct dbAct = dataInstance as DbAct;
+            Act retVal = null;
+            IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
+
+                switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case ControlAct:
+                        retVal = cache?.GetCacheItem<ControlAct>(dbAct.Key);
+                        break;
+                    case SubstanceAdministration:
+                        retVal = cache?.GetCacheItem<SubstanceAdministration>(dbAct.Key);
+                        break;
+                    case Observation:
+                        var dbObs = context.Connection.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
+                        if (dbObs != null)
+                            switch (dbObs.ValueType)
+                            {
+                                case "ST":
+                                    retVal = cache?.GetCacheItem<TextObservation>(dbAct.Key);
+                                    break;
+                                case "CD":
+                                    retVal = cache?.GetCacheItem<CodedObservation>(dbAct.Key);
+                                    break;
+                                case "PQ":
+                                    retVal = cache?.GetCacheItem<QuantityObservation>(dbAct.Key);
+                                    break;
+                            }
+                        break;
+                    case Encounter:
+                        retVal = cache?.GetCacheItem<PatientEncounter>(dbAct.Key);
+                        break;
+                    case Condition:
+                    default:
+                        retVal = cache?.GetCacheItem<Act>(dbAct.Key);
+                        break;
+                }
+
+            // Return cache value
+            if (retVal != null)
+                return retVal;
+            else
+                return base.CacheConvert(dataInstance, context, loadFast);
+        }
 
         /// <summary>
         /// To model instance
@@ -220,8 +272,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     new List<ActProtocol>(),
                     retVal.Protocols,
                     retVal.Key,
-
                     context);
+
             return retVal;
         }
 

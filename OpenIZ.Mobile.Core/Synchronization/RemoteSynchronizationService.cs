@@ -80,6 +80,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// Fired when the service ahs stopped
         /// </summary>
         public event EventHandler Stopped;
+        /// <summary>
+        /// Pull has completed
+        /// </summary>
+        public event EventHandler<SynchronizationEventArgs> PullCompleted;
 
         /// <summary>
         /// Returns true if the service is running
@@ -159,11 +163,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         }
 
+                        // Pull complete?
                         if (totalResults > 0 && initialSync)
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(true, totalResults));
                         }
+                        else if(totalResults > 0)
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults));
 
 
                     }
@@ -201,15 +209,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Pull(Type modelType, NameValueCollection filter)
         {
+            var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
+
             try
             {
 
                 ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
-
                 // Get last modified date
-                var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
                 this.m_tracer.TraceVerbose("Synchronize all on {0} since {1}", modelType, lastModificationDate);
 
                 var result = new Bundle() { TotalResults = 1 };
@@ -254,6 +262,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 // Log that we synchronized successfully
                 SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+
+                // Fire the pull event
+                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), retVal));
+
                 return retVal;
             }
             catch (Exception e)
@@ -261,6 +273,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                 alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
                 return 0;
             }
