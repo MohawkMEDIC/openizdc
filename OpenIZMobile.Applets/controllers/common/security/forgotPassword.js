@@ -55,55 +55,9 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
         }
     });
 
-    $("a[data-toggle='tab'][href='#changePasswordTab']").on('shown.bs.tab', function () {
-        console.log('change');
-        $scope.onNext = function () {
-            if (!OpenIZ.App.getOnlineState()) {
-                console.log(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
-                return false;
-            }
-
-            // Try to change the password
-            OpenIZ.App.showWait();
-            OpenIZ.Authentication.setPasswordAsync({
-                userName: $scope.resetRequest.userName,
-                password: $scope.resetRequest.password,
-                continueWith: function (data) {
-                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
-
-                    // Authenticate fully
-                    OpenIZ.Authentication.loginAsync({
-                        userName: $scope.resetRequest.userName,
-                        password: $scope.resetRequest.password,
-                        continueWith: function (session) {
-                            if (session == null) {
-                                OpenIZ.App.toast(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
-                            }
-                            else if (OpenIZ.urlParams["returnUrl"] != null)
-                                if (window.location.hash == "")
-                                    window.location.hash = "#/";
-                            $window.location.reload();
-                        },
-                        onException: function (exception) {
-                            console.log(exception.message || exception);
-                        },
-                        finally: function () {
-                            $("#forgotPasswordWizard").modal("hide");
-                            OpenIZ.App.hideWait()
-                        }
-                    });
-                },
-                onException: function (exception) {
-                    console.log(exception.message || exception);
-                },
-                finally: function () {
-                    OpenIZ.App.hideWait();
-                }
-            })
-
-            return false;
-
-        };
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"][href="#changePasswordTab"]', function () {
+        $('#submitButton').show();
+        $('#nextButton').hide();
     });
 
     /**
@@ -115,6 +69,9 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
             .val('')
             .removeAttr('selected')
             .removeAttr('checked');
+
+        $('#submitButton').hide();
+        $('#nextButton').show();
 
         // Remove dirty and touched from inputs
         delete ($scope.resetRequest.mechanism);
@@ -172,7 +129,6 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
             }
 
             // Try to use the login code
-            OpenIZ.App.showWait();
             OpenIZ.Authentication.loginAsync({
                 userName: $scope.resetRequest.userName,
                 tfaSecret: $scope.resetRequest.tfaSecret,
@@ -180,13 +136,15 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                     // Set scope next
                     $scope.onNext = null;
                     $scope.nextWizard();
+
+                    $state.reload();
+                    $scope.$apply();
                 },
                 onException: function (exception) {
                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.invalidCode"));
                     console.log(exception.message || exception);
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait();
                 }
             });
             return false;
@@ -213,6 +171,58 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                 OpenIZ.App.hideWait();
             }
         });
+    };
+
+    /**
+     * Submit the final password change
+     */
+    $scope.submitPasswordChange = function () {
+        if (!OpenIZ.App.getOnlineState()) {
+            console.log(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
+            return false;
+        }
+
+        // Try to change the password
+        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#submitButton');
+        OpenIZ.Authentication.setPasswordAsync({
+            userName: $scope.resetRequest.userName,
+            password: $scope.resetRequest.password,
+            continueWith: function (data) {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.alert.updateSuccessful"));
+
+                // Authenticate fully
+                OpenIZ.Authentication.loginAsync({
+                    userName: $scope.resetRequest.userName,
+                    password: $scope.resetRequest.password,
+                    continueWith: function (session) {
+                        if (session == null) {
+                            OpenIZ.App.toast(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                        }
+                        else if (OpenIZ.urlParams["returnUrl"] != null)
+                            if (window.location.hash == "")
+                                window.location.hash = "#/";
+                        $window.location.reload();
+                    },
+                    onException: function (exception) {
+                        console.log(exception.message || exception);
+                    },
+                    finally: function () {
+                        $("#forgotPasswordWizard").modal("hide");
+                        OpenIZ.App.hideWait();
+                    }
+                });
+            },
+            onException: function (exception) {
+                OpenIZ.App.hideWait('#submitButton');
+                console.log(exception.message || exception);
+            },
+            finally: function () {
+                OpenIZ.App.hideWait();
+            }
+        });
+
+        return false;
     };
 
 }]);
