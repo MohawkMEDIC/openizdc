@@ -145,10 +145,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
 
                 bool initialSync = !SynchronizationLog.Current.GetAll().Any();
+
                 if (Monitor.TryEnter(this.m_lock, 100)) // Do we have a lock?
                 {
                     try
                     {
+
+                        DateTime lastSync = DateTime.MinValue;
+                        if(SynchronizationLog.Current.GetAll().Count() > 0)
+                            lastSync = SynchronizationLog.Current.GetAll().Min(o => o.LastSync);
 
                         if (!this.m_integrationService.IsAvailable()) return;
 
@@ -168,10 +173,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
-                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(true, totalResults));
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(true, totalResults, lastSync));
                         }
                         else if(totalResults > 0)
-                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults));
+                            this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults, lastSync));
 
 
                     }
@@ -224,6 +229,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var eTag = String.Empty;
                 var retVal = 0;
                 int count = 75;
+
+                var qid = Guid.NewGuid();
+
                 // Enqueue
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
@@ -237,7 +245,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
                             infopt.Add(itm.Key, itm.Value);
                     }
-                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt });
+                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 20000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
 
                     // Queue the act of queueing
                     if (result != null)

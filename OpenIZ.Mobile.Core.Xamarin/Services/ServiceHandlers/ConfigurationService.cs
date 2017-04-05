@@ -293,13 +293,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         }
 
                         // Assignable from
-                        if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
-                        {
-                            for (int i = 0; i < syncSetting.Filters.Count; i++)
-                                syncSetting.Filters[i] += "&obsoletionTime=null";
-                            if (syncSetting.Filters.Count == 0)
-                                syncSetting.Filters.Add("obsoletionTime=null");
-                        }
+                        //if (typeof(BaseEntityData).IsAssignableFrom(binder.BindToType(typeof(BaseEntityData).Assembly.FullName, res)))
+                        //{
+                        //    for (int i = 0; i < syncSetting.Filters.Count; i++)
+                        //        syncSetting.Filters[i] += "&obsoletionTime=null";
+                        //    if (syncSetting.Filters.Count == 0)
+                        //        syncSetting.Filters.Add("obsoletionTime=null");
+                        //}
 
                         // TODO: Patient registration <> facility
                         syncConfig.SynchronizationResources.Add(syncSetting);

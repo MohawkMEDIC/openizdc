@@ -97,9 +97,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     results = bundle.Item.OfType<Act>();
 
                 }
-                else if (actRepositoryService is IPersistableQueryProvider)
+                else if (actRepositoryService is IPersistableQueryRepositoryService)
                 {
-                    results = (actRepositoryService as IPersistableQueryProvider).Query<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
+                    results = (actRepositoryService as IPersistableQueryRepositoryService).Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
                 }
                 else
                 {

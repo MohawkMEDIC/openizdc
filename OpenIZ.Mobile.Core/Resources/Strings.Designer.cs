@@ -163,6 +163,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Gathering patients in need of care plan refresh.....
+        /// </summary>
+        internal static string locale_refreshCarePlan {
+            get {
+                return ResourceManager.GetString("locale_refreshCarePlan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;.
         /// </summary>
         internal static string locale_rejectionBody {

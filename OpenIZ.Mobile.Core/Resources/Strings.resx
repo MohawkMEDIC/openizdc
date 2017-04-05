@@ -200,4 +200,7 @@ Sincerely,
   <data name="locale_calculatingCarePlan" xml:space="preserve">
     <value>Calculating Care-plans ({0} remaining)...</value>
   </data>
+  <data name="locale_refreshCarePlan" xml:space="preserve">
+    <value>Gathering patients in need of care plan refresh....</value>
+  </data>
 </root>

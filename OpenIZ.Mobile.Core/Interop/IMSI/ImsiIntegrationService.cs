@@ -142,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
                 this.m_tracer.TraceVerbose("Performing IMSI query ({0}):{1}", typeof(TModel).FullName, predicate);
 
-                var retVal = client.Query<TModel>(predicate, offset, count);
+                var retVal = client.Query<TModel>(predicate, offset, count, queryId: options.QueryId);
                 //retVal?.Reconstitute();
                 return retVal;
             }

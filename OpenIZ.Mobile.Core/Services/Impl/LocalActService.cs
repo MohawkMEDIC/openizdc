@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActService : IActRepositoryService, IPersistableQueryProvider, IRepositoryService<Act>,
+	public class LocalActService : IActRepositoryService, IPersistableQueryRepositoryService, IRepositoryService<Act>,
         IRepositoryService<SubstanceAdministration>,
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
@@ -53,7 +53,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
-            var results = this.Query(filter, offset, count, out totalResults, Guid.Empty);
+            var results = this.Find(filter, offset, count, out totalResults, Guid.Empty);
             results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
             return results;
 		}
@@ -159,7 +159,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <summary>
         /// Queries the Act service using the specified state query id
         /// </summary>
-        public IEnumerable<TAct> Query<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
+        public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults, Guid queryId) where TAct : IdentifiedData
         {
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TAct>>();
             var breService = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>();

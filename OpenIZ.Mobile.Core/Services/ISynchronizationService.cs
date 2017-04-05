@@ -60,26 +60,27 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Synchronization type events
         /// </summary>
-        public SynchronizationEventArgs(Type type, NameValueCollection filter, DateTime fromDate, int totalResults) : this(totalResults)  
+        public SynchronizationEventArgs(Type type, NameValueCollection filter, DateTime fromDate, int totalResults) : this(totalResults, fromDate)  
         {
             this.Type = type;
             this.Filter = filter;
-            this.FromDate = fromDate;
             this.IsInitial = fromDate == default(DateTime);
         }
 
         /// <summary>
         /// Create an empty pull event arg
         /// </summary>
-        public SynchronizationEventArgs(int totalResults)
+        public SynchronizationEventArgs(int totalResults, DateTime fromDate)
         {
             this.Count = totalResults;
+            this.FromDate = fromDate;
+
         }
 
         /// <summary>
         /// Creates a new initial pull event arg
         /// </summary>
-        public SynchronizationEventArgs(bool isInitial, int totalResults) : this(totalResults) 
+        public SynchronizationEventArgs(bool isInitial, int totalResults, DateTime fromDate) : this(totalResults, fromDate) 
         {
             this.IsInitial = isInitial;
 
