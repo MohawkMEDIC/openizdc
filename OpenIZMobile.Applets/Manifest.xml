@@ -281,8 +281,10 @@
     <string key="locale.preferences.username">Username</string>
     <string key="locale.preferences.existingPassword">Existing Password</string>
     <string key="locale.preferences.password">New Password</string>
+    <string key="locale.preferences.passwordChanged">Password was successfully changed</string>
     <string key="locale.preferences.confirm">Confirm Password</string>
     <string key="locale.preferences.tabs.password">Password</string>
+    <string key="locale.preferences.tabs.passwordRecovery">Password Recovery</string>
     <string key="locale.preferences.tabs.profile">My Profile</string>
     <string key="locale.preferences.givenName">Name(s)</string>
     <string key="locale.preferences.familyName">Surname(s)</string>
@@ -294,14 +296,14 @@
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
     <string key="locale.preferences.password.onlineOnly">Password Reset Can Only Be Done When Online</string>
-    <string key="locale.preferences.passwordReset.title">Password Recovery Options</string>
-    <string key="locale.preferences.passwordReset.description">The settings below will be used to contact you in case your user account needs to be reset. You must enter your password above to change this data</string>
     <string key="locale.preferences.email">E-Mail</string>
     <string key="locale.preferences.recoveryOptions.success">Recovery Options Successfully Changed</string>
     <string key="locale.preferences.phone">Mobile</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
     <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
-
+    <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
+    <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
+    
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
     <string key="locale.legend.completed">Completed</string>
@@ -526,8 +528,6 @@
     <string key="locale.preferences.givenName">Uthibitisho:</string>
     <string key="locale.preferences.language">Chagua hapa kufanya maombi kutoka kwenye kifaa yatumie HTTP</string>
     <string key="locale.preferences.password">Tafadhali subiri</string>
-    <string key="locale.preferences.passwordReset.description">Tuma ripoti</string>
-    <string key="locale.preferences.passwordReset.title">Anuani ya proxy</string>
     <string key="locale.preferences.phone">Kata</string>
     <string key="locale.preferences.tabs.password">Kamwe</string>
     <string key="locale.preferences.tabs.profile">Ndio</string>

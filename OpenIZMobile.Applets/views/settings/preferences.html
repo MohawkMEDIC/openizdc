@@ -34,10 +34,14 @@
         <li role="presentation" class="margin-top-5">
             <a data-target="#password" data-toggle="tab" ng-disabled="!isNetworkAvailable">{{ 'locale.preferences.tabs.password' | i18n }}</a>
         </li>
+        <li role="presentation" class="margin-top-5">
+            <a data-target="#passwordRecovery" data-toggle="tab" ng-disabled="!isNetworkAvailable">{{ 'locale.preferences.tabs.passwordRecovery' | i18n }}</a>
+        </li>
     </ul>
 
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="profile"><!-- #include virtual="~/views/settings/tabs/profile.html" --></div>
         <div role="tabpanel" class="tab-pane" id="password"><!-- #include virtual="~/views/settings/tabs/password.html" --></div>
+        <div role="tabpanel" class="tab-pane" id="passwordRecovery"><!-- #include virtual="~/views/settings/tabs/passwordRecovery.html" --></div>
     </div>
 </div>

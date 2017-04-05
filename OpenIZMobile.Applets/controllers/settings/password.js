@@ -23,25 +23,18 @@
 
 layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexService', function ($scope, $rootScope, regexService) {
 
-    $rootScope.$watch('session', function (nv, ov) {
-        $scope.changeData = {
-            phone: $rootScope.session.user.phoneNumber,
-            email: $rootScope.session.user.email
-        };
-    });
-
     $scope.regexService = regexService;
 
-    $scope.changePassword = function (userName, existing, password, confirmation, email, telephone) {
+    $scope.changePassword = function (userName, existing, password, confirmation) {
 
         // Are we even online?
         if (!$rootScope.page.onlineState)
-            console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+            console.log(OpenIZ.Localization.getString("locale.action.onlineOnly"));
         else if (password != confirmation)
             console.log(OpenIZ.Localization.getString("locale.settings.passwordNoMatch"));
         else {
-
             OpenIZ.App.showWait();
+            OpenIZ.App.showWait('#changePasswordButton');
 
             // Re-authenticate the user to verify their current password
             OpenIZ.Authentication.loginAsync({
@@ -50,42 +43,25 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexSe
                 continueWith: function (session) {
                     if (session != null) // success for auth, let's change the password
                     {
-                        // Password set?
-                        if(password)
-                            OpenIZ.Authentication.setPasswordAsync({
-                                userName: userName,
-                                password: password,
-                                continueWith: function (result) {
-                                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.passwordChanged"));
+                        OpenIZ.Authentication.setPasswordAsync({
+                            userName: userName,
+                            password: password,
+                            continueWith: function (result) {
+                                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.passwordChanged"));
+                            },
+                            onException: function (ex) {
+                                if (ex.message != null)
+                                    console.log(ex.message);
+                                else
+                                    console.log(ex);
 
-                                },
-                                onException: function (ex) {
-                                    if (ex.message != null)
-                                        console.log(ex.message);
-                                    else
-                                        console.log(ex);
-                                },
-                                finally: function () {
-                                    OpenIZ.App.hideWait();
-                                }
-                            });
-
-                        // Email set?
-                        if (email && email != $rootScope.session.user.email ||
-                            telephone && telephone != $rootScope.session.user.phoneNumber)
-                            OpenIZ.Authentication.saveUserAsync({
-                                data: new OpenIZModel.SecurityUser({
-                                    id: $rootScope.session.user.id,
-                                    email: email,
-                                    phoneNumber: telephone
-                                }),
-                                continueWith: function (result) {
-                                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.recoveryOptions.success"));
-                                    $rootScope.session.user = result;
-                                }
-                            });
-
-
+                                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.errors.changePasswordFailure"));
+                            },
+                            finally: function () {
+                                OpenIZ.App.hideWait();
+                                OpenIZ.App.hideWait('#changePasswordButton');
+                            }
+                        });
                     }
                 },
                 onException: function (ex) { // Some error with authentication
@@ -93,7 +69,9 @@ layoutApp.controller('UserPasswordController', ['$scope', '$rootScope', 'regexSe
                         console.log(ex.message);
                     else
                         console.log(ex);
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.errors.changePasswordFailure"));
                     OpenIZ.App.hideWait(); // We won't make it to the other finally :( 
+                    OpenIZ.App.hideWait('#changePasswordButton');
                 }
             })
         }
