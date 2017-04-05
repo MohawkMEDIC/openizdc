@@ -352,7 +352,11 @@ angular.module('openiz', [])
                         defaultResults: function() {
                             var s = scope;
                             if (defaultResults != null) {
-                                return eval(defaultResults);
+                                try {
+                                    return eval(defaultResults);
+                                } catch(e) {
+
+                                }
                             }
                             else {
                                 return $.map($('option', element[0]), function (o) {
