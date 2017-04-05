@@ -218,7 +218,6 @@ angular.element(document).ready(function () {
     //OpenIZ.locale = OpenIZ.Localization.getLocale();
 });
 
-
 layoutApp.service('uiHelperService', [function () {
     function setDropdownPosition(dropdownButton, dropdownMenu) {
         if (dropdownMenu.outerWidth() > (dropdownButton.parent().width() + dropdownButton.offset().left)) {
@@ -238,3 +237,10 @@ layoutApp.service('uiHelperService', [function () {
     return uiHelperService;
 }]);
 
+layoutApp.service('regexService', [function () {
+    var regexService = {
+        passwordRegex: /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d]{8,}$/
+    };
+
+    return regexService;
+}]);

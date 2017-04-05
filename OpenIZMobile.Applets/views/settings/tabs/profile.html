@@ -21,12 +21,12 @@
     <oiz:script>/org.openiz.core/controllers/settings/profile.js</oiz:script>
     <div class="container-fluid">
         <div class="form-group">
-            <label class="col-xs-12 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Given" /> </div>
+            <label class="col-xs-3 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Given" /> </div>
         </div>
         <div class="form-group">
-            <label class="col-xs-12 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Family" /> </div>
+            <label class="col-xs-3 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Family" /> </div>
         </div>
         <!--<div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
             <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
@@ -39,8 +39,8 @@
             </div>
         </div>-->
         <div class="form-group">
-            <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10">
+            <label class="col-xs-3 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.facility' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9">
                 <div class="input-group">
                     <select disabled="disabled" class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.relationship.DedicatedServiceDeliveryLocation.target" oiz-entitysearch="Place" data-filter='{ "classConcept" :  "FF34DFA7-C6D3-4F8B-BC9F-14BCDC13BA6C" }'>
                         <option selected="selected" value="{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.target}}">{{::$root.session.entity.relationship.DedicatedServiceDeliveryLocation.targetModel.name.OfficialRecord | oizEntityName }}</option>
@@ -49,8 +49,8 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-xs-12 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
-            <div class="col-xs-12 col-sm-10">
+            <label class="col-xs-3 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
+            <div class="col-xs-9 col-sm-9">
                 <div class="input-group">
                     <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.language[0].languageCode">
                         <option value="en">English</option>
@@ -60,7 +60,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-sm-11">
                 <div class="btn-group pull-right">
                     <button type="submit" class="btn btn-lg btn-success" id="saveUserProfileButton">
                         <span>
