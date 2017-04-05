@@ -224,6 +224,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             continueWith: function (r) {
                 scope.search.results = r;
                 //updateResultEncounters();
+                window.scrollTo(0, 0);
             },
             onException: function (e) {
                 OpenIZ.App.toast(e.message);

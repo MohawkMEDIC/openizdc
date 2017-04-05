@@ -116,7 +116,9 @@
             <div class="col-xs-11">
                 <div class="input-group">
                     <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
-                    <input ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$invalid}" ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" />
+                    <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; 
+                           (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}" 
+                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled &amp;&amp; $root.page.loadTime" ng-min="act._enabled &amp;&amp; patient.dateOfBirth" />
                 </div>
             </div>
             <div class="col-xs-1">
@@ -128,8 +130,20 @@
                     <div class="control__indicator control__indicator_alt" style="top: 14px; left: 0px;"></div>
                 </label>
             </div>
+            <div ng-if="act._enabled">
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.required">
+                    {{ 'locale.encounters.immunizations.errors.requiredDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.max">
+                    {{ 'locale.encounters.immunizations.errors.maxDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.min">
+                    {{ 'locale.encounters.immunizations.errors.minDate' | i18n }}
+                </div>
+                <div class="col-xs-10 help-block text-danger" ng-if="(editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['izdate_' + act.targetModel.id].$error.date">
+                    {{ 'locale.encounters.immunizations.errors.validDate' | i18n }}
+                </div>
+            </div>
         </div>
-        
     </div>
-    
 </div>

@@ -22,11 +22,14 @@
 /// <reference path="~/js/openiz.js"/>
 layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function ($scope, $window) {
 
+    var controller = this;
+
     $scope.resetRequest = {
         purpose: "PasswordReset"
     };
 
     $scope.displayPage = "#usernameTab";
+    $scope.verificationPlaceholder = "";
 
     // Get mechanisms
     OpenIZ.Authentication.getTfaMechanisms({
@@ -38,11 +41,25 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
             OpenIZ.App.toast(ex.message || ex);
         }
     });
-    
+
+    $(document).on('shown.bs.tab', 'a[data-toggle="tab"][href="#challengeTab"]', function () {
+        switch ($scope.resetRequest.mechanism) {
+            case 'd919457d-e015-435c-bd35-42e425e2c60c':
+                $scope.verificationPlaceholder = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.placeholderEmail");
+                break;
+            case '08124835-6c24-43c9-8650-9d605f6b5bd6':
+                $scope.verificationPlaceholder = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.placeholderPhone");
+                break;
+            default:
+                break;
+        }
+    });
+
     $("a[data-toggle='tab'][href='#changePasswordTab']").on('shown.bs.tab', function () {
+        console.log('change');
         $scope.onNext = function () {
             if (!OpenIZ.App.getOnlineState()) {
-                console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+                console.log(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
                 return false;
             }
 
@@ -60,7 +77,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                         password: $scope.resetRequest.password,
                         continueWith: function (session) {
                             if (session == null) {
-                                console.log(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
+                                OpenIZ.App.toast(OpenIZ.Localization.getString("err_oauth2_invalid_grant"));
                             }
                             else if (OpenIZ.urlParams["returnUrl"] != null)
                                 if (window.location.hash == "")
@@ -87,6 +104,29 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
             return false;
 
         };
+    });
+
+    /**
+     * Reset the forgot password wizard on close
+     */
+    $("#passwordResetDialog").on('hidden.bs.modal', function () {
+        $(':input', '#passwordResetDialog')
+            .not(':button, :submit, :reset')
+            .val('')
+            .removeAttr('selected')
+            .removeAttr('checked');
+
+        // Remove dirty and touched from inputs
+        delete ($scope.resetRequest.mechanism);
+        delete ($scope.resetRequest.mechanismModel);
+        controller.forgotPasswordForm.$setPristine();
+        controller.forgotPasswordForm.$setUntouched();
+
+        // Set to first tab and reset progress
+        $("#forgotPasswordWizard li:first a").tab('show');
+        $scope.nextEnabled(false);
+        $scope.onNext = null;
+        $scope.resetResponse = false;
     });
 
     /** 
@@ -127,7 +167,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
 
             // Online only
             if (!OpenIZ.App.getOnlineState()) {
-                alert(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
                 return false;
             }
 
@@ -142,6 +182,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                     $scope.nextWizard();
                 },
                 onException: function (exception) {
+                    OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.invalidCode"));
                     console.log(exception.message || exception);
                 },
                 finally: function () {
@@ -153,7 +194,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
 
         // Online only
         if (!OpenIZ.App.getOnlineState()) {
-            console.log(OpenIZ.Localization.getString("locale.error.onlineOnly"));
+            OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.onlineOnly"));
             return false;
         }
 
@@ -165,6 +206,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', function 
                 $scope.$apply();
             },
             onException: function (ex) {
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.forgotPassword.error.validation"));
                 console.log(ex.message || ex);
             },
             finally: function () {

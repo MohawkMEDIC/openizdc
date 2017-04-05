@@ -27,7 +27,7 @@
 
         <div class="search-results-container">
             <div class="row" style="padding: 0 10px;">
-                <div class="col-xs-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
+                <div class="col-xs-12 col-sm-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
                     <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
                         <span class="search-results-tile-circle">
                             <span class="search-results-tile-counter">

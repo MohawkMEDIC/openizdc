@@ -28,7 +28,10 @@ layoutApp.controller('LoginPartController', ['$scope', '$window', function ($sco
         // Get the current scope that we're in
 
         $scope.showPasswordReset = $scope.showPasswordReset || function () {
-            $('#passwordResetDialog').modal('show');
+            $('#passwordResetDialog').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
         };
 
         $scope.login = $scope.login || function (form, username, password) {

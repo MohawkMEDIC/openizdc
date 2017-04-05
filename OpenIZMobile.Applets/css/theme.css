@@ -927,7 +927,7 @@ body{
 }
 
 .order-list-selector{
-    border: none;
+    border-bottom: 5px solid transparent;
     background: none !important;
     color: #386582 !important;
     font-weight: 400;
