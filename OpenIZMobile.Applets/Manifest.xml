@@ -378,16 +378,45 @@
     <string key="locale.session.expiration">Session Warning</string>
 
     <!-- Sync Centre -->
-    <string key="locale.sync.title">Sync</string>
+    <string key="locale.sync.title">Sync Centre</string>
     <string key="locale.sync.queue">Queue</string>
+    <string key="locale.sync.inspectQueue">Inspect Contents</string>
     <string key="locale.sync.conflicted">Server &amp; Tablet Conflict</string>
     <string key="locale.sync.outbound">Local to Server (Outbox)</string>
     <string key="locale.sync.inbound">Server to Local (Inbox)</string>
     <string key="locale.sync.objects">Items in Queue</string>
     <string key="locale.sync.resolve.resolve">Resolve</string>
-    <string key="locale.sync.resolve.takeMine">Take Mine</string>
-    <string key="locale.sync.resolve.leaveServer">Leave Server</string>
+    <string key="locale.sync.resolve.takeMine">Override Server</string>
+    <string key="locale.sync.batchForceConfirm">You are about to perform an action that will attempt to force the IMS server to accept data. This may overwrite previous changes made by other users. It is not recommended you do such an action unless you're sure the data is correct. Do you want to continue?</string>
+    <string key="locale.sync.resolve.title">Resolve Conflict</string>
+    <string key="locale.sync.queue.date">Original Submission Date</string>
+    <string key="locale.sync.resolve.reason">The reason this object was rejected</string>
+    <string key="locale.sync.resolve.data">Data that was attempted to be submitted</string>
+    <string key="locale.sync.resolve.leaveServer">Leave Server Version</string>
+    <string key="locale.sync.queue.id">ID#</string>
+    <string key="locale.sync.queue.content">Type of Data</string>
+    <string key="locale.sync.queue.operation">Operation</string>
+    <string key="locale.sync.queue.action">Action</string>
     <string key="locale.sync.conflict">Conflict</string>
+    <string key="locale.sync.retry">Retry Conflicted</string>
+    <string key="locale.sync.force">Synchronize Now</string>
+    <string key="locale.sync.resource.AlertMessage">Alert Messages</string>
+    <string key="locale.sync.resource.ConceptSet">Terminology Sets</string>
+    <string key="locale.sync.resource.AssigningAuthority">Identifier Types</string>
+    <string key="locale.sync.resource.IdentifierType">Identity Classifications</string>
+    <string key="locale.sync.resource.ExtensionType">Extended Data Attributes</string>
+    <string key="locale.sync.resource.ConceptClass">Concept Classes</string>
+    <string key="locale.sync.resource.Material">Material Types</string>
+    <string key="locale.sync.resource.SecurityRole">Security Information</string>
+    <string key="locale.sync.resource.Concept">Concepts (Drop-down values)</string>
+    <string key="locale.sync.resource.Place">Facilities &amp; Villages</string>
+    <string key="locale.sync.resource.Organization">Organizations</string>
+    <string key="locale.sync.resource.UserEntity">Author Information</string>
+    <string key="locale.sync.resource.Provider">Provider Information</string>
+    <string key="locale.sync.resource.ManufacturedMaterial">Material Stock Elements</string>
+    <string key="locale.sync.resource.Person">Persons (Patients &amp; Next of Kin)</string>
+    <string key="locale.sync.resource.Act">Acts (Vaccinations, Weights, Adjustments, etc.)</string>
+
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>

@@ -349,36 +349,49 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                     catch(WebException e)
                     {
 
-                        if((e.Response as HttpWebResponse).StatusCode == HttpStatusCode.Conflict) // Try to resolve the conflict in an automated way
+                        switch((e.Response as HttpWebResponse).StatusCode)
                         {
-                            this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
+                            case HttpStatusCode.Conflict: // Try to resolve the conflict in an automated way
+                                this.m_tracer.TraceWarning("Will attempt to force PATCH {0}", patch);
 
-                            // Condition 1: Can we apply the patch without causing any issues (ignoring version)
-                            client.Client.Requesting += (o, evt) =>
-                            {
-                                evt.AdditionalHeaders["X-Patch-Force"] = "true";
-                            };
-
-                            // Configuration dictates only safe patch
-                            if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SafePatchOnly)
-                            {
-                                // First, let's grab the item
-                                var serverCopy = this.Get(patch.AppliesTo.Type, patch.AppliesTo.Key.Value, null);
-                                if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
-                                    newUuid = client.Patch(patch);
-                                else
+                                // Condition 1: Can we apply the patch without causing any issues (ignoring version)
+                                client.Client.Requesting += (o, evt) =>
                                 {
-                                    // There are no intersections of properties between the object we have and the server copy
-                                    var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
-                                    if (!serverDiff.Operation.Any(sd => patch.Operation.Any(po => po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                    evt.AdditionalHeaders["X-Patch-Force"] = "true";
+                                };
+
+                                // Configuration dictates only safe patch
+                                if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SafePatchOnly)
+                                {
+                                    // First, let's grab the item
+                                    var serverCopy = this.Get(patch.AppliesTo.Type, patch.AppliesTo.Key.Value, null);
+                                    if (ApplicationContext.Current.GetService<IPatchService>().Test(patch, serverCopy))
                                         newUuid = client.Patch(patch);
                                     else
-                                        throw;
+                                    {
+                                        // There are no intersections of properties between the object we have and the server copy
+                                        var serverDiff = ApplicationContext.Current.GetService<IPatchService>().Diff(existing, serverCopy);
+                                        if (!serverDiff.Operation.Any(sd => patch.Operation.Any(po => po.Path == sd.Path && sd.OperationType != PatchOperationType.Test)))
+                                            newUuid = client.Patch(patch);
+                                        else
+                                            throw;
+                                    }
                                 }
-                            }
-                            else /// unsafe patch ... meh
-                                newUuid = client.Patch(patch);
+                                else /// unsafe patch ... meh
+                                    newUuid = client.Patch(patch);
+                                break;
+                            case HttpStatusCode.NotFound: // We tried to update something that doesn't exist on the server? That's odd
+                                this.m_tracer.TraceWarning("Server reported patch target doesn't exist! {0}", patch);
+                                var svcType = typeof(IDataPersistenceService<>).MakeGenericType(patch.AppliesTo.Type);
+                                var persistenceService = ApplicationContext.Current.GetService(svcType) as IDataPersistenceService;
+                                var localObject = persistenceService.Get(patch.AppliesTo.Key.Value);
 
+                                // Re-queue for create
+                                // First, we have to remove the "replaces version" key as it doesn't make much sense
+                                if(localObject is IVersionedEntity)
+                                    (localObject as IVersionedEntity).PreviousVersionKey = null;
+                                this.Insert(Bundle.CreateBundle(localObject as IdentifiedData));
+                                break;
 
                         }
 

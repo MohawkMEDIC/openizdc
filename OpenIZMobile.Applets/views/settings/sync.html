@@ -1,19 +1,19 @@
 ﻿<!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2017-3-31
  -->
@@ -29,62 +29,217 @@
             <openiz:title lang="sw"></openiz:title>
         </openiz:view>
     </openiz:state>
-    <div class="row prevent-scroll">
-        <div class="col-portrait-12 col-sm-3 padding-10 padding-top-15 no-padding-right" ng-class="{'hidden-portrait' : queue.current != null}">
-            <h3 class="no-margin-top padding-left-10">{{ 'locale.sync.queue' | i18n }}</h3>
-            <div class="alerts-tile row no-margin-left no-margin-right-landscape margin-right-10-portrait"
-                 style="padding: 15px 5px;"
-                 ng-click="queue.current = queue.dead"
-                 ng-class="{'alerts-tile-selected' : queue.current == queue.dead}">
-                <span class="padding-left-10" ><span class="glyphicon glyphicon-resize-small"></span> {{ 'locale.sync.conflicted' | i18n }} <span class="badge">{{ queue.dead.CollectionItem.length }}</span></span>
-            </div>
-            <div class="alerts-tile row no-margin-left no-margin-right-landscape margin-right-10-portrait"
-                 style="padding: 15px 5px;"
-                 ng-click="queue.current = queue.outbound"
-                 ng-class="{'alerts-tile-selected' : queue.current == queue.outbound}">
-               <span class="padding-left-10" ><span class="glyphicon glyphicon-export"></span> {{ 'locale.sync.outbound' | i18n }} <span class="badge">{{ queue.outbound.CollectionItem.length }}</span></span>
-            </div>
-            <div class="alerts-tile row no-margin-left no-margin-right-landscape margin-right-10-portrait"
-                 style="padding: 15px 5px;"
-                 ng-click="queue.current = queue.inbound"
-                 ng-class="{'alerts-tile-selected' : queue.current == queue.inbound}">
-                <span class="padding-left-10"><span class="glyphicon glyphicon-import"></span> {{ 'locale.sync.inbound' | i18n }} <span class="badge">{{ queue.inbound.CollectionItem.length }}</span></span>
+    <div class="row">
+        <div class="modal fade" id="queueInspectorDialog" tabindex="-5" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        <h4 class="modal-title">
+                            <span ng-if="queue.current == queue.dead"><span class="glyphicon glyphicon-random"></span> {{ 'locale.sync.queue' | i18n }} - {{ 'locale.sync.conflicted' | i18n }}</span>
+                            <span ng-if="queue.current == queue.inbound"><span class="glyphicon glyphicon-import"></span> {{ 'locale.sync.queue' | i18n }} - {{ 'locale.sync.inbound' | i18n }}</span>
+                            <span ng-if="queue.current == queue.outbound"><span class="glyphicon glyphicon-export"></span> {{ 'locale.sync.queue' | i18n }} - {{ 'locale.sync.outbound' | i18n }}</span>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>
+                                        {{ 'locale.sync.queue.id' | i18n }}
+                                    </th>
+                                    <th>
+                                        {{ 'locale.sync.queue.date' | i18n }}
+                                    </th>
+                                    <th>
+                                        {{ 'locale.sync.queue.content' | i18n }}
+                                    </th>
+                                    <th>
+                                        {{ 'locale.sync.queue.operation' | i18n }}
+                                    </th>
+                                    <th ng-if="queue.current == queue.dead">
+                                        {{ 'locale.sync.queue.action' | i18n }}
+                                    </th>
+                                </tr>
+                                <tr ng-repeat="queueItem in queue.current.CollectionItem">
+                                    <td>
+                                        {{ queueItem.id }}
+                                    </td>
+                                    <td>
+                                        {{ queueItem.creationTime | date: 'yyyy-MMM-dd HH:mm' }}
+                                    </td>
+                                    <td>
+                                        {{ renderType(queueItem.type) }}
+                                    </td>
+                                    <td>
+                                        {{ queueItem.operation }}
+                                    </td>
+                                    <td ng-if="queue.current == queue.dead">  
+                                        <button type="button" class="btn btn-lg btn-primary" data-target="#resolveDialog" ng-click="queue.currentItem = queueItem" data-toggle="modal">
+                                            <span>
+                                                <span class="glyphicon glyphicon-eye-open"></span>
+                                                {{ 'locale.sync.resolve.resolve' | i18n }}
+                                            </span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group pull-right">
+                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="reQueueDead" ng-if="queue.current == queue.dead" ng-click="requeueAllDead()" class="btn btn-lg btn-warning">
+                                <span>
+                                    <span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.sync.retry' | i18n }}
+                                </span>
+                            </button>
+
+                            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
+                                <span>
+                                    <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                                </span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
+        <div class="modal fade" id="resolveDialog" tabindex="-10" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                            {{ 'locale.sync.resolve.title' | i18n }}
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <p><strong>{{ 'locale.sync.queue.date' | i18n }}</strong> {{queue.currentItem.creationTime | date : 'yyyy-MMM-dd HH:mm'}}</p>
+                            <p>{{ 'locale.sync.resolve.reason' | i18n }}</p>
+                            <pre>{{ renderB64(queue.currentItem.tag) }}</pre>
+                            <p>{{ 'locale.sync.resolve.data' | i18n }}</p>
+                            <pre style="max-height:40%; overflow:scroll">{{ renderB64(queue.currentItem.data) }}</pre>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group pull-right">
+                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="delete" ng-click="deleteQueueItem(queue.currentItem.id)" class="btn btn-lg btn-success">
+                                <span>
+                                    <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.sync.resolve.leaveServer' | i18n }}
+                                </span>
+                            </button>
+                            <button type="button" ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="delete" ng-click="requeueItem(queue.currentItem.id)" class="btn btn-lg btn-danger">
+                                <span>
+                                    <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'locale.sync.resolve.takeMine' | i18n }}
+                                </span>
+                            </button>
+                            <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">
+                                <span>
+                                    <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                                </span>
+                            </button>
+                        </div>
 
-        <div class="hidden-xs col-sm-9 padding-10 padding-top-15" ng-class="{'force-show full-width-portrait' : queue.current != null}">
-            <h3 class="no-margin-top padding-left-10">
-                <button class="btn btn-lg btn-primary hidden-landscape" ng-click="closeQueue()">
-                    <span>
-                        <span class="glyphicon glyphicon-chevron-left"></span> {{ 'locale.action.back' | i18n }}
-                    </span>
-                </button>
-                {{ 'locale.sync.objects' | i18n }}
-            </h3>
-            <div class="inner-scroll" style="height: calc(100% - 35px);">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <h3>{{ 'locale.sync.title' | i18n }}</h3>
+
+            <div class="container-fluid">
                 <div class="row">
-                    <div class="col-xs-12 search-results-tile-container no-padding-top padding-bottom-10" ng-repeat="obj in queue.current.CollectionItem">
-                        <div class="queue-tile no-margin-all">
-                            <div class="row no-margin-all">
-                                <label class="col-xs-1 no-margin-all no-padding-right">{{ 'locale.encounters.date' | i18n }}</label>
-                                <div class="col-xs-11">{{ obj.creationTime | date : 'yyyy-MMM-dd HH:mm:ss' }}</div>
-                            </div>
-                            <div class="row no-margin-all">
-                                <label class="col-xs-1 no-margin-all no-padding-right">{{ 'locale.sync.conflict' | i18n }}</label>
-                                <div class="col-xs-11">{{ obj.type }}</div>
-                            </div>
-                            
-                            <div class="row" style="margin-bottom: -10px;">
-                                <div class=" col-xs-4"><a class="btn tile-btn" style="height:initial"><span class="glyphicon glyphicon-zoom-in"></span> {{ 'locale.sync.resolve.resolve' | i18n }}</a></div>
-                                <div class=" col-xs-4"><a class="btn tile-btn" style="height:initial"><span class="glyphicon glyphicon-ok"></span> {{ 'locale.sync.resolve.takeMine' | i18n }}</a></div>
-                                <div class=" col-xs-4"><a class="btn tile-btn" style="height:initial"><span class="glyphicon glyphicon-remove"></span> {{ 'locale.sync.resolve.leaveServer' | i18n }}</a></div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="well vis-center">
+                            <h1 class="sync-queue-icon">
+                                <span class="glyphicon glyphicon-random"></span>
+                                {{ queue.dead.CollectionItem.length }}
+                            </h1>
+                            <div class="sync-queue-description">
+                                {{ 'locale.sync.conflicted' | i18n }}
+                                <a ng-click="queue.current = queue.dead" ng-if="queue.dead.Size > 0" data-target="#queueInspectorDialog" data-toggle="modal">
+                                    (
+                                    <span class="glyphicon glyphicon-zoom-in"></span>
+                                    {{ 'locale.sync.inspectQueue' | i18n }}
+                                    )
+                                </a>
                             </div>
                         </div>
-                    </div><!--tile container-->
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="well vis-center">
+                            <h1 class="sync-queue-icon">
+                                <span class="glyphicon glyphicon-export"></span> {{ queue.outbound.CollectionItem.length }}
+                            </h1>
+                            <div class="sync-queue-description">
+                                {{ 'locale.sync.outbound' | i18n }}
+                                <a ng-click="queue.current = queue.outbound" ng-if="queue.outbound.Size > 0" data-target="#queueInspectorDialog" data-toggle="modal">
+                                    (
+                                    <span class="glyphicon glyphicon-zoom-in"></span>
+                                    {{ 'locale.sync.inspectQueue' | i18n }}
+                                    )
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <div class="well vis-center">
+                            <h1 class="sync-queue-icon">
+                                <span class="glyphicon glyphicon-import"></span> {{ queue.inbound.CollectionItem.length }}
+                            </h1>
+                            <div class="sync-queue-description">
+                                {{ 'locale.sync.inbound' | i18n }}
+                                <a ng-click="queue.current = queue.inbound" ng-if="queue.inbound.Size > 0" data-target="#queueInspectorDialog" data-toggle="modal">
+                                    (
+                                    <span class="glyphicon glyphicon-zoom-in"></span>
+                                    {{ 'locale.sync.inspectQueue' | i18n }}
+                                    )
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div> <!--Inner scroll-->
-
+            </div>
         </div>
-
     </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="btn-group pull-right">
+                <button ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="reQueueDead" ng-if="queue.dead.CollectionItem.length > 0" ng-click="requeueAllDead()" class="btn btn-lg  btn-warning">
+                    <span>
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.sync.retry' | i18n }}
+                    </span>
+                </button>
+                <button ng-disabled="!$root.page.onlineState || $root.session.method == 'LOCAL'" id="forceSync" ng-click="forceSync()" class="btn btn-lg btn-info">
+                    <span>
+                        <span class="glyphicon glyphicon-cloud-upload"></span> {{ 'locale.sync.force' | i18n }}
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.syncInfo' | i18n }}</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.sync.resource' | i18n }}</th>
+                    <th>{{ 'locale.about.sync.date' | i18n }}</th>
+                    <th>{{ 'locale.about.sync.etag' | i18n }}</th>
+                </tr>
+                <tr ng-repeat="s in about.syncInfo">
+                    <td>{{ OpenIZ.Localization.getString("locale.sync.resource." + s.resource) }}</td>
+                    <td>{{ s.lastSync | date: 'yyyy-MMM-dd HH:mm' }}</td>
+                    <td>{{ s.etag }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
 </div>

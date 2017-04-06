@@ -652,7 +652,7 @@ var OpenIZ = OpenIZ || {
             });
         },
         /**
-         * @summary Perform a simple post of JSON data to the backend
+         * @summary Perform a simple PUT of JSON data to the backend
          * @method
          * @memberof
          * @param {object} controlData The control data
@@ -660,14 +660,64 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {string} url The URL from which to post to 
+         * @param {object} controlData.query The query to be sent on the put
          * @param {object} controlData.data The query to be posted as JSON
+         */
+        simplePut: function (url, controlData) {
+            controlData.onException = controlData.onException || OpenIZ.Util.logException;
+
+            $.ajax({
+                method: 'PUT',
+                url: controlData == null || controlData.query == null ? url : url + "?" + controlData.query,
+                data: JSON.stringify(controlData.data),
+                dataType: "json",
+                contentType: 'application/json',
+                success: function (xhr, data) {
+
+                    if (controlData.continueWith !== undefined)
+                        controlData.continueWith(xhr, controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                },
+                error: function (data) {
+                    var error = data.responseJSON;
+                    if (controlData.onException === null)
+                        console.error(error);
+                    else if (error.error !== undefined) // oauth 2 error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                null
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                }
+            });
+        },
+        /**
+         * @summary Perform a simple delete of JSON data to the backend
+         * @method
+         * @memberof
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {string} url The URL from which to post to 
+         * @param {object} controlData.query The query to be sent on the DELETE
          */
         simpleDelete: function (url, controlData) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
 
             $.ajax({
                 method: 'DELETE',
-                url: controlData == null ? url : url + "?" + controlData.query,
+                url: controlData == null || controlData.query == null ? url : url + "?" + controlData.query,
                 dataType: "json",
                 contentType: 'application/json',
                 success: function (xhr, data) {
@@ -2774,6 +2824,25 @@ var OpenIZ = OpenIZ || {
         getQueueAsync: function (controlData) {
             OpenIZ.Util.simpleGet("/__app/queue", {
                 query: { _queue: controlData.queueName, id: "!null" },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Retrieves a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueName The name of the queue to retrieve
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        requeueDeadAsync: function (controlData) {
+            OpenIZ.Util.simplePut("/__app/queue", {
+                query: "_id=" + controlData.queueId,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,

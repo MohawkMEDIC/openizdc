@@ -28,6 +28,9 @@ layoutApp.controller('SyncCentreController', ['$scope', function ($scope) {
 
     $scope.queue = {};
     $scope.closeQueue = closeQueue;
+    $scope.requeueAllDead = requeueAllDead;
+    $scope.renderType = renderType;
+    $scope.renderB64 = renderB64;
 
     function getQueue(queueName) {
         OpenIZ.Queue.getQueueAsync({
@@ -49,8 +52,59 @@ layoutApp.controller('SyncCentreController', ['$scope', function ($scope) {
         delete $scope.queue.current;
     }
 
+    function requeueAllDead(queueId, acknowledgedUnsafe) {
+
+        if (!acknowledgedUnsafe && !confirm(OpenIZ.Localization.getString("locale.sync.batchForceConfirm")))
+            return;
+
+        OpenIZ.App.showWait("#reQueueDead")
+
+        OpenIZ.Queue.requeueDeadAsync({
+            queueId: $scope.queue["dead"].CollectionItem[queueId || 0].id,
+            continueWith: function (data, state) {
+                
+                // Last queue item?
+                var idx = ((state || queueId || 0) + 1);
+                if (idx > $scope.queue["dead"].CollectionItem.length) {
+                    getQueue(OpenIZ.Queue.QueueNames.DeadLetterQueue);
+                    OpenIZ.App.hideWait("#reQueueDead")
+                }
+                else
+                    requeueAllDead(idx, true);
+            },
+            state: queueId || 0,
+            onException: function (ex) {
+                if (ex.message)
+                    alert(OpenIZ.Localization.getString(ex.message));
+                else
+                    console.error(ex);
+                OpenIZ.App.hideWait("#reQueueDead")
+
+            }
+        });
+    };
+
+    function renderType(typeName) {
+        var pat = /^((\w+)[\.,])*/;
+        var matches = pat.exec(typeName);
+        return matches[2];
+    }
+
+    function renderB64(tag) {
+        if (tag) {
+            var tagContent = atob(tag);
+            return tagContent;
+        }
+    }
+
     getQueue(OpenIZ.Queue.QueueNames.InboundQueue);
     getQueue(OpenIZ.Queue.QueueNames.OutboundQueue);
     getQueue(OpenIZ.Queue.QueueNames.DeadLetterQueue);
+    OpenIZ.App.getInfoAsync({
+        continueWith: function (d) {
+            $scope.about = d;
+            $scope.$apply();
+        }
+    })
 
 }]);

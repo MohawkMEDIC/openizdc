@@ -175,12 +175,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             switch (queueItem.OriginalQueue)
             {
                 case "inbound":
+                case "inbound_queue":
                     SynchronizationQueue.Inbound.EnqueueRaw(new InboundQueueEntry(queueItem));
                     break;
                 case "outbound":
+                case "outbound_queue":
                     SynchronizationQueue.Outbound.EnqueueRaw(new OutboundQueueEntry(queueItem));
                     break;
                 case "admin":
+                case "admin_queue":
                     SynchronizationQueue.Admin.EnqueueRaw(new OutboundAdminQueueEntry(queueItem));
                     break;
                 default:

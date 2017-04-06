@@ -123,7 +123,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// Gets or sets the serialized data which is to be sent to the service (XML)
 		/// </summary>
 		/// <value>The data.</value>
-		[Column("data"), JsonIgnore, XmlIgnore]
+		[Column("data"), JsonProperty("data"), XmlIgnore]
 		public byte[] Data {
 			get;
 			set;

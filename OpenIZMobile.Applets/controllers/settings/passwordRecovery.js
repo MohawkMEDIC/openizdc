@@ -25,12 +25,12 @@ layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', 
 
     $rootScope.$watch('session', function (nv, ov) {
         $scope.changeData = {
-            phone: $rootScope.session.user.phoneNumber,
+            phoneNumber: $rootScope.session.user.phoneNumber,
             email: $rootScope.session.user.email
         };
     });
 
-    $scope.changePasswordRecovery = function (userName, existing, email, telephone) {
+    $scope.changePasswordRecovery = function (userName, existing, email, phoneNumber) {
 
         // Are we even online?
         if (!$rootScope.page.onlineState)
@@ -48,12 +48,12 @@ layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', 
                     {
                         // Email set?
                         if (email && email != $rootScope.session.user.email ||
-                            telephone && telephone != $rootScope.session.user.phoneNumber) {
+                            phoneNumber && phoneNumber != $rootScope.session.user.phoneNumber) {
                             OpenIZ.Authentication.saveUserAsync({
                                 data: new OpenIZModel.SecurityUser({
                                     id: $rootScope.session.user.id,
                                     email: email,
-                                    phoneNumber: telephone
+                                    phoneNumber: phoneNumber
                                 }),
                                 continueWith: function (result) {
                                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.recoveryOptions.success"));
