@@ -56,12 +56,10 @@
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
             <div class="col-xs-4">
-                <span>
-                    <span ng-repeat="(dmn, id) in patient.identifier">
-                        <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
-                        <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info"> {{ i.authority.name }}</span><br /></span>
-                    </span>
-                </span>
+                <div ng-repeat="identifier in patientViewIdentifiers|limitTo:2">
+                    <span>{{ identifier.value}}</span> <span class="label label-info"> {{ identifier.authority.name }}</span>
+                </div>
+                <span ng-if="patientViewIdentifiers.length &gt; 2">...</span>
 
             </div>
             

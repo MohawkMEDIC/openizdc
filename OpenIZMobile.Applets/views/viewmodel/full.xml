@@ -95,6 +95,11 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="genderConceptModel" behavior="always" ref="Concept"/>
+    <property name="identifier" behavior="always" >
+      <property name="*" all="true">
+        <property name="value" behavior="always"/>
+      </property>
+    </property>
     <property name="relationship" all="true" behavior="always">
       <property name="*" ref="EntityRelationship"/>
     </property>
