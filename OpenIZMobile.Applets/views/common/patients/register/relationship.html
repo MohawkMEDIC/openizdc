@@ -25,7 +25,7 @@
         <div class="col-xs-9">
             <div class="input-group">
                 <select ng-model="patient.relationship.NextOfKin.relationshipType" class="form-control" id="nextOfKinRelationshipType"
-                        bind:source="Concept" bind:filter="conceptSet.mnemonic=FamilyMember" bind:value="mnemonic"></select>
+                        bind:source="Concept" bind:filter="conceptSet.mnemonic=FamilyMember" bind:value="name[{{ locale }}].value"></select>
                 <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 <span class="input-group-btn">
                     <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>

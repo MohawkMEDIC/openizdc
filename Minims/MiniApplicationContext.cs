@@ -518,7 +518,7 @@ namespace Minims
                 tw.WriteLine("\tswitch(key) {");
                 foreach (var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
                 {
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value.Replace("'", "\\'"));
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value?.Replace("'", "\\'").Replace("\r","").Replace("\n",""));
                 }
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
