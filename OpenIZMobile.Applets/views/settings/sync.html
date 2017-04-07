@@ -154,7 +154,7 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4">
+                    <div class="col-xs-12 col-sm-3">
                         <div class="well vis-center">
                             <h1 class="sync-queue-icon">
                                 <span class="glyphicon glyphicon-random"></span>
@@ -171,7 +171,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-4">
+                    <div class="col-xs-12 col-sm-3">
                         <div class="well vis-center">
                             <h1 class="sync-queue-icon">
                                 <span class="glyphicon glyphicon-export"></span> {{ queue.outbound.CollectionItem.length }}
@@ -187,7 +187,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-4">
+                    <div class="col-xs-12 col-sm-3">
                         <div class="well vis-center">
                             <h1 class="sync-queue-icon">
                                 <span class="glyphicon glyphicon-import"></span> {{ queue.inbound.CollectionItem.length }}
@@ -195,6 +195,23 @@
                             <div class="sync-queue-description">
                                 {{ 'locale.sync.inbound' | i18n }}
                                 <a ng-click="queue.current = queue.inbound" ng-if="queue.inbound.Size > 0" data-target="#queueInspectorDialog" data-toggle="modal">
+                                    (
+                                    <span class="glyphicon glyphicon-zoom-in"></span>
+                                    {{ 'locale.sync.inspectQueue' | i18n }}
+                                    )
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-3">
+                        <div class="well vis-center">
+                            <h1 class="sync-queue-icon">
+                                <span class="glyphicon glyphicon-wrench"></span> {{ queue.admin.CollectionItem.length }}
+                            </h1>
+                            <div class="sync-queue-description">
+                                {{ 'locale.sync.admin' | i18n }}
+                                <a ng-click="queue.current = queue.admin" ng-if="queue.admin.Size > 0" data-target="#queueInspectorDialog" data-toggle="modal">
                                     (
                                     <span class="glyphicon glyphicon-zoom-in"></span>
                                     {{ 'locale.sync.inspectQueue' | i18n }}

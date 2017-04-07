@@ -112,6 +112,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     new ConnectionString () {
                         Name = "openIzWarehouse",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.warehouse.sqlite")
+                    },
+                    new ConnectionString () {
+                        Name = "openIzAudit",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZ.audit.sqlite")
                     }
                 }
             };

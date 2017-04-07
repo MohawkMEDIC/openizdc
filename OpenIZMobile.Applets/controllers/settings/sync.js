@@ -175,6 +175,7 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($sco
         getQueue(OpenIZ.Queue.QueueNames.InboundQueue);
         getQueue(OpenIZ.Queue.QueueNames.OutboundQueue);
         getQueue(OpenIZ.Queue.QueueNames.DeadLetterQueue);
+        getQueue(OpenIZ.Queue.QueueNames.AdminQueue);
 
         if (!noTimer && $state.is('org-openiz-core.sync'))
             setTimeout(refreshQueueState, 5000);

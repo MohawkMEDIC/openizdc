@@ -382,6 +382,7 @@
     <string key="locale.sync.conflicted">Server &amp; Tablet Conflict</string>
     <string key="locale.sync.outbound">Local to Server (Outbox)</string>
     <string key="locale.sync.inbound">Server to Local (Inbox)</string>
+    <string key="locale.sync.admin">Administrative (Audits, Users, etc.)</string>
     <string key="locale.sync.objects">Items in Queue</string>
     <string key="locale.sync.resolve.resolve">Resolve</string>
     <string key="locale.sync.resolve.takeMine">Override Server</string>

@@ -105,6 +105,10 @@ namespace DisconnectedClient
                     new ConnectionString () {
                         Name = "openIzWarehouse",
                         Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC","OpenIZ.warehouse.sqlite")
+                    },
+                    new ConnectionString () {
+                        Name = "openIzAudit",
+                        Value = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), "OpenIZDC", "OpenIZ.audit.sqlite")
                     }
                 }
             };
