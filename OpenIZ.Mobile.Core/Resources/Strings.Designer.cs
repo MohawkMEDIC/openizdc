@@ -80,6 +80,24 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;.
+        /// </summary>
+        internal static string InternalServerError {
+            get {
+                return ResourceManager.GetString("InternalServerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gathering imported patients for care planning....
+        /// </summary>
+        internal static string locale_calculateImportedCareplan {
+            get {
+                return ResourceManager.GetString("locale_calculateImportedCareplan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calculating Care-plans ({0} remaining)....
         /// </summary>
         internal static string locale_calculatingCarePlan {
@@ -163,7 +181,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gathering patients in need of care plan refresh.....
+        ///   Looks up a localized string similar to Scanning patients for care plan refresh.....
         /// </summary>
         internal static string locale_refreshCarePlan {
             get {
@@ -172,7 +190,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;.
+        ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href=&quot;#/core/sync&quot; class=&quot;btn btn-lg btn-info&quot;&gt;Visit Sync Centre&lt;/a&gt;.
         /// </summary>
         internal static string locale_rejectionBody {
             get {

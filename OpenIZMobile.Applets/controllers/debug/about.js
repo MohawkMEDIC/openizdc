@@ -28,6 +28,7 @@ layoutApp.controller('AboutApplicationController', ['$scope', function ($scope) 
     $scope.data = {};
     // Get information asynchronously
     OpenIZ.App.getInfoAsync({
+        includeUpdates: true,
         continueWith: function (data) {
             $scope.about = data;
 

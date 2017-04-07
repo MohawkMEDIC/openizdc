@@ -28,12 +28,17 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
         if ($rootScope.session != null) {
             //$scope.editObject = $rootScope.session;
             $scope.editObject = $rootScope.session;
-            
+            if (!$scope.editObject.entity.language)
+                $scope.editObject.entity.language = [{ languageCode: 'en' }];
             
         }
     });
 
-    $scope.saveProfile = function (userEntity) {
+    $scope.saveProfile = function (userProfileForm, userEntity) {
+
+        if (!userProfileForm.$valid) {
+            return;
+        }
 
         OpenIZ.App.showWait('#saveUserProfileButton');
 
@@ -48,7 +53,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
             delete (userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel);
         userEntity.securityUser = $rootScope.session.user.id;
         userEntity.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
-
+        userEntity.language
         // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,

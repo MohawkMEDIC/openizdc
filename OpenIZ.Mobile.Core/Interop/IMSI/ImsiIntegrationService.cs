@@ -20,6 +20,7 @@
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Exceptions;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Interop;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -64,22 +65,26 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             "sequence"
         };
 
+        // Options
+        private ServiceOptions m_options = null;
+
         /// <summary>
         /// Throws an exception if the specified service client has the invalid version
         /// </summary>
         private bool IsValidVersion(ImsiServiceClient client)
         {
             var expectedVersion = typeof(IdentifiedData).GetTypeInfo().Assembly.GetName().Version;
-            var options = client.Options();
-            if (options == null) return false;
-            var version = new Version(options.InterfaceVersion);
+            if(this.m_options == null)
+                this.m_options = client.Options();
+            if (this.m_options == null) return false;
+            var version = new Version(this.m_options.InterfaceVersion);
             // Major version must match & minor version must match. Example:
             // Server           Client          Result
             // 0.6.14.*         0.6.14.*        Compatible
             // 0.7.0.*          0.6.14.*        Not compatible (server newer)
             // 0.7.0.*          0.9.0.0         Compatible (client newer)
             // 0.8.0.*          1.0.0.0         Not compatible (major version mis-match)
-            this.m_tracer.TraceVerbose("IMSI server indicates version {0}", options.InterfaceVersion);
+            this.m_tracer.TraceVerbose("IMSI server indicates version {0}", this.m_options.InterfaceVersion);
             return (expectedVersion.Major == version.Major &&
                 expectedVersion.Minor >= version.Minor);
         }
@@ -237,7 +242,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
             }
             catch (TargetInvocationException e)
             {
-                throw Activator.CreateInstance(e.InnerException.GetType(), "Error performing action", e) as Exception;
+                throw Activator.CreateInstance(e.InnerException.GetType(), "Error performing action", e.InnerException) as Exception;
             }
         }
 

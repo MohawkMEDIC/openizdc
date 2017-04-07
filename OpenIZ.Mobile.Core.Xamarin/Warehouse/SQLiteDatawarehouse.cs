@@ -667,7 +667,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     var queryDefn = mart.Schema.Queries.FirstOrDefault(m => m.Name == queryId);
 
                     int tr = 0;
-                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 100, out tr);
+                    return this.QueryInternal(String.Format("sqp_{0}_{1}", mart.Schema.Name, queryId), queryDefn.Properties, parms, 0, 0, out tr);
                 }
                 catch (Exception e)
                 {
@@ -696,7 +696,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             using (var dbc = this.CreateCommand(null, String.Format("SELECT COUNT(*) FROM ({0})", sb), vals.ToArray()))
                 totalResults = Convert.ToInt32(dbc.ExecuteScalar());
 
-            sb.AppendFormat(" LIMIT {1}  OFFSET {0}", offset, count);
+            if(count > 0)
+                sb.AppendFormat(" LIMIT {0}", count);
+            if(offset > 0)
+                sb.AppendFormat(" OFFSET {0}", offset);
 
             lock (this.m_lock)
             {

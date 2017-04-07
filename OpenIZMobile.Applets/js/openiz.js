@@ -1578,7 +1578,10 @@ var OpenIZ = OpenIZ || {
          * @see {OpenIZModel.ApplicationInfo}
          */
         getInfoAsync: function (controlData) {
-            OpenIZ.Util.simpleGet('/__app/info', controlData);
+            if (controlData.includeUpdates)
+                OpenIZ.Util.simpleGet('/__app/info.max', controlData);
+            else
+                OpenIZ.Util.simpleGet('/__app/info', controlData);
         },
         /**
          * @summary Get the online state of the application
@@ -2701,6 +2704,13 @@ var OpenIZ = OpenIZ || {
      */
     Material:
         {
+            /** 
+             * @deprecated
+             * @summary Deprecated, use getMaterialAsync
+             */
+            findMaterialAsync: function(controlData) {
+                return OpenIZ.Material.getMaterialAsync(controlData);
+            },
             /**
              * @summary Get manufactured materials from the IMS 
              * @param {object} controlData An object containing search, offset, count and callback data
@@ -2714,9 +2724,12 @@ var OpenIZ = OpenIZ || {
              * @memberof OpenIZ.ManufacturedMaterial
              * @method
              */
-            findMaterialAsync: function (controlData) {
+            getMaterialAsync: function (controlData) {
                 var query = controlData.query || {};
-                query.classConcept = OpenIZModel.EntityClassKeys.Material;
+                if (controlData instanceof String)
+                    query += "&classConcept=" + OpenIZModel.EntityClassKeys.Material;
+                else
+                    query.classConcept = OpenIZModel.EntityClassKeys.Material;
                 OpenIZ.Ims.get({
                     resource: "Entity",
                     continueWith: controlData.continueWith,
@@ -2831,18 +2844,38 @@ var OpenIZ = OpenIZ || {
             });
         },
         /** 
-         * @summary Retrieves a specified queue object
+         * @summary Re-queues a specified queue object
          * @param {object} controlData An object containing search, offset, count and callback data
          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
-         * @param {String} controlData.queueName The name of the queue to retrieve
+         * @param {String} controlData.queueId The ID of the item to re-queue
          * @memberof OpenIZ.Queue
          * @method
          */
         requeueDeadAsync: function (controlData) {
             OpenIZ.Util.simplePut("/__app/queue", {
                 query: "_id=" + controlData.queueId,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /** 
+         * @summary Deletes a specified queue object
+         * @param {object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {String} controlData.queueName The name of the queue to delete from
+         * @param {String} controlData.queueId The ID of the queue item to delete
+         * @memberof OpenIZ.Queue
+         * @method
+         */
+        deleteQueueAsync: function (controlData) {
+            OpenIZ.Util.simpleDelete("/__app/queue", {
+                query: "_id=" + controlData.queueId + "&_queue=" + controlData.queueName,
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,

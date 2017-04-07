@@ -274,18 +274,22 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.#ctor">
             <summary>
-            Default constructor for entity relationship
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Acts.ActRelationship"/> class.
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.#ctor(System.Nullable{System.Guid},OpenIZ.Core.Model.Acts.Act)">
             <summary>
-            Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Acts.ActRelationship"/> class.
             </summary>
+            <param name="relationshipType">Type of the relationship.</param>
+            <param name="target">The target.</param>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.#ctor(System.Nullable{System.Guid},System.Nullable{System.Guid})">
             <summary>
-            Entity relationship between <paramref name="source"/> and <paramref name="target"/>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Acts.ActRelationship"/> class.
             </summary>
+            <param name="relationshipType">Type of the relationship.</param>
+            <param name="targetKey">The target key.</param>
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.ActRelationship.TargetActKey">
             <summary>
@@ -1076,7 +1080,7 @@
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActClassKeys">
             <summary>
-            Represents a series of class keys for use on acts
+            Represents a series of class keys for use on acts.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.AccountManagement">
@@ -1086,67 +1090,67 @@
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Act">
             <summary>
-            Generic act
+            Generic act.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Battery">
             <summary>
-            The act represents a simple battery of procedures/administrations/etc
+            The act represents a simple battery of procedures/administrations/etc.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.CareProvision">
             <summary>
-            The act represents some provision of care
+            The act represents some provision of care.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Condition">
             <summary>
-            The act represetns a condition
+            The act represents a condition.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.ControlAct">
             <summary>
-            Control act event
+            Control act event.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Encounter">
             <summary>
-            The act represents an encounter
+            The act represents an encounter.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Inform">
             <summary>
-            The act represents an informational act
+            The act represents an informational act.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Observation">
             <summary>
-            The act represents a procedure
+            The act represents a procedure.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Procedure">
             <summary>
-            The act represents a procedure (something done to a patient)
+            The act represents a procedure (something done to a patient).
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Registration">
             <summary>
-            The act represents a registration
+            The act represents a registration.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.SubstanceAdministration">
             <summary>
-            The act represents a substance administration
+            The act represents a substance administration.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Supply">
             <summary>
-            The act represents a supply of some material
+            The act represents a supply of some material.
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Constants.ActClassKeys.Transport">
             <summary>
-            The physical transporting of materials or people from one place to another
+            The physical transporting of materials or people from one place to another.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActMoodKeys">
@@ -1609,6 +1613,16 @@
             Concept status
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.ContainerCap">
+            <summary>
+            Represents the container cap concept set.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.ContainerSeparatorTypeKeys">
+            <summary>
+            Represents the container separator concept set.
+            </summary>
+        </member>
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.EntityClass">
             <summary>
             Entity classifications
@@ -1652,6 +1666,77 @@
         <member name="F:OpenIZ.Core.Model.Constants.ConceptSetKeys.TelecomAddressUse">
             <summary>
             Telecom address use
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Constants.ContainerCapKeys">
+            <summary>
+            Represents a collection of container cap keys.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.ChildProof">
+            <summary>
+            Represents a child proof cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.EasyOpen">
+            <summary>
+            Represents an easy open cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.Film">
+            <summary>
+            Represents a film cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.Foil">
+            <summary>
+            Represents a foil cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.MedicationCap">
+            <summary>
+            Represents a medication cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.PushCap">
+            <summary>
+            Represents a push cap.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerCapKeys.ScrewCap">
+            <summary>
+            Represents a screw cap.
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Constants.ContainerSeparatorTypeKeys">
+            <summary>
+            Represents a collection of container separator type keys.
+            A material in a blood collection container that facilitates the separation of of blood cells from serum or plasma
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerSeparatorTypeKeys.Gel">
+            <summary>
+            Represents a gelatinous type of separator material.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerSeparatorTypeKeys.None">
+            <summary>
+            Represents no separator material is present in the container.
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Constants.ContainerTypeKeys">
+            <summary>
+            Represents a collection of container type keys.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerTypeKeys.Boxes">
+            <summary>
+            Represents a container type of box.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.ContainerTypeKeys.Vials">
+            <summary>
+            Represents a container type of vial.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.DeterminerKeys">
@@ -2997,17 +3082,116 @@
             Gets or sets the description
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.Entities.Container">
+            <summary>
+            Represents a container.
+            </summary>
+            <seealso cref="T:OpenIZ.Core.Model.Entities.ManufacturedMaterial" />
+        </member>
+        <member name="F:OpenIZ.Core.Model.Entities.Container.capTypeConcept">
+            <summary>
+            The cap type concept.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Entities.Container.capTypeConceptKey">
+            <summary>
+            The cap type concept key.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Entities.Container.separatorTypeConcept">
+            <summary>
+            The separator type concept.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Entities.Container.separatorTypeConceptKey">
+            <summary>
+            The separator type concept key.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Container.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Entities.Container"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Container.#ctor(System.Guid)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Entities.Container"/> class.
+            </summary>
+            <param name="key">The key.</param>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.BarrierDeltaQuantity">
+            <summary>
+            Gets or sets the barrier delta quantity. The distance from the Point of Reference to the separator material (barrier) within a container.
+            </summary>
+            <value>The barrier delta quantity.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.BottomDeltaQuantity">
+            <summary>
+            Gets or sets the bottom delta quantity. The distance from the Point of Reference to the outside bottom of the container.
+            </summary>
+            <value>The bottom delta quantity.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.CapacityQuantity">
+            <summary>
+            Gets or sets the capacity quantity. The functional capacity of the container.
+            </summary>
+            <value>The capacity quantity.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.CapTypeConcept">
+            <summary>
+            Gets or sets the cap type concept. The type of container cap consistent with de-capping, piercing or other automated manipulation.
+            </summary>
+            <value>The cap type concept.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.CapTypeConceptKey">
+            <summary>
+            Gets or sets the cap type concept key.
+            </summary>
+            <value>The cap type concept key.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.DiameterQuantity">
+            <summary>
+            Gets or sets the diameter quantity. The outside diameter of the container.
+            </summary>
+            <value>The diameter quantity.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.HeightQuantity">
+            <summary>
+            Gets or sets the height quantity. The height of the container.
+            </summary>
+            <value>The height quantity.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.SeparatorTypeConcept">
+            <summary>
+            Gets or sets the separator type concept. A material added to a container to facilitate and create a physical separation of specimen components of differing density.
+            Examples: A gel material added to blood collection tubes that following centrifugation creates a physical barrier between the blood cells and the serum or plasma.
+            </summary>
+            <value>The separator type concept.</value>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Container.SeparatorTypeConceptKey">
+            <summary>
+            Gets or sets the separator type concept key.
+            </summary>
+            <value>The separator type concept key.</value>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Container.SemanticEquals(System.Object)">
+            <summary>
+            Determines if two containers are semantically equal.
+            </summary>
+            <param name="obj">The container to compare against.</param>
+            <returns>Returns true if the two containers are equal, otherwise false.</returns>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.UserEntity">
             <summary>
             Represents a user entity
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.UserEntity.SecurityUserKey">
+        <member name="P:OpenIZ.Core.Model.Entities.UserEntity.SecurityUser">
             <summary>
             Gets or sets the security user key
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.UserEntity.SecurityUser">
+        <member name="P:OpenIZ.Core.Model.Entities.UserEntity.SecurityUserKey">
             <summary>
             Gets or sets the security user key
             </summary>
@@ -3027,12 +3211,12 @@
             Creates application entity
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.SecurityApplicationKey">
+        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.SecurityApplication">
             <summary>
             Gets or sets the security application
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.SecurityApplication">
+        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.SecurityApplicationKey">
             <summary>
             Gets or sets the security application
             </summary>
@@ -3042,14 +3226,14 @@
             Gets or sets the name of the software
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.VersionName">
-            <summary>
-            Gets or sets the version of the software
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.VendorName">
             <summary>
             Gets or sets the vendoer name of the software
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.ApplicationEntity.VersionName">
+            <summary>
+            Gets or sets the version of the software
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.ApplicationEntity.Refresh">
@@ -3072,16 +3256,6 @@
             Device entity ctor
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.SecurityDeviceKey">
-            <summary>
-            Gets or sets the security device key
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.SecurityDevice">
-            <summary>
-            Gets or sets the security device
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.ManufacturerModelName">
             <summary>
             Gets or sets the manufacturer model name
@@ -3092,6 +3266,16 @@
             Gets or sets the operating system name
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.SecurityDevice">
+            <summary>
+            Gets or sets the security device
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.DeviceEntity.SecurityDeviceKey">
+            <summary>
+            Gets or sets the security device key
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Entities.DeviceEntity.Refresh">
             <summary>
             Force refresh of data model
@@ -3099,7 +3283,7 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.DeviceEntity.SemanticEquals(System.Object)">
             <summary>
-            Determine semantic equality 
+            Determine semantic equality
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Entity">
@@ -3112,39 +3296,9 @@
             Creates a new instance of the entity class
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.TemplateKey">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Addresses">
             <summary>
-            Gets the template key
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
-            <summary>
-            Gets or sets the template identifier 
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.ClassConceptKey">
-            <summary>
-            Class concept
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.DeterminerConceptKey">
-            <summary>
-            Determiner concept
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.StatusConceptKey">
-            <summary>
-            Status concept id
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.CreationActKey">
-            <summary>
-            Creation act reference
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.TypeConceptKey">
-            <summary>
-            Type concept identifier
+            Gets a list of all addresses associated with the entity
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.ClassConcept">
@@ -3152,14 +3306,9 @@
             Class concept datal load property
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.DeterminerConcept">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.ClassConceptKey">
             <summary>
-            Determiner concept
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.StatusConcept">
-            <summary>
-            Status concept id
+            Class concept
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.CreationAct">
@@ -3167,24 +3316,19 @@
             Creation act reference
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.TypeConcept">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.CreationActKey">
             <summary>
-            Type concept identifier
+            Creation act reference
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Identifiers">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.DeterminerConcept">
             <summary>
-            Gets the identifiers associated with this entity
+            Determiner concept
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Relationships">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.DeterminerConceptKey">
             <summary>
-            Gets a list of all associated entities for this entity
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Telecoms">
-            <summary>
-            Gets a list of all telecommunications addresses associated with the entity
+            Determiner concept
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Extensions">
@@ -3192,14 +3336,14 @@
             Gets a list of all extensions associated with the entity
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Identifiers">
+            <summary>
+            Gets the identifiers associated with this entity
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Names">
             <summary>
             Gets a list of all names associated with the entity
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Addresses">
-            <summary>
-            Gets a list of all addresses associated with the entity
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Notes">
@@ -3207,14 +3351,54 @@
             Gets a list of all notes associated with the entity
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Participations">
+            <summary>
+            Gets the acts in which this entity participates
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Relationships">
+            <summary>
+            Gets a list of all associated entities for this entity
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.StatusConcept">
+            <summary>
+            Status concept id
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.StatusConceptKey">
+            <summary>
+            Status concept id
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.Tags">
             <summary>
             Gets a list of all tags associated with the entity
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Participations">
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Telecoms">
             <summary>
-            Gets the acts in which this entity participates
+            Gets a list of all telecommunications addresses associated with the entity
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
+            <summary>
+            Gets or sets the template identifier
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.TemplateKey">
+            <summary>
+            Gets the template key
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.TypeConcept">
+            <summary>
+            Type concept identifier
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.TypeConceptKey">
+            <summary>
+            Type concept identifier
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.Entity.Clean">
@@ -3253,14 +3437,14 @@
             Default CTOR
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityAddress.AddressUseKey">
-            <summary>
-            Gets or sets the address use key
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityAddress.AddressUse">
             <summary>
             Gets or sets the address use
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityAddress.AddressUseKey">
+            <summary>
+            Gets or sets the address use key
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityAddress.Component">
@@ -3283,6 +3467,12 @@
             <summary>
             Semantic equality function
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityAddress.ShouldSerializeSourceEntityKey">
+            <summary>
+            Never need to serialize the entity source key
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddressComponent">
             <summary>
@@ -3328,24 +3518,14 @@
             Default ctor
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityName.NameUseKey">
-            <summary>
-            Gets or sets the name use key
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityName.NameUse">
             <summary>
             Gets or sets the name use
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityName.Component">
+        <member name="P:OpenIZ.Core.Model.Entities.EntityName.NameUseKey">
             <summary>
-            Gets or sets the component types
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Entities.EntityName.Refresh">
-            <summary>
-            Refreshes the underlying content
+            Gets or sets the name use key
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityName.Clean">
@@ -3359,10 +3539,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityName.Refresh">
+            <summary>
+            Gets or sets the component types
+            </summary>
+            <summary>
+            Refreshes the underlying content
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityName.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityName.ShouldSerializeSourceEntityKey">
+            <summary>
+            Never need to serialize the entity source key
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityNameComponent">
             <summary>
@@ -3371,7 +3565,7 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.#ctor">
             <summary>
-            Entity name component 
+            Entity name component
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.#ctor(System.String)">
@@ -3387,19 +3581,9 @@
             <param name="partTypeKey"></param>
             <param name="value"></param>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticCode">
-            <summary>
-            Gets or sets the phonetic code of the reference term
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.ComponentTypeKey">
             <summary>
             Gets or sets the component type key
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticAlgorithmKey">
-            <summary>
-            Gets or sets the identifier of the phonetic code
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticAlgorithm">
@@ -3407,14 +3591,24 @@
             Gets or sets the phonetic algorithm
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.ToString">
+        <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticAlgorithmKey">
             <summary>
-            Value of the name
+            Gets or sets the identifier of the phonetic code
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityNameComponent.PhoneticCode">
+            <summary>
+            Gets or sets the phonetic code of the reference term
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.ShouldSerializePhoneticAlgorithmKey">
             <summary>
-            Should serialize 
+            Should serialize
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityNameComponent.ToString">
+            <summary>
+            Value of the name
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityRelationship">
@@ -3437,9 +3631,9 @@
             Entity relationship between <paramref name="source"/> and <paramref name="target"/>
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntityKey">
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.Holder">
             <summary>
-            The target of the association
+            The entity that this relationship targets
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.HolderKey">
@@ -3447,29 +3641,9 @@
             The entity that this relationship targets
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.Holder">
-            <summary>
-            The entity that this relationship targets
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntity">
-            <summary>
-            Target entity reference
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.RelationshipTypeKey">
-            <summary>
-            Association type key
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.InversionIndicator">
             <summary>
             The inversion indicator
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.RelationshipType">
-            <summary>
-            Gets or sets the association type
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.Quantity">
@@ -3477,15 +3651,35 @@
             Represents the quantity of target in source
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.IsEmpty">
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.RelationshipType">
             <summary>
-            Is empty
+            Gets or sets the association type
             </summary>
-            <returns></returns>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.RelationshipTypeKey">
+            <summary>
+            Association type key
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntity">
+            <summary>
+            Target entity reference
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityRelationship.TargetEntityKey">
+            <summary>
+            The target of the association
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.Clean">
             <summary>
             Clean the entity
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.IsEmpty">
+            <summary>
+            Is empty
             </summary>
             <returns></returns>
         </member>
@@ -3524,20 +3718,19 @@
             Creates a new entity telecom address with specified use and value
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.AddressUse">
+            <summary>
+            Gets or sets the name use
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.AddressUseKey">
             <summary>
             Gets or sets the name use key
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IsEmpty">
+        <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IETFValue">
             <summary>
-            Empty
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.AddressUse">
-            <summary>
-            Gets or sets the name use
+            Gets or sets the value as an IETF value
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.Value">
@@ -3545,10 +3738,11 @@
             Gets or sets the value of the telecom address
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IETFValue">
+        <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.IsEmpty">
             <summary>
-            Gets or sets the value as an IETF value
+            Empty
             </summary>
+            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.EntityTelecomAddress.Refresh">
             <summary>
@@ -3581,14 +3775,14 @@
             Constructor with the specified identifier
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ComponentTypeKey">
-            <summary>
-            Component type key
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ComponentType">
             <summary>
             Gets or sets the type of address component
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ComponentTypeKey">
+            <summary>
+            Component type key
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.GenericComponentValues`1.Value">
@@ -3617,6 +3811,12 @@
             Should serialize component type key
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.GenericComponentValues`1.ShouldSerializeSourceEntityKey">
+            <summary>
+            Never need to serialize the entity source key
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.ManufacturedMaterial">
             <summary>
             Manufactured material
@@ -3639,7 +3839,7 @@
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.Material">
             <summary>
-            Represents a material 
+            Represents a material
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.Material.#ctor">
@@ -3647,20 +3847,9 @@
             Material ctor
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Material.Quantity">
+        <member name="P:OpenIZ.Core.Model.Entities.Material.ExpiryDate">
             <summary>
-            The base quantity of the object in the units. This differs from quantity on the relationship
-            which is a /per ... 
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Material.FormConceptKey">
-            <summary>
-            Gets or sets the form concept's key
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Material.QuantityConceptKey">
-            <summary>
-            Gets or sets the quantity concept ref
+            Gets or sets the expiry date of the material
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Material.FormConcept">
@@ -3668,19 +3857,30 @@
             Gets or sets the concept which dictates the form of the material (solid, liquid, capsule, injection, etc.)
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Material.QuantityConcept">
+        <member name="P:OpenIZ.Core.Model.Entities.Material.FormConceptKey">
             <summary>
-            Gets or sets the concept which dictates the unit of measure for a single instance of this entity
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Material.ExpiryDate">
-            <summary>
-            Gets or sets the expiry date of the material
+            Gets or sets the form concept's key
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Material.IsAdministrative">
             <summary>
             True if the material is simply administrative
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Material.Quantity">
+            <summary>
+            The base quantity of the object in the units. This differs from quantity on the relationship
+            which is a /per ...
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Material.QuantityConcept">
+            <summary>
+            Gets or sets the concept which dictates the unit of measure for a single instance of this entity
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Material.QuantityConceptKey">
+            <summary>
+            Gets or sets the quantity concept ref
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.Material.Refresh">
@@ -3703,12 +3903,10 @@
             Organization ctor
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Organization.IndustryConceptKey">
+        <member name="P:OpenIZ.Core.Model.Entities.Organization.IndustryConcept">
             <summary>
             Gets or sets the industry concept key
             </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Organization.IndustryConcept">
             <summary>
             Gets or sets the industry in which the organization operates
             </summary>
@@ -3733,14 +3931,14 @@
             Person constructor
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Person.AsSecurityUser">
+            <summary>
+            Gets the security user account associated with this person if applicable
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirth">
             <summary>
             Gets or sets the person's date of birth
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthXml">
-            <summary>
-            Gets the date of birth as XML
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthPrecision">
@@ -3748,14 +3946,14 @@
             Gets or sets the precision ofthe date of birth
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Person.DateOfBirthXml">
+            <summary>
+            Gets the date of birth as XML
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Person.LanguageCommunication">
             <summary>
             Gets the person's languages of communication
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Person.AsSecurityUser">
-            <summary>
-            Gets the security user account associated with this person if applicable
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.Person.SemanticEquals(System.Object)">
@@ -3778,14 +3976,14 @@
             Language communication code ctor with specified code and preference
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.LanguageCode">
-            <summary>
-            Gets or sets the language code
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.IsPreferred">
             <summary>
             Gets or set the user's preference indicator
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.LanguageCode">
+            <summary>
+            Gets or sets the language code
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.PersonLanguageCommunication.SemanticEquals(System.Object)">
@@ -3838,9 +4036,9 @@
             Represents a service for a place
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.PlaceService.ServiceSchedule">
+        <member name="P:OpenIZ.Core.Model.Entities.PlaceService.ServiceConcept">
             <summary>
-            The schedule that the service is offered
+            Gets or sets the service concept
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.PlaceService.ServiceConceptKey">
@@ -3848,9 +4046,9 @@
             Gets or sets the service concept key
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.PlaceService.ServiceConcept">
+        <member name="P:OpenIZ.Core.Model.Entities.PlaceService.ServiceSchedule">
             <summary>
-            Gets or sets the service concept
+            The schedule that the service is offered
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Entities.PlaceService.Refresh">
@@ -3966,11 +4164,6 @@
         <member name="P:OpenIZ.Core.Model.IdentifiedData.IsDelayLoadEnabled">
             <summary>
             True if the class is currently loading associations when accessed
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.IdentifiedData.SetDelayLoad(System.Boolean,System.Collections.Generic.HashSet{System.Nullable{System.Guid}})">
-            <summary>
-            Set delay load
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.IdentifiedData.Key">

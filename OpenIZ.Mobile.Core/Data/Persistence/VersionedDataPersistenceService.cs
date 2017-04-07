@@ -48,7 +48,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel InsertInternal(LocalDataContext context, TModel data)
         {
-            data.VersionKey = data.VersionKey == Guid.Empty || !data.VersionKey.HasValue ? Guid.NewGuid() : data.VersionKey;
+            if(data.VersionKey.GetValueOrDefault() == Guid.Empty)
+                data.VersionKey = Guid.NewGuid();
             return base.InsertInternal(context, data);
         }
 

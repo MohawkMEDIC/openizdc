@@ -150,7 +150,7 @@
     <value>Constructing Freetext Index</value>
   </data>
   <data name="locale_rejectionBody" xml:space="preserve">
-    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;</value>
+    <value>&lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href="#/core/sync" class="btn btn-lg btn-info"&gt;Visit Sync Centre&lt;/a&gt;</value>
   </data>
   <data name="locale_rejectionSubject" xml:space="preserve">
     <value>Synchronization Conflict</value>
@@ -201,6 +201,12 @@ Sincerely,
     <value>Calculating Care-plans ({0} remaining)...</value>
   </data>
   <data name="locale_refreshCarePlan" xml:space="preserve">
-    <value>Gathering patients in need of care plan refresh....</value>
+    <value>Scanning patients for care plan refresh....</value>
+  </data>
+  <data name="locale_calculateImportedCareplan" xml:space="preserve">
+    <value>Gathering imported patients for care planning...</value>
+  </data>
+  <data name="InternalServerError" xml:space="preserve">
+    <value>&lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;</value>
   </data>
 </root>

@@ -17,7 +17,7 @@
  - User: justi
  - Date: 2016-8-17
  -->
-<form class="form form-horizontal" ng-controller="UserProfileController" ng-submit="saveProfile(editObject.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding">
+<form name="userProfileForm" class="form form-horizontal" ng-controller="UserProfileController" ng-submit="saveProfile(userProfileForm, editObject.entity)" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" novalidate="novalidate">
     <oiz:script>/org.openiz.core/controllers/settings/profile.js</oiz:script>
     <div class="container-fluid">
         <div class="form-group">
@@ -50,9 +50,9 @@
         </div>
         <div class="form-group">
             <label class="col-xs-3 col-sm-2 control-label" for="facilityInput">{{ 'locale.preferences.language' | i18n }}</label>
-            <div class="col-xs-9 col-sm-9">
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.languageInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.languageInput.$invalid }">
                 <div class="input-group">
-                    <select class="form-control" style="width:100%; height:100%" id="facilityInput" name="facilityInput" ng-model="editObject.entity.language[0].languageCode">
+                    <select required="required" class="form-control" style="width:100%; height:100%" id="languageInput" name="languageInput" ng-model="editObject.entity.language[0].languageCode">
                         <option value="en">English</option>
                         <option value="sw">Kiswahili</option>
                     </select>

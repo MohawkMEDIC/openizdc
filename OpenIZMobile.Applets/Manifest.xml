@@ -105,10 +105,6 @@
       <icon>/org.openiz.core/img/appbar.futurama.bender.png</icon>
       <text>Debug Information</text>
     </menuItem>
-    <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
-      <icon>/org.openiz.core/img/appbar.settings.png</icon>
-      <text>Suggestion Box</text>
-    </menuItem>
   </menuItem>
   <strings lang="en">
 
@@ -361,6 +357,8 @@
     <string key="locale.about.sync.logFile">Log File</string>
     <string key="locale.about.sync.logSize">Log File Size</string>
     <string key="locale.about.sync.logContents">Log File Contents</string>
+    <string key="locale.about.updateToast.title">Updates Available</string>
+    <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>
@@ -388,6 +386,9 @@
     <string key="locale.sync.resolve.resolve">Resolve</string>
     <string key="locale.sync.resolve.takeMine">Override Server</string>
     <string key="locale.sync.batchForceConfirm">You are about to perform an action that will attempt to force the IMS server to accept data. This may overwrite previous changes made by other users. It is not recommended you do such an action unless you're sure the data is correct. Do you want to continue?</string>
+    <string key="locale.sync.forceConfirm">You are about to perform an action that will force the IMS server to accept this change. This may undo other user's changes. Are you sure you wish to continue?</string>
+    <string key="locale.sync.deleteConfirm">Are you sure you want to ignore sending this data to the server? If the data was an insert it will only exist on your local tablet and not on the server.</string>
+    <string key="locale.sync.deleteConfirm.insert">The item you are deleting was an insert, if you continue whatever data contained in the insert will not be on the server. Are you sure you want to continue?</string>
     <string key="locale.sync.resolve.title">Resolve Conflict</string>
     <string key="locale.sync.queue.date">Original Submission Date</string>
     <string key="locale.sync.resolve.reason">The reason this object was rejected</string>

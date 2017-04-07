@@ -55,17 +55,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         /// <summary>
         /// Application information
         /// </summary>
-        public ApplicationInfo() : base(AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(o => o.DefinedTypes.Any(t => t.Name == "SplashActivity")) ?? typeof(OpenIZConfiguration).Assembly)
+        public ApplicationInfo(bool checkForUpdates) : base(AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(o => o.DefinedTypes.Any(t => t.Name == "SplashActivity")) ?? typeof(OpenIZConfiguration).Assembly)
         {
             this.OpenIZ = new DiagnosticVersionInfo(typeof(OpenIZ.Mobile.Core.ApplicationContext).Assembly);
 
             this.Applets = XamarinApplicationContext.Current.LoadedApplets.Select(o => o.Info).ToList();
-            try
-            {
-                this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
-                this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
-            }
-            catch { }
+
+            if(checkForUpdates)
+                try
+                {
+                    this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
+                    this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
+                }
+                catch { }
 
             this.Assemblies = AppDomain.CurrentDomain.GetAssemblies().Select(o => new DiagnosticVersionInfo(o)).ToList();
             

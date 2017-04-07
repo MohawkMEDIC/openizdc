@@ -95,7 +95,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Iterate compact open connections
             conmgr.Compact();
-            
+
         }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             if (conmgr == null)
                 throw new InvalidOperationException(Strings.err_purgeNotPermitted);
-                
+
             conmgr.Stop();
             (warehouse as IDaemonService)?.Stop();
 
@@ -144,15 +144,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             switch (queue)
             {
                 case "inbound":
+                case "inbound_queue":
                     SynchronizationQueue.Inbound.Delete(id);
                     break;
                 case "outbound":
+                case "outbound_queue":
                     SynchronizationQueue.Outbound.Delete(id);
                     break;
                 case "dead":
+                case "dead_queue":
                     SynchronizationQueue.DeadLetter.Delete(id);
                     break;
                 case "admin":
+                case "admin_queue":
                     SynchronizationQueue.Admin.Delete(id);
                     break;
             }
@@ -204,7 +208,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             int offset = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_offset"] ?? "0"),
-                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "10"),
+                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "30"),
                 totalResults = 0;
 
             // Get the queue
@@ -213,7 +217,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "inbound":
                     {
                         var predicate = QueryExpressionParser.BuildLinqExpression<InboundQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Inbound.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
+                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Inbound.Query(predicate, offset, count, out totalResults)
+                            .Select(o => new InboundQueueEntry()
+                            {
+                                Id = o.Id,
+                                CreationTime = o.CreationTime,
+                                Operation = o.Operation,
+                                Type = o.Type
+                            })
+                            .OfType<SynchronizationQueueEntry>()
+                            .ToList())
                         {
                             Size = totalResults,
                             Offset = offset
@@ -222,7 +235,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "outbound":
                     {
                         var predicate = QueryExpressionParser.BuildLinqExpression<OutboundQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Outbound.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
+                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Outbound.Query(predicate, offset, count, out totalResults)
+                            .Select(o => new OutboundQueueEntry()
+                            {
+                                Id = o.Id,
+                                CreationTime = o.CreationTime,
+                                Operation = o.Operation,
+                                Type = o.Type
+                            })
+                            .OfType<SynchronizationQueueEntry>().ToList())
                         {
                             Size = totalResults,
                             Offset = offset

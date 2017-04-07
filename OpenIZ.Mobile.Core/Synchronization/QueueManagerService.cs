@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public bool IsRunning => true;
 
-	    /// <summary>
+        /// <summary>
         /// Exhausts the inbound queue
         /// </summary>
         public void ExhaustInboundQueue()
@@ -275,7 +275,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationQueue.Outbound.DequeueRaw();
 
                         // Construct an alert
-                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
+                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusCode.ToString()) ?? Strings.locale_syncErrorBody, ex, dpe), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {
@@ -300,8 +300,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
                         this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
-						SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
-						SynchronizationQueue.Outbound.DequeueRaw();
+                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
+                        SynchronizationQueue.Outbound.DequeueRaw();
 
                         throw;
                     }
@@ -416,10 +416,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
             SynchronizationQueue.Outbound.Enqueued += (o, e) =>
             {
                 // Trigger sync?
-                if (ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
+                if (e.Data.Type.StartsWith(typeof(Patch).FullName) ||
+                            e.Data.Type.StartsWith(typeof(Bundle).FullName) ||
+                            ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.
                     Exists(r => r.ResourceType == Type.GetType(e.Data.Type) &&
-                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0) || e.Data.Type == typeof(Patch).AssemblyQualifiedName ||
-                            e.Data.Type == typeof(Bundle).AssemblyQualifiedName)
+                            (r.Triggers & SynchronizationPullTriggerType.OnCommit) != 0))
                 {
                     Action<Object> async = (itm) =>
                     {
@@ -430,7 +431,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
             };
 
             // Bind to administration queue
-            SynchronizationQueue.Admin.Enqueued += (o, e) => {
+            SynchronizationQueue.Admin.Enqueued += (o, e) =>
+            {
                 // Admin is always pushed
                 this.m_threadPool.QueueUserWorkItem(a => this.ExhaustAdminQueue());
             };
@@ -446,7 +448,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.ExhaustInboundQueue();
                         this.ExhaustAdminQueue();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error executing initial queues: {0}", ex);
                     }

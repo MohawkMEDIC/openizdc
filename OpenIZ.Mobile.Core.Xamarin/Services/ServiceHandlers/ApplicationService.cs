@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.Json)]
         public DiagnosticReport PostBugReport([RestMessage(RestMessageFormat.Json)] BugReport report)
         {
-            report.ApplicationInfo = new ApplicationInfo();
+            report.ApplicationInfo = new ApplicationInfo(false);
 
             if (report.IncludeData)
             {
@@ -280,6 +280,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 return retVal;
             }
         }
+
         /// <summary>
         /// Get the alerts from the service
         /// </summary>
@@ -288,7 +289,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             try
             {
-                return new ApplicationInfo();
+                return new ApplicationInfo(false);
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Could not retrieve app info {0}...", e);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get the alerts from the service
+        /// </summary>
+        [RestOperation(UriPath = "/info.max", Method = "GET")]
+        public ApplicationInfo GetInfoMax()
+        {
+            try
+            {
+                return new ApplicationInfo(true);
             }
             catch (Exception e)
             {

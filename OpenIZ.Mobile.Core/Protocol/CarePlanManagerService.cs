@@ -139,13 +139,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                         this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
                         this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
-                    else // prune datamart
-                    {
-                        this.m_warehouseService.Delete(this.m_dataMart.Id, new
-                        {
-                            max_date = String.Format("<=", DateTime.Now.AddDays(-365))
-                        });
-                    }
+                    //else // prune datamart
+                    //{
+                    //    this.m_warehouseService.Delete(this.m_dataMart.Id, new
+                    //    {
+                    //        max_date = String.Format("<=", DateTime.Now.AddDays(-365))
+                    //    });
+                    //}
 
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
@@ -178,7 +178,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     ofs = 0;
                                     while (ofs < tr)
                                     {
-                                        ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
+                                        ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
                                         var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && (p.CreationTime >= e.FromDate || p.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.Act.CreationTime >= e.FromDate)), ofs, 50, out tr, queryId);
                                         this.QueueWorkItem(prodPatients.ToArray());
                                         ofs += 50;

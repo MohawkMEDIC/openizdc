@@ -89,6 +89,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             onlineState: OpenIZ.App.getOnlineState()
         };
 
+        // Interval to refresh online state and to check session
         setInterval(function () {
             $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
 
@@ -166,6 +167,28 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 $(controlId).attr('max', $(controlId).attr('data-max-' + type));
             }
         };
+
+        $rootScope.$watch('session', function (nv, ov) {
+            if(nv)
+                OpenIZ.App.getInfoAsync({
+                    includeUpdates: true,
+                    continueWith: function (data) {
+
+                        if (data.update && data.update.length > 0) {
+                            toastr.info(OpenIZ.Localization.getString("locale.about.updateToast.text"), OpenIZ.Localization.getString("locale.about.updateToast.title"), {
+                                closeButton: false,
+                                preventDuplicates: true,
+                                onclick: function () {
+                                    window.location.hash = "/core/about";
+                                },
+                                positionClass: "toast-bottom-center",
+                                timeOut: 4000,
+                                extendedTimeOut: 0
+                            });
+                        }
+                    }
+                });
+        });
 
         $rootScope.OpenIZ = OpenIZ;
     });
