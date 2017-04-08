@@ -24,7 +24,7 @@ namespace DisconnectedClient
 
             Action<ApplicationProgressEventArgs> updateUi = (e) =>
             {
-                lblProgress.Text = e.ProgressText;
+                lblProgress.Text = String.Format("{0} ({1:#0}%)", e.ProgressText, e.Progress * 100);
                 if (e.Progress >= 0 && e.Progress <= 1)
                 {
                     pgMain.Style = ProgressBarStyle.Continuous;

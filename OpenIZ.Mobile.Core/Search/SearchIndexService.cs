@@ -147,51 +147,56 @@ namespace OpenIZ.Mobile.Core.Search
         /// <summary>
         /// Perform an index of the entity
         /// </summary>
-        private bool IndexEntity(Entity e)
+        private bool IndexEntity(params Entity[] entities)
         {
             var conn = this.CreateConnection();
             using (conn.Lock())
             {
                 try
                 {
-                    var entityUuid = e.Key.Value.ToByteArray();
-                    var entityVersionUuid = e.VersionKey.Value.ToByteArray();
-                    if (conn.Table<SearchEntityType>().Where(o => o.Key == entityUuid && o.VersionKey == entityVersionUuid).Count() > 0) return true; // no change
-
                     conn.BeginTransaction();
 
-                    var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
+
+                    foreach (var e in entities)
+                    {
+                        var entityUuid = e.Key.Value.ToByteArray();
+                        var entityVersionUuid = e.VersionKey.Value.ToByteArray();
+                        if (conn.Table<SearchEntityType>().Where(o => o.Key == entityUuid && o.VersionKey == entityVersionUuid).Count() > 0) return true; // no change
+
+                        var tokens = (e.Names ?? new List<EntityName>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower()))
                         .Union((e.Identifiers ?? new List<EntityIdentifier>()).Select(o => o.Value.ToLower()))
                         .Union((e.Addresses ?? new List<EntityAddress>()).SelectMany(o => o.Component.Select(c => c.Value.Trim().ToLower())))
                         .Union((e.Telecoms ?? new List<EntityTelecomAddress>()).Select(o => o.Value.ToLower()))
                         .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Names ?? new List<EntityName>()).SelectMany(n => n.Component?.Select(c => c.Value?.Trim().ToLower()))))
                         .Union((e.Relationships ?? new List<EntityRelationship>()).Where(o => o.TargetEntity is Person).SelectMany(o => (o.TargetEntity.Telecoms ?? new List<EntityTelecomAddress>()).Select(c => c.Value?.Trim().ToLower())))
-                        .Where(o=>o != null);
-                    
-                    // Insert new terms
-                    var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
-                    var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();
-                    conn.InsertAll(inserting);
-                    this.m_tracer.TraceVerbose("{0}", e);
-                    foreach (var itm in existing.Union(inserting))
-                        this.m_tracer.TraceVerbose("\t+{0}", itm.Term);
-                    // Now match tokens with this 
-                    conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
-                    conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());
-                    var insertRefs = existing.Union(inserting).Distinct().Select(o => new SearchTermEntity() { EntityId = e.Key.Value.ToByteArray(), TermId = o.Key }).ToArray();
-                    conn.InsertAll(insertRefs);
-                    conn.Insert(new SearchEntityType() { Key = e.Key.Value.ToByteArray(), SearchType = e.GetType().FullName, VersionKey = e.VersionKey.Value.ToByteArray() });
+                        .Where(o => o != null);
+
+                        // Insert new terms
+                        var existing = conn.Table<SearchTerm>().Where(o => tokens.Contains(o.Term)).ToArray();
+                        var inserting = tokens.Where(t => !existing.Any(x => x.Term == t)).Select(o => new SearchTerm() { Term = o }).ToArray();
+                        conn.InsertAll(inserting);
+                        this.m_tracer.TraceVerbose("{0}", e);
+                        foreach (var itm in existing.Union(inserting))
+                            this.m_tracer.TraceVerbose("\t+{0}", itm.Term);
+                        // Now match tokens with this 
+                        conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
+                        conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());
+                        var insertRefs = existing.Union(inserting).Distinct().Select(o => new SearchTermEntity() { EntityId = e.Key.Value.ToByteArray(), TermId = o.Key }).ToArray();
+                        conn.InsertAll(insertRefs);
+                        conn.Insert(new SearchEntityType() { Key = e.Key.Value.ToByteArray(), SearchType = e.GetType().FullName, VersionKey = e.VersionKey.Value.ToByteArray() });
+
+                        this.m_tracer.TraceVerbose("Indexed {0}", e);
+
+                    }
 
                     // Now commit
                     conn.Commit();
-
-                    this.m_tracer.TraceVerbose("Indexed {0}", e);
 
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    this.m_tracer.TraceError("Error indexing {0} : {1}", e, ex);
+                    this.m_tracer.TraceError("Error indexing {0} : {1}", entities, ex);
                     conn.Rollback();
                     return false;
                 }
@@ -209,7 +214,7 @@ namespace OpenIZ.Mobile.Core.Search
                 try
                 {
                     conn.BeginTransaction();
-
+ 
                     // Now match tokens with this 
                     conn.Execute(String.Format(String.Format("DELETE FROM {0} WHERE entity = ?", conn.GetMapping<SearchTermEntity>().TableName), e.Key.Value.ToByteArray()));
                     conn.Delete<SearchEntityType>(e.Key.Value.ToByteArray());
@@ -267,10 +272,14 @@ namespace OpenIZ.Mobile.Core.Search
                     // Bind entity
                     if (bundlePersistence != null && !this.m_bundleBound)
                     {
-                        bundlePersistence.Inserted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                        bundlePersistence.Updated += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.IndexBackground(i as Entity)).ToList();
-                        bundlePersistence.Obsoleted += (o, e) => e.Data.Item.OfType<Patient>().Select(i => this.DeleteEntity(i as Entity)).ToList();
-                        this.m_bundleBound = true;
+                        Action<Object> doBundleIndex = (o) =>
+                        {
+                            this.IndexEntity((o as Bundle).Item.Where(e=>e is Patient).OfType<Entity>().ToArray());
+                        };
+
+                        bundlePersistence.Inserted += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
+                        bundlePersistence.Updated += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
+                        bundlePersistence.Obsoleted += (o, e) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(doBundleIndex, e.Data);
                     }
 
 

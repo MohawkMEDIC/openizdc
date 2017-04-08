@@ -110,7 +110,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityAddressComponentPersistenceService : IdentifiedPersistenceService<EntityAddressComponent, DbEntityAddressComponent, DbEntityAddressComponent.QueryResult>, ILocalAssociativePersistenceService
     {
-        
+
+        // Address value identifier lookup 
+        private Dictionary<String, byte[]> m_addressValueIds = new Dictionary<string, byte[]>();
+
         /// <summary>
         /// To model instance
         /// </summary>
@@ -137,18 +140,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.FromModelInstance(modelInstance, context) as DbEntityAddressComponent;
 
             // Address component already exists?
-            var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
-            if (existing != null && existing.Key != retVal.Key)
-                retVal.ValueUuid = existing.Uuid;
-            else if(!String.IsNullOrEmpty(modelInstance.Value))
+            byte[] existingKey = null;
+            if (!this.m_addressValueIds.TryGetValue(modelInstance.Value, out existingKey))
             {
-                retVal.ValueUuid = Guid.NewGuid().ToByteArray();
-                context.Connection.Insert(new DbAddressValue()
+                var existing = context.Connection.Table<DbAddressValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                if (existing != null && existing.Key != retVal.Key)
+                    retVal.ValueUuid = existing.Uuid;
+                else if (!String.IsNullOrEmpty(modelInstance.Value))
                 {
-                    Uuid = retVal.ValueUuid,
-                    Value = modelInstance.Value
-                });
+                    retVal.ValueUuid = Guid.NewGuid().ToByteArray();
+                    context.Connection.Insert(new DbAddressValue()
+                    {
+                        Uuid = retVal.ValueUuid,
+                        Value = modelInstance.Value
+                    });
+                }
+                lock (this.m_addressValueIds)
+                    if (!this.m_addressValueIds.ContainsKey(modelInstance.Value))
+                        this.m_addressValueIds.Add(modelInstance.Value, retVal.ValueUuid);
             }
+            else
+                retVal.ValueUuid = existingKey;
+
             return retVal;
         }
 

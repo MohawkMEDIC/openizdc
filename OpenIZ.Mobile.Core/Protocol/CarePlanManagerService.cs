@@ -161,7 +161,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
                             this.QueueWorkItem(p);
                     }
-                    
+
                     // Stage 3. Subscribe to persistence
                     ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
                     {

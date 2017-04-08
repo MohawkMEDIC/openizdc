@@ -111,6 +111,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNameComponentPersistenceService : IdentifiedPersistenceService<EntityNameComponent, DbEntityNameComponent, DbEntityNameComponent.QueryResult>, ILocalAssociativePersistenceService
     {
 
+        // Existing 
+        private Dictionary<String, byte[]> m_existingNames = new Dictionary<string, byte[]>();
+
         /// <summary>
         /// To model instance
         /// </summary>
@@ -139,21 +142,31 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.FromModelInstance(modelInstance, context) as DbEntityNameComponent;
 
             // Address component already exists?
-            var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
-            if (existing != null && existing.Key != retVal.Key)
-                retVal.ValueUuid = existing.Uuid;
-            else if(!String.IsNullOrEmpty(modelInstance.Value))
+            byte[] existingKey = null;
+            if (!this.m_existingNames.TryGetValue(modelInstance.Value, out existingKey))
             {
-                var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
-                retVal.ValueUuid = Guid.NewGuid().ToByteArray();
-                context.Connection.Insert(new DbPhoneticValue()
+                var existing = context.Connection.Table<DbPhoneticValue>().Where(o => o.Value == modelInstance.Value).FirstOrDefault();
+                if (existing != null && existing.Key != retVal.Key)
+                    retVal.ValueUuid = existing.Uuid;
+                else if (!String.IsNullOrEmpty(modelInstance.Value))
                 {
-                    Uuid = retVal.ValueUuid,
-                    Value = modelInstance.Value,
-                    PhoneticAlgorithmUuid = (phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None).ToByteArray(),
-                    PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
-                });
+                    var phoneticCoder = ApplicationContext.Current.GetService<IPhoneticAlgorithmHandler>();
+                    retVal.ValueUuid = Guid.NewGuid().ToByteArray();
+                    context.Connection.Insert(new DbPhoneticValue()
+                    {
+                        Uuid = retVal.ValueUuid,
+                        Value = modelInstance.Value,
+                        PhoneticAlgorithmUuid = (phoneticCoder?.AlgorithmId ?? PhoneticAlgorithmKeys.None).ToByteArray(),
+                        PhoneticCode = phoneticCoder?.GenerateCode(modelInstance.Value)
+                    });
+                }
+
+                lock (this.m_existingNames)
+                    if (!this.m_existingNames.ContainsKey(modelInstance.Value))
+                        this.m_existingNames.Add(modelInstance.Value, retVal.ValueUuid);
             }
+            else
+                retVal.ValueUuid = existingKey;
             return retVal;
         }
 
