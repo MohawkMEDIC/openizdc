@@ -89,6 +89,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
+            scope.search.query["_viewModel"] = "min";
             scope.search.isSearching = true;
             $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
             var start = $scope.search.dateOfBirthStringLow;
@@ -147,6 +148,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         // Current page increment
         scope.search.paging.current++;
         scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
+        scope.search.orginalQuery["_viewModel"] = "min";
         scope.search.orginalQuery["_count"] = scope.search.paging.size;
         delete scope.search.results;
         scope.search.isSearching = true;
@@ -180,6 +182,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Current page increment
         scope.search.paging.current--;
+        scope.search.orginalQuery["_viewModel"] = "min";
         scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
         scope.search.orginalQuery["_count"] = scope.search.paging.size;
         delete scope.search.results;
@@ -213,6 +216,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Current page increment
         scope.search.paging.current = pageNo;
+        scope.search.orginalQuery["_viewModel"] = "min";
         scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
         scope.search.orginalQuery["_count"] = scope.search.paging.size;
         delete scope.search.results;

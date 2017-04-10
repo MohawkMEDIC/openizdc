@@ -60,7 +60,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 retVal.QuantityConceptKey = new Guid(dataInstance.QuantityConceptUuid);
             if(dataInstance.FormConceptUuid != null)
                 retVal.FormConceptKey = new Guid(dataInstance.FormConceptUuid);
-            retVal.LoadAssociations(context);
+           // retVal.LoadAssociations(context);
             return retVal;
 
         }

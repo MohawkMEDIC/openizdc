@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     {
                         var package = AppletPackage.Load(gzs);
                         this.m_tracer.TraceInfo("Upgrading {0}...", package.Meta.ToString());
-                        ApplicationContext.Current.InstallApplet(package);
+                        ApplicationContext.Current.InstallApplet(package, true);
                         //ApplicationContext.Current.Exit(); // restart
                     }
                 }
@@ -156,7 +156,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
 
-                    foreach (var i in amiClient.GetApplets().CollectionItem) {
+                    foreach (var i in amiClient.GetApplets().CollectionItem)
+                    {
                         var installed = XamarinApplicationContext.Current.GetApplet(i.AppletManifest.Info.Id);
                         if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletManifest.Info.Version) &&
                             ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
@@ -166,10 +167,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                this.m_tracer.TraceError("Error checking for updates: {0}", e);
-            }
+                this.m_tracer.TraceError("Error checking for updates: {0}", ex);
+            };
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

@@ -198,15 +198,18 @@ Sincerely,
     <value>Loading protocol {0}...</value>
   </data>
   <data name="locale_calculatingCarePlan" xml:space="preserve">
-    <value>Calculating Care-plans ({0} remaining)...</value>
+    <value>Calculating Appointment Proposals ({0} remaining)...</value>
   </data>
   <data name="locale_refreshCarePlan" xml:space="preserve">
-    <value>Scanning patients for care plan refresh....</value>
+    <value>Preparing to update facility plan...</value>
   </data>
   <data name="locale_calculateImportedCareplan" xml:space="preserve">
-    <value>Gathering imported patients for care planning...</value>
+    <value>Preparing imported data...</value>
   </data>
   <data name="InternalServerError" xml:space="preserve">
     <value>&lt;p&gt;The server encountered an internal error while processing your request. Please contact the system administrator for more information. Include the following diagnostic error data:&lt;/p&gt;&lt;pre&gt;{0}&lt;/pre&gt;</value>
+  </data>
+  <data name="locale_processBundle" xml:space="preserve">
+    <value>Importing {0} from bundle ({1} of {2})...</value>
   </data>
 </root>

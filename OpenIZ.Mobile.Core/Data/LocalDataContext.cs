@@ -90,6 +90,14 @@ namespace OpenIZ.Mobile.Core.Data
                     this.m_dataDictionary.Add(key, value);
         }
 
-
+        /// <summary>
+        /// Try get cache item
+        /// </summary>
+        public IdentifiedData TryGetCacheItem(Guid key)
+        {
+            IdentifiedData retVal = null;
+            this.m_cacheCommit.TryGetValue(key, out retVal);
+            return retVal;
+        }
     }
 }

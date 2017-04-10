@@ -36,6 +36,7 @@ using OpenIZ.Mobile.Core.Data.Model.Concepts;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model;
+using OpenIZ.Mobile.Core.Data.Model.Roles;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -64,14 +65,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         private const String CountyOrParish = "D9489D56-DDAC-4596-B5C6-8F41D73D8DC5";
         private const String Country = "48B2FFB3-07DB-47BA-AD73-FC8FB8502471";
         private const String NonLivingSubject = "9025E5C9-693B-49D4-973C-D7010F3A23EE";
-        
+
         /// <summary>
         /// To model instance
         /// </summary>
         public virtual TEntityType ToModelInstance<TEntityType>(DbEntity dbInstance, LocalDataContext context, bool loadFast) where TEntityType : Entity, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbEntity, TEntityType>(dbInstance, useCache: !context.Connection.IsInTransaction);
-            
+
             // Has this been updated? If so, minimal information about the previous version is available
             if (dbInstance.UpdatedTime != null)
             {
@@ -89,8 +90,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             // Now we want to load the relationships inversed!
-            retVal.LoadAssociations(context);
-
+            retVal.LoadAssociations(context,
+                nameof(OpenIZ.Core.Model.Entities.Entity.Addresses),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Extensions),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Tags),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Identifiers),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Names),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Telecoms),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Template)
+            );  
             //if (!loadFast)
             //{
             //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))
@@ -173,6 +181,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             Entity retVal = null;
             IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
 
+            if(dbEntity != null)
                 switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
                 {
                     case Device:
@@ -218,6 +227,24 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         retVal = cache?.GetCacheItem<Entity>(dbEntity.Key);
                         break;
                 }
+            else if (dataInstance is DbDeviceEntity)
+                retVal = cache?.GetCacheItem<DeviceEntity>(dataInstance.Key);
+            else if (dataInstance is DbApplicationEntity)
+                retVal = cache?.GetCacheItem<ApplicationEntity>(dataInstance.Key);
+            else if (dataInstance is DbPerson)
+                retVal = cache?.GetCacheItem<UserEntity>(dataInstance.Key);
+            else if (dataInstance is DbPatient)
+                retVal = cache?.GetCacheItem<Patient>(dataInstance.Key);
+            else if (dataInstance is DbProvider)
+                retVal = cache?.GetCacheItem<Provider>(dataInstance.Key);
+            else if (dataInstance is DbPlace)
+                retVal = cache?.GetCacheItem<Place>(dataInstance.Key);
+            else if (dataInstance is DbOrganization)
+                retVal = cache?.GetCacheItem<Organization>(dataInstance.Key);
+            else if (dataInstance is DbMaterial)
+                retVal = cache?.GetCacheItem<Material>(dataInstance.Key);
+            else if (dataInstance is DbManufacturedMaterial)
+                retVal = cache?.GetCacheItem<ManufacturedMaterial>(dataInstance.Key);
 
             // Return cache value
             if (retVal != null)

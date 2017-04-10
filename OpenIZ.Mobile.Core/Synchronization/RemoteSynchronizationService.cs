@@ -41,6 +41,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -258,7 +259,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             count = 150;
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
-                        SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+
+                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => { SynchronizationQueue.Inbound.Enqueue(o as IdentifiedData, DataOperationType.Sync); }, result);
+                        
                         retVal = result.TotalResults;
                     }
                     else
@@ -275,6 +278,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), retVal));
 
                 return retVal;
+            }
+            catch(TargetInvocationException ex)
+            {
+                var e = ex.InnerException;
+                this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
+                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
+
+                return 0;
+
             }
             catch (Exception e)
             {

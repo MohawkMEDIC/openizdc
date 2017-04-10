@@ -60,14 +60,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            var existing = context.Connection.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
-            if (existing == null)
+            //var existing = context.Connection.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
+            //if (existing == null)
                 return base.InsertInternal(context, data);
-            else
-            {
-                data.Key = new Guid(existing.Uuid);
-                return data;
-            }
+            //else
+            //{
+            //    data.Key = new Guid(existing.Uuid);
+            //    return data;
+            //}
         }
 
         /// <summary>

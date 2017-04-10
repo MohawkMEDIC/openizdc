@@ -42,6 +42,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <summary>
         /// Performs an ad-hoc query against the datawarehouse
         /// </summary>
+        [RestOperation(Method = "GET", UriPath = "/adhocQuery", FaultProvider = nameof(AdhocWarehouseFaultProvider))]
+        public object AdHocQuery()
+        {
+            var warehouseSvc = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
+
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            int totalResults = 0,
+                   offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
+                   count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+
+            if (!search.ContainsKey("martId")) throw new ArgumentNullException("Missing datamart identifier");
+            else
+            {
+                var dataMart = warehouseSvc.GetDatamart(search["martId"][0]);
+                search.Remove("martId");
+                search.Remove("_");
+                return warehouseSvc.AdhocQuery(dataMart.Id, search);
+            }
+        }
+
+        /// <summary>
+        /// Performs an ad-hoc query against the datawarehouse
+        /// </summary>
         [RestOperation(Method = "GET", UriPath = "/storedQuery", FaultProvider = nameof(AdhocWarehouseFaultProvider))]
         public object StoredQuery()
         {

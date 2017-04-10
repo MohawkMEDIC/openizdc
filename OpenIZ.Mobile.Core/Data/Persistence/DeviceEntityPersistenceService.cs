@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.SecurityDeviceKey = new Guid(deviceEntity.SecurityDeviceUuid);
             retVal.ManufacturerModelName = deviceEntity.ManufacturerModelName;
             retVal.OperatingSystemName = deviceEntity.OperatingSystemName;
-            retVal.LoadAssociations(context);
+            //retVal.LoadAssociations(context);
 
             return retVal;
         }

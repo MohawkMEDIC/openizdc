@@ -156,8 +156,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                     while (ofs < tr)
                     {
                         ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                        var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 50, out tr, queryId);
-                        ofs += 50;
+                        var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
+                        ofs += 15;
                         foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
                             this.QueueWorkItem(p);
                     }
@@ -179,9 +179,9 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     while (ofs < tr)
                                     {
                                         ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
-                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && (p.CreationTime >= e.FromDate || p.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.Act.CreationTime >= e.FromDate)), ofs, 50, out tr, queryId);
+                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && (p.CreationTime >= e.FromDate || p.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.Act.CreationTime >= e.FromDate)), ofs, 15, out tr, queryId);
                                         this.QueueWorkItem(prodPatients.ToArray());
-                                        ofs += 50;
+                                        ofs += 15;
                                     }
 
                                     this.m_isSubscribed = false;
@@ -462,7 +462,6 @@ namespace OpenIZ.Mobile.Core.Protocol
                 this.m_tracer.TraceError("Could not update care plan based on Act {0}: {1}", act, ex);
             }
 
-
         }
 
         /// <summary>
@@ -477,7 +476,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                 List<Object> warehousePlan = new List<Object>();
 
-                foreach (var p in patients.AsParallel())
+                foreach (var p in patients)
                 {
                     this.m_tracer.TraceVerbose("Calculating care plan for {0}", p.Key);
                     var data = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);

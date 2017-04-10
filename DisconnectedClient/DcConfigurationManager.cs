@@ -123,8 +123,7 @@ namespace DisconnectedClient
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "org.openiz.core",
-                AuthenticationAsset = "/org/openiz/core/views/security/login.html"
+                StartupAsset = "org.openiz.core"
             };
 
             // Initial applet style

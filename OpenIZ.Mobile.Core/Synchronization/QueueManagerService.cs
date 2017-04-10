@@ -89,20 +89,40 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 // Exhaust the queue
                 int remain = SynchronizationQueue.Inbound.Count();
+                int maxTotal = 0;
                 while (remain > 0)
                 {
                     try
                     {
-                        ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (float)1 / (float)remain);
+                        if (remain > maxTotal)
+                            maxTotal = remain;
+
+                        ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (maxTotal - remain) / (float)maxTotal);
 
                         this.m_tracer.TraceInfo("{0} remaining inbound queue items", SynchronizationQueue.Inbound.Count());
                         var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
                         var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
                         //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
-                        dpe = (dpe as OpenIZ.Core.Model.Collection.Bundle)?.Entry ?? dpe;
+                        var bundle = dpe as Bundle;
+                        dpe = bundle?.Entry ?? dpe;
 
-                        this.ImportElement(dpe, queueEntry);
-                        SynchronizationQueue.Inbound.DequeueRaw();
+                        if(bundle?.Item.Count > 100)
+                        {
+                            var ofs = 0;
+                            while(ofs < bundle.Item.Count)
+                            {
+                                this.ImportElement(new Bundle()
+                                {
+                                    Item = bundle.Item.Skip(ofs).Take(100).ToList()
+                                });
+                                ofs += 100;
+                            }
+                        }
+                        else
+                            this.ImportElement(dpe);
+                        SynchronizationQueue.Inbound.Delete(queueEntry.Id);
+                        queueEntry = null;
+
                     }
                     catch (Exception e)
                     {
@@ -111,6 +131,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     remain = SynchronizationQueue.Inbound.Count();
                 }
+                ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
                 this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound"));
             }
             catch (TimeoutException e)
@@ -170,7 +191,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 break;
                         }
 
-                        SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of object from queue
+
+                        SynchronizationQueue.Admin.Delete(syncItm.Id); // Get rid of object from queue
                     }
                     catch (WebException ex)
                     {
@@ -266,7 +288,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 break;
                         }
 
-                        SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of object from queue
+                        SynchronizationQueue.Outbound.Delete(syncItm.Id); // Get rid of object from queue
                     }
                     catch (WebException ex)
                     {
@@ -327,13 +349,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Import element
         /// </summary>
-        private void ImportElement(IdentifiedData data, InboundQueueEntry queueEntry)
+        private void ImportElement(IdentifiedData data)
         {
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(data.GetType());
             var svc = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService(idpType) as IDataPersistenceService;
             try
             {
-                var existing = svc.Get(data.Key.Value) as IdentifiedData;
+                IdentifiedData existing = null;
+                if(!(data is Bundle))
+                    existing = svc.Get(data.Key.Value) as IdentifiedData;
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
                 if (existing == null)
@@ -349,7 +373,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             foreach (var d in (data as Bundle).Item)
                             {
-                                this.ImportElement(d as IdentifiedData, queueEntry);
+                                this.ImportElement(d as IdentifiedData);
                                 SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
                             }
                         }
@@ -366,12 +390,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     if (ver?.PreviousVersionKey != null && ver?.PreviousVersionKey != (existing as IVersionedEntity)?.VersionKey ||
                         data.GetType() != existing.GetType()) // Conflict, ask the meatbag to resolve it
                     {
-                        XmlSerializer xsz = new XmlSerializer(existing.GetType());
-                        using (var ms = new MemoryStream())
-                        {
-                            xsz.Serialize(ms, existing);
-                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
-                        }
+                        SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Update); //.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
                     }
                     else
                     {

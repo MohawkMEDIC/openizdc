@@ -231,6 +231,7 @@ namespace OpenIZ.Mobile.Core
             //ModelSettings.SourceProvider = new EntitySource.DummyEntitySource();
             this.Starting?.Invoke(this, EventArgs.Empty);
 
+
             ApplicationConfigurationSection config = this.Configuration.GetSection<ApplicationConfigurationSection>();
             var daemons = config.Services.OfType<IDaemonService>();
             Tracer tracer = Tracer.GetTracer(typeof(ApplicationContext));

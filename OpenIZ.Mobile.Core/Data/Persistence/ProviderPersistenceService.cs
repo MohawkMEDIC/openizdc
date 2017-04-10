@@ -57,7 +57,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (!String.IsNullOrEmpty(dbp.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PersonPersistenceService.PrecisionMap.Where(o => o.Value == dbp.DateOfBirthPrecision).Select(o => o.Key).First();
             retVal.ProviderSpecialtyKey = provider.Specialty == null ? null : (Guid?)new Guid(provider.Specialty);
-            retVal.LoadAssociations(context);
+            //retVal.LoadAssociations(context);
 
             return retVal;
         }

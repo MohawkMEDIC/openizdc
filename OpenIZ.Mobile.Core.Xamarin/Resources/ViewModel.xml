@@ -33,13 +33,13 @@
 
   <type type="EntityName" all="true">
     <property name="source" behavior="never"/>
-    <property name="component" all="true">
+    <property name="component" all="true" behavior="always">
       <property name="*" all="true"/>
     </property>
   </type>
   <type type="EntityAddress" all="true">
     <property name="source" behavior="never"/>
-    <property name="component" all="true">
+    <property name="component" all="true" behavior="always">
       <property name="*" all="true"/>
     </property>
   </type>
@@ -68,7 +68,8 @@
     <property name="previousVersionModel" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true">
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
@@ -76,7 +77,7 @@
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
-    <property name="participation" all="true">
+    <property name="participation" all="true" behavior="always">
       <property name="*" all="true">
         <property name="actModel" all="true"/>
         <property name="participationRoleModel" behavior="never"/>
@@ -90,10 +91,14 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="genderConceptModel" all="true" behavior="always"/>
-    <property name="relationship" all="true">
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="address" all="true" ref="EntityAddress" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
+    <property name="telecom" all="true" behavior="always"/>
+    <property name="relationship" all="true" behavior="always">
       <property name="Mother" all="true">
         <property name="target" all="true"/>
-        <property name="targetModel" all="true" behavior="always"/>
+        <property name="targetModel" all="true" behavior="always" ref="Person"/>
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
       <property name="*" all="true">
@@ -112,13 +117,6 @@
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
-    <property name="participation" all="false">
-      <property name="*" all="true">
-        <property name="actModel" behavior="never">
-        </property>
-        <property name="participationRoleModel" behavior="never"/>
-      </property>
-    </property>
   </type>
 
   <type type="ManufacturedMaterial" all="true">
@@ -128,6 +126,8 @@
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always"/>
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="relationship" all="true">
       <property name="*" all="true">
         <property name="targetModel" all="true">
@@ -161,8 +161,10 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="typeConceptModel" behavior="always"/>
-    <property name="relationship" all="true">
+    <property name="relationship" all="true" behavior="always">
       <property name="*" all="true">
         <property name="targetModel" all="true">
           <property name="relationship" all="true">
@@ -179,7 +181,7 @@
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
-    <property name="participation" all="false">
+    <property name="participation" all="false" behavior="always">
       <property name="*" all="true">
         <property name="targetAct" behavior="never">
         </property>
@@ -195,6 +197,9 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="typeConceptModel" behavior="always"/>
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="address" all="true" ref="EntityAddress" behavior="always"/>
+    <property name="telecom" all="true" behavior="always"/>
     <property name="relationship" all="true" behavior="always">
       <property name="Parent" all="true">
         <property name="holderModel" behavior="never"/>
@@ -285,7 +290,7 @@
               <property name="actModel" behavior="never"/>
               <property name="sourceModel" behavior="never"/>
               <property name="participationRoleModel" behavior="never"/>
-              <property name="playerModel" all="true"/>
+              <property name="playerModel" all="true" behavior="always"/>
             </property>
           </property>
         </property>
@@ -393,7 +398,9 @@
   <!-- Session information -->
   <type type="SessionInfo" all="true">
     <property name="entity" all="true">
-      <property name="relationship" all="true">
+      <property name="name" behavior="always" ref="EntityName"/>
+      <property name="languageCommunication" behavior="always" all="true"/>
+      <property name="relationship" all="true" behavior="always">
         <property name="DedicatedServiceDeliveryLocation">
           <property name="sourceModel" behavior="never"/>
           <property name="relationshipTypeModel" behavior="never"/>
@@ -404,8 +411,13 @@
           <property name="targetModel" all="false" behavior="always">
             <property name="id" all="false"/>
             <property name="version" all="false"/>
-            <property name="identifier" ref="EntityIdentifier" all="true"/>
-            <property name="name"  ref="EntityName" all="true"/>
+            <property name="identifier" ref="EntityIdentifier" all="true" behavior="always"/>
+            <property name="name"  ref="EntityName" all="true" behavior="always"/>
+            <property name="relationship" behavior="always">
+              <property name="OwnedEntity" all="false">
+                <property name="targetModel" ref="ManufacturedMaterial" all="true" behavior="always"/>
+              </property>
+            </property>
           </property>
         </property>
         <property name="*" all="true">

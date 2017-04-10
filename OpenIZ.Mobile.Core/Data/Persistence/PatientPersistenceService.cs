@@ -74,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.MultipleBirthOrder = patient.MultipleBirthOrder;
             retVal.GenderConceptKey = new Guid(patient.GenderConceptUuid);
 
-            retVal.LoadAssociations(context);
+            //retVal.LoadAssociations(context);
 
             return retVal;
         }

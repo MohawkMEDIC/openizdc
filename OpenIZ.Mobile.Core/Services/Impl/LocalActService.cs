@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-17
  */
+using MARC.HI.EHRS.SVC.Auditing.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -55,6 +56,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 		{
             var results = this.Find(filter, offset, count, out totalResults, Guid.Empty);
             results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
+            
             return results;
 		}
 

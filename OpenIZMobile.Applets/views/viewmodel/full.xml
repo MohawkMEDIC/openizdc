@@ -71,7 +71,8 @@
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
-
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="relationship" all="true" behavior="always">
       <property name="*" ref="EntityRelationship"/>
     </property>
@@ -84,12 +85,31 @@
     </property>
   </type>
 
+  <type type="Person" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="address" all="true" ref="EntityAddress" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
+    <property name="telecom" all="true" behavior="always"/>
+
+    <property name="classConceptModel" behavior="never"/>
+    <property name="classConcept" behavior="never"/>
+    <property name="determinerConceptModel" behavior="never"/>
+    <property name="determinerConcept" behavior="never"/>
+  </type>
+  
   <type type="Patient" all="true">
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
-
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="address" all="true" ref="EntityAddress" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
+    <property name="telecom" all="true" behavior="always"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -118,6 +138,8 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="typeConceptModel" behavior="always"/>
     <property name="relationship" all="true">
       <property name="*" all="true" ref="EntityRelationship"/>
@@ -136,14 +158,15 @@
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
-
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true">
+    <property name="relationship" all="true" behavior="always">
       <property name="*" all="true" ref="EntityRelationship"/>
     </property>
     <property name="participation" all="false">
@@ -155,7 +178,8 @@
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
-
+    <property name="name" all="true" ref="EntityName" behavior="always"/>
+    <property name="address" all="true" ref="EntityAddress" behavior="always"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
@@ -283,7 +307,7 @@
           <property name="id"/>
           <property name="version"/>
           <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true"/>
+          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
           <property name="tag" all="true"/>
           <property name="extension" all="true"/>

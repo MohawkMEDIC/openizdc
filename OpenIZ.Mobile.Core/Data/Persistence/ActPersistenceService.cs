@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             DbAct dbAct = dataInstance as DbAct;
             Act retVal = null;
             IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
-
+            if(dbAct != null)
                 switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
                 {
                     case ControlAct:
@@ -96,6 +96,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         retVal = cache?.GetCacheItem<Act>(dbAct.Key);
                         break;
                 }
+            else if (dataInstance is DbControlAct)
+                retVal = cache?.GetCacheItem<ControlAct>(dataInstance.Key);
+            else if (dataInstance is DbSubstanceAdministration)
+                retVal = cache?.GetCacheItem<SubstanceAdministration>(dataInstance.Key);
+            else if (dataInstance is DbTextObservation)
+                retVal = cache?.GetCacheItem<TextObservation>(dataInstance.Key);
+            else if (dataInstance is DbCodedObservation)
+                retVal = cache?.GetCacheItem<CodedObservation>(dataInstance.Key);
+            else if (dataInstance is DbQuantityObservation)
+                retVal = cache?.GetCacheItem<QuantityObservation>(dataInstance.Key);
+            else if (dataInstance is DbPatientEncounter)
+                retVal = cache?.GetCacheItem<PatientEncounter>(dataInstance.Key);
 
             // Return cache value
             if (retVal != null)
@@ -130,7 +142,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
-            retVal.LoadAssociations(context);
+            retVal.LoadAssociations(context,
+                nameof(OpenIZ.Core.Model.Acts.Act.Template),
+                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
+                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
+                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
+                nameof(OpenIZ.Core.Model.Acts.Act.Policies),
+                nameof(OpenIZ.Core.Model.Acts.Act.Protocols),
+                nameof(OpenIZ.Core.Model.Acts.Act.TypeConcept),
+                nameof(OpenIZ.Core.Model.Acts.Act.ReasonConcept)
+            );
             return retVal;
         }
 

@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (!String.IsNullOrEmpty(person.DateOfBirthPrecision))
                 retVal.DateOfBirthPrecision = PrecisionMap.Where(o => o.Value == person.DateOfBirthPrecision).Select(o => o.Key).First();
 
-            retVal.LoadAssociations(context);
+            //etVal.LoadAssociations(context);
 
             return retVal;
         }

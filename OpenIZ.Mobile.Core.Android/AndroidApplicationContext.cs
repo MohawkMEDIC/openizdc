@@ -44,6 +44,7 @@ using System.Security.Principal;
 using System.Xml.Serialization;
 using A = Android;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
+using System.IO.Compression;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -164,6 +165,37 @@ namespace OpenIZ.Mobile.Core.Android
                             throw;
                         }
 
+                    // Are we going to deploy applets
+                    // Upgrade applets from our app manifest
+                    foreach (var itm in context.Assets.List("Applets"))
+                    {
+                        try
+                        {
+                            retVal.m_tracer.TraceVerbose("Loading {0}", itm);
+                            AppletPackage pkg = null;
+                            if (Path.GetExtension(itm) == ".pak")
+                            {
+                                using (var gzs = new GZipStream(context.Assets.Open(String.Format("Applets/{0}", itm)), CompressionMode.Decompress))
+                                    pkg = AppletPackage.Load(gzs);
+                            }
+                            else
+                            {
+                                AppletManifest manifest = AppletManifest.Load(context.Assets.Open(String.Format("Applets/{0}", itm)));
+                                pkg = manifest.CreatePackage();
+                            }
+
+                            // Write data to assets directory
+#if !DEBUG
+                            if (retVal.GetApplet(pkg.Meta.Id) == null || new Version(retVal.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
+#endif
+                                retVal.InstallApplet(pkg, true);
+                        }
+                        catch (Exception e)
+                        {
+                            retVal.m_tracer?.TraceError(e.ToString());
+                        }
+                    }
+
                     // Ensure data migration exists
                     try
                     {
@@ -271,7 +303,10 @@ namespace OpenIZ.Mobile.Core.Android
                     // Unload the loaded applet version
                     var existingApplet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
                     if (existingApplet != null)
+                    {
                         this.LoadedApplets.Remove(existingApplet);
+                        AppletCollection.ClearCaches();
+                    }
                     appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
                 }
 
@@ -307,7 +342,7 @@ namespace OpenIZ.Mobile.Core.Android
                     {
                         var itm = mfst.Assets[i];
                         var itmPath = Path.Combine(assetDirectory, itm.Name);
-                        this.SetProgress(package.Meta.GetName("en"), 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
+                        this.SetProgress($"Installing {package.Meta.GetName("en")}", 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
 
                         // Get dir name and create
                         if (!Directory.Exists(Path.GetDirectoryName(itmPath)))

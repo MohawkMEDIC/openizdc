@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             retVal.IsMobile = place.IsMobile;
             retVal.Lat = place.Lat;
             retVal.Lng = place.Lng;
-            retVal.LoadAssociations(context);
+            //retVal.LoadAssociations(context);
 
             return retVal;
         }

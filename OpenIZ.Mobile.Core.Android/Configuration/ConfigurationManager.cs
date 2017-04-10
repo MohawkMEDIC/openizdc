@@ -182,7 +182,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
             // Security configuration
             var wlan = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault(o => o.NetworkInterfaceType == NetworkInterfaceType.Ethernet && o.Description.StartsWith("wlan"));
-            String macAddress = Guid.NewGuid().ToString();
+            String macAddress = Guid.NewGuid().ToString().Substring(0, 6);
             if (wlan != null)
                 macAddress = wlan.GetPhysicalAddress().ToString();
             //else 

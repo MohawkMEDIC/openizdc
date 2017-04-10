@@ -89,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gathering imported patients for care planning....
+        ///   Looks up a localized string similar to Preparing imported data....
         /// </summary>
         internal static string locale_calculateImportedCareplan {
             get {
@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calculating Care-plans ({0} remaining)....
+        ///   Looks up a localized string similar to Calculating Appointment Proposals ({0} remaining)....
         /// </summary>
         internal static string locale_calculatingCarePlan {
             get {
@@ -181,7 +181,16 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Scanning patients for care plan refresh.....
+        ///   Looks up a localized string similar to Importing {0} from bundle ({1} of {2})....
+        /// </summary>
+        internal static string locale_processBundle {
+            get {
+                return ResourceManager.GetString("locale_processBundle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Preparing to update facility plan....
         /// </summary>
         internal static string locale_refreshCarePlan {
             get {

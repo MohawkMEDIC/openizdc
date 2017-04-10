@@ -51,14 +51,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
-            var existing = context.Connection.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
-            if (existing == null)
-                return base.InsertInternal(context, data);
-            else
-            {
-                data.Key = new Guid(existing.Uuid);
-                return data;
-            }
+            //var existing = context.Connection.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
+            //if (existing == null)
+            return base.InsertInternal(context, data);
+            //else
+            //{
+            //    data.Key = new Guid(existing.Uuid);
+            //    return data;
+            //}
         }
 
         /// <summary>

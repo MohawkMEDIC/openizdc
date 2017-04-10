@@ -37,6 +37,7 @@ using System.Linq.Expressions;
 using OpenIZ.Core.Model.Query;
 using Newtonsoft.Json;
 using System.Data;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
 {
