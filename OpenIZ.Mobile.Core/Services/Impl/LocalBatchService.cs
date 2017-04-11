@@ -18,6 +18,7 @@
  * Date: 2017-3-31
  */
 using OpenIZ.Core.Exceptions;
+using OpenIZ.Core.Interfaces;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
@@ -32,12 +33,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Local batch service
 	/// </summary>
-	public class LocalBatchService : IBatchRepositoryService
+	public class LocalBatchService : IBatchRepositoryService, IAuditEventSource
 	{
-		/// <summary>
-		/// Insert the bundle
-		/// </summary>
-		public Bundle Insert(Bundle data)
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+
+        /// <summary>
+        /// Insert the bundle
+        /// </summary>
+        public Bundle Insert(Bundle data)
 		{
 			data = this.Validate(data);
 			var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
@@ -52,6 +58,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             // Insert bundle to the master queue
             ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=> SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert));
+
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(data.Item));
 
             return data;
 		}
@@ -72,6 +80,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             obsolete = breService?.AfterObsolete(obsolete) ?? obsolete;
 
             SynchronizationQueue.Outbound.Enqueue(obsolete, Synchronization.Model.DataOperationType.Obsolete);
+
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(obsolete.Item));
+
             return obsolete;
 		}
 
@@ -102,8 +113,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             data = persistence.Insert(data);
             breService?.AfterUpdate(data);
 
+            this.DataUpdated?.Invoke(this, new AuditDataEventArgs(data.Item));
+
             // Patch
-            if(old != null)
+            if (old != null)
             {
                 var diff = ApplicationContext.Current.GetService<IPatchService>()?.Diff(old, data.Entry);
                 if (diff != null)

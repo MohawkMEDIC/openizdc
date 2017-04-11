@@ -45,6 +45,7 @@ using System.Xml.Serialization;
 using A = Android;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using System.IO.Compression;
+using System.Threading;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -263,15 +264,34 @@ namespace OpenIZ.Mobile.Core.Android
                 retVal.m_configurationManager = new ConfigurationManager(OpenIZ.Mobile.Core.Android.Configuration.ConfigurationManager.GetDefaultConfiguration());
                 ApplicationContext.Current = retVal;
                 ApplicationServiceContext.Current = ApplicationContext.Current;
-
                 retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
+
+
+                try
+                {
+                    using (var fd = context.Assets.OpenFd("Applets/org.openiz.core.pak"))
+                        retVal.m_tracer.TraceInfo("Installing org.openiz.core : {0} bytes", fd?.Length);
+                    using (var gzs = new GZipStream(context.Assets.Open("Applets/org.openiz.core.pak"), CompressionMode.Decompress))
+                    {
+                        // Write data to assets directory
+                        var package = AppletPackage.Load(gzs);
+                        AndroidApplicationContext.Current.InstallApplet(package, true);
+                    }
+                }
+                catch (Exception e)
+                {
+                    retVal.m_tracer.TraceError(e.ToString());
+                    throw;
+                }
+
+
                 retVal.Start();
                 return true;
             }
             catch (Exception e)
             {
                 Log.Error("OpenIZ 0118 999 881 999 119 7253", e.ToString());
-                return false;
+                return false; 
             }
         }
 
@@ -502,6 +522,49 @@ namespace OpenIZ.Mobile.Core.Android
                 ApplicationContext.Current.Stop();
                 (this.Context as Activity).Finish();
             }, null);
+        }
+
+        /// <summary>
+        /// Confirm the alert
+        /// </summary>
+        public override bool Confirm(string confirmText)
+        {
+            AutoResetEvent evt = new AutoResetEvent(false);
+            bool result = false;
+            var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                    .SetMessage(confirmText)
+                    .SetCancelable(false)
+                    .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                    {
+                        result = true;
+                        evt.Reset();
+                    })
+                    .SetNegativeButton(Strings.locale_cancel, (sender, args) =>
+                    {
+                        result = false;
+                        evt.Reset();
+
+                    });
+
+            alertDialogBuilder.Create().Show();
+            evt.WaitOne();
+            return result;
+        }
+
+        /// <summary>
+        /// Show an alert
+        /// </summary>
+        public override void Alert(string alertText)
+        {
+            var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                     .SetMessage(alertText)
+                    .SetCancelable(false)
+                    .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                    {
+                    });
+
+
+            alertDialogBuilder.Create().Show();
         }
 
         #endregion implemented abstract members of ApplicationContext

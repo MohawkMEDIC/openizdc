@@ -147,4 +147,10 @@
   <data name="err_unauthenticated_principal" xml:space="preserve">
     <value>Cannot set context to unauthenticated principal</value>
   </data>
+  <data name="locale_cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="locale_confirm" xml:space="preserve">
+    <value>Ok</value>
+  </data>
 </root>

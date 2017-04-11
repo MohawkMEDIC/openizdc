@@ -51,6 +51,7 @@ using OpenIZ.Mobile.Core.Android.Diagnostics;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
 using OpenIZ.Mobile.Core.Xamarin.Warehouse;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -170,6 +171,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
+
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -189,7 +191,8 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
 
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ", "")
+                DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ", ""),
+                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
             };
 
             // Device key

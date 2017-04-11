@@ -384,6 +384,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             Application.SynchronizationContext.Post(_ =>
             {
+                this.m_tracer.TraceInfo("Received close() request");
                 ApplicationContext.Current.Stop();
                 AppletCollection.ClearCaches();
                 (this.m_context as Activity).Finish();

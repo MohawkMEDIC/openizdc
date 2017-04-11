@@ -29,6 +29,24 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         private Tracer m_tracer = Tracer.GetTracer(typeof(LocalAuditRepositoryService));
 
         /// <summary>
+        /// Ctor (prune on startup)
+        /// </summary>
+        public LocalAuditRepositoryService()
+        {
+            ApplicationContext.Current.Started += (o, e) =>
+            {
+                try
+                {
+                    this.Prune();
+                }
+                catch(Exception ex)
+                {
+                    this.m_tracer.TraceError("Error pruning audit repository: {0}", ex);
+                }
+            };
+        }
+
+        /// <summary>
         /// Create a connection
         /// </summary>
         /// <returns>The connection.</returns>
@@ -37,6 +55,22 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             return SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(
                 "openIzAudit"
             ).Value);
+        }
+
+        /// <summary>
+        /// Prune the audit database
+        /// </summary>
+        public void Prune()
+        {
+            var config = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+
+            this.m_tracer.TraceInfo("Prune audits older than {0}", config?.AuditRetention);
+            var conn = this.CreateConnection();
+            using (conn.Lock())
+            {
+
+            }
+
         }
 
         /// <summary>
@@ -53,7 +87,16 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// </summary>
         public IEnumerable<AuditData> Find(Expression<Func<AuditData, bool>> query, int offset, int? count, out int totalResults)
         {
-            throw new NotImplementedException();
+            try
+            {
+                totalResults = 0;
+                return null;
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Could not query audit {0}: {1}", query, e);
+                throw;
+            }
         }
 
         /// <summary>
@@ -70,6 +113,17 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
                     // Insert core
                     var dbAudit = this.m_mapper.MapModelInstance<AuditData, DbAuditData>(audit);
+
+                    var eventId = audit.EventTypeCode;
+                    if (eventId != null)
+                    {
+                        var existing = conn.Table<DbAuditCode>().Where(o => o.Code == eventId.Code && o.CodeSystem == eventId.CodeSystem).FirstOrDefault();
+                        if (existing == null)
+                            dbAudit.EventTypeId = conn.Insert(new DbAuditCode() { Code = eventId.Code, CodeSystem = eventId.CodeSystem });
+                        else
+                            dbAudit.EventTypeId = existing.Id;
+                    }
+
                     dbAudit.CreationTime = DateTime.Now;
                     dbAudit.Id = conn.Insert(dbAudit);
 
@@ -82,6 +136,16 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                             {
                                 dbAct = this.m_mapper.MapModelInstance<AuditActorData, DbAuditActor>(act);
                                 dbAct.Id = conn.Insert(dbAct);
+                                var roleCode = act.ActorRoleCode.FirstOrDefault();
+                                if (roleCode != null)
+                                {
+                                    var existing = conn.Table<DbAuditCode>().Where(o => o.Code == roleCode.Code && o.CodeSystem == roleCode.CodeSystem).FirstOrDefault();
+                                    if (existing == null)
+                                        dbAct.RoleCodeId = conn.Insert(new DbAuditCode() { Code = roleCode.Code, CodeSystem = roleCode.CodeSystem });
+                                    else
+                                        dbAct.RoleCodeId = existing.Id;
+                                }
+
                             }
                             conn.Insert(new DbAuditActorAssociation()
                             {

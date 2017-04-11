@@ -58,6 +58,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     where TQueryResult : DbIdentified
     {
 
+        // Required properties
+        private Dictionary<Type, PropertyInfo[]> m_requiredProperties = new Dictionary<Type, PropertyInfo[]>();
+
         // Query persistence
         private IQueryPersistenceService m_queryPersistence = ApplicationContext.Current.GetService<IQueryPersistenceService>();
 
@@ -99,8 +102,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (domainObject.Uuid == null || domainObject.Key == Guid.Empty)
                 data.Key = domainObject.Key = Guid.NewGuid();
 
-#if DEBUG
-            foreach (var itm in typeof(TDomain).GetRuntimeProperties().Where(o => o.GetCustomAttribute<NotNullAttribute>() != null))
+#if DB_DEBUG
+            PropertyInfo[] properties = null;
+            if(!this.m_requiredProperties.TryGetValue(typeof(TDomain), out properties))
+            {
+                properties = typeof(TDomain).GetRuntimeProperties().Where(o => o.GetCustomAttribute<NotNullAttribute>() != null).ToArray();
+                lock (this.m_requiredProperties)
+                    if (this.m_requiredProperties.ContainsKey(typeof(TDomain)))
+                        this.m_requiredProperties.Add(typeof(TDomain), properties);
+            }
+            foreach (var itm in properties)
                 if (itm.GetValue(domainObject) == null)
                     throw new ArgumentNullException(itm.Name, "Requires a value");
 #endif
@@ -152,7 +163,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Query has been registered?
-            if (this.m_queryPersistence?.IsRegistered(queryId) == true)
+            if (queryId != Guid.Empty && this.m_queryPersistence?.IsRegistered(queryId) == true)
             {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p)).ToList();
@@ -220,7 +231,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (countResults && queryId == Guid.Empty)
                 totalResults = context.Connection.ExecuteScalar<Int32>("SELECT COUNT(*) FROM (" + queryStatement.SQL + ")", args);
             else if (countResults)
+            {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
+                if (totalResults == 0)
+                    return new List<TModel>();
+            }
             else
                 totalResults = 0;
 
@@ -269,7 +284,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
 
             // Query has been registered?
-            if (this.m_queryPersistence.IsRegistered(queryId))
+            if (queryId != Guid.Empty && this.m_queryPersistence.IsRegistered(queryId))
             {
                 totalResults = (int)this.m_queryPersistence.QueryResultTotalQuantity(queryId);
                 return this.m_queryPersistence.GetQueryResults(queryId, offset, count).Select(p => this.Get(context, p));

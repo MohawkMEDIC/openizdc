@@ -24,36 +24,6 @@
     ]
   },
   {
-    "outputFileName": "controllers/common/patients/search/search-results.min.js",
-    "inputFiles": [
-      "controllers/common/patients/search/search-results.js"
-    ]
-  },
-  {
-    "outputFileName": "controllers/common/security/login.min.js",
-    "inputFiles": [
-      "controllers/common/security/login.js"
-    ]
-  },
-  {
-    "outputFileName": "controllers/settings/settings.min.js",
-    "inputFiles": [
-      "controllers/settings/settings.js"
-    ]
-  },
-  {
-    "outputFileName": "controllers/layouts/root.min.js",
-    "inputFiles": [
-      "controllers/layouts/root.js"
-    ]
-  },
-  {
-    "outputFileName": "controllers/layouts/navbar.min.js",
-    "inputFiles": [
-      "controllers/layouts/navbar.js"
-    ]
-  },
-  {
     "outputFileName": "lib/bootstrap-tokenfield.min.js",
     "inputFiles": [
       "lib/bootstrap-tokenfield.js"
@@ -81,6 +51,72 @@
     "outputFileName": "lib/bootstrap-wizard.min.js",
     "inputFiles": [
       "lib/bootstrap-wizard.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-dw.min.js",
+    "inputFiles": [
+      "js/openiz-dw.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-bre.min.js",
+    "inputFiles": [
+      "js/openiz-bre.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/vis.min.js",
+    "inputFiles": [
+      "lib/vis.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/select2-extended-ajax.min.js",
+    "inputFiles": [
+      "lib/select2-extended-ajax.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/angular-filter.min.js",
+    "inputFiles": [
+      "lib/angular-filter.js"
+    ]
+  },
+  {
+    "outputFileName": "css/fullcalendar.min.css",
+    "inputFiles": [
+      "css/fullcalendar.css"
+    ]
+  },
+  {
+    "outputFileName": "css/fullcalendar.print.min.css",
+    "inputFiles": [
+      "css/fullcalendar.print.css"
+    ]
+  },
+  {
+    "outputFileName": "css/pageloader.min.css",
+    "inputFiles": [
+      "css/pageloader.css"
+    ]
+  },
+  {
+    "outputFileName": "css/vis.min.css",
+    "inputFiles": [
+      "css/vis.css"
+    ]
+  },
+  {
+    "outputFileName": "css/xeditable.min.css",
+    "inputFiles": [
+      "css/xeditable.css"
+    ]
+  },
+  {
+    "outputFileName": "css/toastr.min.css",
+    "inputFiles": [
+      "css/toastr.css"
     ]
   }
 ]

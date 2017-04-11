@@ -23,13 +23,13 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// User identifier
         /// </summary>
-        [Column("user_id"), MaxLength(16)]
+        [Column("user_id"), MaxLength(16), Indexed]
         public String UserIdentifier { get; set; }
 
         /// <summary>
         /// Username
         /// </summary>
-        [Column("user_name")]
+        [Column("user_name"), Unique, Collation("NOCASE")]
         public String UserName { get; set; }
 
         /// <summary>

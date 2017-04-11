@@ -88,6 +88,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 if (!locked) return;
 
                 // Exhaust the queue
+                List<Guid> importKeys = new List<Guid>();
                 int remain = SynchronizationQueue.Inbound.Count();
                 int maxTotal = 0;
                 while (remain > 0)
@@ -120,6 +121,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         }
                         else
                             this.ImportElement(dpe);
+
+                        if (bundle != null)
+                            importKeys.AddRange(bundle?.Item.Select(o => o.Key.Value));
+                        else
+                            importKeys.Add(dpe.Key.Value);
+
                         SynchronizationQueue.Inbound.Delete(queueEntry.Id);
                         queueEntry = null;
 
@@ -132,7 +139,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     remain = SynchronizationQueue.Inbound.Count();
                 }
                 ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
-                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound"));
+                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", importKeys.ToArray()));
             }
             catch (TimeoutException e)
             {
@@ -251,6 +258,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 locked = Monitor.TryEnter(this.m_outboundLock, 100);
                 if (!locked) return;
+                List<Guid> exportKeys = new List<Guid>();
                 // Exhaust the queue
                 while (SynchronizationQueue.Outbound.Count() > 0)
                 {
@@ -271,8 +279,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     try
                     {
                         // Reconstitute bundle
-                        (dpe as Bundle)?.Reconstitute();
-                        dpe = (dpe as Bundle)?.Entry ?? dpe;
+                        var bundle = dpe as Bundle;
+                        bundle?.Reconstitute();
+                        dpe = bundle?.Entry ?? dpe;
 
                         // Send the object to the remote host
                         switch (syncItm.Operation)
@@ -287,6 +296,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 integrationService.Update(dpe, syncItm.IsRetry);
                                 break;
                         }
+
+
+                        if (bundle != null)
+                            exportKeys.AddRange(bundle?.Item.Select(o => o.Key.Value));
+                        else
+                            exportKeys.Add(dpe.Key.Value);
 
                         SynchronizationQueue.Outbound.Delete(syncItm.Id); // Get rid of object from queue
                     }
@@ -328,7 +343,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         throw;
                     }
                 }
-                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("outbound"));
+                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("outbound", exportKeys.ToArray()));
 
             }
             finally
@@ -508,11 +523,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public String Queue { get; private set; }
 
         /// <summary>
+        /// Gets or sets the object keys
+        /// </summary>
+        public IEnumerable<Guid> ObjectKeys { get; private set; }
+
+        /// <summary>
         /// Queue has been exhausted
         /// </summary>
-        public QueueExhaustedEventArgs(String queueName)
+        public QueueExhaustedEventArgs(String queueName, params Guid[] objectKeys)
         {
             this.Queue = queueName;
+            this.ObjectKeys = objectKeys;
         }
+
+
     }
 }

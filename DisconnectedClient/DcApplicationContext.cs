@@ -430,7 +430,7 @@ namespace DisconnectedClient
                         navigateAsset.MimeType == "text/xml")
             {
                 var script = File.ReadAllText(itmPath);
-                if (itmPath.Contains("openiz.js"))
+                if (itmPath.Contains("openiz.js") || itmPath.Contains("openiz.min.js"))
                     script += this.GetShimMethods();
                 return script;
             }
@@ -635,6 +635,22 @@ namespace DisconnectedClient
         public override void Exit()
         {
             Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Confirmation
+        /// </summary>
+        public override bool Confirm(string confirmText)
+        {
+            return System.Windows.Forms.MessageBox.Show(confirmText, String.Empty, System.Windows.Forms.MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK;
+        }
+
+        /// <summary>
+        /// Show an alert
+        /// </summary>
+        public override void Alert(string alertText)
+        {
+            System.Windows.Forms.MessageBox.Show(alertText);
         }
     }
 }

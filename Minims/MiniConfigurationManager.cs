@@ -44,6 +44,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace Minims
 {
@@ -160,7 +161,7 @@ namespace Minims
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
-                    typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(SearchIndexService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -182,7 +183,8 @@ namespace Minims
 
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", "")
+                DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", ""),
+                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
             };
 
             // Device key

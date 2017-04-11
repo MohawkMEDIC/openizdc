@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Services.Impl
 {
@@ -44,6 +45,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         IRepositoryService<CodedObservation>,
         IRepositoryService<TextObservation>
     {
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+
         public IEnumerable<Act> Find(Expression<Func<Act, bool>> query)
         {
             throw new NotImplementedException();
@@ -54,10 +60,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public IEnumerable<TAct> Find<TAct>(Expression<Func<TAct, bool>> filter, int offset, int? count, out int totalResults) where TAct : Act
 		{
-            var results = this.Find(filter, offset, count, out totalResults, Guid.Empty);
-            results = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterQuery(results) ?? results;
-            
-            return results;
+            return this.Find<TAct>(filter, offset, count, out totalResults, Guid.Empty);
 		}
 
         /// <summary>
@@ -86,6 +89,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	        {
 				result = ApplicationContext.Current.GetService<IBusinessRulesService<TAct>>()?.AfterRetrieve(result) ?? result;
 			}
+
+            // Data disclosed
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(key.ToString(), new object[] { result }));
 
             return result;
 		}
@@ -122,6 +128,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
             //SynchronizationQueue.Outbound.Enqueue(insert, DataOperationType.Insert);
 
+            this.DataCreated?.Invoke(this, new AuditDataEventArgs(insert));
+
             return insert;
 		}
 
@@ -154,6 +162,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             
             SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
+            this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));
 
             return act;
 		}
@@ -171,6 +180,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             var results = persistenceService.Query(filter, offset, count, out totalResults, queryId);
             results = breService?.AfterQuery(results) ?? results;
+            this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(filter.ToString(), results));
             return results;
         }
 
@@ -202,6 +212,9 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 {
                     var old = persistenceService.Get(act.Key.Value).Clone();
 
+                    if (old == null)
+                        throw new KeyNotFoundException();
+
                     // Fire before update
                     act = breService?.BeforeUpdate(act) ?? act;
 
@@ -218,6 +231,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), act.Key.Value);
                 }
                 else throw new KeyNotFoundException();
+
+                this.DataUpdated?.Invoke(this, new AuditDataEventArgs(act));
                 return act;
             }
             catch (KeyNotFoundException)
@@ -234,6 +249,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(act), DataOperationType.Insert);
                 else
                     SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Insert);
+
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(act));
 
                 return act;
             }

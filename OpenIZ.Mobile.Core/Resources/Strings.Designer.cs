@@ -89,6 +89,24 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Account is locked.
+        /// </summary>
+        internal static string locale_accountLocked {
+            get {
+                return ResourceManager.GetString("locale_accountLocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Account is deleted.
+        /// </summary>
+        internal static string locale_accountObsolete {
+            get {
+                return ResourceManager.GetString("locale_accountObsolete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preparing imported data....
         /// </summary>
         internal static string locale_calculateImportedCareplan {
@@ -177,6 +195,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         internal static string locale_indexing {
             get {
                 return ResourceManager.GetString("locale_indexing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid Username / Password.
+        /// </summary>
+        internal static string locale_invalidUserNamePassword {
+            get {
+                return ResourceManager.GetString("locale_invalidUserNamePassword", resourceCulture);
             }
         }
         

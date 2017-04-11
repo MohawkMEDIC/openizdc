@@ -100,6 +100,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("deviceCertificate")]
         public ServiceCertificateConfiguration DeviceCertificate { get; set; }
+
+        /// <summary>
+        /// Audit retention
+        /// </summary>
+        [XmlElement("auditRetention")]
+        public TimeSpan AuditRetention { get; set; }
     }
 
 }

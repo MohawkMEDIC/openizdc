@@ -55,6 +55,7 @@ using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Interop.AMI;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -190,6 +191,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(AmiPolicyInformationService).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.RemoveAll(o => o == typeof(ImsiPersistenceService).AssemblyQualifiedName);
             ApplicationContext.Current.Configuration.Sections.RemoveAll(o => o is SynchronizationConfigurationSection);
+
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAuditRepositoryService).AssemblyQualifiedName);
+            ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAuditService).AssemblyQualifiedName);
 
             // Data mode
             switch (optionObject["data"]["mode"].Value<String>())
@@ -516,7 +520,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 							CreationTime = DateTimeOffset.Now,
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
-                            UserClass = UserClassKeys.ApplictionUser,
+                            UserClass = UserClassKeys.ApplicationUser,
                             SecurityHash = Guid.NewGuid().ToString()
                         })
                         {

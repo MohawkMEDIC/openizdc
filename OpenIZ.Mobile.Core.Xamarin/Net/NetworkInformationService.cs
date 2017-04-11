@@ -113,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
         {
      
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
-                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, o.Description
+                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, o.Description, o.GetIPProperties().UnicastAddresses.FirstOrDefault()?.ToString()
             ));
 
         }

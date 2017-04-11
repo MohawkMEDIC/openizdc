@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
         public override IEnumerable<NetworkInterfaceInfo> GetInterfaces()
         {
             return NetworkInterface.GetAllNetworkInterfaces().Select(o => new NetworkInterfaceInfo(
-                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, AndroidOS.Build.Model
+                o.Name, o.GetPhysicalAddress().ToString(), o.OperationalStatus == OperationalStatus.Up, AndroidOS.Build.Model, o.GetIPProperties().UnicastAddresses.FirstOrDefault().ToString()
             ));
         }
         /// <summary>

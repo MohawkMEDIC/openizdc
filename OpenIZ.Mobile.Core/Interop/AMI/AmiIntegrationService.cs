@@ -168,7 +168,24 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
         /// </summary>
         public void Insert(IdentifiedData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+                switch (data.GetType().Name)
+                {
+                    case "AuditInfo":
+                        //amiClient.InsertAudit(data as AuditInfo);
+                        break;
+                    default:
+                        throw new NotSupportedException($"AMI servicing not supported for {data.GetType().Name}");
+                }
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+                throw;
+            }
         }
 
         /// <summary>

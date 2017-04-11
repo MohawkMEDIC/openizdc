@@ -17,10 +17,14 @@
  * User: justi
  * Date: 2017-2-4
  */
+using OpenIZ.Core.Interfaces;
+using OpenIZ.Core.Model.Security;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Data.Model.Security;
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Serices;
 using OpenIZ.Mobile.Core.Services;
 using SQLite.Net;
@@ -35,7 +39,7 @@ namespace OpenIZ.Mobile.Core.Security
 	/// <summary>
 	/// Local identity service.
 	/// </summary>
-	public class LocalIdentityService : IIdentityProviderService
+	public class LocalIdentityService : IIdentityProviderService, ISecurityAuditEventSource
 	{
 		// Configuration
 		private DataConfigurationSection m_configuration = ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>();
@@ -54,13 +58,18 @@ namespace OpenIZ.Mobile.Core.Security
 		/// Fired on authenticating
 		/// </summary>
 		public event EventHandler<AuthenticatingEventArgs> Authenticating;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityAttributesChanged;
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
 
-		/// <summary>
-		/// Authenticate the user
-		/// </summary>
-		/// <param name="userName">User name.</param>
-		/// <param name="password">Password.</param>
-		public System.Security.Principal.IPrincipal Authenticate(string userName, string password)
+        /// <summary>
+        /// Authenticate the user
+        /// </summary>
+        /// <param name="userName">User name.</param>
+        /// <param name="password">Password.</param>
+        public System.Security.Principal.IPrincipal Authenticate(string userName, string password)
 		{
 			if (String.IsNullOrEmpty(userName))
 				throw new ArgumentNullException(nameof(userName));
@@ -92,47 +101,60 @@ namespace OpenIZ.Mobile.Core.Security
 			}
 
 			IPrincipal retVal = null;
+            try
+            {
+                // Connect to the db
+                var connection = this.CreateConnection();
+                using (connection.Lock())
+                {
+                    // Password service
+                    IPasswordHashingService passwordHash = ApplicationContext.Current.GetService(typeof(IPasswordHashingService)) as IPasswordHashingService;
 
-			// Connect to the db
-			var connection = this.CreateConnection();
-			using (connection.Lock())
-			{
-				// Password service
-				IPasswordHashingService passwordHash = ApplicationContext.Current.GetService(typeof(IPasswordHashingService)) as IPasswordHashingService;
+                    DbSecurityUser dbs = connection.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == principal.Identity.Name);
+                    if (dbs == null)
+                        throw new SecurityException(Strings.locale_invalidUserNamePassword);
+                    else if (dbs.Lockout.HasValue && dbs.Lockout > DateTime.Now)
+                        throw new SecurityException(Strings.locale_accountLocked);
+                    else if (dbs.ObsoletionTime != null)
+                        throw new SecurityException(Strings.locale_accountObsolete);
+                    else if (passwordHash.ComputeHash(password) != dbs.PasswordHash)
+                    {
+                        dbs.InvalidLoginAttempts++;
+                        connection.Update(dbs);
+                        throw new SecurityException(Strings.locale_invalidUserNamePassword);
+                    }
+                    else if (dbs.InvalidLoginAttempts > 3)
+                    { //s TODO: Make this configurable
+                        dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 3));
+                        connection.Update(dbs);
+                        throw new SecurityException(Strings.locale_accountLocked);
+                    } // TODO: Lacks login permission
+                    else
+                    {
+                        dbs.LastLoginTime = DateTime.Now;
+                        dbs.InvalidLoginAttempts = 0;
+                        connection.Update(dbs);
 
-				DbSecurityUser dbs = connection.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == principal.Identity.Name);
-				if (dbs == null)
-					throw new SecurityException("Invalid username/password");
-				else if (dbs.Lockout.HasValue && dbs.Lockout > DateTime.Now)
-					throw new SecurityException("Account is currently locked");
-				else if (dbs.ObsoletionTime != null)
-					throw new SecurityException("Account is obsolete");
-				else if (passwordHash.ComputeHash(password) != dbs.PasswordHash)
-				{
-					dbs.InvalidLoginAttempts++;
-					connection.Update(dbs);
-				}
-				else if (dbs.InvalidLoginAttempts > 3)
-				{ //s TODO: Make this configurable
-					dbs.Lockout = DateTime.Now.AddSeconds(30 * (dbs.InvalidLoginAttempts - 3));
-					connection.Update(dbs);
-					throw new SecurityException("Account is currently locked");
-				} // TODO: Lacks login permission
-				else
-				{
-					dbs.LastLoginTime = DateTime.Now;
-					dbs.InvalidLoginAttempts = 0;
-					connection.Update(dbs);
+                        // Create the principal
+                        retVal = new SQLitePrincipal(new SQLiteIdentity(dbs.UserName, true),
+                            connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?",
+                            dbs.Uuid).Select(o => o.Name).ToArray());
+                        
+                    }
+                }
 
-					// Create the principal
-					retVal = new SQLitePrincipal(new SQLiteIdentity(dbs.UserName, true),
-						connection.Query<DbSecurityRole>("SELECT security_role.* FROM security_user_role INNER JOIN security_role ON (security_role.uuid = security_user_role.role_id) WHERE security_user_role.user_id = ?",
-						dbs.Uuid).Select(o => o.Name).ToArray());
-				}
-			}
+                // Post-event
+                this.Authenticated?.Invoke(e, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
 
-			// Post-event
-			this.Authenticated?.Invoke(e, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });
+            }
+            catch (Exception ex)
+            {
+                this.m_tracer.TraceError("Error establishing session: {0}", ex);
+                this.Authenticated?.Invoke(e, new AuthenticatedEventArgs(principal.Identity.Name, password, false) { Principal = retVal });
+
+                throw;
+            }
+
 			return retVal;
 		}
 
@@ -177,12 +199,16 @@ namespace OpenIZ.Mobile.Core.Security
 						dbu.UpdatedByUuid = conn.Table<DbSecurityUser>().First(u => u.UserName == principal.Identity.Name).Uuid;
 						dbu.UpdatedTime = DateTime.Now;
 						conn.Update(dbu);
+                        this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(dbu, "password"));
 					}
 				}
 			}
 			catch (Exception e)
 			{
-				this.m_tracer.TraceError("Error changing password for user {0} : {1}", userName, e);
+
+                this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(new SecurityUser() { Key = Guid.Empty, UserName = userName }, "password") { Success = false });
+
+                this.m_tracer.TraceError("Error changing password for user {0} : {1}", userName, e);
 				throw;
 			}
 		}
@@ -202,32 +228,54 @@ namespace OpenIZ.Mobile.Core.Security
 		/// </summary>
 		public IIdentity CreateIdentity(String userName, String password)
 		{
-			return this.CreateIdentity(Guid.NewGuid(), userName, password);
+			return this.CreateIdentity(Guid.NewGuid(), userName, password, AuthenticationContext.Current.Principal);
 		}
 
-		/// <summary>
-		/// Creates an identity for the user
-		/// </summary>
-		public IIdentity CreateIdentity(Guid sid, string userName, string password)
-		{
-			var conn = this.CreateConnection();
-			IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
-			
-			using (conn.Lock())
-			{
-                DbSecurityUser dbu = new DbSecurityUser()
+        /// <summary>
+        /// Create specified identity
+        /// </summary>
+        public IIdentity CreateIdentity(Guid sid, String userName, String password)
+        {
+            return this.CreateIdentity(sid, userName, password, AuthenticationContext.Current.Principal);
+        }
+
+        /// <summary>
+        /// Creates an identity for the user
+        /// </summary>
+        public IIdentity CreateIdentity(Guid sid, string userName, string password, IPrincipal principal)
+        {
+
+            try {
+                var pdp = ApplicationContext.Current.GetService<IPolicyDecisionService>();
+                if (pdp.GetPolicyOutcome(principal ?? AuthenticationContext.Current.Principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+                    throw new PolicyViolationException(PolicyIdentifiers.AccessClientAdministrativeFunction, PolicyGrantType.Deny);
+
+                var conn = this.CreateConnection();
+                IPasswordHashingService hash = ApplicationContext.Current.GetService<IPasswordHashingService>();
+
+                using (conn.Lock())
                 {
-                    PasswordHash = hash.ComputeHash(password),
-                    SecurityHash = Guid.NewGuid().ToString(),
-                    CreationTime = DateTime.Now,
-                    CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
-                    UserName = userName,
-                    Key = sid
-                };
-                conn.Insert(dbu);
-			}
-			return new SQLiteIdentity(userName, false);
-		}
+                    DbSecurityUser dbu = new DbSecurityUser()
+                    {
+                        PasswordHash = hash.ComputeHash(password),
+                        SecurityHash = Guid.NewGuid().ToString(),
+                        CreationTime = DateTime.Now,
+                        CreatedByUuid = conn.Table<DbSecurityUser>().FirstOrDefault(o => o.UserName == AuthenticationContext.Current?.Principal?.Identity?.Name)?.Uuid ?? Guid.Parse("fadca076-3690-4a6e-af9e-f1cd68e8c7e8").ToByteArray(),
+                        UserName = userName,
+                        Key = sid
+                    };
+                    conn.Insert(dbu);
+                    this.DataCreated?.Invoke(this, new AuditDataEventArgs(dbu));
+                }
+                return new SQLiteIdentity(userName, false);
+            }
+            catch
+            {
+                this.DataCreated?.Invoke(this, new AuditDataEventArgs(new SecurityUser()) { Success = false });
+                throw;
+            }
+        }
+
 
 		public void DeleteIdentity(string userName)
 		{

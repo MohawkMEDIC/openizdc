@@ -19,20 +19,26 @@
  */
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
+using OpenIZ.Mobile.Core.Data.Connection;
 using SQLite.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SQLite.Net.Interop;
 
 namespace OpenIZ.Mobile.Core.Data
 {
     /// <summary>
     /// Local data context
     /// </summary>
-    public class LocalDataContext
+    public class LocalDataContext : IDisposable
     {
+
+        // Prepared
+        private Dictionary<String, IDbStatement> m_prepared = new Dictionary<string, IDbStatement>();
+
         /// <summary>
         /// Cache commit
         /// </summary>
@@ -71,6 +77,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
 
+
         /// <summary>
         /// Add cache commit
         /// </summary>
@@ -98,6 +105,31 @@ namespace OpenIZ.Mobile.Core.Data
             IdentifiedData retVal = null;
             this.m_cacheCommit.TryGetValue(key, out retVal);
             return retVal;
+        }
+
+        /// <summary>
+        /// Get or create prepared statement
+        /// </summary>
+        internal IDbStatement GetOrCreatePrepared(string cmdText)
+        {
+            IDbStatement prepared = null;
+            if(!this.m_prepared.TryGetValue(cmdText, out prepared))
+            {
+                prepared = this.Connection.Prepare(cmdText);
+                lock (this.m_prepared)
+                    if (!this.m_prepared.ContainsKey(cmdText))
+                        this.m_prepared.Add(cmdText, prepared);
+            }
+            return prepared;
+        }
+
+        /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (var stmt in this.m_prepared.Values)
+                stmt.Finalize();
         }
     }
 }

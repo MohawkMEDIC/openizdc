@@ -171,6 +171,9 @@
   <data name="flushing_logFile" xml:space="preserve">
     <value>Flusing diagnostics queue...</value>
   </data>
+  <data name="locale_certificateValidation" xml:space="preserve">
+    <value>The server responded with an invalid certificate: {0}. Do you want to trust this certificate?</value>
+  </data>
   <data name="locale_updateCheck" xml:space="preserve">
     <value>Checking for updates...</value>
   </data>

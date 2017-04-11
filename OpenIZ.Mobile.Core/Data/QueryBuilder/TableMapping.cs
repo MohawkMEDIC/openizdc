@@ -62,7 +62,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
 
             this.OrmType = t;
             this.TableName = t.GetTypeInfo().GetCustomAttribute<TableAttribute>()?.Name ?? t.Name;
-            this.Columns = t.GetRuntimeProperties().Where(o => o.GetCustomAttribute<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o, this));
+            this.Columns = t.GetRuntimeProperties().Where(o => o.GetCustomAttribute<ColumnAttribute>() != null).Select(o => ColumnMapping.Get(o, this)).ToList();
             foreach (var itm in this.Columns)
                 this.m_mappings.Add(itm.SourceProperty.Name, itm);
 

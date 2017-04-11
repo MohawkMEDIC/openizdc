@@ -17,6 +17,7 @@
  * User: justi
  * Date: 2016-8-17
  */
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
@@ -31,134 +32,80 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents the local provider service
 	/// </summary>
-	public class LocalProviderService : IProviderRepositoryService
+	public class LocalProviderService : EntityRepositoryBase, IProviderRepositoryService
 	{
-		/// <summary>
-		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
-		/// </summary>
-		private IDataPersistenceService<Provider> persistenceService;
+        /// <summary>
+        /// Searches for a provider using a given predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to use for searching for the provider.</param>
+        /// <returns>Returns a list of providers who match the specified predicate.</returns>
+        public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate)
+        {
+            int t = 0;
+            return this.Find(predicate, 0, null, out t);
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocalProviderService"/> class.
-		/// </summary>
-		public LocalProviderService()
-		{
-			ApplicationContext.Current.Started += (o, e) => { this.persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Provider>>(); };
-		}
+        /// <summary>
+        /// Searches for a provider using a given predicate.
+        /// </summary>
+        /// <param name="predicate">The predicate to use for searching for the provider.</param>
+        /// <param name="count">The count of the providers to return.</param>
+        /// <param name="offset">The offset for the search results.</param>
+        /// <param name="totalCount">The total count of the search results.</param>
+        /// <returns>Returns a list of providers who match the specified predicate.</returns>
+        public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate, int offset, int? count, out int totalCount)
+        {
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
+        }
 
-		/// <summary>
-		/// Searches for a provider using a given predicate.
-		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the provider.</param>
-		/// <returns>Returns a list of providers who match the specified predicate.</returns>
-		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
+        /// <summary>
+        /// Get the provider based on the identity
+        /// </summary>
+        public Provider Get(IIdentity identity)
+        {
+            int t = 0;
+            return base.Find<Provider>(o => o.Relationships.Any(g => (g.TargetEntity as UserEntity).SecurityUser.UserName == identity.Name), 0, 1, out t, Guid.Empty).FirstOrDefault();
+        }
 
-			int totalCount = 0;
-			return this.Find(predicate, 0, null, out totalCount);
-		}
+        /// <summary>
+        /// Gets the specified provider.
+        /// </summary>
+        /// <param name="id">The id of the provider.</param>
+        /// <param name="versionId">The version id of the provider.</param>
+        /// <returns>Returns the specified provider.</returns>
+        public Provider Get(Guid id, Guid versionId)
+        {
+            return base.Get<Provider>(id, versionId);
+        }
 
-		/// <summary>
-		/// Searches for a provider using a given predicate.
-		/// </summary>
-		/// <param name="predicate">The predicate to use for searching for the provider.</param>
-		/// <param name="count">The count of the providers to return.</param>
-		/// <param name="offset">The offset for the search results.</param>
-		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of providers who match the specified predicate.</returns>
-		public IEnumerable<Provider> Find(Expression<Func<Provider, bool>> predicate, int offset, int? count, out int totalCount)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
+        /// <summary>
+        /// Inserts the specified provider.
+        /// </summary>
+        /// <param name="provider">The provider to insert.</param>
+        /// <returns>Returns the inserted provider.</returns>
+        public Provider Insert(Provider provider)
+        {
+            return base.Insert(provider);
+        }
 
-			return this.persistenceService.Query(predicate, offset, count, out totalCount, Guid.Empty);
-		}
+        /// <summary>
+        /// Obsoletes the specified provider.
+        /// </summary>
+        /// <param name="id">The id of the provider to obsolete.</param>
+        /// <returns>Returns the obsoleted provider.</returns>
+        public Provider Obsolete(Guid id)
+        {
+            return base.Obsolete<Provider>(id);
+        }
 
-		/// <summary>
-		/// Get the provider based off the user identity
-		/// </summary>
-		public Provider Get(IIdentity identity)
-		{
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Gets the specified provider.
-		/// </summary>
-		/// <param name="id">The id of the provider.</param>
-		/// <param name="versionId">The version id of the provider.</param>
-		/// <returns>Returns the specified provider.</returns>
-		public Provider Get(Guid id, Guid versionId)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
-
-			return this.persistenceService.Query(p => p.Key == id && p.VersionKey == versionId).FirstOrDefault();
-		}
-
-		/// <summary>
-		/// Inserts the specified provider.
-		/// </summary>
-		/// <param name="provider">The provider to insert.</param>
-		/// <returns>Returns the inserted provider.</returns>
-		public Provider Insert(Provider provider)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
-
-			var result = this.persistenceService.Insert(provider);
-
-			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Insert);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Obsoletes the specified provider.
-		/// </summary>
-		/// <param name="id">The id of the provider to obsolete.</param>
-		/// <returns>Returns the obsoleted provider.</returns>
-		public Provider Obsolete(Guid id)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
-
-			var result = this.persistenceService.Obsolete(new Provider { Key = id });
-
-			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Obsolete);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Saves the specified provider.
-		/// </summary>
-		/// <param name="provider">The provider to save.</param>
-		/// <returns>Returns the saved provider.</returns>
-		public Provider Save(Provider provider)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Provider>)));
-			}
-
-			var result = this.persistenceService.Update(provider);
-
-			SynchronizationQueue.Outbound.Enqueue(result, Synchronization.Model.DataOperationType.Update);
-
-			return result;
-		}
-	}
+        /// <summary>
+        /// Saves the specified provider.
+        /// </summary>
+        /// <param name="provider">The provider to save.</param>
+        /// <returns>Returns the saved provider.</returns>
+        public Provider Save(Provider provider)
+        {
+            return base.Save(provider);
+        }
+    }
 }

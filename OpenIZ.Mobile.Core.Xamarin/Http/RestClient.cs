@@ -36,6 +36,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using OpenIZ.Core.Model.Query;
+using System.Net.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Http
 {
@@ -47,8 +48,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
 		// Config section
 		private ServiceClientConfigurationSection m_configurationSection;
+
 		// Tracer
 		private Tracer m_tracer;
+
+        // Trusted certificates
+        private static HashSet<String> m_trustedCerts = new HashSet<String>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OpenIZ.Mobile.Core.Xamarin.Http.RestClient"/> class.
@@ -96,13 +101,35 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
 			// Compress?
 			if(this.Description.Binding.Optimize)
-				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate,gzip");
+				retVal.Headers.Add (HttpRequestHeader.AcceptEncoding, "deflate"); // use deflate as it appears to be a little faster
 
             // Proxy?
             if (!String.IsNullOrEmpty(this.m_configurationSection.ProxyAddress))
                 retVal.Proxy = new WebProxy(this.m_configurationSection.ProxyAddress);
+
+            retVal.ServerCertificateValidationCallback = this.RemoteCertificateValidation;
+
 			return retVal;
 		}
+
+        /// <summary>
+        /// Remote certificate validation errors
+        /// </summary>
+        private bool RemoteCertificateValidation(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            lock (m_trustedCerts)
+            {
+                if (m_trustedCerts.Contains(certificate.Subject))
+                    return true;
+                else if (ApplicationContext.Current.Confirm(String.Format(Strings.locale_certificateValidation, certificate.Subject, certificate.Issuer)))
+                {
+                    m_trustedCerts.Add(certificate.Subject);
+                    return true;
+                }
+                else
+                    return false;
+            }
+        }
 
         /// <summary>
         /// Invokes the specified method against the url provided

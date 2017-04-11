@@ -32,6 +32,7 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Core.Http;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.Model;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -146,7 +147,17 @@ namespace OpenIZ.Mobile.Core
 			return candidateService;
 		}
 
-		#endregion
+        #endregion
+
+        /// <summary>
+        /// Confirmation dialog
+        /// </summary>
+        public abstract bool Confirm(String confirmText);
+
+        /// <summary>
+        /// Alert dialog
+        /// </summary>
+        public abstract void Alert(String alertText);
 
 		/// <summary>
 		/// Gets the current application context
@@ -285,6 +296,15 @@ namespace OpenIZ.Mobile.Core
         {
             ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
             appSection.Services.Add(Activator.CreateInstance(serviceType));
+        }
+
+        /// <summary>
+        /// Get all services
+        /// </summary>
+        public IEnumerable<object> GetServices()
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            return appSection.Services;
         }
     }
 }

@@ -237,5 +237,15 @@ namespace OpenIZ.Mobile.Core.Test
         {
             throw new NotImplementedException();
         }
+
+        public override bool Confirm(string confirmText)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Alert(string alertText)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

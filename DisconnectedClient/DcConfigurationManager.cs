@@ -44,6 +44,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace DisconnectedClient
 
@@ -161,7 +162,7 @@ namespace DisconnectedClient
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
-                    typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(SearchIndexService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -177,7 +178,8 @@ namespace DisconnectedClient
             // Security configuration
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
-                DeviceName = Environment.MachineName
+                DeviceName = Environment.MachineName,
+                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
             };
 
             // Device key

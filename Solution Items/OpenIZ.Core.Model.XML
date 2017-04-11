@@ -182,8 +182,10 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.#ctor(System.Nullable{System.Guid},System.Nullable{System.Guid})">
             <summary>
-            Entity relationship between <paramref name="source"/> and <paramref name="playerKey"/>
+            Entity relationship between <paramref name="roleType" /> and <paramref name="playerKey" />
             </summary>
+            <param name="roleType">Type of the role.</param>
+            <param name="playerKey">The player key.</param>
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.ActParticipation.PlayerEntityKey">
             <summary>
@@ -266,6 +268,13 @@
             <summary>
             Represents any state data related to the act / protocol link
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActProtocol.SemanticEquals(System.Object)">
+            <summary>
+            Determines equality of this association
+            </summary>
+            <param name="obj">The object.</param>
+            <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActRelationship">
             <summary>
@@ -793,11 +802,6 @@
             Create new bundle
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Collection.Bundle.m_bundleContents">
-            <summary>
-            Represents bundle contents
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Collection.Bundle.ModifiedOn">
             <summary>
             Gets the time the bundle was modified
@@ -837,6 +841,21 @@
         <member name="P:OpenIZ.Core.Model.Collection.Bundle.TotalResults">
             <summary>
             Gets or sets the total results
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.Add(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Add item to the bundle
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.Insert(System.Int32,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Insert data at the specified index
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.HasTag(System.String)">
+            <summary>
+            True if the bundle has a tag
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData)">
@@ -1466,6 +1485,21 @@
         <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.UCUM">
             <summary>
             UCUM
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.PostalAddressUse">
+            <summary>
+            The postal address use code system key.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.EntityNameUse">
+            <summary>
+            The entity name use code system key.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.Constants.CodeSystemKeys.AdministrativeGender">
+            <summary>
+            The administrative gender code system key.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ConceptClassKeys">
@@ -2174,7 +2208,7 @@
             Represents user classification keys
             </summary>
         </member>
-        <member name="F:OpenIZ.Core.Model.Constants.UserClassKeys.ApplictionUser">
+        <member name="F:OpenIZ.Core.Model.Constants.UserClassKeys.ApplicationUser">
             <summary>
             Represents a user which is an application
             </summary>
@@ -2430,6 +2464,24 @@
             Represents a name (human name) that a concept may have
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ConceptName"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ConceptName"/> class.
+            </summary>
+            <param name="name">The name.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptName.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ConceptName"/> class.
+            </summary>
+            <param name="language">The language.</param>
+            <param name="name">The name.</param>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.ConceptName.Language">
             <summary>
             Gets or sets the language code of the object
@@ -2469,6 +2521,18 @@
             <summary>
             Represents a reference term relationship between a concept and reference term
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm.#ctor(System.Nullable{System.Guid},System.Nullable{System.Guid})">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm"/> class.
+            </summary>
+            <param name="referenceTermKey">The reference term identifier.</param>
+            <param name="relationshipTypeKey">The relationship type identifier.</param>
         </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.ConceptReferenceTerm.ReferenceTermKey">
             <summary>
@@ -2950,6 +3014,24 @@
             <summary>
             Display name of a code system or reference term
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ReferenceTermName"/> class.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ReferenceTermName"/> class.
+            </summary>
+            <param name="name">The name.</param>
+        </member>
+        <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.DataTypes.ReferenceTermName"/> class.
+            </summary>
+            <param name="language">The language.</param>
+            <param name="name">The name.</param>
         </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.ReferenceTermName.ShouldSerializeSourceEntityKey">
             <summary>
@@ -3903,6 +3985,12 @@
             Organization ctor
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Organization.#ctor(System.Guid)">
+            <summary>
+            Initializes a new instance of the <see cref="T:OpenIZ.Core.Model.Entities.Organization"/> class.
+            </summary>
+            <param name="key">The key.</param>
+        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Organization.IndustryConcept">
             <summary>
             Gets or sets the industry concept key
@@ -4448,11 +4536,6 @@
         <member name="T:OpenIZ.Core.Model.Map.MapUtil">
             <summary>
             Map utility
-            </summary>
-        </member>
-        <member name="F:OpenIZ.Core.Model.Map.MapUtil.s_flavorValidation">
-            <summary>
-            Flavor validation
             </summary>
         </member>
         <member name="F:OpenIZ.Core.Model.Map.MapUtil.s_wireMaps">

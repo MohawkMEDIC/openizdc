@@ -155,9 +155,13 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                             $rootScope.session.prefs[set.key] = set.value;
                         }
                         $rootScope.$apply();
-                    }
+                    },
+                    onException: function (ex) { console.error(ex);}
                 });
                 $rootScope.$apply();
+            },
+            onException: function (ex) {
+                console.error(ex);
             }
         });
 
@@ -186,6 +190,9 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                                 extendedTimeOut: 0
                             });
                         }
+                    },
+                    onException: function (ex) {
+                        console.error(ex);
                     }
                 });
         });

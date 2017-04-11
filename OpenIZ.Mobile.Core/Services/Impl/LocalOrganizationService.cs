@@ -30,134 +30,71 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an organization repository service.
 	/// </summary>
-	public class LocalOrganizationService : IOrganizationRepositoryService
+	public class LocalOrganizationService : EntityRepositoryBase, IOrganizationRepositoryService
 	{
-		/// <summary>
-		/// The internal reference to the <see cref="IDataPersistenceService{TData}"/> instance.
-		/// </summary>
-		private IDataPersistenceService<Organization> persistenceService;
+        /// <summary>
+        /// Searches for a organization using a given query.
+        /// </summary>
+        /// <param name="query">The predicate to use for searching for the organization.</param>
+        /// <returns>Returns a list of organizations who match the specified query.</returns>
+        public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query)
+        {
+            int t = 0;
+            return this.Find(query, 0, null, out t);
+        }
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="LocalOrganizationService"/> class.
-		/// </summary>
-		public LocalOrganizationService()
-		{
-			ApplicationContext.Current.Started += (o, e) => { this.persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<Organization>>(); };
-		}
+        /// <summary>
+        /// Searches for a Organization using a given query.
+        /// </summary>
+        /// <param name="query">The predicate to use for searching for the organization.</param>
+        /// <param name="count">The count of the organizations to return.</param>
+        /// <param name="offset">The offset for the search results.</param>
+        /// <param name="totalCount">The total count of the search results.</param>
+        /// <returns>Returns a list of organizations who match the specified query.</returns>
+        public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query, int offset, int? count, out int totalCount)
+        {
+            return base.Find(query, offset, count, out totalCount, Guid.Empty);
+        }
 
-		/// <summary>
-		/// Searches for a organization using a given query.
-		/// </summary>
-		/// <param name="query">The query to use for searching for the organization.</param>
-		/// <returns>Returns a list of organizations who match the specified query.</returns>
-		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
+        /// <summary>
+        /// Gets the specified organization.
+        /// </summary>
+        /// <param name="id">The id of the organization.</param>
+        /// <param name="versionId">The version id of the organization.</param>
+        /// <returns>Returns the specified organization.</returns>
+        public Organization Get(Guid id, Guid versionId)
+        {
+            return base.Get<Organization>(id, versionId);
+        }
 
-			return this.persistenceService.Query(query);
-		}
+        /// <summary>
+        /// Inserts the specified organization.
+        /// </summary>
+        /// <param name="organization">The organization to insert.</param>
+        /// <returns>Returns the inserted organization.</returns>
+        public Organization Insert(Organization organization)
+        {
+            return base.Insert(organization);
+        }
 
-		/// <summary>
-		/// Searches for a organization using a given query.
-		/// </summary>
-		/// <param name="query">The query to use for searching for the organization.</param>
-		/// <param name="count">The count of the organizations to return.</param>
-		/// <param name="offset">The offset for the search results.</param>
-		/// <param name="totalCount">The total count of the search results.</param>
-		/// <returns>Returns a list of organizations who match the specified query.</returns>
-		public IEnumerable<Organization> Find(Expression<Func<Organization, bool>> query, int offset, int? count, out int totalCount)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
+        /// <summary>
+        /// Obsoletes the specified organization.
+        /// </summary>
+        /// <param name="id">The id of the organization to obsolete.</param>
+        /// <returns>Returns the obsoleted organization.</returns>
+        public Organization Obsolete(Guid id)
+        {
+            return base.Obsolete<Organization>(id);
+        }
 
-			return this.persistenceService.Query(query, offset, count, out totalCount, Guid.Empty);
-		}
-
-		/// <summary>
-		/// Gets the specified organization.
-		/// </summary>
-		/// <param name="id">The id of the organization.</param>
-		/// <param name="versionId">The version id of the organization.</param>
-		/// <returns>Returns the specified organization.</returns>
-		public Organization Get(Guid id, Guid versionId)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
-
-			return this.persistenceService.Get(id);
-		}
-
-		/// <summary>
-		/// Inserts the specified organization.
-		/// </summary>
-		/// <param name="organization">The organization to insert.</param>
-		/// <returns>Returns the inserted organization.</returns>
-		public Organization Insert(Organization organization)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
-
-			var result = this.persistenceService.Insert(organization);
-
-			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Obsoletes the specified organization.
-		/// </summary>
-		/// <param name="id">The id of the organization to obsolete.</param>
-		/// <returns>Returns the obsoleted organization.</returns>
-		public Organization Obsolete(Guid id)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
-
-			var result = this.persistenceService.Obsolete(new Organization { Key = id });
-
-			SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Obsolete);
-
-			return result;
-		}
-
-		/// <summary>
-		/// Saves the specified organization.
-		/// </summary>
-		/// <param name="organization">The organization to save.</param>
-		/// <returns>Returns the saved organization.</returns>
-		public Organization Save(Organization organization)
-		{
-			if (this.persistenceService == null)
-			{
-				throw new InvalidOperationException(string.Format("Unable to locate persistence service: {0}", nameof(IDataPersistenceService<Organization>)));
-			}
-
-			Organization result = null;
-
-			try
-			{
-				result = this.persistenceService.Update(organization);
-				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Update);
-			}
-			catch (KeyNotFoundException)
-			{
-				result = this.persistenceService.Insert(organization);
-				SynchronizationQueue.Outbound.Enqueue(result, DataOperationType.Insert);
-			}
-
-			return result;
-		}
-	}
+        /// <summary>
+        /// Saves the specified organization.
+        /// </summary>
+        /// <param name="organization">The organization to save.</param>
+        /// <returns>Returns the saved organization.</returns>
+        public Organization Save(Organization organization)
+        {
+            return base.Save(organization);
+        }
+    }
 }

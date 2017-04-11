@@ -104,172 +104,180 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
             IPrincipal retVal = null;
             var localIdp = new LocalIdentityService();
 
-            using (IRestClient restClient = ApplicationContext.Current.GetRestClient("acs"))
+            try
             {
-
-                try
+                using (IRestClient restClient = ApplicationContext.Current.GetRestClient("acs"))
                 {
-                    // Set credentials
-                    restClient.Credentials = new OAuthTokenServiceCredentials(principal);
-
-                    // Create grant information
-                    OAuthTokenRequest request = null;
-                    if (!String.IsNullOrEmpty(password))
-                        request = new OAuthTokenRequest(principal.Identity.Name, password, scope);
-                    else if (principal is TokenClaimsPrincipal)
-                        request = new OAuthTokenRequest(principal as TokenClaimsPrincipal, scope);
-                    else
-                        request = new OAuthTokenRequest(principal.Identity.Name, null, scope);
 
                     try
                     {
-                        restClient.Requesting += (o, p) =>
-                        {
-                            p.AdditionalHeaders.Add("X-OpenIZClient-Claim", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}={1}", ClaimTypes.OpenIzScopeClaim, scope))));
-                            if (!String.IsNullOrEmpty(tfaSecret))
-                                p.AdditionalHeaders.Add("X-OpenIZ-TfaSecret", tfaSecret);
-                        };
+                        // Set credentials
+                        restClient.Credentials = new OAuthTokenServiceCredentials(principal);
 
-                        // Invoke
-                        OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
-                        retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
-                    }
-                    catch (WebException ex) // Raw level web exception
-                    {
-                        // Not network related, but a protocol level error
-                        if (ex.Status == WebExceptionStatus.ProtocolError)
-                            throw;
+                        // Create grant information
+                        OAuthTokenRequest request = null;
+                        if (!String.IsNullOrEmpty(password))
+                            request = new OAuthTokenRequest(principal.Identity.Name, password, scope);
+                        else if (principal is TokenClaimsPrincipal)
+                            request = new OAuthTokenRequest(principal as TokenClaimsPrincipal, scope);
+                        else
+                            request = new OAuthTokenRequest(principal.Identity.Name, null, scope);
 
-                        this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
                         try
                         {
-                            retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                            restClient.Requesting += (o, p) =>
+                            {
+                                p.AdditionalHeaders.Add("X-OpenIZClient-Claim", Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("{0}={1}", ClaimTypes.OpenIzScopeClaim, scope))));
+                                if (!String.IsNullOrEmpty(tfaSecret))
+                                    p.AdditionalHeaders.Add("X-OpenIZ-TfaSecret", tfaSecret);
+                            };
+
+                            // Invoke
+                            OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
+                            retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
+                            this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
+
                         }
-                        catch
+                        catch (WebException ex) // Raw level web exception
                         {
-                            throw new SecurityException(Strings.err_offline_use_cache_creds);
+                            // Not network related, but a protocol level error
+                            if (ex.Status == WebExceptionStatus.ProtocolError)
+                                throw;
+
+                            this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                            try
+                            {
+                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                            }
+                            catch
+                            {
+                                throw new SecurityException(Strings.err_offline_use_cache_creds);
+                            }
                         }
+                        catch (SecurityException ex)
+                        {
+                            this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex);
+                            throw;
+                        }
+                        catch (Exception ex) // fallback to local
+                        {
+                            try
+                            {
+                                this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
+                                retVal = localIdp.Authenticate(principal.Identity.Name, password);
+                            }
+                            catch
+                            {
+                                throw new SecurityException(Strings.err_offline_use_cache_creds);
+                            }
+                        }
+
+                        // Create a security user and ensure they exist!
+                        var localRp = new LocalRoleProviderService();
+                        var localPip = new LocalPolicyInformationService();
+
+                        // We have a match! Lets make sure we cache this data
+                        // TODO: Clean this up
+                        if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal &&
+                            XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
+                        {
+                            ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
+                            var amiPip = new AmiPolicyInformationService(cprincipal);
+
+                            // We want to impersonate SYSTEM
+                            //AndroidApplicationContext.Current.SetPrincipal(cprincipal);
+
+                            // Ensure policies exist from the claim
+                            foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))
+                            {
+                                if (localPip.GetPolicy(itm.Value) == null)
+                                {
+                                    var policy = amiPip.GetPolicy(itm.Value);
+                                    localPip.CreatePolicy(policy, new SystemPrincipal());
+                                }
+                            }
+
+                            // Ensure roles exist from the claim
+                            var localRoles = localRp.GetAllRoles();
+                            foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
+                            {
+                                // Ensure policy exists
+                                var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
+                                foreach (var pol in amiPolicies)
+                                    if (localPip.GetPolicy(pol.Policy.Oid) == null)
+                                    {
+                                        var policy = amiPip.GetPolicy(pol.Policy.Oid);
+                                        localPip.CreatePolicy(policy, new SystemPrincipal());
+                                    }
+
+                                // Local role doesn't exist
+                                if (!localRoles.Contains(itm.Value))
+                                {
+                                    localRp.CreateRole(itm.Value, new SystemPrincipal());
+                                }
+                                localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
+
+                            }
+
+                            IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
+                            try
+                            {
+                                if (localUser == null)
+                                    localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password, new SystemPrincipal());
+                                else
+                                {
+                                    localIdp.ChangePassword(principal.Identity.Name, password, principal);
+                                    //localIdp.Authenticate(principal, password);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
+                            }
+
+                            // Add user to roles
+                            // TODO: Remove users from specified roles?
+                            localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
+
+                        }
+                    }
+                    catch (RestClientException<OAuthTokenResponse> ex)
+                    {
+                        this.m_tracer.TraceError("REST client exception: {0}", ex);
+                        var se = new SecurityException(
+                            String.Format("err_oauth2_{0}", ex.Result.Error),
+                            ex
+                        );
+                        se.Data.Add("detail", ex.Result);
+                        throw se;
+                    }
+                    catch (SecurityTokenException ex)
+                    {
+                        this.m_tracer.TraceError("TOKEN exception: {0}", ex);
+                        throw new SecurityException(
+                            String.Format("err_token_{0}", ex.Type),
+                            ex
+                        );
                     }
                     catch (SecurityException ex)
                     {
-                        this.m_tracer.TraceError("Server was contacted however the token is invalid: {0}", ex);
+                        this.m_tracer.TraceError("Security exception: {0}", ex);
                         throw;
                     }
-                    catch (Exception ex) // fallback to local
+                    catch (Exception ex)
                     {
-                        try
-                        {
-                            this.m_tracer.TraceWarning("Original OAuth2 request failed trying local. {0}", ex);
-                            retVal = localIdp.Authenticate(principal.Identity.Name, password);
-                        }
-                        catch
-                        {
-                            throw new SecurityException(Strings.err_offline_use_cache_creds);
-                        }
+                        this.m_tracer.TraceError("Generic exception: {0}", ex);
+                        throw new SecurityException(
+                            Strings.err_authentication_exception,
+                            ex);
                     }
-
-                    // Create a security user and ensure they exist!
-                    var localRp = new LocalRoleProviderService();
-                    var localPip = new LocalPolicyInformationService();
-
-                    // We have a match! Lets make sure we cache this data
-                    // TODO: Clean this up
-                    if (!String.IsNullOrEmpty(password) && retVal is ClaimsPrincipal && 
-                        XamarinApplicationContext.Current.ConfigurationManager.IsConfigured)
-                    {
-                        ClaimsPrincipal cprincipal = retVal as ClaimsPrincipal;
-                        var amiPip = new AmiPolicyInformationService(cprincipal);
-
-                        // We want to impersonate SYSTEM
-                        //AndroidApplicationContext.Current.SetPrincipal(cprincipal);
-
-                        // Ensure policies exist from the claim
-                        foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimTypes.OpenIzGrantedPolicyClaim))
-                        {
-                            if (localPip.GetPolicy(itm.Value) == null)
-                            {
-                                var policy = amiPip.GetPolicy(itm.Value);
-                                localPip.CreatePolicy(policy, new SystemPrincipal());
-                            }
-                        }
-
-                        // Ensure roles exist from the claim
-                        var localRoles = localRp.GetAllRoles();
-                        foreach (var itm in cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType))
-                        {
-                            // Ensure policy exists
-                            var amiPolicies = amiPip.GetActivePolicies(new SecurityRole() { Name = itm.Value }).ToArray();
-                            foreach(var pol in amiPolicies)
-                                if (localPip.GetPolicy(pol.Policy.Oid) == null)
-                                {
-                                    var policy = amiPip.GetPolicy(pol.Policy.Oid);
-                                    localPip.CreatePolicy(policy, new SystemPrincipal());
-                                }
-
-                            // Local role doesn't exist
-                            if (!localRoles.Contains(itm.Value))
-                            {
-                                localRp.CreateRole(itm.Value, new SystemPrincipal());
-                            }
-                            localRp.AddPoliciesToRoles(amiPolicies, new String[] { itm.Value }, new SystemPrincipal());
-
-                        }
-
-                        IIdentity localUser = XamarinApplicationContext.Current.ConfigurationManager.IsConfigured ? localIdp.GetIdentity(principal.Identity.Name) : null;
-                        try
-                        {
-                            if (localUser == null)
-                                localIdp.CreateIdentity(Guid.Parse(cprincipal.FindClaim(ClaimTypes.Sid).Value), principal.Identity.Name, password);
-                            else
-                            {
-                                localIdp.ChangePassword(principal.Identity.Name, password, principal);
-                                localIdp.Authenticate(principal, password);
-                            }
-                        }
-                        catch(Exception ex)
-                        {
-                            this.m_tracer.TraceWarning("Insertion of local cache credential failed: {0}", ex);
-                        }
-
-                        // Add user to roles
-                        // TODO: Remove users from specified roles?
-                        localRp.AddUsersToRoles(new String[] { principal.Identity.Name }, cprincipal.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType).Select(o => o.Value).ToArray(), new SystemPrincipal());
-
-                    }
-                }
-                catch (RestClientException<OAuthTokenResponse> ex)
-                {
-                    this.m_tracer.TraceError("REST client exception: {0}", ex);
-                    var se = new SecurityException(
-                        String.Format("err_oauth2_{0}", ex.Result.Error),
-                        ex
-                    );
-                    se.Data.Add("detail", ex.Result);
-                    throw se;
-                }
-                catch (SecurityTokenException ex)
-                {
-                    this.m_tracer.TraceError("TOKEN exception: {0}", ex);
-                    throw new SecurityException(
-                        String.Format("err_token_{0}", ex.Type),
-                        ex
-                    );
-                }
-                catch(SecurityException ex)
-                {
-                    this.m_tracer.TraceError("Security exception: {0}", ex);
-                    throw;
-                }
-                catch (Exception ex)
-                {
-                    this.m_tracer.TraceError("Generic exception: {0}", ex);
-                    throw new SecurityException(
-                        Strings.err_authentication_exception,
-                        ex);
                 }
             }
+            catch {
+                this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, false) { Principal = retVal });
+                throw;
+            }
 
-            this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password) { Principal = retVal });
             return retVal;
         }
         /// <summary>

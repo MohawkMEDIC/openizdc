@@ -556,8 +556,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         public bool Stop()
         {
             this.Stopping?.Invoke(this, EventArgs.Empty);
-            this.m_tracer.TraceInfo("Stopping IMS services...");
-            this.m_listener.Stop();
+            this.m_tracer?.TraceInfo("Stopping IMS services...");
+            this.m_listener?.Stop();
             this.m_listener = null;
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;

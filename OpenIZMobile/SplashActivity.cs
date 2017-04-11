@@ -146,27 +146,7 @@ namespace OpenIZMobile
                         try
                         {
 
-                            if (AndroidApplicationContext.StartTemporary(this.ApplicationContext))
-                            {
-                                this.m_tracer = Tracer.GetTracer(typeof(SplashActivity));
-
-                                try
-                                {
-                                    using (var gzs = new GZipStream(Assets.Open("Applets/org.openiz.core.pak"), CompressionMode.Decompress))
-                                    {
-                                        // Write data to assets directory
-                                        var package = AppletPackage.Load(gzs);
-                                        AndroidApplicationContext.Current.InstallApplet(package, true);
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    this.m_tracer.TraceError(e.ToString());
-                                    throw;
-                                }
-
-                            }
-                            else
+                            if (!AndroidApplicationContext.StartTemporary(this.ApplicationContext))
                                 throw new InvalidOperationException("Cannot start temporary authentication pricipal");
                         }
                         catch (Exception e)

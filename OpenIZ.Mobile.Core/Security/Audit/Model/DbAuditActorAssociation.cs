@@ -24,13 +24,13 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Audit identifier
         /// </summary>
-        [Column("audit_id"), NotNull, ForeignKey(typeof(DbAuditData), nameof(DbAuditData.Id))]
+        [Column("audit_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditData), nameof(DbAuditData.Id))]
         public int AuditId { get; set; }
 
         /// <summary>
         /// Actor identifier
         /// </summary>
-        [Column("actor_id"), NotNull, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
+        [Column("actor_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
         public int ActorId { get; set; }
 
     }

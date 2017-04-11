@@ -35,13 +35,19 @@ namespace OpenIZ.Mobile.Core.Services
         /// <summary>
         /// Network interface ctor
         /// </summary>
-        public NetworkInterfaceInfo(String name, String macAddress, bool isActive, String manufacturer)
+        public NetworkInterfaceInfo(String name, String macAddress, bool isActive, String manufacturer, string ipAddress)
         {
             this.Name = name;
             this.MacAddress = macAddress;
             this.IsActive = isActive;
             this.Manufacturer = manufacturer;
+            this.IpAddress = ipAddress;
         }
+
+        /// <summary>
+        /// IpAddress
+        /// </summary>
+        public string IpAddress { get; set; }
 
         /// <summary>
         /// Mac address

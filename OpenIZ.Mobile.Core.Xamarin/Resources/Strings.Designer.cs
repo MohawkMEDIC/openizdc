@@ -223,6 +223,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The server responded with an invalid certificate: {0}. Do you want to trust this certificate?.
+        /// </summary>
+        internal static string locale_certificateValidation {
+            get {
+                return ResourceManager.GetString("locale_certificateValidation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checking for updates....
         /// </summary>
         internal static string locale_updateCheck {

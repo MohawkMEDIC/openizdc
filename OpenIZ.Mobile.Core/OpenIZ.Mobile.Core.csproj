@@ -32,6 +32,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />
+    <Compile Include="Data\Connection\SQLiteConnectionExtensions.cs" />
     <Compile Include="Data\ILocalPersistenceService.cs" />
     <Compile Include="Data\LocalDataContext.cs" />
     <Compile Include="Data\Model\Acts\DbActProtocol.cs" />
@@ -50,6 +51,8 @@
     <Compile Include="Security\Audit\Model\DbAuditActor.cs" />
     <Compile Include="Security\Audit\Model\DbAuditData.cs" />
     <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
+    <Compile Include="Security\Audit\AuditUtil.cs" />
+    <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />

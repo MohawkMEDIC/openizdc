@@ -30,6 +30,10 @@ using System.Collections;
 using OpenIZ.Core.Model.DataTypes;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Services;
+using OpenIZ.Core.Interfaces;
+using SQLite.Net.Interop;
+using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Mobile.Core.Data.Connection;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -64,17 +68,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
 
             // Ensure exists
-            if(data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
+            if (data.NameUse != null) data.NameUse = data.NameUse?.EnsureExists(context);
             data.NameUseKey = data.NameUse?.Key ?? data.NameUseKey;
             var retVal = base.InsertInternal(context, data);
 
             // Data component
-            if (data.Component != null)
-                base.UpdateAssociatedItems<EntityNameComponent, EntityName>(
-                    new List<EntityNameComponent>(),
-                    data.Component, 
-                    data.Key, 
-                    context);
+            var namePx = ApplicationContext.Current.GetService<EntityNameComponentPersistenceService>();
+
+            String cmdText = SQLiteCommandBuilder.Insert<DbEntityNameComponent>();
+            var dbStatement = context.GetOrCreatePrepared(cmdText);
+
+            foreach (var itm in data.Component.Select(c =>
+            {
+                var cmp = namePx.FromModelInstance(c, context) as DbEntityNameComponent;
+                cmp.NameUuid = retVal.Key.Value.ToByteArray();
+                return cmp;
+            }).Where(o => o.ValueUuid != null))
+            {
+
+                dbStatement.BindInsert(itm);
+                dbStatement.ExecutePreparedNonQuery();
+            }
+
 
             return retVal;
         }
@@ -125,10 +140,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var nameValue = (dataInstance as DbEntityNameComponent.QueryResult)?.GetInstanceOf<DbPhoneticValue>() ?? context.Connection.Table<DbPhoneticValue>().Where(o => o.Uuid == entName.ValueUuid).FirstOrDefault();
             return new EntityNameComponent()
             {
-                ComponentTypeKey = new Guid(entName.ComponentTypeUuid ?? Guid.Empty.ToByteArray() ),
+                ComponentTypeKey = new Guid(entName.ComponentTypeUuid ?? Guid.Empty.ToByteArray()),
                 Value = nameValue.Value,
                 Key = entName.Key,
-                PhoneticAlgorithmKey = new Guid(nameValue.PhoneticAlgorithmUuid ?? Guid.Empty.ToByteArray() ),
+                PhoneticAlgorithmKey = new Guid(nameValue.PhoneticAlgorithmUuid ?? Guid.Empty.ToByteArray()),
                 PhoneticCode = nameValue.PhoneticCode,
                 SourceEntityKey = new Guid(entName.NameUuid)
             };
@@ -139,7 +154,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityNameComponent modelInstance, LocalDataContext context)
         {
-            var retVal = base.FromModelInstance(modelInstance, context) as DbEntityNameComponent;
+            var retVal = new DbEntityNameComponent()
+            {
+                NameUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
 
             // Address component already exists?
             byte[] existingKey = null;

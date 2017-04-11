@@ -149,5 +149,23 @@ namespace OpenIZ.Mobile.Core.Android.Resources {
                 return ResourceManager.GetString("err_unauthenticated_principal", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string locale_cancel {
+            get {
+                return ResourceManager.GetString("locale_cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        internal static string locale_confirm {
+            get {
+                return ResourceManager.GetString("locale_confirm", resourceCulture);
+            }
+        }
     }
 }
