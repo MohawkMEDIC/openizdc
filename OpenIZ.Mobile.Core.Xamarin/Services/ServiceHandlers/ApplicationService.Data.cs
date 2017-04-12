@@ -211,6 +211,36 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "30"),
                 totalResults = 0;
 
+            var explId = MiniImsServer.CurrentContext.Request.QueryString["_id"];
+            if (!String.IsNullOrEmpty(explId))
+                // Get the queue
+                switch (MiniImsServer.CurrentContext.Request.QueryString["_queue"])
+                {
+                    case "inbound":
+                        return new AmiCollection<SynchronizationQueueEntry>()
+                        {
+                            CollectionItem = new List<SynchronizationQueueEntry>() { SynchronizationQueue.Inbound.Get(Int32.Parse(explId)) }
+                        };
+                    case "outbound":
+                        return new AmiCollection<SynchronizationQueueEntry>()
+                        {
+                            CollectionItem = new List<SynchronizationQueueEntry>() { SynchronizationQueue.Outbound.Get(Int32.Parse(explId)) }
+                        };
+                    case "admin":
+                        return new AmiCollection<SynchronizationQueueEntry>()
+                        {
+                            CollectionItem = new List<SynchronizationQueueEntry>() { SynchronizationQueue.Admin.Get(Int32.Parse(explId)) }
+                        };
+                    case "dead":
+                        return new AmiCollection<SynchronizationQueueEntry>()
+                        {
+                            CollectionItem = new List<SynchronizationQueueEntry>() { SynchronizationQueue.DeadLetter.Get(Int32.Parse(explId)) }
+                        };
+
+                    default:
+                        throw new KeyNotFoundException();
+                }
+            else
             // Get the queue
             switch (MiniImsServer.CurrentContext.Request.QueryString["_queue"])
             {
@@ -252,7 +282,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "admin":
                     {
                         var predicate = QueryExpressionParser.BuildLinqExpression<OutboundAdminQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Admin.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
+                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.Admin.Query(predicate, offset, count, out totalResults).Select(o => new OutboundAdminQueueEntry()
+                        {
+                            Id = o.Id,
+                            CreationTime = o.CreationTime,
+                            Operation = o.Operation,
+                            Type = o.Type
+                        }).OfType<SynchronizationQueueEntry>().ToList())
                         {
                             Size = totalResults,
                             Offset = offset
@@ -261,7 +297,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 case "dead":
                     {
                         var predicate = QueryExpressionParser.BuildLinqExpression<DeadLetterQueueEntry>(search);
-                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.DeadLetter.Query(predicate, offset, count, out totalResults).OfType<SynchronizationQueueEntry>().ToList())
+                        return new AmiCollection<SynchronizationQueueEntry>(SynchronizationQueue.DeadLetter.Query(predicate, offset, count, out totalResults).Select(o => new DeadLetterQueueEntry()
+                        {
+                            Id = o.Id,
+                            CreationTime = o.CreationTime,
+                            Operation = o.Operation,
+                            Type = o.Type,
+                            OriginalQueue = o.OriginalQueue
+                        }).OfType<SynchronizationQueueEntry>().ToList())
                         {
                             Size = totalResults,
                             Offset = offset

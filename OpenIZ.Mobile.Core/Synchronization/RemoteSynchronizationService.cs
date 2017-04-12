@@ -42,6 +42,7 @@ using OpenIZ.Core.Alert.Alerting;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Security;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Synchronization
 {
@@ -233,6 +234,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 var qid = Guid.NewGuid();
 
+                // Performance timer for more intelligent query control
+                Stopwatch perfTimer = new Stopwatch();
+
                 // Enqueue
                 for (int i = result.Count; i < result.TotalResults; i += result.Count)
                 {
@@ -246,19 +250,31 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
                             infopt.Add(itm.Key, itm.Value);
                     }
-                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 30000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
+
+                    perfTimer.Reset();
+                    perfTimer.Start();
+                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 60000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
+                    perfTimer.Stop();
 
                     // Queue the act of queueing
                     if (result != null)
                     {
-                        if (result.TotalResults > 5000)
+                        if (count == 1000 && perfTimer.ElapsedMilliseconds < 25000 ||
+                            count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 1000;
-                        else if (result.TotalResults > 1000)
+                        else if (count == 500 && perfTimer.ElapsedMilliseconds < 20000 ||
+                            count < 500 &&  result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
+                            count = 500;
+                        else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
+                            count < 200 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 200;
+                        else
+                            count = 75;
+
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
-
-                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o => { SynchronizationQueue.Inbound.Enqueue(o as IdentifiedData, DataOperationType.Sync); }, result);
+                        
+                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem((o) => SynchronizationQueue.Inbound.Enqueue(o as IdentifiedData, DataOperationType.Sync), result);
                         
                         retVal = result.TotalResults;
                     }

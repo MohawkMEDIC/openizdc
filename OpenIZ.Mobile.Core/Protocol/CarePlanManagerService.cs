@@ -117,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
             // Application context has started
             ApplicationContext.Current.Started += (ao, ae) =>
-            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(xo=>
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(xo =>
             {
                 try
                 {
@@ -149,17 +149,20 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-
-                    var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
-                    Guid queryId = Guid.NewGuid();
-                    int tr = 1, ofs = 0;
-                    while (ofs < tr)
+                    if (SynchronizationQueue.Inbound.Count() == 0)
                     {
-                        ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                        var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
-                        ofs += 15;
-                        foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
-                            this.QueueWorkItem(p);
+
+                        var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
+                        Guid queryId = Guid.NewGuid();
+                        int tr = 1, ofs = 0;
+                        while (ofs < tr)
+                        {
+                            ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
+                            var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
+                            ofs += 15;
+                            foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
+                                this.QueueWorkItem(p);
+                        }
                     }
 
                     // Stage 3. Subscribe to persistence
@@ -171,8 +174,10 @@ namespace OpenIZ.Mobile.Core.Protocol
                             EventHandler<QueueExhaustedEventArgs> evtHandler = null;
                             evtHandler = (qo, qe) =>
                             {
-                                if(qe.Queue == "inbound")
+                                if (qe.Queue == "inbound")
                                 {
+                                    Guid queryId = Guid.NewGuid();
+                                    int tr = 1, ofs = 0;
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
@@ -256,7 +261,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                 this.m_actCarePlanPromise.RemoveAll(i => i.Key == qitm.Key);
                         }
 
-                        if(promiseCount > 0)
+                        if (promiseCount > 0)
                             ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, 0), 0);
 
                         this.m_resetEvent.Reset();
@@ -411,12 +416,12 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // First, we clear the warehouse
                     warehouseService.Delete(this.m_dataMart.Id, new { patient_id = patient.Key.Value });
-                    
+
                     // Now calculate
                     carePlan = careplanService.CreateCarePlan(patient, false, this.m_parameters);
 
                     // Remove for all on this patient
-                    lock(this.m_lock)
+                    lock (this.m_lock)
                         this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == patient.Key.Value || i is Patient && (i as Patient).Key == patient.Key.Value));
 
                 }
@@ -427,7 +432,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         patient_id = patientId.Value,
                         protocol_id = act.Protocols.FirstOrDefault()?.ProtocolKey
                     });
-                    
+
                     carePlan = careplanService.CreateCarePlan(patient, false, this.m_parameters, act.Protocols.FirstOrDefault().ProtocolKey);
 
                     // Remove for all on this patient

@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the target concept identifier.
 		/// </summary>
 		/// <value>The target concept identifier.</value>
-		[Column("targetConcept"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+		[Column("targetConcept"), NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] TargetConceptUuid {
 			get;
 			set;

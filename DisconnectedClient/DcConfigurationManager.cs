@@ -162,6 +162,7 @@ namespace DisconnectedClient
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
+                    typeof(DeflateStreamCompressionService).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
@@ -307,5 +308,7 @@ namespace DisconnectedClient
                 return this.m_configuration;
             }
         }
+
+
     }
 }

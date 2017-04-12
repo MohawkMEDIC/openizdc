@@ -45,7 +45,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Acts
         /// <summary>
         /// Gets or sets the target entity
         /// </summary>
-        [Column("target"), MaxLength(16), NotNull, Indexed, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
+        [Column("target"), MaxLength(16), NotNull, ForeignKey(typeof(DbAct), nameof(DbAct.Uuid))]
         public byte[] TargetUuid { get; set; }
 
         /// <summary>

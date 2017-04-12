@@ -247,5 +247,10 @@ namespace OpenIZ.Mobile.Core.Test
         {
             throw new NotImplementedException();
         }
+
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

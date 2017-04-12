@@ -232,7 +232,7 @@ namespace OpenIZ.Mobile.Core.Android
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
                     {
-                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter, itm.Filter);
                     }
                 }
                 catch (Exception e)
@@ -565,6 +565,14 @@ namespace OpenIZ.Mobile.Core.Android
 
 
             alertDialogBuilder.Create().Show();
+        }
+
+        /// <summary>
+        /// Output performanc log info
+        /// </summary>
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
+        {
+            Log.Info("OpenIZ_PERF", $"{className}.{methodName}@{tagName} - {counter}");
         }
 
         #endregion implemented abstract members of ApplicationContext

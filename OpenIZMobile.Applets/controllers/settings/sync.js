@@ -33,6 +33,7 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($sco
     $scope.renderB64 = renderB64;
     $scope.requeueItem = requeueItem;
     $scope.deleteQueueItem = deleteQueueItem;
+    $scope.selectItem = selectItem;
 
     function getQueue(queueName) {
         OpenIZ.Queue.getQueueAsync({
@@ -44,6 +45,7 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($sco
                 }
                 else
                     $scope.queue[queueName] = data;
+                $scope.queue[queueName].name = queueName;
                 $scope.$apply();
             },
             onException: function (data) {
@@ -57,6 +59,27 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($sco
         console.log("close");
         $scope.queue.current = null;
         delete $scope.queue.current;
+    }
+
+    function selectItem(id) {
+        $scope.isLoading = true;
+        OpenIZ.Queue.getQueueAsync({
+            queueName: $scope.queue.current.name,
+            id: id,
+            continueWith: function (data) {
+                $scope.queue.currentItem = data.CollectionItem[0];
+                $scope.$apply();
+            },
+            onException: function (ex) {
+                if (ex.message)
+                    alert(OpenIZ.Localization.getString(ex.message));
+                else
+                    console.error(ex);
+            },
+            finally: function () {
+                $scope.isLoading = false;
+            }
+        })
     }
 
     function requeueAllDead(queueId, acknowledgedUnsafe) {

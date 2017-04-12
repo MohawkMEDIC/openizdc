@@ -267,10 +267,6 @@ namespace OpenIZ.Mobile.Core
 
             var existing = me.TryGetExisting(context);
 
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
 
             // Existing exists?
             if (existing == null && !m_readonlyTypes.Contains(typeof(TModel)))
@@ -286,10 +282,6 @@ namespace OpenIZ.Mobile.Core
             else if (existing == null)
                 throw new KeyNotFoundException($"Object {me} not found in database and is restricted for creation");
 
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: EnsureExists {0} ({1} ms)", me, sw.ElapsedMilliseconds);
-#endif
             return existing == null ? me : (TModel)existing;
 
         }
@@ -299,10 +291,7 @@ namespace OpenIZ.Mobile.Core
         ///// </summary>
         public static void UpdateParentKeys(this IIdentifiedEntity instance, PropertyInfo field)
         {
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
+
             var delayLoadProperty = field.GetCustomAttribute<SerializationReferenceAttribute>();
             if (delayLoadProperty == null || String.IsNullOrEmpty(delayLoadProperty.RedirectProperty))
                 return;
@@ -313,10 +302,6 @@ namespace OpenIZ.Mobile.Core
             var keyField = instance.GetType().GetRuntimeProperty(delayLoadProperty.RedirectProperty);
             keyField.SetValue(instance, value.Key);
 
-#if PERFMON
-            sw.Stop();
-            s_tracer.TraceVerbose("PERF: UpdateParentKeys {0} ({1} ms)", instance, sw.ElapsedMilliseconds);
-#endif
         }
     }
 }

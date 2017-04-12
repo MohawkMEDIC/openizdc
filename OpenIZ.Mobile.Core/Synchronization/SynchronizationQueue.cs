@@ -40,6 +40,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 	/// </summary>
 	public static class SynchronizationQueue
 	{
+        
 		/// <summary>
 		/// Gets the current inbound queue
 		/// </summary>

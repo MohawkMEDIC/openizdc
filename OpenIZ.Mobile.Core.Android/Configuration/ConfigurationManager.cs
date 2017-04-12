@@ -171,6 +171,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(DeflateStreamCompressionService).AssemblyQualifiedName,
 
                 },
                 Cache = new CacheConfiguration()

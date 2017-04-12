@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the object mnemonic
 		/// </summary>
 		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Unique, NotNull]
+		[Column("mnemonic"), Indexed(Unique = true), NotNull]
 		public string Mnemonic {
 			get;
 			set;
@@ -56,7 +56,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// <summary>
 		/// Gets or sets the status concept id
 		/// </summary>
-		[Column("statusConcept"), Indexed, NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+		[Column("statusConcept"), NotNull, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] StatusUuid {
 			get;
 			set;

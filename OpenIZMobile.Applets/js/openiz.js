@@ -1584,6 +1584,18 @@ var OpenIZ = OpenIZ || {
                 OpenIZ.Util.simpleGet('/__app/info', controlData);
         },
         /**
+        * @summary Get health information data using typical async information parameters
+        * @method
+        * @memberof OpenIZ.App
+        * @param {object} controlData The data which controls the asynchronous operation.
+        * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+        * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+        * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+        */
+        getHealthAsync: function (controlData) {
+            OpenIZ.Util.simpleGet('/__app/health', controlData);
+        },
+        /**
          * @summary Get the online state of the application
          * @method
          * @memberof OpenIZ.App
@@ -2836,7 +2848,7 @@ var OpenIZ = OpenIZ || {
          */
         getQueueAsync: function (controlData) {
             OpenIZ.Util.simpleGet("/__app/queue", {
-                query: { _queue: controlData.queueName, id: "!null" },
+                query: { _queue: controlData.queueName, id: "!null", _id : controlData.id },
                 continueWith: controlData.continueWith,
                 onException: controlData.onException,
                 finally: controlData.finally,

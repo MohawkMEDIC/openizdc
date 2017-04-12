@@ -34,7 +34,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-		[Column("name"), Indexed]
+		[Column("name")]
 		public string Name {
 			get;
 			set;
@@ -44,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Concepts
 		/// Gets or sets the mnemonic.
 		/// </summary>
 		/// <value>The mnemonic.</value>
-		[Column("mnemonic"), Unique, NotNull]
+		[Column("mnemonic"), Indexed(Unique = true), NotNull]
 		public String Mnemonic {
 			get;
 			set;

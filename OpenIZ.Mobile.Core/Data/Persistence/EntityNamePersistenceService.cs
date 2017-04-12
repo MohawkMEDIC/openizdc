@@ -43,6 +43,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
 
+
+
         /// <summary>
         /// Get from source
         /// </summary>
@@ -58,7 +60,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
-            return base.FromModelInstance(modelInstance, context);
+
+            return new DbEntityName()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                UseConceptUuid = modelInstance.NameUseKey?.ToByteArray()
+            };
         }
 
         /// <summary>

@@ -43,6 +43,29 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>{{ 'locale.about.environmentHealth' | i18n }}</h3>
+            <table class="table table-striped">
+                <tr>
+                    <th>{{ 'locale.about.work.conc' | i18n }}</th>
+                    <td>{{ health.active }} / {{ health.concurrency | number:0 }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.work.wait' | i18n }}</th>
+                    <td>{{ health.wait | number:0 }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.work.timers' | i18n }}</th>
+                    <td>{{ health.timer | number:0 }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'locale.about.rogue' | i18n }}</th>
+                    <td>{{ about.nonq | number:0 }} b</td>
+                </tr>
+            </table>
+        </div>
+    </div>
     <!-- #include virtual="~/views/common/app/files.html" -->
 
     <div class="row">

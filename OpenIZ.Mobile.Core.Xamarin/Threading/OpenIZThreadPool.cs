@@ -36,6 +36,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
     /// </summary>
     public class OpenIZThreadPool : IThreadPoolService, IDisposable
     {
+        
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
@@ -43,6 +44,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         private Queue<WorkItem> m_priorityQueue = null;
+        // Timers
+        private List<Timer> m_timers = new List<Timer>();
+        // Non queue operations
+        private List<Thread> m_nonQueueOperations = new List<Thread>();
 
         // Active threads
         private Thread[] m_threadPool = null;
@@ -50,6 +55,43 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         private int m_threadWait = 0;
         // True when the thread pool is being disposed
         private bool m_disposing = false;
+        // Threads doing a unit of work
+        private int m_executingThreads = 0;
+
+        /// <summary>
+        /// Concurrency
+        /// </summary>
+        public int Concurrency { get { return this.m_concurrencyLevel; } }
+
+        /// <summary>
+        /// Waiting threads
+        /// </summary>
+        public int WaitingThreads { get { return this.m_queue.Count + this.m_priorityQueue.Count; } }
+
+        /// <summary>
+        /// Active timers
+        /// </summary>
+        public int ActiveTimers { get { return this.m_timers.Count; } }
+
+        /// <summary>
+        /// Non queue threads
+        /// </summary>
+        public int NonQueueThreads { get { return this.m_nonQueueOperations.Count; } }
+        
+        /// <summary>
+        /// Active threads
+        /// </summary>
+        public List<String> Threads {
+            get
+            {
+                return this.m_threadPool.Select(o => o.Name).Union(this.m_timers.Select(o => "Timer")).Union(this.m_nonQueueOperations.Select(o => $"=>[NQ]=>{o.Name}")).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Active threads
+        /// </summary>
+        public int ActiveThreads { get { return this.m_executingThreads; } }
 
         /// <summary>
         /// Creates a new instance of the wait thread pool
@@ -101,7 +143,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
                     var kv = (KeyValuePair<Action<Object>, Object>)o;
                     this.QueueUserWorkItem(kv.Key, kv.Value);
                     timer.Dispose();
+                    lock (this.m_timers)
+                        this.m_timers.Remove(timer);
                 }, new KeyValuePair<Action<Object>, Object>(callback, parm), (int)timeout.TotalMilliseconds, Timeout.Infinite);
+                lock (this.m_timers)
+                    this.m_timers.Add(timer);
             }
         }
 
@@ -126,7 +172,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         /// </summary>
         public void QueueNonPooledWorkItem(Action<object> action, object parm)
         {
-            Thread thd = new Thread(new ParameterizedThreadStart(action));
+            Thread thd = new Thread(new ParameterizedThreadStart((o) =>
+            {
+                try
+                {
+                    action(o);
+                }
+                catch (Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }
+            }
+            ));
             thd.IsBackground = true;
             thd.Name = $"OpenIZBackground-{action}";
             thd.Start(parm);
@@ -266,9 +320,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
             this.m_tracer.TraceVerbose("Starting task on {0} ---> {1}", Thread.CurrentThread.Name, state.Callback.Target.ToString());
             AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.ThreadDefaultPrincipal) ?? new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
             var worker = (WorkItem)state;
-            try { worker.Callback(worker.State); }
+            try {
+                Interlocked.Increment(ref this.m_executingThreads);
+                worker.Callback(worker.State);
+            }
             catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }
-            finally { DoneWorkItem(); }
+            finally {
+                Interlocked.Decrement(ref this.m_executingThreads);
+
+                DoneWorkItem();
+            }
         }
 
         /// <summary>

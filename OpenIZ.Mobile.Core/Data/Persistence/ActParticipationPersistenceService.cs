@@ -35,6 +35,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     {
 
         /// <summary>
+        /// Create DbActParticipation from modelinstance
+        /// </summary>
+        public override object FromModelInstance(ActParticipation modelInstance, LocalDataContext context)
+        {
+            return new DbActParticipation()
+            {
+                ActUuid = modelInstance.ActKey?.ToByteArray(),
+                EntityUuid = modelInstance.PlayerEntityKey?.ToByteArray(),
+                ParticipationRoleUuid = modelInstance.ParticipationRoleKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
+
+        /// <summary>
         /// Insert the relationship
         /// </summary>
         protected override ActParticipation InsertInternal(LocalDataContext context, ActParticipation data)

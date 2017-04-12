@@ -109,14 +109,13 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             if (!this.IsRunning)
                 throw new InvalidOperationException("Cannot get connection before daemon is started");
 
-            conn.Platform.SQLiteApi.Config(ConfigOption.MultiThread);
-
             try
             {
                 if (!this.m_connections.TryGetValue(dataSource, out conn))
                     lock (s_lockObject)
                         if (!this.m_connections.TryGetValue(dataSource, out conn))
                         {
+
                             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
                             conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, true));
                             this.m_connections.Add(dataSource, conn);

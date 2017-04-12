@@ -34,6 +34,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class ActRelationshipPersistenceService : IdentifiedPersistenceService<ActRelationship, DbActRelationship>, ILocalAssociativePersistenceService
     {
+       
+        /// <summary>
+        /// Create DbActParticipation from modelinstance
+        /// </summary>
+        public override object FromModelInstance(ActRelationship modelInstance, LocalDataContext context)
+        {
+            return new DbActRelationship()
+            {
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                TargetUuid = modelInstance.TargetActKey?.ToByteArray(),
+                RelationshipTypeUuid = modelInstance.RelationshipTypeKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
 
         /// <summary>
         /// Get from source

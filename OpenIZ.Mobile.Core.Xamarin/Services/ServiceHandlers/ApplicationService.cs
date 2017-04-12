@@ -43,6 +43,7 @@ using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using System.IO.Compression;
 using Newtonsoft.Json.Linq;
+using OpenIZ.Mobile.Core.Xamarin.Threading;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -296,6 +297,36 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 this.m_tracer.TraceError("Could not retrieve app info {0}...", e);
                 throw;
             }
+        }
+
+
+        /// <summary>
+        /// Get the alerts from the service
+        /// </summary>
+        [RestOperation(UriPath = "/health", Method = "GET")]
+        public ApplicationHealthInfo GetHealth()
+        {
+            try
+            {
+                var thdp = ApplicationContext.Current.GetService<OpenIZThreadPool>();
+                if (thdp == null) return null;
+
+                return new ApplicationHealthInfo()
+                {
+                    Concurrency = thdp.Concurrency,
+                    Threads = thdp.Threads.ToArray(),
+                    Active = thdp.ActiveThreads,
+                    WaitState = thdp.WaitingThreads,
+                    Timers = thdp.ActiveTimers,
+                    NonQueued = thdp.NonQueueThreads
+                };
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Could not retrieve app info {0}...", e);
+                throw;
+            }
+
         }
 
         /// <summary>

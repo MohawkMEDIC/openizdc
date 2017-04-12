@@ -35,6 +35,20 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class EntityRelationshipPersistenceService : IdentifiedPersistenceService<EntityRelationship, DbEntityRelationship>, ILocalAssociativePersistenceService
     {
 
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(EntityRelationship modelInstance, LocalDataContext context)
+        {
+            return new DbEntityRelationship()
+            {
+                Quantity = modelInstance.Quantity,
+                RelationshipTypeUuid = modelInstance.RelationshipTypeKey?.ToByteArray(),
+                SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
+                TargetUuid = modelInstance.TargetEntityKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
 
         /// <summary>
         /// Get from source

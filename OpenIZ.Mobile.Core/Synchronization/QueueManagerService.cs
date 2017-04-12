@@ -32,6 +32,7 @@ using OpenIZ.Mobile.Core.Synchronization.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -99,24 +100,33 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             maxTotal = remain;
 
                         ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (maxTotal - remain) / (float)maxTotal);
+                        
+#if PERFMON
+                        Stopwatch sw = new Stopwatch();
+                        sw.Start();
+#endif
 
-                        this.m_tracer.TraceInfo("{0} remaining inbound queue items", SynchronizationQueue.Inbound.Count());
                         var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
                         var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
+
+#if PERFMON
+                        sw.Stop();
+                        ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "DeQueue", sw.Elapsed);
+#endif
                         //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
                         var bundle = dpe as Bundle;
                         dpe = bundle?.Entry ?? dpe;
 
-                        if(bundle?.Item.Count > 100)
+                        if(bundle?.Item.Count > 250)
                         {
                             var ofs = 0;
                             while(ofs < bundle.Item.Count)
                             {
                                 this.ImportElement(new Bundle()
                                 {
-                                    Item = bundle.Item.Skip(ofs).Take(100).ToList()
+                                    Item = bundle.Item.Skip(ofs).Take(250).ToList()
                                 });
-                                ofs += 100;
+                                ofs += 250;
                             }
                         }
                         else

@@ -43,7 +43,6 @@
                     </div>
                     <div class="modal-body">
                         <div class="container-fluid">
-
                             <table class="table table-striped">
                                 <tr>
                                     <th>
@@ -76,7 +75,7 @@
                                         {{ queueItem.operation }}
                                     </td>
                                     <td ng-if="queue.current == queue.dead">  
-                                        <button type="button" class="btn btn-lg btn-primary" data-target="#resolveDialog" ng-click="queue.currentItem = queueItem" data-toggle="modal">
+                                        <button type="button" class="btn btn-lg btn-primary" data-target="#resolveDialog" ng-click="selectItem(queueItem.id)" data-toggle="modal">
                                             <span>
                                                 <span class="glyphicon glyphicon-eye-open"></span>
                                                 {{ 'locale.sync.resolve.resolve' | i18n }}
@@ -118,7 +117,10 @@
                         </h4>
                     </div>
                     <div class="modal-body">
-                        <div class="container-fluid">
+                        <div class="progress" ng-if="isLoading">
+                            <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                        </div>
+                        <div class="container-fluid" ng-if="!isLoading">
                             <p><strong>{{ 'locale.sync.queue.date' | i18n }}</strong> {{queue.currentItem.creationTime | date : 'yyyy-MMM-dd HH:mm'}}</p>
                             <p>{{ 'locale.sync.resolve.reason' | i18n }}</p>
                             <pre>{{ renderB64(queue.currentItem.tag) }}</pre>

@@ -197,10 +197,6 @@ namespace OpenIZ.Mobile.Core.Caching
                     {
                         lock (this.m_lock)
                         {
-#if PERFMON
-                        this.m_tracer.TraceVerbose("Remove cache object ({0}) - {1}", objectType, key);
-#endif
-
                             cache.Remove(key.Value);
                         }
                     }
@@ -218,11 +214,6 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-#if PERFMON
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
-#endif
-
             if (!key.HasValue) return null;
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
@@ -234,11 +225,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 if (cache.TryGetValue(key.Value, out candidate))
                 {
                     candidate.Touch();
-#if PERFMON
-                    this.m_tracer.TraceVerbose("Retrieved cache entry ({0}) {1}", objectType, candidate);
-                    sw.Stop();
-                    this.m_tracer.TraceVerbose("PERF: TryGetEntry HIT {0} ({1} ms)", key, sw.ElapsedMilliseconds);
-#endif
+
                     return candidate.Data;
                 }
                 else /// try get entry slow
@@ -250,10 +237,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 }
             }
 
-#if PERFMON
-            sw.Stop();
-            this.m_tracer.TraceVerbose("PERF: TryGetEntry MISS {0} ({1} ms)", key, sw.ElapsedMilliseconds);
-#endif
+
             return null;
         }
 

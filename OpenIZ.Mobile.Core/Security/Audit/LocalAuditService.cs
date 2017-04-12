@@ -65,26 +65,29 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// <summary>
         /// Send an audit (which stores the audit locally in the audit file and then queues it for sending)
         /// </summary>
-        public bool SendAudit(AuditData ad)
+        public bool SendAudit(AuditData audit)
         {
-            try
+            ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
             {
-                // First, save the audit locally
-                var ar = ApplicationContext.Current.GetService<IAuditRepositoryService>();
-                if (ar == null)
-                    throw new InvalidOperationException("!!SECURITY ALERT!! >> Cannot find audit repository");
-                ad = ar.Insert(ad);
+                var ad = o as AuditData;
+                try
+                {
+                    // First, save the audit locally
+                    var ar = ApplicationContext.Current.GetService<IAuditRepositoryService>();
+                    if (ar == null)
+                        throw new InvalidOperationException("!!SECURITY ALERT!! >> Cannot find audit repository");
+                    ad = ar.Insert(ad);
 
-                // Queue for send
-                SynchronizationQueue.Admin.Enqueue(new AuditInfo(ad), Synchronization.Model.DataOperationType.Insert);
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("!!SECURITY ALERT!! >> Error sending audit {0}: {1}", ad, e);
-                throw;
-            }
+                    // Queue for send
+                    SynchronizationQueue.Admin.Enqueue(new AuditInfo(ad), Synchronization.Model.DataOperationType.Insert);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("!!SECURITY ALERT!! >> Error sending audit {0}: {1}", ad, e);
+                    throw;
+                }
+            }, audit);
+            return true;
         }
 
         /// <summary>
@@ -102,15 +105,16 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) => AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
                 ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>
                 {
-                    switch(se.Queue)
-                    {
-                        case "inbound":
-                            AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
-                            break;
-                        case "outbound":
-                            AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
-                            break;
-                    }
+                    if(se.ObjectKeys.Count() > 0)
+                        switch(se.Queue)
+                        {
+                            case "inbound":
+                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
+                                break;
+                            case "outbound":
+                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
+                                break;
+                        }
                 };
                 
                 // Scan for IRepositoryServices and bind to their events as well

@@ -26,7 +26,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;PERFMON</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -101,6 +101,9 @@
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Services\Attributes\AnonymousAttribute.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />
+    <Compile Include="Services\BinaryQueueSerializer.cs" />
+    <Compile Include="Services\DeflateStreamCompressionService.cs" />
+    <Compile Include="Services\Model\ApplicationHealthInfo.cs" />
     <Compile Include="Services\Model\ApplicationInfo.cs" />
     <Compile Include="Services\Model\BugReport.cs" />
     <Compile Include="Services\Model\ErrorResult.cs" />

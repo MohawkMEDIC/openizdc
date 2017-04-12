@@ -136,7 +136,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                             {
                                 dbAct = this.m_mapper.MapModelInstance<AuditActorData, DbAuditActor>(act);
                                 dbAct.Id = conn.Insert(dbAct);
-                                var roleCode = act.ActorRoleCode.FirstOrDefault();
+                                var roleCode = act.ActorRoleCode?.FirstOrDefault();
                                 if (roleCode != null)
                                 {
                                     var existing = conn.Table<DbAuditCode>().Where(o => o.Code == roleCode.Code && o.CodeSystem == roleCode.CodeSystem).FirstOrDefault();

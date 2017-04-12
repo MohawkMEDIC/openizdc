@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model;
 using OpenIZ.Mobile.Core.Resources;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -62,11 +63,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override Bundle InsertInternal(LocalDataContext context, Bundle data)
         {
+
             for(int i = 0; i < data.Item.Count; i++)
             {
                 var itm = data.Item[i];
-#if SHOW_STATUS
-                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_processBundle, itm.GetType().Name, i, data.Item.Count), i / (float)data.Item.Count);
+#if SHOW_STATUS || PERFMON
+                Stopwatch itmSw = new Stopwatch();
+                itmSw.Start();
 #endif
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var svc = ApplicationContext.Current.GetService(idp);
@@ -75,7 +78,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     method = "Update";
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(LocalDataContext), itm.GetType() });
                 data.Item[i] = mi.Invoke(svc, new object[] { context, itm }) as IdentifiedData;
+#if SHOW_STATUS || PERFMON
+                itmSw.Stop();
+#endif
+#if SHOW_STATUS
+                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_processBundle, itm.GetType().Name, i, data.Item.Count), i / (float)data.Item.Count);
+#endif
+#if PERFMON
+                ApplicationContext.Current.PerformanceLog(nameof(BundlePersistenceService), nameof(InsertInternal), $"Insert{itm.GetType().Name}", itmSw.Elapsed);
+#endif
             }
+
+
             return data;
         }
 

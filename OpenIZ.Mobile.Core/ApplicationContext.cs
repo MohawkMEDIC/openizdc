@@ -33,6 +33,7 @@ using OpenIZ.Core.Http;
 using OpenIZ.Core.Services;
 using OpenIZ.Core.Applets.Model;
 using OpenIZ.Core.Interfaces;
+using System.Diagnostics;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -124,12 +125,17 @@ namespace OpenIZ.Mobile.Core
 			return (TService)this.GetService (typeof(TService));
 		}
 
-		/// <summary>
-		/// Gets the service object of the specified type.
-		/// </summary>
-		/// <returns>The service.</returns>
-		/// <param name="serviceType">Service type.</param>
-		public object GetService (Type serviceType)
+        /// <summary>
+        /// Performance log handler
+        /// </summary>
+        public abstract void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter);
+
+        /// <summary>
+        /// Gets the service object of the specified type.
+        /// </summary>
+        /// <returns>The service.</returns>
+        /// <param name="serviceType">Service type.</param>
+        public object GetService (Type serviceType)
 		{
 			
 			Object candidateService = null;

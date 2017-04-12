@@ -46,7 +46,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the form concept.
 		/// </summary>
 		/// <value>The form concept.</value>
-		[Column("form_concept_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+		[Column("form_concept_uuid"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
 		public byte[] FormConceptUuid {
 			get;
 			set;
@@ -102,7 +102,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
             /// Gets or sets the form concept.
             /// </summary>
             /// <value>The form concept.</value>
-            [Column("form_concept_uuid"), Indexed, MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
+            [Column("form_concept_uuid"), MaxLength(16), ForeignKey(typeof(DbConcept), nameof(DbConcept.Uuid))]
             public byte[] FormConceptUuid
             {
                 get;
@@ -155,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
 		/// Gets or sets the lot number.
 		/// </summary>
 		/// <value>The lot number.</value>
-		[Column("lotNumber"), Indexed, Collation("NOCASE")]
+		[Column("lotNumber"), Collation("NOCASE")]
 		public String LotNumber {
 			get;
 			set;
@@ -167,7 +167,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Entities
             /// Gets or sets the lot number.
             /// </summary>
             /// <value>The lot number.</value>
-            [Column("lotNumber"), Indexed, Collation("NOCASE")]
+            [Column("lotNumber"), Collation("NOCASE")]
             public String LotNumber
             {
                 get;

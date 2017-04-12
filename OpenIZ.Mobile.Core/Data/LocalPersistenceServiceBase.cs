@@ -175,7 +175,7 @@ namespace OpenIZ.Mobile.Core.Data
             finally
             {
                 sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: INSERT {0} ({1} ms)", data, sw.ElapsedMilliseconds);
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Insert), "Complete", sw.Elapsed);
             }
 #endif
 
@@ -236,11 +236,11 @@ namespace OpenIZ.Mobile.Core.Data
                 }
                 catch { throw; }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: UPDATE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Update), "Complete", sw.Elapsed);
+                }
 #endif
         }
 
@@ -299,11 +299,12 @@ namespace OpenIZ.Mobile.Core.Data
                 }
                 catch { throw; }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: OBSOLETE {0} ({1} ms)", data, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Obsolete), "Complete", sw.Elapsed);
+                }
+
 #endif
         }
 
@@ -420,11 +421,12 @@ namespace OpenIZ.Mobile.Core.Data
                     throw;
                 }
 #if PERFMON
-            finally
-            {
-                sw.Stop();
-                this.m_tracer.TraceVerbose("PERF: QUERY {0} ({1} ms)", query, sw.ElapsedMilliseconds);
-            }
+                finally
+                {
+                    sw.Stop();
+                    ApplicationContext.Current.PerformanceLog(typeof(TData).Name, nameof(Query), query.ToString(), sw.Elapsed);
+                }
+
 #endif
 
         }

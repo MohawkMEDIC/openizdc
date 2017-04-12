@@ -274,7 +274,7 @@ namespace DisconnectedClient
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
                     {
-                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter);
+                        OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter, itm.Filter);
                     }
 
                     // Start daemons
@@ -651,6 +651,19 @@ namespace DisconnectedClient
         public override void Alert(string alertText)
         {
             System.Windows.Forms.MessageBox.Show(alertText);
+        }
+
+
+        /// <summary>
+        /// Performance log!
+        /// </summary>
+        public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
+        {
+            lock (this.m_configurationManager)
+            {
+                var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.ExecutionUuid.ToString() + ".perf.txt");
+                File.AppendAllText(path, $"{className}.{methodName}@{tagName} - {counter}\r\n");
+            }
         }
     }
 }

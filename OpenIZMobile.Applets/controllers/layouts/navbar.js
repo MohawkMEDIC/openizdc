@@ -87,13 +87,15 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                 setTimeout($scope.checkMessages, 30000);
             }
         });
-        OpenIZ.Queue.getQueueAsync({
-            queueName: OpenIZ.Queue.QueueNames.DeadLetterQueue,
-            continueWith: function (data) {
-                $scope.conflicts = data;
-            },
-            onException: function() {}
-        });
+
+        if ($rootScope.session != null) 
+            OpenIZ.Queue.getQueueAsync({
+                queueName: OpenIZ.Queue.QueueNames.DeadLetterQueue,
+                continueWith: function (data) {
+                    $scope.conflicts = data;
+                },
+                onException: function() {}
+            });
     };
     setTimeout($scope.checkMessages, 30000);
     $scope.checkMessages();

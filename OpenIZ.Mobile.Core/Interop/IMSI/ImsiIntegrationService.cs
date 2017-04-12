@@ -133,13 +133,23 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         }
 
         /// <summary>
+        /// Get service client
+        /// </summary>
+        private ImsiServiceClient GetServiceClient()
+        {
+            var retVal = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+            retVal.Client.Accept = "application/json";
+            return retVal;
+        }
+
+        /// <summary>
         /// Finds the specified model
         /// </summary>
         public Bundle Find<TModel>(Expression<Func<TModel, bool>> predicate, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData
         {
             try
             {
-                ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                ImsiServiceClient client = this.GetServiceClient();
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 if (options?.Timeout.HasValue == true)
@@ -189,7 +199,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
-                ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(options);
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 this.m_tracer.TraceVerbose("Performing IMSI GET ({0}):{1}v{2}", typeof(TModel).FullName, key, versionKey);
@@ -218,7 +228,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
-                ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
                 // Special case = Batch submit of data with an entry point
@@ -254,9 +264,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
-                var restClient = ApplicationContext.Current.GetRestClient("imsi");
+                //var restClient = ApplicationContext.Current.GetRestClient("imsi");
 
-                ImsiServiceClient client = new ImsiServiceClient(restClient);
+                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(restClient);
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
                 var networkInformationService = ApplicationContext.Current.GetService<INetworkInformationService>();
@@ -278,7 +288,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
-                ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 // Force an update
                 if (unsafeObsolete)
@@ -309,7 +319,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
-                ImsiServiceClient client = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
+                ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
                 // Force an update
