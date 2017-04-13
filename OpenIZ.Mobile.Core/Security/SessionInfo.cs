@@ -211,7 +211,7 @@ namespace OpenIZ.Mobile.Core.Security
                     return this.Principal != null;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 this.m_tracer.TraceError("Error extending session: {0}", e);
                 return false;
@@ -241,6 +241,17 @@ namespace OpenIZ.Mobile.Core.Security
                 this.Roles = cp.Claims.Where(o => o.Type == ClaimsIdentity.DefaultRoleClaimType)?.Select(o => o.Value)?.ToList();
                 this.AuthenticationType = cp.FindClaim(ClaimTypes.AuthenticationMethod)?.Value;
 
+                var subKey = Guid.Empty;
+                if (cp.HasClaim(o => o.Type == ClaimTypes.Sid))
+                    Guid.TryParse(cp.FindClaim(ClaimTypes.Sid)?.Value, out subKey);
+
+                // Security user 
+                this.SecurityUser = new SecurityUser()
+                {
+                    Key = subKey,
+                    UserName = cp.Identity.Name,
+                    Email = cp.FindClaim(ClaimTypes.Email)?.Value
+                };
             }
             else
             {
@@ -248,20 +259,23 @@ namespace OpenIZ.Mobile.Core.Security
                 this.Roles = rps.GetAllRoles(this.UserName).ToList();
                 this.Issued = DateTime.Now;
                 this.Expiry = DateTime.MaxValue;
+
+                // Grab the user entity
+                try
+                {
+
+                    var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+                    var securityUser = userService.GetUser(principal.Identity);
+                    this.SecurityUser = securityUser;
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error getting extended session information: {0}", e);
+                }
+
             }
 
-            // Grab the user entity
-            try
-            {
-                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-                var securityUser = userService.GetUser(principal.Identity);
-                this.SecurityUser = securityUser;
 
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error getting extended session information: {0}", e);
-            }
         }
     }
 }

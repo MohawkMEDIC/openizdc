@@ -80,7 +80,7 @@
                         </li>
                     </ul>
                 </li>
-                <li ng-show="$root.session.user">
+                <li ng-show="$root.session">
                     <a href="#" ui-sref="org-openiz-core.alert()"
                        class="dropdown-toggle" role="button"
                        data-toggle="collapse" data-target=".navbar-collapse-small"
@@ -91,13 +91,13 @@
                         </span>
                     </a>
                 </li>
-                <li id="syncCtrDropDown" ng-show="$root.session.user">
+                <li id="syncCtrDropDown" ng-show="$root.session">
                     <a ui-sref="org-openiz-core.sync()">
                         <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon"/> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
                         <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
                     </a>
                 </li>
-                <li class="dropdown" ng-show="$root.session.user">
+                <li class="dropdown" ng-show="$root.session">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.user.png" class="navbar-icon" /> {{ $root.session.user.userName }}  <span class="caret"></span>
                     </a>

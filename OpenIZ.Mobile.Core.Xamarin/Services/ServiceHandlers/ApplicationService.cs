@@ -318,7 +318,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     Active = thdp.ActiveThreads,
                     WaitState = thdp.WaitingThreads,
                     Timers = thdp.ActiveTimers,
-                    NonQueued = thdp.NonQueueThreads
+                    NonQueued = thdp.NonQueueThreads,
+                    Utilization = String.Format("{0:#0}%", (thdp.ActiveThreads / (float)thdp.Concurrency) * 100)
                 };
             }
             catch (Exception e)

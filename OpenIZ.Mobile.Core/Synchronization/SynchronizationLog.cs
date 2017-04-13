@@ -85,7 +85,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public DateTime? GetLastTime(Type modelType, String filter = null)
         {
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
             {
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
@@ -99,7 +99,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public String GetLastEtag(Type modelType, String filter = null)
         {
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
             {
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
@@ -113,7 +113,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public void Save(Type modelType, String filter, String eTag)
         {
             var conn = this.CreateConnection();
-                using(conn.Lock())
+            using (conn.Lock())
             {
                 var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
                 var logEntry = conn.Table<SynchronizationLogEntry>().Where(o => o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
@@ -122,7 +122,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 else
                 {
                     logEntry.LastSync = DateTime.Now;
-                    if(!String.IsNullOrEmpty(eTag))
+                    if (!String.IsNullOrEmpty(eTag))
                         logEntry.LastETag = eTag;
                     conn.Update(logEntry);
                 }
@@ -138,6 +138,89 @@ namespace OpenIZ.Mobile.Core.Synchronization
             using (conn.Lock())
             {
                 return conn.Table<SynchronizationLogEntry>().ToList();
+            }
+        }
+
+        /// <summary>
+        /// Save the query state so that it can come back if the connection is lost
+        /// </summary>
+        public void SaveQuery(Type modelType, String filter, Guid queryId, int offset)
+        {
+
+            var conn = this.CreateConnection();
+            using (conn.Lock())
+            {
+                try
+                {
+                    var qid = queryId.ToByteArray();
+                    var currentQuery = conn.Table<SynchronizationQuery>().Where(o=>o.Uuid == qid).FirstOrDefault();
+                    if (currentQuery == null)
+                    {
+                        var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+
+                        conn.Insert(new SynchronizationQuery()
+                        {
+                            Uuid = queryId.ToByteArray(),
+                            Filter = filter,
+                            LastSuccess = offset,
+                            StartTime = DateTime.Now,
+                            ResourceType = modelAqn
+                        });
+                    }
+                    else
+                    {
+                        currentQuery.LastSuccess = offset;
+                        conn.Update(currentQuery);
+                    }
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error saving query data {0} : {1}", queryId, e);
+                    throw;
+                }
+            }
+
+        }
+
+        /// <summary>
+        /// Complete query 
+        /// </summary>
+        public void CompleteQuery(Guid queryId)
+        {
+            var conn = this.CreateConnection();
+            using (conn.Lock())
+            {
+                try
+                {
+                    var qid = queryId.ToByteArray();
+                    conn.Table<SynchronizationQuery>().Delete(o=>o.Uuid == qid);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error deleting query data {0} : {1}", queryId, e);
+                    throw;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Find query data
+        /// </summary>
+        public SynchronizationQuery FindQueryData(Type modelType, String filter)
+        {
+            var conn = this.CreateConnection();
+            using (conn.Lock())
+            {
+                try
+                {
+                    var modelAqn = modelType.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>().TypeName;
+                    return conn.Table<SynchronizationQuery>().Where(o=>o.ResourceType == modelAqn && o.Filter == filter).FirstOrDefault();
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error fetching query data {0} : {1}", modelType, e);
+                    throw;
+                }
             }
         }
     }

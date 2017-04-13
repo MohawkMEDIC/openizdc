@@ -221,7 +221,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             try
             {
 
-                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), 0);
+                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, 0, 0), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
                 // Get last modified date
@@ -230,9 +230,22 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var result = new Bundle() { TotalResults = 1 };
                 var eTag = String.Empty;
                 var retVal = 0;
-                int count = 75;
-
+                int count = 100;
                 var qid = Guid.NewGuid();
+
+                // Attempt to find an existing query
+                var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
+                if(existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
+                {
+                    qid = new Guid(existingQuery.Uuid);
+                    result.Count = existingQuery.LastSuccess;
+                    result.TotalResults = result.Count + 1;
+                }
+                else
+                {
+                    if (existingQuery != null) SynchronizationLog.Current.CompleteQuery(new Guid(existingQuery.Uuid));
+                    SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
+                }
 
                 // Performance timer for more intelligent query control
                 Stopwatch perfTimer = new Stopwatch();
@@ -242,7 +255,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     float perc = i / (float)result.TotalResults;
 
-                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name), perc);
+                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
                     NameValueCollection infopt = null;
                     if (filter.Any(o => o.Key.StartsWith("_")))
                     {
@@ -259,22 +272,26 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     // Queue the act of queueing
                     if (result != null)
                     {
-                        if (count == 1000 && perfTimer.ElapsedMilliseconds < 25000 ||
+                        if (count == 2500 && perfTimer.ElapsedMilliseconds < 25000 ||
+                            count < 2500 && result.TotalResults > 50000 && perfTimer.ElapsedMilliseconds < 10000)
+                            count = 2500;
+                        else if (count == 1000 && perfTimer.ElapsedMilliseconds < 25000 ||
                             count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 1000;
                         else if (count == 500 && perfTimer.ElapsedMilliseconds < 20000 ||
-                            count < 500 &&  result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
+                            count < 500 && result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 500;
                         else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
                             count < 200 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 200;
                         else
-                            count = 75;
+                            count = 100;
 
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
                         
-                        ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem((o) => SynchronizationQueue.Inbound.Enqueue(o as IdentifiedData, DataOperationType.Sync), result);
+                        SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
                         
                         retVal = result.TotalResults;
                     }
@@ -287,6 +304,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 // Log that we synchronized successfully
                 SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+
+                // Clear the query
+                SynchronizationLog.Current.CompleteQuery(qid);
 
                 // Fire the pull event
                 this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), retVal));

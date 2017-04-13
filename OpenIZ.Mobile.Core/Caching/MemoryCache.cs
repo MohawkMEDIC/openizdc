@@ -38,6 +38,7 @@ using System.Collections;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Security;
 using System.Xml.Serialization;
+using OpenIZ.Core.Model.Acts;
 
 namespace OpenIZ.Mobile.Core.Caching
 {
@@ -150,6 +151,19 @@ namespace OpenIZ.Mobile.Core.Caching
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
+                // Parent cache lookup
+                Func<Type, bool> cacheLookup = (o) =>
+                {
+                    if (!this.m_entryTable.TryGetValue(o, out cache))
+                    {
+                        if ((typeof(Entity).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo())))
+                            cache = this.RegisterCacheType(o);
+                        else
+                            return false;
+                    }
+                    return true;
+                };
+
                 // We want to cascade up the type heirarchy this is a do/while with IF instead of while
                 // because the ELSE-IF clause
                 do
@@ -169,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Caching
                             }
 
                     objData = objData.GetTypeInfo().BaseType;
-                } while (this.m_entryTable.TryGetValue(objData, out cache));
+                } while (cacheLookup(objData));
             }
             else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
                 this.RegisterCacheType(data.GetType());
@@ -351,7 +365,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Register caching type
         /// </summary>
-        public void RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
+        public Dictionary<Guid, CacheEntry> RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
         {
 
             this.ThrowIfDisposed();
@@ -366,7 +380,7 @@ namespace OpenIZ.Mobile.Core.Caching
                     this.m_entryTable.Add(t, cache);
                 }
                 else
-                    return;
+                    return cache;
             }
 
             // We want to subscribe when this object is changed so we can keep the cache fresh
@@ -398,6 +412,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 idpType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queryInstanceDelegate);
             }
 
+            return cache;
 
         }
 

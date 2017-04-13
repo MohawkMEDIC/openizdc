@@ -30,6 +30,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class SubstanceAdministrationPersistenceService : ActDerivedPersistenceService<SubstanceAdministration, DbSubstanceAdministration, DbSubstanceAdministration.QueryResult>
     {
+
+        /// <summary>
+        /// Create from model instance
+        /// </summary>
+        public override object FromModelInstance(SubstanceAdministration modelInstance, LocalDataContext context)
+        {
+            return new DbSubstanceAdministration()
+            {
+                DoseQuantity = modelInstance.DoseQuantity,
+                DoseUnitConceptUuid = modelInstance.DoseUnitKey?.ToByteArray(),
+                RouteConceptUuid = modelInstance.RouteKey?.ToByteArray(),
+                SequenceId = modelInstance.SequenceId,
+                SiteConceptUuid = modelInstance.SiteKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
+
         /// <summary>
         /// Convert databased model to model
         /// </summary>

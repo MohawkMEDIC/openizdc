@@ -316,7 +316,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Downloading {0}s....
+        ///   Looks up a localized string similar to Downloading {0} ({1} of {2})....
         /// </summary>
         internal static string locale_sync {
             get {

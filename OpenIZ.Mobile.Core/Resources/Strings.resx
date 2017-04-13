@@ -177,7 +177,7 @@
     <value>Starting care plan manager service...</value>
   </data>
   <data name="locale_sync" xml:space="preserve">
-    <value>Downloading {0}s...</value>
+    <value>Downloading {0} ({1} of {2})...</value>
   </data>
   <data name="locale_syncErrorBody" xml:space="preserve">
     <value>&lt;p&gt;Error synchronizing data with remote server. This is usually caused by a conflict where this device tried to send an object ({1}) to the server but the server had a different version of that object.&lt;/p&gt;&lt;p&gt;For your reference, the error is:&lt;br/&gt;{0}&lt;/p&gt;</value>

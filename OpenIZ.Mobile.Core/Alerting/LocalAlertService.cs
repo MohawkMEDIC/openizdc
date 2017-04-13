@@ -90,12 +90,21 @@ namespace OpenIZ.Mobile.Core.Alerting
 				var conn = SQLiteConnectionManager.Current.GetConnection(this.m_connectionString);
 				using (conn.Lock())
 				{
-					var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate);
+					var dbPredicate = s_mapper.MapModelExpression<AlertMessage, DbAlertMessage>(predicate, false);
 
-					var results = conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o => o.ToAlert());
-					totalCount = results.Count();
+                    if (dbPredicate == null)
+                    {
+                        this.m_tracer.TraceError("Cannot map query to DB");
+                        totalCount = 0;
+                        return null;
+                    }
+                    else
+                    {
+                        var results = conn.Table<DbAlertMessage>().Where(dbPredicate).Skip(offset).Take(count ?? 100).OrderByDescending(o => o.TimeStamp).ToList().Select(o => o.ToAlert());
+                        totalCount = results.Count();
 
-					return results;
+                        return results;
+                    }
 				}
 			}
 			catch (Exception e)

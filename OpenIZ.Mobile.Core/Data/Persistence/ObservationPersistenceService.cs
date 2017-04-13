@@ -35,6 +35,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     {
 
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(TObservation modelInstance, LocalDataContext context)
+        {
+            return new DbObservation()
+            {
+                InterpretationConceptUuid = modelInstance.InterpretationConceptKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray(),
+                ValueType = modelInstance is TextObservation ? "ST" : modelInstance is CodedObservation ? "CD" : "PQ"
+            };
+        }
+
+        /// <summary>
         /// Convert a data act and observation instance to an observation
         /// </summary>
         public virtual TObservation ToModelInstance(TDbObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
@@ -103,6 +116,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     public class TextObservationPersistenceService : ObservationPersistenceService<TextObservation, DbTextObservation, DbTextObservation.QueryResult>
     {
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(TextObservation modelInstance, LocalDataContext context)
+        {
+            return new DbTextObservation()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                Value = modelInstance.Value
+            };
+        }
+
+        /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
         public override TextObservation ToModelInstance(DbTextObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
@@ -130,6 +155,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class CodedObservationPersistenceService : ObservationPersistenceService<CodedObservation, DbCodedObservation, DbCodedObservation.QueryResult>
     {
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(CodedObservation modelInstance, LocalDataContext context)
+        {
+            return new DbCodedObservation()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                Value = modelInstance.ValueKey?.ToByteArray()
+            };
+        }
+
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
@@ -179,6 +216,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class QuantityObservationPersistenceService : ObservationPersistenceService<QuantityObservation, DbQuantityObservation, DbQuantityObservation.QueryResult>
     {
+
+        /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(QuantityObservation modelInstance, LocalDataContext context)
+        {
+            return new DbQuantityObservation()
+            {
+                UnitOfMeasureUuid = modelInstance.UnitOfMeasureKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray(),
+                Value = modelInstance.Value
+            };
+        }
 
         /// <summary>
         /// Convert the specified object to a model instance

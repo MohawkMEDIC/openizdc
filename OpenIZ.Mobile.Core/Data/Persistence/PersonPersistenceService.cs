@@ -54,11 +54,17 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Person modelInstance, LocalDataContext context)
         {
-            var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
+            /*var dbPerson = base.FromModelInstance(modelInstance, context) as DbPerson;
 
             if (modelInstance.DateOfBirthPrecision.HasValue && PrecisionMap.ContainsKey(modelInstance.DateOfBirthPrecision.Value))
                 dbPerson.DateOfBirthPrecision = PrecisionMap[modelInstance.DateOfBirthPrecision.Value];
-            return dbPerson;
+                */
+            return new DbPerson()
+            {
+                DateOfBirth = modelInstance.DateOfBirth,
+                DateOfBirthPrecision = modelInstance.DateOfBirthPrecision.HasValue ? PrecisionMap[modelInstance.DateOfBirthPrecision.Value] : null,
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
         }
 
         /// <summary>
@@ -92,12 +98,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.InsertInternal(context, data);
             byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
-            if (data.LanguageCommunication != null)
-                base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
-                    new List<PersonLanguageCommunication>(),
-                    data.LanguageCommunication,
-                    retVal.Key,
-                    context);
+            // Insert language communication
+            context.Connection.InsertAll(data.LanguageCommunication.Select(l => new DbPersonLanguageCommunication()
+            {
+                IsPreferred = l.IsPreferred,
+                Uuid = l.Key?.ToByteArray(),
+                LanguageCode = l.LanguageCode,
+                SourceUuid = sourceKey
+            }));
             return retVal;
         }
 

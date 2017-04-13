@@ -607,11 +607,14 @@ namespace Minims
         /// </summary>
         public override void PerformanceLog(string className, string methodName, string tagName, TimeSpan counter)
         {
-            lock (this.m_configurationManager)
+            this.GetService<IThreadPoolService>().QueueUserWorkItem(o =>
             {
-                var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.ExecutionUuid.ToString() + ".perf.txt");
-                File.AppendAllText(path, $"{className}.{methodName}@{tagName} - {counter}\r\n");
-            }
+                lock (this.m_configurationManager)
+                {
+                    var path = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), this.ExecutionUuid.ToString() + ".perf.txt");
+                    File.AppendAllText(path, $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")} - {className}.{methodName}@{tagName} - {counter}\r\n");
+                }
+            });
         }
     }
 }

@@ -47,5 +47,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         /// </summary>
         [JsonProperty("nonq")]
         public int NonQueued { get; set; }
+
+        /// <summary>
+        /// Utilization
+        /// </summary>
+        [JsonProperty("utilization")]
+        public string Utilization { get; set; }
     }
 }

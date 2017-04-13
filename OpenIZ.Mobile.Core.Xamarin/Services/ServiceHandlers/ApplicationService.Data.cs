@@ -208,7 +208,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             int offset = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_offset"] ?? "0"),
-                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "30"),
+                count = Int32.Parse(MiniImsServer.CurrentContext.Request.QueryString["_count"] ?? "100"),
                 totalResults = 0;
 
             var explId = MiniImsServer.CurrentContext.Request.QueryString["_id"];

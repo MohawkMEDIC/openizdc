@@ -70,13 +70,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if(data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
 
-            byte[] target = data.TargetEntityKey.Value.ToByteArray(),
-                source = data.SourceEntityKey.Value.ToByteArray(),
-                typeKey = data.RelationshipTypeKey.Value.ToByteArray();
+            //byte[] target = data.TargetEntityKey.Value.ToByteArray(),
+            //    source = data.SourceEntityKey.Value.ToByteArray(),
+            //    typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
             //var existing = context.Connection.Table<DbEntityRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
             //if (existing == null)
-                return base.InsertInternal(context, data);
+            return base.InsertInternal(context, data);
             //else
             //{
             //    data.Key = new Guid(existing.Uuid);
@@ -94,7 +94,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.TargetEntityKey = data.TargetEntity?.Key ?? data.TargetEntityKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
-
             return base.UpdateInternal(context, data);
         }
     }

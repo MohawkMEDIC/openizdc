@@ -17,8 +17,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// The identifier assigned to the audit number
         /// </summary>
-        [Column("id"), PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [Column("id"), PrimaryKey]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// Outcome of the event
@@ -54,6 +54,6 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// The event type identifier
         /// </summary>
         [Column("class"), ForeignKey(typeof(DbAuditCode), nameof(DbAuditCode.Id))]
-        public int EventTypeId { get; set; }
+        public byte[] EventTypeId { get; set; }
     }
 }

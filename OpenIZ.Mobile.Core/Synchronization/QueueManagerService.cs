@@ -78,6 +78,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
         public bool IsRunning => true;
 
         /// <summary>
+        /// True if synchronization is occurring
+        /// </summary>
+        public bool IsSynchronizing { get
+            {
+                return Monitor.IsEntered(this.m_inboundLock) || Monitor.IsEntered(this.m_outboundLock);
+            }
+        }
+
+        /// <summary>
         /// Exhausts the inbound queue
         /// </summary>
         public void ExhaustInboundQueue()
@@ -89,9 +98,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 if (!locked) return;
 
                 // Exhaust the queue
-                List<Guid> importKeys = new List<Guid>();
                 int remain = SynchronizationQueue.Inbound.Count();
                 int maxTotal = 0;
+                InboundQueueEntry nextPeek = null;
+                IdentifiedData nextDpe = null;
+
                 while (remain > 0)
                 {
                     try
@@ -99,25 +110,47 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (remain > maxTotal)
                             maxTotal = remain;
 
-                        ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (maxTotal - remain) / (float)maxTotal);
+                        if(maxTotal > 5)
+                            ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (maxTotal - remain) / (float)maxTotal);
                         
 #if PERFMON
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
 #endif
+                        InboundQueueEntry queueEntry = null;
+                        IdentifiedData dpe = null;
+                        if (nextPeek != null) // Was this loaded before? {
+                        {
+                            queueEntry = nextPeek;
+                            dpe = nextDpe;
+                        }
+                        else
+                        {
+                            queueEntry = SynchronizationQueue.Inbound.PeekRaw();
+                            dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
+                        }
 
-                        var queueEntry = SynchronizationQueue.Inbound.PeekRaw();
-                        var dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
+                        // Try to peek off the next queue item while we're doing something else
+                        var nextPeekTask = Task<KeyValuePair<InboundQueueEntry, IdentifiedData>>.Run(() =>
+                        {
+                            var nextRaw = SynchronizationQueue.Inbound.PeekRaw(1);
+                            return new KeyValuePair<InboundQueueEntry, IdentifiedData>(nextRaw, nextRaw == null ? null : SynchronizationQueue.Inbound.DeserializeObject(nextRaw));
+                        });
+                        
 
 #if PERFMON
                         sw.Stop();
                         ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "DeQueue", sw.Elapsed);
+                        sw.Reset();
+                        sw.Start();
 #endif
+                        
+
                         //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
                         var bundle = dpe as Bundle;
                         dpe = bundle?.Entry ?? dpe;
 
-                        if(bundle?.Item.Count > 250)
+                        if(bundle?.Item.Count > 500)
                         {
                             var ofs = 0;
                             while(ofs < bundle.Item.Count)
@@ -126,19 +159,25 @@ namespace OpenIZ.Mobile.Core.Synchronization
                                 {
                                     Item = bundle.Item.Skip(ofs).Take(250).ToList()
                                 });
-                                ofs += 250;
+                                ofs += 500;
                             }
                         }
                         else
                             this.ImportElement(dpe);
 
-                        if (bundle != null)
-                            importKeys.AddRange(bundle?.Item.Select(o => o.Key.Value));
-                        else
-                            importKeys.Add(dpe.Key.Value);
+                        this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }));
 
+#if PERFMON
+                        sw.Stop();
+                        ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "ImportComplete", sw.Elapsed);
+                        sw.Reset();
+#endif
                         SynchronizationQueue.Inbound.Delete(queueEntry.Id);
                         queueEntry = null;
+
+                        var peekTaskResult = nextPeekTask.Result;
+                        nextPeek = peekTaskResult.Key;
+                        nextDpe = peekTaskResult.Value;
 
                     }
                     catch (Exception e)
@@ -147,9 +186,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(SynchronizationQueue.Inbound.DequeueRaw(), Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "In" });
                     }
                     remain = SynchronizationQueue.Inbound.Count();
+
                 }
-                ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
-                this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", importKeys.ToArray()));
+
+                if(maxTotal > 5)
+                    ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
+       
             }
             catch (TimeoutException e)
             {

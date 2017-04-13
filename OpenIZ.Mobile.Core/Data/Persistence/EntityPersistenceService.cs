@@ -129,37 +129,81 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             // Alright first, which type am I mapping to?
             var dbEntity = dataInstance as DbEntity;
-            switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
-            {
-                case Device:
-                    return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case NonLivingSubject:
-                    return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Person:
-                    return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Patient:
-                    return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Provider:
-                    return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Place:
-                case CityOrTown:
-                case Country:
-                case CountyOrParish:
-                case State:
-                case ServiceDeliveryLocation:
-                    return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Organization:
-                    return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case Material:
-                    return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                case ManufacturedMaterial:
-                    return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
-                default:
-                    return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
+            if (dbEntity != null)
+                switch (new Guid(dbEntity.ClassConceptUuid).ToString().ToUpper())
+                {
+                    case Device:
+                        return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case NonLivingSubject:
+                        return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Person:
+                        return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Patient:
+                        return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Provider:
+                        return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Place:
+                    case CityOrTown:
+                    case Country:
+                    case CountyOrParish:
+                    case State:
+                    case ServiceDeliveryLocation:
+                        return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Organization:
+                        return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case Material:
+                        return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    case ManufacturedMaterial:
+                        return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    default:
+                        return this.ToModelInstance<Entity>(dbEntity, context, loadFast);
 
-            }
+                }
+            else if (dataInstance is DbDeviceEntity)
+                return new DeviceEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbApplicationEntity)
+                return new ApplicationEntityPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbPerson)
+                return new PersonPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbPatient)
+                return new PatientPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbProvider)
+                return new ProviderPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbPlace)
+                return new PlacePersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbOrganization)
+                return new OrganizationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbMaterial)
+                return new MaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else if (dataInstance is DbManufacturedMaterial)
+                return new ManufacturedMaterialPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+            else
+                return null;
+
         }
 
+        /// <summary>
+        /// Convert entity into a dbentity
+        /// </summary>
+        public override object FromModelInstance(Entity modelInstance, LocalDataContext context)
+        {
+            return new DbEntity()
+            {
+                ClassConceptUuid = modelInstance.ClassConceptKey?.ToByteArray(),
+                CreatedByUuid = modelInstance.CreatedByKey?.ToByteArray(),
+                CreationTime = modelInstance.CreationTime,
+                DeterminerConceptUuid = modelInstance.DeterminerConceptKey?.ToByteArray(),
+                ObsoletedByUuid = modelInstance.ObsoletedByKey?.ToByteArray(),
+                ObsoletionTime = modelInstance.ObsoletionTime,
+                PreviousVersionUuid = modelInstance.PreviousVersionKey?.ToByteArray(),
+                StatusConceptUuid = modelInstance.StatusConceptKey?.ToByteArray(),
+                TemplateUuid = modelInstance.TemplateKey?.ToByteArray(),
+                TypeConceptUuid = modelInstance.TypeConceptKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray(),
+                VersionSequenceId = (int)modelInstance.VersionSequence.GetValueOrDefault(),
+                VersionUuid = modelInstance.VersionKey?.ToByteArray()
+            };
+        }
 
         /// <summary>
         /// Conversion based on type
@@ -272,8 +316,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.InsertInternal(context, data);
-
-
+            
             // Identifiers
             if (data.Identifiers != null)
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(

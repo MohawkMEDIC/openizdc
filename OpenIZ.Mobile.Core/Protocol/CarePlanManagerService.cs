@@ -149,9 +149,11 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
-                    if (SynchronizationQueue.Inbound.Count() == 0)
-                    {
+                    var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
 
+                    if (!queueService.IsSynchronizing &&
+                                SynchronizationQueue.Inbound.Count() == 0)
+                    {
                         var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
                         Guid queryId = Guid.NewGuid();
                         int tr = 1, ofs = 0;
@@ -160,21 +162,28 @@ namespace OpenIZ.Mobile.Core.Protocol
                             ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
                             var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
                             ofs += 15;
+
+                            if (queueService.IsSynchronizing ||
+                                SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
+
                             foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
                                 this.QueueWorkItem(p);
                         }
                     }
 
+
                     // Stage 3. Subscribe to persistence
                     ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
                     {
-                        if (!this.m_isSubscribed && e.Type == null) // General subscribption is done
-                        {
-                            // Wait for the inbound queue to exhaust itself
-                            EventHandler<QueueExhaustedEventArgs> evtHandler = null;
-                            evtHandler = (qo, qe) =>
+                        if (!this.m_isSubscribed && e.Type == null && e.Count == 0) // General subscribption is done
+                            this.SubscribeEvents();
+                    };
+
+
+                    queueService.QueueExhausted += (o, e) =>
                             {
-                                if (qe.Queue == "inbound")
+                                if (e.Queue == "inbound" && e.ObjectKeys.Count() > 0 && !queueService.IsSynchronizing &&
+                                SynchronizationQueue.Inbound.Count() == 0)
                                 {
                                     Guid queryId = Guid.NewGuid();
                                     int tr = 1, ofs = 0;
@@ -184,21 +193,16 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     while (ofs < tr)
                                     {
                                         ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
-                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && (p.CreationTime >= e.FromDate || p.Participations.Where(g => g.ParticipationRole.Mnemonic == "RecordTarget").Any(g => g.Act.CreationTime >= e.FromDate)), ofs, 15, out tr, queryId);
-                                        this.QueueWorkItem(prodPatients.ToArray());
+                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic == "ACTIVE", ofs, 15, out tr, queryId);
+                                        this.QueueWorkItem(prodPatients.Where(p => e.ObjectKeys.Contains(p.Key.Value)));
                                         ofs += 15;
                                     }
 
                                     this.m_isSubscribed = false;
                                     this.SubscribeEvents();
-                                    ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted -= evtHandler;
                                 }
                             };
-                            ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += evtHandler;
 
-                        }
-
-                    };
 
                 }
                 catch (Exception e)
@@ -278,9 +282,15 @@ namespace OpenIZ.Mobile.Core.Protocol
             return true;
         }
 
+        /// <summary>
+        /// Queue work item data
+        /// </summary>
         private void QueueWorkItem(object importedData)
         {
-            throw new NotImplementedException();
+            if (importedData is Bundle)
+                this.QueueWorkItem((importedData as Bundle)?.Item);
+            else if (importedData is Patient || importedData is Act)
+                this.QueueWorkItem(importedData as IdentifiedData);
         }
 
         /// <summary>

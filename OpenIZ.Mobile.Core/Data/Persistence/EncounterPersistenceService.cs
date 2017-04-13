@@ -32,6 +32,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     {
 
         /// <summary>
+        /// From model instance
+        /// </summary>
+        public override object FromModelInstance(PatientEncounter modelInstance, LocalDataContext context)
+        {
+            return new DbPatientEncounter()
+            {
+                DischargeDispositionUuid = modelInstance.DischargeDispositionKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray()
+            };
+        }
+
+        /// <summary>
         /// Convert database instance to patient encounter
         /// </summary>
         public override PatientEncounter ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)

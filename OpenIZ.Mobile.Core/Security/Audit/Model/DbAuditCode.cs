@@ -16,8 +16,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Identifier of the audit code instance
         /// </summary>
-        [Column("id"), PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [Column("id"), PrimaryKey]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// Code

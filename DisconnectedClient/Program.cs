@@ -65,7 +65,7 @@ namespace DisconnectedClient
             }
             else
             {
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/index.html#/");
+                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/splash.html");
             }
 
             Application.EnableVisualStyles();

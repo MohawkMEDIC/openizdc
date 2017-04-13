@@ -44,11 +44,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Patient modelInstance, LocalDataContext context)
         {
+            /*
             var dbPatient = base.FromModelInstance(modelInstance, context) as DbPatient;
 
             if (modelInstance.DeceasedDatePrecision.HasValue)
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;
+            */
+            return new DbPatient()
+            {
+                Uuid = modelInstance.Key?.ToByteArray(),
+                DeceasedDate = modelInstance.DeceasedDate,
+                DeceasedDatePrecision = modelInstance.DeceasedDatePrecision.HasValue ? PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value] : null,
+                GenderConceptUuid = modelInstance.GenderConceptKey?.ToByteArray(),
+                MultipleBirthOrder = modelInstance.MultipleBirthOrder
+            };
         }
 
         /// <summary>

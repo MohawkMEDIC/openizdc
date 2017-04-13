@@ -18,20 +18,20 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Id of the association
         /// </summary>
-        [Column("id"), PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [Column("id"), PrimaryKey]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// Audit identifier
         /// </summary>
         [Column("audit_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditData), nameof(DbAuditData.Id))]
-        public int AuditId { get; set; }
+        public byte[] AuditId { get; set; }
 
         /// <summary>
         /// Actor identifier
         /// </summary>
         [Column("actor_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
-        public int ActorId { get; set; }
+        public byte[] ActorId { get; set; }
 
     }
 }

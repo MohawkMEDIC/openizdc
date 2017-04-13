@@ -314,7 +314,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
 
 #if PERFMON
                                 sw.Stop();
-                                ApplicationContext.Current.PerformanceLog(nameof(RestClient), "InvokeInternal", $"{nameof(TBody)}-RCV", sw.Elapsed);
+                                ApplicationContext.Current.PerformanceLog(nameof(RestClient), "InvokeInternal", $"{nameof(TBody)}-INT", sw.Elapsed);
                                 sw.Reset();
                                 sw.Start();
 #endif

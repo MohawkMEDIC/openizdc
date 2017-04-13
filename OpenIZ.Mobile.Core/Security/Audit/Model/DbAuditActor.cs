@@ -17,8 +17,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Identifier for the actor instance
         /// </summary>
-        [Column("id"), PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [Column("id"), PrimaryKey]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// User identifier
@@ -42,7 +42,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// Role code identifier
         /// </summary>
         [Column("role_code_id"), ForeignKey(typeof(DbAuditCode), nameof(DbAuditCode.Id))]
-        public int RoleCodeId { get; set; }
+        public byte[] RoleCodeId { get; set; }
 
     }
 }

@@ -216,13 +216,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Act modelInstance, LocalDataContext context)
         {
-            var domainInstance = base.FromModelInstance(modelInstance, context) as DbAct;
-            if (modelInstance.Template != null)
+            return new DbAct()
             {
-                modelInstance.Template = modelInstance.Template.EnsureExists(context);
-                domainInstance.TemplateUuid = modelInstance.Template.Key.Value.ToByteArray();
-            }
-            return domainInstance;
+                ActTime = modelInstance.ActTime,
+                ClassConceptUuid = modelInstance.ClassConceptKey?.ToByteArray(),
+                CreatedByUuid = modelInstance.CreatedByKey?.ToByteArray(),
+                CreationTime = modelInstance.CreationTime,
+                IsNegated = modelInstance.IsNegated,
+                MoodConceptUuid = modelInstance.MoodConceptKey?.ToByteArray(),
+                ObsoletedByUuid = modelInstance.ObsoletedByKey?.ToByteArray(),
+                ObsoletionTime = modelInstance.ObsoletionTime,
+                PreviousVersionUuid = modelInstance.PreviousVersionKey?.ToByteArray(),
+                ReasonConceptUuid = modelInstance.ReasonConceptKey?.ToByteArray(),
+                StartTime = modelInstance.StartTime,
+                StatusConceptUuid = modelInstance.StatusConceptKey?.ToByteArray(),
+                StopTime = modelInstance.StopTime,
+                TemplateUuid = modelInstance.TemplateKey?.ToByteArray(),
+                TypeConceptUuid = modelInstance.TypeConceptKey?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray(),
+                VersionUuid = modelInstance.VersionKey?.ToByteArray()
+            };
         }
 
         /// <summary>

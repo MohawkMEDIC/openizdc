@@ -70,5 +70,6 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
         /// </summary>
         [Column("time")]
         public DateTime LastSync { get; set; }
+        
     }
 }

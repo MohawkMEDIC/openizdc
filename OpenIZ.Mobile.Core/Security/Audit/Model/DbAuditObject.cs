@@ -17,14 +17,14 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Identifier of the object
         /// </summary>
-        [Column("id"), PrimaryKey, AutoIncrement]
-        public int Id { get; set; }
+        [Column("id"), PrimaryKey]
+        public byte[] Id { get; set; }
 
         /// <summary>
         /// Gets or sets the audit identifier
         /// </summary>
         [Column("audit_id"), ForeignKey(typeof(DbAuditData), nameof(DbAuditData.Id))]
-        public int AuditId { get; set; }
+        public byte[] AuditId { get; set; }
 
         /// <summary>
         /// The identifier of the object

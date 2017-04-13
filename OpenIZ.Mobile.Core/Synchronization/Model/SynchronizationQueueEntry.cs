@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 		/// </summary>
 		/// <value>The data.</value>
 		[Column("data"), JsonProperty("data"), XmlIgnore]
-		public byte[] Data {
+		public String Data {
 			get;
 			set;
 		}

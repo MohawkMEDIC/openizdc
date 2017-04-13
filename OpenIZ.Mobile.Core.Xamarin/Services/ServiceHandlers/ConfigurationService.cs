@@ -229,12 +229,31 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     var syncConfig = new SynchronizationConfigurationSection();
                     var binder = new OpenIZ.Core.Model.Serialization.ModelSerializationBinder();
                     // TODO: Customize this and clean it up ... It is very hackish
-                    foreach (var res in new String[] { "ConceptSet", "AssigningAuthority", "IdentifierType", "ExtensionType", "ConceptClass", "Concept", "Material", "Place", "Organization", "SecurityRole", "UserEntity", "Provider", "ManufacturedMaterial", "Person", "Act" })
+                    foreach (var res in new String[] {
+                        "ConceptSet",
+                        "AssigningAuthority",
+                        "IdentifierType",
+                        "ExtensionType",
+                        "ConceptClass",
+                        "Concept",
+                        "Material",
+                        "Place",
+                        "Organization",
+                        "UserEntity",
+                        "Provider",
+                        "ManufacturedMaterial",
+                        "Person",
+                        "PatientEncounter",
+                        "SubstanceAdministration",
+                        "CodedObservation",
+                        "QuantityObservation",
+                        "TextObservation",
+                        "Act" })
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = res == "UserEntity" || res == "Person" || res == "Act" ? SynchronizationPullTriggerType.Always :
+                            Triggers = new String[] { "UserEntity", "Person", "Act", "SubstanceAdministration", "QuantityObservation", "CodedObservation", "TextObservation", "PatientEncounter" }.Contains(res) ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
                         
@@ -247,6 +266,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             {
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient);
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient);
+                            }
+                            else if(res == "Act")
+                            {
+                                syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement);
+                                syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply);
                             }
                             else if (efield != null && res != "Place")
                                 syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
@@ -270,8 +294,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
-                                        syncSetting.Filters.Add("classConcept=a064984f-9847-4480-8bea-dddf64b3c77c&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Receiver].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
                                         //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        break;
+                                    case "SubstanceAdministration":
+                                    case "QuantityObservation":
+                                    case "CodedObservation":
+                                    case "TextObservation":
+                                    case "PatientEncounter":
                                         syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         syncSetting.Filters.Add("participation[PrimaryInformationRecipient].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;

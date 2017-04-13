@@ -55,8 +55,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         private int m_threadWait = 0;
         // True when the thread pool is being disposed
         private bool m_disposing = false;
-        // Threads doing a unit of work
-        private int m_executingThreads = 0;
 
         /// <summary>
         /// Concurrency
@@ -91,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         /// <summary>
         /// Active threads
         /// </summary>
-        public int ActiveThreads { get { return this.m_executingThreads; } }
+        public int ActiveThreads { get { return this.m_concurrencyLevel - this.m_threadWait; } }
 
         /// <summary>
         /// Creates a new instance of the wait thread pool
@@ -321,13 +319,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
             AuthenticationContext.Current = new AuthenticationContext(ApplicationContext.Current.ThreadDefaultPrincipal) ?? new AuthenticationContext(AuthenticationContext.AnonymousPrincipal);
             var worker = (WorkItem)state;
             try {
-                Interlocked.Increment(ref this.m_executingThreads);
                 worker.Callback(worker.State);
             }
             catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }
             finally {
-                Interlocked.Decrement(ref this.m_executingThreads);
-
                 DoneWorkItem();
             }
         }

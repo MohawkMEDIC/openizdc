@@ -61,9 +61,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Act != null) data.Act = data.Act.EnsureExists(context);
             data.ActKey = data.Act?.Key ?? data.ActKey;
 
-            byte[] target = data.PlayerEntityKey.Value.ToByteArray(),
-                source = data.SourceEntityKey.Value.ToByteArray(),
-                typeKey = data.ParticipationRoleKey.Value.ToByteArray();
+            //byte[] target = data.PlayerEntityKey.Value.ToByteArray(),
+            //    source = data.SourceEntityKey.Value.ToByteArray(),
+            //    typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
             //var existing = context.Connection.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
             //if (existing == null)

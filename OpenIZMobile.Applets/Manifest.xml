@@ -358,6 +358,7 @@
     <string key="locale.about.sync.logSize">Log File Size</string>
     <string key="locale.about.sync.logContents">Log File Contents</string>
     <string key="locale.about.updateToast.title">Updates Available</string>
+    <string key="locale.about.workLoad">Threadpool Use</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>

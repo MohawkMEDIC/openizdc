@@ -115,9 +115,10 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="genderConceptModel" behavior="always" ref="Concept"/>
-    <property name="identifier" behavior="always" >
+    <property name="identifier" behavior="always" ref="EntityIdentifier">
       <property name="*" all="true">
         <property name="value" behavior="always"/>
+        <property name="authority" all="true"/>
       </property>
     </property>
     <property name="relationship" all="true" behavior="always">

@@ -134,6 +134,8 @@
     <Compile Include="Services\Impl\MemoryQueryPersistenceService.cs" />
     <Compile Include="Services\IntegrationQueryOptions.cs" />
     <Compile Include="Services\ISessionManagerService.cs" />
+    <Compile Include="Synchronization\IQueueFileProvider.cs" />
+    <Compile Include="Synchronization\Model\SynchronizationQuery.cs" />
     <Compile Include="Synchronization\RemoteSynchronizationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\OpenIZConfiguration.cs" />

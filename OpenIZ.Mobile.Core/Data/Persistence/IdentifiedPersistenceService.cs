@@ -117,6 +117,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
 
             // Does this already exist?
+
             //if(context.Connection.Get<TDomain>(domainObject.Uuid) == null)
             try
             {
@@ -170,11 +171,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             SqlStatement queryStatement = null;
-            try
+            queryStatement = new SqlStatement<TDomain>().SelectFrom();
+            var expression = m_mapper.MapModelExpression<TModel, TDomain>(query, false);
+            if (expression != null)
             {
-                queryStatement = new SqlStatement<TDomain>().SelectFrom();
-                var expression = m_mapper.MapModelExpression<TModel, TDomain>(query);
-
                 if (typeof(TQueryResult) != typeof(TDomain))
                 {
                     var tableMap = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(typeof(TDomain));
@@ -189,7 +189,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                         {
                             var fkTbl = OpenIZ.Core.Data.QueryBuilder.TableMapping.Get(jt.ForeignKey.Table);
                             var fkAtt = fkTbl.GetColumn(jt.ForeignKey.Column);
-                            queryStatement.InnerJoin(dt.OrmType,fkTbl.OrmType);
+                            queryStatement.InnerJoin(dt.OrmType, fkTbl.OrmType);
                             if (!scopedTables.Contains(fkTbl))
                                 fkStack.Push(fkTbl);
                             scopedTables.Add(fkAtt.Table);
@@ -200,11 +200,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 }
 
                 //queryStatement = new SqlStatement<TDomain>().SelectFrom()
-                queryStatement = queryStatement.Where<TDomain>(m_mapper.MapModelExpression<TModel, TDomain>(query)).Build();
+                queryStatement = queryStatement.Where<TDomain>(expression).Build();
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
-
             }
-            catch
+            else
             {
                 queryStatement = m_builder.CreateQuery(query).Build();
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);

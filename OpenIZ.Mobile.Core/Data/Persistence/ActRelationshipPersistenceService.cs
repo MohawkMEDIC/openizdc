@@ -68,9 +68,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
             
-            byte[] target = data.TargetActKey.Value.ToByteArray(),
-                source = data.SourceEntityKey.Value.ToByteArray(),
-                typeKey = data.RelationshipTypeKey.Value.ToByteArray();
+            //byte[] target = data.TargetActKey.Value.ToByteArray(),
+            //    source = data.SourceEntityKey.Value.ToByteArray(),
+            //    typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
             //var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
             //if (existing == null)

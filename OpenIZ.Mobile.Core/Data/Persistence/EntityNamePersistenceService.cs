@@ -83,21 +83,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Data component
             var namePx = ApplicationContext.Current.GetService<EntityNameComponentPersistenceService>();
 
-            String cmdText = SQLiteCommandBuilder.Insert<DbEntityNameComponent>();
-            var dbStatement = context.GetOrCreatePrepared(cmdText);
-
-            foreach (var itm in data.Component.Select(c =>
+            // insert
+            context.Connection.InsertAll(data.Component.Select(c =>
             {
                 var cmp = namePx.FromModelInstance(c, context) as DbEntityNameComponent;
                 cmp.NameUuid = retVal.Key.Value.ToByteArray();
                 return cmp;
-            }).Where(o => o.ValueUuid != null))
-            {
-
-                dbStatement.BindInsert(itm);
-                dbStatement.ExecutePreparedNonQuery();
-            }
-
+            }).Where(o => o.ValueUuid != null));
 
             return retVal;
         }

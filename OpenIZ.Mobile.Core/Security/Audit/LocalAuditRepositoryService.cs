@@ -119,13 +119,18 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     {
                         var existing = conn.Table<DbAuditCode>().Where(o => o.Code == eventId.Code && o.CodeSystem == eventId.CodeSystem).FirstOrDefault();
                         if (existing == null)
-                            dbAudit.EventTypeId = conn.Insert(new DbAuditCode() { Code = eventId.Code, CodeSystem = eventId.CodeSystem });
+                        {
+                            Guid codeId = Guid.NewGuid();
+                            dbAudit.EventTypeId = codeId.ToByteArray();
+                            conn.Insert(new DbAuditCode() { Code = eventId.Code, CodeSystem = eventId.CodeSystem, Id = codeId.ToByteArray() });
+                        }
                         else
                             dbAudit.EventTypeId = existing.Id;
                     }
 
                     dbAudit.CreationTime = DateTime.Now;
-                    dbAudit.Id = conn.Insert(dbAudit);
+                    dbAudit.Id = Guid.NewGuid().ToByteArray();
+                    conn.Insert(dbAudit);
 
                     // Insert secondary properties
                     if(audit.Actors != null)
@@ -135,13 +140,17 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                             if(dbAct == null)
                             {
                                 dbAct = this.m_mapper.MapModelInstance<AuditActorData, DbAuditActor>(act);
-                                dbAct.Id = conn.Insert(dbAct);
+                                dbAct.Id = Guid.NewGuid().ToByteArray();
+                                conn.Insert(dbAct);
                                 var roleCode = act.ActorRoleCode?.FirstOrDefault();
                                 if (roleCode != null)
                                 {
                                     var existing = conn.Table<DbAuditCode>().Where(o => o.Code == roleCode.Code && o.CodeSystem == roleCode.CodeSystem).FirstOrDefault();
                                     if (existing == null)
-                                        dbAct.RoleCodeId = conn.Insert(new DbAuditCode() { Code = roleCode.Code, CodeSystem = roleCode.CodeSystem });
+                                    {
+                                        dbAct.RoleCodeId = Guid.NewGuid().ToByteArray();
+                                        conn.Insert(new DbAuditCode() { Code = roleCode.Code, CodeSystem = roleCode.CodeSystem, Id = dbAct.RoleCodeId });
+                                    }
                                     else
                                         dbAct.RoleCodeId = existing.Id;
                                 }
@@ -150,7 +159,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                             conn.Insert(new DbAuditActorAssociation()
                             {
                                 ActorId = dbAct.Id,
-                                AuditId = dbAudit.Id
+                                AuditId = dbAudit.Id,
+                                Id = Guid.NewGuid().ToByteArray()
                             });
                         }
 
@@ -160,6 +170,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                         {
                             var dbAo = this.m_mapper.MapModelInstance<AuditableObject, DbAuditObject>(ao);
                             dbAo.AuditId = dbAudit.Id;
+                            dbAo.Id = Guid.NewGuid().ToByteArray();
                             conn.Insert(dbAo);
                         }
 

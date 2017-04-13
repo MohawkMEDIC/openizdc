@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -90,7 +91,8 @@ namespace LogViewer
         {
             Regex v1Regex = new Regex(@"^(.*)?(\s)?[\s][\[\<](.*?)[\]\>]\s\[(.*?)\]\s?:(.*)$"),
              v2Regex = new Regex(@"^(.*)?@(.*)?\s[\[\<](.*)?[\>\]]\s\[(.*?)\]\:\s(.*)$"),
-             server = new Regex(@"^([0-9\-\s\:APM\/]*?)\[@(\d*)\]?\s:\s(.*)\s(Information|Warning|Error|Fatal|Verbose):\s-?\d{1,10}?\s:(.*)$");
+             server = new Regex(@"^([0-9\-\s\:APM\/]*?)\[@(\d*)\]?\s:\s(.*)\s(Information|Warning|Error|Fatal|Verbose):\s-?\d{1,10}?\s:(.*)$"),
+             logCat = new Regex(@"^(\d{2}\-\d{2}\s\d{2}\:\d{2}\:\d{2}\.\d{3})\s*(\d*)?\s*(\d*)?\s([IVDEW])\s([\w\-\s]*):\s(.*)$");
 
             List<LogEvent> retVal = new List<LogEvent>();
             LogEvent current = null;
@@ -128,6 +130,23 @@ namespace LogViewer
                         Date = DateTime.Parse(match.Groups[1].Value),
                         Message = match.Groups[5].Value,
                         Thread = match.Groups[2].Value
+                    };
+                }
+                else if(logCat.IsMatch(line))
+                {
+                    if (current != null) retVal.Add(current);
+                    match = logCat.Match(line);
+                    current = new LogEvent()
+                    {
+                        Sequence = current?.Sequence + 1 ?? 0,
+                        Source = match.Groups[5].Value,
+                        Level = match.Groups[4].Value == "I" ? EventLevel.Informational :
+                        match.Groups[4].Value == "V" ? EventLevel.Verbose :
+                        match.Groups[4].Value == "E" ? EventLevel.Error :
+                        match.Groups[4].Value == "D" ? EventLevel.LogAlways : EventLevel.Warning,
+                        Date = DateTime.ParseExact(match.Groups[1].Value, "MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture),
+                        Message = match.Groups[6].Value,
+                        Thread = match.Groups[3].Value
                     };
                 }
                 else if(current != null)
