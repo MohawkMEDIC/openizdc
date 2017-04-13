@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         private ImsiServiceClient GetServiceClient()
         {
             var retVal = new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
-            retVal.Client.Accept = "application/json";
+            retVal.Client.Accept = "application/xml";
             return retVal;
         }
 
