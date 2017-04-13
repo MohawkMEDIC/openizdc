@@ -146,8 +146,21 @@
                 <td colspan="5" class="no-border-all">
                     <ul class="pagination" style="margin:0px; padding:0px" ng-if="search.paging.total > 1">
                         <li><a ng-click="search.previous()">&lt;&lt;</a></li>
-                        <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages"><a ng-click="search.goPage(i)">{{i}}</a></li>
-                        <li><a ng-click="search.next()">&gt;&gt;</a></li>
+                        <li ng-if="search.paging.current > 5">
+                            <a ng-click="search.goPage(search.paging.pages[0])">{{search.paging.pages[0]}}<span ng-if="search.paging.current > 6">...</span></a>
+                        </li>
+                        <li ng-class="{'active' : i == search.paging.current}" ng-repeat="i in search.paging.pages | limitTo: 10 : (search.paging.current > 5 ? search.paging.current-5 : 0) ">
+                            <a ng-click="search.goPage(i)">{{i}}</a>
+                        </li>
+                        <li ng-if="search.paging.pages.length-5 > search.paging.current &amp;&amp; search.paging.pages.length > 10">
+                           <a ng-click="search.goPage(search.paging.pages[search.paging.pages.length-1])">
+                               <span ng-if="search.paging.pages.length-6 > search.paging.current">...</span>
+                               {{search.paging.pages[search.paging.pages.length-1]}}
+                           </a>
+                        </li>
+                        <li>
+                            <a ng-click="search.next()">&gt;&gt;</a>
+                        </li>
                     </ul>
                 </td>
             </tr>
