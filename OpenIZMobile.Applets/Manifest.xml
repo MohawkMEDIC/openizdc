@@ -168,6 +168,10 @@
     <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
     <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
     <string key="locale.forgotPassword.challenge.placeholder">Enter the secret code</string>
+    <string key="locale.forgotPassword.challengeRequest.email">Send me an E-Mail</string>
+    <string key="locale.forgotPassword.challengeRequest.emailText">Please enter the first part of your e-mail address (ex: john@domain.com would be "john")</string>
+    <string key="locale.forgotPassword.challengeRequest.phone">Send me an SMS</string>
+    <string key="locale.forgotPassword.challengeRequest.phoneText">Please enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Enter the first part of your e-mail</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
@@ -468,6 +472,8 @@
     <string key="locale.about.versions.id">Maelezo yangu</string>
     <string key="locale.about.versions.info">Chaguo/chujo</string>
     <string key="locale.about.versions.version">Toleo la .NET Runtime</string>
+    <string key="locale.about.updateToast.title">Updates Inapatikana</string>
+    <string key="locale.about.updateToast.text">Habari njema! Kuna toleo jipya la programu inapatikana. Gonga hapa ili kwenda kwenye ukurasa update.</string>
     <string key="locale.action.acknowledge">Siwezi kuendelea kwasababu ya hitilafu hii</string>
     <string key="locale.action.back">Hii namba ni batili</string>
     <string key="locale.action.cancel">kufuta</string>
@@ -530,7 +536,6 @@
     <string key="locale.forgotPassword.challenge.resend">Ukubwa wa faili kumbukumbu</string>
     <string key="locale.forgotPassword.challenge.response">neno siri</string>
     <string key="locale.forgotPassword.challenge.title">Sasisho limekamilika</string>
-    <string key="locale.forgotPassword.challengeRequest.placeholder">Tengeneza akaunti Local Admin</string>
     <string key="locale.forgotPassword.changePassword.help">Neno siri</string>
     <string key="locale.forgotPassword.changePassword.title">Hakuna wagonjwa </string>
     <string key="locale.forgotPassword.mechanism.help">Onyo: kipindi kuisha</string>
@@ -539,6 +544,15 @@
     <string key="locale.forgotPassword.userName.label">Maelezo ya toleo</string>
     <string key="locale.forgotPassword.userName.placeholder">Kipindi chako kinakaribia kuisha</string>
     <string key="locale.forgotPassword.userName.title">Jina la kifaa tayari limesajiliwa. Je, unataka kubadilisha huu usajili?(kama ndio, kifaa kingine chenye jina hili kitashindwa kuunga)</string>
+    <string key="locale.forgotPassword.challengeRequest.email">Nitumie E-Mail</string>
+    <string key="locale.forgotPassword.challengeRequest.emailText">Tafadhali weka sehemu ya kwanza ya barua pepe yako (kwa mfano: john@domain.com itakuwa "john")</string>
+    <string key="locale.forgotPassword.challengeRequest.phone">Nitumie SMS</string>
+    <string key="locale.forgotPassword.challengeRequest.phoneText">Tafadhali ingiza tarakimu nne za mwisho za nambari yako ya</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Weka sehemu ya kwanza ya barua pepe yako</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Ingiza tarakimu nne za mwisho za nambari yako ya</string>
+    <string key="locale.forgotPassword.error.onlineOnly">Ili kuweka upya nenosiri lako lazima uwe mtandaoni</string>
+    <string key="locale.forgotPassword.error.validation">utambulisho yako haikuweza kuthibitishwa</string>
+    <string key="locale.forgotPassword.error.invalidCode">Nambari yako ya siri ni batili</string>
     <string key="locale.legend.completed">Tafuta</string>
     <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.legend.upcoming">Tahadhari</string>
@@ -572,6 +586,7 @@
     <string key="locale.preferences.username">Sehemu ya mfumo</string>
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
     <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
+    <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
     <string key="locale.security.errors.unableToResetPassword">Hitilafu imetokea. Tafadhali pitia faili kumbukumbu.</string>
     <string key="locale.security.errors.usernameRequired">Jina la mtumiaji Local Admin</string>
     <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>
