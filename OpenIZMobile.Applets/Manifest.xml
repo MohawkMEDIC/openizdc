@@ -253,7 +253,6 @@
     <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
     <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
     <string key="locale.settings.localAdminName">Local Admin Username:</string>
-    <string key="locale.actions.save">Save</string>
     <string key="locale.settings.data.restore">Restore Data</string>
     <string key="locale.settings.data.purge">Purge Data</string>
     <string key="locale.settings.data.pull">Synchronize Now</string>
@@ -272,6 +271,12 @@
     <string key="locale.settings.proxyAddress">Proxy Address</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
+    <string key="locale.settings.security.audit">Audit Retention</string>
+    <string key="locale.settings.security.audit.none">Do not retain audits (erase when app starts)</string>
+    <string key="locale.settings.security.audit.48hr">Retain audits for 48 hrs</string>
+    <string key="locale.settings.security.audit.week">Retain audits for 1 week</string>
+    <string key="locale.settings.security.audit.month">Retain audits for 1 month</string>
+    <string key="locale.settings.security.audit.help">This setting controls how long the applet will keep an audit trail locally</string>
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Save</string>
     <string key="locale.preferences.username">Username</string>

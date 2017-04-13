@@ -150,9 +150,16 @@ namespace OpenIZ.Mobile.Core.Protocol
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                     var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
+                    var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("oizcp-lastRun") ?? "0001-01-01");
 
-                    if (!queueService.IsSynchronizing &&
-                                SynchronizationQueue.Inbound.Count() == 0)
+                    // Should we 
+                    if (SynchronizationLog.Current.GetLastTime(typeof(Patient)).HasValue &&
+                        SynchronizationQueue.Inbound.Count() == 0 &&
+                            (
+                                lastRefresh == DateTime.MinValue || 
+                                DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
+                            )
+                        )
                     {
                         var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
                         Guid queryId = Guid.NewGuid();
@@ -175,7 +182,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     // Stage 3. Subscribe to persistence
                     ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
                     {
-                        if (!this.m_isSubscribed && e.Type == null && e.Count == 0) // General subscribption is done
+                        if (!this.m_isSubscribed && e.Type == null) // General subscribption is done
                             this.SubscribeEvents();
                     };
 
@@ -199,7 +206,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     }
 
                                     this.m_isSubscribed = false;
-                                    this.SubscribeEvents();
+                                    //this.SubscribeEvents();
                                 }
                             };
 
@@ -266,7 +273,10 @@ namespace OpenIZ.Mobile.Core.Protocol
                         }
 
                         if (promiseCount > 0)
-                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_calculatingCarePlan, 0), 0);
+                        {
+                            ApplicationContext.Current.SetProgress(String.Empty, 0);
+                            ApplicationContext.Current.Configuration.SetAppSetting("oizcp-lastRun", DateTime.Now);
+                        }
 
                         this.m_resetEvent.Reset();
 

@@ -105,6 +105,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 while (remain > 0)
                 {
+                    InboundQueueEntry queueEntry = null;
+
                     try
                     {
                         if (remain > maxTotal)
@@ -117,7 +119,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
 #endif
-                        InboundQueueEntry queueEntry = null;
                         IdentifiedData dpe = null;
                         if (nextPeek != null) // Was this loaded before? {
                         {
@@ -165,14 +166,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         else
                             this.ImportElement(dpe);
 
-                        this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }));
+                        this.QueueExhausted?.BeginInvoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }), null, null);
 
 #if PERFMON
                         sw.Stop();
                         ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "ImportComplete", sw.Elapsed);
                         sw.Reset();
 #endif
-                        SynchronizationQueue.Inbound.Delete(queueEntry.Id);
                         queueEntry = null;
 
                         var peekTaskResult = nextPeekTask.Result;
@@ -182,8 +182,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     catch (Exception e)
                     {
-                        this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
-                        SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(SynchronizationQueue.Inbound.DequeueRaw(), Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "In" });
+                        try
+                        {
+                            this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
+                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "inbound" });
+                        }
+                        catch(Exception e2)
+                        {
+                            this.m_tracer.TraceEvent(System.Diagnostics.Tracing.EventLevel.Critical, "Error putting dead item on deadletter queue: {0}", e);
+                            throw;
+                        }
+                    }
+                    finally
+                    {
+                        SynchronizationQueue.Inbound.Delete(queueEntry.Id);
                     }
                     remain = SynchronizationQueue.Inbound.Count();
 
@@ -192,10 +204,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 if(maxTotal > 5)
                     ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
        
-            }
-            catch (TimeoutException e)
-            {
-
             }
             finally
             {
@@ -428,37 +436,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);
                 if (existing == null)
-                    try
-                    {
-                        svc.Insert(data);
-                    }
-                    catch (Exception e)
-                    {
-                        this.m_tracer.TraceWarning("Batch insert fails, performing individual inserts");
-
-                        if (data is Bundle)
-                        {
-                            foreach (var d in (data as Bundle).Item)
-                            {
-                                this.ImportElement(d as IdentifiedData);
-                                SynchronizationQueue.Inbound.Enqueue(d as IdentifiedData, DataOperationType.Sync); // Queue this up for later
-                            }
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
+                    svc.Insert(data);
                 else
                 {
                     IVersionedEntity ver = data as IVersionedEntity;
                     if (ver?.VersionKey == (existing as IVersionedEntity)?.VersionKey) // no need to update
                         this.m_tracer.TraceVerbose("Object {0} is already up to date", existing);
-                    if (ver?.PreviousVersionKey != null && ver?.PreviousVersionKey != (existing as IVersionedEntity)?.VersionKey ||
-                        data.GetType() != existing.GetType()) // Conflict, ask the meatbag to resolve it
-                    {
-                        SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Update); //.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, ms.ToArray()));
-                    }
                     else
                     {
                         svc.Update(data);
@@ -468,11 +451,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             catch (Exception e)
             {
                 this.m_tracer.TraceError("Error inserting object data: {0}", e);
-
-                SynchronizationQueue.DeadLetter.Enqueue(data, DataOperationType.Sync);
-                // throw;
-                this.CreateUserAlert(Strings.locale_importErrorSubject, Strings.locale_importErrorBody, e, data);
-
+                throw;
             }
         }
 

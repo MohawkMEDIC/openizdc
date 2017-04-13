@@ -73,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
         public SynchronizationQueueEntry(SynchronizationQueueEntry entry)
         {
             this.CreationTime = entry.CreationTime;
-            this.Data = entry.Data;
+            this.Data = ApplicationContext.Current.GetService<IQueueFileProvider>().CopyQueueData(entry.Data);
             this.IsRetry = entry.IsRetry;
             this.Operation = entry.Operation;
             this.Type = entry.Type;
@@ -191,7 +191,7 @@ namespace OpenIZ.Mobile.Core.Synchronization.Model
 				throw new ArgumentNullException (nameof (fromEntry));
 			
 			this.OriginalQueue = fromEntry.GetType().GetTypeInfo ().GetCustomAttribute<TableAttribute> ().Name;
-			this.Data = fromEntry.Data;
+			this.Data = ApplicationContext.Current.GetService<IQueueFileProvider>().CopyQueueData(fromEntry.Data);
 			this.CreationTime = DateTime.Now;
 			this.Type = fromEntry.Type;
             this.TagData = tagData;

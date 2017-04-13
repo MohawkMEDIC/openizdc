@@ -226,6 +226,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Your facility plan is over a week old, do you want to recalculate it?.
+        /// </summary>
+        internal static string locale_refreshCarePlanPrompt {
+            get {
+                return ResourceManager.GetString("locale_refreshCarePlanPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;p&gt;The server received the request to synchronize the data, however it rejected it due to an error &lt;strong&gt;{0}&lt;/strong&gt;. The changes the server attempted to process were:&lt;/p&gt;&lt;pre&gt;{1}&lt;/pre&gt;&lt;p&gt;The message has been quarantined, you can view the message in the sync centre.&lt;/p&gt;&lt;a href=&quot;#/core/sync&quot; class=&quot;btn btn-lg btn-info&quot;&gt;Visit Sync Centre&lt;/a&gt;.
         /// </summary>
         internal static string locale_rejectionBody {

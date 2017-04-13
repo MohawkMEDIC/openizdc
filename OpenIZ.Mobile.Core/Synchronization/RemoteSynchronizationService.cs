@@ -221,7 +221,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
             try
             {
 
-                ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, 0, 0), 0);
                 this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
                 // Get last modified date
@@ -255,7 +254,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     float perc = i / (float)result.TotalResults;
 
-                    ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
+                    if(result.TotalResults > result.Count)
+                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
                     NameValueCollection infopt = null;
                     if (filter.Any(o => o.Key.StartsWith("_")))
                     {
@@ -301,6 +301,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     if (String.IsNullOrEmpty(eTag))
                         eTag = result?.Item.FirstOrDefault()?.Tag;
                 }
+
+                if (result.TotalResults > result.Count)
+                    ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                 // Log that we synchronized successfully
                 SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);

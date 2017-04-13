@@ -368,6 +368,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             conn.Delete(tdata);
                             ApplicationContext.Current.GetService<IQueueFileProvider>().RemoveQueueData(tdata?.Data);
                         }
+                        else
+                            this.m_tracer.TraceWarning("Could not find queue item {0} to be deleted", id);
                     }
                 }
                 catch (Exception e)

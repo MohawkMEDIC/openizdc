@@ -24,6 +24,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         private Dictionary<Type, XmlSerializer> m_serializers = new Dictionary<Type, XmlSerializer>();
 
         /// <summary>
+        /// Copy queue data 
+        /// </summary>
+        public string CopyQueueData(string data)
+        {
+            var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
+
+            // Create blob path
+            var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
+            if (!Directory.Exists(blobPath))
+                Directory.CreateDirectory(blobPath);
+
+            blobPath = Path.Combine(blobPath, Guid.NewGuid().ToString() + ".dat");
+            File.Copy(data, blobPath);
+            return blobPath;
+        }
+
+        /// <summary>
         /// Get Queue Data
         /// </summary>
         public IdentifiedData GetQueueData(string pathSpec, Type typeSpec)

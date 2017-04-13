@@ -286,7 +286,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 foreach (var itm in this.m_entryTable)
                 {
                     int maxSize = this.m_configuration.Cache.MaxSize;
-                    var garbageBin = itm.Value.AsParallel().OrderByDescending(o => o.Value.LastUpdateTime).Take(itm.Value.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
+                    var garbageBin = itm.Value.OrderByDescending(o => o.Value.LastUpdateTime).Take(itm.Value.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
 
                     if (garbageBin.Count() > 0)
                     {
@@ -296,8 +296,7 @@ namespace OpenIZ.Mobile.Core.Caching
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
                             foreach (var g in gc)
-                                lock (this.m_lock)
-                                    itm.Value.Remove(g);
+                                itm.Value.Remove(g);
                         }, garbageBin);
                     }
                 }
@@ -341,7 +340,7 @@ namespace OpenIZ.Mobile.Core.Caching
                 foreach (var itm in this.m_entryTable)
                 {
                     // Clean old data
-                    var garbageBin = itm.Value.AsParallel().Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
+                    var garbageBin = itm.Value.Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
                     if (garbageBin.Count() > 0)
                     {
                         this.m_tracer.TraceInfo("Will clean {0} stale entries from cache {1}..", garbageBin.Count(), itm.Key.FullName);
@@ -349,7 +348,6 @@ namespace OpenIZ.Mobile.Core.Caching
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
                             foreach (var g in gc.ToArray())
-                                lock (this.m_lock)
                                     itm.Value.Remove(g);
                         }, garbageBin);
                     }

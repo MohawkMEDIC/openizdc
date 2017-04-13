@@ -27,5 +27,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// Get queue data
         /// </summary>
         IdentifiedData GetQueueData(String pathSpec, Type typeSpec);
+
+        /// <summary>
+        /// Copy queue data
+        /// </summary>
+        string CopyQueueData(string data);
     }
 }

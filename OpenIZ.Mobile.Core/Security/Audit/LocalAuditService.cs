@@ -109,10 +109,10 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                         switch(se.Queue)
                         {
                             case "inbound":
-                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
+                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null);
                                 break;
                             case "outbound":
-                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null, se.ObjectKeys.Select(k=>new DummyIdentifiedWrapper() { Key = k }).ToArray());
+                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null);
                                 break;
                         }
                 };

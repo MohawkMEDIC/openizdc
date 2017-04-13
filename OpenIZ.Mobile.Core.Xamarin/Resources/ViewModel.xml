@@ -413,11 +413,6 @@
             <property name="version" all="false"/>
             <property name="identifier" ref="EntityIdentifier" all="true" behavior="always"/>
             <property name="name"  ref="EntityName" all="true" behavior="always"/>
-            <property name="relationship" behavior="always">
-              <property name="OwnedEntity" all="false">
-                <property name="targetModel" ref="ManufacturedMaterial" all="true" behavior="always"/>
-              </property>
-            </property>
           </property>
         </property>
         <property name="*" all="true">

@@ -221,4 +221,7 @@ Sincerely,
   <data name="locale_invalidUserNamePassword" xml:space="preserve">
     <value>Invalid Username / Password</value>
   </data>
+  <data name="locale_refreshCarePlanPrompt" xml:space="preserve">
+    <value>Your facility plan is over a week old, do you want to recalculate it?</value>
+  </data>
 </root>
