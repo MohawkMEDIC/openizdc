@@ -187,6 +187,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Entity modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbEntity()
             {
                 ClassConceptUuid = modelInstance.ClassConceptKey?.ToByteArray(),
@@ -199,7 +200,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 StatusConceptUuid = modelInstance.StatusConceptKey?.ToByteArray(),
                 TemplateUuid = modelInstance.TemplateKey?.ToByteArray(),
                 TypeConceptUuid = modelInstance.TypeConceptKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray() ,
                 VersionSequenceId = (int)modelInstance.VersionSequence.GetValueOrDefault(),
                 VersionUuid = modelInstance.VersionKey?.ToByteArray()
             };

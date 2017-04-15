@@ -679,7 +679,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 this.m_tracer.TraceError("Error joining context: {0}", e);
                 throw;
             }
-            return null;
         }
 
         /// <summary>

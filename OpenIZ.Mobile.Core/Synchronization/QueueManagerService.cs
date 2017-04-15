@@ -166,14 +166,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         else
                             this.ImportElement(dpe);
 
-                        this.QueueExhausted?.BeginInvoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }), null, null);
+                        this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }));
 
 #if PERFMON
                         sw.Stop();
                         ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "ImportComplete", sw.Elapsed);
                         sw.Reset();
 #endif
-                        queueEntry = null;
+                        //queueEntry = null;
 
                         var peekTaskResult = nextPeekTask.Result;
                         nextPeek = peekTaskResult.Key;
@@ -505,7 +505,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             ApplicationContext.Current.Started += (o, e) =>
             {
                 // startup
-                AsyncCallback startup = (iar) =>
+                Action<Object> startup = (iar) =>
                 {
                     try
                     {
@@ -519,7 +519,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                 };
 
-                startup.BeginInvoke(null, null, null);
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueNonPooledWorkItem(startup, null);
             };
 
 

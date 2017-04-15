@@ -183,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Security
                         conn.Insert(new DbSecurityRole() { Name = value, Key = pk });
                         this.DataCreated?.Invoke(this, new AuditDataEventArgs(new SecurityRole() { Key = pk, Name = value }));
                     }
-                    catch
+                    catch(Exception e)
                     {
 
                     }

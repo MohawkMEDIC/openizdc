@@ -47,6 +47,7 @@ using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using System.IO.Compression;
 using OpenIZ.Core.Applets.Services;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -167,6 +168,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 this.m_acceptThread.Start();
                 this.m_acceptThread.Name = "MiniIMS";
                 this.m_tracer.TraceInfo("Started internal IMS services...");
+
+                // We have to wait for the IAppletManager service to come up or else it is pretty useless
                 this.Started?.Invoke(this, EventArgs.Empty);
 
                 return true;
@@ -367,13 +370,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 if (result is IdentifiedData)
                                 {
 
-                                    //response.AddHeader("Content-Encoding", "deflate");
-                                    //using(var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
-                                    using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                                    response.AddHeader("Content-Encoding", "deflate");
+                                    using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
+                                    using (StreamWriter sw = new StreamWriter(gzs))
                                     {
                                         if(request.QueryString["_viewModel"] != null)
                                         {
-                                            var viewModelDescription = appletManager.LoadedApplets.GetViewModelDescription(request.QueryString["_viewModel"]);
+                                            var viewModelDescription = appletManager.Applets.GetViewModelDescription(request.QueryString["_viewModel"]);
                                             var serializer = this.CreateSerializer(viewModelDescription);
                                             serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
                                         }
@@ -403,22 +406,23 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             }
             catch (UnauthorizedAccessException ex)
             {
-                this.m_tracer.TraceError(ex.ToString());
+                this.m_tracer.TraceError("Unauthorized action: {0}", ex.Message);
+                AuditUtil.AuditRestrictedFunction(ex, request.Url);
                 response.StatusCode = 403;
-                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
-                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/403.html");
+                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
             }
             catch (SecurityException ex)
             {
-                this.m_tracer.TraceError(ex.ToString());
+                this.m_tracer.TraceError("General security exception: {0}", ex.Message);
                 if (AuthenticationContext.Current.Principal == AuthenticationContext.AnonymousPrincipal)
                 {
                     // Is there an authentication asset in the configuration
                     var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;
                     if (String.IsNullOrEmpty(authentication))
-                        authentication = appletManager.LoadedApplets.AuthenticationAssets.FirstOrDefault();
+                        authentication = appletManager.Applets.AuthenticationAssets.FirstOrDefault();
                     if (String.IsNullOrEmpty(authentication))
                         authentication = "/org/openiz/core/views/security/login.html";
 
@@ -430,27 +434,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 {
                     response.StatusCode = 403;
 
-                    var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
-                    var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                    var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/403.html");
+                    var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                     response.OutputStream.Write(buffer, 0, buffer.Length);
                 }
 
             }
             catch (FileNotFoundException ex)
             {
-                this.m_tracer.TraceError(ex.ToString());
+                this.m_tracer.TraceError("Asset not found: {0}", ex.FileName);
                 response.StatusCode = 404;
-                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html");
-                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/404.html");
+                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
             }
             catch (Exception ex)
             {
-                this.m_tracer.TraceError(ex.ToString());
+                this.m_tracer.TraceError("Internal applet error: {0}", ex.ToString());
                 response.StatusCode = 500;
-                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
-                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.Applets.ResolveAsset("/org.openiz.core/views/errors/500.html");
+                var buffer = appletManager.Applets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
@@ -476,7 +480,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
         {
-            this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e);
+            this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.Message);
 
             response.StatusCode = 500;
             if(e is SecurityException)
@@ -519,7 +523,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             if (!this.m_cacheApplets.TryGetValue(appletPath, out navigateAsset))
             {
 
-                navigateAsset = appletManagerService.LoadedApplets.ResolveAsset(appletPath);
+                navigateAsset = appletManagerService.Applets.ResolveAsset(appletPath);
 
                 if (navigateAsset == null)
 				{
@@ -550,7 +554,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             response.ContentType = navigateAsset.MimeType;
 
             // Write asset
-            var content = appletManagerService.LoadedApplets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+            var content = appletManagerService.Applets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
             response.OutputStream.Write(content, 0, content.Length);
 
         }

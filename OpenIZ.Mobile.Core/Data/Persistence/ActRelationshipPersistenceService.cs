@@ -40,6 +40,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(ActRelationship modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbActRelationship()
             {
                 SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),

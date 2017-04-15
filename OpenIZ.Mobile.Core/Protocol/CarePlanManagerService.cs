@@ -22,6 +22,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -150,11 +151,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
                     var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
-                    var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("oizcp-lastRun") ?? "0001-01-01");
+                    var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.protocol.plan.lastRun") ?? "0001-01-01");
 
-                    // Should we 
-                    if (SynchronizationLog.Current.GetLastTime(typeof(Patient)).HasValue &&
-                        SynchronizationQueue.Inbound.Count() == 0 &&
+                    // Should we ?
+                    var hasPatientSync = SynchronizationLog.Current.GetAll().Any(o=>o.ResourceType == "Person");
+                    var inboundQueueCount = SynchronizationQueue.Inbound.Count();
+                    if (hasPatientSync &&
+                        inboundQueueCount == 0 &&
                             (
                                 lastRefresh == DateTime.MinValue || 
                                 DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
@@ -167,7 +170,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         while (ofs < tr)
                         {
                             ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                            var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
+                            var prodPatients = patientPersistence.Query(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId);
                             ofs += 15;
 
                             if (queueService.IsSynchronizing ||
@@ -195,12 +198,13 @@ namespace OpenIZ.Mobile.Core.Protocol
                                     Guid queryId = Guid.NewGuid();
                                     int tr = 1, ofs = 0;
                                     queryId = Guid.NewGuid();
-                                    tr = 1;
+                                    tr = e.ObjectKeys.Count();
                                     ofs = 0;
                                     while (ofs < tr)
                                     {
                                         ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
-                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic == "ACTIVE", ofs, 15, out tr, queryId);
+
+                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic != "OBSOLETE", ofs, 15, out tr, queryId);
                                         this.QueueWorkItem(prodPatients.Where(p => e.ObjectKeys.Contains(p.Key.Value)));
                                         ofs += 15;
                                     }
@@ -275,7 +279,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         if (promiseCount > 0)
                         {
                             ApplicationContext.Current.SetProgress(String.Empty, 0);
-                            ApplicationContext.Current.Configuration.SetAppSetting("oizcp-lastRun", DateTime.Now);
+                            ApplicationContext.Current.Configuration.SetAppSetting("openiz.mobile.core.protocol.plan.lastRun", DateTime.Now);
                             ApplicationContext.Current.SaveConfiguration();
                         }
 

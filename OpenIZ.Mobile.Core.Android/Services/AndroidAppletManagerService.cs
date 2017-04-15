@@ -26,8 +26,8 @@ namespace OpenIZ.Mobile.Core.Android.Services
         /// </summary>
         public AndroidAppletManagerService()
         {
-            this.LoadedApplets.Resolver = this.ResolveAppletAsset;
-            this.LoadedApplets.CachePages = true;
+            this.m_appletCollection.Resolver = this.ResolveAppletAsset;
+            this.m_appletCollection.CachePages = true;
         }
 
         /// <summary>

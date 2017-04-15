@@ -132,7 +132,11 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "org.openiz.core"
+                StartupAsset = "org.openiz.core",
+                Security = new AppletSecurityConfiguration()
+                {
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style
@@ -143,6 +147,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 ServiceTypes = new List<string>() {
                     
                     typeof(LocalPolicyDecisionService).AssemblyQualifiedName,
+                    typeof(AndroidAppletManagerService).AssemblyQualifiedName,
                     typeof(LocalPolicyInformationService).AssemblyQualifiedName,
                     typeof(LocalPatientService).AssemblyQualifiedName,
                     typeof(LocalPlaceService).AssemblyQualifiedName,
@@ -172,8 +177,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
-                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
-                    typeof(AndroidAppletManagerService).AssemblyQualifiedName
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {

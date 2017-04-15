@@ -51,6 +51,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 dbPatient.DeceasedDatePrecision = PersonPersistenceService.PrecisionMap[modelInstance.DeceasedDatePrecision.Value];
             return dbPatient;
             */
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbPatient()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),

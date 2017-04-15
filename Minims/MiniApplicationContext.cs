@@ -258,7 +258,6 @@ namespace Minims
                     {
                         retVal.ConfigurationManager.Save();
                     }
-                    appService.LoadedApplets.CachePages = false;
 
                     if(!retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Any(o=>o.TraceWriterClassXml.Contains("Console")))
                         retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter.Add(new TraceWriterConfiguration()

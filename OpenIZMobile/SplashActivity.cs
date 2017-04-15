@@ -56,7 +56,7 @@ namespace OpenIZMobile
 
         // Tracer
         private Tracer m_tracer;
-
+        
         /// <summary>
         /// Progress has changed
         /// </summary>
@@ -72,6 +72,7 @@ namespace OpenIZMobile
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            
             this.SetContentView(Resource.Layout.Splash);
         }
 
@@ -134,7 +135,7 @@ namespace OpenIZMobile
                 if (AndroidApplicationContext.Current != null)
                     return true;
 
-                if (!AndroidApplicationContext.Start(this.ApplicationContext, this.Application))
+                if (!AndroidApplicationContext.Start(this, this.ApplicationContext, this.Application))
                 {
 
                     CancellationTokenSource ctSource = new CancellationTokenSource();
@@ -146,8 +147,9 @@ namespace OpenIZMobile
                         try
                         {
 
-                            if (!AndroidApplicationContext.StartTemporary(this.ApplicationContext))
+                            if (!AndroidApplicationContext.StartTemporary(this, this.ApplicationContext))
                                 throw new InvalidOperationException("Cannot start temporary authentication pricipal");
+
                         }
                         catch (Exception e)
                         {
@@ -196,6 +198,7 @@ namespace OpenIZMobile
 
         }
 
+     
 
         /// <summary>
         /// Shows an exception message box

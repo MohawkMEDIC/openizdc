@@ -59,11 +59,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (modelInstance.DateOfBirthPrecision.HasValue && PrecisionMap.ContainsKey(modelInstance.DateOfBirthPrecision.Value))
                 dbPerson.DateOfBirthPrecision = PrecisionMap[modelInstance.DateOfBirthPrecision.Value];
                 */
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbPerson()
             {
                 DateOfBirth = modelInstance.DateOfBirth,
                 DateOfBirthPrecision = modelInstance.DateOfBirthPrecision.HasValue ? PrecisionMap[modelInstance.DateOfBirthPrecision.Value] : null,
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
         }
 
@@ -102,7 +103,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             context.Connection.InsertAll(data.LanguageCommunication.Select(l => new DbPersonLanguageCommunication()
             {
                 IsPreferred = l.IsPreferred,
-                Uuid = l.Key?.ToByteArray(),
+                Uuid = l.Key?.ToByteArray() ?? Guid.NewGuid().ToByteArray(),
                 LanguageCode = l.LanguageCode,
                 SourceUuid = sourceKey
             }));

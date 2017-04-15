@@ -99,11 +99,15 @@ namespace OpenIZ.Mobile.Core.Android
         /// </summary>
         public static event EventHandler NoConfiguration;
 
+        /// <summary>
+        /// Gets or sets the current activity
+        /// </summary>
+        public A.Content.Context CurrentActivity { get; set; }
 
         /// <summary>
         /// Start the application context
         /// </summary>
-        public static bool Start(A.Content.Context context, A.App.Application application)
+        public static bool Start(A.Content.Context launcherActivity, A.Content.Context context, A.App.Application application)
         {
             var retVal = new AndroidApplicationContext();
             retVal.Context = context;
@@ -121,11 +125,11 @@ namespace OpenIZ.Mobile.Core.Android
                 try
                 {
                     retVal.ConfigurationManager.Load();
+
                     // Set master application context
                     ApplicationContext.Current = retVal;
-
+                    retVal.CurrentActivity = launcherActivity;
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
-
 
                     // HACK: For some reason the PCL doesn't do this automagically
                     //var connectionString = retVal.Configuration.GetConnectionString("openIzWarehouse");
@@ -239,13 +243,14 @@ namespace OpenIZ.Mobile.Core.Android
         /// configuring the software
         /// </summary>
         /// <returns><c>true</c>, if temporary was started, <c>false</c> otherwise.</returns>
-        public static bool StartTemporary(A.Content.Context context)
+        public static bool StartTemporary(A.Content.Context launcherActivity, A.Content.Context context)
         {
             try
             {
                 var retVal = new AndroidApplicationContext();
 
                 retVal.Context = context;
+                retVal.CurrentActivity = launcherActivity;
                 retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
                 retVal.ThreadDefaultPrincipal = AuthenticationContext.SystemPrincipal;
 
@@ -375,7 +380,7 @@ namespace OpenIZ.Mobile.Core.Android
 
             A.App.Application.SynchronizationContext.Post(_ =>
             {
-                var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                var alertDialogBuilder = new AlertDialog.Builder(this.CurrentActivity)
                         .SetMessage(confirmText)
                         .SetCancelable(false)
                         .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
@@ -406,7 +411,7 @@ namespace OpenIZ.Mobile.Core.Android
             A.App.Application.SynchronizationContext.Post(_ =>
             {
 
-                var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                var alertDialogBuilder = new AlertDialog.Builder(this.CurrentActivity)
                          .SetMessage(alertText)
                         .SetCancelable(false)
                         .SetPositiveButton(Strings.locale_confirm, (sender, args) =>

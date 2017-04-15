@@ -36,6 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(SubstanceAdministration modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbSubstanceAdministration()
             {
                 DoseQuantity = modelInstance.DoseQuantity,
@@ -43,7 +44,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 RouteConceptUuid = modelInstance.RouteKey?.ToByteArray(),
                 SequenceId = modelInstance.SequenceId,
                 SiteConceptUuid = modelInstance.SiteKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
         }
 

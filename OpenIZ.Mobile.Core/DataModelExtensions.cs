@@ -71,6 +71,10 @@ namespace OpenIZ.Mobile.Core
             typeof(Place)
         };
 
+        // Get instance of cache
+        private static Dictionary<Type, Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>> s_getInstanceOfCache = new Dictionary<Type, Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>>();
+
+
         /// <summary>
         /// Gets an instance of TDomain from me
         /// </summary>
@@ -80,11 +84,33 @@ namespace OpenIZ.Mobile.Core
 
             TDomain retVal = new TDomain();
 
-            foreach (var prop in typeof(TDomain).GetRuntimeProperties())
+            // First get the runtime properties from cache?
+            Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>> meKnownMaps = null;
+            if(!s_getInstanceOfCache.TryGetValue(me.GetType(), out meKnownMaps))
             {
-                var meProp = me.GetType().GetRuntimeProperties().FirstOrDefault(p => p.Name == prop.Name);
-                if (meProp != null)
-                    prop.SetValue(retVal, meProp.GetValue(me));
+                meKnownMaps = new Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>();
+                lock (s_getInstanceOfCache)
+                    if (!s_getInstanceOfCache.ContainsKey(me.GetType()))
+                        s_getInstanceOfCache.Add(me.GetType(), meKnownMaps);
+            }
+
+            // Do we have a map for the destination?
+            Dictionary<PropertyInfo, PropertyInfo> mapProperties = null;
+            if(!meKnownMaps.TryGetValue(typeof(TDomain), out mapProperties))
+            {
+                mapProperties = new Dictionary<PropertyInfo, PropertyInfo>();
+                foreach (var pi in typeof(TDomain).GetRuntimeProperties())
+                    mapProperties.Add(pi, me.GetType().GetRuntimeProperty(pi.Name));
+                lock (meKnownMaps)
+                    if (meKnownMaps.ContainsKey(typeof(TDomain)))
+                        meKnownMaps.Add(typeof(TDomain), mapProperties);
+            }
+
+            // Now map
+            foreach (var prop in mapProperties)
+            {
+                if (prop.Value != null)
+                    prop.Key.SetValue(retVal, prop.Value.GetValue(me));
                 else
                     return default(TDomain);
             }

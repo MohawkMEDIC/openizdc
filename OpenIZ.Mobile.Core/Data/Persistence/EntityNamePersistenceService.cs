@@ -42,8 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
-
-
+        
 
         /// <summary>
         /// Get from source
@@ -61,9 +60,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
 
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbEntityName()
             {
-                Uuid = modelInstance.Key?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray() ,
                 SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 UseConceptUuid = modelInstance.NameUseKey?.ToByteArray()
             };
@@ -154,11 +154,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityNameComponent modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             var retVal = new DbEntityNameComponent()
             {
                 NameUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
 
             // Address component already exists?

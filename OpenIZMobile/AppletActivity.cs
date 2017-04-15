@@ -79,7 +79,9 @@ namespace OpenIZMobile
 		protected override void OnCreate (Bundle savedInstanceState)
 		{
 			base.OnCreate (savedInstanceState);
-                        
+
+            (AndroidApplicationContext.Current as AndroidApplicationContext).CurrentActivity = this;
+
 			this.SetContentView (Resource.Layout.Applet);
 			this.m_webView = FindViewById<AppletWebView> (Resource.Id.applet_view);
             //this.m_webView.Asset = asset;

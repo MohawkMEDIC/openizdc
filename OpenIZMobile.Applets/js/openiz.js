@@ -281,7 +281,69 @@ var OpenIZ = OpenIZ || {
                 finally: controlData.finally,
                 state: controlData.state
             });
-        }
+        },
+        /**
+          * @summary Perform a search of an act subtypes asynchronously
+          * @memberof OpenIZ.Act
+          * @method
+          * @param {Object} controlData An object containing search, offset, count and callback data
+          * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+          * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+          * @param {object} controlData.query The query filters to apply to the search
+          * @param {int} controlData.query._count The limit of results to return from the ims
+          * @param {int} controlData.query._offset The offset of the search result window
+          * @param {uuid} controlData.query._id The identifier of the object to retrieve from the IMS (performs a get rather than a query)
+          * @see {OpenIZ.IMS.get}
+          */
+        findClinicalActAsync: function (controlData) {
+            var actResources = [
+                "Act"
+            ];
+                /*
+                "SubstanceAdministration",
+                "QuantityObservation",
+                "CodedObservation",
+                "TextObservation",
+                "PatientEncounter"
+            ];*/
+
+            var doSearch = function (index, queryId, offset, count) {
+                
+                // Perform query
+                var query = controlData.query;
+                query._queryId = queryId;
+                query._offset = offset;
+                query._count = count;
+
+                OpenIZ.Ims.get({
+                    resource: actResources[index],
+                    /** @param {OpenIZModel.Bundle} data */
+                    continueWith: function(data) {
+
+                        controlData.intermediateResults(data);
+
+                        // Call the intermediary results function
+                        if (data.offset + data.count < data.totalResults) // More results
+                            doSearch(index, queryId, offset + count, count);
+                        else if (++index < actResources.length)
+                            doSearch(index, queryId, offset + count, count);
+                        else
+                            controlData.continueWith(data);
+                    },
+                    onException: controlData.onException,
+                    finally: function() {
+                        if(index >= actResources.length)
+                            controlData.finally
+                    },
+                    query: query,
+                    state: controlData.state
+                });
+            }
+
+            // Start the process
+            doSearch(0, OpenIZ.App.newGuid(), 0, 15);
+        },
     },
 
     /**

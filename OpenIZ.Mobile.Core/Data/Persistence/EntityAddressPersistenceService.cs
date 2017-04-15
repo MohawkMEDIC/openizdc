@@ -56,6 +56,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
 
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+
             return new DbEntityAddress()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -156,11 +158,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityAddressComponent modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             var retVal = new DbEntityAddressComponent()
             {
                 AddressUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
 
             // Address component already exists?

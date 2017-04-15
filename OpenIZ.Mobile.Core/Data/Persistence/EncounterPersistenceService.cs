@@ -36,6 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(PatientEncounter modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbPatientEncounter()
             {
                 DischargeDispositionUuid = modelInstance.DischargeDispositionKey?.ToByteArray(),

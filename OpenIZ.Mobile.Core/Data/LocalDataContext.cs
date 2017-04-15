@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net.Interop;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -39,6 +40,9 @@ namespace OpenIZ.Mobile.Core.Data
         // Prepared
         private Dictionary<String, IDbStatement> m_prepared = new Dictionary<string, IDbStatement>();
 
+        // Cached query
+        private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
+        
         /// <summary>
         /// Cache commit
         /// </summary>
@@ -131,5 +135,47 @@ namespace OpenIZ.Mobile.Core.Data
             foreach (var stmt in this.m_prepared.Values)
                 stmt.Finalize();
         }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        public String GetQueryLiteral(SqlStatement query)
+        {
+            StringBuilder retVal = new StringBuilder(query.SQL);
+            String sql = retVal.ToString();
+            var qList = query.Arguments.ToArray();
+            int parmId = 0;
+            while (sql.Contains("?"))
+            {
+                var pIndex = sql.IndexOf("?");
+                retVal.Remove(pIndex, 1);
+                retVal.Insert(pIndex, qList[parmId++]);
+                sql = retVal.ToString();
+            }
+            return retVal.ToString();
+        }
+
+        /// <summary>
+        /// Add a cached set of query results
+        /// </summary>
+        public void AddQuery(SqlStatement domainQuery, IEnumerable<object> results)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            lock (this.m_cachedQuery)
+                if (!this.m_cachedQuery.ContainsKey(key))
+                    this.m_cachedQuery.Add(key, results);
+        }
+
+        /// <summary>
+        /// Cache a query 
+        /// </summary>
+        public IEnumerable<Object> CacheQuery(SqlStatement domainQuery)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            IEnumerable<Object> retVal = null;
+            this.m_cachedQuery.TryGetValue(key, out retVal);
+            return retVal;
+        }
+
     }
 }

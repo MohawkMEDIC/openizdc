@@ -256,7 +256,7 @@
     <string key="locale.settings.data.restore">Restore Data</string>
     <string key="locale.settings.data.purge">Purge Data</string>
     <string key="locale.settings.data.pull">Synchronize Now</string>
-    <string key="locale.settings.data.compact">Compact Data</string>
+    <string key="locale.settings.data.compact">Optimize Databases</string>
     <string key="locale.settings.enableSSL">Enable TLS/SSL for connection</string>
     <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
     <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
@@ -364,6 +364,7 @@
     <string key="locale.about.sync.logContents">Log File Contents</string>
     <string key="locale.about.updateToast.title">Updates Available</string>
     <string key="locale.about.workLoad">Threadpool Use</string>
+    <string key="locale.about.versions.verified"> Verified</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>

@@ -329,6 +329,23 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             SendAudit(audit);
         }
 
-
+        /// <summary>
+        /// Audit the use of a restricted function
+        /// </summary>
+        public static void AuditRestrictedFunction(UnauthorizedAccessException ex, Uri url)
+        {
+            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.UseOfARestrictedFunction));
+            AddUserActor(audit);
+            AddDeviceActor(audit);
+            audit.AuditableObjects.Add(new AuditableObject()
+            {
+                IDTypeCode = AuditableObjectIdType.Uri,
+                LifecycleType = AuditableObjectLifecycle.Access,
+                ObjectId = url.ToString(),
+                Role = AuditableObjectRole.Resource,
+                Type = AuditableObjectType.SystemObject
+            });
+            SendAudit(audit);
+        }
     }
 }

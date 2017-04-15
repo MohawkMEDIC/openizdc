@@ -50,8 +50,8 @@ namespace Minims
         /// </summary>
         public MiniAppletManagerService()
         {
-            this.LoadedApplets.Resolver = this.ResolveAppletAsset;
-            this.LoadedApplets.CachePages = false;
+            this.m_appletCollection.Resolver = this.ResolveAppletAsset;
+            this.m_appletCollection.CachePages = false;
         }
 
         /// <summary>
@@ -260,7 +260,7 @@ namespace Minims
                 tw.WriteLine("OpenIZApplicationService.GetVersion = function() {{ return '{0} ({1})'; }}", typeof(OpenIZConfiguration).Assembly.GetName().Version, typeof(OpenIZConfiguration).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
                 tw.WriteLine("OpenIZApplicationService.GetString = function(key) {");
                 tw.WriteLine("\tswitch(key) {");
-                foreach (var itm in this.LoadedApplets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
+                foreach (var itm in this.Applets.GetStrings(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName))
                 {
                     tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Key, itm.Value?.Replace("'", "\\'").Replace("\r", "").Replace("\n", ""));
                 }
@@ -277,7 +277,7 @@ namespace Minims
 
                 tw.WriteLine("OpenIZApplicationService.GetTemplateForm = function(templateId) {");
                 tw.WriteLine("\tswitch(templateId) {");
-                foreach (var itm in this.LoadedApplets.SelectMany(o => o.Templates))
+                foreach (var itm in this.Applets.SelectMany(o => o.Templates))
                 {
                     tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Mnemonic.ToLowerInvariant(), itm.Form);
                 }
@@ -286,8 +286,8 @@ namespace Minims
 
                 tw.WriteLine("OpenIZApplicationService.GetDataAsset = function(assetId) {");
                 tw.WriteLine("\tswitch(assetId) {");
-                foreach (var itm in this.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("data/")))
-                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.LoadedApplets.RenderAssetContent(itm)).Replace("'", "\\'"));
+                foreach (var itm in this.Applets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("data/")))
+                    tw.WriteLine("\t\tcase '{0}': return '{1}'; break;", itm.Name.Replace("data/", ""), Convert.ToBase64String(this.Applets.RenderAssetContent(itm)).Replace("'", "\\'"));
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
                 // Read the static shim

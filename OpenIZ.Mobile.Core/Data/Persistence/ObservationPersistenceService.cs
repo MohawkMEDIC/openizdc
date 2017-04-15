@@ -39,6 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(TObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbObservation()
             {
                 InterpretationConceptUuid = modelInstance.InterpretationConceptKey?.ToByteArray(),
@@ -120,6 +121,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(TextObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbTextObservation()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -160,6 +162,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(CodedObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbCodedObservation()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -222,6 +225,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(QuantityObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbQuantityObservation()
             {
                 UnitOfMeasureUuid = modelInstance.UnitOfMeasureKey?.ToByteArray(),

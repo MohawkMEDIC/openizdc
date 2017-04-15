@@ -62,10 +62,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Rules
             this.Starting?.Invoke(this, EventArgs.Empty);
             ApplicationContext.Current.Started += (o, e) =>
             {
-                ApplicationServiceContext.Current = ApplicationContext.Current;
-                if (ApplicationContext.Current.GetService<IDataReferenceResolver>() == null)
-                    ApplicationContext.Current.AddServiceProvider(typeof(AppletDataReferenceResolver));
-                new AppletBusinessRuleLoader().LoadRules();
+                try
+                {
+                    ApplicationServiceContext.Current = ApplicationContext.Current;
+                    if (ApplicationContext.Current.GetService<IDataReferenceResolver>() == null)
+                        ApplicationContext.Current.AddServiceProvider(typeof(AppletDataReferenceResolver));
+                    new AppletBusinessRuleLoader().LoadRules();
+                }
+                catch(Exception ex)
+                {
+                    Tracer.GetTracer(typeof(BusinessRulesDaemonService)).TraceError("Error starting up business rules service: {0}", ex);
+                }
             };
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;

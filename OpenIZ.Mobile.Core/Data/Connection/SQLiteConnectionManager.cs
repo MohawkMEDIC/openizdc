@@ -174,7 +174,12 @@ namespace OpenIZ.Mobile.Core.Data.Connection
             foreach(var itm in this.m_connections)
             {
                 using (itm.Value.Lock())
+                {
                     itm.Value.Execute("VACUUM");
+                    itm.Value.Execute("ANALYZE");
+                    itm.Value.Execute("REINDEX");
+
+                }
             }
         }
     }

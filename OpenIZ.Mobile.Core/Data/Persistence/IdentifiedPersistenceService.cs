@@ -36,6 +36,8 @@ using System.Reflection;
 using SQLite.Net.Attributes;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -74,7 +76,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         {
             var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
 
-            retVal.LoadAssociations(context);
+            if(context.Connection.IsInTransaction || !context.Data.ContainsKey("lean"))
+                retVal.LoadAssociations(context);
+            else
+                retVal.LoadAssociations(context, 
+                    nameof(EntityIdentifier.Authority),
+                    nameof(EntityAddress.Component),
+                    nameof(EntityRelationship.TargetEntity)
+                );
             return retVal;
         }
 
@@ -209,6 +218,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
 
+            // Is this a cached query?
+            //var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();
+            //if (retVal != null && !countResults)
+            //{
+            //    totalResults = 0;
+            //    return retVal;
+            //}
+
+            // Preare SQLite Args
             var args = queryStatement.Arguments.Select(o =>
             {
                 if (o is Guid || o is Guid?)
@@ -248,11 +266,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     queryStatement.Append($" OFFSET {offset} ");
             }
 
-            var retVal = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
+            // Exec query
+            var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
 
-            var domainList = retVal.ToList();
-
-            return domainList.Select(o => this.CacheConvert(o, context, count > 1)).ToList();
+            var modelList = domainList.Select(o => this.CacheConvert(o, context, count > 1)).ToList();
+            context.AddQuery(queryStatement, modelList);
+            return modelList;
         }
 
         /// <summary>

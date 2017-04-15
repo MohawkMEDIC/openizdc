@@ -23,24 +23,34 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
     /// </summary>
     public class LocalAppletManagerService : IAppletManagerService
     {
+        // Applet collection
+        protected AppletCollection m_appletCollection = new AppletCollection();
+
+        // RO applet collection
+        private ReadonlyAppletCollection m_readonlyAppletCollection;
+
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(LocalAppletManagerService));
-
-       
+        
         /// <summary>
         /// Local applet manager ctor
         /// </summary>
         public LocalAppletManagerService()
         {
-            this.LoadedApplets = new AppletCollection();
+            this.m_appletCollection = new AppletCollection();
+            this.m_readonlyAppletCollection = this.m_appletCollection.AsReadonly();
+
         }
 
         /// <summary>
         /// Gets the loaded applets from the manager
         /// </summary>
-        public AppletCollection LoadedApplets
+        public ReadonlyAppletCollection Applets
         {
-            get; private set;
+            get
+            {
+                return this.m_readonlyAppletCollection;
+            }
         }
 
         /// <summary>
@@ -59,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// <param name="id">Identifier.</param>
         public virtual AppletManifest GetApplet(String id)
         {
-            return this.LoadedApplets.FirstOrDefault(o => o.Info.Id == id);
+            return this.m_appletCollection.FirstOrDefault(o => o.Info.Id == id);
         }
 
         /// <summary>
@@ -69,8 +79,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 		public virtual bool LoadApplet(AppletManifest applet)
         {
             if (applet.Info.Id == (ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
-                this.LoadedApplets.DefaultApplet = applet;
-            this.LoadedApplets.Add(applet);
+                this.m_appletCollection.DefaultApplet = applet;
+            applet.Initialize();
+            this.m_appletCollection.Add(applet);
             AppletCollection.ClearCaches();
             return true;
         }
@@ -180,17 +191,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
             this.m_tracer.TraceInfo("Un-installing {0}", packageId);
             // Applet check
-            var applet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == packageId);
+            var applet = this.m_appletCollection.FirstOrDefault(o => o.Info.Id == packageId);
             if (applet == null)
                 throw new FileNotFoundException($"Applet {packageId} is not installed");
 
             // Dependency check
-            var dependencies = this.LoadedApplets.Where(o => o.Info.Dependencies.Any(d => d.Id == packageId));
+            var dependencies = this.m_appletCollection.Where(o => o.Info.Dependencies.Any(d => d.Id == packageId));
             if (dependencies.Any())
                 throw new InvalidOperationException($"Uninstalling {packageId} would break : {String.Join(", ", dependencies.Select(o => o.Info))}");
 
             // We're good to go!
-            this.LoadedApplets.Remove(applet);
+            this.m_appletCollection.Remove(applet);
 
             var appletConfig = ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
 
@@ -218,7 +229,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             // TODO: Verify package hash / signature
             if (!this.VerifyPackage(package))
                 throw new SecurityException("Applet failed validation");
-            else if (!this.LoadedApplets.VerifyDependencies(package.Meta))
+            else if (!this.m_appletCollection.VerifyDependencies(package.Meta))
                 throw new InvalidOperationException($"Applet {package.Meta} depends on : [{String.Join(", ", package.Meta.Dependencies.Select(o => o.ToString()))}] which are missing or incompatible");
 
             var appletSection = ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
@@ -243,7 +254,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         throw new InvalidOperationException(Strings.err_duplicate_package_name);
 
                     // Unload the loaded applet version
-                    var existingApplet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
+                    var existingApplet = this.m_appletCollection.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
                     if (existingApplet != null)
                         this.UnInstall(existingApplet.Info.Id);
                 }

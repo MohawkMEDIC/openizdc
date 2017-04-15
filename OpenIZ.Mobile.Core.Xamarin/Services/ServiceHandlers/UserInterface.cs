@@ -67,9 +67,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         sw.WriteLine("OpenIZ.UserInterface = OpenIZ.UserInterface || {}");
                         sw.WriteLine("OpenIZ.UserInterface.states = [");
                         // Collect routes
-                        foreach (var itm in appletService.LoadedApplets.ViewStateAssets)
+                        foreach (var itm in appletService.Applets.ViewStateAssets)
                         {
-                            var htmlContent = (itm.Content ?? appletService.LoadedApplets.Resolver?.Invoke(itm)) as AppletAssetHtml;
+                            var htmlContent = (itm.Content ?? appletService.Applets.Resolver?.Invoke(itm)) as AppletAssetHtml;
                             var viewState = htmlContent.ViewState;
                             sw.WriteLine($"{{ name: '{viewState.Name}', url: '{viewState.Route}', abstract: {viewState.IsAbstract.ToString().ToLower()}, views: {{");
                             foreach(var view in viewState.View)

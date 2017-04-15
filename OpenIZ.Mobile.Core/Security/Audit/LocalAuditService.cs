@@ -100,36 +100,43 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             this.m_safeToStop = false;
             ApplicationContext.Current.Started += (o, e) =>
             {
-                this.m_tracer.TraceInfo("Binding to service events...");
-
-                ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) => AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
-                ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>
+                try
                 {
-                    if(se.ObjectKeys.Count() > 0)
-                        switch(se.Queue)
-                        {
-                            case "inbound":
-                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null);
-                                break;
-                            case "outbound":
-                                AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null);
-                                break;
-                        }
-                };
-                
-                // Scan for IRepositoryServices and bind to their events as well
-                foreach(var svc in ApplicationContext.Current.GetServices().OfType<IAuditEventSource>())
-                {
-                    svc.DataCreated += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Create, AuditableObjectLifecycle.Creation, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
-                    svc.DataUpdated += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Update, AuditableObjectLifecycle.Amendment, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
-                    svc.DataObsoleted += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Delete, AuditableObjectLifecycle.LogicalDeletion, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
-                    svc.DataDisclosed += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.Query, ActionType.Read, AuditableObjectLifecycle.Disclosure, EventIdentifierType.Query, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
+                    this.m_tracer.TraceInfo("Binding to service events...");
 
-                    if (svc is ISecurityAuditEventSource)
-                        (svc as ISecurityAuditEventSource).SecurityAttributesChanged += (so, se) => AuditUtil.AuditSecurityAttributeAction(se.Objects, se.Success, se.ChangedProperties);
+                    ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) => AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
+                    ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>
+                    {
+                        if (se.ObjectKeys.Count() > 0)
+                            switch (se.Queue)
+                            {
+                                case "inbound":
+                                    AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Import, ActionType.Create, AuditableObjectLifecycle.Import, EventIdentifierType.Import, OutcomeIndicator.Success, null);
+                                    break;
+                                case "outbound":
+                                    AuditUtil.AuditDataAction<IdentifiedData>(EventTypeCodes.Export, ActionType.Execute, AuditableObjectLifecycle.Export, EventIdentifierType.Export, OutcomeIndicator.Success, null);
+                                    break;
+                            }
+                    };
+
+                    // Scan for IRepositoryServices and bind to their events as well
+                    foreach (var svc in ApplicationContext.Current.GetServices().OfType<IAuditEventSource>())
+                    {
+                        svc.DataCreated += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Create, AuditableObjectLifecycle.Creation, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
+                        svc.DataUpdated += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Update, AuditableObjectLifecycle.Amendment, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
+                        svc.DataObsoleted += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.PatientRecord, ActionType.Delete, AuditableObjectLifecycle.LogicalDeletion, EventIdentifierType.PatientRecord, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
+                        svc.DataDisclosed += (so, se) => AuditUtil.AuditDataAction(EventTypeCodes.Query, ActionType.Read, AuditableObjectLifecycle.Disclosure, EventIdentifierType.Query, se.Success ? OutcomeIndicator.Success : OutcomeIndicator.SeriousFail, null, se.Objects.OfType<IdentifiedData>().ToArray());
+
+                        if (svc is ISecurityAuditEventSource)
+                            (svc as ISecurityAuditEventSource).SecurityAttributesChanged += (so, se) => AuditUtil.AuditSecurityAttributeAction(se.Objects, se.Success, se.ChangedProperties);
+                    }
+
+                    AuditUtil.AuditApplicationStartStop(EventTypeCodes.ApplicationStart);
                 }
-
-                AuditUtil.AuditApplicationStartStop(EventTypeCodes.ApplicationStart);
+                catch(Exception ex)
+                {
+                    this.m_tracer.TraceError("Error starting up audit repository service: {0}", ex);
+                }
             };
             ApplicationContext.Current.Stopped += (o, e) => AuditUtil.AuditApplicationStartStop(EventTypeCodes.ApplicationStop);
             ApplicationContext.Current.Stopping += (o, e) => this.m_safeToStop = true;

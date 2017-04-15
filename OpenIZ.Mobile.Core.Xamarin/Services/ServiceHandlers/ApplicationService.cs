@@ -126,7 +126,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 // Cannot have menus if not logged in
                 if (!AuthenticationContext.Current.Principal.Identity.IsAuthenticated) return null;
 
-                var rootMenus = ApplicationContext.Current.GetService<IAppletManagerService>().LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
+                var rootMenus = ApplicationContext.Current.GetService<IAppletManagerService>().Applets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
                 List<MenuInformation> retVal = new List<MenuInformation>();
 
                 // Create menus
@@ -151,7 +151,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             // TODO: Demand permission
             if (menu.Asset != null &&
-                !ApplicationContext.Current.GetService<IAppletManagerService>().LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
+                !ApplicationContext.Current.GetService<IAppletManagerService>().Applets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
                 return;
 
             // Get text for menu item

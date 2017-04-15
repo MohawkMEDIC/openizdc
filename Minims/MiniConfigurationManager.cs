@@ -123,7 +123,11 @@ namespace Minims
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "tz.timr.applet"
+                StartupAsset = "org.openiz.core",
+                Security = new AppletSecurityConfiguration()
+                {
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style

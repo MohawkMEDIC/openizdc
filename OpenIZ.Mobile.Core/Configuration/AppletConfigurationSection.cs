@@ -137,7 +137,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// <summary>
         /// Trusted publisher
         /// </summary>
-        [XmlAttribute("trustedPublisher")]
+        [XmlElement("trustedPublisher")]
         public List<String> TrustedPublishers { get; set; }
     }
 

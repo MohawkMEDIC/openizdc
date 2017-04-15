@@ -254,7 +254,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     float perc = i / (float)result.TotalResults;
 
-                    if(result.TotalResults > result.Count)
+                    if(result.TotalResults > result.Offset + result.Count + 1)
                         ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
                     NameValueCollection infopt = null;
                     if (filter.Any(o => o.Key.StartsWith("_")))
@@ -302,7 +302,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         eTag = result?.Item.FirstOrDefault()?.Tag;
                 }
 
-                if (result.TotalResults > result.Count)
+                if (result?.TotalResults > result?.Count)
                     ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                 // Log that we synchronized successfully

@@ -279,12 +279,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             List<String> templateId = search["templateId"];
 
             // Attempt to get the template definition
-            var template = appletManagerService.LoadedApplets.GetTemplateDefinition(templateId.First());
+            var template = appletManagerService.Applets.GetTemplateDefinition(templateId.First());
 
             // Load and replace constants
             var templateBytes = template.DefinitionContent;
             if (templateBytes == null)
-                templateBytes = appletManagerService.LoadedApplets.Resolver?.Invoke(appletManagerService.LoadedApplets.ResolveAsset(template.Definition)) as byte[];
+                templateBytes = appletManagerService.Applets.Resolver?.Invoke(appletManagerService.Applets.ResolveAsset(template.Definition)) as byte[];
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
 

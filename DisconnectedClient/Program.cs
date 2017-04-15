@@ -57,20 +57,27 @@ namespace DisconnectedClient
             };
 
             // Start up!!!
-            if (!DcApplicationContext.StartContext())
+            try
             {
-                DcApplicationContext.StartTemporary();
-                // Forward
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
-            }
-            else
-            {
-                Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/splash.html");
-            }
+                if (!DcApplicationContext.StartContext())
+                {
+                    DcApplicationContext.StartTemporary();
+                    // Forward
+                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/views/settings/index.html");
+                }
+                else
+                {
+                    Process pi = Process.Start("http://127.0.0.1:9200/org.openiz.core/splash.html");
+                }
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmDisconnectedClient());
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new frmDisconnectedClient());
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
     }
 }
