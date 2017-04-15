@@ -29,6 +29,13 @@
     <ConsolePause>false</ConsolePause>
     <DefineConstants>TRACE;PERFMON</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE;PERFMON</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Configuration\Data\Migrations\InitialAuditCatalog.cs" />
     <Compile Include="DataModelExtensions.cs" />

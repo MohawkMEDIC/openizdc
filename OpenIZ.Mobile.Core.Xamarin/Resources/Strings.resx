@@ -171,13 +171,25 @@
   <data name="flushing_logFile" xml:space="preserve">
     <value>Flusing diagnostics queue...</value>
   </data>
+  <data name="locale_certificateExpired" xml:space="preserve">
+    <value>The certificate for publisher {0} is expired (expired on {1:yyyy-MMM-dd}). Do you want to ignore this error and continue?</value>
+  </data>
   <data name="locale_certificateValidation" xml:space="preserve">
     <value>The server responded with an invalid certificate: {0}. Do you want to trust this certificate?</value>
   </data>
+  <data name="locale_downloading" xml:space="preserve">
+    <value>Downloading {0}...</value>
+  </data>
+  <data name="locale_invalidSignature" xml:space="preserve">
+    <value>The applet could not be installed because the verification stage failed.</value>
+  </data>
+  <data name="locale_unsignedAppletsNotAllowed" xml:space="preserve">
+    <value>The applet {0} is not signed or contains an invalid header. Your security settings do not allow for unsigned applets to be executed.</value>
+  </data>
+  <data name="locale_untrustedPublisherPrompt" xml:space="preserve">
+    <value>The applet {0} published by {1} is not trusted. Do you want to continue to load / install this applet?</value>
+  </data>
   <data name="locale_updateCheck" xml:space="preserve">
     <value>Checking for updates...</value>
-  </data>
-  <data name="locale_updating" xml:space="preserve">
-    <value>Updating package {0}....</value>
   </data>
 </root>

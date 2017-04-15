@@ -289,12 +289,7 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
-
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
-
+        
         /// <summary>
         /// Add service 
         /// </summary>
@@ -311,6 +306,15 @@ namespace OpenIZ.Mobile.Core
         {
             ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
             return appSection.Services;
+        }
+
+        /// <summary>
+        /// Remove a service provider
+        /// </summary>
+        public void RemoveServiceProvider(Type serviceType)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.RemoveAll(o=>o.GetType() == serviceType);
         }
     }
 }

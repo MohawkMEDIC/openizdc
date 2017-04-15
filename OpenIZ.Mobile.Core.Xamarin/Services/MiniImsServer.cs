@@ -46,6 +46,7 @@ using System.Diagnostics;
 using OpenIZ.Mobile.Core.Exceptions;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using System.IO.Compression;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -217,6 +218,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             var request = context.Request;
             var response = context.Response;
 
+            var appletManager = ApplicationContext.Current.GetService<IAppletManagerService>();
+
 #if DEBUG
             Stopwatch perfTimer = new Stopwatch();
             perfTimer.Start();
@@ -370,7 +373,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     {
                                         if(request.QueryString["_viewModel"] != null)
                                         {
-                                            var viewModelDescription = XamarinApplicationContext.Current.LoadedApplets.GetViewModelDescription(request.QueryString["_viewModel"]);
+                                            var viewModelDescription = appletManager.LoadedApplets.GetViewModelDescription(request.QueryString["_viewModel"]);
                                             var serializer = this.CreateSerializer(viewModelDescription);
                                             serializer.Serialize(sw, (result as IdentifiedData).GetLocked());
                                         }
@@ -402,8 +405,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 403;
-                var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
-                var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
+                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
             }
@@ -415,7 +418,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     // Is there an authentication asset in the configuration
                     var authentication = XamarinApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AuthenticationAsset;
                     if (String.IsNullOrEmpty(authentication))
-                        authentication = XamarinApplicationContext.Current.LoadedApplets.AuthenticationAssets.FirstOrDefault();
+                        authentication = appletManager.LoadedApplets.AuthenticationAssets.FirstOrDefault();
                     if (String.IsNullOrEmpty(authentication))
                         authentication = "/org/openiz/core/views/security/login.html";
 
@@ -427,8 +430,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 {
                     response.StatusCode = 403;
 
-                    var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
-                    var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                    var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/403.html");
+                    var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                     response.OutputStream.Write(buffer, 0, buffer.Length);
                 }
 
@@ -437,8 +440,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 404;
-                var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html");
-                var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/404.html");
+                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 response.OutputStream.Write(buffer, 0, buffer.Length);
 
             }
@@ -446,8 +449,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 this.m_tracer.TraceError(ex.ToString());
                 response.StatusCode = 500;
-                var errAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
-                var buffer = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+                var errAsset = appletManager.LoadedApplets.ResolveAsset("/org.openiz.core/views/errors/500.html");
+                var buffer = appletManager.LoadedApplets.RenderAssetContent(errAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
                 buffer = Encoding.UTF8.GetBytes(Encoding.UTF8.GetString(buffer).Replace("{{ exception }}", ex.ToString()));
                 response.OutputStream.Write(buffer, 0, buffer.Length);
             }
@@ -510,11 +513,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
             // Navigate asset
             AppletAsset navigateAsset = null;
+            var appletManagerService = ApplicationContext.Current.GetService<IAppletManagerService>();
+
             String appletPath = request.Url.AbsolutePath.ToLower();
             if (!this.m_cacheApplets.TryGetValue(appletPath, out navigateAsset))
             {
 
-                navigateAsset = XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(appletPath);
+                navigateAsset = appletManagerService.LoadedApplets.ResolveAsset(appletPath);
 
                 if (navigateAsset == null)
 				{
@@ -545,7 +550,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             response.ContentType = navigateAsset.MimeType;
 
             // Write asset
-            var content = XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+            var content = appletManagerService.LoadedApplets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
             response.OutputStream.Write(content, 0, content.Length);
 
         }

@@ -46,6 +46,7 @@ using A = Android;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using System.IO.Compression;
 using System.Threading;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Android
 {
@@ -122,7 +123,6 @@ namespace OpenIZ.Mobile.Core.Android
                     retVal.ConfigurationManager.Load();
                     // Set master application context
                     ApplicationContext.Current = retVal;
-                    retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                     retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext), retVal.ConfigurationManager.Configuration);
 
@@ -138,6 +138,8 @@ namespace OpenIZ.Mobile.Core.Android
                     var configuredApplets = retVal.Configuration.GetSection<AppletConfigurationSection>().Applets;
 
                     retVal.SetProgress(context.GetString(Resource.String.startup_configuration), 0.2f);
+                    var appletManager = retVal.GetService<IAppletManagerService>();
+
                     // Load all user-downloaded applets in the data directory
                     foreach (var appletInfo in configuredApplets)// Directory.GetFiles(this.m_configuration.GetSection<AppletConfigurationSection>().AppletDirectory)) {
                         try
@@ -150,14 +152,13 @@ namespace OpenIZ.Mobile.Core.Android
                                 // Is this applet in the allowed applets
 
                                 // public key token match?
-                                if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken ||
-                                    !retVal.VerifyManifest(manifest, appletInfo))
+                                if (appletInfo.PublicKeyToken != manifest.Info.PublicKeyToken)
                                 {
                                     retVal.m_tracer.TraceWarning("Applet {0} failed validation", appletInfo);
                                     ; // TODO: Raise an error
                                 }
 
-                                retVal.LoadApplet(manifest);
+                                appletManager.LoadApplet(manifest);
                             }
                         }
                         catch (Exception e)
@@ -173,23 +174,13 @@ namespace OpenIZ.Mobile.Core.Android
                         try
                         {
                             retVal.m_tracer.TraceVerbose("Loading {0}", itm);
-                            AppletPackage pkg = null;
-                            if (Path.GetExtension(itm) == ".pak")
-                            {
-                                using (var gzs = new GZipStream(context.Assets.Open(String.Format("Applets/{0}", itm)), CompressionMode.Decompress))
-                                    pkg = AppletPackage.Load(gzs);
-                            }
-                            else
-                            {
-                                AppletManifest manifest = AppletManifest.Load(context.Assets.Open(String.Format("Applets/{0}", itm)));
-                                pkg = manifest.CreatePackage();
-                            }
+                            AppletPackage pkg = AppletPackage.Load(context.Assets.Open(String.Format("Applets/{0}", itm)));
 
                             // Write data to assets directory
 #if !DEBUG
-                            if (retVal.GetApplet(pkg.Meta.Id) == null || new Version(retVal.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
+                            if (appletManager.GetApplet(pkg.Meta.Id) == null || new Version(appletManager.GetApplet(pkg.Meta.Id).Info.Version) < new Version(pkg.Meta.Version))
 #endif
-                                retVal.InstallApplet(pkg, true);
+                                appletManager.Install(pkg, true);
                         }
                         catch (Exception e)
                         {
@@ -225,15 +216,13 @@ namespace OpenIZ.Mobile.Core.Android
                     {
                         retVal.ConfigurationManager.Save();
                     }
+
                     // Start daemons
                     retVal.GetService<IThreadPoolService>().QueueUserWorkItem(o => { retVal.Start(); });
-
-
+                    
                     // Set the tracer writers for the PCL goodness!
                     foreach (var itm in retVal.Configuration.GetSection<DiagnosticsConfigurationSection>().TraceWriter)
-                    {
                         OpenIZ.Core.Diagnostics.Tracer.AddWriter(itm.TraceWriter, itm.Filter);
-                    }
                 }
                 catch (Exception e)
                 {
@@ -255,7 +244,6 @@ namespace OpenIZ.Mobile.Core.Android
             try
             {
                 var retVal = new AndroidApplicationContext();
-                retVal.LoadedApplets.Resolver = retVal.ResolveAppletAsset;
 
                 retVal.Context = context;
                 retVal.SetProgress(context.GetString(Resource.String.startup_setup), 0);
@@ -266,17 +254,12 @@ namespace OpenIZ.Mobile.Core.Android
                 ApplicationServiceContext.Current = ApplicationContext.Current;
                 retVal.m_tracer = Tracer.GetTracer(typeof(AndroidApplicationContext));
 
-
                 try
                 {
                     using (var fd = context.Assets.OpenFd("Applets/org.openiz.core.pak"))
                         retVal.m_tracer.TraceInfo("Installing org.openiz.core : {0} bytes", fd?.Length);
-                    using (var gzs = new GZipStream(context.Assets.Open("Applets/org.openiz.core.pak"), CompressionMode.Decompress))
-                    {
-                        // Write data to assets directory
-                        var package = AppletPackage.Load(gzs);
-                        AndroidApplicationContext.Current.InstallApplet(package, true);
-                    }
+                    var package = AppletPackage.Load(context.Assets.Open("Applets/org.openiz.core.pak"));
+                    retVal.GetService<IAppletManagerService>().Install(package, true);
                 }
                 catch (Exception e)
                 {
@@ -291,136 +274,17 @@ namespace OpenIZ.Mobile.Core.Android
             catch (Exception e)
             {
                 Log.Error("OpenIZ 0118 999 881 999 119 7253", e.ToString());
-                return false; 
+                return false;
             }
         }
-
-        /// <summary>
-        /// Install an applet
-        /// </summary>
-        public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
-        {
-            // Desearialize an prep for install
-            var appletSection = this.Configuration.GetSection<AppletConfigurationSection>();
-            String appletPath = Path.Combine(appletSection.AppletDirectory, package.Meta.Id);
-
-            try
-            {
-                this.m_tracer.TraceInfo("Installing applet {0} (IsUpgrade={1})", package.Meta, isUpgrade);
-
-                this.SetProgress(package.Meta.GetName("en"), 0.0f);
-                // TODO: Verify the package
-
-                // Copy
-                if (!Directory.Exists(appletSection.AppletDirectory))
-                    Directory.CreateDirectory(appletSection.AppletDirectory);
-
-                if (File.Exists(appletPath))
-                {
-                    if (!isUpgrade)
-                        throw new InvalidOperationException(Strings.err_duplicate_package_name);
-
-                    // Unload the loaded applet version
-                    var existingApplet = this.LoadedApplets.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
-                    if (existingApplet != null)
-                    {
-                        this.LoadedApplets.Remove(existingApplet);
-                        AppletCollection.ClearCaches();
-                    }
-                    appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
-                }
-
-                // Save the applet
-                XmlSerializer xsz = new XmlSerializer(typeof(AppletManifest));
-
-                AppletManifest mfst;
-
-                // Install Database stuff
-                using (MemoryStream ms = new MemoryStream(package.Manifest))
-                {
-                    mfst = xsz.Deserialize(ms) as AppletManifest;
-                    // Migrate data.
-                    if (mfst.DataSetup != null)
-                    {
-                        foreach (var itm in mfst.DataSetup.Action)
-                        {
-                            Type idpType = typeof(IDataPersistenceService<>);
-                            idpType = idpType.MakeGenericType(new Type[] { itm.Element.GetType() });
-                            var svc = ApplicationContext.Current.GetService(idpType);
-                            idpType.GetMethod(itm.ActionName).Invoke(svc, new object[] { itm.Element });
-                        }
-                    }
-
-                    // Now export all the binary files out
-                    var assetDirectory = Path.Combine(appletSection.AppletDirectory, "assets", mfst.Info.Id);
-                    if (!Directory.Exists(assetDirectory))
-                    {
-                        Directory.CreateDirectory(assetDirectory);
-                    }
-
-                    for (int i = 0; i < mfst.Assets.Count; i++)
-                    {
-                        var itm = mfst.Assets[i];
-                        var itmPath = Path.Combine(assetDirectory, itm.Name);
-                        this.SetProgress($"Installing {package.Meta.GetName("en")}", 0.1f + (float)(0.8 * (float)i / mfst.Assets.Count));
-
-                        // Get dir name and create
-                        if (!Directory.Exists(Path.GetDirectoryName(itmPath)))
-                            Directory.CreateDirectory(Path.GetDirectoryName(itmPath));
-
-                        // Extract content
-                        if (itm.Content is byte[])
-                        {
-                            File.WriteAllBytes(itmPath, itm.Content as byte[]);
-                            itm.Content = null;
-                        }
-                        else if (itm.Content is String)
-                        {
-                            File.WriteAllText(itmPath, itm.Content as String);
-                            itm.Content = null;
-                        }
-                    }
-
-                    // Serialize the data to disk
-                    using (FileStream fs = File.Create(appletPath))
-                        xsz.Serialize(fs, mfst);
-                }
-
-                // TODO: Sign this with my private key
-                // For now sign with SHA256
-                SHA256 sha = SHA256.Create();
-                package.Meta.Hash = sha.ComputeHash(File.ReadAllBytes(appletPath));
-                appletSection.Applets.Add(package.Meta.AsReference());
-
-                this.SetProgress(package.Meta.GetName("en"), 0.98f);
-
-                if (this.ConfigurationManager.IsConfigured)
-                    this.ConfigurationManager.Save();
-
-                mfst.Initialize();
-
-                this.LoadApplet(mfst);
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error installing applet {0} : {1}", package.Meta.ToString(), e);
-
-                // Remove
-                if (File.Exists(appletPath))
-                {
-                    File.Delete(appletPath);
-                }
-
-                throw;
-            }
-        }
-
+        
         /// <summary>
         /// Save the configuration
         /// </summary>
         public override void SaveConfiguration()
         {
-            this.m_configurationManager.Save();
+            if(this.m_configurationManager.IsConfigured)
+                this.m_configurationManager.Save();
         }
 
 
@@ -488,30 +352,7 @@ namespace OpenIZ.Mobile.Core.Android
             }
         }
 
-        /// <summary>
-        /// Resolve asset
-        /// </summary>
-        public override object ResolveAppletAsset(AppletAsset navigateAsset)
-        {
-            String itmPath = System.IO.Path.Combine(
-                                        ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory,
-                                        "assets",
-                                        navigateAsset.Manifest.Info.Id,
-                                        navigateAsset.Name);
-            using (MemoryStream response = new MemoryStream())
-            using (var fs = File.OpenRead(itmPath))
-            {
-                int br = 8096;
-                byte[] buffer = new byte[8096];
-                while (br == 8096)
-                {
-                    br = fs.Read(buffer, 0, 8096);
-                    response.Write(buffer, 0, br);
-                }
-                return response.ToArray();
-            }
-        }
-
+        
         /// <summary>
         /// Close 
         /// </summary>
@@ -531,22 +372,26 @@ namespace OpenIZ.Mobile.Core.Android
         {
             AutoResetEvent evt = new AutoResetEvent(false);
             bool result = false;
-            var alertDialogBuilder = new AlertDialog.Builder(this.Context)
-                    .SetMessage(confirmText)
-                    .SetCancelable(false)
-                    .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
-                    {
-                        result = true;
-                        evt.Reset();
-                    })
-                    .SetNegativeButton(Strings.locale_cancel, (sender, args) =>
-                    {
-                        result = false;
-                        evt.Reset();
 
-                    });
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
+                var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                        .SetMessage(confirmText)
+                        .SetCancelable(false)
+                        .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                        {
+                            result = true;
+                            evt.Set();
+                        })
+                        .SetNegativeButton(Strings.locale_cancel, (sender, args) =>
+                        {
+                            result = false;
+                            evt.Set();
+                        });
 
-            alertDialogBuilder.Create().Show();
+                alertDialogBuilder.Create().Show();
+            }, null);
+
             evt.WaitOne();
             return result;
         }
@@ -556,15 +401,23 @@ namespace OpenIZ.Mobile.Core.Android
         /// </summary>
         public override void Alert(string alertText)
         {
-            var alertDialogBuilder = new AlertDialog.Builder(this.Context)
-                     .SetMessage(alertText)
-                    .SetCancelable(false)
-                    .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
-                    {
-                    });
+            AutoResetEvent evt = new AutoResetEvent(false);
 
+            A.App.Application.SynchronizationContext.Post(_ =>
+            {
 
-            alertDialogBuilder.Create().Show();
+                var alertDialogBuilder = new AlertDialog.Builder(this.Context)
+                         .SetMessage(alertText)
+                        .SetCancelable(false)
+                        .SetPositiveButton(Strings.locale_confirm, (sender, args) =>
+                        {
+                            evt.Set();
+                        });
+
+                alertDialogBuilder.Create().Show();
+            }, null);
+
+            evt.WaitOne();
         }
 
         /// <summary>

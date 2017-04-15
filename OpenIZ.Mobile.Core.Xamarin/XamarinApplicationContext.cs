@@ -43,6 +43,7 @@ using OpenIZ.Core.Protocol;
 using OpenIZ.Core;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
+using System.Security.Cryptography.X509Certificates;
 
 namespace OpenIZ.Mobile.Core.Xamarin
 {
@@ -54,9 +55,6 @@ namespace OpenIZ.Mobile.Core.Xamarin
 
         // Tracer
         protected Tracer m_tracer;
-
-		// Applets
-		private AppletCollection m_applets = new AppletCollection();
 
 		/// <summary>
 		/// Gets the current application context
@@ -86,53 +84,9 @@ namespace OpenIZ.Mobile.Core.Xamarin
         }
 
         /// <summary>
-        /// Get applet by id
+        /// Explicitly authenticate the specified user as the domain context
         /// </summary>
-        /// <returns>The applet.</returns>
-        /// <param name="id">Identifier.</param>
-        public AppletManifest GetApplet (String id)
-		{
-			return this.m_applets.FirstOrDefault (o => o.Info.Id == id);
-		}
-
-		/// <summary>
-		/// Register applet
-		/// </summary>
-		/// <param name="applet">Applet.</param>
-		public virtual void LoadApplet (AppletManifest applet)
-		{
-            if (applet.Info.Id == (this.Configuration.GetSection<AppletConfigurationSection>().StartupAsset ?? "org.openiz.core"))
-                this.m_applets.DefaultApplet = applet;
-			this.m_applets.Add (applet);
-            AppletCollection.ClearCaches();
-		}
-
-
-        /// <summary>
-        /// Get the registered applets
-        /// </summary>
-        /// <value>The registered applets.</value>
-        public AppletCollection LoadedApplets {
-			get { 
-				return this.m_applets;
-			}
-		}
-
-	
-		/// <summary>
-		/// Verifies the manifest against it's recorded signature
-		/// </summary>
-		/// <returns><c>true</c>, if manifest was verifyed, <c>false</c> otherwise.</returns>
-		/// <param name="manifest">Manifest.</param>
-		public bool VerifyManifest (AppletManifest manifest, AppletName configuredInfo)
-		{
-			return true;
-		}
-
-		/// <summary>
-		/// Explicitly authenticate the specified user as the domain context
-		/// </summary>
-		public void Authenticate(String userName, String password)
+        public void Authenticate(String userName, String password)
 		{
 			var identityService = this.GetService<IIdentityProviderService>();
             var principal = identityService.Authenticate(userName, password);
@@ -156,12 +110,6 @@ namespace OpenIZ.Mobile.Core.Xamarin
 				};
 			}
 		}
-        
-        /// <summary>
-        /// Get applet asset
-        /// </summary>
-        public abstract object ResolveAppletAsset(AppletAsset navigateAsset);
-
 
         /// <summary>
         /// Loads the user configuration for the specified user key

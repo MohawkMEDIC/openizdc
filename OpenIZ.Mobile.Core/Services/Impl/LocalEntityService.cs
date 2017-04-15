@@ -104,6 +104,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         }
 
         /// <summary>
+        /// Gets the specified data
+        /// </summary>
+        EntityRelationship IRepositoryService<EntityRelationship>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<EntityRelationship>(key, Guid.Empty);
+        }
+
+        /// <summary>
         /// Gets the specified data.
         /// </summary>
         /// <param name="key">The key.</param>

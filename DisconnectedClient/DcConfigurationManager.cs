@@ -163,7 +163,8 @@ namespace DisconnectedClient
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
-                    typeof(SearchIndexService).AssemblyQualifiedName
+                    typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(DcAppletManagerService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -274,6 +275,7 @@ namespace DisconnectedClient
         {
             this.Save(this.m_configuration);
         }
+
         /// <summary>
         /// Save the specified configuration
         /// </summary>

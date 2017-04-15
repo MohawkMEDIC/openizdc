@@ -64,6 +64,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <JavaMaximumHeapSize>512m</JavaMaximumHeapSize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -210,11 +219,9 @@
     <AndroidEnvironment Include="environment.txt" />
   </ItemGroup>
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\openiz.core.applet.xml"  
-"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" 
- copy "$(TargetDir)\openiz.core.applet.xml" "$(ProjectDir)\Assets\Applets\org.openiz.core.xml"
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.xml"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert
+"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)..\timr-applets\src" -o "$(TargetDir)\tz.timr.applet.xml" --keyFile="$(SolutionDir)\..\keys\timr.mobile.applet.pfx" --keyPassword="$(SolutionDir)\..\keys\timr.mobile.applet.pass" --embedCert
  copy "$(TargetDir)\openiz.core.applet.pak" "$(ProjectDir)\Assets\Applets\org.openiz.core.pak"
- copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"
-</PreBuildEvent>
+ copy "$(TargetDir)\tz.timr.applet.pak" "$(ProjectDir)\Assets\Applets\tz.timr.applet.pak"</PreBuildEvent>
   </PropertyGroup>
 </Project>

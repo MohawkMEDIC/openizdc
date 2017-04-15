@@ -52,6 +52,7 @@ using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Xamarin.Rules;
 using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Mobile.Core.Android.Services;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -172,7 +173,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
-
+                    typeof(AndroidAppletManagerService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {

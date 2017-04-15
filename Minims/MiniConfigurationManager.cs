@@ -162,7 +162,9 @@ namespace Minims
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
-                    typeof(SearchIndexService).AssemblyQualifiedName
+                    typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(MiniAppletManagerService).AssemblyQualifiedName
+
                 },
                 Cache = new CacheConfiguration()
                 {

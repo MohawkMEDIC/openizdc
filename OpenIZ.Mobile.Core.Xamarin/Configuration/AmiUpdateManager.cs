@@ -34,6 +34,7 @@ using System.IO;
 using OpenIZ.Mobile.Core.Services;
 using System.IO.Compression;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Configuration
 {
@@ -116,15 +117,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                 {
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_updating, packageId), e.Progress);
+                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), e.Progress);
                     // Fetch the applet package
-                    var applet = amiClient.Client.Get($"/pak/{packageId}");
-                    using (var ms = new MemoryStream(applet))
-                    using (var gzs = new GZipStream(ms, CompressionMode.Decompress))
+                    using (var ms = amiClient.DownloadApplet(packageId))
                     {
-                        var package = AppletPackage.Load(gzs);
+                        var package = AppletPackage.Load(ms);
                         this.m_tracer.TraceInfo("Upgrading {0}...", package.Meta.ToString());
-                        ApplicationContext.Current.InstallApplet(package, true);
+                        ApplicationContext.Current.GetService<IAppletManagerService>().Install(package, true);
                         //ApplicationContext.Current.Exit(); // restart
                     }
                 }
@@ -158,7 +157,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
 
                     foreach (var i in amiClient.GetApplets().CollectionItem)
                     {
-                        var installed = XamarinApplicationContext.Current.GetApplet(i.AppletManifest.Info.Id);
+                        var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletManifest.Info.Id);
                         if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletManifest.Info.Version) &&
                             ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
                             this.Install(i.AppletManifest.Info.Id);

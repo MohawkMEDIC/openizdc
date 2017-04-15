@@ -38,7 +38,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 	/// <summary>
 	/// Represents an act repository service.
 	/// </summary>
-	public class LocalActService : IActRepositoryService, IPersistableQueryRepositoryService, IRepositoryService<Act>,
+	public class LocalActService : IActRepositoryService, IPersistableQueryRepositoryService, 
+        IRepositoryService<Act>,
         IRepositoryService<SubstanceAdministration>,
         IRepositoryService<QuantityObservation>,
         IRepositoryService<PatientEncounter>,
@@ -63,6 +64,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return this.Find<TAct>(filter, offset, count, out totalResults, Guid.Empty);
 		}
 
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        public Act Get(Guid key, Guid versionKey)
+        {
+            return this.Get<Act>(key, Guid.Empty);
+        }
+        
         /// <summary>
         /// Get by key
         /// </summary>
@@ -294,6 +303,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <summary>
         /// Get sbadm
         /// </summary>
+        SubstanceAdministration IRepositoryService<SubstanceAdministration>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<SubstanceAdministration>(key, Guid.Empty);
+        }
+
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
         SubstanceAdministration IRepositoryService<SubstanceAdministration>.Get(Guid key)
         {
             return this.Get<SubstanceAdministration>(key, Guid.Empty);
@@ -340,6 +358,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return this.Obsolete<SubstanceAdministration>(key);
         }
 
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        QuantityObservation IRepositoryService<QuantityObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<QuantityObservation>(key, Guid.Empty);
+        }
 
         /// <summary>
         /// Get sbadm
@@ -388,6 +413,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         QuantityObservation IRepositoryService<QuantityObservation>.Obsolete(Guid key)
         {
             return this.Obsolete<QuantityObservation>(key);
+        }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        CodedObservation IRepositoryService<CodedObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<CodedObservation>(key, Guid.Empty);
         }
 
 
@@ -440,6 +473,15 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             return this.Obsolete<CodedObservation>(key);
         }
 
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        TextObservation IRepositoryService<TextObservation>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<TextObservation>(key, Guid.Empty);
+        }
+
+
 
         /// <summary>
         /// Get sbadm
@@ -488,6 +530,14 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         TextObservation IRepositoryService<TextObservation>.Obsolete(Guid key)
         {
             return this.Obsolete<TextObservation>(key);
+        }
+
+        /// <summary>
+        /// Get sbadm
+        /// </summary>
+        PatientEncounter IRepositoryService<PatientEncounter>.Get(Guid key, Guid versionKey)
+        {
+            return this.Get<PatientEncounter>(key, Guid.Empty);
         }
 
 

@@ -276,6 +276,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                         {
                             ApplicationContext.Current.SetProgress(String.Empty, 0);
                             ApplicationContext.Current.Configuration.SetAppSetting("oizcp-lastRun", DateTime.Now);
+                            ApplicationContext.Current.SaveConfiguration();
                         }
 
                         this.m_resetEvent.Reset();

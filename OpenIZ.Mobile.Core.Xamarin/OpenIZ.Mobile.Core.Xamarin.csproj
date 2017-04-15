@@ -30,6 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE;PERFMON</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -122,6 +131,7 @@
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
+    <Compile Include="Services\LocalAppletManagerService.cs" />
     <Compile Include="Services\SimpleQueueFileProvider.cs" />
     <Compile Include="Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="XamarinApplicationContext.cs" />

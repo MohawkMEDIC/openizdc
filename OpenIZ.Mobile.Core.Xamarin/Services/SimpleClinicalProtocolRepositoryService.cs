@@ -33,6 +33,7 @@ using OpenIZ.Core.Applets.Model;
 using System.Xml.Linq;
 using OpenIZ.Protocol.Xml.Model;
 using OpenIZ.Protocol.Xml;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services
 {
@@ -77,13 +78,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             try
             {
                 // Get protocols from the applet
-                var protocols = XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("protocols/"));
+                var appletManager = ApplicationContext.Current.GetService<IAppletManagerService>();
+                var protocols = appletManager.LoadedApplets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("protocols/"));
 
                 foreach (var f in protocols)
                 {
 
                     XmlSerializer xsz = new XmlSerializer(typeof(ProtocolDefinition));
-                    var content = f.Content ?? XamarinApplicationContext.Current.LoadedApplets.Resolver(f);
+                    var content = f.Content ?? appletManager.LoadedApplets.Resolver(f);
                     if (content is String)
                         using (var rStream = new StringReader(content as String))
                             this.m_protocols.Add(

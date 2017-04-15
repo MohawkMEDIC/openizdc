@@ -45,6 +45,7 @@ using OpenIZ.Mobile.Core.Security;
 using System.Reflection;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -271,17 +272,19 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         private String GetTemplateString()
         {
+
+            var appletManagerService = ApplicationContext.Current.GetService<IAppletManagerService>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             // The template to construct
             List<String> templateId = search["templateId"];
 
             // Attempt to get the template definition
-            var template = XamarinApplicationContext.Current.LoadedApplets.GetTemplateDefinition(templateId.First());
+            var template = appletManagerService.LoadedApplets.GetTemplateDefinition(templateId.First());
 
             // Load and replace constants
             var templateBytes = template.DefinitionContent;
             if (templateBytes == null)
-                templateBytes = XamarinApplicationContext.Current.ResolveAppletAsset(XamarinApplicationContext.Current.LoadedApplets.ResolveAsset(template.Definition)) as byte[];
+                templateBytes = appletManagerService.LoadedApplets.Resolver?.Invoke(appletManagerService.LoadedApplets.ResolveAsset(template.Definition)) as byte[];
 
             var templateString = Encoding.UTF8.GetString(templateBytes);
 

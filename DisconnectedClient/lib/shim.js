@@ -21,3 +21,7 @@ OpenIZApplicationService.Close = function () {
     alert("You need to restart the DisconnectedClient application for the changes to take effect");
     window.close();
 }
+
+OpenIZApplicationService.GetLocale = function () {
+    return (navigator.language || navigator.userLanguage).substring(0, 2);
+}

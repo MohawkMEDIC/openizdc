@@ -33,6 +33,7 @@ using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using System.Xml.Serialization;
 using OpenIZ.Core.Model.AMI.Diagnostics;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 {
@@ -59,13 +60,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         {
             this.OpenIZ = new DiagnosticVersionInfo(typeof(OpenIZ.Mobile.Core.ApplicationContext).Assembly);
 
-            this.Applets = XamarinApplicationContext.Current.LoadedApplets.Select(o => o.Info).ToList();
+            var appService = ApplicationContext.Current.GetService<IAppletManagerService>();
+            this.Applets = appService.LoadedApplets.Select(o => o.Info).ToList();
 
             if(checkForUpdates)
                 try
                 {
-                    this.Updates = XamarinApplicationContext.Current.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
-                    this.Updates.RemoveAll(o => new Version(XamarinApplicationContext.Current.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
+                    this.Updates = appService.LoadedApplets.Select(o => ApplicationContext.Current.GetService<IUpdateManager>().GetServerVersion(o.Info.Id)).ToList();
+                    this.Updates.RemoveAll(o => new Version(appService.GetApplet(o.Id).Info.Version).CompareTo(new Version(o.Version)) > 0);
                 }
                 catch { }
 

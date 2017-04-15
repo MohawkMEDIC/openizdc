@@ -388,7 +388,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
-
+            
             return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
         }
 

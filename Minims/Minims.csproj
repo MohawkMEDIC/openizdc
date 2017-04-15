@@ -36,6 +36,16 @@
     <MonoDataSqlitePortablePath Condition="'$(Platform)' == 'x86'">$(MonoDataSqlitePortableHardware)-x86</MonoDataSqlitePortablePath>
     <MonoDataSqlitePortablePath Condition="'$(Platform)' == 'ARM'">$(MonoDataSqlitePortableHardware)-arm</MonoDataSqlitePortablePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -125,6 +135,7 @@
   <ItemGroup>
     <Compile Include="ConsoleParameters.cs" />
     <Compile Include="ConsoleTraceWriter.cs" />
+    <Compile Include="MiniAppletManagerService.cs" />
     <Compile Include="MiniConfigurationManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
