@@ -383,7 +383,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         else
                                         {
                                             this.CreateSerializer(null).Serialize(sw, (result as IdentifiedData).GetLocked());
-
                                         }
                                     }
                                 }

@@ -81,20 +81,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Data component
             var addPx = ApplicationContext.Current.GetService<EntityAddressComponentPersistenceService>();
 
-            context.Connection.InsertAll(data.Component.Select(c =>
-                {
-                    var cmp = addPx.FromModelInstance(c, context) as DbEntityAddressComponent;
-                    cmp.AddressUuid = retVal.Key.Value.ToByteArray();
-                    return cmp;
-                }).Where(o => o.ValueUuid != null));
-
-
-            //if (data.Component != null)
-            //    base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
-            //        new List<EntityAddressComponent>(),
-            //        data.Component,
-            //        data.Key,
-            //        context);
+            if (data.Component != null)
+                base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
+                    new List<EntityAddressComponent>(),
+                    data.Component,
+                    data.Key,
+                    context);
 
             return retVal;
         }
@@ -138,7 +130,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
 

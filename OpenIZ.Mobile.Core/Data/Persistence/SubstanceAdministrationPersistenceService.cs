@@ -51,12 +51,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert databased model to model
         /// </summary>
-        public override SubstanceAdministration ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override SubstanceAdministration ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbIdentified;
             var dbSbadm = dataInstance as DbSubstanceAdministration ?? dataInstance.GetInstanceOf<DbSubstanceAdministration>() ?? context.Connection.Table<DbSubstanceAdministration>().Where(o => o.Uuid == iddat.Uuid).First();
             var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(a => a.Uuid == dbSbadm.Uuid).First();
-            var retVal = m_actPersister.ToModelInstance<SubstanceAdministration>(dba, context, loadFast);
+            var retVal = m_actPersister.ToModelInstance<SubstanceAdministration>(dba, context);
 
             if (dbSbadm.DoseUnitConceptUuid != null)
                 retVal.DoseUnitKey = new Guid(dbSbadm.DoseUnitConceptUuid);

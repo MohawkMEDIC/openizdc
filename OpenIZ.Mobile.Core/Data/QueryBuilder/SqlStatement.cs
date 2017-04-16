@@ -231,6 +231,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         {
             if (expression is MemberExpression) return (expression as MemberExpression).Member;
             else if (expression is UnaryExpression) return this.GetMember((expression as UnaryExpression).Operand);
+            else if (expression is LambdaExpression) return this.GetMember((expression as LambdaExpression).Body);
             else throw new InvalidOperationException($"{expression} not supported, please use a member access expression");
         }
 
@@ -407,6 +408,19 @@ namespace OpenIZ.Core.Data.QueryBuilder
             });
         }
 
+
+        /// <summary>
+        /// Construct a SELECT FROM statement
+        /// </summary>
+        public SqlStatement<T> SelectFrom(params Expression<Func<T, dynamic>>[] columns)
+        {
+            var tableMap = TableMapping.Get(typeof(T));
+            return this.Append(new SqlStatement<T>($"SELECT {String.Join(",", columns.Select(o=>tableMap.GetColumn(this.GetMember(o)).Name))} FROM {tableMap.TableName} AS {tableMap.TableName} ")
+            {
+                m_alias = tableMap.TableName
+            });
+        }
+
         /// <summary>
         /// Generate an update statement
         /// </summary>
@@ -414,6 +428,11 @@ namespace OpenIZ.Core.Data.QueryBuilder
         {
             var tableMap = TableMapping.Get(typeof(T));
             return this.Append(new SqlStatement<T>($"UPDATE {tableMap.TableName} SET "));
+        }
+
+        internal object SelectFrom(Func<object, object> p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

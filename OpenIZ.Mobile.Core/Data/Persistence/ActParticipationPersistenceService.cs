@@ -17,8 +17,10 @@
  * User: justi
  * Date: 2017-3-31
  */
+using OpenIZ.Core.Data.QueryBuilder;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Acts;
 using SQLite.Net;
 using System;
@@ -97,7 +99,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance 
         /// </summary>
-        public override ActParticipation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override ActParticipation ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var dbi = dataInstance as DbActParticipation;
             if (dbi == null) return null;
@@ -147,18 +149,22 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Act != null) data.Act = data.Act.EnsureExists(context);
             data.ActKey = data.Act?.Key ?? data.ActKey;
 
-            //byte[] target = data.PlayerEntityKey.Value.ToByteArray(),
-            //    source = data.SourceEntityKey.Value.ToByteArray(),
-            //    typeKey = data.ParticipationRoleKey.Value.ToByteArray();
+            byte[] target = data.PlayerEntityKey.Value.ToByteArray(),
+                source = data.SourceEntityKey.Value.ToByteArray(),
+                typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
-            //var existing = context.Connection.Table<DbActParticipation>().Where(o => o.EntityUuid == target && o.ActUuid == source && o.ParticipationRoleUuid == typeKey).FirstOrDefault();
-            //if (existing == null)
-            return base.InsertInternal(context, data);
-            //else
-            //{
-            //    data.Key = new Guid(existing.Uuid);
-            //    return data;
-            //}
+            SqlStatement sql = new SqlStatement<DbActParticipation>().SelectFrom(o => o.Uuid)
+               .Where<DbActParticipation>(o => o.ActUuid == source && o.EntityUuid == target && o.ParticipationRoleUuid == typeKey)
+               .Limit(1).Build();
+
+            var existing = context.Connection.Query<DbIdentified>(sql.SQL, sql.Arguments.ToArray()).FirstOrDefault();
+            if (existing == null)
+                return base.InsertInternal(context, data);
+            else
+            {
+                data.Key = new Guid(existing.Uuid);
+                return data;
+            }
         }
 
         /// <summary>

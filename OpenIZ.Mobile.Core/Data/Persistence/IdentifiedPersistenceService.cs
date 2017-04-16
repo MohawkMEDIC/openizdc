@@ -72,18 +72,11 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public override TModel ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override TModel ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
 
-            if(context.Connection.IsInTransaction || !context.Data.ContainsKey("lean"))
-                retVal.LoadAssociations(context);
-            else
-                retVal.LoadAssociations(context, 
-                    nameof(EntityIdentifier.Authority),
-                    nameof(EntityAddress.Component),
-                    nameof(EntityRelationship.TargetEntity)
-                );
+            retVal.LoadAssociations(context);
             return retVal;
         }
 
@@ -219,12 +212,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             // Is this a cached query?
-            //var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();
-            //if (retVal != null && !countResults)
-            //{
-            //    totalResults = 0;
-            //    return retVal;
-            //}
+            var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();
+            if (retVal != null && !countResults)
+            {
+                totalResults = 0;
+                return retVal;
+            }
 
             // Preare SQLite Args
             var args = queryStatement.Arguments.Select(o =>
@@ -267,9 +260,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
             // Exec query
-            var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
-
-            var modelList = domainList.Select(o => this.CacheConvert(o, context, count > 1)).ToList();
+            var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args).ToList();
+            var modelList = domainList.Select(o => this.CacheConvert(o, context));
             context.AddQuery(queryStatement, modelList);
             return modelList;
         }
@@ -277,16 +269,19 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
             {
-                cacheItem = this.ToModelInstance(o, context, loadFast);
+                cacheItem = this.ToModelInstance(o, context);
                 if (!context.Connection.IsInTransaction)
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
+            else if (cacheItem.LoadState <= context.DelayLoadMode)
+                cacheItem.LoadAssociations(context);
+
             return cacheItem;
         }
 
@@ -484,7 +479,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
             //totalResults = retVal.Count;
-            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context, true)).ToList();
+            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context)).ToList();
         }
 
         /// <summary>
@@ -498,8 +493,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Get from the database
             try
             {
-                var kuuid = key.ToByteArray();
-                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context, true);
+                int t = 0;
+                if (typeof(TQueryResult) != typeof(TDomain)) // faster to join
+                    return this.QueryInternal(context, o => o.Key == key, 0, 1, out t, Guid.Empty, false).FirstOrDefault();
+                else
+                {
+                    var kuuid = key.ToByteArray();
+                    return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context);
+                }
             }
             catch (Exception e)
             {

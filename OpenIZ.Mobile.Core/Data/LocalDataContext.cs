@@ -37,6 +37,14 @@ namespace OpenIZ.Mobile.Core.Data
     public class LocalDataContext : IDisposable
     {
 
+        /// <summary>
+        /// Partial load mode
+        /// </summary>
+        public LocalDataContext()
+        {
+            this.DelayLoadMode = LoadState.PartialLoad;
+        }
+
         // Prepared
         private Dictionary<String, IDbStatement> m_prepared = new Dictionary<string, IDbStatement>();
 
@@ -50,6 +58,11 @@ namespace OpenIZ.Mobile.Core.Data
 
         // Data dictionary
         private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Associations to be be forcably loaded
+        /// </summary>
+        public String[] LoadAssociations { get; set; }
 
         /// <summary>
         /// Local data context
@@ -81,6 +94,10 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
 
+        /// <summary>
+        /// The data loading mode
+        /// </summary>
+        public OpenIZ.Core.Model.LoadState DelayLoadMode { get; set; }
 
         /// <summary>
         /// Add cache commit
@@ -149,11 +166,29 @@ namespace OpenIZ.Mobile.Core.Data
             {
                 var pIndex = sql.IndexOf("?");
                 retVal.Remove(pIndex, 1);
-                retVal.Insert(pIndex, qList[parmId++]);
+                retVal.Insert(pIndex, this.RenderParameter(qList[parmId++]));
                 sql = retVal.ToString();
             }
             return retVal.ToString();
         }
+
+        /// <summary>
+        /// Render parameter
+        /// </summary>
+        private string RenderParameter(object v)
+        {
+            if (v is byte[])
+                return $"X'{BitConverter.ToString((byte[])v).Replace("-", "")}'";
+            else if (v is Guid)
+                return $"X'{BitConverter.ToString(((Guid)v).ToByteArray()).Replace("-", "")}'";
+            else if (v is String)
+                return $"'{v}'";
+            else if (v == null)
+                return "null";
+            else
+                return v.ToString();
+        }
+
 
         /// <summary>
         /// Add a cached set of query results

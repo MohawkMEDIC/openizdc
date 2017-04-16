@@ -203,7 +203,7 @@ namespace OpenIZ.Mobile.Core.Data
 			/// </summary>
 			public IEnumerable<TModel> Query(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
 			{
-				var data = this.m_client.Query(query, offset, count);
+				var data = this.m_client.Query(query, offset, count, false, queryId);
 				(data as Bundle)?.Reconstitute();
 				offset = (data as Bundle)?.Offset ?? offset;
 				count = (data as Bundle)?.Count ?? count;
@@ -244,6 +244,22 @@ namespace OpenIZ.Mobile.Core.Data
             public IEnumerable Query(Expression query, int offset, int? count, out int totalResults)
             {
                 return this.Query((Expression<Func<TModel, bool>>)query, offset, count, out totalResults, Guid.Empty);
+            }
+
+            /// <summary>
+            /// Query fast (not implemented)
+            /// </summary>
+            public IEnumerable<TModel> QueryFast(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+            {
+                return this.QueryFast((Expression<Func<TModel, bool>>)query, offset, count, out totalResults, Guid.Empty);
+            }
+
+            /// <summary>
+            /// Expliciry load
+            /// </summary>
+            public IEnumerable<TModel> QueryExplicitLoad(Expression<Func<TModel, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<string> expandProperties)
+            {
+                throw new NotImplementedException();
             }
         }
 	}

@@ -80,7 +80,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// True if synchronization is occurring
         /// </summary>
-        public bool IsSynchronizing { get
+        public bool IsBusy
+        {
+            get
             {
                 return Monitor.IsEntered(this.m_inboundLock) || Monitor.IsEntered(this.m_outboundLock);
             }
@@ -100,6 +102,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 // Exhaust the queue
                 int remain = SynchronizationQueue.Inbound.Count();
                 int maxTotal = 0;
+
                 InboundQueueEntry nextPeek = null;
                 IdentifiedData nextDpe = null;
 
@@ -112,9 +115,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (remain > maxTotal)
                             maxTotal = remain;
 
-                        if(maxTotal > 5)
+                        if (maxTotal > 5)
                             ApplicationContext.Current.SetProgress(String.Format("{0} - [{1}]", Strings.locale_import, remain), (maxTotal - remain) / (float)maxTotal);
-                        
+
 #if PERFMON
                         Stopwatch sw = new Stopwatch();
                         sw.Start();
@@ -137,7 +140,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             var nextRaw = SynchronizationQueue.Inbound.PeekRaw(1);
                             return new KeyValuePair<InboundQueueEntry, IdentifiedData>(nextRaw, nextRaw == null ? null : SynchronizationQueue.Inbound.DeserializeObject(nextRaw));
                         });
-                        
+
 
 #if PERFMON
                         sw.Stop();
@@ -145,26 +148,46 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         sw.Reset();
                         sw.Start();
 #endif
-                        
+
 
                         //(dpe as OpenIZ.Core.Model.Collection.Bundle)?.Reconstitute();
                         var bundle = dpe as Bundle;
                         dpe = bundle?.Entry ?? dpe;
 
-                        if(bundle?.Item.Count > 500)
+                        try
                         {
-                            var ofs = 0;
-                            while(ofs < bundle.Item.Count)
+                            if (bundle?.Item.Count > 250)
                             {
-                                this.ImportElement(new Bundle()
+                                var ofs = 0;
+                                while (ofs < bundle.Item.Count)
                                 {
-                                    Item = bundle.Item.Skip(ofs).Take(250).ToList()
-                                });
-                                ofs += 500;
+                                    this.ImportElement(new Bundle()
+                                    {
+                                        Item = bundle.Item.Skip(ofs).Take(250).ToList()
+                                    });
+                                    ofs += 250;
+                                }
+                            }
+                            else
+                                this.ImportElement(dpe);
+                        }
+                        catch (Exception e)
+                        {
+                            try
+                            {
+                                this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
+                                SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "inbound" });
+                            }
+                            catch (Exception e2)
+                            {
+                                this.m_tracer.TraceEvent(System.Diagnostics.Tracing.EventLevel.Critical, "Error putting dead item on deadletter queue: {0}", e);
+                                throw;
                             }
                         }
-                        else
-                            this.ImportElement(dpe);
+                        finally
+                        {
+                            SynchronizationQueue.Inbound.Delete(queueEntry.Id);
+                        }
 
                         this.QueueExhausted?.Invoke(this, new QueueExhaustedEventArgs("inbound", bundle?.Item.AsParallel().Select(o => o.Key.Value).ToArray() ?? new Guid[] { dpe.Key.Value }));
 
@@ -173,8 +196,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "ImportComplete", sw.Elapsed);
                         sw.Reset();
 #endif
-                        //queueEntry = null;
-
+                        nextPeekTask.Wait();
                         var peekTaskResult = nextPeekTask.Result;
                         nextPeek = peekTaskResult.Key;
                         nextDpe = peekTaskResult.Value;
@@ -182,28 +204,15 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     }
                     catch (Exception e)
                     {
-                        try
-                        {
-                            this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
-                            SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "inbound" });
-                        }
-                        catch(Exception e2)
-                        {
-                            this.m_tracer.TraceEvent(System.Diagnostics.Tracing.EventLevel.Critical, "Error putting dead item on deadletter queue: {0}", e);
-                            throw;
-                        }
-                    }
-                    finally
-                    {
-                        SynchronizationQueue.Inbound.Delete(queueEntry.Id);
+                        this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
                     }
                     remain = SynchronizationQueue.Inbound.Count();
 
                 }
 
-                if(maxTotal > 5)
-                    ApplicationContext.Current.SetProgress(String.Format("{0} - [0]", Strings.locale_import, remain), 0);
-       
+                if (maxTotal > 5)
+                    ApplicationContext.Current.SetProgress(String.Empty, 0);
+
             }
             finally
             {
@@ -431,7 +440,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             try
             {
                 IdentifiedData existing = null;
-                if(!(data is Bundle))
+                if (!(data is Bundle))
                     existing = svc.Get(data.Key.Value) as IdentifiedData;
 
                 this.m_tracer.TraceVerbose("Inserting object from inbound queue: {0}", data);

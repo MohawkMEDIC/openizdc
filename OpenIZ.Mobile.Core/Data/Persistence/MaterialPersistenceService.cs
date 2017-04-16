@@ -38,21 +38,21 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert persistence model to business objects
         /// </summary>
-        public override Material ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Material ToModelInstance(object dataInstance, LocalDataContext context)
         {
-            return this.ToModelInstance<Material>(dataInstance, context, loadFast);
+            return this.ToModelInstance<Material>(dataInstance, context);
         }
 
         /// <summary>
         /// Creates the specified model instance
         /// </summary>
-        internal TModel ToModelInstance<TModel>(object rawInstance, LocalDataContext context, bool loadFast)
+        internal TModel ToModelInstance<TModel>(object rawInstance, LocalDataContext context)
             where TModel : Material, new()
         {
             var iddat = rawInstance as DbIdentified;
             var dataInstance = rawInstance as DbMaterial ?? rawInstance.GetInstanceOf<DbMaterial>() ?? context.Connection.Table<DbMaterial>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = rawInstance.GetInstanceOf<DbEntity>() ?? rawInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == dataInstance.Uuid).First();
-            var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context, loadFast);
+            var retVal = this.m_entityPersister.ToModelInstance<TModel>(dbe, context);
             retVal.ExpiryDate = dataInstance.ExpiryDate;
             retVal.IsAdministrative = dataInstance.IsAdministrative;
             retVal.Quantity = dataInstance.Quantity;

@@ -69,7 +69,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
 
                 OpenIZ.CarePlan.getCarePlanAsync({
                     query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
-                    minDate: new Date().addDays(-30),
+                    minDate: new Date(),
                     maxDate: new Date().addDays(90),
                     continueWith: function (proposals) {
                         if (!proposals.item) // There are no proposals, at the end of the planning process
@@ -135,6 +135,8 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     $scope.renderAppointments = function (start, end, timezone, callback) {
         if ($scope.appointment == null) return;
 
+        OpenIZ.App.showWait("#appointmentScheduler .fc-center");
+
         var appointments = [{
             id: $scope.appointment.id,
             title: OpenIZ.Localization.getString("locale.encounters.appointment.recommended"),
@@ -155,7 +157,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
 
         // Function using closures to query the warehouse data
         var queryWarehouse = function () {
-            OpenIZWarehouse.Adhoc.query({
+            OpenIZWarehouse.Adhoc.queryAsync({
                 martId: "oizcp",
                 queryId: "bymonth",
                 parameters: {
@@ -184,6 +186,9 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                     }
 
                     callback(appointments);
+                },
+                finally: function () {
+                    OpenIZ.App.hideWait("#appointmentScheduler .fc-center");
                 }
             });
         };
@@ -192,7 +197,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
         if (Object.keys(refs).length == 0)
             OpenIZ.Material.findMaterialAsync(
                 {
-                    query: { "typeConcept.mnemonic": "~VaccineType", "obsoletionTime": "null", "relationship[ManufacturedProduct].target.relationship[OwnedEntity].source": $rootScope.session.entity.relationship.DedicatedServiceDeliveryLocation.target, "relationship[ManufacturedProduct].target@Material.expiryDate": ">" + OpenIZ.Util.toDateInputString(new Date()) },
+                    query: { "typeConcept.mnemonic": "~VaccineType", "obsoletionTime": "null" },
                     continueWith: function (materials) {
                         for (var i in materials.item)
                             refs[materials.item[i].id] = OpenIZ.Util.renderName(materials.item[i].name.Assigned);

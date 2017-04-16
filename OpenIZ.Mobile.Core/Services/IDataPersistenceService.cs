@@ -81,7 +81,6 @@ namespace OpenIZ.Mobile.Core.Services
 		public DataQueryEventArgs (Expression<Func<TData, bool>> query, int offset, int? count) : base(offset, count)
 		{
 			this.Query = query;
-
         }
 
        
@@ -342,6 +341,18 @@ namespace OpenIZ.Mobile.Core.Services
         /// <param name="query">Query.</param>
         IEnumerable<TData> Query(Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId);
 
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        IEnumerable<TData> QueryFast(Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId);
+
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        IEnumerable<TData> QueryExplicitLoad(Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<String> expandProperties);
+        
         /// <summary>
         /// Executes a stored query
         /// </summary>

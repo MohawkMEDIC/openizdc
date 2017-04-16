@@ -90,13 +90,16 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.query["_viewModel"] = "min";
+            scope.search.query["_queryId"] = OpenIZ.App.newGuid();
+
             scope.search.isSearching = true;
             $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
             var start = $scope.search.dateOfBirthStringLow;
             var end = $scope.search.dateOfBirthStringHigh;
-            scope.search.orginalQuery = angular.copy(scope.search.query);
+            
+            //scope.search.orginalQuery = angular.copy(scope.search.query);
             OpenIZ.Patient.findAsync({
-                query: scope.search.orginalQuery,
+                query: scope.search.query,
                 continueWith: function (r) {
 
                     if (start !== null && start !== undefined && end != null && end != undefined && r.totalResults>0) {//Temporary fix until the query string can take a range
@@ -147,14 +150,14 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Current page increment
         scope.search.paging.current++;
-        scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
-        scope.search.orginalQuery["_viewModel"] = "min";
-        scope.search.orginalQuery["_count"] = scope.search.paging.size;
+        scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
+        scope.search.query["_viewModel"] = "min";
+        scope.search.query["_count"] = scope.search.paging.size;
         delete scope.search.results;
         scope.search.isSearching = true;
         // Find async
         OpenIZ.Patient.findAsync({
-            query: scope.search.orginalQuery,
+            query: scope.search.query,
             continueWith: function (r) {
                 scope.search.results = r;
                 //updateResultEncounters();
@@ -182,15 +185,15 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Current page increment
         scope.search.paging.current--;
-        scope.search.orginalQuery["_viewModel"] = "min";
-        scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
-        scope.search.orginalQuery["_count"] = scope.search.paging.size;
+        scope.search.query["_viewModel"] = "min";
+        scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
+        scope.search.query["_count"] = scope.search.paging.size;
         delete scope.search.results;
         scope.search.isSearching = true;
 
         // Find async
         OpenIZ.Patient.findAsync({
-            query: scope.search.orginalQuery,
+            query: scope.search.query,
             continueWith: function (r) {
                 scope.search.results = r;
                 //updateResultEncounters();
@@ -216,15 +219,15 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
         // Current page increment
         scope.search.paging.current = pageNo;
-        scope.search.orginalQuery["_viewModel"] = "min";
-        scope.search.orginalQuery["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
-        scope.search.orginalQuery["_count"] = scope.search.paging.size;
+        scope.search.query["_viewModel"] = "min";
+        scope.search.query["_offset"] = (scope.search.paging.current - 1) * scope.search.paging.size;
+        scope.search.query["_count"] = scope.search.paging.size;
         delete scope.search.results;
         scope.search.isSearching = true;
 
         // Find async
         OpenIZ.Patient.findAsync({
-            query: scope.search.orginalQuery,
+            query: scope.search.query,
             continueWith: function (r) {
                 scope.search.results = r;
                 //updateResultEncounters();

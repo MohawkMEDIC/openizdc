@@ -169,11 +169,13 @@ namespace OpenIZ.Mobile.Core.Caching
                 do
                 {
                     Guid key = idData?.Key ?? Guid.Empty;
-                    if (cache.ContainsKey(key))
+                    CacheEntry ent = null;
+                    if (cache.TryGetValue(key, out ent))
+                    {
                         lock (this.m_lock)
-                        {
-                            cache[key].Update(data as IdentifiedData);
-                        }
+                            if (ent.Data != data)
+                                ent.Update(data as IdentifiedData);
+                    }
                     else
                         lock (this.m_lock)
                             if (!cache.ContainsKey(key))
@@ -185,8 +187,8 @@ namespace OpenIZ.Mobile.Core.Caching
                     objData = objData.GetTypeInfo().BaseType;
                 } while (cacheLookup(objData));
             }
-            else //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
-                this.RegisterCacheType(data.GetType());
+            else  //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
+                this.RegisterCacheType(data.GetType()).Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
 
         }
 
@@ -232,25 +234,22 @@ namespace OpenIZ.Mobile.Core.Caching
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objectType, out cache))
+            Type scanType = objectType;
+            while (scanType == objectType || typeof(Act).GetTypeInfo().IsAssignableFrom(scanType.GetTypeInfo()) || typeof(Entity).GetTypeInfo().IsAssignableFrom(scanType.GetTypeInfo()))
             {
-                CacheEntry candidate = default(CacheEntry);
-                if (cache.TryGetValue(key.Value, out candidate))
+                Dictionary<Guid, CacheEntry> cache = null;
+                if (this.m_entryTable.TryGetValue(scanType, out cache))
                 {
-                    candidate.Touch();
+                    CacheEntry candidate = default(CacheEntry);
+                    if (cache.TryGetValue(key.Value, out candidate))
+                    {
+                        candidate.Touch();
 
-                    return candidate.Data;
+                        return candidate.Data;
+                    }
                 }
-                else /// try get entry slow
-                {
-                    var entryTabl = this.m_entryTable.FirstOrDefault(o => objectType.GetTypeInfo().IsAssignableFrom(o.Key.GetTypeInfo()) && o.Value.ContainsKey(key.Value));
-                    if (entryTabl.Value == null) return null;
-                    else
-                        return entryTabl.Value[key.Value].Data;
-                }
+                scanType = scanType.GetTypeInfo().BaseType;
             }
-
 
             return null;
         }

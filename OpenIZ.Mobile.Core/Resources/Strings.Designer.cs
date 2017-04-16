@@ -125,6 +125,15 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Optimizing Databases....
+        /// </summary>
+        internal static string locale_compacting {
+            get {
+                return ResourceManager.GetString("locale_compacting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error Downloading Remote Data.
         /// </summary>
         internal static string locale_downloadError {

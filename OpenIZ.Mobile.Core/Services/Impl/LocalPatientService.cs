@@ -62,7 +62,21 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
         public IEnumerable<Patient> Find(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount)
         {
-            return base.Find(predicate, offset, count, out totalCount, Guid.Empty);
+            return base.Find(predicate, offset, count, out totalCount, Guid.Empty, true);
+        }
+
+        /// <summary>
+        /// Finds the specified patient with query controls.
+        /// </summary>
+        /// <param name="predicate">The predicate.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The count.</param>
+        /// <param name="totalCount">The total count.</param>
+        /// <returns>Returns a list of patient which match the specific predicate.</returns>
+        /// <exception cref="System.InvalidOperationException">If the persistence service is not found.</exception>
+        public IEnumerable<Patient> FindFast(Expression<Func<Patient, bool>> predicate, int offset, int? count, out int totalCount, Guid queryId)
+        {
+            return base.Find(predicate, offset, count, out totalCount, queryId, true);
         }
 
         /// <summary>

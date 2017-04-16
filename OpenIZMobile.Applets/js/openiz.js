@@ -19,6 +19,11 @@
  * Date: 2016-7-17
  */
 
+window.alert_ = window.alert;
+window.alert = function () {
+    alert_.apply(window, arguments)
+};
+
 /// <reference path="openiz-bre.js"/>
 
 /*

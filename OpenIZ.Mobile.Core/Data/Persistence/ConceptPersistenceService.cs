@@ -38,9 +38,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override Concept ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Concept ToModelInstance(object dataInstance, LocalDataContext context)
         {
-            var modelInstance = base.ToModelInstance(dataInstance, context, loadFast);
+            var modelInstance = m_mapper.MapDomainInstance<DbConcept, Concept>(dataInstance as DbConcept);
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;

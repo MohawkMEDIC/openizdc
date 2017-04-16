@@ -83,8 +83,11 @@ namespace OpenIZ.Mobile.Core.Data
         public IEnumerable<TObject> Query<TObject>(Expression<Func<TObject, bool>> query) where TObject : IdentifiedData, new()
 		{
 			var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TObject>>();
-			if(persistenceService != null)
-				return persistenceService.Query(query);
+            if (persistenceService != null)
+            {
+                var tr = 0;
+                return persistenceService.QueryFast(query, 0, null, out tr, Guid.Empty);
+            }
 			return new List<TObject>();
 		}
 

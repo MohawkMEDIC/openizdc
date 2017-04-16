@@ -99,6 +99,11 @@ namespace OpenIZ.Mobile.Core.Services
         event EventHandler<SynchronizationEventArgs> PullCompleted;
 
         /// <summary>
+        /// Get whether the service is syncing
+        /// </summary>
+        bool IsSynchronizing { get; }
+
+        /// <summary>
         /// Fetch to see if there are any particular changes on the specified model type
         /// </summary>
         bool Fetch(Type modelType);

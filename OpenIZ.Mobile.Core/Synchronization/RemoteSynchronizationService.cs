@@ -98,6 +98,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
             }
         }
 
+        /// <summary>
+        /// Gets whether the object is synchronizing
+        /// </summary>
+        public bool IsSynchronizing
+        {
+            get; private set;
+        }
 
         /// <summary>
         /// Start the service
@@ -152,6 +159,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     try
                     {
+                        this.IsSynchronizing = true;
 
                         DateTime lastSync = DateTime.MinValue;
                         if(SynchronizationLog.Current.GetAll().Count() > 0)
@@ -189,6 +197,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     finally
                     {
                         Monitor.Exit(this.m_lock);
+                        this.IsSynchronizing = false;
                     }
                 }
             });

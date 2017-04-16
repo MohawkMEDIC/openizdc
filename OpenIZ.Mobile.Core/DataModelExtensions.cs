@@ -37,6 +37,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace OpenIZ.Mobile.Core
 {
@@ -86,7 +87,7 @@ namespace OpenIZ.Mobile.Core
 
             // First get the runtime properties from cache?
             Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>> meKnownMaps = null;
-            if(!s_getInstanceOfCache.TryGetValue(me.GetType(), out meKnownMaps))
+            if (!s_getInstanceOfCache.TryGetValue(me.GetType(), out meKnownMaps))
             {
                 meKnownMaps = new Dictionary<Type, Dictionary<PropertyInfo, PropertyInfo>>();
                 lock (s_getInstanceOfCache)
@@ -96,7 +97,7 @@ namespace OpenIZ.Mobile.Core
 
             // Do we have a map for the destination?
             Dictionary<PropertyInfo, PropertyInfo> mapProperties = null;
-            if(!meKnownMaps.TryGetValue(typeof(TDomain), out mapProperties))
+            if (!meKnownMaps.TryGetValue(typeof(TDomain), out mapProperties))
             {
                 mapProperties = new Dictionary<PropertyInfo, PropertyInfo>();
                 foreach (var pi in typeof(TDomain).GetRuntimeProperties())
@@ -121,11 +122,14 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Load specified associations
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context, params String[] associationsToLoad) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
         {
-                if (me == null)
-                    throw new ArgumentNullException(nameof(me));
-                else if (context.Connection.IsInTransaction) return;
+            if (me == null)
+                throw new ArgumentNullException(nameof(me));
+            else if (me.LoadState == LoadState.FullLoad ||
+                context.DelayLoadMode == LoadState.PartialLoad && context.LoadAssociations == null)
+                return;
+            else if (context.Connection.IsInTransaction) return;
 
 #if DEBUG
             /*
@@ -141,88 +145,96 @@ namespace OpenIZ.Mobile.Core
             sw.Start();
 #endif
 
-                // Cache get classification property - thiz makez us fasters
-                PropertyInfo classProperty = null;
-                if (!s_classificationProperties.TryGetValue(typeof(TModel), out classProperty))
+            // Cache get classification property - thiz makez us fasters
+            PropertyInfo classProperty = null;
+            if (!s_classificationProperties.TryGetValue(typeof(TModel), out classProperty))
+            {
+                classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
+                if (classProperty != null)
+                    classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
+                lock (s_lockObject)
+                    if (!s_classificationProperties.ContainsKey(typeof(TModel)))
+                        s_classificationProperties.Add(typeof(TModel), classProperty);
+            }
+
+            // Classification property?
+            String classValue = classProperty?.GetValue(me)?.ToString();
+
+            // Cache the props so future kitties can call it
+            IEnumerable<PropertyInfo> properties = null;
+            var propertyCacheKey = $"{me.GetType()}.FullName[{classValue}]";
+            if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
+                lock (s_runtimeProperties)
                 {
-                    classProperty = typeof(TModel).GetRuntimeProperty(typeof(TModel).GetTypeInfo().GetCustomAttribute<ClassifierAttribute>()?.ClassifierProperty ?? "____XXX");
-                    if (classProperty != null)
-                        classProperty = typeof(TModel).GetRuntimeProperty(classProperty.GetCustomAttribute<SerializationReferenceAttribute>()?.RedirectProperty ?? classProperty.Name);
-                    lock (s_lockObject)
-                        if (!s_classificationProperties.ContainsKey(typeof(TModel)))
-                            s_classificationProperties.Add(typeof(TModel), classProperty);
+                    properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo()));
+
+                    if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
+                    {
+                        s_runtimeProperties.Add(propertyCacheKey, properties);
+                    }
                 }
 
-                // Classification property?
-                String classValue = classProperty?.GetValue(me)?.ToString();
+            // Load fast or lean mode only root associations which will appear on the wire
+            if(context.LoadAssociations != null)
+            {
+                var loadAssociations = context.LoadAssociations.Where(o => o.StartsWith(me.GetType().GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName))
+                    .Select(la => la.Contains(".") ? la.Substring(la.IndexOf(".") + 1) : la).ToArray();
+                if (loadAssociations.Length == 0) return;
+                properties = properties.Where(p => loadAssociations.Any(la => la == p.Name));
 
-                // Cache the props so future kitties can call it
-                IEnumerable<PropertyInfo> properties = null;
-                var propertyCacheKey = $"{me.GetType()}.FullName[{classValue}]";
-                if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
-                    lock (s_runtimeProperties)
-                    {
-                        properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo()));
+            }
 
-                        if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
-                        {
-                            s_runtimeProperties.Add(propertyCacheKey, properties);
-                        }
-                    }
+            // Iterate over the properties and load the properties
+            foreach (var pi in properties)
+            {
 
-                // Iterate over the properties and load the properties
-                foreach (var pi in properties)
+                // Map model type to domain
+                var adoPersister = LocalPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
+
+                // Loading associations, so what is the associated type?
+                if (typeof(IList).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo()) &&
+                    adoPersister is ILocalAssociativePersistenceService &&
+                    me.Key.HasValue) // List so we select from the assoc table where we are the master table
                 {
-                    if (!associationsToLoad.Contains(pi.Name))
-                        continue;
+                    // Is there not a value?
+                    var assocPersister = adoPersister as ILocalAssociativePersistenceService;
 
-                    // Map model type to domain
-                    var adoPersister = LocalPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
-
-                    // Loading associations, so what is the associated type?
-                    if (typeof(IList).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo()) &&
-                        adoPersister is ILocalAssociativePersistenceService &&
-                        me.Key.HasValue) // List so we select from the assoc table where we are the master table
-                    {
-                        // Is there not a value?
-                        var assocPersister = adoPersister as ILocalAssociativePersistenceService;
-
-                        // We want to que   ry based on our PK and version if applicable
-                        decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
-                        var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence);
-                        var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
-                        pi.SetValue(me, listValue);
-                    }
-                    else if (typeof(IIdentifiedEntity).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo())) // Single
-                    {
-                        // Single property, we want to execute a get on the key property
-                        var redirectAtt = pi.GetCustomAttribute<SerializationReferenceAttribute>();
-                        if (redirectAtt == null)
-                            continue; // cannot get key property
-
-                        // We want to issue a query
-                        var keyProperty = pi.DeclaringType.GetRuntimeProperty(redirectAtt.RedirectProperty);
-                        var keyValue = keyProperty?.GetValue(me);
-                        if (keyValue == null ||
-                            Guid.Empty.Equals(keyValue))
-                            continue; // No key specified
-
-                        // This is kinda messy.. maybe iz to be changez
-                        object value = null;
-                        if (!context.Data.TryGetValue(keyValue.ToString(), out value))
-                        {
-                            value = adoPersister.Get(context, (Guid)keyValue);
-                            context.AddData(keyValue.ToString(), value);
-                        }
-                        pi.SetValue(me, value);
-                    }
-
+                    // We want to que   ry based on our PK and version if applicable
+                    decimal? versionSequence = (me as IVersionedEntity)?.VersionSequence;
+                    var assoc = assocPersister.GetFromSource(context, me.Key.Value, versionSequence);
+                    var listValue = Activator.CreateInstance(pi.PropertyType, assoc);
+                    pi.SetValue(me, listValue);
                 }
+                else if (typeof(IIdentifiedEntity).GetTypeInfo().IsAssignableFrom(pi.PropertyType.GetTypeInfo())) // Single
+                {
+                    // Single property, we want to execute a get on the key property
+                    var redirectAtt = pi.GetCustomAttribute<SerializationReferenceAttribute>();
+                    if (redirectAtt == null)
+                        continue; // cannot get key property
+
+                    // We want to issue a query
+                    var keyProperty = pi.DeclaringType.GetRuntimeProperty(redirectAtt.RedirectProperty);
+                    var keyValue = keyProperty?.GetValue(me);
+                    if (keyValue == null ||
+                        Guid.Empty.Equals(keyValue))
+                        continue; // No key specified
+
+                    // This is kinda messy.. maybe iz to be changez
+                    object value = null;
+                    if (!context.Data.TryGetValue(keyValue.ToString(), out value))
+                    {
+                        value = adoPersister.Get(context, (Guid)keyValue);
+                        context.AddData(keyValue.ToString(), value);
+                    }
+                    pi.SetValue(me, value);
+                }
+
+            }
 #if DEBUG
             sw.Stop();
             s_tracer.TraceVerbose("Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
 #endif
-                ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);
+            ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);
         }
 
         /// <summary>
@@ -235,7 +247,7 @@ namespace OpenIZ.Mobile.Core
             var idpInstance = LocalPersistenceService.GetPersister(me.GetType()) as ILocalPersistenceService;
 
             IIdentifiedEntity existing = null;
-            if (me.Key != null) 
+            if (me.Key != null)
                 existing = context.TryGetCacheItem(me.Key.Value);
             if (existing != null) return existing;
 

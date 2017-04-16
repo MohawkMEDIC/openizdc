@@ -23,7 +23,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($scope, $state) {
+layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', function ($scope, $state, $rootScope) {
 
 
     $scope.queue = {};
@@ -195,12 +195,13 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', function ($sco
     // Refresh queue state
     // @param {bool} noTimer When true, instructs the function not to re-run on a timer
     function refreshQueueState(noTimer) {
+
         getQueue(OpenIZ.Queue.QueueNames.InboundQueue);
         getQueue(OpenIZ.Queue.QueueNames.OutboundQueue);
         getQueue(OpenIZ.Queue.QueueNames.DeadLetterQueue);
         getQueue(OpenIZ.Queue.QueueNames.AdminQueue);
 
-        if (!noTimer && $state.is('org-openiz-core.sync'))
+        if (!noTimer && $state.is('org-openiz-core.sync') && $rootScope.session != null)
             setTimeout(refreshQueueState, 5000);
     }
 
