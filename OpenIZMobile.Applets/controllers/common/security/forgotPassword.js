@@ -35,6 +35,24 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
     // Get mechanisms
     OpenIZ.Authentication.getTfaMechanisms({
         continueWith: function (data) {
+            
+            // HACK: the TFA mechanisms are stored in the database in english, get the locale string for it
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                switch (data[i].id) {
+                    case 'd919457d-e015-435c-bd35-42e425e2c60c':
+                        data[i].name = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.email");
+                        data[i].challengeText = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.emailText");
+                        break;
+                    case '08124835-6c24-43c9-8650-9d605f6b5bd6':
+                        data[i].name = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.phone");
+                        data[i].challengeText = OpenIZ.Localization.getString("locale.forgotPassword.challengeRequest.phoneText");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             $scope.tfaMechanisms = data;
             $scope.$apply();
         },
