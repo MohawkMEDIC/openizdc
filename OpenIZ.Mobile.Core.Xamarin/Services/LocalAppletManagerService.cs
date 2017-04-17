@@ -160,7 +160,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             }
             else if (ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().Security.AllowUnsignedApplets)
             {
-                return true;
+                return ApplicationContext.Current.Confirm(String.Format(Strings.locale_unsignedAppletPrompt, package.Meta.Names.First().Value));
             }
             else
             {

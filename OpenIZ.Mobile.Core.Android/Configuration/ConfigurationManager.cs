@@ -135,6 +135,9 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                 StartupAsset = "org.openiz.core",
                 Security = new AppletSecurityConfiguration()
                 {
+#if DEV_MODE
+                    AllowUnsignedApplets = true,
+#endif
                     TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
                 }
             };

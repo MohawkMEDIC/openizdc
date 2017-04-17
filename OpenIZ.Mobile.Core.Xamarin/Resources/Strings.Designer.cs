@@ -259,6 +259,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?.
+        /// </summary>
+        internal static string locale_unsignedAppletPrompt {
+            get {
+                return ResourceManager.GetString("locale_unsignedAppletPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The applet {0} is not signed or contains an invalid header. Your security settings do not allow for unsigned applets to be executed..
         /// </summary>
         internal static string locale_unsignedAppletsNotAllowed {

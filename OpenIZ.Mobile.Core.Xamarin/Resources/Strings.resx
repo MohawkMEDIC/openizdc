@@ -183,6 +183,9 @@
   <data name="locale_invalidSignature" xml:space="preserve">
     <value>The applet could not be installed because the verification stage failed.</value>
   </data>
+  <data name="locale_unsignedAppletPrompt" xml:space="preserve">
+    <value>The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?</value>
+  </data>
   <data name="locale_unsignedAppletsNotAllowed" xml:space="preserve">
     <value>The applet {0} is not signed or contains an invalid header. Your security settings do not allow for unsigned applets to be executed.</value>
   </data>
