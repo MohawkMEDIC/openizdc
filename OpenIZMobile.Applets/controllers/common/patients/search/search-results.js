@@ -54,6 +54,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
 
     scope.search.searchSubmitted = false;
     var onlineOnly = false;
+
+    scope.search.minSearchDate = '2000-01-01';
     
     //function updateResultEncounters() {
     //    for (var i in scope.search.results.item) {

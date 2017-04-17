@@ -578,7 +578,7 @@
     <string key="locale.openiz.info">Haipatikani</string>
     <string key="locale.patient.search.noresults">Imetokea hitilafu kwenye kuleta ukurasa. Tafadhali pitia faili kumbukumbu kwenye kifaa.</string>
     <string key="locale.patient.search.header.mother">M</string>
-    <string key="locale.preferences.changePassword">Maelekezo yafatayo yatatumika kukutafuta ikiwa akaunti yako itahitaji mabadiliko. Itakubidi uingize neno siri kubadili haya maelekezo.</string>
+    <string key="locale.preferences.changePassword">Badilisha neno la sir.</string>
     <string key="locale.preferences.confirm">Umetumiwa "siri", ingiza "siri" hapo chini. Kama hujatumiwa, bonyeza "tuma" upate "siri" mpya</string>
     <string key="locale.preferences.email">Tayari</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">Kusahau neno siri</string>
@@ -594,6 +594,7 @@
     <string key="locale.preferences.password">Tafadhali subiri</string>
     <string key="locale.preferences.phone">Kata</string>
     <string key="locale.preferences.tabs.password">Kamwe</string>
+    <string key="locale.preferences.tabs.passwordRecovery">kuokoa nenosiri</string>
     <string key="locale.preferences.tabs.profile">Ndio</string>
     <string key="locale.preferences.telephone">Ukubwa wa tatizo:</string>
     <string key="locale.preferences.username">Sehemu ya mfumo</string>
