@@ -12,6 +12,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
     /// Audit data
     /// </summary>
     [Table("audit")]
+    [AssociativeTable(typeof(DbAuditActor), typeof(DbAuditActorAssociation))]
     public class DbAuditData
     {
         /// <summary>
@@ -30,19 +31,19 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// The action performed
         /// </summary>
         [Column("action")]
-        public int Action { get; set; }
+        public int ActionCode { get; set; }
 
         /// <summary>
         /// The type of action performed
         /// </summary>
         [Column("type")]
-        public int Type { get; set; }
+        public int EventIdentifier { get; set; }
 
         /// <summary>
         /// The time of the event
         /// </summary>
         [Column("eventTime")]
-        public DateTime EventTimestamp { get; set; }
+        public DateTime Timestamp { get; set; }
 
         /// <summary>
         /// The time the data was created
@@ -53,7 +54,27 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// The event type identifier
         /// </summary>
-        [Column("class"), ForeignKey(typeof(DbAuditCode), nameof(DbAuditCode.Id))]
-        public byte[] EventTypeId { get; set; }
+        [Column("class"), ForeignKey(typeof(DbAuditCode), nameof(DbAuditCode.Id)), AlwaysJoin]
+        public byte[] EventTypeCode { get; set; }
+
+        /// <summary>
+        /// Query result type
+        /// </summary>
+        public class QueryResult : DbAuditData
+        {
+
+            /// <summary>
+            /// Code
+            /// </summary>
+            [Column("code"), Indexed, NotNull]
+            public string Code { get; set; }
+
+            /// <summary>
+            /// Code system
+            /// </summary>
+            [Column("code_system"), Indexed]
+            public String CodeSystem { get; set; }
+
+        }
     }
 }

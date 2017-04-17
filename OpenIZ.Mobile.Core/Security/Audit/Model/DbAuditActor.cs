@@ -12,6 +12,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
     /// Audit actors
     /// </summary>
     [Table("audit_actor")]
+    [AssociativeTable(typeof(DbAuditData), typeof(DbAuditActorAssociation))]
+
     public class DbAuditActor
     {
         /// <summary>
@@ -41,8 +43,26 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// Role code identifier
         /// </summary>
-        [Column("role_code_id"), ForeignKey(typeof(DbAuditCode), nameof(DbAuditCode.Id))]
-        public byte[] RoleCodeId { get; set; }
+        [Column("role_code_id")]
+        public byte[] ActorRoleCode { get; set; }
 
+        /// <summary>
+        /// Query result
+        /// </summary>
+        public class QueryResult : DbAuditActor
+        {
+
+            /// <summary>
+            /// Code
+            /// </summary>
+            [Column("code"), Indexed, NotNull]
+            public string Code { get; set; }
+
+            /// <summary>
+            /// Code system
+            /// </summary>
+            [Column("code_system"), Indexed]
+            public String CodeSystem { get; set; }
+        }
     }
 }

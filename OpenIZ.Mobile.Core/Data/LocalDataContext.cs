@@ -158,38 +158,10 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public String GetQueryLiteral(SqlStatement query)
         {
-            StringBuilder retVal = new StringBuilder(query.SQL);
-            String sql = retVal.ToString();
-            var qList = query.Arguments.ToArray();
-            int parmId = 0;
-            while (sql.Contains("?"))
-            {
-                var pIndex = sql.IndexOf("?");
-                retVal.Remove(pIndex, 1);
-                retVal.Insert(pIndex, this.RenderParameter(qList[parmId++]));
-                sql = retVal.ToString();
-            }
-            return retVal.ToString();
+            return query.ToString();
         }
 
-        /// <summary>
-        /// Render parameter
-        /// </summary>
-        private string RenderParameter(object v)
-        {
-            if (v is byte[])
-                return $"X'{BitConverter.ToString((byte[])v).Replace("-", "")}'";
-            else if (v is Guid)
-                return $"X'{BitConverter.ToString(((Guid)v).ToByteArray()).Replace("-", "")}'";
-            else if (v is String)
-                return $"'{v}'";
-            else if (v == null)
-                return "null";
-            else
-                return v.ToString();
-        }
-
-
+      
         /// <summary>
         /// Add a cached set of query results
         /// </summary>

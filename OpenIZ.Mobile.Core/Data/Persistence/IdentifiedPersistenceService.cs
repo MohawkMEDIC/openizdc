@@ -250,13 +250,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 totalResults = 0;
 
             if (count > 0)
-                queryStatement.Append($" LIMIT {count} ");
+                queryStatement.Limit(count);
             if (offset > 0)
             {
                 if (count == 0)
-                    queryStatement.Append($" LIMIT 100 OFFSET {offset} ");
+                    queryStatement.Limit(100).Offset(offset);
                 else
-                    queryStatement.Append($" OFFSET {offset} ");
+                    queryStatement.Offset(offset);
             }
 
             // Exec query

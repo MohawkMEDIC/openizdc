@@ -97,7 +97,7 @@ namespace OpenIZ.Mobile.Core.Security
         {
             get
             {
-                if (this.m_entity != null)
+                if (this.m_entity != null || this.Principal == null)
                     return this.m_entity;
 
                 // HACK: Find a better way

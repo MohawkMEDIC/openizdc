@@ -32,6 +32,22 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 	[JsonObject]
 	public class ErrorResult
 	{
+        public ErrorResult()
+        {
+
+        }
+
+        /// <summary>
+        /// Create error result from the specified excepion
+        /// </summary>
+        /// <param name="e"></param>
+        public ErrorResult(Exception e)
+        {
+            Error = e.Message;
+            ErrorDescription = e.InnerException?.Message;
+            ErrorType = e.GetType().Name;
+        }
+
         [JsonProperty("type")]
         public String ErrorType { get; set; }
         [JsonProperty("error")]

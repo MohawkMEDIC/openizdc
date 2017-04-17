@@ -336,16 +336,20 @@ angular.module('openiz', [])
                     var modelType = attrs.oizEntitysearch;
                     var filterString = attrs.filter;
                     var displayString = attrs.display;
+                    var searchProperty = attrs.searchfield || "name.component.value";
                     var defaultResults = attrs.default;
                     var groupString = attrs.groupBy;
                     var groupDisplayString = attrs.groupDisplay;
-
+                    var resultProperty = attrs.resultfield || "id";
                     var filter = {}, defaultFilter = {};
                     if (filterString !== undefined)
                         filter = JSON.parse(filterString);
-                    filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+
+                    if(modelType != "SecurityUser" && modelType != "SecurityRole")
+                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     // Add appropriate styling so it looks half decent
+                    
 
                     // Bind select 2 search
                     $(element).select2({
@@ -366,12 +370,12 @@ angular.module('openiz', [])
                         },
                         dataAdapter: $.fn.select2.amd.require('select2/data/extended-ajax'),
                         ajax: {
-                            url: "/__ims/" + modelType,
+                            url: ((modelType == "SecurityUser" || modelType == "SecurityRole") ? "/__auth/" : "/__ims/") + modelType,
                             dataType: 'json',
                             delay: 500,
                             method: "GET",
                             data: function (params) {
-                                filter["name.component.value"] = "~" + params.term;
+                                filter[searchProperty] = "~" + params.term;
                                 filter["_count"] = 5;
                                 filter["_offset"] = 0;
                                 return filter;
@@ -384,7 +388,11 @@ angular.module('openiz', [])
                                     return {
                                         results: $.map(data, function (o) {
                                             var text = "";
-                                            if (o.name !== undefined) {
+                                            if (displayString) {
+                                                scope = o;
+                                                text = eval(displayString);
+                                            }
+                                            else if (o.name !== undefined) {
                                                 if (o.name.OfficialRecord) {
                                                     text = OpenIZ.Util.renderName(o.name.OfficialRecord);
                                                 } else if (o.name.Assigned) {
@@ -392,6 +400,7 @@ angular.module('openiz', [])
                                                 }
                                             }
                                             o.text = o.text || text;
+                                            o.id = o[resultProperty];
                                             return o;
                                         })
                                     };
@@ -461,6 +470,7 @@ angular.module('openiz', [])
                             if (result.loading) return result.text;
 
                             if (displayString != null) {
+                                var scope = result;
                                 return eval(displayString);
                             }
                             else if (result.name != null && result.typeConceptModel != null && result.typeConceptModel.name != null && result.name.OfficialRecord)

@@ -122,7 +122,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
             {
                 sb.Append(focus.m_sql);
                 // Add parms
-                if(focus.Arguments != null)
+                if (focus.Arguments != null)
                     parameters.AddRange(focus.Arguments);
                 focus = focus.m_rhs;
             } while (focus != null);
@@ -193,14 +193,18 @@ namespace OpenIZ.Core.Data.QueryBuilder
         /// </summary>
         public SqlStatement InnerJoin<TLeft, TRight>(Expression<Func<TLeft, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
         {
+            return this.Join<TLeft, TRight>("INNER", leftColumn, rightColumn);
+        }
+
+        public SqlStatement Join<TLeft, TRight>(String joinType, Expression<Func<TLeft, dynamic>> leftColumn, Expression<Func<TRight, dynamic>> rightColumn)
+        {
             var leftMap = TableMapping.Get(typeof(TLeft));
             var rightMap = TableMapping.Get(typeof(TRight));
-            var joinStatement = this.Append($"INNER JOIN {rightMap.TableName} ON");
+            var joinStatement = this.Append($"{joinType} JOIN {rightMap.TableName} ON");
             var rhsPk = rightMap.GetColumn(this.GetMember(rightColumn.Body));
             var lhsPk = leftMap.GetColumn(this.GetMember(leftColumn.Body));
             return joinStatement.Append($"({lhsPk.Table.TableName}.{lhsPk.Name} = {rhsPk.Table.TableName}.{rhsPk.Name}) ");
         }
-
         /// <summary>
         /// Inner join left and right
         /// </summary>
@@ -302,9 +306,48 @@ namespace OpenIZ.Core.Data.QueryBuilder
             var t = this;
             while (t.m_rhs?.m_rhs != null)
                 t = t.m_rhs;
-            if(t != null)
+            if (t != null)
                 t.m_rhs = null;
         }
+
+        /// <summary>
+        /// represent as a string
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            StringBuilder retVal = new StringBuilder(this.SQL);
+            String sql = retVal.ToString();
+            var qList = this.Arguments.ToArray();
+            int parmId = 0;
+            while (sql.Contains("?"))
+            {
+                var pIndex = sql.IndexOf("?");
+                retVal.Remove(pIndex, 1);
+                retVal.Insert(pIndex, this.RenderParameter(qList[parmId++]));
+                sql = retVal.ToString();
+            }
+            return retVal.ToString();
+        }
+
+        /// <summary>
+        /// Render parameter
+        /// </summary>
+        private string RenderParameter(object v)
+        {
+            if (v is byte[])
+                return $"X'{BitConverter.ToString((byte[])v).Replace("-", "")}'";
+            else if (v is Guid)
+                return $"X'{BitConverter.ToString(((Guid)v).ToByteArray()).Replace("-", "")}'";
+            else if (v is String)
+                return $"'{v}'";
+            else if (v == null)
+                return "null";
+            else
+                return v.ToString();
+        }
+
+
 
     }
 
@@ -415,7 +458,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         public SqlStatement<T> SelectFrom(params Expression<Func<T, dynamic>>[] columns)
         {
             var tableMap = TableMapping.Get(typeof(T));
-            return this.Append(new SqlStatement<T>($"SELECT {String.Join(",", columns.Select(o=>tableMap.GetColumn(this.GetMember(o)).Name))} FROM {tableMap.TableName} AS {tableMap.TableName} ")
+            return this.Append(new SqlStatement<T>($"SELECT {String.Join(",", columns.Select(o => tableMap.GetColumn(this.GetMember(o)).Name))} FROM {tableMap.TableName} AS {tableMap.TableName} ")
             {
                 m_alias = tableMap.TableName
             });
@@ -434,5 +477,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

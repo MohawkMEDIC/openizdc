@@ -29,7 +29,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// <summary>
         /// The identifier of the object
         /// </summary>
-        [Column("obj_id"), NotNull, MaxLength(16)]
+        [Column("obj_id")]
         public string ObjectId { get; set; }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// The lifecycle
         /// </summary>
         [Column("lifecycle")]
-        public int Lifecycle { get; set; }
+        public int LifecycleType { get; set; }
 
         /// <summary>
         /// Identifier type code
@@ -66,6 +66,6 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// The name data associated 
         /// </summary>
         [Column("name")]
-        public String Name { get; set; }
+        public String NameData { get; set; }
     }
 }

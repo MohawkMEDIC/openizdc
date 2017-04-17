@@ -93,6 +93,10 @@
       <icon>/org.openiz.core/img/appbar.shield.png</icon>
       <text lang="en">Settings</text>
     </menuItem>
+    <menuItem asset="/org.openiz.core/views/security/audit.html" launch="#/core/audit">
+      <icon>/org.openiz.core/img/appbar.journal.png</icon>
+      <text lang="en">Audit Log</text>
+    </menuItem>
   </menuItem>
   <menuItem order="99">
     <icon>/org.openiz.core/img/appbar.code.xml.png</icon>
@@ -430,6 +434,14 @@
     <string key="locale.sync.resource.Person">Persons (Patients &amp; Next of Kin)</string>
     <string key="locale.sync.resource.Act">Acts (Vaccinations, Weights, Adjustments, etc.)</string>
 
+    <string key="locale.audit.action">Action</string>
+    <string key="locale.audit.class">Operation</string>
+    <string key="locale.audit.date">Timestamp</string>
+    <string key="locale.audit.user">User</string>
+    <string key="locale.audit.event">Event</string>
+    <string key="locale.audit.outcome">Outcome</string>
+    <string key="locale.audit.title">Local Audit Centre</string>
+    <string key="locale.audit.detail.title">Audit Detail</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>

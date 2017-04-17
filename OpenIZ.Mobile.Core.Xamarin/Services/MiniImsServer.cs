@@ -479,7 +479,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
         {
-            this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.Message);
+            if(e is TargetInvocationException)
+                this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e);
+            else
+                this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.Message);
 
             response.StatusCode = 500;
             if(e is SecurityException)

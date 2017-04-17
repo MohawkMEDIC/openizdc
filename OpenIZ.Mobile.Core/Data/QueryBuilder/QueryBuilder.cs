@@ -467,7 +467,9 @@ namespace OpenIZ.Core.Data.QueryBuilder
         private static object CreateParameterValue(object value, Type toType)
         {
             object retVal = null;
-            if (value.GetType() == toType ||
+            if (value is Guid)
+                return ((Guid)value).ToByteArray();
+            else if (value.GetType() == toType ||
                 value.GetType() == toType.StripNullable())
                 return value;
             else if (MapUtil.TryConvert(value, toType, out retVal))

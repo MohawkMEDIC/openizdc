@@ -105,7 +105,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Audit retention
         /// </summary>
         [XmlElement("auditRetention")]
-        public TimeSpan AuditRetention { get; set; }
+        public TimeSpan? AuditRetention { get; set; }
 
     }
 

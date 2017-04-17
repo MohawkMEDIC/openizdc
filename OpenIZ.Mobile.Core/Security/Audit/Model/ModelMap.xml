@@ -20,7 +20,7 @@
 <modelMap xmlns="http://openiz.org/model/map">
   <class modelClass="MARC.HI.EHRS.SVC.Auditing.Data.AuditData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0"
 		domainClass="OpenIZ.Mobile.Core.Security.Audit.Model.DbAuditData, OpenIZ.Mobile.Core, Version=0.5.0.0">
-    <property modelName="Timestamp" domainName="EventTimestamp"/>
+    <property modelName="CorrelationToken" domainName="Id"/>
   </class>
 
   <class modelClass="MARC.HI.EHRS.SVC.Auditing.Data.AuditActorData, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0"
@@ -31,4 +31,8 @@
 domainClass="OpenIZ.Mobile.Core.Security.Audit.Model.DbAuditObject, OpenIZ.Mobile.Core, Version=0.5.0.0">
   </class>
 
+  <class modelClass="MARC.HI.EHRS.SVC.Auditing.Data.AuditCode, MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0"
+domainClass="OpenIZ.Mobile.Core.Security.Audit.Model.DbAuditCode, OpenIZ.Mobile.Core, Version=0.5.0.0">
+  </class>
+  
 </modelMap>

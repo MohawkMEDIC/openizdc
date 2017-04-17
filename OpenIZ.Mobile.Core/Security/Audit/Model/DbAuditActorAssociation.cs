@@ -12,7 +12,6 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
     /// Associates the audit actor to audit message
     /// </summary>
     [Table("audit_actor_assoc")]
-    [AssociativeTable(typeof(DbAuditData), typeof(DbAuditActor))]
     public class DbAuditActorAssociation
     {
         /// <summary>
@@ -25,13 +24,13 @@ namespace OpenIZ.Mobile.Core.Security.Audit.Model
         /// Audit identifier
         /// </summary>
         [Column("audit_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditData), nameof(DbAuditData.Id))]
-        public byte[] AuditId { get; set; }
+        public byte[] SourceUuid { get; set; }
 
         /// <summary>
         /// Actor identifier
         /// </summary>
         [Column("actor_id"), NotNull, Indexed, ForeignKey(typeof(DbAuditActor), nameof(DbAuditActor.Id))]
-        public byte[] ActorId { get; set; }
+        public byte[] TargetUuid { get; set; }
 
     }
 }

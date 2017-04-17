@@ -2,6 +2,7 @@
 using MARC.HI.EHRS.SVC.Auditing.Services;
 using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
+using OpenIZ.Core.Model.Attributes;
 using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Interfaces;
 using OpenIZ.Core.Model.Roles;
@@ -86,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// <param name="outcome"></param>
         /// <param name="query"></param>
         /// <param name="auditIds"></param>
-        public static void AuditAuditLogUsed(ActionType action, OutcomeIndicator outcome, String query, params int[] auditIds)
+        public static void AuditAuditLogUsed(ActionType action, OutcomeIndicator outcome, String query, params Guid[] auditIds)
         {
             AuditData audit = new AuditData(DateTime.Now, action, outcome, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.AuditLogUsed));
 
@@ -287,7 +288,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// </summary>
         public static void AuditLogin(IPrincipal principal, String identityName, IIdentityProviderService identityProvider, bool successfulLogin =true)
         {
-            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, successfulLogin ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.Login, CreateAuditActionCode(successfulLogin ? EventTypeCodes.Login : EventTypeCodes.SecurityAlert));
+            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, successfulLogin ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Login));
             audit.Actors.Add(new AuditActorData()
             {
                 UserName = principal?.Identity?.Name ?? identityName,
@@ -318,7 +319,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.Logout, CreateAuditActionCode(EventTypeCodes.Logout));
+            AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Logout));
             audit.Actors.Add(new AuditActorData()
             {
                 UserName = principal.Identity.Name,

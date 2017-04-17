@@ -39,6 +39,9 @@ using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.AMI.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -244,20 +247,21 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         /// <param name="username">The username of the user to be retrieved.</param>
         /// <returns>Returns the user.</returns>
-        [RestOperation(Method = "GET", UriPath = "/get_user")]
+        [RestOperation(Method = "GET", UriPath = "/SecurityUser")]
         [return: RestMessage(RestMessageFormat.Json)]
-        public SecurityUser GetUser()
+        public IdentifiedData GetUser()
         {
             // this is used for the forgot password functionality
             // need to find a way to stop people from simply searching users via username...
+
             NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<SecurityUser>(query);
-
             ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-            var user = securityRepositoryService.FindUsers(predicate).FirstOrDefault();
-
-            return user;
+            if (query.ContainsKey("_id"))
+                return securityRepositoryService.GetUser(Guid.Parse(query["_id"][0]));
+            else
+                return Bundle.CreateBundle(securityRepositoryService.FindUsers(predicate), 0, 0);
         }
 
         /// <summary>

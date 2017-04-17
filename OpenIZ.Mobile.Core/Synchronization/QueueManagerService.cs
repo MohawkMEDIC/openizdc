@@ -93,9 +93,11 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public void ExhaustInboundQueue()
         {
+
             bool locked = false;
             try
             {
+                AuthenticationContext.Current = new AuthenticationContext(AuthenticationContext.SystemPrincipal);
                 locked = Monitor.TryEnter(this.m_inboundLock, 100);
                 if (!locked) return;
 
@@ -127,20 +129,19 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             queueEntry = nextPeek;
                             dpe = nextDpe;
+                            nextPeek = SynchronizationQueue.Inbound.PeekRaw(1);
                         }
                         else
                         {
                             queueEntry = SynchronizationQueue.Inbound.PeekRaw();
                             dpe = SynchronizationQueue.Inbound.DeserializeObject(queueEntry);
+                            nextPeek = SynchronizationQueue.Inbound.PeekRaw(1);
                         }
 
                         // Try to peek off the next queue item while we're doing something else
-                        var nextPeekTask = Task<KeyValuePair<InboundQueueEntry, IdentifiedData>>.Run(() =>
-                        {
-                            var nextRaw = SynchronizationQueue.Inbound.PeekRaw(1);
-                            return new KeyValuePair<InboundQueueEntry, IdentifiedData>(nextRaw, nextRaw == null ? null : SynchronizationQueue.Inbound.DeserializeObject(nextRaw));
-                        });
-
+                        Task<IdentifiedData> nextPeekTask = null;
+                        if(nextPeek != null)
+                            nextPeekTask = Task<IdentifiedData>.Run(() => SynchronizationQueue.Inbound.DeserializeObject(nextPeek));
 
 #if PERFMON
                         sw.Stop();
@@ -196,10 +197,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         ApplicationContext.Current.PerformanceLog(nameof(QueueManagerService), nameof(ExhaustInboundQueue), "ImportComplete", sw.Elapsed);
                         sw.Reset();
 #endif
-                        nextPeekTask.Wait();
-                        var peekTaskResult = nextPeekTask.Result;
-                        nextPeek = peekTaskResult.Key;
-                        nextDpe = peekTaskResult.Value;
+                        nextPeekTask?.Wait();
+                        nextDpe = nextPeekTask?.Result;
 
                     }
                     catch (Exception e)
