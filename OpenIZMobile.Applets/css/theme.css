@@ -597,6 +597,10 @@ body{
     padding: 5px;
 }
 
+.search-results-tile-container:nth-child(2)::after {
+    clear: both;
+}
+
 .search-results-tile-circle{
     width: 30px;
     height: 30px;
@@ -620,6 +624,11 @@ body{
  .search-tile-label{
     font-weight: 600;
     color: #c3c3c3;
+ }
+
+ .patient-id-wrapper {
+     display:inline-block;
+     margin-right: 10px;
  }
 
  .tile-btn{
