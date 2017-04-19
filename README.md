@@ -6,3 +6,7 @@
  forecasting. The disconnected client represents a mobile application framework which is capable of editing the data contained on the IMS in both online and offline mode.
 </p>
 </div><div class="ClearBoth"></div>
+
+
+# OpenIZ Javasript Bridge 
+http://openiz.org/artifacts/0.1pre/openiz-js/
