@@ -55,7 +55,7 @@
         </div>
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
-            <div class="col-xs-4">
+            <div class="col-xs-4 padding-id-header">
                 <div ng-repeat="identifier in patientViewIdentifiers|limitTo:2">
                     <span>{{ identifier.value}}</span> <span class="label label-info"> {{ identifier.authority.name }}</span>
                 </div>
@@ -68,12 +68,12 @@
         </div>
         <div class="row">
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.domicile' | i18n }}:</label>
-            <div class="col-xs-4 padding-left-30">
+            <div class="col-xs-4 padding-left-30 hide-text-header">
                 <span class="glyphicon glyphicon-map-marker domicle-marker"></span> {{ patient.address | oizEntityAddress }}
             </div>
 
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
-            <div class="col-xs-4">
+            <div class="col-xs-4  hide-text-header">
                 <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
                     <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
                     <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
