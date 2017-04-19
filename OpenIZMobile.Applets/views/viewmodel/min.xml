@@ -57,6 +57,7 @@
 
   <!-- Entity Information -->
   <type type="Entity" all="true">
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -78,6 +79,10 @@
   </type>
 
   <type type="Person" all="true">
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -94,6 +99,10 @@
   </type>
   
   <type type="Patient" all="true">
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -130,6 +139,10 @@
   </type>
 
   <type type="ManufacturedMaterial" all="true">
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -165,6 +178,10 @@
   </type>
 
   <type type="Material" all="true">
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -200,6 +217,10 @@
   </type>
 
   <type type="Place" all="true">
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -233,6 +254,9 @@
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
 
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>

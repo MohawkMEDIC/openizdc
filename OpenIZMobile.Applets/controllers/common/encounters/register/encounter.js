@@ -82,7 +82,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
         if (isNaN(index)) {
             for (var i in bind) {
                 try {
-                    if (bind[i].targetModel.template.mnemonic == index)
+                    if (bind[i].targetModel.templateModel.mnemonic == index)
                         bind.splice(i, 1);
 
                     if (removeFrom && removeAs)

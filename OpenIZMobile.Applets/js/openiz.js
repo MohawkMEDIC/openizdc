@@ -1704,7 +1704,8 @@ var OpenIZ = OpenIZ || {
          * @return {string} The URL of the form template which is to be used to capture data for the specified template
          */
         resolveTemplate: function (templateId) {
-            return OpenIZApplicationService.GetTemplateForm(templateId);
+            if(templateId)
+                return OpenIZApplicationService.GetTemplateForm(templateId);
         },
         /**
          * @summary Update the status of the status dialog

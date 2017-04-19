@@ -25,7 +25,7 @@
                 <div class="container-fluid">
                     <div class="row flex-container" ng-if="act._created">
                         <div class="col-xs-11" >
-                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.templateModel.mnemonic)"></div>
                         </div>
                         <div class="col-xs-1 flex-item-center" >
                             <button type="button" class="btn btn-icon" ng-click="delSubEncounter(encounter.relationship.HasComponent, $index)" ><span class="glyphicon glyphicon-trash"></span></button>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="row" ng-if="!act._created">
                         <div class="col-xs-12">
-                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.template.mnemonic)"></div>
+                            <div ng-include="OpenIZ.App.resolveTemplate(act.targetModel.templateModel.mnemonic)"></div>
                         </div>
                     </div>
                 </div>
