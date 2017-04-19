@@ -156,24 +156,24 @@ angular.module('openiz', [])
 
             switch (format) {
                 case 1:   // Year     "Y"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatYear;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatYear;
                     break;
                 case 2:   // Month    "m"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMonth;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMonth;
                     break;
                 case 3:   // Day      "D"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatDay;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatDay;
                     break;
                 case 4:   // Hour     "H"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatHour;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatHour;
                     break;
                 case 5:   // Minute   "M"
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatMinute;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatMinute;
                     break;
                 case 6:   // Second   "S"
                 case 0:   // Full     "F"
                 default:
-                    dateFormat = OpenIZModel.DatePrecisionFormats.DateFormatSecond;
+                    dateFormat = OpenIZ.App.DatePrecisionFormats.DateFormatSecond;
                     break;
             }
 
