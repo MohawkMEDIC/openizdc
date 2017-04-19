@@ -153,4 +153,7 @@
   <data name="locale_confirm" xml:space="preserve">
     <value>Ok</value>
   </data>
+  <data name="locale_restartRequired" xml:space="preserve">
+    <value>There was a problem with your device's configuration. The application has attempted to recover from this error and will restart.</value>
+  </data>
 </root>

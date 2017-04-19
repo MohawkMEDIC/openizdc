@@ -183,11 +183,15 @@ namespace OpenIZMobile
                 {
 
                     this.m_tracer = Tracer.GetTracer(this.GetType());
-
                 }
 
 
                 return true;
+            }
+            catch(AppDomainUnloadedException)
+            {
+                this.Finish();
+                return false;
             }
             catch (Exception e)
             {

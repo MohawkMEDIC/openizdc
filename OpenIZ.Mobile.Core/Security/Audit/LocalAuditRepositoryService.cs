@@ -76,7 +76,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                     try
                     {
                         conn.BeginTransaction();
-                        DateTime cutoff = DateTime.Now.Subtract(config.AuditRetention.Value);
+                        DateTime cutoff = DateTime.Now.Subtract(config.AuditRetention);
                         Expression<Func<DbAuditData, bool>> epred = o => o.CreationTime < cutoff;
                         conn.Table<DbAuditData>().Delete(epred);
 

@@ -181,7 +181,9 @@ namespace OpenIZ.Mobile.Core.Caching
                             if (!cache.ContainsKey(key))
                             {
                                 cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
+#if DEBUG
                                 this.m_tracer.TraceVerbose("Cache for {0} contains {1} entries...", objData, cache.Count);
+#endif
                             }
 
                     objData = objData.GetTypeInfo().BaseType;

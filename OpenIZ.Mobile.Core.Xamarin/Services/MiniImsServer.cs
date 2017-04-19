@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                             BindObject = instance,
                                             Method = mi,
                                             FaultProvider = faultMethod,
-                                            Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o=>o.PolicyId).ToList(),
+                                            Demand = (mi.GetCustomAttributes<DemandAttribute>().Union(t.GetCustomAttributes<DemandAttribute>())).Select(o => o.PolicyId).ToList(),
                                             Anonymous = (mi.GetCustomAttribute<AnonymousAttribute>() ?? t.GetCustomAttribute<AnonymousAttribute>()) != null,
                                             Parameters = mi.GetParameters()
                                         });
@@ -133,7 +133,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
                         }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         this.m_tracer.TraceWarning("Could not load assembly {0} : {1}", a, e);
                     }
@@ -251,7 +251,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 AuthenticationContext.Current = new AuthenticationContext(session);
                                 this.m_tracer.TraceVerbose("Retrieved session {0} from cookie", session?.Key);
                             }
-                            catch(SessionExpiredException)
+                            catch (SessionExpiredException)
                             {
                                 this.m_tracer.TraceWarning("Session {0} is expired and could not be extended", cookie.Value);
                                 response.SetCookie(new Cookie("_s", Guid.Empty.ToString(), "/") { Expired = true, Expires = DateTime.Now.AddSeconds(-20) });
@@ -282,7 +282,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                 break;
                             }
                     }
-                } 
+                }
 
                 // Attempt to find a service which implements the path
                 var rootPath = String.Format("{0}:{1}", request.HttpMethod.ToUpper(), request.Url.AbsolutePath);
@@ -333,7 +333,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         }
                         response.StatusCode = 200;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         result = this.HandleServiceException(e, invoke, response);
                         if (result == null)
@@ -374,7 +374,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
                                     using (StreamWriter sw = new StreamWriter(gzs))
                                     {
-                                        if(request.QueryString["_viewModel"] != null)
+                                        if (request.QueryString["_viewModel"] != null)
                                         {
                                             var viewModelDescription = appletManager.Applets.GetViewModelDescription(request.QueryString["_viewModel"]);
                                             var serializer = this.CreateSerializer(viewModelDescription);
@@ -386,7 +386,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                         }
                                     }
                                 }
-                                else if(result != null)
+                                else if (result != null)
                                     this.m_contentTypeHandler.GetSerializer("application/json", result.GetType()).Serialize(response.OutputStream, result);
 
                                 break;
@@ -464,7 +464,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 #if DEBUG
                     perfTimer.Stop();
                     this.m_tracer.TraceVerbose("PERF : MiniIMS >>>> {0} took {1} ms to service", request.Url, perfTimer.ElapsedMilliseconds);
-#endif 
+#endif
+
+#if DEBUG
+                    response.AddHeader("Cache-Control", "no-cache");
+#else
+                    response.AddHeader("Cache-Control", "no-store");
+#endif
+
                     response.Close();
                 }
                 catch { }
@@ -479,18 +486,18 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         private object HandleServiceException(Exception e, InvokationInformation invoke, HttpListenerResponse response)
         {
-            if(e is TargetInvocationException)
+            if (e is TargetInvocationException)
                 this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e);
             else
                 this.m_tracer.TraceError("{0} - {1}", invoke.Method.Name, e.Message);
 
             response.StatusCode = 500;
-            if(e is SecurityException)
+            if (e is SecurityException)
             {
                 response.StatusCode = 401;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
-            else if(e is FileNotFoundException)
+            else if (e is FileNotFoundException)
             {
                 response.StatusCode = 404;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
@@ -500,7 +507,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 response.StatusCode = 403;
                 return invoke.FaultProvider?.Invoke(invoke.BindObject, new object[] { e });
             }
-            else if (e is TargetInvocationException) 
+            else if (e is TargetInvocationException)
                 return this.HandleServiceException(e.InnerException, invoke, response);
             else
             {
@@ -514,7 +521,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// <param name="request">The HTTP request.</param>
         /// <param name="response">The HTTP response.</param>
         private void HandleAssetRenderRequest(HttpListenerRequest request, HttpListenerResponse response)
-		{
+        {
             // Try to demand policy 
 
             // Navigate asset
@@ -528,30 +535,40 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 navigateAsset = appletManagerService.Applets.ResolveAsset(appletPath);
 
                 if (navigateAsset == null)
-				{
-					throw new FileNotFoundException(request.RawUrl);
-				}
+                {
+                    throw new FileNotFoundException(request.RawUrl);
+                }
 
                 lock (m_lockObject)
-				{
-					if (!this.m_cacheApplets.ContainsKey(appletPath))
-					{
-						this.m_cacheApplets.Add(appletPath, navigateAsset);
-					}
-				}           
+                {
+                    if (!this.m_cacheApplets.ContainsKey(appletPath))
+                    {
+                        this.m_cacheApplets.Add(appletPath, navigateAsset);
+                    }
+                }
             }
+
 #if DEBUG
             response.AddHeader("Cache-Control", "no-cache");
+#else
+            if (request.Url.ToString().EndsWith(".js") || request.Url.ToString().EndsWith(".css") ||
+                request.Url.ToString().EndsWith(".png") || request.Url.ToString().EndsWith(".woff2"))
+            {
+                response.AddHeader("Cache-Control", "public");
+                response.AddHeader("Expires", DateTime.UtcNow.AddMinutes(10).ToString("ddd, dd MMM yyyy HH:mm:ss 'GMT'"));
+            }
+            else
+                response.AddHeader("Cache-Control", "no-cache");
 #endif
 
             // Navigate policy?
             if (navigateAsset.Policies != null)
-			{
-				foreach (var policy in navigateAsset.Policies)
-				{
-					new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
-				}
-			}
+            {
+                foreach (var policy in navigateAsset.Policies)
+                {
+                    new PolicyPermission(System.Security.Permissions.PermissionState.Unrestricted, policy).Demand();
+                }
+            }
 
             response.ContentType = navigateAsset.MimeType;
 

@@ -50,12 +50,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         {
             get
             {
-                return this.PollInterval?.ToString();
+                return this.PollInterval.ToString();
             }
             set
             {
                 if (value == null)
-                    this.PollInterval = null;
+                    this.PollInterval = TimeSpan.MinValue;
                 else
                     this.PollInterval = TimeSpan.Parse(value);
             }
@@ -65,7 +65,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Poll interval
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public TimeSpan? PollInterval { get; set; }
+        public TimeSpan PollInterval { get; set; }
 
         /// <summary>
         /// Gets or sets the list of synchronization queries

@@ -189,7 +189,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         public virtual bool UnInstall(String packageId)
         {
 
-            this.m_tracer.TraceInfo("Un-installing {0}", packageId);
+            this.m_tracer.TraceWarning("Un-installing {0}", packageId);
             // Applet check
             var applet = this.m_appletCollection.FirstOrDefault(o => o.Info.Id == packageId);
             if (applet == null)
@@ -224,7 +224,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
         /// </summary>
         public virtual bool Install(AppletPackage package, bool isUpgrade = false)
         {
-            this.m_tracer.TraceInfo("Installing {0}", package.Meta);
+            this.m_tracer.TraceWarning("Installing {0}", package.Meta);
 
             // TODO: Verify package hash / signature
             if (!this.VerifyPackage(package))

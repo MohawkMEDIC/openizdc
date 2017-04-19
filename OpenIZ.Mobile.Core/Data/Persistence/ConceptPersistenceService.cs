@@ -44,15 +44,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Set the concepts
             var dbInstance = dataInstance as DbConcept;
-            modelInstance.ConceptSets = context.Connection.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
-                o => m_mapper.MapDomainInstance<DbConceptSet, ConceptSet>(o)
-            ).ToList();
+            //modelInstance.ConceptSets = context.Connection.Query<DbConceptSet>("SELECT concept_set.* FROM concept_concept_set INNER JOIN concept_set ON (concept_concept_set.concept_set_uuid = concept_set.uuid) WHERE concept_concept_set.concept_uuid = ?", dbInstance.Uuid).Select(
+            //    o => m_mapper.MapDomainInstance<DbConceptSet, ConceptSet>(o)
+            //).ToList();
 
             // Set the concept names
             modelInstance.ConceptNames = context.Connection.Table<DbConceptName>().Where(o => o.ConceptUuid == dbInstance.Uuid).Select(o => m_mapper.MapDomainInstance<DbConceptName, ConceptName>(o)).ToList();
             //modelInstance.StatusConcept = m_mapper.MapDomainInstance<DbConcept, Concept>(context.Table<DbConcept>().Where(o => o.Uuid == dbInstance.StatusUuid).FirstOrDefault());
             //modelInstance.Class = m_mapper.MapDomainInstance<DbConceptClass, ConceptClass>(context.Table<DbConceptClass>().Where(o => o.Uuid == dbInstance.ClassUuid).FirstOrDefault());
             //modelInstance.LoadAssociations(context);
+            modelInstance.LoadState = OpenIZ.Core.Model.LoadState.FullLoad;
 
             return modelInstance;
         }

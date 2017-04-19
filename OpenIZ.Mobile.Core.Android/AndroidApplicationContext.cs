@@ -150,6 +150,16 @@ namespace OpenIZ.Mobile.Core.Android
                         {
                             retVal.m_tracer.TraceInfo("Loading applet {0}", appletInfo);
                             String appletPath = Path.Combine(retVal.Configuration.GetSection<AppletConfigurationSection>().AppletDirectory, appletInfo.Id);
+
+                            if (!File.Exists(appletPath)) // reinstall
+                            {
+                                retVal.Configuration.GetSection<AppletConfigurationSection>().Applets.Clear();
+                                retVal.SaveConfiguration();
+                                retVal.Alert(Strings.locale_restartRequired);
+                                throw new AppDomainUnloadedException();
+                            }
+
+                            // Load
                             using (var fs = File.OpenRead(appletPath))
                             {
                                 AppletManifest manifest = AppletManifest.Load(fs);

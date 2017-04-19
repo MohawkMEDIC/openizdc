@@ -37,13 +37,15 @@ using OpenIZ.Core.Services;
 using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
 using System.Text;
+using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Security
 {
     /// <summary>
     /// Represents an OAuthIdentity provider
     /// </summary>
-    public class OAuthIdentityProvider : IIdentityProviderService
+    public class OAuthIdentityProvider : IIdentityProviderService, ISecurityAuditEventSource
     {
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OAuthIdentityProvider));
@@ -57,6 +59,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
         /// Occurs when authenticated.
         /// </summary>
         public event EventHandler<AuthenticatedEventArgs> Authenticated;
+        public event EventHandler<SecurityAuditDataEventArgs> SecurityAttributesChanged;
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
+
         /// <summary>
         /// Authenticate the user
         /// </summary>
@@ -342,6 +350,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                         else
                             userId = securityUser.Key.Value;
                     }
+
                     // Use the current configuration's credential provider
                     var user = new SecurityUserInfo()
                     {
@@ -354,6 +363,13 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                     client.Client.Credentials = ApplicationContext.Current.Configuration.GetServiceDescription("ami").Binding.Security.CredentialProvider.GetCredentials(principal);
 
                     client.UpdateUser(user.UserId.Value, user);
+                    var localIdp = new LocalIdentityService();
+                    // Change locally
+                    localIdp.ChangePassword(userName, newPassword);
+
+                    // Audit - Local IDP has alerted this already
+                    if (!(localIdp is ISecurityAuditEventSource))
+                        this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(user, "password"));
                 }
 
             }

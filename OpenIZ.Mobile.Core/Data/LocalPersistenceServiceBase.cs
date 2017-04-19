@@ -316,6 +316,18 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
+                var conn = this.CreateConnection();
+                using (var context = this.CreateConnection())
+                    try
+                    {
+                        (existing as IdentifiedData).LoadAssociations(context);
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error loading associations: {0}", e);
+                    }
+            }
             if (existing != null)
                 return existing as TData;
             int toss = 0;

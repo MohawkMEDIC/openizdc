@@ -118,28 +118,15 @@
       <property name="*" all="false">
         <property name="id" all="true"/>
         <property name="relationshipType" all="true"/>
-        <property name="targetModel" all="true" behavior="always">
-          <property name="relationship" all="true">
-            <property name="*" all="true">
-              <property name="holderModel" behavior="never"/>
-              <property name="sourceModel" behavior="never"/>
-              <property name="targetModel" behavior="never"/>
-              <property name="relationshipTypeModel" behavior="never"/>
-            </property>
-          </property>
+        <property name="targetModel" all="false" behavior="always">
+          <property name="name" behavior="always"/>
         </property>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="relationshipTypeModel" behavior="never"/>
       </property>
     </property>
-    <property name="participation" all="false">
-      <property name="*" all="true">
-        <property name="actModel" behavior="never">
-        </property>
-        <property name="participationRoleModel" behavior="never"/>
-      </property>
-    </property>
+    <property name="participation" all="false" behavior="never"/>
   </type>
 
   <type type="ManufacturedMaterial" all="true">

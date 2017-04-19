@@ -112,47 +112,55 @@ namespace OpenIZ.Mobile.Core.Search
         /// </summary>
         public IEnumerable<TEntity> Search<TEntity>(String[] tokens, int offset, int? count, out int totalResults) where TEntity : Entity
         {
-            var conn = this.CreateConnection();
-            using (conn.Lock())
+            try
             {
-                // Search query builder
-                StringBuilder queryBuilder = new StringBuilder();
-
-                queryBuilder.AppendFormat("SELECT DISTINCT {1}.* FROM {0} INNER JOIN {1} ON ({0}.entity = {1}.key) WHERE {1}.type = '{2}' AND {0}.entity IN (",
-                    conn.GetMapping<Model.SearchTermEntity>().TableName,
-                    conn.GetMapping<Model.SearchEntityType>().TableName,
-                    typeof(TEntity).FullName);
-
-                foreach (var tkn in tokens)
+                var conn = this.CreateConnection();
+                using (conn.Lock())
                 {
-                    queryBuilder.AppendFormat("SELECT {0}.entity FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) WHERE ",
+                    // Search query builder
+                    StringBuilder queryBuilder = new StringBuilder();
+
+                    queryBuilder.AppendFormat("SELECT DISTINCT {1}.* FROM {0} INNER JOIN {1} ON ({0}.entity = {1}.key) WHERE {1}.type = '{2}' AND {0}.entity IN (",
                         conn.GetMapping<Model.SearchTermEntity>().TableName,
-                        conn.GetMapping<Model.SearchTerm>().TableName,
+                        conn.GetMapping<Model.SearchEntityType>().TableName,
                         typeof(TEntity).FullName);
 
-                    if (tkn.Contains("*"))
-                        queryBuilder.AppendFormat("{0}.term LIKE '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*", "%"));
-                    else
-                        queryBuilder.AppendFormat("{0}.term = '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
-                    queryBuilder.Append(" INTERSECT ");
+                    foreach (var tkn in tokens)
+                    {
+                        queryBuilder.AppendFormat("SELECT {0}.entity FROM {0} INNER JOIN {1} ON ({0}.term = {1}.key) WHERE ",
+                            conn.GetMapping<Model.SearchTermEntity>().TableName,
+                            conn.GetMapping<Model.SearchTerm>().TableName,
+                            typeof(TEntity).FullName);
+
+                        if (tkn.Contains("*"))
+                            queryBuilder.AppendFormat("{0}.term LIKE '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.Replace("'", "''").Replace("*", "%"));
+                        else
+                            queryBuilder.AppendFormat("{0}.term = '{1}' ", conn.GetMapping<Model.SearchTerm>().TableName, tkn.ToLower().Replace("'", "''"));
+                        queryBuilder.Append(" INTERSECT ");
+                    }
+
+                    queryBuilder.Remove(queryBuilder.Length - 11, 11);
+                    queryBuilder.Append(")");
+
+                    // Search now!
+                    this.m_tracer.TraceVerbose("FREETEXT SEARCH: {0}", queryBuilder);
+
+                    // Perform query
+                    var results = conn.Query<Model.SearchEntityType>(queryBuilder.ToString());
+
+                    var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
+                    totalResults = results.Count();
+
+                    var retVal = results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
+
+                    this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs("FTS:" + String.Join(":", tokens), retVal));
+                    return retVal;
                 }
-
-                queryBuilder.Remove(queryBuilder.Length - 11, 11);
-                queryBuilder.Append(")");
-
-                // Search now!
-                this.m_tracer.TraceVerbose("FREETEXT SEARCH: {0}", queryBuilder);
-
-                // Perform query
-                var results = conn.Query<Model.SearchEntityType>(queryBuilder.ToString());
-
-                var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
-                totalResults = results.Count();
-                
-                var retVal = results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
-
-                this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs("FTS:" + String.Join(":", tokens), retVal));
-                return retVal;
+            }
+            catch(Exception e)
+            {
+                this.m_tracer.TraceError("Error performing search: {0}", e);
+                throw;
             }
         }
 

@@ -109,7 +109,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         {
             get
             {
-                return this.AuditRetention?.ToString();
+                return this.AuditRetention.ToString();
             }
             set
             {
@@ -121,7 +121,7 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// Audit retention
         /// </summary>
         [XmlIgnore, JsonIgnore]
-        public TimeSpan? AuditRetention { get; set; }
+        public TimeSpan AuditRetention { get; set; }
 
     }
 
