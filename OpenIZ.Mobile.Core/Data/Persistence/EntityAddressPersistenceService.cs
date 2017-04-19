@@ -56,6 +56,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
 
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
+
             return new DbEntityAddress()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -79,20 +81,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Data component
             var addPx = ApplicationContext.Current.GetService<EntityAddressComponentPersistenceService>();
 
-            context.Connection.InsertAll(data.Component.Select(c =>
-                {
-                    var cmp = addPx.FromModelInstance(c, context) as DbEntityAddressComponent;
-                    cmp.AddressUuid = retVal.Key.Value.ToByteArray();
-                    return cmp;
-                }).Where(o => o.ValueUuid != null));
-
-
-            //if (data.Component != null)
-            //    base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
-            //        new List<EntityAddressComponent>(),
-            //        data.Component,
-            //        data.Key,
-            //        context);
+            if (data.Component != null)
+                base.UpdateAssociatedItems<EntityAddressComponent, EntityAddress>(
+                    new List<EntityAddressComponent>(),
+                    data.Component,
+                    data.Key,
+                    context);
 
             return retVal;
         }
@@ -136,7 +130,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override EntityAddressComponent ToModelInstance(object dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
 
@@ -156,11 +150,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityAddressComponent modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             var retVal = new DbEntityAddressComponent()
             {
                 AddressUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
 
             // Address component already exists?

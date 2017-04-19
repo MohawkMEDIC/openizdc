@@ -137,6 +137,16 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
+        Material IRepositoryService<Material>.Get(Guid key, Guid versionKey)
+        {
+            return this.GetMaterial(key, Guid.Empty);
+        }
+
+        /// <summary>
+        /// Get the specified material
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         Material IRepositoryService<Material>.Get(Guid key)
         {
             return this.GetMaterial(key, Guid.Empty);
@@ -149,6 +159,17 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         {
             return this.ObsoleteMaterial(key);
         }
+
+        /// <summary>
+        /// Get the specified material
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        ManufacturedMaterial IRepositoryService<ManufacturedMaterial>.Get(Guid key, Guid versionKey)
+        {
+            return this.GetManufacturedMaterial(key, Guid.Empty);
+        }
+
 
         /// <summary>
         /// Get manufactured material

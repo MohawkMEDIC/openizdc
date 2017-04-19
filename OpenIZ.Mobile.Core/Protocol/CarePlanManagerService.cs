@@ -22,6 +22,7 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
+using OpenIZ.Core.Model.Entities;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Diagnostics;
@@ -29,6 +30,7 @@ using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Synchronization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -149,12 +151,15 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // Stage 2. Ensure consistency with existing patient dataset
                     var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+                    var remoteSyncService = ApplicationContext.Current.GetService<ISynchronizationService>();
                     var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
-                    var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("oizcp-lastRun") ?? "0001-01-01");
+                    var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.protocol.plan.lastRun") ?? "0001-01-01");
 
-                    // Should we 
-                    if (SynchronizationLog.Current.GetLastTime(typeof(Patient)).HasValue &&
-                        SynchronizationQueue.Inbound.Count() == 0 &&
+                    // Should we ?
+                    var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o=>o.ResourceType == "Person");
+                    var inboundQueueCount = SynchronizationQueue.Inbound.Count();
+                    if (patientSync != null &&
+                        inboundQueueCount == 0 &&
                             (
                                 lastRefresh == DateTime.MinValue || 
                                 DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
@@ -167,10 +172,10 @@ namespace OpenIZ.Mobile.Core.Protocol
                         while (ofs < tr)
                         {
                             ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                            var prodPatients = patientPersistence.Query(o => o.StatusConceptKey != StatusKeys.Obsolete, ofs, 15, out tr, queryId);
+                            var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
                             ofs += 15;
 
-                            if (queueService.IsSynchronizing ||
+                            if (queueService.IsBusy ||
                                 SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
 
                             foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
@@ -182,31 +187,38 @@ namespace OpenIZ.Mobile.Core.Protocol
                     // Stage 3. Subscribe to persistence
                     ApplicationContext.Current.GetService<ISynchronizationService>().PullCompleted += (o, e) =>
                     {
-                        if (!this.m_isSubscribed && e.Type == null) // General subscribption is done
+                        if (!this.m_isSubscribed && e.Type == null && SynchronizationQueue.Inbound.Count() == 0) // General subscribption is done
                             this.SubscribeEvents();
                     };
 
 
                     queueService.QueueExhausted += (o, e) =>
                             {
-                                if (e.Queue == "inbound" && e.ObjectKeys.Count() > 0 && !queueService.IsSynchronizing &&
-                                SynchronizationQueue.Inbound.Count() == 0)
+                                inboundQueueCount = SynchronizationQueue.Inbound.Count();
+                                if (e.Queue == "inbound" && !remoteSyncService.IsSynchronizing &&
+                                inboundQueueCount == 0)
                                 {
                                     Guid queryId = Guid.NewGuid();
                                     int tr = 1, ofs = 0;
                                     queryId = Guid.NewGuid();
                                     tr = 1;
                                     ofs = 0;
+                                    var syncFilter = patientSync?.LastSync ?? DateTime.MinValue;
                                     while (ofs < tr)
                                     {
                                         ApplicationContext.Current.SetProgress(Strings.locale_calculateImportedCareplan, ofs / (float)tr);
-                                        var prodPatients = patientPersistence.Query(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic == "ACTIVE", ofs, 15, out tr, queryId);
-                                        this.QueueWorkItem(prodPatients.Where(p => e.ObjectKeys.Contains(p.Key.Value)));
+
+                                        var prodPatients = patientPersistence.QueryExplicitLoad(p => p.ObsoletionTime == null && p.StatusConcept.Mnemonic != "OBSOLETE" && p.CreationTime >= syncFilter, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
+                                        this.QueueWorkItem(prodPatients);
                                         ofs += 15;
                                     }
 
                                     this.m_isSubscribed = false;
-                                    //this.SubscribeEvents();
+                                    this.SubscribeEvents();
+                                }
+                                else if(e.Queue == "inbound")
+                                {
+                                    this.m_tracer.TraceWarning("Cannot execute CP yet because inbound={0} & isSync={1}", inboundQueueCount, queueService.IsBusy);
                                 }
                             };
 
@@ -244,7 +256,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                                 // Get all patients
                                 lock (this.m_lock)
                                 {
-                                    patients = this.m_actCarePlanPromise.OfType<Patient>().Take(25).ToArray();
+                                    patients = this.m_actCarePlanPromise.OfType<Patient>().Take(5).ToArray();
                                     this.m_actCarePlanPromise.RemoveAll(d => patients.Contains(d));
                                 }
                                 this.UpdateCarePlan(patients);
@@ -275,7 +287,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                         if (promiseCount > 0)
                         {
                             ApplicationContext.Current.SetProgress(String.Empty, 0);
-                            ApplicationContext.Current.Configuration.SetAppSetting("oizcp-lastRun", DateTime.Now);
+                            ApplicationContext.Current.Configuration.SetAppSetting("openiz.mobile.core.protocol.plan.lastRun", DateTime.Now);
+                            ApplicationContext.Current.SaveConfiguration();
                         }
 
                         this.m_resetEvent.Reset();
@@ -301,6 +314,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                 this.QueueWorkItem((importedData as Bundle)?.Item);
             else if (importedData is Patient || importedData is Act)
                 this.QueueWorkItem(importedData as IdentifiedData);
+            else if (importedData is IEnumerable)
+                this.QueueWorkItem((importedData as IEnumerable).OfType<IdentifiedData>().ToArray());
         }
 
         /// <summary>
@@ -504,7 +519,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                 foreach (var p in patients)
                 {
                     this.m_tracer.TraceVerbose("Calculating care plan for {0}", p.Key);
-                    var data = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
+                    var data = p; //  ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>().Get(p.Key.Value);
 
                     // First, we clear the warehouse
                     warehouseService.Delete(this.m_dataMart.Id, new { patient_id = data.Key.Value });
@@ -525,7 +540,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                         max_date = o.StopTime?.DateTime,
                         act_date = o.ActTime.DateTime,
                         product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
-                        sequence_id = o.Protocols.FirstOrDefault()?.Sequence
+                        sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
+                        dose_seq=(o as SubstanceAdministration)?.SequenceId
                     }));
                 }
 

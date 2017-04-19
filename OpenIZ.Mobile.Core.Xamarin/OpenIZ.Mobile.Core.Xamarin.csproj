@@ -30,6 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SignedRelease|AnyCPU'">
+    <OutputPath>bin\SignedRelease\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\Solution Items\Antlr3.Runtime.dll</HintPath>
@@ -39,6 +48,10 @@
     </Reference>
     <Reference Include="jint">
       <HintPath>..\Solution Items\jint.dll</HintPath>
+    </Reference>
+    <Reference Include="MARC.HI.EHRS.SVC.Auditing.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solution Items\MARC.HI.EHRS.SVC.Auditing.Core.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite">
       <HintPath>..\Solution Items\Net45\Mono.Data.Sqlite.dll</HintPath>
@@ -108,6 +121,7 @@
     <Compile Include="Services\Model\MenuInformation.cs" />
     <Compile Include="Services\ServiceHandlers\AdhocWarehouseService.cs" />
     <Compile Include="Services\ServiceHandlers\ApplicationService.Data.cs" />
+    <Compile Include="Services\ServiceHandlers\AuditService.cs" />
     <Compile Include="Services\ServiceHandlers\ConfigurationService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
@@ -122,6 +136,7 @@
     <Compile Include="Services\ServiceHandlers\AuthenticationService.cs" />
     <Compile Include="Services\ServiceHandlers\CarePlanService.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
+    <Compile Include="Services\LocalAppletManagerService.cs" />
     <Compile Include="Services\SimpleQueueFileProvider.cs" />
     <Compile Include="Warehouse\SQLiteDatawarehouse.cs" />
     <Compile Include="XamarinApplicationContext.cs" />

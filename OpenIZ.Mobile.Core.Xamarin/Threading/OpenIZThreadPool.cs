@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(OpenIZThreadPool));
         // Number of threads to keep alive
-        private int m_concurrencyLevel = System.Environment.ProcessorCount * 4;
+        private int m_concurrencyLevel = System.Environment.ProcessorCount * 2;
         // Queue of work items
         private Queue<WorkItem> m_queue = null;
         private Queue<WorkItem> m_priorityQueue = null;
@@ -321,7 +321,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Threading
             try {
                 worker.Callback(worker.State);
             }
-            catch(Exception e) { this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e); }
+            catch(Exception e) {
+                this.m_tracer.TraceError("!!!!!! 0118 999 881 999 119 7253 : THREAD DEATH !!!!!!!\r\nUncaught Exception on worker thread: {0}", e);
+            }
             finally {
                 DoneWorkItem();
             }

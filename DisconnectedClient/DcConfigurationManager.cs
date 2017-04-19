@@ -124,7 +124,11 @@ namespace DisconnectedClient
                     "Stock Management",
                     "Administration"
                 },
-                StartupAsset = "org.openiz.core"
+                StartupAsset = "org.openiz.core",
+                Security = new AppletSecurityConfiguration()
+                {
+                    TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
+                }
             };
 
             // Initial applet style
@@ -163,7 +167,8 @@ namespace DisconnectedClient
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
-                    typeof(SearchIndexService).AssemblyQualifiedName
+                    typeof(SearchIndexService).AssemblyQualifiedName,
+                    typeof(DcAppletManagerService).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -180,7 +185,7 @@ namespace DisconnectedClient
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
                 DeviceName = Environment.MachineName,
-                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key
@@ -274,6 +279,7 @@ namespace DisconnectedClient
         {
             this.Save(this.m_configuration);
         }
+
         /// <summary>
         /// Save the specified configuration
         /// </summary>

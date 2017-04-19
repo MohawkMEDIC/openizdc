@@ -111,10 +111,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             }
             else
             {
-                
+
                 int totalResults = 0,
                     offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                     count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
+                Guid queryId = search.ContainsKey("_queryId") ? Guid.Parse(search["_queryId"][0]) : Guid.Empty;
 
                 IEnumerable<Patient> retVal = null;
 
@@ -183,7 +184,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             retVal = retVal.Where(predicate.Compile());
                         else
                         {
-                            retVal = patientService.Find(predicate, offset, count, out totalResults);
+                            if (search.ContainsKey("_viewModel") && search["_viewModel"][0] != "full")
+                                retVal = (patientService as IFastQueryRepositoryService).FindFast(predicate, offset, count, out totalResults, queryId);
+                            else
+                                retVal = (patientService as IPersistableQueryRepositoryService).Find(predicate, offset, count, out totalResults, queryId);
                         }
                     }
                 }

@@ -43,13 +43,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Model instance
         /// </summary>
-        public override Provider ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Provider ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
             var provider = dataInstance as DbProvider ?? dataInstance.GetInstanceOf<DbProvider>()?? context.Connection.Table<DbProvider>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbe = dataInstance.GetInstanceOf<DbEntity>() ?? dataInstance as DbEntity ?? context.Connection.Table<DbEntity>().Where(o => o.Uuid == provider.Uuid).First();
             var dbp = context.Connection.Table<DbPerson>().Where(o => o.Uuid == provider.Uuid).First();
-            var retVal = m_entityPersister.ToModelInstance<Provider>(dbe, context, loadFast);
+            var retVal = m_entityPersister.ToModelInstance<Provider>(dbe, context);
 
             retVal.DateOfBirth = dbp.DateOfBirth;
             // Reverse lookup

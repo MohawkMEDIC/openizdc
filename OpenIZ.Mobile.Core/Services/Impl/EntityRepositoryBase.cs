@@ -16,7 +16,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
     /// <summary>
     /// Entity repository base
     /// </summary>
-    public abstract class EntityRepositoryBase : IPersistableQueryRepositoryService, IAuditEventSource
+    public abstract class EntityRepositoryBase : IPersistableQueryRepositoryService, IAuditEventSource, IFastQueryRepositoryService
     {
         public event EventHandler<AuditDataEventArgs> DataCreated;
         public event EventHandler<AuditDataEventArgs> DataUpdated;
@@ -28,6 +28,23 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         public IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
         {
+            return this.Find(query, offset, count, out totalResults, queryId, false);
+        }
+
+        /// <summary>
+        /// Find with stored query parameters
+        /// </summary>
+        public IEnumerable<TEntity> FindFast<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId) where TEntity : IdentifiedData
+        {
+            return this.Find(query, offset, count, out totalResults, queryId, true);
+        }
+
+        /// <summary>
+        /// Find with specified query 
+        /// </summary>
+        public IEnumerable<TEntity> Find<TEntity>(Expression<Func<TEntity, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool fastSearch) where TEntity : IdentifiedData
+        {
+
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
 
             if (persistenceService == null)
@@ -38,7 +55,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             var businessRulesService = ApplicationContext.Current.GetService<IBusinessRulesService<TEntity>>();
 
             IEnumerable<TEntity> results = null;
-            results = persistenceService.Query(query, offset, count, out totalResults, queryId);
+            if(fastSearch)
+                results = persistenceService.QueryFast(query, offset, count, out totalResults, queryId);
+            else
+                results = persistenceService.Query(query, offset, count, out totalResults, queryId);
 
             this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(query.ToString(), results));
 

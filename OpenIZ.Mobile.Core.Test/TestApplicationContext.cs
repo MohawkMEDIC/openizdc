@@ -228,16 +228,6 @@ namespace OpenIZ.Mobile.Core.Test
             throw new NotImplementedException();
         }
 
-        public override void InstallApplet(AppletPackage package, bool isUpgrade = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object ResolveAppletAsset(AppletAsset navigateAsset)
-        {
-            throw new NotImplementedException();
-        }
-
         public override bool Confirm(string confirmText)
         {
             throw new NotImplementedException();

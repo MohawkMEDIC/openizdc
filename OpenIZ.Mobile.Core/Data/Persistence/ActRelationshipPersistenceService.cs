@@ -26,6 +26,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Mobile.Core.Data.Model;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -40,6 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(ActRelationship modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbActRelationship()
             {
                 SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
@@ -67,19 +70,23 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.TargetActKey = data.TargetAct?.Key ?? data.TargetActKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
-            
-            //byte[] target = data.TargetActKey.Value.ToByteArray(),
-            //    source = data.SourceEntityKey.Value.ToByteArray(),
-            //    typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            //var existing = context.Connection.Table<DbActRelationship>().Where(o => o.TargetUuid == target && o.SourceUuid == source && o.RelationshipTypeUuid == typeKey).FirstOrDefault();
-            //if (existing == null)
+            byte[] target = data.TargetActKey.Value.ToByteArray(),
+                source = data.SourceEntityKey.Value.ToByteArray(),
+                typeKey = data.RelationshipTypeKey.Value.ToByteArray();
+
+            SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom(o => o.Uuid)
+                .Where<DbActRelationship>(o => o.SourceUuid == source && o.TargetUuid == target && o.RelationshipTypeUuid == typeKey)
+                .Limit(1).Build();
+
+            var existing = context.Connection.Query<DbIdentified>(sql.SQL, sql.Arguments.ToArray()).FirstOrDefault();
+            if (existing == null)
                 return base.InsertInternal(context, data);
-            //else
-            //{
-            //    data.Key = new Guid(existing.Uuid);
-            //    return data;
-            //}
+            else
+            {
+                data.Key = new Guid(existing.Uuid);
+                return data;
+            }
         }
 
         /// <summary>

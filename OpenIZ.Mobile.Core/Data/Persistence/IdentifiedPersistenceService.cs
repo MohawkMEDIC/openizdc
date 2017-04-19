@@ -36,6 +36,8 @@ using System.Reflection;
 using SQLite.Net.Attributes;
 using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Core.Data.QueryBuilder;
+using OpenIZ.Core.Model.DataTypes;
+using OpenIZ.Core.Model.Entities;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -70,7 +72,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public override TModel ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override TModel ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var retVal = m_mapper.MapDomainInstance<TDomain, TModel>(dataInstance as TDomain);
 
@@ -209,6 +211,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 m_tracer.TraceVerbose("Built Query: {0}", queryStatement.SQL);
             }
 
+            // Is this a cached query?
+            var retVal = context.CacheQuery(queryStatement)?.OfType<TModel>();
+            if (retVal != null && !countResults)
+            {
+                totalResults = 0;
+                return retVal;
+            }
+
+            // Preare SQLite Args
             var args = queryStatement.Arguments.Select(o =>
             {
                 if (o is Guid || o is Guid?)
@@ -239,35 +250,38 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 totalResults = 0;
 
             if (count > 0)
-                queryStatement.Append($" LIMIT {count} ");
+                queryStatement.Limit(count);
             if (offset > 0)
             {
                 if (count == 0)
-                    queryStatement.Append($" LIMIT 100 OFFSET {offset} ");
+                    queryStatement.Limit(100).Offset(offset);
                 else
-                    queryStatement.Append($" OFFSET {offset} ");
+                    queryStatement.Offset(offset);
             }
 
-            var retVal = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args);
-
-            var domainList = retVal.ToList();
-
-            return domainList.Select(o => this.CacheConvert(o, context, count > 1)).ToList();
+            // Exec query
+            var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args).ToList();
+            var modelList = domainList.Select(o => this.CacheConvert(o, context)).ToList();
+            context.AddQuery(queryStatement, modelList);
+            return modelList;
         }
 
         /// <summary>
         /// Try conversion from cache otherwise map
         /// </summary>
-        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        protected virtual TModel CacheConvert(DbIdentified o, LocalDataContext context)
         {
             if (o == null) return null;
             var cacheItem = ApplicationContext.Current.GetService<IDataCachingService>()?.GetCacheItem<TModel>(new Guid(o.Uuid));
             if (cacheItem == null)
             {
-                cacheItem = this.ToModelInstance(o, context, loadFast);
+                cacheItem = this.ToModelInstance(o, context);
                 if (!context.Connection.IsInTransaction)
                     ApplicationContext.Current.GetService<IDataCachingService>()?.Add(cacheItem);
             }
+            else if (cacheItem.LoadState <= context.DelayLoadMode)
+                cacheItem.LoadAssociations(context);
+
             return cacheItem;
         }
 
@@ -465,7 +479,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             this.m_tracer.TraceVerbose("Query Finished: {0}", sw.ElapsedMilliseconds);
 #endif
             //totalResults = retVal.Count;
-            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context, true)).ToList();
+            return retVal.Skip(offset).Take(count < 0 ? 100 : count).Select(o => this.CacheConvert(o, context)).ToList();
         }
 
         /// <summary>
@@ -479,8 +493,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Get from the database
             try
             {
-                var kuuid = key.ToByteArray();
-                return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context, true);
+                int t = 0;
+                if (typeof(TQueryResult) != typeof(TDomain)) // faster to join
+                    return this.QueryInternal(context, o => o.Key == key, 0, 1, out t, Guid.Empty, false).FirstOrDefault();
+                else
+                {
+                    var kuuid = key.ToByteArray();
+                    return this.CacheConvert(context.Connection.Table<TDomain>().Where(o => o.Uuid == kuuid).FirstOrDefault(), context);
+                }
             }
             catch (Exception e)
             {

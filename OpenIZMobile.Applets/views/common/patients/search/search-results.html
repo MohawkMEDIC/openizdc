@@ -28,7 +28,7 @@
         <div class="search-results-container">
             <div class="row" style="padding: 0 10px;">
                 <div class="col-xs-12 col-sm-6 search-results-tile-container" ng-repeat="patient in search.results.item track by $index">
-                    <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})">
+                    <div class="search-results-tile" ui-sref="tz-timr-applet.view-patient({patientId:patient.id})" ng-click="$root.isLoading=true">
                         <span class="search-results-tile-circle">
                             <span class="search-results-tile-counter">
                                 {{$index + 1}}
@@ -67,11 +67,11 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
-                            <div class="col-xs-9 no-padding-right no-wrap">
-                                <span ng-repeat="(dmn, id) in patient.identifier">
+                            <div class="col-xs-9 no-padding-right">
+                                <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
                                     <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
                                     <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ id.authority.name }}</span><br /></span>
-                                </span>
+                                </div>
                             </div>
                         </div>
 

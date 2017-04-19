@@ -201,6 +201,7 @@ namespace OpenIZ.Mobile.Core.Caching
             else if (e.Object is EntityRelationship)
             {
                 var rel = (e.Object as EntityRelationship);
+                MemoryCache.Current.AddUpdateEntry(rel.SourceEntity);
                 MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Entity), rel.SourceEntityKey);
                 MemoryCache.Current.RemoveObject(rel.TargetEntity?.GetType() ?? typeof(Entity), rel.TargetEntityKey);
             }

@@ -67,14 +67,82 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public IdentifiedData GetAct()
         {
-            var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+            return this.GetAct<Act>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/SubstanceAdministration", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetSubstanceAdministration()
+        {
+            return this.GetAct<SubstanceAdministration>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/QuantityObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetQuantityObservation()
+        {
+            return this.GetAct<QuantityObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/TextObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetTextObservation()
+        {
+            return this.GetAct<TextObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/CodedObservation", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetCodedObservation()
+        {
+            return this.GetAct<CodedObservation>();
+        }
+
+        /// <summary>
+        /// Gets a list of acts.
+        /// </summary>
+        /// <returns>Returns a list of acts.</returns>
+        [RestOperation(Method = "GET", UriPath = "/PatientEncounter", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.QueryClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData GetPatientEncounter()
+        {
+            return this.GetAct<PatientEncounter>();
+        }
+
+        /// <summary>
+        /// Get specified service
+        /// </summary>
+        private IdentifiedData GetAct<TAct>() where TAct : IdentifiedData
+        { 
+            var actRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<TAct>>();
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
 
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), Guid.Parse(search["_id"].FirstOrDefault()));
-                var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
+                var act = actRepositoryService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 return act;
             }
             else
@@ -86,7 +154,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                        offset = search.ContainsKey("_offset") ? Int32.Parse(search["_offset"][0]) : 0,
                        count = search.ContainsKey("_count") ? Int32.Parse(search["_count"][0]) : 100;
 
-                IEnumerable<Act> results = null;
+                IEnumerable<TAct> results = null;
                 if (search.ContainsKey("_onlineOnly") && search["_onlineOnly"][0] == "true")
                 {
                     var integrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
@@ -94,16 +162,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     totalResults = bundle.TotalResults;
                     bundle.Reconstitute();
                     bundle.Item.OfType<Act>().ToList().ForEach(o => o.Tags.Add(new ActTag("onlineResult", "true")));
-                    results = bundle.Item.OfType<Act>();
+                    results = bundle.Item.OfType<TAct>();
 
                 }
                 else if (actRepositoryService is IPersistableQueryRepositoryService)
                 {
-                    results = (actRepositoryService as IPersistableQueryRepositoryService).Find<Act>(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults, queryId);
+                    results = (actRepositoryService as IPersistableQueryRepositoryService).Find<TAct>(QueryExpressionParser.BuildLinqExpression<TAct>(search, null, false), offset, count, out totalResults, queryId);
                 }
                 else
                 {
-                    results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<Act>(search, null, false), offset, count, out totalResults);
+                    results = actRepositoryService.Find(QueryExpressionParser.BuildLinqExpression<TAct>(search, null, false), offset, count, out totalResults);
                 }
 
                 //results.ToList().ForEach(a => a.Relationships.OrderBy(r => r.TargetAct.CreationTime));
@@ -115,7 +183,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     Key = queryId,
                     Count = results.Count(),
                     Item = results.OfType<IdentifiedData>().ToList(),
-                    Offset = 0,
+                    Offset = offset,
                     TotalResults = totalResults
                 };
             }

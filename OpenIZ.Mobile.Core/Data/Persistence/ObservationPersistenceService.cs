@@ -39,6 +39,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(TObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbObservation()
             {
                 InterpretationConceptUuid = modelInstance.InterpretationConceptKey?.ToByteArray(),
@@ -50,9 +51,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert a data act and observation instance to an observation
         /// </summary>
-        public virtual TObservation ToModelInstance(TDbObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
+        public virtual TObservation ToModelInstance(TDbObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context)
         {
-            var retVal = m_actPersister.ToModelInstance<TObservation>(actInstance, context, loadFast);
+            var retVal = m_actPersister.ToModelInstance<TObservation>(actInstance, context);
 
             if(obsInstance.InterpretationConceptUuid != null)
                 retVal.InterpretationConceptKey = new Guid(obsInstance.InterpretationConceptUuid);
@@ -120,6 +121,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(TextObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbTextObservation()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -130,9 +132,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override TextObservation ToModelInstance(DbTextObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
+        public override TextObservation ToModelInstance(DbTextObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context)
         {
-            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context, loadFast);
+            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             retVal.Value = dataInstance.Value;
             return retVal;
         }
@@ -140,13 +142,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override TextObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override TextObservation ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
             var textObs = dataInstance as DbTextObservation ?? dataInstance.GetInstanceOf<DbTextObservation>() ?? context.Connection.Table<DbTextObservation>().Where(o => o.Uuid == iddat.Uuid).First();
             var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            return this.ToModelInstance(textObs, dba, dbo, context, loadFast);
+            return this.ToModelInstance(textObs, dba, dbo, context);
         }
     }
 
@@ -160,6 +162,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(CodedObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbCodedObservation()
             {
                 Uuid = modelInstance.Key?.ToByteArray(),
@@ -170,9 +173,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override CodedObservation ToModelInstance(DbCodedObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
+        public override CodedObservation ToModelInstance(DbCodedObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context)
         {
-            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context, loadFast);
+            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             if(dataInstance.Value != null)
                 retVal.ValueKey = new Guid(dataInstance.Value);
             return retVal;
@@ -181,13 +184,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override CodedObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override CodedObservation ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
             var codeObs = dataInstance as DbCodedObservation ?? dataInstance.GetInstanceOf<DbCodedObservation>() ?? context.Connection.Table<DbCodedObservation>().Where(o => o.Uuid == iddat.Uuid).First();
             var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == iddat.Uuid).First();
             var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == iddat.Uuid).First();
-            return this.ToModelInstance(codeObs, dba, dbo, context, loadFast);
+            return this.ToModelInstance(codeObs, dba, dbo, context);
         }
 
         /// <summary>
@@ -222,6 +225,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(QuantityObservation modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbQuantityObservation()
             {
                 UnitOfMeasureUuid = modelInstance.UnitOfMeasureKey?.ToByteArray(),
@@ -233,9 +237,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert the specified object to a model instance
         /// </summary>
-        public override QuantityObservation ToModelInstance(DbQuantityObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context, bool loadFast)
+        public override QuantityObservation ToModelInstance(DbQuantityObservation dataInstance, DbAct actInstance, DbObservation obsInstance, LocalDataContext context)
         {
-            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context, loadFast);
+            var retVal = base.ToModelInstance(dataInstance, actInstance, obsInstance, context);
             if (dataInstance.UnitOfMeasureUuid != null)
                 retVal.UnitOfMeasureKey = new Guid(dataInstance.UnitOfMeasureUuid);
             retVal.Value = dataInstance.Value;
@@ -245,13 +249,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Convert to model instance
         /// </summary>
-        public override QuantityObservation ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override QuantityObservation ToModelInstance(object dataInstance, LocalDataContext context)
         {
             var iddat = dataInstance as DbVersionedData;
             var qObs = dataInstance as DbQuantityObservation ?? dataInstance.GetInstanceOf<DbQuantityObservation>() ?? context.Connection.Table<DbQuantityObservation>().Where(o => o.Uuid == iddat.Uuid).First();
             var dba = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct ?? context.Connection.Table<DbAct>().Where(o => o.Uuid == qObs.Uuid).First();
             var dbo = dataInstance.GetInstanceOf<DbObservation>() ?? context.Connection.Table<DbObservation>().Where(o => o.Uuid == qObs.Uuid).First();
-            return this.ToModelInstance(qObs, dba, dbo, context, loadFast);
+            return this.ToModelInstance(qObs, dba, dbo, context);
         }
 
         /// <summary>

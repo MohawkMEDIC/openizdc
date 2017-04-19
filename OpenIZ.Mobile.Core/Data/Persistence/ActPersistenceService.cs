@@ -57,7 +57,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Cache convert an act version
         /// </summary>
-        protected override Act CacheConvert(DbIdentified dataInstance, LocalDataContext context, bool loadFast)
+        protected override Act CacheConvert(DbIdentified dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
             DbAct dbAct = dataInstance as DbAct;
@@ -113,13 +113,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (retVal != null)
                 return retVal;
             else
-                return base.CacheConvert(dataInstance, context, loadFast);
+                return base.CacheConvert(dataInstance, context);
         }
 
         /// <summary>
         /// To model instance
         /// </summary>
-        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, LocalDataContext context, bool loadFast) where TActType : Act, new()
+        public virtual TActType ToModelInstance<TActType>(DbAct dbInstance, LocalDataContext context) where TActType : Act, new()
         {
             var retVal = m_mapper.MapDomainInstance<DbAct, TActType>(dbInstance);
 
@@ -142,23 +142,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
-            retVal.LoadAssociations(context,
-                nameof(OpenIZ.Core.Model.Acts.Act.Template),
-                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
-                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
-                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
-                nameof(OpenIZ.Core.Model.Acts.Act.Policies),
-                nameof(OpenIZ.Core.Model.Acts.Act.Protocols),
-                nameof(OpenIZ.Core.Model.Acts.Act.TypeConcept),
-                nameof(OpenIZ.Core.Model.Acts.Act.ReasonConcept)
-            );
+            retVal.LoadAssociations(context);
+
             return retVal;
         }
 
         /// <summary>
         /// Create an appropriate entity based on the class code
         /// </summary>
-        public override Act ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override Act ToModelInstance(object dataInstance, LocalDataContext context)
         {
             // Alright first, which type am I mapping to?
             var dbAct = dataInstance.GetInstanceOf<DbAct>() ?? dataInstance as DbAct;
@@ -166,15 +158,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
             {
                 case ControlAct:
-                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new ControlActPersistenceService().ToModelInstance(dataInstance, context);
                 case SubstanceAdministration:
-                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new SubstanceAdministrationPersistenceService().ToModelInstance(dataInstance, context);
                 case Observation:
                     var dbObs = context.Connection.Table<DbObservation>().Where(o => o.Uuid == dbAct.Uuid).FirstOrDefault();
 
                     if (dbObs == null)
                     {
-                        return base.ToModelInstance(dataInstance, context, loadFast);
+                        return base.ToModelInstance(dataInstance, context);
                     }
 
                     switch (dbObs.ValueType)
@@ -184,29 +176,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                                 context.Connection.Table<DbTextObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         case "CD":
                             return new CodedObservationPersistenceService().ToModelInstance(
                                 context.Connection.Table<DbCodedObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         case "PQ":
                             return new QuantityObservationPersistenceService().ToModelInstance(
                                 context.Connection.Table<DbQuantityObservation>().Where(o => o.Uuid == dbObs.Uuid).First(),
                                 dbAct,
                                 dbObs,
-                                context,
-                                loadFast);
+                                context);
                         default:
-                            return base.ToModelInstance(dataInstance, context, loadFast);
+                            return base.ToModelInstance(dataInstance, context);
                     }
                 case Encounter:
-                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context, loadFast);
+                    return new EncounterPersistenceService().ToModelInstance(dataInstance, context);
                 default:
-                    return this.ToModelInstance<Act>(dbAct, context, loadFast);
+                    return this.ToModelInstance<Act>(dbAct, context);
 
             }
         }
@@ -216,6 +205,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(Act modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbAct()
             {
                 ActTime = modelInstance.ActTime,

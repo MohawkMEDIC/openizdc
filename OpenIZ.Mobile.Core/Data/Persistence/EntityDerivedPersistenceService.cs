@@ -39,9 +39,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// Do cache convert
         /// </summary>
-        protected override TModel CacheConvert(DbIdentified o, LocalDataContext context, bool loadFast)
+        protected override TModel CacheConvert(DbIdentified o, LocalDataContext context)
         {
-            return (TModel)this.m_entityPersister.DoCacheConvert(o, context, loadFast);
+            return (TModel)this.m_entityPersister.DoCacheConvert(o, context);
         }
 
         /// <summary>

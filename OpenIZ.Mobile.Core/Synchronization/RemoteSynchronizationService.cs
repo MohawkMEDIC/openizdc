@@ -98,6 +98,13 @@ namespace OpenIZ.Mobile.Core.Synchronization
             }
         }
 
+        /// <summary>
+        /// Gets whether the object is synchronizing
+        /// </summary>
+        public bool IsSynchronizing
+        {
+            get; private set;
+        }
 
         /// <summary>
         /// Start the service
@@ -118,18 +125,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
             // Polling
             if (this.m_configuration.SynchronizationResources.Any(o => (o.Triggers & SynchronizationPullTriggerType.PeriodicPoll) != 0) &&
-                this.m_configuration.PollInterval.HasValue &&
-                this.m_configuration.PollInterval.Value != default(TimeSpan))
+                this.m_configuration.PollInterval != default(TimeSpan))
             {
                 Action<Object> pollFn = null;
                 pollFn = _ =>
                 {
                     ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 0.5f);
                     this.Pull(SynchronizationPullTriggerType.PeriodicPoll);
-                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+                    ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval, pollFn, null);
 
                 };
-                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval.Value, pollFn, null);
+                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval, pollFn, null);
             }
             this.Started?.Invoke(this, EventArgs.Empty);
 
@@ -152,6 +158,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     try
                     {
+                        this.IsSynchronizing = true;
 
                         DateTime lastSync = DateTime.MinValue;
                         if(SynchronizationLog.Current.GetAll().Count() > 0)
@@ -189,6 +196,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     finally
                     {
                         Monitor.Exit(this.m_lock);
+                        this.IsSynchronizing = false;
                     }
                 }
             });
@@ -254,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     float perc = i / (float)result.TotalResults;
 
-                    if(result.TotalResults > result.Count)
+                    if(result.TotalResults > result.Offset + result.Count + 1)
                         ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
                     NameValueCollection infopt = null;
                     if (filter.Any(o => o.Key.StartsWith("_")))
@@ -302,7 +310,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         eTag = result?.Item.FirstOrDefault()?.Tag;
                 }
 
-                if (result.TotalResults > result.Count)
+                if (result?.TotalResults > result?.Count)
                     ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                 // Log that we synchronized successfully

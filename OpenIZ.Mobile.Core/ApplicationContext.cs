@@ -255,9 +255,17 @@ namespace OpenIZ.Mobile.Core
             var nonChangeDaemons = daemons.Distinct().ToArray();
             foreach (var d in nonChangeDaemons)
             {
-                tracer.TraceInfo("Starting {0}", d.GetType().Name);
-                if (!d.Start())
-                    tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+                try
+                {
+                    tracer.TraceInfo("Starting {0}", d.GetType().Name);
+                    if (!d.Start())
+                        tracer.TraceWarning("{0} reported unsuccessful startup", d.GetType().Name);
+                }
+                catch(Exception e)
+                {
+                    tracer.TraceError("Daemon {0} did not start up successully!: {1}", d, e);
+                    throw new TypeLoadException($"{d} failed startup: {e.Message}", e);
+                }
             }
             
             this.Started?.Invoke(this, EventArgs.Empty);
@@ -289,12 +297,7 @@ namespace OpenIZ.Mobile.Core
         /// Close the application
         /// </summary>
         public abstract void Exit();
-
-        /// <summary>
-        /// Perform platform specific installation
-        /// </summary>
-        public abstract void InstallApplet(AppletPackage package, bool isUpgrade = false);
-
+        
         /// <summary>
         /// Add service 
         /// </summary>
@@ -311,6 +314,15 @@ namespace OpenIZ.Mobile.Core
         {
             ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
             return appSection.Services;
+        }
+
+        /// <summary>
+        /// Remove a service provider
+        /// </summary>
+        public void RemoveServiceProvider(Type serviceType)
+        {
+            ApplicationConfigurationSection appSection = this.Configuration.GetSection<ApplicationConfigurationSection>();
+            appSection.Services.RemoveAll(o=>o.GetType() == serviceType);
         }
     }
 }

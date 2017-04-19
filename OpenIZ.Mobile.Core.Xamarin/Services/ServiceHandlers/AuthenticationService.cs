@@ -38,6 +38,10 @@ using OpenIZ.Mobile.Core.Diagnostics;
 using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Mobile.Core.Interop;
 using OpenIZ.Mobile.Core.Xamarin.Resources;
+using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Collection;
+using OpenIZ.Core.Model.AMI.Security;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -51,26 +55,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         // Get tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(AuthenticationService));
 
-		/// <summary>
-		/// Abandons the users session.
-		/// </summary>
-		/// <returns>Returns an empty session.</returns>
-		[RestOperation(Method = "POST", UriPath = "/abandon", FaultProvider = nameof(AuthenticationFault))]
-		public SessionInfo Abandon()
-		{
-			var cookie = MiniImsServer.CurrentContext.Request.Cookies["_s"];
+        /// <summary>
+        /// Abandons the users session.
+        /// </summary>
+        /// <returns>Returns an empty session.</returns>
+        [RestOperation(Method = "POST", UriPath = "/abandon", FaultProvider = nameof(AuthenticationFault))]
+        public SessionInfo Abandon()
+        {
+            var cookie = MiniImsServer.CurrentContext.Request.Cookies["_s"];
 
-			var value = Guid.Empty;
+            var value = Guid.Empty;
 
-			if (cookie != null && Guid.TryParse(cookie.Value, out value))
-			{
-				ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
+            if (cookie != null && Guid.TryParse(cookie.Value, out value))
+            {
+                ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
+                var sessionInfo = sessionService.Delete(value);
+                AuditUtil.AuditLogout(sessionInfo.Principal);
+            }
 
-				return sessionService.Delete(value);
-			}
-
-			return new SessionInfo();
-		}
+            return new SessionInfo();
+        }
 
 
         /// <summary>
@@ -82,7 +86,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         {
             var localSecSrv = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
             var amiServ = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
-            
+
             // Session
             amiServ.Client.Credentials = new TokenCredentials(AuthenticationContext.Current.Principal);
             var remoteUser = amiServ.GetUser(user.Key.ToString());
@@ -130,7 +134,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if (resetService == null)
                     throw new InvalidOperationException(Strings.err_reset_not_supported);
                 return resetService.GetResetMechanisms();
-                
+
             }
             catch (Exception e)
             {
@@ -140,15 +144,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
         }
 
-		/// <summary>
-		/// Authenticate the user returning the session if successful
-		/// </summary>
-		/// <param name="authRequest"></param>
-		/// <returns></returns>
-		[RestOperation(Method = "POST", UriPath = "/authenticate", FaultProvider = nameof(AuthenticationFault))]
-		[return: RestMessage(RestMessageFormat.Json)]
-		public SessionInfo Authenticate([RestMessage(RestMessageFormat.FormData)] NameValueCollection authRequest)
-		{
+        /// <summary>
+        /// Authenticate the user returning the session if successful
+        /// </summary>
+        /// <param name="authRequest"></param>
+        /// <returns></returns>
+        [RestOperation(Method = "POST", UriPath = "/authenticate", FaultProvider = nameof(AuthenticationFault))]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public SessionInfo Authenticate([RestMessage(RestMessageFormat.FormData)] NameValueCollection authRequest)
+        {
 
             ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
             SessionInfo retVal = null;
@@ -177,47 +181,47 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     break;
             }
 
-			if (retVal == null)
-			{
-				throw new SecurityException();
-			}
+            if (retVal == null)
+            {
+                throw new SecurityException();
+            }
             else
             {
-				var lanugageCode = retVal?.UserEntity?.LanguageCommunication?.FirstOrDefault(o => o.IsPreferred)?.LanguageCode;
+                var lanugageCode = retVal?.UserEntity?.LanguageCommunication?.FirstOrDefault(o => o.IsPreferred)?.LanguageCode;
 
-				CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(CultureInfo.DefaultThreadCurrentUICulture?.TwoLetterISOLanguageName ?? "en");
+                CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(CultureInfo.DefaultThreadCurrentUICulture?.TwoLetterISOLanguageName ?? "en");
 
-				if (lanugageCode != null)
-					CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(lanugageCode);
+                if (lanugageCode != null)
+                    CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo(lanugageCode);
 
                 // Set the session 
-                if(!authRequest.ContainsKey("scope"))
+                if (!authRequest.ContainsKey("scope"))
                     MiniImsServer.CurrentContext.Response.SetCookie(new Cookie("_s", retVal.Key.ToString())
                     {
-                        
+
                         HttpOnly = true,
                         Secure = true,
-                        Path ="/",
+                        Path = "/",
                         Domain = MiniImsServer.CurrentContext.Request.Url.Host
                     });
                 return retVal;
             }
         }
 
-		/// <summary>
-		/// Authentication fault
-		/// </summary>
-		public OAuthTokenResponse AuthenticationFault(Exception e)
-		{
-			if (e.Data.Contains("detail"))
-				return e.Data["detail"] as OAuthTokenResponse;
-			else
-				return new OAuthTokenResponse()
-				{
-					Error = e.Message,
-					ErrorDescription = e.InnerException?.Message
-				};
-		}
+        /// <summary>
+        /// Authentication fault
+        /// </summary>
+        public OAuthTokenResponse AuthenticationFault(Exception e)
+        {
+            if (e.Data.Contains("detail"))
+                return e.Data["detail"] as OAuthTokenResponse;
+            else
+                return new OAuthTokenResponse()
+                {
+                    Error = e.Message,
+                    ErrorDescription = e.InnerException?.Message
+                };
+        }
 
 
         /// <summary>
@@ -226,43 +230,44 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <param name="authRequest"></param>
         /// <returns></returns>
         [RestOperation(Method = "GET", UriPath = "/get_session")]
-		[return: RestMessage(RestMessageFormat.SimpleJson)]
-		public SessionInfo GetSession()
-		{
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public SessionInfo GetSession()
+        {
             NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             ISessionManagerService sessionService = ApplicationContext.Current.GetService<ISessionManagerService>();
 
             if (query.ContainsKey("_id"))
                 return sessionService.Get(Guid.Parse(query["_id"][0]));
-            else 
-				return AuthenticationContext.Current.Session;
-		}
+            else
+                return AuthenticationContext.Current.Session;
+        }
 
-		/// <summary>
-		/// Gets a user by username.
-		/// </summary>
-		/// <param name="username">The username of the user to be retrieved.</param>
-		/// <returns>Returns the user.</returns>
-		[RestOperation(Method = "GET", UriPath = "/get_user")]
-		[return: RestMessage(RestMessageFormat.Json)]
-		public SecurityUser GetUser()
-		{
+        /// <summary>
+        /// Gets a user by username.
+        /// </summary>
+        /// <param name="username">The username of the user to be retrieved.</param>
+        /// <returns>Returns the user.</returns>
+        [RestOperation(Method = "GET", UriPath = "/SecurityUser")]
+        [return: RestMessage(RestMessageFormat.Json)]
+        public IdentifiedData GetUser()
+        {
             // this is used for the forgot password functionality
             // need to find a way to stop people from simply searching users via username...
+
             NameValueCollection query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<SecurityUser>(query);
+            ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
 
-			ISecurityRepositoryService securityRepositoryService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+            if (query.ContainsKey("_id"))
+                return securityRepositoryService.GetUser(Guid.Parse(query["_id"][0]));
+            else
+                return Bundle.CreateBundle(securityRepositoryService.FindUsers(predicate), 0, 0);
+        }
 
-			var user = securityRepositoryService.FindUsers(predicate).FirstOrDefault();
-
-			return user;
-		}
-
-		/// <summary>
-		/// Sets the user's password
-		/// </summary>
-		[RestOperation(Method = "POST", UriPath = "/passwd", FaultProvider = nameof(AuthenticationFault))]
+        /// <summary>
+        /// Sets the user's password
+        /// </summary>
+        [RestOperation(Method = "POST", UriPath = "/passwd", FaultProvider = nameof(AuthenticationFault))]
         [return: RestMessage(RestMessageFormat.Json)]
         public SessionInfo SetPassword([RestMessage(RestMessageFormat.FormData)]NameValueCollection controlData)
         {

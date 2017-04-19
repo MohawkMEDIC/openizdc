@@ -42,8 +42,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
-
-
+        
 
         /// <summary>
         /// Get from source
@@ -61,9 +60,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             foreach (var itm in modelInstance.Component)
                 itm.Value = itm.Value.Trim();
 
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbEntityName()
             {
-                Uuid = modelInstance.Key?.ToByteArray(),
+                Uuid = modelInstance.Key?.ToByteArray() ,
                 SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 UseConceptUuid = modelInstance.NameUseKey?.ToByteArray()
             };
@@ -81,15 +81,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.InsertInternal(context, data);
 
             // Data component
-            var namePx = ApplicationContext.Current.GetService<EntityNameComponentPersistenceService>();
-
-            // insert
-            context.Connection.InsertAll(data.Component.Select(c =>
-            {
-                var cmp = namePx.FromModelInstance(c, context) as DbEntityNameComponent;
-                cmp.NameUuid = retVal.Key.Value.ToByteArray();
-                return cmp;
-            }).Where(o => o.ValueUuid != null));
+            if (data.Component != null)
+                base.UpdateAssociatedItems<EntityNameComponent, EntityName>(
+                    new List<EntityNameComponent>(),
+                    data.Component,
+                    data.Key,
+                    context);
 
             return retVal;
         }
@@ -132,7 +129,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <summary>
         /// To model instance
         /// </summary>
-        public override EntityNameComponent ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override EntityNameComponent ToModelInstance(object dataInstance, LocalDataContext context)
         {
             if (dataInstance == null) return null;
 
@@ -154,11 +151,12 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         public override object FromModelInstance(EntityNameComponent modelInstance, LocalDataContext context)
         {
+            modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             var retVal = new DbEntityNameComponent()
             {
                 NameUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray()
+                Uuid = modelInstance.Key?.ToByteArray() 
             };
 
             // Address component already exists?

@@ -155,7 +155,7 @@ namespace OpenIZ.Mobile.Core.Data
                             data = this.Insert(context, data);
                             context.Connection.Commit();
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
                         }
                         catch (Exception e)
@@ -219,7 +219,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                         }
@@ -282,7 +282,7 @@ namespace OpenIZ.Mobile.Core.Data
                             context.Connection.Commit();
 
                             // Remove from the cache
-                            foreach (var itm in context.CacheOnCommit)
+                            foreach (var itm in context.CacheOnCommit.AsParallel())
                                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.GetType(), itm.Key.Value);
 
                         }
@@ -316,11 +316,23 @@ namespace OpenIZ.Mobile.Core.Data
         {
             if (key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
+                var conn = this.CreateConnection();
+                using (var context = this.CreateConnection())
+                    try
+                    {
+                        (existing as IdentifiedData).LoadAssociations(context);
+                    }
+                    catch (Exception e)
+                    {
+                        this.m_tracer.TraceError("Error loading associations: {0}", e);
+                    }
+            }
             if (existing != null)
                 return existing as TData;
             int toss = 0;
             this.m_tracer.TraceInfo("GET: {0}", key);
-            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty, false)?.SingleOrDefault();
+            return this.Query(o => o.Key == key, 0, 1, out toss, Guid.Empty, false, false)?.SingleOrDefault();
         }
 
         /// <summary>
@@ -330,7 +342,7 @@ namespace OpenIZ.Mobile.Core.Data
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
-            return this.Query(query, 0, null, out totalResults, Guid.Empty, false);
+            return this.Query(query, 0, null, out totalResults, Guid.Empty, false, false);
         }
 
         /// <summary>
@@ -339,13 +351,31 @@ namespace OpenIZ.Mobile.Core.Data
         /// <param name="query">Query.</param>
         public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
-            return this.Query(query, offset, count, out totalResults, queryId, true);
+            return this.Query(query, offset, count, out totalResults, queryId, true, false);
+        }
+
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public System.Collections.Generic.IEnumerable<TData> QueryFast(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+        {
+            return this.Query(query, offset, count, out totalResults, queryId, true, true);
+        }
+
+        /// <summary>
+        /// Query the specified data
+        /// </summary>
+        /// <param name="query">Query.</param>
+        public System.Collections.Generic.IEnumerable<TData> QueryExplicitLoad(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<String> expandProperties)
+        {
+            return this.Query(query, offset, count, out totalResults, queryId, true, true, expandProperties);
         }
 
         /// <summary>
         /// Query function returning results and count control
         /// </summary>
-        private IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool countResults)
+        private IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, bool countResults, bool fastQuery, IEnumerable<String> expandProperties = null)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));
@@ -372,6 +402,14 @@ namespace OpenIZ.Mobile.Core.Data
                     {
                         this.m_tracer.TraceVerbose("QUERY {0}", query);
 
+                        if (fastQuery)
+                            context.DelayLoadMode = LoadState.PartialLoad;
+                        else
+                            context.DelayLoadMode = LoadState.FullLoad;
+
+                        if (expandProperties != null)
+                            context.LoadAssociations = expandProperties.ToArray();
+
                         results = this.Query(context, query, offset, count ?? -1, out totalResults, queryId, countResults);
                     }
 
@@ -381,7 +419,7 @@ namespace OpenIZ.Mobile.Core.Data
                     totalResults = postData.TotalResults;
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit)
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
                         ApplicationContext.Current.GetService<IDataCachingService>()?.Add(itm);
 
                     return postData.Results;
@@ -496,7 +534,7 @@ namespace OpenIZ.Mobile.Core.Data
 
 
                     // Remove from the cache
-                    foreach (var itm in context.CacheOnCommit)
+                    foreach (var itm in context.CacheOnCommit.AsParallel())
                         ApplicationContext.Current.GetService<IDataCachingService>().Add(itm);
 
                     return postArgs.Results;
@@ -613,7 +651,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         /// <returns>The model instance.</returns>
         /// <param name="dataInstance">Data instance.</param>
-        public abstract TData ToModelInstance(Object dataInstance, LocalDataContext context, bool loadFast);
+        public abstract TData ToModelInstance(Object dataInstance, LocalDataContext context);
 
         /// <summary>
         /// Froms the model instance.
@@ -755,7 +793,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         object ILocalPersistenceService.ToModelInstance(object domainInstance, LocalDataContext context)
         {
-            return this.ToModelInstance(domainInstance, context, true);
+            return this.ToModelInstance(domainInstance, context);
         }
     }
 }

@@ -114,7 +114,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 				try
 				{
 					// We are to poll for alerts always (never push supported)
-					TimeSpan pollInterval = this.m_configuration.PollInterval ?? new TimeSpan(0, 10, 0);
+					TimeSpan pollInterval = this.m_configuration.PollInterval == TimeSpan.MinValue ? new TimeSpan(0, 10, 0) : this.m_configuration.PollInterval;
 					this.m_alertRepository = ApplicationContext.Current.GetService<IAlertRepositoryService>();
 					Action<Object> pollAction = null;
 					pollAction = x =>

@@ -125,10 +125,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
 
         /// <summary>
         /// Finds the specified model
-        /// </summary>
+        /// </summar>y
         public Bundle Find<TModel>(NameValueCollection filter, int offset, int? count, IntegrationQueryOptions options = null) where TModel : IdentifiedData
         {
-            var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(filter);
+            var predicate = QueryExpressionParser.BuildLinqExpression<TModel>(filter, null, false);
             return this.Find<TModel>(predicate, offset, count, options);
         }
 

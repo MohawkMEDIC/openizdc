@@ -223,6 +223,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The certificate for publisher {0} is expired (expired on {1:yyyy-MMM-dd}). Do you want to ignore this error and continue?.
+        /// </summary>
+        internal static string locale_certificateExpired {
+            get {
+                return ResourceManager.GetString("locale_certificateExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The server responded with an invalid certificate: {0}. Do you want to trust this certificate?.
         /// </summary>
         internal static string locale_certificateValidation {
@@ -232,20 +241,56 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading {0}....
+        /// </summary>
+        internal static string locale_downloading {
+            get {
+                return ResourceManager.GetString("locale_downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The applet could not be installed because the verification stage failed..
+        /// </summary>
+        internal static string locale_invalidSignature {
+            get {
+                return ResourceManager.GetString("locale_invalidSignature", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The applet {0} is not signed and its authenticity cannot be verified. Do you want to continue installation?.
+        /// </summary>
+        internal static string locale_unsignedAppletPrompt {
+            get {
+                return ResourceManager.GetString("locale_unsignedAppletPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The applet {0} is not signed or contains an invalid header. Your security settings do not allow for unsigned applets to be executed..
+        /// </summary>
+        internal static string locale_unsignedAppletsNotAllowed {
+            get {
+                return ResourceManager.GetString("locale_unsignedAppletsNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The applet {0} published by {1} is not trusted. Do you want to continue to load / install this applet?.
+        /// </summary>
+        internal static string locale_untrustedPublisherPrompt {
+            get {
+                return ResourceManager.GetString("locale_untrustedPublisherPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checking for updates....
         /// </summary>
         internal static string locale_updateCheck {
             get {
                 return ResourceManager.GetString("locale_updateCheck", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Updating package {0}.....
-        /// </summary>
-        internal static string locale_updating {
-            get {
-                return ResourceManager.GetString("locale_updating", resourceCulture);
             }
         }
     }

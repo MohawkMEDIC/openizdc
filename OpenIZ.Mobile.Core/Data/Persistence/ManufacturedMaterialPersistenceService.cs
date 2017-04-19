@@ -44,14 +44,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// <param name="context"></param>
         /// <param name="principal"></param>
         /// <returns></returns>
-        public override ManufacturedMaterial ToModelInstance(object dataInstance, LocalDataContext context, bool loadFast)
+        public override ManufacturedMaterial ToModelInstance(object dataInstance, LocalDataContext context)
         {
 
             var iddat = dataInstance as DbIdentified;
             var domainMmat = dataInstance as DbManufacturedMaterial ?? dataInstance.GetInstanceOf<DbManufacturedMaterial>() ?? context.Connection.Table<DbManufacturedMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
             var domainMat = dataInstance as DbMaterial ?? dataInstance.GetInstanceOf<DbMaterial>() ?? context.Connection.Table<DbMaterial>().Where(o=>o.Uuid == iddat.Uuid).First();
             //var dbm = domainMat ?? context.Table<DbMaterial>().Where(o => o.Uuid == domainMmat.Uuid).First();
-            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(domainMat, context, loadFast);
+            var retVal = this.m_materialPersister.ToModelInstance<ManufacturedMaterial>(domainMat, context);
             retVal.LotNumber = domainMmat.LotNumber;
             return retVal;
 

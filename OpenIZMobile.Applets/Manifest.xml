@@ -93,6 +93,10 @@
       <icon>/org.openiz.core/img/appbar.shield.png</icon>
       <text lang="en">Settings</text>
     </menuItem>
+    <menuItem asset="/org.openiz.core/views/security/audit.html" launch="#/core/audit">
+      <icon>/org.openiz.core/img/appbar.journal.png</icon>
+      <text lang="en">Audit Log</text>
+    </menuItem>
   </menuItem>
   <menuItem order="99">
     <icon>/org.openiz.core/img/appbar.code.xml.png</icon>
@@ -168,6 +172,10 @@
     <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
     <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
     <string key="locale.forgotPassword.challenge.placeholder">Enter the secret code</string>
+    <string key="locale.forgotPassword.challengeRequest.email">Send me an E-Mail</string>
+    <string key="locale.forgotPassword.challengeRequest.emailText">Please enter the first part of your e-mail address (ex: john@domain.com would be "john")</string>
+    <string key="locale.forgotPassword.challengeRequest.phone">Send me an SMS</string>
+    <string key="locale.forgotPassword.challengeRequest.phoneText">Please enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Enter the first part of your e-mail</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
@@ -256,7 +264,7 @@
     <string key="locale.settings.data.restore">Restore Data</string>
     <string key="locale.settings.data.purge">Purge Data</string>
     <string key="locale.settings.data.pull">Synchronize Now</string>
-    <string key="locale.settings.data.compact">Compact Data</string>
+    <string key="locale.settings.data.compact">Optimize Databases</string>
     <string key="locale.settings.enableSSL">Enable TLS/SSL for connection</string>
     <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
     <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
@@ -364,6 +372,7 @@
     <string key="locale.about.sync.logContents">Log File Contents</string>
     <string key="locale.about.updateToast.title">Updates Available</string>
     <string key="locale.about.workLoad">Threadpool Use</string>
+    <string key="locale.about.versions.verified"> Verified</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
@@ -425,6 +434,14 @@
     <string key="locale.sync.resource.Person">Persons (Patients &amp; Next of Kin)</string>
     <string key="locale.sync.resource.Act">Acts (Vaccinations, Weights, Adjustments, etc.)</string>
 
+    <string key="locale.audit.action">Action</string>
+    <string key="locale.audit.class">Operation</string>
+    <string key="locale.audit.date">Timestamp</string>
+    <string key="locale.audit.user">User</string>
+    <string key="locale.audit.event">Event</string>
+    <string key="locale.audit.outcome">Outcome</string>
+    <string key="locale.audit.title">Local Audit Centre</string>
+    <string key="locale.audit.detail.title">Audit Detail</string>
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
@@ -468,6 +485,8 @@
     <string key="locale.about.versions.id">Maelezo yangu</string>
     <string key="locale.about.versions.info">Chaguo/chujo</string>
     <string key="locale.about.versions.version">Toleo la .NET Runtime</string>
+    <string key="locale.about.updateToast.title">Updates Inapatikana</string>
+    <string key="locale.about.updateToast.text">Habari njema! Kuna toleo jipya la programu inapatikana. Gonga hapa ili kwenda kwenye ukurasa update.</string>
     <string key="locale.action.acknowledge">Siwezi kuendelea kwasababu ya hitilafu hii</string>
     <string key="locale.action.back">Hii namba ni batili</string>
     <string key="locale.action.cancel">kufuta</string>
@@ -530,7 +549,6 @@
     <string key="locale.forgotPassword.challenge.resend">Ukubwa wa faili kumbukumbu</string>
     <string key="locale.forgotPassword.challenge.response">neno siri</string>
     <string key="locale.forgotPassword.challenge.title">Sasisho limekamilika</string>
-    <string key="locale.forgotPassword.challengeRequest.placeholder">Tengeneza akaunti Local Admin</string>
     <string key="locale.forgotPassword.changePassword.help">Neno siri</string>
     <string key="locale.forgotPassword.changePassword.title">Hakuna wagonjwa </string>
     <string key="locale.forgotPassword.mechanism.help">Onyo: kipindi kuisha</string>
@@ -539,6 +557,15 @@
     <string key="locale.forgotPassword.userName.label">Maelezo ya toleo</string>
     <string key="locale.forgotPassword.userName.placeholder">Kipindi chako kinakaribia kuisha</string>
     <string key="locale.forgotPassword.userName.title">Jina la kifaa tayari limesajiliwa. Je, unataka kubadilisha huu usajili?(kama ndio, kifaa kingine chenye jina hili kitashindwa kuunga)</string>
+    <string key="locale.forgotPassword.challengeRequest.email">Nitumie E-Mail</string>
+    <string key="locale.forgotPassword.challengeRequest.emailText">Tafadhali weka sehemu ya kwanza ya barua pepe yako (kwa mfano: john@domain.com itakuwa "john")</string>
+    <string key="locale.forgotPassword.challengeRequest.phone">Nitumie SMS</string>
+    <string key="locale.forgotPassword.challengeRequest.phoneText">Tafadhali ingiza tarakimu nne za mwisho za nambari yako ya</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Weka sehemu ya kwanza ya barua pepe yako</string>
+    <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Ingiza tarakimu nne za mwisho za nambari yako ya</string>
+    <string key="locale.forgotPassword.error.onlineOnly">Ili kuweka upya nenosiri lako lazima uwe mtandaoni</string>
+    <string key="locale.forgotPassword.error.validation">utambulisho yako haikuweza kuthibitishwa</string>
+    <string key="locale.forgotPassword.error.invalidCode">Nambari yako ya siri ni batili</string>
     <string key="locale.legend.completed">Tafuta</string>
     <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.legend.upcoming">Tahadhari</string>
@@ -551,7 +578,7 @@
     <string key="locale.openiz.info">Haipatikani</string>
     <string key="locale.patient.search.noresults">Imetokea hitilafu kwenye kuleta ukurasa. Tafadhali pitia faili kumbukumbu kwenye kifaa.</string>
     <string key="locale.patient.search.header.mother">M</string>
-    <string key="locale.preferences.changePassword">Maelekezo yafatayo yatatumika kukutafuta ikiwa akaunti yako itahitaji mabadiliko. Itakubidi uingize neno siri kubadili haya maelekezo.</string>
+    <string key="locale.preferences.changePassword">Badilisha neno la sir.</string>
     <string key="locale.preferences.confirm">Umetumiwa "siri", ingiza "siri" hapo chini. Kama hujatumiwa, bonyeza "tuma" upate "siri" mpya</string>
     <string key="locale.preferences.email">Tayari</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">Kusahau neno siri</string>
@@ -567,11 +594,13 @@
     <string key="locale.preferences.password">Tafadhali subiri</string>
     <string key="locale.preferences.phone">Kata</string>
     <string key="locale.preferences.tabs.password">Kamwe</string>
+    <string key="locale.preferences.tabs.passwordRecovery">kuokoa nenosiri</string>
     <string key="locale.preferences.tabs.profile">Ndio</string>
     <string key="locale.preferences.telephone">Ukubwa wa tatizo:</string>
     <string key="locale.preferences.username">Sehemu ya mfumo</string>
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
     <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
+    <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
     <string key="locale.security.errors.unableToResetPassword">Hitilafu imetokea. Tafadhali pitia faili kumbukumbu.</string>
     <string key="locale.security.errors.usernameRequired">Jina la mtumiaji Local Admin</string>
     <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>

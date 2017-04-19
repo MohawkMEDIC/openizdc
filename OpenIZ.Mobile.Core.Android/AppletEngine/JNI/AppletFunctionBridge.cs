@@ -43,6 +43,7 @@ using OpenIZ.Mobile.Core.Xamarin;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Text;
 using OpenIZ.Core.Applets;
+using OpenIZ.Core.Applets.Services;
 
 namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 {
@@ -86,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         public String GetDataAsset(String dataId)
         {
             dataId = String.Format("data/{0}", dataId);
-            return Convert.ToBase64String(XamarinApplicationContext.Current.LoadedApplets.RenderAssetContent(XamarinApplicationContext.Current.LoadedApplets.SelectMany(o => o.Assets).FirstOrDefault(o => o.Name == dataId), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
+            return Convert.ToBase64String(ApplicationContext.Current.GetService<IAppletManagerService>().Applets.RenderAssetContent(XamarinApplicationContext.Current.GetService<IAppletManagerService>().Applets.SelectMany(o => o.Assets).FirstOrDefault(o => o.Name == dataId), CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
         }
 
         /// <summary>
@@ -144,7 +145,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [Export]
         public String GetTemplateForm(String templateId)
         {
-            return AndroidApplicationContext.Current.LoadedApplets.GetTemplateDefinition(templateId)?.Form;
+            return AndroidApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetTemplateDefinition(templateId)?.Form;
         }
 
         /// <summary>
@@ -236,44 +237,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
                 return ApplicationContext.Current.GetService(serviceType)?.GetType().Name;
         }
 
-        /// <summary>
-        /// Get the menu items for the current user for specified language
-        /// </summary>
-        [JavascriptInterface]
-        [Export]
-        public String GetMenus()
-        {
-            try
-            {
-
-                // Cannot have menus if not logged in
-                if (AuthenticationContext.Current.Principal == null) return null;
-
-                string cached = null;
-                if (this.m_cachedMenus.TryGetValue(AuthenticationContext.Current.Principal, out cached))
-                    return cached;
-
-                var rootMenus = AndroidApplicationContext.Current.LoadedApplets.SelectMany(o => o.Menus).OrderBy(o => o.Order).ToArray();
-                List<MenuInformation> retVal = new List<MenuInformation>();
-
-                // Create menus
-                foreach (var mnu in rootMenus)
-                    this.ProcessMenuItem(mnu, retVal);
-                retVal.RemoveAll(o => o.Action == null && o.Menu?.Count == 0);
-
-
-                cached = JniUtil.ToJson(retVal);
-                lock (this.m_cachedMenus)
-                    this.m_cachedMenus.Add(AuthenticationContext.Current.Principal, cached);
-                return cached;
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error retrieving menus: {0}", e);
-                return "err_menu";
-            }
-        }
-
+       
 		[Export]
 		[JavascriptInterface]
 		public string GetNetworkState()
@@ -282,38 +246,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
 
 			return networkInformationService.IsNetworkAvailable.ToString();
 		}
-
-        /// <summary>
-        /// Process menu item
-        /// </summary>
-        private void ProcessMenuItem(AppletMenu menu, List<MenuInformation> retVal)
-        {
-            // TODO: Demand permission
-            if (menu.Asset != null &&
-                !AndroidApplicationContext.Current.LoadedApplets.ResolveAsset(menu.Asset, menu.Manifest.Assets[0])?.Policies?.Any(p => ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(AuthenticationContext.Current.Principal, p) == OpenIZ.Core.Model.Security.PolicyGrantType.Deny) == false)
-                return;
-
-            // Get text for menu item
-            string menuText = menu.GetText(this.GetLocale());
-            var existing = retVal.Find(o => o.Text == menuText && o.Icon == menu.Icon);
-            if (existing == null)
-            {
-                existing = new MenuInformation()
-                {
-                    Action = menu.Launch,
-                    Icon = menu.Icon,
-                    Text = menuText
-                };
-                retVal.Add(existing);
-            }
-            if (menu.Menus.Count > 0)
-            {
-                existing.Menu = new List<MenuInformation>();
-                foreach (var child in menu.Menus)
-                    this.ProcessMenuItem(child, existing.Menu);
-            }
-        }
-
+        
         /// <summary>
         /// Navigate the specified appletId and context.
         /// </summary>
@@ -341,7 +274,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         {
             try
             {
-                var appletResource = AndroidApplicationContext.Current.LoadedApplets.GetStrings(this.GetLocale()).FirstOrDefault(o => o.Key == stringId).Value;
+                var appletResource = AndroidApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetStrings(this.GetLocale()).FirstOrDefault(o => o.Key == stringId).Value;
                 if (appletResource != null)
                     return appletResource;
                 else
@@ -435,7 +368,7 @@ namespace OpenIZ.Mobile.Core.Android.AppletEngine.JNI
         [JavascriptInterface]
         public String GetStrings(String locale)
         {
-            var strings = AndroidApplicationContext.Current.LoadedApplets.GetStrings(locale);
+            var strings = AndroidApplicationContext.Current.GetService<IAppletManagerService>().Applets.GetStrings(locale);
 
             using (StringWriter sw = new StringWriter())
             {

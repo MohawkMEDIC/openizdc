@@ -18,6 +18,7 @@
  * Date: 2016-7-30
  */
 using OpenIZ.Mobile.Core.Diagnostics;
+using OpenIZ.Mobile.Core.Resources;
 using OpenIZ.Mobile.Core.Services;
 using SQLite.Net;
 using SQLite.Net.Interop;
@@ -171,10 +172,19 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public void Compact()
         {
-            foreach(var itm in this.m_connections)
+            for(int i = 0; i < this.m_connections.Count; i++)
             {
-                using (itm.Value.Lock())
-                    itm.Value.Execute("VACUUM");
+                var itm = this.m_connections[this.m_connections.Keys.ElementAt(i)];
+                using (itm.Lock())
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count*3.0f));
+                    itm.Execute("VACUUM");
+                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 1) / (this.m_connections.Count * 3.0f));
+                    itm.Execute("REINDEX");
+                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 2) / (this.m_connections.Count * 3.0f));
+                    itm.Execute("ANALYZE");
+
+                }
             }
         }
     }

@@ -31,6 +31,7 @@
   <property name="act_date" type="date" attributes="index"/>
   <property name="product_id" type="uuid" attributes="index"/>
   <property name="sequence_id" type="int" />
+  <property name="dose_seq" type="int"/>
   <sqp name="bymonth">
     <property name="location_id" type="uuid"/>
     <property name="product_id" type="uuid"/>
@@ -47,7 +48,7 @@
     <property name="num_children" type="int"/>
     <sql provider="sqlite">
       <![CDATA[
-    SELECT overdue / 86400 AS days_overdue, location_id, COUNT(patient_id) AS num_children FROM
+    SELECT overdue / 86400 AS days_overdue, location_id, COUNT(DISTINCT patient_id) AS num_children FROM
     (SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) AS overdue FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') GROUP BY patient_id) WHERE overdue > 0 GROUP BY overdue, location_id
     ]]>
     </sql>
@@ -58,7 +59,7 @@
     <property name="days_overdue" type="int"/>
     <sql provider="sqlite">
       <![CDATA[
-    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
+    SELECT patient_id, location_id, -(max_date - strftime('%s', 'now')) / 86400 AS days_overdue, product_id, dose_seq FROM oizcp WHERE product_id IS NOT NULL AND max_date IS NOT NULL AND max_date < strftime('%s', 'now') 
     ]]>
     </sql>
   </sqp>

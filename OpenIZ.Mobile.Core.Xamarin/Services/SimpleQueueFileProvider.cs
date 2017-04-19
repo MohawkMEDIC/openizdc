@@ -35,9 +35,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             if (!Directory.Exists(blobPath))
                 Directory.CreateDirectory(blobPath);
 
+            data = Path.Combine(blobPath, data);
             blobPath = Path.Combine(blobPath, Guid.NewGuid().ToString() + ".dat");
             File.Copy(data, blobPath);
-            return blobPath;
+            return Path.GetFileName(blobPath);
         }
 
         /// <summary>
@@ -78,6 +79,46 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             {
                 sw.Stop();
                 ApplicationContext.Current.PerformanceLog(nameof(SimpleQueueFileProvider), nameof(GetQueueData), typeSpec.Name, sw.Elapsed);
+            }
+#endif
+        }
+
+
+        /// <summary>
+        /// Get Queue Data
+        /// </summary>
+        public byte[] GetQueueData(string pathSpec)
+        {
+#if PERFMON
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+            try
+            {
+#endif
+            
+
+            var sqlitePath = ApplicationContext.Current.Configuration.GetConnectionString(ApplicationContext.Current.Configuration.GetSection<DataConfigurationSection>().MessageQueueConnectionStringName).Value;
+
+            // Create blob path
+            var blobPath = Path.Combine(Path.GetDirectoryName(sqlitePath), "blob");
+            if (!Directory.Exists(blobPath))
+                Directory.CreateDirectory(blobPath);
+
+            blobPath = Path.Combine(blobPath, pathSpec);
+            using (var fs = File.OpenRead(blobPath))
+            using (var gzs = new GZipStream(fs, CompressionMode.Decompress))
+            using(var ms = new MemoryStream())
+            {
+                gzs.CopyTo(ms);
+                ms.Flush();
+                return ms.ToArray();                    
+            }
+#if PERFMON
+            }
+            finally
+            {
+                sw.Stop();
+                ApplicationContext.Current.PerformanceLog(nameof(SimpleQueueFileProvider), nameof(GetQueueData), "Raw", sw.Elapsed);
             }
 #endif
         }

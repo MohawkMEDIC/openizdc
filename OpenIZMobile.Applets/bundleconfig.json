@@ -118,5 +118,40 @@
     "inputFiles": [
       "css/toastr.css"
     ]
+  },
+  {
+    "outputFileName": "js/openiz-audit.min.js",
+    "inputFiles": [
+      "js/openiz-audit.js"
+    ]
+  },
+  {
+    "outputFileName": "js/openiz-core.js",
+    "inputFiles": [
+      "js/openiz-audit.js",
+      "js/openiz-bre.js",
+      "js/openiz-dw.js",
+      "js/openiz-model.js"
+    ]
+  },
+  {
+    "outputFileName": "lib/lib-core.js",
+    "inputFiles": [
+      "lib/jquery.min.js",
+      "lib/jquery.datefix.min.js",
+      "lib/angular.min.js",
+      "lib/angular-route.min.js",
+      "lib/angular-ui-router.min.js",
+      "lib/angular-sanitize.min.js",
+      "lib/angular-filter.min.js",
+      "lib/bootstrap.min.js",
+      "lib/bootstrap-tokenfield.min.js",
+      "lib/moment.min.js",
+      "lib/select2.min.js",
+      "lib/select2-extended-ajax.min.js",
+      "lib/toastr.min.js",
+      "lib/vis.min.js",
+      "lib/fullcalendar.min.js"
+    ]
   }
 ]

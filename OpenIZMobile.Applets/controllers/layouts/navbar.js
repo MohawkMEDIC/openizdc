@@ -39,6 +39,7 @@ layoutApp.controller('LayoutController', ['$scope', '$interval', '$rootScope', '
                 continueWith: function (data) {
                     console.log(data);
                     window.location.hash = "#/";
+                    $rootScope.isLoading = true;
                     $window.location.reload();
                 },
                 onException: function (ex) {

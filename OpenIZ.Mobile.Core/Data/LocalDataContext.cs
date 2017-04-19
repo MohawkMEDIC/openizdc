@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite.Net.Interop;
+using OpenIZ.Core.Data.QueryBuilder;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -36,9 +37,20 @@ namespace OpenIZ.Mobile.Core.Data
     public class LocalDataContext : IDisposable
     {
 
+        /// <summary>
+        /// Partial load mode
+        /// </summary>
+        public LocalDataContext()
+        {
+            this.DelayLoadMode = LoadState.PartialLoad;
+        }
+
         // Prepared
         private Dictionary<String, IDbStatement> m_prepared = new Dictionary<string, IDbStatement>();
 
+        // Cached query
+        private Dictionary<String, IEnumerable<Object>> m_cachedQuery = new Dictionary<string, IEnumerable<object>>();
+        
         /// <summary>
         /// Cache commit
         /// </summary>
@@ -46,6 +58,11 @@ namespace OpenIZ.Mobile.Core.Data
 
         // Data dictionary
         private Dictionary<String, Object> m_dataDictionary = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Associations to be be forcably loaded
+        /// </summary>
+        public String[] LoadAssociations { get; set; }
 
         /// <summary>
         /// Local data context
@@ -77,6 +94,10 @@ namespace OpenIZ.Mobile.Core.Data
         /// </summary>
         public IDictionary<String, Object> Data { get { return this.m_dataDictionary; } }
 
+        /// <summary>
+        /// The data loading mode
+        /// </summary>
+        public OpenIZ.Core.Model.LoadState DelayLoadMode { get; set; }
 
         /// <summary>
         /// Add cache commit
@@ -131,5 +152,37 @@ namespace OpenIZ.Mobile.Core.Data
             foreach (var stmt in this.m_prepared.Values)
                 stmt.Finalize();
         }
+
+        /// <summary>
+        /// Query
+        /// </summary>
+        public String GetQueryLiteral(SqlStatement query)
+        {
+            return query.ToString();
+        }
+
+      
+        /// <summary>
+        /// Add a cached set of query results
+        /// </summary>
+        public void AddQuery(SqlStatement domainQuery, IEnumerable<object> results)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            lock (this.m_cachedQuery)
+                if (!this.m_cachedQuery.ContainsKey(key))
+                    this.m_cachedQuery.Add(key, results);
+        }
+
+        /// <summary>
+        /// Cache a query 
+        /// </summary>
+        public IEnumerable<Object> CacheQuery(SqlStatement domainQuery)
+        {
+            var key = this.GetQueryLiteral(domainQuery);
+            IEnumerable<Object> retVal = null;
+            this.m_cachedQuery.TryGetValue(key, out retVal);
+            return retVal;
+        }
+
     }
 }
