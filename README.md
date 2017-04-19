@@ -7,6 +7,9 @@
 </p>
 </div><div class="ClearBoth"></div>
 
+# OpenIZ IMSI Interface Specification
+
+http://openiz.org/artifacts/0.1pre/imsi/
 
 # OpenIZ Javasript Bridge 
 http://openiz.org/artifacts/0.1pre/openiz-js/
