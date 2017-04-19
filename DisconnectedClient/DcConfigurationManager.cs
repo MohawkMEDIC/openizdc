@@ -185,7 +185,7 @@ namespace DisconnectedClient
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
                 DeviceName = Environment.MachineName,
-                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key

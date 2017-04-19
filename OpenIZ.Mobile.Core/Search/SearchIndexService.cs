@@ -38,13 +38,14 @@ using OpenIZ.Core.Model.DataTypes;
 using SQLite.Net.Interop;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Exceptions;
+using OpenIZ.Core.Interfaces;
 
 namespace OpenIZ.Mobile.Core.Search
 {
     /// <summary>
     /// Search indexing service
     /// </summary>
-    public class SearchIndexService : IFreetextSearchService, IDaemonService
+    public class SearchIndexService : IFreetextSearchService, IDaemonService, IAuditEventSource
     {
 
         // Tracer
@@ -83,6 +84,10 @@ namespace OpenIZ.Mobile.Core.Search
         /// The service is stopping
         /// </summary>
         public event EventHandler Stopping;
+        public event EventHandler<AuditDataEventArgs> DataCreated;
+        public event EventHandler<AuditDataEventArgs> DataUpdated;
+        public event EventHandler<AuditDataEventArgs> DataObsoleted;
+        public event EventHandler<AuditDataDisclosureEventArgs> DataDisclosed;
 
         /// <summary>
         /// Create a connection
@@ -143,7 +148,11 @@ namespace OpenIZ.Mobile.Core.Search
 
                 var persistence = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
                 totalResults = results.Count();
-                return results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
+                
+                var retVal = results.Skip(offset).Take(count ?? 100).AsParallel().Select(o => persistence.Get(new Guid(o.Key)));
+
+                this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs("FTS:" + String.Join(":", tokens), retVal));
+                return retVal;
             }
         }
 

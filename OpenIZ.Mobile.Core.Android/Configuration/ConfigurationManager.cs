@@ -201,7 +201,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
                 DeviceName = String.Format("{0}-{1}", AndroidOS.Build.Model, macAddress).Replace(" ", ""),
-                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key

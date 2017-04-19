@@ -288,6 +288,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// </summary>
         public static void AuditLogin(IPrincipal principal, String identityName, IIdentityProviderService identityProvider, bool successfulLogin =true)
         {
+            if ((principal?.Identity?.Name ?? identityName) == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName) return; // don't worry about this
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, successfulLogin ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Login));
             audit.Actors.Add(new AuditActorData()
             {

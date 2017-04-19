@@ -276,7 +276,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationQueue.Outbound.DequeueRaw();
 
                         // Construct an alert
-                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
+                        //this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {
@@ -290,7 +290,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
-                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                            //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         }
                         else
                         {
@@ -300,7 +300,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error sending object to AMI: {0}", ex);
-                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                        //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                         SynchronizationQueue.Outbound.DequeueRaw();
 
@@ -380,7 +380,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         SynchronizationQueue.Outbound.DequeueRaw();
 
                         // Construct an alert
-                        this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusCode.ToString()) ?? Strings.locale_syncErrorBody, ex, dpe), dpe);
+                        //this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusCode.ToString()) ?? Strings.locale_syncErrorBody, ex, dpe), dpe);
                     }
                     catch (TimeoutException ex) // Timeout due to lack of connectivity
                     {
@@ -394,7 +394,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                             SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
-                            this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                            //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         }
                         else
                         {
@@ -404,7 +404,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     catch (Exception ex)
                     {
                         this.m_tracer.TraceError("Error sending object to IMS: {0}", ex);
-                        this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
+                        //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
                         SynchronizationQueue.Outbound.DequeueRaw();
 

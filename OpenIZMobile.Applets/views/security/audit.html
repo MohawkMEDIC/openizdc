@@ -9,7 +9,7 @@
         </oiz:view>
     </oiz:state>
     <div class="modal fade" id="detailModel" tabindex="-10" role="dialog">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
@@ -60,11 +60,15 @@
                             <div class="col-xs-8">
                                 <ul>
                                     <li ng-repeat="obj in audit.current.object">
-                                        <span ng-if="obj.type == 'Person'" class="glyphicon glyphicon-user"></span>
-                                        <span ng-if="obj.type == 'SystemObject'" class="glyphicon glyphicon-cog"></span>
-                                        <span ng-if="obj.type == 'Organization'" class="glyphicon glyphicon-home"></span>
-                                        <span ng-if="obj.type == 'Other'" class="glyphicon glyphicon-question-sign"></span>
-                                        {{ obj.id }}
+                                        <strong>
+                                            <span ng-if="obj.type == 'Person'" class="glyphicon glyphicon-user"></span>
+                                            <span ng-if="obj.type == 'SystemObject'" class="glyphicon glyphicon-cog"></span>
+                                            <span ng-if="obj.type == 'Organization'" class="glyphicon glyphicon-home"></span>
+                                            <span ng-if="obj.type == 'Other'" class="glyphicon glyphicon-question-sign"></span>
+                                            {{ obj.lifecycle}} - {{obj.idType}}
+                                        </strong><br/>
+                                        <small>ID#: {{ obj.id }}</small><br/>
+                                        <small ng-if="obj.queryData"><strong>Query:</strong> {{obj.queryData}}</small>
                                     </li>
                                 </ul>
                             </div>
@@ -104,7 +108,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <select class="form-control" size="1" ng-model="audit.query.action">
+                            <select class="form-control" size="1" ng-model="audit.query.action" ng-change="audit.query._offset = 0">
                                 <option value="Create">Create</option>
                                 <option value="Update">Update</option>
                                 <option value="Read">Read</option>
@@ -113,7 +117,7 @@
                             </select>
                         </td>
                         <td>
-                            <select class="form-control" size="1" ng-model="audit.query.event">
+                            <select class="form-control" size="1" ng-model="audit.query.event" ng-change="audit.query._offset = 0" >
                                 <option value="Import">Import</option>
                                 <option value="Export">Export</option>
                                 <option value="SecurityAlert">Security Alert</option>
@@ -123,26 +127,34 @@
                             </select>
                         </td>
                         <td>
-                            <input class="form-control" type="date" ng-model="audit.queryTimestamp" ng-change="audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)" />
+                            <input class="form-control" type="date" ng-model="audit.queryTimestamp" ng-change="audit.query._offset = 0; audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)" />
                         </td>
                         <td>
                             <select class="form-control" 
                                     ng-model="audit.query['actor.uname']"
+                                    ng-change="audit.query._offset = 0"
                                     oiz-entitysearch="SecurityUser"
                                     data-searchField="userName"
                                     data-resultField="userName"
                                     data-display="scope.userName"></select>
                         </td>
                         <td>
-                            <select ng-model="audit.query['type.code']"  class="form-control" bind:source="Concept" bind:filter="conceptSet.mnemonic=SecurityAuditCode" bind:value="name[{{ locale }}].value" bind:key="mnemonic"/>
+                            <select ng-model="audit.query['type.code']"  class="form-control" bind:source="Concept" ng-change="audit.query._offset = 0" bind:filter="conceptSet.mnemonic=SecurityAuditCode" bind:value="name[{{ locale }}].value" bind:key="mnemonic"/>
                         </td>
                         <td>
-                            <select class="form-control" size="1" ng-model="audit.query.outcome">
+                            <select class="form-control" size="1" ng-model="audit.query.outcome" ng-change="audit.query._offset = 0">
                                 <option value="Success">Successful</option>
                                 <option value="MinorFail">Minor Failure</option>
                                 <option value="SeriousFail">Serious Failure</option>
                                 <option value="EpicFail">Catastrophic Failure</option>
                             </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-info" ng-click="audit.query = { _offset: 0, _count: 10, 'type.code': '!SecurityAuditCode-AuditLogUsed' }">
+                                <span>
+                                    <span class="glyphicon glyphicon-remove"/>
+                                </span>
+                            </button>
                         </td>
                     </tr>
                 </thead>
@@ -181,7 +193,7 @@
                         <td colspan="5">
                             <ul class="pagination" style="margin:0px; padding:0px">
                                 <li><a ng-click="audit.query._offset = audit.query._offset - 10" ng-if="audit.query._offset >= 10">&lt;&lt;</a></li>
-                                <li ng-class="{'active' : $index == trunc(audit.query._offset / 10)}" ng-repeat="i in [].constructor(trunc(audit.log.Size / 10) + 1) track by $index ">
+                                <li ng-class="{'active' : $index == trunc(audit.query._offset / 10)}" ng-repeat="i in [].constructor(trunc(audit.log.Size / 10) + 1) track by $index" ng-if="$index &lt; 14">
                                     <a ng-click="audit.query._offset = ($index * 10)">{{$index + 1}}</a>
                                 </li>
                                 <li>

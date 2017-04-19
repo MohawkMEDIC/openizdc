@@ -191,7 +191,7 @@ namespace Minims
             SecurityConfigurationSection secSection = new SecurityConfigurationSection()
             {
                 DeviceName = String.Format("MINI-IMS-{0}", macAddress).Replace(" ", ""),
-                AuditRetention = new TimeSpan(14, 0, 0, 0, 0)
+                AuditRetention = new TimeSpan(30, 0, 0, 0, 0)
             };
 
             // Device key

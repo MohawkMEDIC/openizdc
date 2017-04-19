@@ -49,7 +49,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Gets or sets the allowed token type
 		/// </summary>
 		/// <value>The type of the token.</value>
-		[XmlElement("tokenType")]
+		[XmlElement("tokenType"), JsonIgnore]
 		public String TokenType {
 			get;
 			set;
@@ -59,7 +59,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Gets or sets the token algorithms.
 		/// </summary>
 		/// <value>The token algorithms.</value>
-		[XmlElement("tokenAlg")]
+		[XmlElement("tokenAlg"), JsonIgnore]
 		public List<String> TokenAlgorithms {
 			get;
 			set;
@@ -69,7 +69,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Gets or sets the token symmetric secrets.
 		/// </summary>
 		/// <value>The token symmetric secrets.</value>
-		[XmlElement("secret")]
+		[XmlElement("secret"), JsonIgnore]
 		public List<Byte[]> TokenSymmetricSecrets
 		{
 			get;set;
@@ -89,7 +89,7 @@ namespace OpenIZ.Mobile.Core.Configuration
 		/// Sets the device secret.
 		/// </summary>
 		/// <value>The device secret.</value>
-		[XmlElement("deviceSecret")]
+		[XmlElement("deviceSecret"), JsonIgnore]
 		public String DeviceSecret {
 			get;
 			set;
@@ -98,13 +98,29 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// <summary>
         /// Gets or sets teh device certificate
         /// </summary>
-        [XmlElement("deviceCertificate")]
+        [XmlElement("deviceCertificate"), JsonIgnore]
         public ServiceCertificateConfiguration DeviceCertificate { get; set; }
 
         /// <summary>
         /// Audit retention
         /// </summary>
-        [XmlElement("auditRetention")]
+        [XmlElement("auditRetention"), JsonProperty("auditRetention")]
+        public String AuditRetentionXml
+        {
+            get
+            {
+                return this.AuditRetention?.ToString();
+            }
+            set
+            {
+                this.AuditRetention = TimeSpan.Parse(value);
+            }
+        }
+
+        /// <summary>
+        /// Audit retention
+        /// </summary>
+        [XmlIgnore, JsonIgnore]
         public TimeSpan? AuditRetention { get; set; }
 
     }

@@ -294,8 +294,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
-                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Receiver].player=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&classConcept=ca44a469-81d7-4484-9189-ca1d55afecbc&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Destination].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
                                         //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "SubstanceAdministration":
@@ -304,7 +304,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "TextObservation":
                                     case "PatientEncounter":
                                         syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[PrimaryInformationRecipient].player=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":
                                         if (syncSetting.Filters.Count == 0)
@@ -360,6 +360,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(PlainTextPasswordHasher).AssemblyQualifiedName);
                     break;
             }
+
+            // Audit retention.
+            ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().AuditRetention = TimeSpan.Parse(optionObject["security"]["auditRetention"].Value<String>());
 
             // Proxy
             if (optionObject["network"]["useProxy"].Value<Boolean>())

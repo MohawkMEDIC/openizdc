@@ -557,7 +557,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
 
             // Write asset
             var content = appletManagerService.Applets.RenderAssetContent(navigateAsset, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-            response.OutputStream.Write(content, 0, content.Length);
+            response.AddHeader("Content-Encoding", "deflate");
+            using (var gzs = new DeflateStream(response.OutputStream, CompressionMode.Compress))
+                gzs.Write(content, 0, content.Length);
 
         }
 

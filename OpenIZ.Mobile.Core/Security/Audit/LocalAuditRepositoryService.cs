@@ -343,6 +343,10 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                         foreach(var ao in audit.AuditableObjects)
                         {
                             var dbAo = this.m_mapper.MapModelInstance<AuditableObject, DbAuditObject>(ao);
+                            dbAo.IDTypeCode = (int)(ao.IDTypeCode ?? 0);
+                            dbAo.LifecycleType = (int)(ao.LifecycleType ?? 0);
+                            dbAo.Role = (int)(ao.Role ?? 0);
+                            dbAo.Type = (int)(ao.Type);
                             dbAo.AuditId = dbAudit.Id;
                             dbAo.Id = Guid.NewGuid().ToByteArray();
                             conn.Insert(dbAo);
