@@ -356,7 +356,6 @@ a.not-active {
 }
 .label{
     border-radius: 12px;
-    padding: 4px 12px;
 }
 
 .label-large{
@@ -796,6 +795,17 @@ body{
     box-shadow: none !important;
     z-index: 25;
 }
+.padding-id-header{
+    margin-bottom: 5px;
+}
+.hide-text-header{
+    display: block;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 3em;
+    line-height: 1em;
+}
 .button-icon-text{
     padding-left: 40px;
 }
@@ -917,10 +927,6 @@ body{
     text-align: right;
     font-size: 14px;
     white-space: nowrap;
-}
-.mother-info-item{
-    border-left: solid 2px;
-    padding-left: 5px;
 }
 @media screen and (max-width: 605px){
     .nav-tabs>li>a {
