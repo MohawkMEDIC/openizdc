@@ -42,9 +42,10 @@
                             <label class="control control--checkbox">
                                 <input type="checkbox"
                                         ng-model="sequence._enabled"
-                                        ng-disabled="!(event[sequence.doseSequence - 1] == null || event[sequence.doseSequence - 1]._enabled == 1) || sequence.moodConcept.toUpperCase() == 'EC74541F-87C4-4327-A4B9-97F325501747' || sequence.startTime > $root.page.maxEventTime ? 'disabled' : null"
-                                        value="1"
-                                        name="tetanusImmunity" />
+                                        ng-change="vaccinationCheck(event, sequence, $index)"
+                                        ng-disabled="vaccinationCheckDisabled(event, sequence, $index)"
+                                        value="false"
+                                        name="enabledImmunization-{{antigen}}-{{$index}}" />
                                 <div class="control__indicator control__indicator_alt"></div>
                             </label>
                             

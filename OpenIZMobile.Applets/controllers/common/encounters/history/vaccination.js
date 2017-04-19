@@ -23,7 +23,7 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('VaccinationHistoryController', ['$scope', function($scope) {
+layoutApp.controller('VaccinationHistoryController', ['$scope','$rootScope', function($scope, $rootScope) {
     //    $('.oiz-vaccination-history').each(function (i, e) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();
@@ -33,10 +33,33 @@ layoutApp.controller('VaccinationHistoryController', ['$scope', function($scope)
     scope.patient = scope.patient || new OpenIZModel.Patient({});
     scope.patient.participation = scope.patient.participation || {};
     scope.display = scope.display || {};
-
+    scope.vaccinationCheck = vaccinationCheck;
+    scope.vaccinationCheckDisabled = vaccinationCheckDisabled;
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
+
+    function vaccinationCheck(event, sequence, currentIndex) {
+        if (!sequence._enabled) {
+            for (var i = currentIndex+1; i < event.length; i++) {
+                event[i]._enabled = false;
+            }
+        }
+    }
+
+    function vaccinationCheckDisabled(event, sequence, currentIndex) {
+        if (sequence.moodConcept === OpenIZModel.ActMoodKeys.Eventoccurrence || (sequence.startTime > $rootScope.page.maxEventTime)) {
+            return true;
+        }
+        if (currentIndex > 0 && event[currentIndex - 1] !== null) {
+            for (var i = currentIndex - 1; i >= 0; i--) {
+                if (event[i] !== null && !event[i]._enabled) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     scope.$watch(function (s) { return s.patient.participation }, function (newValue, oldValue) {
         scope.display._vaccineAdministrations = {};
