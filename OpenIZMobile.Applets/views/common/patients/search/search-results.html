@@ -44,7 +44,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.names' | i18n }}
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-9 search-results-name">
                                 {{ patient.name.OfficialRecord | oizEntityName }}
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
-                            <div class="col-xs-9 no-padding-right">
+                            <div class="col-xs-9 no-padding-right search-result-id">
                                 <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
                                     <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
                                     <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ id.authority.name }}</span><br /></span>
