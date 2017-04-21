@@ -280,14 +280,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (retVal.Participations != null)
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     new List<ActParticipation>(),
-                    retVal.Participations,
+                    retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
 
             if (retVal.Relationships != null)
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     new List<ActRelationship>(),
-                    retVal.Relationships,
+                    retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
 
@@ -367,14 +367,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (retVal.Participations != null)
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     context.Connection.Table<DbActParticipation>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList(),
-                    retVal.Participations,
+                    retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
 
             if (retVal.Relationships != null)
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     context.Connection.Table<DbActRelationship>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActRelationship, ActRelationship>(o)).ToList(),
-                    retVal.Relationships,
+                    retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
 

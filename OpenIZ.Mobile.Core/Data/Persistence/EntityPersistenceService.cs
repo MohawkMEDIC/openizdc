@@ -330,7 +330,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships.Where(o=>!o.InversionIndicator).ToList(),
+                    data.Relationships.Where(o=>!o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
 
@@ -438,7 +438,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Relationships != null)
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
-                    data.Relationships.Where(o => !o.InversionIndicator).ToList(),
+                    data.Relationships.Where(o => !o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
 

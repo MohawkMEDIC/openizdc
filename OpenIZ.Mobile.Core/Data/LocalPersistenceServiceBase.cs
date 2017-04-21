@@ -111,10 +111,26 @@ namespace OpenIZ.Mobile.Core.Data
         public event EventHandler<DataQueryEventArgsBase<TData>> Querying;
 
         /// <summary>
+        /// Fire inserting event
+        /// </summary>
+        protected void FireInserting(DataPersistencePreEventArgs<TData> evt)
+        {
+            this.Inserting?.Invoke(this, evt);
+        }
+
+        /// <summary>
+        /// Fire inserting event
+        /// </summary>
+        protected void FireInserted(DataPersistenceEventArgs<TData> evt)
+        {
+            this.Inserted?.Invoke(this, evt);
+        }
+
+        /// <summary>
         /// Creates the connection.
         /// </summary>
         /// <returns>The connection.</returns>
-        private LocalDataContext CreateConnection()
+        protected LocalDataContext CreateConnection()
         {
             return new LocalDataContext(SQLiteConnectionManager.Current.GetConnection(ApplicationContext.Current.Configuration.GetConnectionString(m_configuration.MainDataSourceConnectionStringName).Value));
         }
@@ -123,7 +139,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Insert the specified data.
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Insert(TData data)
+        public virtual TData Insert(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -185,7 +201,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Update the specified data
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Update(TData data)
+        public virtual TData Update(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -248,7 +264,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Obsolete the specified identified data
         /// </summary>
         /// <param name="data">Data.</param>
-        public TData Obsolete(TData data)
+        public virtual TData Obsolete(TData data)
         {
             if (data == null)
                 throw new ArgumentNullException(nameof(data));
@@ -312,7 +328,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Get the specified key.
         /// </summary>
         /// <param name="key">Key.</param>
-        public TData Get(Guid key)
+        public virtual TData Get(Guid key)
         {
             if (key == Guid.Empty) return null;
             var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
@@ -339,7 +355,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
+        public virtual System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query)
         {
             int totalResults = 0;
             return this.Query(query, 0, null, out totalResults, Guid.Empty, false, false);
@@ -349,7 +365,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+        public virtual System.Collections.Generic.IEnumerable<TData> Query(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
             return this.Query(query, offset, count, out totalResults, queryId, true, false);
         }
@@ -358,7 +374,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> QueryFast(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
+        public virtual System.Collections.Generic.IEnumerable<TData> QueryFast(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId)
         {
             return this.Query(query, offset, count, out totalResults, queryId, true, true);
         }
@@ -367,7 +383,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// Query the specified data
         /// </summary>
         /// <param name="query">Query.</param>
-        public System.Collections.Generic.IEnumerable<TData> QueryExplicitLoad(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<String> expandProperties)
+        public virtual System.Collections.Generic.IEnumerable<TData> QueryExplicitLoad(System.Linq.Expressions.Expression<Func<TData, bool>> query, int offset, int? count, out int totalResults, Guid queryId, IEnumerable<String> expandProperties)
         {
             return this.Query(query, offset, count, out totalResults, queryId, true, true, expandProperties);
         }
@@ -719,7 +735,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Insert the specified object
         /// </summary>
-        public object Insert(object data)
+        public virtual object Insert(object data)
         {
             return this.Insert(data as TData);
         }
@@ -727,7 +743,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Update the specified object
         /// </summary>
-        public object Update(object data)
+        public virtual object Update(object data)
         {
             return this.Update(data as TData);
         }
@@ -735,7 +751,7 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Obsoletes the specified data
         /// </summary>
-        public object Obsolete(object data)
+        public virtual object Obsolete(object data)
         {
             return this.Obsolete(data as TData);
         }

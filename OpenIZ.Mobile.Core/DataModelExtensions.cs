@@ -134,17 +134,17 @@ namespace OpenIZ.Mobile.Core
                 else if (context.Connection.IsInTransaction) return;
 
 #if DEBUG
-            /*
-             * Me neez all the timez
+                /*
+                 * Me neez all the timez
 
-               /\_/\
-               >^.^<.---.
-              _'-`-'     )\
-             (6--\ |--\ (`.`-.
-                 --'  --'  ``-'
-            */
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+                   /\_/\
+                   >^.^<.---.
+                  _'-`-'     )\
+                 (6--\ |--\ (`.`-.
+                     --'  --'  ``-'
+                */
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
 #endif
 
                 // Cache get classification property - thiz makez us fasters
@@ -235,8 +235,8 @@ namespace OpenIZ.Mobile.Core
 
                 }
 #if DEBUG
-            sw.Stop();
-            s_tracer.TraceVerbose("Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
+                sw.Stop();
+                s_tracer.TraceVerbose("Load associations for {0} took {1} ms", me, sw.ElapsedMilliseconds);
 #endif
 
                 me.LoadState = LoadState.FullLoad;
@@ -248,7 +248,7 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context, bool forceFromDisk = false)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context)
         {
 
             // Is there a classifier?
@@ -258,16 +258,11 @@ namespace OpenIZ.Mobile.Core
             //    System.Diagnostics.Debugger.Break();
 
             IIdentifiedEntity existing = null;
-            if (!forceFromDisk)
-            {
-                if (me.Key != null)
-                    existing = context.TryGetCacheItem(me.Key.Value);
-                if (existing != null) return existing;
-                else if (!context.Connection.IsInTransaction)
-                    existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
-            }
-            else
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.GetType(), me.Key.Value);
+            if (me.Key != null)
+                existing = context.TryGetCacheItem(me.Key.Value);
+            if (existing != null) return existing;
+            else if (!context.Connection.IsInTransaction)
+                existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
 
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)

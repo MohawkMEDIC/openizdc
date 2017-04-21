@@ -154,37 +154,37 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
-            SqlStatement sql = new SqlStatement<DbActParticipation>().SelectFrom()
-               .Where<DbActParticipation>(o => o.ActUuid == source )
-               .Limit(1).Build();
+            //SqlStatement sql = new SqlStatement<DbActParticipation>().SelectFrom()
+            //   .Where<DbActParticipation>(o => o.ActUuid == source )
+            //   .Limit(1).Build();
 
-            IEnumerable<DbActParticipation> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActParticipation>;
-            if (dbrelationships == null) { 
-                dbrelationships = context.Connection.Query<DbActParticipation>(sql.SQL, sql.Arguments.ToArray()).ToList();
-                context.AddData($"EX{sql.ToString()}", dbrelationships);
-            }
+            //IEnumerable<DbActParticipation> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActParticipation>;
+            //if (dbrelationships == null) { 
+            //    dbrelationships = context.Connection.Query<DbActParticipation>(sql.SQL, sql.Arguments.ToArray()).ToList();
+            //    context.AddData($"EX{sql.ToString()}", dbrelationships);
+            //}
 
-            var existing = dbrelationships.FirstOrDefault(
-                    o => o.ParticipationRoleUuid == typeKey &&
-                    o.EntityUuid == target);
+            //var existing = dbrelationships.FirstOrDefault(
+            //        o => o.ParticipationRoleUuid == typeKey &&
+            //        o.EntityUuid == target);
 
-            if (existing == null)
-            {
-                var retVal = base.InsertInternal(context, data);
-                (dbrelationships as List<DbActParticipation>).Add(new DbActParticipation()
-                {
-                    Uuid = retVal.Key.Value.ToByteArray(),
-                    ParticipationRoleUuid = typeKey,
-                    ActUuid = source,
-                    EntityUuid = target
-                });
-                return retVal;
-            }
-            else
-            {
-                data.Key = new Guid(existing.Uuid);
-                return data;
-            }
+            //if (existing == null)
+            //{
+            return base.InsertInternal(context, data);
+            //    (dbrelationships as List<DbActParticipation>).Add(new DbActParticipation()
+            //    {
+            //        Uuid = retVal.Key.Value.ToByteArray(),
+            //        ParticipationRoleUuid = typeKey,
+            //        ActUuid = source,
+            //        EntityUuid = target
+            //    });
+            //    return retVal;
+            //}
+            //else
+            //{
+            //    data.Key = new Guid(existing.Uuid);
+            //    return data;
+            //}
         }
 
         /// <summary>
@@ -200,6 +200,33 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.ActKey = data.Act?.Key ?? data.ActKey;
 
             return base.UpdateInternal(context, data);
+        }
+
+        /// <summary>
+        /// Comparer for entity relationships
+        /// </summary>
+        internal class Comparer : IEqualityComparer<ActParticipation>
+        {
+            /// <summary>
+            /// Determine equality between the two relationships
+            /// </summary>
+            public bool Equals(ActParticipation x, ActParticipation y)
+            {
+                return x.SourceEntityKey == y.SourceEntityKey &&
+                    x.PlayerEntityKey == y.PlayerEntityKey &&
+                    x.ParticipationRoleKey == y.ParticipationRoleKey;
+            }
+
+            /// <summary>
+            /// Get hash code
+            /// </summary>
+            public int GetHashCode(ActParticipation obj)
+            {
+                int result = obj.SourceEntityKey.GetHashCode();
+                result = 37 * result + obj.PlayerEntityKey.GetHashCode();
+                result = 37 * result + obj.ParticipationRoleKey.GetHashCode();
+                return result;
+            }
         }
     }
 }

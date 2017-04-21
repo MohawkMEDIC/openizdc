@@ -36,7 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class ActRelationshipPersistenceService : IdentifiedPersistenceService<ActRelationship, DbActRelationship>, ILocalAssociativePersistenceService
     {
-       
+
         /// <summary>
         /// Create DbActParticipation from modelinstance
         /// </summary>
@@ -66,7 +66,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         protected override ActRelationship InsertInternal(LocalDataContext context, ActRelationship data)
         {
             // Ensure we haven't already persisted this
-            if(data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
+            if (data.TargetAct != null) data.TargetAct = data.TargetAct.EnsureExists(context);
             data.TargetActKey = data.TargetAct?.Key ?? data.TargetActKey;
             if (data.RelationshipType != null) data.RelationshipType = data.RelationshipType.EnsureExists(context);
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
@@ -75,37 +75,37 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom()
-                .Where<DbActRelationship>(o => o.SourceUuid == source)
-                .Limit(1).Build();
+            //SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom()
+            //    .Where<DbActRelationship>(o => o.SourceUuid == source)
+            //    .Limit(1).Build();
 
-            IEnumerable<DbActRelationship> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActRelationship>;
-            if (dbrelationships == null)
-            {
-                dbrelationships = context.Connection.Query<DbActRelationship>(sql.SQL, sql.Arguments.ToArray()).ToList();
-                context.AddData($"EX{sql.ToString()}", dbrelationships);
-            }
-            var existing = dbrelationships.FirstOrDefault(
-                    o => o.RelationshipTypeUuid == typeKey &&
-                    o.TargetUuid == target);
+            //IEnumerable<DbActRelationship> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActRelationship>;
+            //if (dbrelationships == null)
+            //{
+            //    dbrelationships = context.Connection.Query<DbActRelationship>(sql.SQL, sql.Arguments.ToArray()).ToList();
+            //    context.AddData($"EX{sql.ToString()}", dbrelationships);
+            //}
+            //var existing = dbrelationships.FirstOrDefault(
+            //        o => o.RelationshipTypeUuid == typeKey &&
+            //        o.TargetUuid == target);
 
-            if (existing == null)
-            {
-                var retVal = base.InsertInternal(context, data);
-                (dbrelationships as List<DbActRelationship>).Add(new DbActRelationship()
-                {
-                    Uuid = retVal.Key.Value.ToByteArray(),
-                    RelationshipTypeUuid = typeKey,
-                    SourceUuid = source,
-                    TargetUuid = target
-                });
-                return retVal;
-            }
-            else
-            {
-                data.Key = new Guid(existing.Uuid);
-                return data;
-            }
+            //if (existing == null)
+            //{
+            return base.InsertInternal(context, data);
+            //    (dbrelationships as List<DbActRelationship>).Add(new DbActRelationship()
+            //    {
+            //        Uuid = retVal.Key.Value.ToByteArray(),
+            //        RelationshipTypeUuid = typeKey,
+            //        SourceUuid = source,
+            //        TargetUuid = target
+            //    });
+            //    return retVal;
+            //}
+            //else
+            //{
+            //    data.Key = new Guid(existing.Uuid);
+            //    return data;
+            //}
         }
 
         /// <summary>
@@ -119,6 +119,33 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.RelationshipTypeKey = data.RelationshipType?.Key ?? data.RelationshipTypeKey;
 
             return base.UpdateInternal(context, data);
+        }
+
+        /// <summary>
+        /// Comparer for entity relationships
+        /// </summary>
+        internal class Comparer : IEqualityComparer<ActRelationship>
+        {
+            /// <summary>
+            /// Determine equality between the two relationships
+            /// </summary>
+            public bool Equals(ActRelationship x, ActRelationship y)
+            {
+                return x.SourceEntityKey == y.SourceEntityKey &&
+                    x.TargetActKey == y.TargetActKey &&
+                    x.RelationshipTypeKey == y.RelationshipTypeKey;
+            }
+
+            /// <summary>
+            /// Get hash code
+            /// </summary>
+            public int GetHashCode(ActRelationship obj)
+            {
+                int result = obj.SourceEntityKey.GetHashCode();
+                result = 37 * result + obj.RelationshipTypeKey.GetHashCode();
+                result = 37 * result + obj.TargetActKey.GetHashCode();
+                return result;
+            }
         }
     }
 }
