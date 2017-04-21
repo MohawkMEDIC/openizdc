@@ -148,6 +148,10 @@ namespace OpenIZ.Mobile.Core.Caching
             if (idData == null || !idData.Key.HasValue)
                 return;
 
+            //if (idData.Key?.ToString() == "e4d3350b-b0f5-45c1-80ba-49e3844cbcc8" ||
+            //    idData.Key?.ToString() == "663f0245-744e-408c-aa04-bba7183cbe10")
+            //    System.Diagnostics.Debugger.Break();
+
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {

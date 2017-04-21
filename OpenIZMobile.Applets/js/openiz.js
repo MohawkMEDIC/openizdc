@@ -989,6 +989,8 @@ var OpenIZ = OpenIZ || {
                 }
                 return nameStr;
             }
+            else if(typeof (entityName) === "string")
+                return entityName;
             else
                 return "";
         },

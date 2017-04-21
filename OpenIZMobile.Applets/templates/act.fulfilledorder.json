@@ -1,6 +1,6 @@
 ﻿{
   "$type": "Act",
-  "template": {
+  "templateModel": {
     "mnemonic": "Act.FulfilledOrder"
   },
   "moodConcept": "ec74541f-87c4-4327-a4b9-97f325501747",

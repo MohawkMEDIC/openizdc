@@ -89,6 +89,14 @@ namespace DisconnectedClient
         }
 
         /// <summary>
+        /// Show toast
+        /// </summary>
+        public override void ShowToast(string subject)
+        {
+            
+        }
+
+        /// <summary>
         /// Get the configuration
         /// </summary>
         public override OpenIZConfiguration Configuration

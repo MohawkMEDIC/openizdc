@@ -67,7 +67,10 @@ namespace OpenIZ.Mobile.Core.Alerting
 				if (args.Ignore)
 					return;
 
-				this.Save(msg);
+                if (msg.Flags == AlertMessageFlags.Transient)
+                    ApplicationContext.Current.ShowToast(msg.Subject);
+                else
+				    this.Save(msg);
 
 				// Committed
 				this.Committed?.BeginInvoke(this, args, null, null);

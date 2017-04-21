@@ -1,6 +1,6 @@
 ﻿{
   "$type": "Act",
-  "template": {
+  "templateModel": {
     "mnemonic": "Act.CountStock"
   },
   "typeConcept": "63ae8c25-d607-4382-a704-63a6b6930faf",

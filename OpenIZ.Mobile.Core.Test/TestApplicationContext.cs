@@ -50,6 +50,10 @@ namespace OpenIZ.Mobile.Core.Test
         private OpenIZConfiguration m_configuration;
         private TestContext m_context;
 
+        public override void ShowToast(string subject)
+        {
+        }
+
         /// <summary>
         /// Gets or sets the unit test context
         /// </summary>

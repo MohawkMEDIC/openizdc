@@ -79,6 +79,10 @@ namespace OpenIZ.Mobile.Core
         // Fired when application wishes to show progress of some sort
         public static event EventHandler<ApplicationProgressEventArgs> ProgressChanged;
 
+        /// <summary>
+        /// Shows a toast on the application context
+        /// </summary>
+        public abstract void ShowToast(string subject);
 
         /// <summary>
         /// Fired when the application is starting

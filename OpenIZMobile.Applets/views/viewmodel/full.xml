@@ -126,6 +126,7 @@
     <property name="classConcept" behavior="never"/>
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
+    <property name="tag" all="true" behavior="always"/>
     <property name="genderConceptModel" behavior="always" ref="Concept"/>
     <property name="identifier" behavior="always" ref="EntityIdentifier">
       <property name="*" all="true">

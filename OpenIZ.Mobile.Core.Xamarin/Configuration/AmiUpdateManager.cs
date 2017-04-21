@@ -145,30 +145,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
             this.Starting?.Invoke(this, EventArgs.Empty);
 
             // Check for updates
-            try
+            ApplicationContext.Current.Started += (o, e) =>
             {
-                if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
+                try
                 {
-                    ApplicationContext.Current.SetProgress(Strings.locale_updateCheck, 0.5f);
-
-                    // Check for new applications
-                    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
-                    amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-
-                    foreach (var i in amiClient.GetApplets().CollectionItem)
+                    if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkAvailable)
                     {
-                        var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
-                        if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
-                            ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
-                            this.Install(i.AppletInfo.Id);
+                        ApplicationContext.Current.SetProgress(Strings.locale_updateCheck, 0.5f);
+
+                        // Check for new applications
+                        var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+                        amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+
+                        foreach (var i in amiClient.GetApplets().CollectionItem)
+                        {
+                            var installed = ApplicationContext.Current.GetService<IAppletManagerService>().GetApplet(i.AppletInfo.Id);
+                            if (installed == null || new Version(installed.Info.Version) < new Version(i.AppletInfo.Version) &&
+                                ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>().AutoUpdateApplets)
+                                this.Install(i.AppletInfo.Id);
 
 
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                this.m_tracer.TraceError("Error checking for updates: {0}", ex);
+                catch (Exception ex)
+                {
+                    this.m_tracer.TraceError("Error checking for updates: {0}", ex);
+                };
             };
 
             this.Started?.Invoke(this, EventArgs.Empty);

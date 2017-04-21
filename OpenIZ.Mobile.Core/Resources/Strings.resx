@@ -124,7 +124,7 @@
     <value>The server has a newer version of the object you're trying to update</value>
   </data>
   <data name="locale_downloadError" xml:space="preserve">
-    <value>Error Downloading Remote Data</value>
+    <value>Remote downloads are temporarily not working</value>
   </data>
   <data name="locale_downloadErrorBody" xml:space="preserve">
     <value>There was an error downloading the specified resources: {0}</value>
@@ -171,7 +171,7 @@
     <value>Installing Tables</value>
   </data>
   <data name="locale_startingPoll" xml:space="preserve">
-    <value>Initiating pull request...</value>
+    <value>Executing pull request...</value>
   </data>
   <data name="locale_start_careplan" xml:space="preserve">
     <value>Starting care plan manager service...</value>

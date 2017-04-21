@@ -90,7 +90,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             }
 
 
-            retVal.LoadAssociations(context);
+            retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Entities.Entity.Extensions),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Notes),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Participations),
+                nameof(OpenIZ.Core.Model.Entities.Entity.Telecoms),
+                nameof(OpenIZ.Core.Model.Entities.UserEntity.SecurityUser)
+                );
+
             //if (!loadFast)
             //{
             //    foreach (var itm in retVal.Relationships.Where(o => !o.InversionIndicator && o.TargetEntity == null))

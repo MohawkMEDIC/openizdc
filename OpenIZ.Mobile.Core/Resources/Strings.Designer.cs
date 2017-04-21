@@ -134,7 +134,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error Downloading Remote Data.
+        ///   Looks up a localized string similar to Remote downloads are temporarily not working.
         /// </summary>
         internal static string locale_downloadError {
             get {
@@ -325,7 +325,7 @@ namespace OpenIZ.Mobile.Core.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Initiating pull request....
+        ///   Looks up a localized string similar to Executing pull request....
         /// </summary>
         internal static string locale_startingPoll {
             get {

@@ -1,6 +1,6 @@
 ﻿{
   "$type": "Act",
-  "template": {
+  "templateModel": {
     "mnemonic": "Act.NewOrder"
   },
   "moodConcept": "e658ca72-3b6a-4099-ab6e-7cf6861a5b61",

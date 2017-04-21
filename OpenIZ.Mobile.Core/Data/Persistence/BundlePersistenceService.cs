@@ -74,7 +74,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var svc = ApplicationContext.Current.GetService(idp);
                 String method = "Insert";
-                if (itm.TryGetExisting(context) != null)
+                if (itm.TryGetExisting(context, true) != null)
                     method = "Update";
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(LocalDataContext), itm.GetType() });
                 data.Item[i] = mi.Invoke(svc, new object[] { context, itm }) as IdentifiedData;

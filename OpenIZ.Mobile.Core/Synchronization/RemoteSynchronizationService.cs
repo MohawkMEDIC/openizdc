@@ -166,15 +166,20 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (!this.m_integrationService.IsAvailable()) return;
 
                         int totalResults = 0;
-                        foreach (var syncResource in this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & trigger) != 0))
+                        var syncTargets = this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & trigger) != 0).ToList();
+                        for(var i = 0; i < syncTargets.Count; i++)
                         {
 
+                            var syncResource = syncTargets[i];
+
+                            ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, (float)i / syncTargets.Count);
                             foreach (var fltr in syncResource.Filters)
                                 totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
                             if (syncResource.Filters.Count == 0)
                                 totalResults += this.Pull(syncResource.ResourceType);
 
                         }
+                        ApplicationContext.Current.SetProgress(String.Empty, 0);
 
                         // Pull complete?
                         if (totalResults > 0 && initialSync)
@@ -328,7 +333,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 var e = ex.InnerException;
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
                 this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
                 return 0;
@@ -338,7 +343,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             {
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
                 var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.System));
+                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
                 this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
                 return 0;

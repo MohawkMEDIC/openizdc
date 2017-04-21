@@ -250,6 +250,8 @@ namespace OpenIZ.Mobile.Core.Caching
 			this.m_mappingHandler = null;
 			this.m_mappedHandler = null;
 
+            MemoryCache.Current.Clear();
+
 			this.Stopped?.Invoke(this, EventArgs.Empty);
 			return true;
 		}

@@ -177,6 +177,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             try
                             {
                                 this.m_tracer.TraceError("Error processing inbound queue entry: {0}", e);
+                                //this.CreateUserAlert(Strings.locale_importErrorSubject, Strings.locale_importErrorBody, )
                                 SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(queueEntry, Encoding.UTF8.GetBytes(e.ToString())) { OriginalQueue = "inbound" });
                             }
                             catch (Exception e2)

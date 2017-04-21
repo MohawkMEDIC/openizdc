@@ -122,7 +122,7 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Load specified associations
         /// </summary>
-        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context) where TModel : IIdentifiedEntity
+        public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context, params string[] excludeProperties) where TModel : IIdentifiedEntity
         {
             using (context.Connection.Lock())
             {
@@ -190,6 +190,8 @@ namespace OpenIZ.Mobile.Core
                 foreach (var pi in properties)
                 {
 
+                    if (excludeProperties?.Contains(pi.Name) == true)
+                        continue;
                     // Map model type to domain
                     var adoPersister = LocalPersistenceService.GetPersister(pi.PropertyType.StripGeneric());
 
@@ -246,16 +248,26 @@ namespace OpenIZ.Mobile.Core
         /// <summary>
         /// Try get by classifier
         /// </summary>
-        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context)
+        public static IIdentifiedEntity TryGetExisting(this IIdentifiedEntity me, LocalDataContext context, bool forceFromDisk = false)
         {
 
             // Is there a classifier?
             var idpInstance = LocalPersistenceService.GetPersister(me.GetType()) as ILocalPersistenceService;
 
+            //if (me.Key?.ToString() == "e4d3350b-b0f5-45c1-80ba-49e3844cbcc8")
+            //    System.Diagnostics.Debugger.Break();
+
             IIdentifiedEntity existing = null;
-            if (me.Key != null)
-                existing = context.TryGetCacheItem(me.Key.Value) ?? context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
-            if (existing != null) return existing;
+            if (!forceFromDisk)
+            {
+                if (me.Key != null)
+                    existing = context.TryGetCacheItem(me.Key.Value);
+                if (existing != null) return existing;
+                else if (!context.Connection.IsInTransaction)
+                    existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
+            }
+            else
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.GetType(), me.Key.Value);
 
             // Is the key not null?
             if (me.Key != Guid.Empty && me.Key != null)
@@ -296,6 +308,7 @@ namespace OpenIZ.Mobile.Core
 
             if (existing != null && me.Key.HasValue)
                 context.AddData(me.Key.Value.ToString(), existing);
+
             return existing;
 
         }

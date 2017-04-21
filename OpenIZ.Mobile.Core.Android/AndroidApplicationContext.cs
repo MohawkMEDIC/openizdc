@@ -367,7 +367,6 @@ namespace OpenIZ.Mobile.Core.Android
             }
         }
 
-        
         /// <summary>
         /// Close 
         /// </summary>
@@ -410,6 +409,15 @@ namespace OpenIZ.Mobile.Core.Android
 
             evt.WaitOne();
             return result;
+        }
+
+
+        /// <summary>
+        /// show toast
+        /// </summary>
+        public override void ShowToast(String message)
+        {
+            A.Widget.Toast.MakeText(this.CurrentActivity, message, A.Widget.ToastLength.Long);
         }
 
         /// <summary>

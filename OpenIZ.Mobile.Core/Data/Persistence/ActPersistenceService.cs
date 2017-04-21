@@ -142,7 +142,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 };
             }
 
-            retVal.LoadAssociations(context);
+            retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
+                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
+                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
+                nameof(OpenIZ.Core.Model.Acts.Act.Notes),
+                nameof(OpenIZ.Core.Model.Acts.Act.Policies)
+                );
 
             return retVal;
         }

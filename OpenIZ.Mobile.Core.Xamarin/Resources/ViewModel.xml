@@ -406,7 +406,7 @@
           <property name="relationshipTypeModel" behavior="never"/>
           <property name="holderModel" behavior="never"/>
           <property name="target" all="false"/>
-          <property name="relationshipType" all="false"/>
+          <property name="relationshipType" behavior="never" all="false"/>
           <property name="holder" all="false"/>
           <property name="targetModel" all="false" behavior="always">
             <property name="id" all="false"/>

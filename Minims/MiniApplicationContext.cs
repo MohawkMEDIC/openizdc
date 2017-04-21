@@ -78,6 +78,14 @@ namespace Minims
         }
 
         /// <summary>
+        /// Show toast
+        /// </summary>
+        public override void ShowToast(string subject)
+        {
+            Console.WriteLine("TOAST >>>> {0}", subject);
+        }
+
+        /// <summary>
         /// Get the configuration
         /// </summary>
         public override OpenIZConfiguration Configuration
