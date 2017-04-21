@@ -615,8 +615,8 @@ body{
     padding-right: 40px;
 }
 
-.search-result-id {
-    height: 100%;
+.search-result-field {
+    min-height: 100%;
 }
 
 .search-results-tile-counter{

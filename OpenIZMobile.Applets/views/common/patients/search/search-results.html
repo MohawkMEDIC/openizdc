@@ -44,7 +44,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.names' | i18n }}
                             </div>
-                            <div class="col-xs-9 search-results-name">
+                            <div class="col-xs-9 search-result-field search-results-name">
                                 {{ patient.name.OfficialRecord | oizEntityName }}
                             </div>
                         </div>
@@ -53,7 +53,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.mother' | i18n }}
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-9 search-result-field">
                                 <span ng-if="patient.relationship.Mother.targetModel">
                                     {{ patient.relationship.Mother.targetModel.name.OfficialRecord | oizEntityName }}
                                 </span>
@@ -67,7 +67,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
                             </div>
-                            <div class="col-xs-9 no-padding-right search-result-id">
+                            <div class="col-xs-9 no-padding-right search-result-field">
                                 <div ng-repeat="(dmn, id) in patient.identifier" class="patient-id-wrapper">
                                     <span ng-if="id.length == null">{{ id.value }} <span class="label label-info">{{ id.authority.name }}</span></span>
                                     <span ng-if="id.length != null" ng-repeat="i in id">{{ i.value }} <span class="label label-info">{{ id.authority.name }}</span><br /></span>
@@ -79,11 +79,11 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
                             </div>
-                            <div class="col-xs-9" ng-if="patient.dateOfBirth">
+                            <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
                                 {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
                                 <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                             </div>
-                            <div class="col-xs-9" ng-if="!patient.dateOfBirth">
+                            <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
                                 {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
@@ -92,10 +92,10 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.deceasedDate' | i18n }}
                             </div>
-                            <div class="col-xs-9" ng-if="patient.deceasedDate">
+                            <div class="col-xs-9 search-result-field" ng-if="patient.deceasedDate">
                                 {{ patient.deceasedDate | date: 'yyyy-MMM-dd' }}
                             </div>
-                            <div class="col-xs-9" ng-if="!patient.deceasedDate">
+                            <div class="col-xs-9 search-result-field" ng-if="!patient.deceasedDate">
                                 {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
@@ -104,7 +104,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.gender' | i18n }}
                             </div>
-                            <div class="col-xs-9">
+                            <div class="col-xs-9 search-result-field">
                                 {{ patient.genderConceptModel.name[$root.page.locale] }}
                             </div>
                         </div>
@@ -113,7 +113,7 @@
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.cityVillage' | i18n }}
                             </div>
-                            <div class="col-xs-9 ellipsis">
+                            <div class="col-xs-9 search-result-field ellipsis">
                                 {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
                             </div>
                         </div>
