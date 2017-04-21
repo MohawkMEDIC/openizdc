@@ -36,6 +36,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class ActParticipationPersistenceService : IdentifiedPersistenceService<ActParticipation, DbActParticipation>
     {
+
         // Role mnemonics to save from hitting the DB
         private readonly Dictionary<String, String> m_roleMnemonicDictionary = new Dictionary<String, String>() {
             { "A0174216-6439-4351-9483-A241A48029B7", "Admitter" },
@@ -153,13 +154,32 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.ParticipationRoleKey.Value.ToByteArray();
 
-            SqlStatement sql = new SqlStatement<DbActParticipation>().SelectFrom(o => o.Uuid)
-               .Where<DbActParticipation>(o => o.ActUuid == source && o.EntityUuid == target && o.ParticipationRoleUuid == typeKey)
+            SqlStatement sql = new SqlStatement<DbActParticipation>().SelectFrom()
+               .Where<DbActParticipation>(o => o.ActUuid == source )
                .Limit(1).Build();
 
-            var existing = context.Connection.Query<DbIdentified>(sql.SQL, sql.Arguments.ToArray()).FirstOrDefault();
+            IEnumerable<DbActParticipation> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActParticipation>;
+            if (dbrelationships == null) { 
+                dbrelationships = context.Connection.Query<DbActParticipation>(sql.SQL, sql.Arguments.ToArray()).ToList();
+                context.AddData($"EX{sql.ToString()}", dbrelationships);
+            }
+
+            var existing = dbrelationships.FirstOrDefault(
+                    o => o.ParticipationRoleUuid == typeKey &&
+                    o.EntityUuid == target);
+
             if (existing == null)
-                return base.InsertInternal(context, data);
+            {
+                var retVal = base.InsertInternal(context, data);
+                (dbrelationships as List<DbActParticipation>).Add(new DbActParticipation()
+                {
+                    Uuid = retVal.Key.Value.ToByteArray(),
+                    ParticipationRoleUuid = typeKey,
+                    ActUuid = source,
+                    EntityUuid = target
+                });
+                return retVal;
+            }
             else
             {
                 data.Key = new Guid(existing.Uuid);

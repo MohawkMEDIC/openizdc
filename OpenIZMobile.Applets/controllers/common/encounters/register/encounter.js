@@ -18,15 +18,43 @@
  * Date: 2016-8-17
  */
 
-/// <refernece path="~/js/openiz.js"/>
 /// <reference path="~/js/openiz-model.js"/>
+/// <refernece path="~/js/openiz-core.js"/>
+/// <refernece path="~/js/openiz.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('EncounterEntryController', ['$scope', function ($scope) {
+layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
 
     // Get the current scope that we're in
     var scope = $scope;
+
+    /** 
+     * Removes a vaccination from the overdue list
+     */
+    scope.removeOverdue = scope.removeOverdue || function (bind, afterFocus) {
+
+        var doBindMove = function () {
+            delete (bind.targetModel._overdue);
+            bind._enabled = true;
+            bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
+            bind._encounter.relationship.HasComponent.push(bind);
+            if (afterFocus)
+                $timeout(function () { $(afterFocus).focus() }, 200);
+        };
+
+        // Is there a previous or later step in the has component? if so warn
+        var laterStep = $.grep(bind._encounter.relationship.HasComponent, /** @param {OpenIZModel.Act} e */ function (e) {
+            return e.targetModel.protocol[0].protocol == bind.targetModel.protocol[0].protocol;
+        });
+        if (laterStep.length && confirm(OpenIZ.Localization.getString("locale.encounter.laterStepConflict"))) {
+            bind._encounter.relationship.HasComponent.splice($.inArray(laterStep[0], bind._encounter.relationship.HasComponent), 1);
+            doBindMove();
+        }
+        else if (!laterStep.length) {
+            doBindMove();
+        }
+    }
 
     /** 
     * Add sub-encounter sub-encounter

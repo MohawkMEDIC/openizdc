@@ -294,7 +294,7 @@ namespace OpenIZ.Mobile.Core
                     existing = idpInstance.ToModelInstance(dataObject, context) as IIdentifiedEntity;
             }
 
-            if (existing != null)
+            if (existing != null && me.Key.HasValue)
                 context.AddData(me.Key.Value.ToString(), existing);
             return existing;
 

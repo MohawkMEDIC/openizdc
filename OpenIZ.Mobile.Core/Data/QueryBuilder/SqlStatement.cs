@@ -336,7 +336,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
         private string RenderParameter(object v)
         {
             if (v is byte[])
-                return $"X'{BitConverter.ToString((byte[])v).Replace("-", "")}'";
+                return $"X'{BitConverter.ToString((byte[])v)}'";
             else if (v is Guid)
                 return $"X'{BitConverter.ToString(((Guid)v).ToByteArray()).Replace("-", "")}'";
             else if (v is String)

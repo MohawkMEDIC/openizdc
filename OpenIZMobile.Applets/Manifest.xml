@@ -131,6 +131,7 @@
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>
+    <string key="locale.action.activate">Activate</string>
     <string key="locale.action.search">Search</string>
     <string key="locale.action.confirm">Confirm</string>
     <string key="locale.action.onlineOnly">Online Only</string>

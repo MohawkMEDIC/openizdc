@@ -130,7 +130,6 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 Action<Object> pollFn = null;
                 pollFn = _ =>
                 {
-                    ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, 0.5f);
                     this.Pull(SynchronizationPullTriggerType.PeriodicPoll);
                     ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(this.m_configuration.PollInterval, pollFn, null);
 

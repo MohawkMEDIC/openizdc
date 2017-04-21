@@ -77,13 +77,32 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            SqlStatement sql = new SqlStatement<DbEntityRelationship>().SelectFrom(o=>o.Uuid)
-                .Where<DbEntityRelationship>(o => o.SourceUuid == source && o.TargetUuid == target && o.RelationshipTypeUuid == typeKey)
+            SqlStatement sql = new SqlStatement<DbEntityRelationship>().SelectFrom()
+                .Where<DbEntityRelationship>(o => o.SourceUuid == source)
                 .Limit(1).Build();
 
-            var existing = context.Connection.Query<DbIdentified>(sql.SQL, sql.Arguments.ToArray()).FirstOrDefault();
+            IEnumerable<DbEntityRelationship> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbEntityRelationship>;
+            if (dbrelationships == null) { 
+                dbrelationships = context.Connection.Query<DbEntityRelationship>(sql.SQL, sql.Arguments.ToArray()).ToList();
+                                context.AddData($"EX{sql.ToString()}", dbrelationships);
+            }
+
+            var existing = dbrelationships.FirstOrDefault(
+                    o => o.RelationshipTypeUuid == data.RelationshipTypeKey.Value.ToByteArray() &&
+                    o.TargetUuid == data.TargetEntityKey.Value.ToByteArray());
+
             if (existing == null)
-                return base.InsertInternal(context, data);
+            {
+                var retVal = base.InsertInternal(context, data);
+                (dbrelationships as List<DbEntityRelationship>).Add(new DbEntityRelationship()
+                {
+                    Uuid = retVal.Key.Value.ToByteArray(),
+                    RelationshipTypeUuid = typeKey,
+                    SourceUuid = source,
+                    TargetUuid = target
+                });
+                return retVal;
+            }
             else
             {
                 data.Key = new Guid(existing.Uuid);

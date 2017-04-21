@@ -124,7 +124,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                         var package = AppletPackage.Load(ms);
                         this.m_tracer.TraceInfo("Upgrading {0}...", package.Meta.ToString());
                         ApplicationContext.Current.GetService<IAppletManagerService>().Install(package, true);
-                        ApplicationContext.Current.Exit(); // restart
+                       // ApplicationContext.Current.Exit(); // restart
                     }
                 }
                 else

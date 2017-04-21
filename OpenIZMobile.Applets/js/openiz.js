@@ -990,7 +990,7 @@ var OpenIZ = OpenIZ || {
                 return nameStr;
             }
             else
-                return entityName;
+                return "";
         },
         /**
          * @summary Changes the specified date string into an appropriate ISO string

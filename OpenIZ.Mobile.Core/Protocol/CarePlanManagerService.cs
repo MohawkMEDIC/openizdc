@@ -490,7 +490,8 @@ namespace OpenIZ.Mobile.Core.Protocol
                     max_date = o.StopTime?.DateTime,
                     act_date = o.ActTime.DateTime,
                     product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
-                    sequence_id = o.Protocols.FirstOrDefault()?.Sequence
+                    sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
+                    dose_seq = (o as SubstanceAdministration)?.SequenceId
                 }));
 
 

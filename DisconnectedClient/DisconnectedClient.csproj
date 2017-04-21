@@ -194,7 +194,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.xml"   --keyFile="$(SolutionDir)\..\keys\org.openiz.core.pfx" --keyPassword="$(SolutionDir)\..\keys\org.openiz.core.pass" --embedCert
+    <PreBuildEvent>"C:\Program Files\OpenIZ\tools\AppletCompiler.exe" --compile -s "$(SolutionDir)OpenIZMobile.Applets" -o "$(TargetDir)\org.openiz.core.xml" 
  copy "$(TargetDir)\org.openiz.core.pak" "$(ProjectDir)\Applets\org.openiz.core.pak"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

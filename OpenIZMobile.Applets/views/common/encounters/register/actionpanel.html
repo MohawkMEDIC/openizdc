@@ -47,7 +47,7 @@
     </table>
     <div class="panel-body">
         <div class="btn-group pull-right dropdown">
-            <button type="button" class="btn btn-primary" data-toggle="dropdown"><span class="glyphicon glyphicon-plus-sign"></span><span class="caret"></span> {{ 'locale.encounters.addEntry' | i18n }}</button>
+            <button type="button" class="btn btn-primary" data-toggle="dropdown" id="actionPanelButton"><span class="glyphicon glyphicon-plus-sign"></span><span class="caret"></span> {{ 'locale.encounters.addEntry' | i18n }}</button>
             <ul class="dropdown-menu">
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.substanceadmin.immunization')">{{ 'locale.encounter.action.immunization' | i18n }}</a></li>
                 <li><a ng-click="addSubEncounter(encounter.relationship.HasComponent, 'act.observation.weight')">{{ 'locale.encounter.action.weight' | i18n }}</a></li>

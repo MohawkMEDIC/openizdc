@@ -75,13 +75,32 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 source = data.SourceEntityKey.Value.ToByteArray(),
                 typeKey = data.RelationshipTypeKey.Value.ToByteArray();
 
-            SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom(o => o.Uuid)
-                .Where<DbActRelationship>(o => o.SourceUuid == source && o.TargetUuid == target && o.RelationshipTypeUuid == typeKey)
+            SqlStatement sql = new SqlStatement<DbActRelationship>().SelectFrom()
+                .Where<DbActRelationship>(o => o.SourceUuid == source)
                 .Limit(1).Build();
 
-            var existing = context.Connection.Query<DbIdentified>(sql.SQL, sql.Arguments.ToArray()).FirstOrDefault();
+            IEnumerable<DbActRelationship> dbrelationships = context.TryGetData($"EX:{sql.ToString()}") as IEnumerable<DbActRelationship>;
+            if (dbrelationships == null)
+            {
+                dbrelationships = context.Connection.Query<DbActRelationship>(sql.SQL, sql.Arguments.ToArray()).ToList();
+                context.AddData($"EX{sql.ToString()}", dbrelationships);
+            }
+            var existing = dbrelationships.FirstOrDefault(
+                    o => o.RelationshipTypeUuid == typeKey &&
+                    o.TargetUuid == target);
+
             if (existing == null)
-                return base.InsertInternal(context, data);
+            {
+                var retVal = base.InsertInternal(context, data);
+                (dbrelationships as List<DbActRelationship>).Add(new DbActRelationship()
+                {
+                    Uuid = retVal.Key.Value.ToByteArray(),
+                    RelationshipTypeUuid = typeKey,
+                    SourceUuid = source,
+                    TargetUuid = target
+                });
+                return retVal;
+            }
             else
             {
                 data.Key = new Guid(existing.Uuid);

@@ -45,6 +45,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Protocol.Xml;
 
 namespace DisconnectedClient
 
@@ -127,6 +128,7 @@ namespace DisconnectedClient
                 StartupAsset = "org.openiz.core",
                 Security = new AppletSecurityConfiguration()
                 {
+                    AllowUnsignedApplets = true,
                     TrustedPublishers = new List<string>() { "84BD51F0584A1F708D604CF0B8074A68D3BEB973" }
                 }
             };
@@ -162,11 +164,11 @@ namespace DisconnectedClient
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
-                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(DcAppletManagerService).AssemblyQualifiedName
                 },
