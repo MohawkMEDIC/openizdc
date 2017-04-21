@@ -200,23 +200,32 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
             if (dependencies.Any())
                 throw new InvalidOperationException($"Uninstalling {packageId} would break : {String.Join(", ", dependencies.Select(o => o.Info))}");
 
+            this.UnInstallInternal(applet);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Uninstall
+        /// </summary>
+        private void UnInstallInternal(AppletManifest applet)
+        {
+
             // We're good to go!
             this.m_appletCollection.Remove(applet);
 
             var appletConfig = ApplicationContext.Current.Configuration.GetSection<AppletConfigurationSection>();
 
             // Delete the applet registration data
-            appletConfig.Applets.RemoveAll(o => o.Id == packageId);
+            appletConfig.Applets.RemoveAll(o => o.Id == applet.Info.Id);
             ApplicationContext.Current.SaveConfiguration();
 
-            if (File.Exists(Path.Combine(appletConfig.AppletDirectory, packageId)))
-                File.Delete(Path.Combine(appletConfig.AppletDirectory, packageId));
-            if (Directory.Exists(Path.Combine(appletConfig.AppletDirectory, "assets", packageId)))
-                Directory.Delete(Path.Combine(appletConfig.AppletDirectory, "assets", packageId), true);
+            if (File.Exists(Path.Combine(appletConfig.AppletDirectory, applet.Info.Id)))
+                File.Delete(Path.Combine(appletConfig.AppletDirectory, applet.Info.Id));
+            if (Directory.Exists(Path.Combine(appletConfig.AppletDirectory, "assets", applet.Info.Id)))
+                Directory.Delete(Path.Combine(appletConfig.AppletDirectory, "assets", applet.Info.Id), true);
 
             AppletCollection.ClearCaches();
-
-            return true;
         }
 
         /// <summary>
@@ -256,7 +265,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                     // Unload the loaded applet version
                     var existingApplet = this.m_appletCollection.FirstOrDefault(o => o.Info.Id == package.Meta.Id);
                     if (existingApplet != null)
-                        this.UnInstall(existingApplet.Info.Id);
+                        this.UnInstallInternal(existingApplet);
                 }
 
                 var mfst = package.Unpack();
@@ -309,6 +318,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                 // For now sign with SHA256
                 SHA256 sha = SHA256.Create();
                 package.Meta.Hash = sha.ComputeHash(File.ReadAllBytes(appletPath));
+                // HACK: Re-re-remove 
+                appletSection.Applets.RemoveAll(o => o.Id == package.Meta.Id);
                 appletSection.Applets.Add(package.Meta.AsReference());
 
                 ApplicationContext.Current.SetProgress(package.Meta.GetName("en"), 0.98f);

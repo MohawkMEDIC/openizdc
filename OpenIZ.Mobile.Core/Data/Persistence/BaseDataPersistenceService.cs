@@ -63,10 +63,10 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
-            if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
-                context.Connection.Insert(domainObject);
-            else
-                context.Connection.Update(domainObject);
+            //if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+            context.Connection.Insert(domainObject);
+            //else
+            //    context.Connection.Update(domainObject);
 
 			return data;
 		}

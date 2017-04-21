@@ -375,6 +375,7 @@ namespace OpenIZ.Mobile.Core.Android
         {
             A.App.Application.SynchronizationContext.Post(_ =>
             {
+                this.m_tracer.TraceWarning("Restarting application context");
                 ApplicationContext.Current.Stop();
                 (this.Context as Activity).Finish();
             }, null);

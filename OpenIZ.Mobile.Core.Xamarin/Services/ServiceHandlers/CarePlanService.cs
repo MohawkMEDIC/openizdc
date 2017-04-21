@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var protocolService = ApplicationContext.Current.GetService<ICarePlanService>();
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            var plan = new List<Act>(protocolService.CreateCarePlan(p, asAppointments));
+            var plan = protocolService.CreateCarePlan(p, asAppointments).Action;
             sw.Stop();
             this.m_tracer.TraceInfo(">>>> CARE PLAN CONSTRUCTED IN {0}", sw.Elapsed);
 

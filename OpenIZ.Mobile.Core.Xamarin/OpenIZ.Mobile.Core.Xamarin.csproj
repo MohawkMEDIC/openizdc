@@ -127,7 +127,6 @@
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Patient.cs" />
     <Compile Include="Services\ServiceHandlers\UserInterface.cs" />
-    <Compile Include="Services\SimpleClinicalProtocolRepositoryService.cs" />
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
     <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
     <Compile Include="Services\Attributes\RestServiceAttribute.cs" />

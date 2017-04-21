@@ -254,7 +254,7 @@ namespace OpenIZ.Mobile.Core
 
             IIdentifiedEntity existing = null;
             if (me.Key != null)
-                existing = context.TryGetCacheItem(me.Key.Value);
+                existing = context.TryGetCacheItem(me.Key.Value) ?? context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
             if (existing != null) return existing;
 
             // Is the key not null?
@@ -293,6 +293,9 @@ namespace OpenIZ.Mobile.Core
                 if (dataObject != null)
                     existing = idpInstance.ToModelInstance(dataObject, context) as IIdentifiedEntity;
             }
+
+            if (existing != null)
+                context.AddData(me.Key.Value.ToString(), existing);
             return existing;
 
         }

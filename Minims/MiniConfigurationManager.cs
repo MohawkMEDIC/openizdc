@@ -45,6 +45,7 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using OpenIZ.Mobile.Core.Security.Audit;
+using OpenIZ.Protocol.Xml;
 
 namespace Minims
 {
@@ -161,7 +162,7 @@ namespace Minims
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
                     typeof(MemorySessionManagerService).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(MemoryQueryPersistenceService).AssemblyQualifiedName,
                     typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,

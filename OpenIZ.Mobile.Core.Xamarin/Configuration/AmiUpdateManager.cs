@@ -117,14 +117,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                 {
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), (float)e.ProgressPercentage/100);
+                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), (float)e.ProgressPercentage);
                     // Fetch the applet package
                     using (var ms = amiClient.DownloadApplet(packageId))
                     {
                         var package = AppletPackage.Load(ms);
                         this.m_tracer.TraceInfo("Upgrading {0}...", package.Meta.ToString());
                         ApplicationContext.Current.GetService<IAppletManagerService>().Install(package, true);
-                        //ApplicationContext.Current.Exit(); // restart
+                        ApplicationContext.Current.Exit(); // restart
                     }
                 }
                 else

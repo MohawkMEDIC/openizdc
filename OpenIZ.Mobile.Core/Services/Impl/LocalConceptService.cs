@@ -262,6 +262,11 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
         }
 
+        public ReferenceTerm ObsoleteReferenceTerm(Guid key)
+        {
+            throw new NotImplementedException();
+        }
+
         public Concept SaveConcept(Concept concept)
 		{
 			throw new NotImplementedException();

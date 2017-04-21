@@ -429,7 +429,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                 var warehouseService = ApplicationContext.Current.GetService<IAdHocDatawarehouseService>();
                 var careplanService = ApplicationContext.Current.GetService<ICarePlanService>();
 
-                IEnumerable<Act> carePlan = null;
+                CarePlan carePlan = null;
 
                 // First step, we delete all acts in the warehouse for the specified patient in the protocol
                 var patientId = act.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ActParticipationKey.RecordTarget)?.PlayerEntityKey;
@@ -477,7 +477,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                 }
 
                 /// Create a plan for the warehouse
-                warehousePlan.AddRange(carePlan.Select(o => new
+                warehousePlan.AddRange(carePlan.Action.Select(o => new
                 {
                     creation_date = DateTime.Now,
                     patient_id = patient.Key.Value,
@@ -527,7 +527,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     // Now calculate
                     var carePlan = careplanService.CreateCarePlan(data, false, this.m_parameters);
-                    warehousePlan.AddRange(carePlan.Select(o => new
+                    warehousePlan.AddRange(carePlan.Action.Select(o => new
                     {
                         creation_date = DateTime.Now,
                         patient_id = data.Key.Value,

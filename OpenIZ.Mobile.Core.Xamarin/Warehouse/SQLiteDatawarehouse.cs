@@ -904,7 +904,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Create a stored query
         /// </summary>
-        public void CreateStoredQuery(Guid datamartId, object queryDefinition)
+        public DatamartStoredQuery CreateStoredQuery(Guid datamartId, object queryDefinition)
         {
             this.ThrowIfDisposed();
             
@@ -918,10 +918,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     {
                         this.CreateStoredQueryInternal(tx, datamartId, queryDefinition);
                         tx.Commit();
+                        return queryDefinition as DatamartStoredQuery;
                     }
                     catch
                     {
                         tx.Rollback();
+                        throw;
                     }
                 }
             }
@@ -930,7 +932,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         /// <summary>
         /// Get the specified data mart
         /// </summary>
-        private DatamartDefinition GetDatamart(Guid datamartId)
+        public DatamartDefinition GetDatamart(Guid datamartId)
         {
             lock (this.m_lock)
             {
@@ -1030,6 +1032,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         }
 
         /// <summary>
+        /// Performs a free text query 
+        /// </summary>
+        public IEnumerable<dynamic> AdhocQuery(String query)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
         /// Start the warehouse service
         /// </summary>
         public bool Start()
@@ -1048,8 +1058,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
         {
             this.Stopping?.Invoke(this, EventArgs.Empty);
 
-            this.m_connection.Close();
-            this.m_connection.Dispose();
+            this.m_connection?.Close();
+            this.m_connection?.Dispose();
 
             this.Stopped?.Invoke(this, EventArgs.Empty);
             return true;

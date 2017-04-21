@@ -53,6 +53,7 @@ using OpenIZ.Mobile.Core.Xamarin.Rules;
 using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Mobile.Core.Security.Audit;
 using OpenIZ.Mobile.Core.Android.Services;
+using OpenIZ.Protocol.Xml;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -176,7 +177,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(OpenIZThreadPool).AssemblyQualifiedName,
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SimpleCarePlanService).AssemblyQualifiedName,
-                    typeof(SimpleClinicalProtocolRepositoryService).AssemblyQualifiedName,
+                    typeof(AppletClinicalProtocolRepository).AssemblyQualifiedName,
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,

@@ -347,7 +347,7 @@
     <string key="locale.about.versions.applet">Name</string>
     <string key="locale.about.versions.author">Author</string>
     <string key="locale.about.versions.id">Package ID</string>
-    <string key="locale.about.versions.update">Updgrade to </string>
+    <string key="locale.about.versions.update">Upgrade to </string>
     <string key="locale.about.versions.update.confirm">Are you sure you wish to upgrade this applet? Your application will restart after the update is applied</string>
     <string key="locale.about.versions.assemblies.title">Loaded DLLs</string>
     <string key="locale.about.versions.assembly">Assembly</string>

@@ -184,5 +184,14 @@ namespace OpenIZ.Mobile.Core.Data
             return retVal;
         }
 
+        /// <summary>
+        /// Try to get data from data array
+        /// </summary>
+        public Object TryGetData(String key)
+        {
+            Object data = null;
+            this.Data.TryGetValue(key, out data);
+            return data;
+        }
     }
 }
