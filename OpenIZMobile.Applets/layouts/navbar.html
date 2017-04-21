@@ -59,6 +59,7 @@
                                 <img class="navbar-icon" ng-if="::c.icon" ng-src="{{::c.icon}}" ng-alt="{{::c.text}}" ng-title="{{::c.text}}" />
                                 <img class="navbar-icon" ng-if="::!c.icon" src="/org.openiz.core/img/appbar.blank.png" />
                                 {{::c.text}}
+                                <span ng-if="c.action == '#/encounter/search/test'">({{ 'locale.common.underDevelopment' | i18n }})</span>
                             </a>
                         </li>
                     </ul>
