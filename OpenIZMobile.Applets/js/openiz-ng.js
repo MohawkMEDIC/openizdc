@@ -247,7 +247,7 @@ angular.module('openiz', [])
                         filter = JSON.parse(filterString);
 
                     if (!filter.statusConcept)
-                        filter.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
+                        filter.statusConcept =  'C8064CBD-FA06-4530-B430-1A52F1530C27';
 
                     var bind = function () {
                         // Get the bind element

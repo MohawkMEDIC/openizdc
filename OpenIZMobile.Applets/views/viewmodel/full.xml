@@ -229,31 +229,30 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
     <property name="typeConceptModel" all="true" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true" behavior="always">
-      <property name="Parent" all="true">
-        <property name="holderModel" behavior="never"/>
-        <property name="sourceModel" behavior="never"/>
-        <property name="relationshipTypeModel" behavior="never"/>
-        <property name="targetModel" all="true">
-          <property name="relationship" all="true">
-            <property name="Parent" behavior="never" all="false"/>
-            <property name="OwnedEntity" behavior="never" all="false"/>
-          </property>
+    <property name="extension" all="true" behavior="always"/>
+    <property name="relationship" all="false" behavior="always">
+      <property name="Parent" all="false">
+        <property name="id"/>
+        <property name="target"/>
+        <property name="targetModel" behavior="always" all="false">
+          <property name="name" ref="EntityName" all="true"/>
+          <property name="id"/>
+          <property name="version"/>
+          <property name="relationship" behavior="never"/>
         </property>
       </property>
-      <property name="OwnedEntity" all="true">
-        <property name="holderModel" behavior="never"/>
-        <property name="relationshipTypeModel" behavior="never"/>
-        <property name="targetModel" behavior="always" all="true">
+      <property name="OwnedEntity" all="false">
+        <property name="id"/>
+        <property name="target"/>
+        <property name="quantity"/>
+        <property name="targetModel" behavior="always">
           <property name="id"/>
           <property name="version"/>
           <property name="lotNumber"/>
           <property name="expiryDate"/>
           <property name="typeConceptModel" behavior="always" ref="Concept"/>
           <property name="identifier" all="true"/>
-          <property name="name" all="true" behavior="always"/>
-          <property name="tag" all="true"/>
-          <property name="extension" all="true"/>
+          <property name="name" all="true" behavior="always" ref="EntityName"/>
         </property>
       </property>
       <property name="*" all="true">

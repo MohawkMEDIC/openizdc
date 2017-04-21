@@ -128,6 +128,7 @@
     <string key="locale.action.save">Save</string>
     <string key="locale.action.finish">Finish</string>
     <string key="locale.action.view">View</string>
+    <string key="locale.action.verify">Verify</string>
     <string key="locale.action.update">Update</string>
     <string key="locale.action.edit">Edit</string>
     <string key="locale.action.remove">Remove</string>

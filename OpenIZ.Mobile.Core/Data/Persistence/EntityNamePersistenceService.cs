@@ -42,7 +42,48 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityNamePersistenceService : IdentifiedPersistenceService<EntityName, DbEntityName>, ILocalAssociativePersistenceService
     {
-        
+
+        private readonly Dictionary<Guid, String> m_nameUseMap = new Dictionary<Guid, String>() {
+            { Guid.Parse("71D1C07C-6EE6-4240-8A95-19F96583512E"), "Alphabetic" },
+            { Guid.Parse("95E6843A-26FF-4046-B6F4-EB440D4B85F7"), "Anonymous" },
+            { Guid.Parse("4A7BF199-F33B-42F9-8B99-32433EA67BD7"), "Artist" },
+            { Guid.Parse("A87A6D21-2CA6-4AEA-88F3-6135CCEB58D1"), "Assigned" },
+            { Guid.Parse("09000479-4672-44F8-BB4A-72FB25F7356A"), "Ideographic" },
+            { Guid.Parse("A3FB2A05-5EBE-47AE-AFD0-4C1B22336090"), "Indigenous" },
+            { Guid.Parse("EFFE122D-8D30-491D-805D-ADDCB4466C35"), "Legal" },
+            { Guid.Parse("48075D19-7B29-4CA5-9C73-0CBD31248446"), "License" },
+            { Guid.Parse("0674C1C8-963A-4658-AFF9-8CDCD308FA68"), "MaidenName" },
+            { Guid.Parse("1EC9583A-B019-4BAA-B856-B99CAF368656"), "OfficialRecord" },
+            { Guid.Parse("2B085D38-3308-4664-9F89-48D8EF4DABA7"), "Phonetic" },
+            { Guid.Parse("C31564EF-CA8D-4528-85A8-88245FCEF344"), "Pseudonym" },
+            { Guid.Parse("15207687-5290-4672-A7DF-2880A23DCBB5"), "Religious" },
+            { Guid.Parse("87964BFF-E442-481D-9749-69B2A84A1FBE"), "Search" },
+            { Guid.Parse("E5794E3B-3025-436F-9417-5886FEEAD55A"), "Soundex" },
+            { Guid.Parse("B4CA3BF0-A7FC-44F3-87D5-E126BEDA93FF"), "Syllabic" }
+            };
+
+        /// <summary>
+        /// Represent as a model instance
+        /// </summary>
+        public override EntityName ToModelInstance(object dataInstance, LocalDataContext context)
+        {
+            var dbEntName = dataInstance as DbEntityName;
+            var compPersister = new EntityNameComponentPersistenceService();
+
+            return new EntityName()
+            {
+                Key = new Guid(dbEntName.Uuid),
+                NameUseKey = dbEntName.UseConceptUuid == null ? null : (Guid?)new Guid(dbEntName.UseConceptUuid),
+                SourceEntityKey = new Guid(dbEntName.SourceUuid),
+                NameUse = new Concept()
+                {
+                    Key = new Guid(dbEntName.UseConceptUuid),
+                    Mnemonic = this.m_nameUseMap[new Guid(dbEntName.UseConceptUuid)]
+                },
+                LoadState = OpenIZ.Core.Model.LoadState.FullLoad,
+                Component = compPersister.GetFromSource(context, new Guid(dbEntName.Uuid), null).OfType<EntityNameComponent>().ToList()
+            };
+        }
 
         /// <summary>
         /// Get from source
@@ -63,7 +104,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             modelInstance.Key = modelInstance.Key ?? Guid.NewGuid();
             return new DbEntityName()
             {
-                Uuid = modelInstance.Key?.ToByteArray() ,
+                Uuid = modelInstance.Key?.ToByteArray(),
                 SourceUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 UseConceptUuid = modelInstance.NameUseKey?.ToByteArray()
             };
@@ -156,7 +197,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 NameUuid = modelInstance.SourceEntityKey?.ToByteArray(),
                 ComponentTypeUuid = modelInstance.ComponentTypeKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray() 
+                Uuid = modelInstance.Key?.ToByteArray()
             };
 
             // Address component already exists?

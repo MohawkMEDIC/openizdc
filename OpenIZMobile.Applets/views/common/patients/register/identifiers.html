@@ -21,7 +21,7 @@
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group"
           ng-controller="PatientIdentifiersController">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
-    <div ng-repeat="identifier in identifiers track by $index">
+    <div ng-init="identifiers = identifiers || []" ng-repeat="identifier in identifiers track by $index">
         <div class="form-group">
             <ng-form name="identifierForm">
                 <div class="col-xs-12 col-sm-3">

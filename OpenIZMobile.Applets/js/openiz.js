@@ -3109,3 +3109,13 @@ Date.prototype.tomorrow = function () {
 Date.prototype.yesterday = function () {
     return this.addDays(-1);
 }
+
+/** 
+ * @summary Decodes a hex string
+ * @method
+ */
+String.prototype.hexDecode = function () {
+    return this.replace(/([0-9A-Fa-f]{2})/g, function(i, a) {
+        return String.fromCharCode(parseInt(a, 16));
+    });
+}
