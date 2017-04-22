@@ -396,5 +396,127 @@
     </property>
   </type>
 
+  <type type="SubstanceAdministration" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+    <property name="classConceptModel" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="statusConceptModel" behavior="never"/>
+    <property name="doseUnitModel" behavior="always" ref="Concept"/>
+    <property name="moodConceptModel" behavior="never"/>
+    <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
+    <property name="protocol" behavior="never"/>
+    <property name="routeModel" behavior="always"  ref="Concept"/>
+    <property name="siteModel" behavior="always"  ref="Concept"/>
+    <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
+    <property name="relationship" all="true" behavior="never"/>
+    <property name="participation" all="true" behavior="always">
+      <property name="Product" all="false">
+        <property name="sourceModel" behavior="never"/>
+        <property name="actModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true"/>
+          <property name="name" all="true" behavior="always"/>
+          <property name="tag" all="true"/>
+          <property name="extension" all="true"/>
+          <property name="participation" behavior="never"/>
+          <property name="formConcept"/>
+        </property>
+      </property>
+      <property name="Consumable" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true"/>
+          <property name="name" all="true" behavior="always"/>
+          <property name="lotNumber" all="true"/>
+          <property name="participation" behavior="never"/>
+        </property>
+      </property>
+      <property name="Location" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true" />
+          <property name="name" all="true" behavior="always"/>
+          <property name="tag" all="true"/>
+          <property name="extension" all="true"/>
+          <property name="participation" behavior="never"/>
+        </property>
+      </property>
+      <property name="*" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="act" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+        <property name="playerModel" behavior="never"/>
+      </property>
+    </property>
+  </type>
+  
+  <type type="QuantityObservation" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+    <property name="classConceptModel" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="statusConceptModel" behavior="never"/>
+    <property name="moodConceptModel" behavior="never"/>
+    <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
+    <property name="relationship" all="true" behavior="never"/>
+    <property name="unitOfMeasureModel" behavior="always" ref="Concept"/>
+    <property name="participation" all="true" behavior="always">
+      <property name="Location" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true" />
+          <property name="name" all="true" behavior="always"/>
+          <property name="tag" all="true"/>
+          <property name="extension" all="true"/>
+          <property name="participation" behavior="never"/>
+        </property>
+      </property>
+      <property name="*" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="act" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+        <property name="playerModel" behavior="never"/>
+      </property>
+    </property>
+  </type>
+
 
 </ViewModel>

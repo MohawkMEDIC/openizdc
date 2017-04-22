@@ -123,6 +123,11 @@ namespace OpenIZ.Mobile.Core.Configuration
         [XmlIgnore, JsonIgnore]
         public TimeSpan AuditRetention { get; set; }
 
+        /// <summary>
+        /// When true, only allow login from subscribed facilities
+        /// </summary>
+        [XmlElement("onlySubscribedAuth"), JsonProperty("onlySubscribedAuth")]
+        public bool OnlySubscribedFacilities { get; set; }
     }
 
 }

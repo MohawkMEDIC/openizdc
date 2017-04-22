@@ -150,7 +150,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <param name="authRequest"></param>
         /// <returns></returns>
         [RestOperation(Method = "POST", UriPath = "/authenticate", FaultProvider = nameof(AuthenticationFault))]
-        [return: RestMessage(RestMessageFormat.Json)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
         public SessionInfo Authenticate([RestMessage(RestMessageFormat.FormData)] NameValueCollection authRequest)
         {
 

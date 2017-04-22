@@ -37,6 +37,9 @@ using OpenIZ.Core.Model.Attributes;
 using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Threading;
+using OpenIZ.Mobile.Core.Configuration;
+using System.Security;
+using OpenIZ.Mobile.Core.Resources;
 
 namespace OpenIZ.Mobile.Core.Security
 {
@@ -245,13 +248,6 @@ namespace OpenIZ.Mobile.Core.Security
                 if (cp.HasClaim(o => o.Type == ClaimTypes.Sid))
                     Guid.TryParse(cp.FindClaim(ClaimTypes.Sid)?.Value, out subKey);
 
-                // Security user 
-                this.SecurityUser = new SecurityUser()
-                {
-                    Key = subKey,
-                    UserName = cp.Identity.Name,
-                    Email = cp.FindClaim(ClaimTypes.Email)?.Value
-                };
             }
             else
             {
@@ -259,22 +255,32 @@ namespace OpenIZ.Mobile.Core.Security
                 this.Roles = rps.GetAllRoles(this.UserName).ToList();
                 this.Issued = DateTime.Now;
                 this.Expiry = DateTime.MaxValue;
-
-                // Grab the user entity
-                try
-                {
-
-                    var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-                    var securityUser = userService.GetUser(principal.Identity);
-                    this.SecurityUser = securityUser;
-                }
-                catch (Exception e)
-                {
-                    this.m_tracer.TraceError("Error getting extended session information: {0}", e);
-                }
-
             }
 
+            // Grab the user entity
+            try
+            {
+                var userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
+                var securityUser = userService.GetUser(principal.Identity);
+                this.SecurityUser = securityUser;
+
+                // User entity available?
+                this.m_entity = userService.GetUserEntity(principal.Identity);
+                
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting extended session information: {0}", e);
+            }
+
+            // Only subscribed faciliites
+            if (ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities)
+            {
+                var subFacl = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities;
+                var isInSubFacility = this.m_entity?.Relationships.Any(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation && subFacl.Contains(o.TargetEntityKey.ToString())) == true;
+                if (!isInSubFacility && ApplicationContext.Current.PolicyDecisionService.GetPolicyOutcome(principal, PolicyIdentifiers.AccessClientAdministrativeFunction) != PolicyGrantType.Grant)
+                    throw new SecurityException(Strings.locale_loginFromUnsubscribedFacility);
+            }
 
         }
     }

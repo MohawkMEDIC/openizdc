@@ -227,4 +227,7 @@ Sincerely,
   <data name="locale_compacting" xml:space="preserve">
     <value>Optimizing Databases...</value>
   </data>
+  <data name="locale_loginFromUnsubscribedFacility" xml:space="preserve">
+    <value>The security settings of this tablet do not allow you to login. Reason: Only users from subscribed facilities may login to this device. Please contact your system administrator for assistance.</value>
+  </data>
 </root>

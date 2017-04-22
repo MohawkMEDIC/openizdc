@@ -62,6 +62,14 @@
             <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2">
                     <label>
+                        <input name="onlySubscribedFacilities" type="checkbox" ng-model="config.security.onlySubscribedAuth" ng-disabled="!config.data.sync.subscribe"/>
+                        {{ 'locale.settings.onlySubscribedFacilities' | i18n }}
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <label>
                         <input name="offlineAuthenticationInput" type="checkbox" ng-model="config.security.offline.enable" />
                         {{ 'locale.settings.allowLocalAuth' | i18n }}
                     </label>

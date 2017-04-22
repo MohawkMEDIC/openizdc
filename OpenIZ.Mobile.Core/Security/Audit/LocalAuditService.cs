@@ -15,6 +15,7 @@ using OpenIZ.Core.Model.AMI.Security;
 using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Interfaces;
+using OpenIZ.Mobile.Core.Configuration;
 
 namespace OpenIZ.Mobile.Core.Security.Audit
 {
@@ -104,7 +105,11 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 {
                     this.m_tracer.TraceInfo("Binding to service events...");
 
-                    ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) => AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
+                    ApplicationContext.Current.GetService<IIdentityProviderService>().Authenticated += (so, se) =>
+                    {
+                        if ((se.Principal?.Identity.Name ?? se.UserName) != ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName)
+                            AuditUtil.AuditLogin(se.Principal, se.UserName, so as IIdentityProviderService, se.Success);
+                    };
                     ApplicationContext.Current.GetService<QueueManagerService>().QueueExhausted += (so, se) =>
                     {
                         if (se.ObjectKeys.Count() > 0)

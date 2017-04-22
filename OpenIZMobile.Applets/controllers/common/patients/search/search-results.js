@@ -51,6 +51,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.previous = scope.search.previous || previous;
     scope.search.goPage = scope.search.goPage || goPage;
     scope.startEncounter = startEncounter;
+    scope.goResult = scope.goResult || goResult;
 
     scope.search.searchSubmitted = false;
     var onlineOnly = false;
@@ -76,6 +77,12 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     //    }
     //};
 
+    /**
+     * @summary View a result
+     */
+    function goResult(patientId) {
+        OpenIZ.UserInterface.patientController.view(patientId);
+    }
     /** 
      * @summary Advances to the next set of results
      */

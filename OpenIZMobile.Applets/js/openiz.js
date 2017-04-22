@@ -94,10 +94,96 @@ var OpenIZ = OpenIZ || {
      * @summary Provides a mechanism for user interface interaction with OpenIZ
      * @class
      * @static
+     * @property {OpenIZ.UserInterface.PatientControllerPrototype} patientController The patient controller which OpenIZ components can call  
      * @memberof OpenIZ
      */
     UserInterface: {
+        /**
+         * @class
+         * @summary A prototype patient controller which is called by OpenIZ core components
+         * @memberof OpenIZ.UserInterface
+         */
+        PatientControllerPrototype: function () {
 
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {uuid} patientId The patient to be shown
+             * @param {object} state The state provider
+             */
+            this.view = function (patientId) { alert("Default implementation, not implemented "); };
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {uuid} patientId The patient to be shown
+             * @param {object} state The state provider
+             */
+            this.download = function (patientId) { alert("Default implementation, not implemented "); };
+            /** 
+             * @summary Instructs the handler to open the patient view
+             * @method
+             * @param {OpenIZModel.Patient} patient The patient which is to be saved
+             */
+            this.save = function (patient, controlData) {
+                var controlData = {
+                    data: patient,
+                    id: patient.id,
+                    versionId: patient.version,
+                    continueWith: function (data) {
+                        console.log(data);
+                        switch (data.multipleBirthOrder) {
+                            case 1:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.first');
+                                break;
+                            case 2:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.second');
+                                break;
+                            case 3:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.third');
+                                break;
+                            case 0:
+                                data.multipleBirthOrderText = OpenIZ.Localization.getString('locale.patient.demographics.multipleBirth.unknown');
+                                break;
+                        };
+                        if (data.multipleBirthOrder != undefined && data.multipleBirthOrder != null) {
+                            data.multipleBirthOrder = data.multipleBirthOrder.toString();
+                        }
+                        OpenIZ.Patient.getAsync({
+                            id: patient.id,
+                            continueWith: controlData.continueWith,
+                            onException: controlData.onException
+                        })
+                    },
+                    onException: controlData.onException,
+                    finally: controlData.finally,
+                    state: 0
+                };
+
+                delete (patient.genderConceptModel);
+
+                if (patient.relationship && patient.relationship.DedicatedServiceDeliveryLocation && patient.relationship.DedicatedServiceDeliveryLocation.targetModel) {
+                    delete (patient.relationship.DedicatedServiceDeliveryLocation.targetModel);
+                }
+
+                // Address has changed, so let's change it!
+                if (patient.address.HomeAddress.villageId != null) {
+                    // Get the village
+                    OpenIZ.Place.findAsync({
+                        query: { _id: patient.address.HomeAddress.villageId, _viewModel: "min" },
+                        continueWith: function (data) {
+                            patient.address.HomeAddress.component = data.address.Direct.component;
+                            OpenIZ.Patient.updateAsync(controlData);
+
+                        },
+                        onException: controlData.onException
+                    });
+                }
+                else
+                    OpenIZ.Patient.updateAsync(controlData);
+            };
+
+        },
+        patientController: null
     },
     /**
      * @summary Provides operations for managing {@link OpenIZModel.Act} instances.
@@ -1419,7 +1505,7 @@ var OpenIZ = OpenIZ || {
             obs.interpretationConcept = postVal.interpretationConcept;
 
             obs.participation.RecordTarget.playerModel = null;
-
+            return postVal.interpretationConcept;
         },
         /**
          * @summary Generate a care plan for the specified patient
@@ -3003,6 +3089,9 @@ var OpenIZ = OpenIZ || {
         }
     }
 };
+
+OpenIZ.UserInterface.patientController = new OpenIZ.UserInterface.PatientControllerPrototype();
+
 /**
  * @summary Current Locale
  */

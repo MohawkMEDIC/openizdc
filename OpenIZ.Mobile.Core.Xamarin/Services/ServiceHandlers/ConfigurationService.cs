@@ -214,7 +214,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     break;
                 case "sync":
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Insert(0, typeof(SQLiteConnectionManager).AssemblyQualifiedName);
-
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalPersistenceService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalAlertService).AssemblyQualifiedName);
                     ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(OAuthIdentityProvider).AssemblyQualifiedName);
@@ -346,6 +345,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     break;
             }
+
             ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().ServiceTypes.Add(typeof(LocalRoleProviderService).AssemblyQualifiedName);
             // Password hashing
             switch (optionObject["security"]["hasher"].Value<String>())
@@ -363,6 +363,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Audit retention.
             ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().AuditRetention = TimeSpan.Parse(optionObject["security"]["auditRetention"].Value<String>());
+
+            if(optionObject["security"]["onlySubscribedAuth"].Value<Boolean>())
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities = true;
 
             // Proxy
             if (optionObject["network"]["useProxy"].Value<Boolean>())

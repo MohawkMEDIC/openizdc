@@ -143,6 +143,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
                             // Invoke
                             OAuthTokenResponse response = restClient.Post<OAuthTokenRequest, OAuthTokenResponse>("oauth2_token", "application/x-www-urlform-encoded", request);
                             retVal = new TokenClaimsPrincipal(response.AccessToken, response.TokenType, response.RefreshToken);
+
                             this.Authenticated?.Invoke(this, new AuthenticatedEventArgs(principal.Identity.Name, password, true) { Principal = retVal });
 
                         }
