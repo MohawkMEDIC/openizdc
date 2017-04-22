@@ -117,7 +117,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Configuration
                 {
                     var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
                     amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
-                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), (float)e.ProgressPercentage);
+                    amiClient.Client.ProgressChanged += (o, e) => ApplicationContext.Current.SetProgress(String.Format(Strings.locale_downloading, packageId), e.Progress);
                     // Fetch the applet package
                     using (var ms = amiClient.DownloadApplet(packageId))
                     {

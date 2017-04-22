@@ -56,7 +56,9 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
                         $scope.$applyAsync();
                 },
                 onException: function (ex) {
-                    if (ex.message)
+                    if (ex.type == "FileNotFoundException")
+                        ;
+                    else if (ex.message)
                         alert(ex.message);
                     else
                         console.error(ex);

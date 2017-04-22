@@ -191,7 +191,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 data = persistenceService.Update(data);
                 data = businessRulesService?.AfterUpdate(data) ?? data;
 
-                var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, data);
+                var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, data, "participation");
 
                 SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(TEntity), data.Key.Value);

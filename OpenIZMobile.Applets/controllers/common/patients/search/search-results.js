@@ -96,11 +96,31 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             else
                 delete (scope.search.query["_onlineOnly"]);
 
+
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.query["_viewModel"] = "min";
             scope.search.query["_queryId"] = OpenIZ.App.newGuid();
 
+            // Search shouldn't include null parameters
+            for (var k in Object.keys(scope.search.query))
+            {
+                var key = Object.keys(scope.search.query)[k];
+                if (key.startsWith("_")) continue;
+
+                if (Array.isArray(scope.search.query[key])) {
+                    for (var i in scope.search.query[key])
+                        if(!scope.search.query[key][i])
+                            delete (scope.search.query[key][i]);
+                        else if (!scope.search.query[key][i].startsWith("~"))
+                            scope.search.query[key][i] = "~" + scope.search.query[key][i];
+                }
+                else if (!scope.search.query[key])
+                    delete (scope.search.query[key]);
+                else if (scope.search.query[key].startsWith && !scope.search.query[key].startsWith("~"))
+                    scope.search.query[key] = "~" + scope.search.query[key];
+
+            }
             scope.search.isSearching = true;
             $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
             var start = $scope.search.dateOfBirthStringLow;

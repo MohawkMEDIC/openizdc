@@ -96,7 +96,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 Patient patient = null;
                 if (search.ContainsKey("_onlineOnly"))
                 {
-                    patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null);
+                    patient = integrationService.Get<Patient>(Guid.Parse(search["_id"].FirstOrDefault()), null, new IntegrationQueryOptions()
+                    {
+                        Expand = new String[] { "relationship.target" }
+                    });
                     // Add this to the cache
                     //ApplicationContext.Current.GetService<IDataCachingService>().Add(patient);
                     patient.Tags.Add(new EntityTag("onlineResult", "true"));
@@ -126,6 +129,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     this.m_tracer.TraceVerbose("Freetext search: {0}", MiniImsServer.CurrentContext.Request.Url.Query);
 
                     var values = search.ContainsKey("any") ? search["any"] : search["any[]"];
+                    
                     // Filtes
                     if (search.ContainsKey("_onlineOnly"))
                     {
@@ -141,7 +145,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     { tryFields[tryField++] , values }
                                 }
                             );
-                            bundle = integrationService.Find(predicate, offset, count);
+
+                            bundle = integrationService.Find(predicate, offset, count, new IntegrationQueryOptions() {
+                                Expand = new String[] { "relationship.target" }
+                            });
                         }
 
                         // Now compose bundle
@@ -155,7 +162,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     else
                     {
                         var fts = ApplicationContext.Current.GetService<IFreetextSearchService>();
-                        retVal = fts.Search<Patient>(values.ToArray(), offset, count, out totalResults);
+                        retVal = fts.Search<Patient>(values.Select(o=>o.Replace("~","")).ToArray(), offset, count, out totalResults);
                     }
 
                     search.Remove("any");

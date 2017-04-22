@@ -33,6 +33,7 @@ using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System.Collections.Generic;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
+using System.IO;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -57,12 +58,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
             var predicate = QueryExpressionParser.BuildLinqExpression<Act>(search);
 
-            if(search.ContainsKey("_patientId"))
+            if (search.ContainsKey("_patientId"))
             {
                 var patientSvc = ApplicationContext.Current.GetService<IPatientRepositoryService>();
-                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty).Clone() as Patient;
+                p = patientSvc.Get(Guid.Parse(search["_patientId"][0]), Guid.Empty)?.Clone() as Patient;
                 //p.Participations = new List<ActParticipation>();
             }
+
+            if (p == null)
+                throw new FileNotFoundException();
 
     //        if(p.Participations.Count == 0)
     //        {
