@@ -21,7 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
-using OpenIZ.Mobile.Core.Protocol;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System;

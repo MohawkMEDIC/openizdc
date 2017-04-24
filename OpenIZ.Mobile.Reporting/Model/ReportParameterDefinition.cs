@@ -6,7 +6,7 @@ namespace OpenIZ.Mobile.Reporting.Model
     /// <summary>
     /// Report parameter types
     /// </summary>
-    [XmlType(nameof(ReportParameterType), Namespace = "http://openiz.org/mobile/reporting")]
+    [XmlType(nameof(ReportPropertyType), Namespace = "http://openiz.org/mobile/reporting")]
     public enum ReportPropertyType
     {
         /// <summary>

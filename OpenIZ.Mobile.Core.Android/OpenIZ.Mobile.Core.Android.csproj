@@ -145,6 +145,10 @@
       <Project>{554DF209-7744-433F-993A-783E2A2803EF}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj">
+      <Project>{39a382d5-a4a1-415a-8ceb-618177e23fac}</Project>
+      <Name>OpenIZ.Mobile.Reporting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\values-fr\Strings.xml" />

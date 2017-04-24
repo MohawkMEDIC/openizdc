@@ -44,7 +44,6 @@ using OpenIZ.Core.Services.Impl;
 using OpenIZ.Core.Protocol;
 using OpenIZ.Mobile.Core.Android.Net;
 using OpenIZ.Mobile.Core.Search;
-using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Xamarin.Configuration;
 using OpenIZ.Mobile.Core.Xamarin.Diagnostics;
 using OpenIZ.Mobile.Core.Android.Diagnostics;
@@ -54,6 +53,9 @@ using OpenIZ.Mobile.Core.Xamarin.Warehouse;
 using OpenIZ.Mobile.Core.Security.Audit;
 using OpenIZ.Mobile.Core.Android.Services;
 using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 
 namespace OpenIZ.Mobile.Core.Android.Configuration
 {
@@ -181,7 +183,10 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(AmiUpdateManager).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.XamarinAndroid.SQLitePlatformAndroid).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
-                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName
+                    typeof(SimpleQueueFileProvider).AssemblyQualifiedName,
+                    typeof(SQLiteReportDatasource).AssemblyQualifiedName,
+                    typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {

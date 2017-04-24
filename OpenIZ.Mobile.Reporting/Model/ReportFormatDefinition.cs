@@ -8,7 +8,7 @@ namespace OpenIZ.Mobile.Reporting.Model
     /// Formatting control
     /// </summary>
     [XmlType(nameof(ReportFormatDefinition), Namespace = "http://openiz.org/mobile/reporting")]
-    [JsonObject(nameof(ReportFormatDefinition)]
+    [JsonObject(nameof(ReportFormatDefinition))]
     public class ReportFormatDefinition
     {
         /// <summary>

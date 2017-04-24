@@ -40,7 +40,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Mobile.Core.Data.Warehouse.CarePlan
+namespace OpenIZ.Mobile.Core.Data.Warehouse
 {
     /// <summary>
     /// The protocol watch service is used to watch patient regsitrations and ensure the clinical

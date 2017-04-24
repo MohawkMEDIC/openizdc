@@ -1,5 +1,4 @@
-﻿using OpenIZ.Core.Data.QueryBuilder;
-using OpenIZ.Mobile.Reporting.Model;
+﻿using OpenIZ.Mobile.Reporting.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -101,7 +101,7 @@ namespace OpenIZ.Mobile.Reporting
             // Now we want to format our report parameters to appropriate SQL
             Dictionary<String, IEnumerable<dynamic>> exeSets = new Dictionary<string, IEnumerable<dynamic>>(rdl.Datasets.Count);
             foreach (var itm in rdl.Datasets)
-                exeSets.Add(itm.Name, this.RenderDataset(itm, pParms));
+                exeSets.Add(itm.Name, this.RenderDataset(rdl.Connection, itm, pParms));
 
             // Now we have our data, let us render it!!!
             if (view.Body != null) // HTML
@@ -236,14 +236,14 @@ namespace OpenIZ.Mobile.Reporting
             if (parm.ValueSet == null)
                 return null;
             else
-                return this.RenderDataset(parm.ValueSet, pParms);
+                return this.RenderDataset(rdl.Connection, parm.ValueSet, pParms);
 
         }
 
         /// <summary>
         /// Render dataset
         /// </summary>
-        private IEnumerable<dynamic> RenderDataset(ReportDatasetDefinition dataset, IDictionary<string, object> pParms)
+        private IEnumerable<dynamic> RenderDataset(String connectionString, ReportDatasetDefinition dataset, IDictionary<string, object> pParms)
         {
             var dsProvider = ApplicationServiceContext.Current.GetService(typeof(IReportDatasource)) as IReportDatasource;
             if (dsProvider == null)
@@ -267,7 +267,7 @@ namespace OpenIZ.Mobile.Reporting
             }
             stmt = regEx.Replace(stmt, "?");
 
-            return dsProvider.ExecuteDataset(stmt, values);
+            return dsProvider.ExecuteDataset(connectionString, stmt, values);
         }
     }
 }

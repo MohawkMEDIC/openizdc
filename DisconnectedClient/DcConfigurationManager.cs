@@ -26,7 +26,6 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Data;
 using OpenIZ.Mobile.Core.Data.Connection;
 using OpenIZ.Mobile.Core.Diagnostics;
-using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Search;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services.Impl;
@@ -46,6 +45,9 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using OpenIZ.Mobile.Core.Security.Audit;
 using OpenIZ.Protocol.Xml;
+using OpenIZ.Mobile.Core.Xamarin.Data;
+using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Core.Data.Warehouse;
 
 namespace DisconnectedClient
 
@@ -170,7 +172,10 @@ namespace DisconnectedClient
                     typeof(SimplePatchService).AssemblyQualifiedName,
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
-                    typeof(DcAppletManagerService).AssemblyQualifiedName
+                    typeof(DcAppletManagerService).AssemblyQualifiedName,
+                                        typeof(SQLiteReportDatasource).AssemblyQualifiedName,
+                    typeof(ReportExecutor).AssemblyQualifiedName,
+                    typeof(AppletReportRepository).AssemblyQualifiedName
                 },
                 Cache = new CacheConfiguration()
                 {
@@ -270,7 +275,7 @@ namespace DisconnectedClient
                 {
                     this.m_configuration = OpenIZConfiguration.Load(fs);
                 }
-            
+
         }
 
 
