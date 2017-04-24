@@ -112,12 +112,12 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     for (var i in scope.search.query[key])
                         if(!scope.search.query[key][i])
                             delete (scope.search.query[key][i]);
-                        else if (!scope.search.query[key][i].startsWith("~"))
+                        else if (!scope.search.query[key][i].startsWith("~") && key.startsWith("name"))
                             scope.search.query[key][i] = "~" + scope.search.query[key][i];
                 }
                 else if (!scope.search.query[key])
                     delete (scope.search.query[key]);
-                else if (scope.search.query[key].startsWith && !scope.search.query[key].startsWith("~"))
+                else if (scope.search.query[key].startsWith && !scope.search.query[key].startsWith("~") && key.startsWith("name"))
                     scope.search.query[key] = "~" + scope.search.query[key];
 
             }
