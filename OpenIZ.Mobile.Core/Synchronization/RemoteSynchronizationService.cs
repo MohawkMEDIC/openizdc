@@ -160,21 +160,27 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.IsSynchronizing = true;
 
                         DateTime lastSync = DateTime.MinValue;
-                        if(SynchronizationLog.Current.GetAll().Count() > 0)
+                        if (SynchronizationLog.Current.GetAll().Count() > 0)
                             lastSync = SynchronizationLog.Current.GetAll().Min(o => o.LastSync);
 
-                        if (!this.m_integrationService.IsAvailable()) return;
+                        // Trigger
+                        if (!this.m_integrationService.IsAvailable())
+                        {
+                            if (trigger == SynchronizationPullTriggerType.OnStart)
+                                ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(new TimeSpan(0, 5, 0), o => this.Pull(SynchronizationPullTriggerType.OnStart), null);
+                            return;
+                        }
 
                         int totalResults = 0;
                         var syncTargets = this.m_configuration.SynchronizationResources.Where(o => (o.Triggers & trigger) != 0).ToList();
-                        for(var i = 0; i < syncTargets.Count; i++)
+                        for (var i = 0; i < syncTargets.Count; i++)
                         {
 
                             var syncResource = syncTargets[i];
 
                             ApplicationContext.Current.SetProgress(Strings.locale_startingPoll, (float)i / syncTargets.Count);
                             foreach (var fltr in syncResource.Filters)
-                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr));
+                                totalResults += this.Pull(syncResource.ResourceType, NameValueCollection.ParseQueryString(fltr), syncResource.Always);
                             if (syncResource.Filters.Count == 0)
                                 totalResults += this.Pull(syncResource.ResourceType);
 
@@ -188,9 +194,8 @@ namespace OpenIZ.Mobile.Core.Synchronization
                             alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name, "everyone", Strings.locale_importDoneSubject, Strings.locale_importDoneBody, AlertMessageFlags.System));
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(true, totalResults, lastSync));
                         }
-                        else if(totalResults > 0)
+                        else if (totalResults > 0)
                             this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(totalResults, lastSync));
-
 
                     }
                     catch (Exception e)
@@ -206,6 +211,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
             });
 
         }
+
         /// <summary>
         /// Perform a fetch operation which performs a head
         /// </summary>
@@ -219,7 +225,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Pull(Type modelType)
         {
-            return this.Pull(modelType, new NameValueCollection());
+            return this.Pull(modelType, new NameValueCollection(), false);
 
         }
 
@@ -228,7 +234,17 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         public int Pull(Type modelType, NameValueCollection filter)
         {
+            return this.Pull(modelType, filter, false);
+        }
+
+        /// <summary>
+        /// Pull with always filter
+        /// </summary>
+        private int Pull(Type modelType, NameValueCollection filter, bool always)
+        {
             var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
+            if (always)
+                lastModificationDate = null;
 
             try
             {
@@ -246,7 +262,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 // Attempt to find an existing query
                 var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
-                if(existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
+                if (existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
                 {
                     qid = new Guid(existingQuery.Uuid);
                     result.Count = existingQuery.LastSuccess;
@@ -266,7 +282,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 {
                     float perc = i / (float)result.TotalResults;
 
-                    if(result.TotalResults > result.Offset + result.Count + 1)
+                    if (result.TotalResults > result.Offset + result.Count + 1)
                         ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
                     NameValueCollection infopt = null;
                     if (filter.Any(o => o.Key.StartsWith("_")))
@@ -301,10 +317,10 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
                         result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
-                        
+
                         SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
                         SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
-                        
+
                         retVal = result.TotalResults;
                     }
                     else
@@ -328,7 +344,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                 return retVal;
             }
-            catch(TargetInvocationException ex)
+            catch (TargetInvocationException ex)
             {
                 var e = ex.InnerException;
                 this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);

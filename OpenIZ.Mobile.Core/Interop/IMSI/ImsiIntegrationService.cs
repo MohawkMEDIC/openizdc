@@ -228,6 +228,9 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
+                if (!(data is Bundle || data is Entity || data is Act))
+                    return;
+
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
 
@@ -288,6 +291,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
+
+                if (!(data is Bundle || data is Entity || data is Act))
+                    return;
+
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
                 // Force an update
@@ -319,6 +326,10 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
         {
             try
             {
+
+                if (!(data is Bundle || data is Entity || data is Act))
+                    return;
+
                 ImsiServiceClient client = this.GetServiceClient(); //new ImsiServiceClient(ApplicationContext.Current.GetRestClient("imsi"));
                 client.Client.Credentials = this.GetCredentials(client.Client);
 

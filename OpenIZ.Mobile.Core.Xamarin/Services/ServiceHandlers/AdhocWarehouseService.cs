@@ -21,6 +21,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Services;
+using OpenIZ.Mobile.Core.Protocol;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using OpenIZ.Mobile.Core.Xamarin.Services.Model;
 using System;
@@ -84,7 +85,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 search.Remove("martId");
                 search.Remove("queryId");
                 search.Remove("_");
-                return warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
+                var results = warehouseSvc.StoredQuery(dataMart.Id, queryName, search);
+
+                // HACK: Sometimes the mart needs to be refreshed
+                if (dataMart.Name == "oizcp" && results.Count() == 0)
+                {
+                    ApplicationContext.Current.GetService<CarePlanManagerService>().RefreshCarePlan(true);
+                    throw new Exception("locale.careplan.refreshing");
+                }
+                return results;
             }
         }
 
@@ -96,7 +105,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return new ErrorResult()
             {
                 Error = e.Message,
-                ErrorDescription = e.ToString(),
+                ErrorDescription = e.InnerException?.Message,
                 ErrorType = e.GetType().Name
             };
         }

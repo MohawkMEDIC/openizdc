@@ -237,8 +237,10 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "Concept",
                         "Material",
                         "Place",
+                        "PlaceMe",
                         "Organization",
                         "UserEntity",
+                        "UserEntityMe",
                         "Provider",
                         "ManufacturedMaterial",
                         "Person",
@@ -247,12 +249,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "CodedObservation",
                         "QuantityObservation",
                         "TextObservation",
-                        "Act" })
+                        "Act"})
                     {
                         var syncSetting = new SynchronizationResource()
                         {
                             ResourceAqn = res,
-                            Triggers = new String[] { "UserEntity", "Person", "Act", "SubstanceAdministration", "QuantityObservation", "CodedObservation", "TextObservation", "PatientEncounter" }.Contains(res) ? SynchronizationPullTriggerType.Always :
+                            Triggers = new String[] { "Person", "Act", "SubstanceAdministration", "QuantityObservation", "CodedObservation", "TextObservation", "PatientEncounter" }.Contains(res) ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
                         
@@ -261,16 +263,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             var efield = typeof(EntityClassKeys).GetField(res);
 
-                            if(res == "Person")
+                            if (res == "Person")
                             {
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient);
                                 syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient);
                             }
-                            else if(res == "Act")
+                            else if (res == "Act")
                             {
                                 syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement);
                                 syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply);
                             }
+                            else if (res == "EntityRelationship" || res == "UserEntityMe") continue;
                             else if (efield != null && res != "Place")
                                 syncSetting.Filters.Add("classConcept=" + efield.GetValue(null).ToString());
                         }
@@ -286,7 +289,6 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "UserEntity":
                                         if (syncSetting.Filters.Count == 0)
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
-                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Person":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
@@ -297,6 +299,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("classConcept=" + ActClassKeys.AccountManagement + "&participation[Location].player=" + itm + "&_expand=relationship&_expand=participation");
                                         //syncSetting.Filters.Add("participation[EntryLocation].player=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
+                                    case "UserEntityMe":
+                                        syncSetting.ResourceAqn = "UserEntity";
+                                        syncSetting.Triggers = SynchronizationPullTriggerType.Always;
+                                        syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        break;
                                     case "SubstanceAdministration":
                                     case "QuantityObservation":
                                     case "CodedObservation":
@@ -306,12 +313,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":
-                                        if (syncSetting.Filters.Count == 0)
-                                        {
-                                            syncSetting.Filters.Add("id=!" + itm + "&classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
-                                            syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
-                                        }
-                                        syncSetting.Filters.Add("id=" + itm + "&_expand=relationship");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
+                                        syncSetting.Filters.Add("classConcept=!" + EntityClassKeys.ServiceDeliveryLocation);
+                                        break;
+                                    case "PlaceMe":
+                                        syncSetting.ResourceAqn = "Place";
+                                        syncSetting.Triggers = SynchronizationPullTriggerType.Always;
+                                        syncSetting.Filters.Add("id=" + itm);
+                                        syncSetting.Always = true;
                                         break;
                                     case "Material":
                                         if (syncSetting.Filters.Count == 0)

@@ -60,6 +60,7 @@
     <Compile Include="Security\Audit\Model\DbAuditObject.cs" />
     <Compile Include="Security\Audit\AuditUtil.cs" />
     <Compile Include="Services\Impl\EntityRepositoryBase.cs" />
+    <Compile Include="Services\Impl\LocalTagPersistenceService.cs" />
     <Compile Include="Services\IUpdateManager.cs" />
     <Compile Include="Synchronization\AlertSynchronizationService.cs" />
     <Compile Include="Alerting\DbAlertMessage.cs" />

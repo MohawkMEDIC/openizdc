@@ -263,6 +263,9 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var domainList = context.Connection.Query<TQueryResult>(queryStatement.Build().SQL, args).ToList();
             var modelList = domainList.Select(o => this.CacheConvert(o, context)).ToList();
             context.AddQuery(queryStatement, modelList);
+
+            //foreach (var i in modelList)
+            //    context.AddCacheCommit(i);
             return modelList;
         }
 

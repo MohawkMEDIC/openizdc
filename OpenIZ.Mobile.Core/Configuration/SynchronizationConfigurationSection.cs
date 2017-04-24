@@ -125,7 +125,7 @@ namespace OpenIZ.Mobile.Core.Configuration
             }
             set
             {
-                this.ResourceType = typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.First(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == value);
+                this.ResourceType = typeof(IdentifiedData).GetTypeInfo().Assembly.ExportedTypes.FirstOrDefault(o => o.GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName == value);
             }
         }
 
@@ -134,6 +134,12 @@ namespace OpenIZ.Mobile.Core.Configuration
         /// </summary>
         [XmlElement("filter")]
         public List<string> Filters { get; set; }
+
+        /// <summary>
+        /// Always pull?
+        /// </summary>
+        [XmlAttribute("ignoreModifiedOn")]
+        public bool Always { get; set; }
     }
 
 

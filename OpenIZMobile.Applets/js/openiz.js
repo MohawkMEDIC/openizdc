@@ -1,4 +1,3 @@
-/// <reference path="openiz-model.js"/>
 /*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  * 
@@ -19,43 +18,22 @@
  * Date: 2016-7-17
  */
 
-window.alert_ = window.alert;
-window.alert = function () {
-    alert_.apply(window, arguments)
-};
-
-/// <reference path="openiz-bre.js"/>
-
-/*
- * Copyright 2015-2016 Mohawk College of Applied Arts and Technology
- * 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
- * the License.
- * 
- * User: justi
- * Date: 2016-7-17
- */
-
-/// <reference path="~/lib/select2.min.js"/>
-
 /**
  * @version 0.6.12 (Dalhouse)
  * @copyright (C) 2015-2016, Mohawk College of Applied Arts and Technology
  * @license Apache 2.0
  */
 
+window.alert_ = window.alert;
+window.alert = function () {
+    alert_.apply(window, arguments)
+};
 
+/// <reference path="openiz-bre.js"/>
+/// <reference path="openiz-model.js"/>
+/// <reference path="~/lib/select2.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
+
 // SHIM
 var OpenIZApplicationService = window.OpenIZApplicationService || {};
 
@@ -2936,7 +2914,7 @@ var OpenIZ = OpenIZ || {
                 else
                     query.classConcept = OpenIZModel.EntityClassKeys.Material;
                 OpenIZ.Ims.get({
-                    resource: "Entity",
+                    resource: "Material",
                     continueWith: controlData.continueWith,
                     onException: controlData.onException,
                     query: query,

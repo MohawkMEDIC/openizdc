@@ -73,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// </summary>
         internal void Update(IdentifiedData data)
         {
-            this.Data = data; // TODO: This should be a copy maybe?
+            this.Data.CopyObjectData(data); // TODO: This should be a copy maybe?
             this.Touch();
         }
 

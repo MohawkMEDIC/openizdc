@@ -156,32 +156,9 @@ namespace OpenIZ.Mobile.Core.Protocol
                     var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.protocol.plan.lastRun") ?? "0001-01-01");
 
                     // Should we ?
-                    var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o=>o.ResourceType == "Person");
-                    var inboundQueueCount = SynchronizationQueue.Inbound.Count();
-                    if (patientSync != null &&
-                        inboundQueueCount == 0 &&
-                            (
-                                lastRefresh == DateTime.MinValue || 
-                                DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
-                            )
-                        )
-                    {
-                        var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
-                        Guid queryId = Guid.NewGuid();
-                        int tr = 1, ofs = 0;
-                        while (ofs < tr)
-                        {
-                            ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
-                            var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
-                            ofs += 15;
-
-                            if (queueService.IsBusy ||
-                                SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
-
-                            foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
-                                this.QueueWorkItem(p);
-                        }
-                    }
+                    var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o => o.ResourceType == "Person");
+                    
+                    this.RefreshCarePlan(false);
 
 
                     // Stage 3. Subscribe to persistence
@@ -194,7 +171,7 @@ namespace OpenIZ.Mobile.Core.Protocol
 
                     queueService.QueueExhausted += (o, e) =>
                             {
-                                inboundQueueCount = SynchronizationQueue.Inbound.Count();
+                                int inboundQueueCount = SynchronizationQueue.Inbound.Count();
                                 if (e.Queue == "inbound" && !remoteSyncService.IsSynchronizing &&
                                 inboundQueueCount == 0)
                                 {
@@ -303,6 +280,45 @@ namespace OpenIZ.Mobile.Core.Protocol
 
             this.Started?.Invoke(this, EventArgs.Empty);
             return true;
+        }
+
+        /// <summary>
+        /// Refresh care plan
+        /// </summary>
+        public void RefreshCarePlan(bool force)
+        {
+            var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
+            var remoteSyncService = ApplicationContext.Current.GetService<ISynchronizationService>();
+            var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
+            var lastRefresh = DateTime.Parse(ApplicationContext.Current.Configuration.GetAppSetting("openiz.mobile.core.protocol.plan.lastRun") ?? "0001-01-01");
+
+            // Should we ?
+            var patientSync = SynchronizationLog.Current.GetAll().FirstOrDefault(o => o.ResourceType == "Person");
+            var inboundQueueCount = SynchronizationQueue.Inbound.Count();
+            if (patientSync != null &&
+                inboundQueueCount == 0 &&
+                    ( force ||
+                        lastRefresh == DateTime.MinValue ||
+                        DateTime.Now.Subtract(lastRefresh).TotalDays > 7 && ApplicationContext.Current.Confirm(Strings.locale_refreshCarePlanPrompt)
+                    )
+                )
+            {
+                var warehousePatients = this.m_warehouseService.StoredQuery(this.m_dataMart.Id, "consistency", new { });
+                Guid queryId = Guid.NewGuid();
+                int tr = 1, ofs = 0;
+                while (ofs < tr)
+                {
+                    ApplicationContext.Current.SetProgress(Strings.locale_refreshCarePlan, ofs / (float)tr);
+                    var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
+                    ofs += 15;
+
+                    if (queueService.IsBusy ||
+                        SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
+
+                    foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
+                        this.QueueWorkItem(p);
+                }
+            }
         }
 
         /// <summary>

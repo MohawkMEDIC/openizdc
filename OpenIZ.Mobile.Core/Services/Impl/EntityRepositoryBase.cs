@@ -157,8 +157,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// </summary>
         protected TEntity Save<TEntity>(TEntity data) where TEntity : IdentifiedData
         {
-
-
+            
             var persistenceService = ApplicationContext.Current.GetService<IDataPersistenceService<TEntity>>();
 
             if (persistenceService == null)
@@ -190,6 +189,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 data = businessRulesService?.BeforeUpdate(data) ?? data;
                 data = persistenceService.Update(data);
                 data = businessRulesService?.AfterUpdate(data) ?? data;
+
 
                 var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, data, "participation");
 

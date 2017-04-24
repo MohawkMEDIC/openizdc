@@ -254,6 +254,7 @@
     <property name="doseUnitModel" behavior="never"/>
     <property name="routeModel" behavior="never"/>
     <property name="siteModel" behavior="never"/>
+    <property name="tag" />
     <property name="relationship" all="true" behavior="always">
       <property name="HasComponent" all="true">
         <property name="sourceModel" behavior="never"/>

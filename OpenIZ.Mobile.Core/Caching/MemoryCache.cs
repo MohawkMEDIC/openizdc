@@ -155,6 +155,7 @@ namespace OpenIZ.Mobile.Core.Caching
             Dictionary<Guid, CacheEntry> cache = null;
             if (this.m_entryTable.TryGetValue(objData, out cache))
             {
+
                 // Parent cache lookup
                 Func<Type, bool> cacheLookup = (o) =>
                 {
@@ -176,15 +177,20 @@ namespace OpenIZ.Mobile.Core.Caching
                     CacheEntry ent = null;
                     if (cache.TryGetValue(key, out ent))
                     {
+                        //if (data.GetType().Name == "EntityRelationship" && !(MemoryCache.Current.TryGetEntry(typeof(OpenIZ.Core.Model.Entities.Place), Guid.Parse("6690bdf7-79e2-4d0a-870b-ee8b7d06ae62")) as Place).Relationships.Contains(ent.Data))
+                        //    System.Diagnostics.Debugger.Break();
                         lock (this.m_lock)
                             if (ent.Data != data)
+                            {
                                 ent.Update(data as IdentifiedData);
+                            }
                     }
                     else
                         lock (this.m_lock)
                             if (!cache.ContainsKey(key))
                             {
-                                cache.Add(key, new CacheEntry(DateTime.Now, data as IdentifiedData));
+                                var ce = new CacheEntry(DateTime.Now, data as IdentifiedData);
+                                cache.Add(key, ce);
 #if DEBUG
                                 this.m_tracer.TraceVerbose("Cache for {0} contains {1} entries...", objData, cache.Count);
 #endif
@@ -194,7 +200,9 @@ namespace OpenIZ.Mobile.Core.Caching
                 } while (cacheLookup(objData));
             }
             else  //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
+            {
                 this.RegisterCacheType(data.GetType()).Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
+            }
 
         }
 

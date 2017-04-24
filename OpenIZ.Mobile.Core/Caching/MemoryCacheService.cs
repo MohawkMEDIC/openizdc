@@ -185,7 +185,7 @@ namespace OpenIZ.Mobile.Core.Caching
         private void EnsureCacheConsistency(DataCacheEventArgs e)
         {
 
-            // Relationships should always be clean of source/target so the source/target will load the new relationship
+            //// Relationships should always be clean of source/target so the source/target will load the new relationship
             if (e.Object is ActParticipation)
             {
                 var ptcpt = (e.Object as ActParticipation);
@@ -201,7 +201,6 @@ namespace OpenIZ.Mobile.Core.Caching
             else if (e.Object is EntityRelationship)
             {
                 var rel = (e.Object as EntityRelationship);
-                MemoryCache.Current.AddUpdateEntry(rel.SourceEntity);
                 MemoryCache.Current.RemoveObject(rel.SourceEntity?.GetType() ?? typeof(Entity), rel.SourceEntityKey);
                 MemoryCache.Current.RemoveObject(rel.TargetEntity?.GetType() ?? typeof(Entity), rel.TargetEntityKey);
             }
