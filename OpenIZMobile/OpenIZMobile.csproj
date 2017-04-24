@@ -72,6 +72,17 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <BundleAssemblies>False</BundleAssemblies>
+    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+    <Debugger>.Net (Xamarin)</Debugger>
+    <AotAssemblies>False</AotAssemblies>
+    <EnableLLVM>False</EnableLLVM>
+    <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <EnableProguard>False</EnableProguard>
+    <DebugSymbols>False</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
