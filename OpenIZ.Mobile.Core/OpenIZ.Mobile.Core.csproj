@@ -121,7 +121,7 @@
     <Compile Include="Exceptions\SessionExpiredException.cs" />
     <Compile Include="Interop\AMI\AmiIntegrationService.cs" />
     <Compile Include="Interop\ConfigurationExtensions.cs" />
-    <Compile Include="Protocol\CarePlanManagerService.cs" />
+    <Compile Include="Data\Warehouse\CarePlan\CarePlanManagerService.cs" />
     <Compile Include="Search\Model\SearchEntityType.cs" />
     <Compile Include="Search\Model\SearchTerm.cs" />
     <Compile Include="Search\Model\SearchTermEntity.cs" />
@@ -320,7 +320,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Security\Audit\Model\ModelMap.xml" />
-    <EmbeddedResource Include="Protocol\CarePlanWarehouseSchema.xml" />
+    <EmbeddedResource Include="Data\Warehouse\CarePlan\CarePlanWarehouseSchema.xml" />
     <EmbeddedResource Include="Alerting\ModelMap.xml" />
     <Content Include="Data\Sql\ExtractingConceptsFromOpenIZDefaultDictionary.txt" />
   </ItemGroup>

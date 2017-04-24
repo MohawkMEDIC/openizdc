@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZMobile", "OpenIZMobile\OpenIZMobile.csproj", "{B031B6B7-B756-4959-B72F-61DB32270647}"
 EndProject
@@ -65,6 +65,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Desktop", "Desktop", "{7764149B-8D63-4C52-BA7F-CFC55ECD3AF9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DisconnectedClient", "DisconnectedClient\DisconnectedClient.csproj", "{899B0F8D-C781-4BAC-BE6E-323D3654FAF8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Reporting", "Reporting", "{76D60CF9-8CC5-4792-8CC0-4D18EFF92FE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenIZ.Mobile.Reporting", "OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj", "{39A382D5-A4A1-415A-8CEB-618177E23FAC}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -140,6 +144,12 @@ Global
 		{899B0F8D-C781-4BAC-BE6E-323D3654FAF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{899B0F8D-C781-4BAC-BE6E-323D3654FAF8}.SignedRelease|Any CPU.ActiveCfg = SignedRelease|Any CPU
 		{899B0F8D-C781-4BAC-BE6E-323D3654FAF8}.SignedRelease|Any CPU.Build.0 = SignedRelease|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.SignedRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC}.SignedRelease|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,5 +164,6 @@ Global
 		{9A06ACC9-4D6F-4EAB-8A8A-9652BC6A70AE} = {A2F42D79-66E3-4A16-B2D6-920C652360D1}
 		{20C72E5E-CDB0-4EF8-AA88-2DB30662F732} = {9C3CB4E7-2726-4669-8335-3D49B939B76C}
 		{899B0F8D-C781-4BAC-BE6E-323D3654FAF8} = {9C3CB4E7-2726-4669-8335-3D49B939B76C}
+		{39A382D5-A4A1-415A-8CEB-618177E23FAC} = {76D60CF9-8CC5-4792-8CC0-4D18EFF92FE0}
 	EndGlobalSection
 EndGlobal

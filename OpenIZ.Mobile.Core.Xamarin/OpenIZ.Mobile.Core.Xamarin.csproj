@@ -106,6 +106,7 @@
   <ItemGroup>
     <Compile Include="Configuration\AmiUpdateManager.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="Data\SQLiteReportDatasource.cs" />
     <Compile Include="Diagnostics\FileTraceWriter.cs" />
     <Compile Include="Diagnostics\LogTraceWriter.cs" />
     <Compile Include="Http\RestClient.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Services\ServiceHandlers\ImsiService.Acts.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Concept.cs" />
     <Compile Include="Services\ServiceHandlers\ImsiService.Patient.cs" />
+    <Compile Include="Services\ServiceHandlers\RisiService.cs" />
     <Compile Include="Services\ServiceHandlers\UserInterface.cs" />
     <Compile Include="Services\Attributes\RestMessageAttribute.cs" />
     <Compile Include="Services\Attributes\RestOperationAttribute.cs" />
@@ -137,7 +139,7 @@
     <Compile Include="Services\ServiceHandlers\ImsiService.cs" />
     <Compile Include="Services\LocalAppletManagerService.cs" />
     <Compile Include="Services\SimpleQueueFileProvider.cs" />
-    <Compile Include="Warehouse\SQLiteDatawarehouse.cs" />
+    <Compile Include="Data\SQLiteDatawarehouse.cs" />
     <Compile Include="XamarinApplicationContext.cs" />
     <Compile Include="Exceptions\SecurityTokenException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -165,6 +167,10 @@
       <Project>{554df209-7744-433f-993a-783e2a2803ef}</Project>
       <Name>OpenIZ.Mobile.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenIZ.Mobile.Reporting\OpenIZ.Mobile.Reporting.csproj">
+      <Project>{39A382D5-A4A1-415A-8CEB-618177E23FAC}</Project>
+      <Name>OpenIZ.Mobile.Reporting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.resx">
@@ -182,7 +188,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Warehouse\InitWarehouse.sql" />
+    <EmbeddedResource Include="Data\InitWarehouse.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

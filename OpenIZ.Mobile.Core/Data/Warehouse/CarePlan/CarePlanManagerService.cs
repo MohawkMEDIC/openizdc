@@ -40,7 +40,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OpenIZ.Mobile.Core.Protocol
+namespace OpenIZ.Mobile.Core.Data.Warehouse.CarePlan
 {
     /// <summary>
     /// The protocol watch service is used to watch patient regsitrations and ensure the clinical
@@ -138,7 +138,7 @@ namespace OpenIZ.Mobile.Core.Protocol
                     if (this.m_dataMart == null)
                     {
                         this.m_tracer.TraceInfo("Datamart for care plan service doesn't exist, will have to create it...");
-                        this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Protocol.CarePlanWarehouseSchema.xml")));
+                        this.m_dataMart = this.m_warehouseService.CreateDatamart("oizcp", DatamartSchema.Load(typeof(CarePlanManagerService).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Data.Warehouse.CarePlan.CarePlanWarehouseSchema.xml")));
                         this.m_tracer.TraceVerbose("Datamart {0} created", this.m_dataMart.Id);
                     }
                     //else // prune datamart
