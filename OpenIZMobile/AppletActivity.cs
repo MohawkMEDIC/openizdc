@@ -115,7 +115,7 @@ namespace OpenIZMobile
                 {
                     try
                     {
-                        if (!String.IsNullOrEmpty(e.ProgressText))
+                        if (!String.IsNullOrEmpty(e.ProgressText) && e.Progress > 0 && e.Progress < 1.0f)
                         {
                             this.m_textView.Visibility = ViewStates.Visible;
                             this.m_progressBar.Progress = (int)(this.m_progressBar.Max * e.Progress);

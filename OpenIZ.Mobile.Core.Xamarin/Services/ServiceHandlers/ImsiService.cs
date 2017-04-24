@@ -294,9 +294,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityUser = AuthenticationContext.Current.Session.SecurityUser;
             var userEntity = AuthenticationContext.Current.Session.UserEntity;
-            templateString = templateString.Replace("{{today}}", DateTime.Today.ToUniversalTime().ToString("o"))
+            templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
                 .Replace("{{uuid}}", Guid.NewGuid().ToString())
-                .Replace("{{now}}", DateTime.Now.ToUniversalTime().ToString("o"))
+                .Replace("{{now}}", DateTime.Now.ToString("o"))
                 .Replace("{{userId}}", securityUser.Key.ToString())
                 .Replace("{{userEntityId}}", userEntity?.Key.ToString())
                 .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString());

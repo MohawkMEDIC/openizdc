@@ -214,7 +214,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 return x.SourceEntityKey == y.SourceEntityKey &&
                     x.PlayerEntityKey == y.PlayerEntityKey &&
-                    x.ParticipationRoleKey == y.ParticipationRoleKey;
+                    (x.ParticipationRoleKey == y.ParticipationRoleKey || x.ParticipationRole?.Mnemonic == y.ParticipationRole?.Mnemonic);
             }
 
             /// <summary>
@@ -225,6 +225,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 int result = obj.SourceEntityKey.GetHashCode();
                 result = 37 * result + obj.PlayerEntityKey.GetHashCode();
                 result = 37 * result + obj.ParticipationRoleKey.GetHashCode();
+                result = 37 * result + (obj.ParticipationRole?.Mnemonic.GetHashCode() ?? 0);
+
                 return result;
             }
         }

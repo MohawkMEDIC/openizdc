@@ -47,9 +47,12 @@ namespace OpenIZ.Mobile.Core.Caching
     /// </summary>
     public class MemoryCache : IDisposable
     {
-        
+
         // Entry table for the cache
-        private Dictionary<Type, Dictionary<Guid, CacheEntry>> m_entryTable = new Dictionary<Type, Dictionary<Guid, CacheEntry>>();
+        private Dictionary<Guid, CacheEntry> m_entryTable = new Dictionary<Guid, CacheEntry>();
+
+        // Subscribed types
+        private HashSet<Type> m_subscribedTypes = new HashSet<Type>();
 
         // True if the object is disposed
         private bool m_disposed = false;
@@ -126,11 +129,7 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(t, out cache))
-                return cache.Count;
-            else
-                return 0;
+            return this.m_entryTable.Count;
 
         }
 
@@ -148,61 +147,12 @@ namespace OpenIZ.Mobile.Core.Caching
             if (idData == null || !idData.Key.HasValue)
                 return;
 
-            //if (idData.Key?.ToString() == "e4d3350b-b0f5-45c1-80ba-49e3844cbcc8" ||
-            //    idData.Key?.ToString() == "663f0245-744e-408c-aa04-bba7183cbe10")
-            //    System.Diagnostics.Debugger.Break();
-
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objData, out cache))
-            {
-
-                // Parent cache lookup
-                Func<Type, bool> cacheLookup = (o) =>
-                {
-                    if (!this.m_entryTable.TryGetValue(o, out cache))
-                    {
-                        if ((typeof(Entity).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo()) || typeof(Act).GetTypeInfo().IsAssignableFrom(o.GetTypeInfo())))
-                            cache = this.RegisterCacheType(o);
-                        else
-                            return false;
-                    }
-                    return true;
-                };
-
-                // We want to cascade up the type heirarchy this is a do/while with IF instead of while
-                // because the ELSE-IF clause
-                do
-                {
-                    Guid key = idData?.Key ?? Guid.Empty;
-                    CacheEntry ent = null;
-                    if (cache.TryGetValue(key, out ent))
-                    {
-                        //if (data.GetType().Name == "EntityRelationship" && !(MemoryCache.Current.TryGetEntry(typeof(OpenIZ.Core.Model.Entities.Place), Guid.Parse("6690bdf7-79e2-4d0a-870b-ee8b7d06ae62")) as Place).Relationships.Contains(ent.Data))
-                        //    System.Diagnostics.Debugger.Break();
-                        lock (this.m_lock)
-                            if (ent.Data != data)
-                            {
-                                ent.Update(data as IdentifiedData);
-                            }
-                    }
-                    else
-                        lock (this.m_lock)
-                            if (!cache.ContainsKey(key))
-                            {
-                                var ce = new CacheEntry(DateTime.Now, data as IdentifiedData);
-                                cache.Add(key, ce);
-#if DEBUG
-                                this.m_tracer.TraceVerbose("Cache for {0} contains {1} entries...", objData, cache.Count);
-#endif
-                            }
-
-                    objData = objData.GetTypeInfo().BaseType;
-                } while (cacheLookup(objData));
-            }
-            else  //if(data.GetType().GetTypeInfo().GetCustomAttribute<XmlRootAttribute>() != null) // only cache root elements
-            {
-                this.RegisterCacheType(data.GetType()).Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
-            }
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(idData.Key.Value, out candidate))
+                candidate.Update(data as IdentifiedData);
+            else
+                lock (this.m_lock)
+                    this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
 
         }
 
@@ -217,24 +167,11 @@ namespace OpenIZ.Mobile.Core.Caching
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
 
-            Dictionary<Guid, CacheEntry> cache = null;
-            if (this.m_entryTable.TryGetValue(objectType, out cache))
-            {
-                do
-                {
-                    CacheEntry candidate = default(CacheEntry);
-                    if (cache.TryGetValue(key.Value, out candidate))
-                    {
-                        lock (this.m_lock)
-                        {
-                            cache.Remove(key.Value);
-                        }
-                    }
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
+                lock (this.m_lock)
+                    this.m_entryTable.Remove(key.Value);
 
-                    objectType = objectType.GetTypeInfo().BaseType;
-                } while (this.m_entryTable.TryGetValue(objectType, out cache));
-            }
-            return;
         }
 
         /// <summary>
@@ -248,21 +185,11 @@ namespace OpenIZ.Mobile.Core.Caching
             else if (objectType == null)
                 throw new ArgumentNullException(nameof(objectType));
 
-            Type scanType = objectType;
-            while (scanType == objectType || typeof(Act).GetTypeInfo().IsAssignableFrom(scanType.GetTypeInfo()) || typeof(Entity).GetTypeInfo().IsAssignableFrom(scanType.GetTypeInfo()))
+            CacheEntry candidate = null;
+            if (this.m_entryTable.TryGetValue(key.Value, out candidate))
             {
-                Dictionary<Guid, CacheEntry> cache = null;
-                if (this.m_entryTable.TryGetValue(scanType, out cache))
-                {
-                    CacheEntry candidate = default(CacheEntry);
-                    if (cache.TryGetValue(key.Value, out candidate))
-                    {
-                        candidate.Touch();
-
-                        return candidate.Data;
-                    }
-                }
-                scanType = scanType.GetTypeInfo().BaseType;
+                candidate.Touch();
+                return candidate.Data;
             }
 
             return null;
@@ -286,38 +213,39 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-
             // Entry table clean
-            try
-            {
-                if (!Monitor.TryEnter(this.m_lock))
-                    return; // Something else is locking the process
-
-                this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
-                var nowTicks = DateTime.Now.Ticks;
-
-                foreach (var itm in this.m_entryTable)
+            if (Monitor.TryEnter(this.m_lock))
+                try
                 {
+
+                    this.m_tracer.TraceInfo("Starting memory cache pressure reduction...");
+                    var nowTicks = DateTime.Now.Ticks;
+
+
                     int maxSize = this.m_configuration.Cache.MaxSize;
-                    var garbageBin = itm.Value.OrderByDescending(o => o.Value.LastUpdateTime).Take(itm.Value.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
+                    var garbageBin = this.m_entryTable.OrderByDescending(o => o.Value.LastUpdateTime).Take(this.m_entryTable.Count - maxSize).Where(o => (nowTicks - o.Value.LastUpdateTime) >= this.m_minAgeTicks).Select(o => o.Key);
 
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceInfo("Cache {0} overcommitted by {1} will remove entries older than min age..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Cache overcommitted by {0} will remove entries older than min age..", garbageBin.Count());
 
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
-                            IEnumerable<Guid> gc = o as IEnumerable<Guid>;
-                            foreach (var g in gc)
-                                itm.Value.Remove(g);
+                            try
+                            {
+                                IEnumerable<Guid> gc = o as IEnumerable<Guid>;
+                                foreach (var g in gc)
+                                    lock (this.m_lock)
+                                        this.m_entryTable.Remove(g);
+                            }
+                            catch { }
                         }, garbageBin);
                     }
                 }
-            }
-            finally
-            {
-                Monitor.Exit(this.m_lock);
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
@@ -327,9 +255,7 @@ namespace OpenIZ.Mobile.Core.Caching
         {
             this.ThrowIfDisposed();
 
-            foreach (var itm in this.m_entryTable)
-                lock (this.m_lock)
-                    itm.Value.Clear();
+            this.m_entryTable.Clear();
         }
 
 
@@ -342,57 +268,46 @@ namespace OpenIZ.Mobile.Core.Caching
 
 
             long nowTicks = DateTime.Now.Ticks;
-            try// This time wait for a lock
-            {
-                if (!Monitor.TryEnter(this.m_lock))
-                    return;
-
-                this.m_tracer.TraceInfo("Starting memory cache deep clean...");
-
-                // Entry table clean
-                foreach (var itm in this.m_entryTable)
+            if (Monitor.TryEnter(this.m_lock))
+                try// This time wait for a lock
                 {
+
+                    this.m_tracer.TraceInfo("Starting memory cache deep clean...");
+
+                    // Entry table clean
+
                     // Clean old data
-                    var garbageBin = itm.Value.Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
+                    var garbageBin = this.m_entryTable.Where(o => nowTicks - o.Value.LastUpdateTime > this.m_configuration.Cache.MaxAge).Select(o => o.Key);
                     if (garbageBin.Count() > 0)
                     {
-                        this.m_tracer.TraceInfo("Will clean {0} stale entries from cache {1}..", garbageBin.Count(), itm.Key.FullName);
+                        this.m_tracer.TraceInfo("Will clean {0} stale entries from cache..", garbageBin.Count());
                         this.m_taskPool.QueueUserWorkItem((o) =>
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
                             foreach (var g in gc.ToArray())
-                                    itm.Value.Remove(g);
+                                lock(this.m_lock)
+                                    this.m_entryTable.Remove(g);
                         }, garbageBin);
                     }
 
                 }
-            }
-            finally
-            {
-                Monitor.Exit(this.m_lock);
-            }
+                finally
+                {
+                    Monitor.Exit(this.m_lock);
+                }
         }
 
         /// <summary>
         /// Register caching type
         /// </summary>
-        public Dictionary<Guid, CacheEntry> RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
+        public void RegisterCacheType(Type t, int maxSize = 50, long maxAge = 0x23C34600)
         {
 
             this.ThrowIfDisposed();
 
-            // Lock the master cache 
-            Dictionary<Guid, CacheEntry> cache = null;
-            lock (this.m_lock)
-            {
-                if (!this.m_entryTable.TryGetValue(t, out cache))
-                {
-                    cache = new Dictionary<Guid, CacheEntry>(10);
-                    this.m_entryTable.Add(t, cache);
-                }
-                else
-                    return cache;
-            }
+            if (this.m_subscribedTypes.Contains(t))
+                return;
+            this.m_subscribedTypes.Add(t);
 
             // We want to subscribe when this object is changed so we can keep the cache fresh
             var idpType = typeof(IDataPersistenceService<>).MakeGenericType(t);
@@ -423,7 +338,6 @@ namespace OpenIZ.Mobile.Core.Caching
                 idpType.GetRuntimeEvent("Queried").AddEventHandler(svcInstance, queryInstanceDelegate);
             }
 
-            return cache;
 
         }
 

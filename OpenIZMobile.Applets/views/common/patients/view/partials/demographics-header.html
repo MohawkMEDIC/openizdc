@@ -94,18 +94,18 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li role="presentation" ng-if="patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.download()">
+                    <a ng-click="patientController.download()">
                         <span class="glyphicon glyphicon-cloud-download margin-right-10"></span> {{ 'locale.patient.action.download' | i18n }}
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.showPatient()">
+                    <a ng-click="patientController.showPatient()">
                         <span class="glyphicon glyphicon-pencil margin-right-10"></span> {{ 'locale.patient.action.edit' | i18n }}
                         <span ng-if="patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null">({{ 'locale.patient.status.patientDeceased' | i18n }})</span>
                     </a>
                 </li>
                 <li role="presentation" ng-if="!patient.tag.onlineResult &amp;&amp; encounterFactory.appointments.length &gt; 0" ng-class="{'tab-disabled': patient.deceasedDate!==undefined &amp;&amp; patient.deceasedDate!==null}">
-                    <a ng-click="patientEdit.appointment()">
+                    <a ng-click="patientController.appointment()">
                         <span class="glyphicon glyphicon-calendar margin-right-10"></span> {{ 'locale.patient.action.appointment' | i18n }}
                     </a>
                 </li>

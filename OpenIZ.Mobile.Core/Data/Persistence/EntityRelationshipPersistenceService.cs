@@ -135,7 +135,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             {
                 return x.SourceEntityKey == y.SourceEntityKey &&
                     x.TargetEntityKey == y.TargetEntityKey &&
-                    x.RelationshipTypeKey == y.RelationshipTypeKey;
+                    (x.RelationshipTypeKey == y.RelationshipTypeKey ||  x.RelationshipType?.Mnemonic == y.RelationshipType?.Mnemonic);
             }
 
             /// <summary>
@@ -146,6 +146,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 int result = obj.SourceEntityKey.GetHashCode();
                 result = 37 * result + obj.RelationshipTypeKey.GetHashCode();
                 result = 37 * result + obj.TargetEntityKey.GetHashCode();
+                result = 37 * result + (obj.RelationshipType?.Mnemonic.GetHashCode() ?? 0);
                 return result;
             }
         }
