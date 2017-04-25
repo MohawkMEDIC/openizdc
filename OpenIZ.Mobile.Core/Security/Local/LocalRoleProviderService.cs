@@ -100,8 +100,6 @@ namespace OpenIZ.Mobile.Core.Security
             catch
             {
                 this.SecurityAttributesChanged?.Invoke(this, new SecurityAuditDataEventArgs(roles.Select(o => new SecurityRole() { Name = o }), $"policy=[{String.Join(",", policyInstance.Select(o => $"{o.Policy.Name}:{o.Rule}"))}]") { Success = false });
-
-                throw;
             }
         }
 

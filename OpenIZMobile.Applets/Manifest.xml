@@ -134,6 +134,7 @@
     <string key="locale.action.remove">Remove</string>
     <string key="locale.action.activate">Activate</string>
     <string key="locale.action.search">Search</string>
+    <string key="locale.action.run">Run</string>
     <string key="locale.action.confirm">Confirm</string>
     <string key="locale.action.onlineOnly">Online Only</string>
 
@@ -330,6 +331,13 @@
     <string key="locale.patient.search.noresults">No Patients Found</string>
     <string key="locale.patient.search.header.mother">Mother</string>
     <string key="locale.patient.schedule.none">No Scheduled Appointments</string>
+
+    <!-- Reports -->
+    <string key="locale.reports.title">Facility Report Centre</string>
+    <string key="locale.reports.info.name">Name</string>
+    <string key="locale.reports.info.description">Description</string>
+    <string key="locale.reports.info.action">Actions</string>
+    <string key="locale.reports.parameters.title">Set report filter parameters</string>
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>

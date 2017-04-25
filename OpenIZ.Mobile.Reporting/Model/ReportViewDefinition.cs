@@ -27,7 +27,7 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// <summary>
         /// Body of the view
         /// </summary>
-        [XmlElement("body"), JsonProperty("body")]
+        [XmlElement("body", Namespace = "http://www.w3.org/1999/xhtml"), JsonProperty("body")]
         public XElement Body { get; set; }
     }
 }

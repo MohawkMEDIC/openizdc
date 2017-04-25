@@ -15,7 +15,7 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// Gets the format specifier for date
         /// </summary>
         [XmlElement("date"), JsonProperty("date")]
-        public IFormatProvider Date { get; internal set; }
+        public String Date { get; set; }
 
         /// <summary>
         /// Date time formatting

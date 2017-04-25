@@ -22,7 +22,13 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// <summary>
         /// Gets or sets the name
         /// </summary>
-        [XmlAttribute("id"), JsonProperty("title")]
+        [XmlAttribute("name"), JsonProperty("name")]
+        public String Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name
+        /// </summary>
+        [XmlAttribute("title"), JsonProperty("title")]
         public String Title { get; set; }
 
         /// <summary>

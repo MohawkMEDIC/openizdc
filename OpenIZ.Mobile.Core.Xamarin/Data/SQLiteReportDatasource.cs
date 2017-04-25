@@ -35,24 +35,70 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
             var connectionStringPath = ApplicationContext.Current.Configuration.GetConnectionString(connectionString).Value;
             var connection = OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.GetConnection(connectionStringPath);
             using (connection.Lock())
-            using (var conn = new SqliteConnection(connectionStringPath))
+            using (var conn = new SqliteConnection($"Data Source={connectionStringPath}"))
             using (var cmd = conn.CreateCommand())
             {
-                cmd.CommandText = sql;
-                cmd.CommandType = System.Data.CommandType.Text;
-                foreach (var p in sqlParms)
+                try
                 {
-                    var parm = cmd.CreateParameter();
-                    parm.Value = p;
-                }
+                    //connection.Close();
+                    cmd.CommandText = sql;
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    foreach (var itm in sqlParms)
+                    {
+                        var parm = cmd.CreateParameter();
+                        parm.Value = itm;
+                        if (itm is String) parm.DbType = System.Data.DbType.String;
+                        else if (itm is DateTime || itm is DateTimeOffset)
+                        {
+                            parm.DbType = System.Data.DbType.Int64;
+                            if (itm is DateTime)
+                                parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
+                            else
+                                parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Ticks;
+                        }
+                        else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
+                        else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
+                        else if (itm is byte[])
+                        {
+                            parm.DbType = System.Data.DbType.Binary;
+                            parm.Value = itm;
+                        }
+                        else if (itm is Guid || itm is Guid?)
+                        {
+                            parm.DbType = System.Data.DbType.Binary;
+                            if (itm != null)
+                                parm.Value = ((Guid)itm).ToByteArray();
+                            else parm.Value = DBNull.Value;
+                        }
+                        else if (itm is float || itm is double) parm.DbType = System.Data.DbType.Double;
+                        else if (itm is Decimal) parm.DbType = System.Data.DbType.Decimal;
+                        else if (itm == null)
+                        {
+                            parm.Value = DBNull.Value;
+                        }
+                        cmd.Parameters.Add(parm);
+                    }
 
-                // data reader
-                using (var dr = cmd.ExecuteReader())
+                    // data reader
+                    try
+                    {
+                        conn.Open();
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            var retVal = new List<Object>();
+                            while (dr.Read())
+                                retVal.Add(this.MapExpando<ExpandoObject>(dr));
+                            return retVal;
+                        }
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+                finally
                 {
-                    var retVal = new List<Object>();
-                    while (dr.Read())
-                        retVal.Add(this.MapExpando<ExpandoObject>(dr));
-                    return retVal;
+                  //  OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.Remove(connection);
                 }
             }
         }
@@ -67,6 +113,11 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
             {
                 var value = rdr[i];
                 var name = rdr.GetName(i);
+                if (value is byte[] && (value as byte[]).Length == 16)
+                    value = new Guid(value as byte[]);
+                else if (name.ToLower().Contains("time") ||
+                    name.ToLower().Contains("utc") && value is int)
+                    value = new DateTime((int)value);
                 retVal.Add(name, value);
             }
             return (TModel)retVal;

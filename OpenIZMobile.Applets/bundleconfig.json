@@ -153,5 +153,11 @@
       "lib/vis.min.js",
       "lib/fullcalendar.min.js"
     ]
+  },
+  {
+    "outputFileName": "css/radial-progress.min.css",
+    "inputFiles": [
+      "css/radial-progress.css"
+    ]
   }
 ]

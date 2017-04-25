@@ -733,6 +733,90 @@ var OpenIZ = OpenIZ || {
         }
     },
     /**
+     * @summary Utility functions which assist in execution and listing of reports
+     * @static
+     * @class
+     * @memberof OpenIZ
+     */
+    Risi: {
+        /**
+         * @method
+         * @summary Search the RISI for reports matching the specified query
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The Query from which to use 
+         */
+        getReportsAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__risi/report", {
+                query: { _name: controlData.name },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally
+            });
+        },
+        /**
+         * @method
+         * @summary Execute a report on the RISI 
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The name of the report to run
+         * @param {object} controlData.view The view of the report to fetch
+         * @param {object} controlData.query The view of the report to fetch
+         */
+        getParameterValuesAsync: function (controlData) {
+            var query = controlData.query || {};
+            query._name = controlData.name;
+            query._report = controlData.report;
+
+            // Execute the report
+            OpenIZ.Util.simpleGet("/__risi/data", {
+                query: query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        },
+        /**
+         * @method
+         * @summary Execute a report on the RISI 
+         * @param {object} controlData The control data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {object} controlData.name The name of the report to run
+         * @param {object} controlData.view The view of the report to fetch
+         * @param {object} controlData.query The view of the report to fetch
+         */
+        executeReportAsync: function (controlData) {
+            var query = {};
+            query._name = controlData.name;
+            query._view = controlData.view;
+
+            if (controlData.query)
+                for (var k in Object.keys(controlData.query)) {
+                    var key = Object.keys(controlData.query)[k];
+                    if (controlData.query[key] && controlData.query[key].toISOString)
+                        query[key] = controlData.query[key].toISOString();
+                    else
+                        query[key] = controlData.query[key];
+                }
+
+            // Execute the report
+            OpenIZ.Util.simpleGet("/__risi/report.htm", {
+                query: query,
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        }
+    },
+    /**
      * @summary Utility functions which assist in the writing of other OpenIZ functions
      * @static
      * @class

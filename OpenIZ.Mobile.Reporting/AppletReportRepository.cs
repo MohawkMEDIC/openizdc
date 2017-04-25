@@ -18,7 +18,7 @@ namespace OpenIZ.Mobile.Reporting
     {
 
         // Reports
-        private List<ReportDefinition> m_reports = new List<ReportDefinition>();
+        private List<ReportDefinition> m_reports = null;
 
         /// <summary>
         /// Get all reports in this repository
@@ -41,11 +41,25 @@ namespace OpenIZ.Mobile.Reporting
                 XmlSerializer xsz = new XmlSerializer(typeof(ReportDefinition));
                 var appletService = ApplicationServiceContext.Current.GetService(typeof(IAppletManagerService)) as IAppletManagerService;
                 var candidates = appletService.Applets.SelectMany(o => o.Assets).Where(o => o.Name.StartsWith("reports"));
-                this.m_reports = new List<ReportDefinition>();
-                foreach (var c in candidates)
+
+                if (appletService.Applets.CachePages)
                 {
-                    using (var ms = new MemoryStream(appletService.Applets.RenderAssetContent(c)))
-                        this.m_reports.Add(xsz.Deserialize(ms) as ReportDefinition);
+                    this.m_reports = new List<ReportDefinition>();
+                    foreach (var c in candidates)
+                    {
+                        using (var ms = new MemoryStream(appletService.Applets.RenderAssetContent(c)))
+                            this.m_reports.Add(xsz.Deserialize(ms) as ReportDefinition);
+                    }
+                }
+                else
+                {
+                    var retVal = new List<ReportDefinition>();
+                    foreach (var c in candidates)
+                    {
+                        using (var ms = new MemoryStream(appletService.Applets.RenderAssetContent(c)))
+                            retVal.Add(xsz.Deserialize(ms) as ReportDefinition);
+                    }
+                    return retVal;
                 }
             }
             return this.m_reports;
@@ -57,7 +71,7 @@ namespace OpenIZ.Mobile.Reporting
         /// </summary>
         public ReportDefinition GetReport(string name)
         {
-            return this.GetReports().FirstOrDefault(o => o.Name == name);
+            return this.GetReports().FirstOrDefault(o => o.Description?.Name == name);
         }
     }
 }

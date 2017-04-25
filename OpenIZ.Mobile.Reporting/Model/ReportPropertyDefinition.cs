@@ -6,7 +6,7 @@ namespace OpenIZ.Mobile.Reporting.Model
     /// <summary>
     /// Represents a report property definition
     /// </summary>
-    [XmlType(nameof(ReportParameterDefinition), Namespace = "http://openiz.org/mobile/reporting")]
+    [XmlType(nameof(ReportPropertyDefinition), Namespace = "http://openiz.org/mobile/reporting")]
     [JsonObject(nameof(ReportPropertyDefinition))]
     public class ReportPropertyDefinition
     {

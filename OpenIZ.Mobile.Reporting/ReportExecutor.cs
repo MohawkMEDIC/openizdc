@@ -61,7 +61,7 @@ namespace OpenIZ.Mobile.Reporting
                 throw new FileNotFoundException(reportName);
 
             var view = rdl.Views.SingleOrDefault(o => o.Name == viewName);
-            if (view != null)
+            if (view == null)
                 throw new KeyNotFoundException(viewName);
 
             var cParms = new Dictionary<String, Object>();
@@ -69,33 +69,37 @@ namespace OpenIZ.Mobile.Reporting
             // Cast parms
             foreach (var kv in pParms)
             {
-                var rparm = rdl.Parameters.FirstOrDefault(o => o.Name == kv.Key);
-                if (rparm == null)
-                    throw new KeyNotFoundException(kv.Key);
-                if (kv.Value != null)
-                    switch (rparm.Type)
-                    {
-                        case ReportPropertyType.ByteArray:
-                            cParms[rparm.Name] = kv.Value;
-                            break;
-                        case ReportPropertyType.Date:
-                        case ReportPropertyType.DateTime:
-                            cParms[rparm.Name] = DateTime.Parse(kv.Value.ToString());
-                            break;
-                        case ReportPropertyType.Decimal:
-                            cParms[rparm.Name] = Decimal.Parse(kv.Value.ToString());
-                            break;
-                        case ReportPropertyType.Integer:
-                            cParms[rparm.Name] = Int32.Parse(kv.Value.ToString());
-                            break;
-                        case ReportPropertyType.String:
-                            cParms[rparm.Name] = kv.Value?.ToString();
-                            break;
-                        case ReportPropertyType.Uuid:
-                            cParms[rparm.Name] = Guid.Parse(kv.Value.ToString());
-                            break;
+                try
+                {
+                    var rparm = rdl.Parameters.FirstOrDefault(o => o.Name == kv.Key);
+                    if (rparm == null)
+                        continue;
+                    if (kv.Value != null)
+                        switch (rparm.Type)
+                        {
+                            case ReportPropertyType.ByteArray:
+                                cParms[rparm.Name] = kv.Value;
+                                break;
+                            case ReportPropertyType.Date:
+                            case ReportPropertyType.DateTime:
+                                cParms[rparm.Name] = DateTime.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.Decimal:
+                                cParms[rparm.Name] = Decimal.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.Integer:
+                                cParms[rparm.Name] = Int32.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.String:
+                                cParms[rparm.Name] = kv.Value?.ToString();
+                                break;
+                            case ReportPropertyType.Uuid:
+                                cParms[rparm.Name] = Guid.Parse(kv.Value.ToString());
+                                break;
 
-                    }
+                        }
+                }
+                catch { }
             }
 
             // Now we want to format our report parameters to appropriate SQL
@@ -109,7 +113,7 @@ namespace OpenIZ.Mobile.Reporting
                 XElement renderedBody = new XElement(view.Body);
 
                 // Look for control parameters
-                renderedBody = this.RenderScope(renderedBody, exeSets, new ReportExecutionContext()
+                this.RenderScope(renderedBody, exeSets, new ReportExecutionContext()
                 {
                     Dataset = null,
                     Report = rdl,
@@ -118,7 +122,12 @@ namespace OpenIZ.Mobile.Reporting
 
                 using (var ms = new MemoryStream())
                 {
-                    using (var xw = XmlWriter.Create(ms))
+                    using (var xw = XmlWriter.Create(ms, new XmlWriterSettings()
+                    {
+                        OmitXmlDeclaration = true,
+                        Encoding = System.Text.Encoding.UTF8
+
+                    }))
                         renderedBody.WriteTo(xw);
                     return ms.ToArray();
                 }
@@ -129,56 +138,63 @@ namespace OpenIZ.Mobile.Reporting
         /// <summary>
         /// Render scope object
         /// </summary>
-        private TFacet RenderScope<TFacet>(TFacet facet, object scope, ReportExecutionContext context) where TFacet : XNode
+        private void RenderScope<TFacet>(TFacet facet, object scope, ReportExecutionContext context) where TFacet : XElement
         {
-            foreach (var xel in (facet as XElement).Elements())
+            if (facet.Name == xs_report + "repeat")
             {
-                if (xel.Name == xs_report + "repeat")
-                {
-                    var bind = xel.Attribute("bind");
-                    var subScope = this.GetBind(scope, bind?.Value);
-                    if (!(subScope is IEnumerable))
-                        throw new InvalidOperationException("Repeat must be performed on a IEnumerable scope");
-                    var subContext = new ReportExecutionContext() { Dataset = subScope as IEnumerable, Report = context.Report };
-                    foreach (var itm in subScope as IEnumerable)
-                    {
-                        subContext.Scope = itm;
-                        foreach (var cel in xel.Elements())
-                        {
-                            var rchild = this.RenderScope(new XElement(cel), itm, context);
-                            xel.AddAfterSelf(rchild);
-                        }
-                    }
-                    xel.Remove();
-                }
-                else if (xel.Name == xs_report + "value")
-                {
-                    xel.AddAfterSelf(new XText(this.RenderString(this.GetBind(scope, xel.Value), context).ToString()));
-                    xel.Remove();
-                }
-                else if (xel.Name == xs_report + "expr")
-                {
-                    Delegate evaluator = null;
-                    if (!this.m_cachedExpressions.TryGetValue($"{scope.GetType().FullName}-{xel.Value}", out evaluator))
-                    {
-                        var expression = new CompiledExpression(xel.Value);
-                        expression.TypeRegistry = new TypeRegistry();
-                        expression.TypeRegistry.RegisterDefaultTypes();
-                        expression.TypeRegistry.RegisterType<Guid>();
-                        expression.TypeRegistry.RegisterType<DateTimeOffset>();
-                        expression.TypeRegistry.RegisterType<TimeSpan>();
-                        expression.TypeRegistry.RegisterParameter("now", () => DateTime.Now);
-                        expression.TypeRegistry.RegisterParameter("_context", () => context);
-                        evaluator = expression.ScopeCompile();
-                        lock (this.m_cachedExpressions)
-                            this.m_cachedExpressions.Add(xel.Value, evaluator);
-                    }
-                    xel.AddAfterSelf(new XText(this.RenderString(evaluator.DynamicInvoke(scope), context).ToString()));
-                    xel.Remove();
+                var bind = facet.Attribute("bind");
+                var subScope = this.GetBind(scope, bind?.Value);
+                if (!(subScope is IEnumerable))
+                    throw new InvalidOperationException("Repeat must be performed on a IEnumerable scope");
+                var subContext = new ReportExecutionContext() { Dataset = subScope as IEnumerable, Report = context.Report };
 
+                List<XElement> newChildren = new List<XElement>();
+                foreach (var itm in subScope as IEnumerable)
+                {
+                    subContext.Scope = itm;
+                    foreach (var cel in facet.Elements())
+                    {
+                        var nchild = new XElement(cel);
+                        this.RenderScope(nchild, itm, context);
+                        newChildren.Add(nchild);
+                    }
                 }
+                foreach (var itm in facet.Elements())
+                    itm.Remove();
+                facet.Add(newChildren.ToArray());
+                //facet.Remove();
             }
-            return facet;
+            else if (facet.Name == xs_report + "value")
+            {
+                var format = facet.Attribute("format")?.Value;
+                if(format != null)
+                    facet.ReplaceWith(new XText(String.Format(format, facet.Value.Split(',').Select(o=> this.RenderString(this.GetBind(scope, o), context).ToString()).ToArray())));
+                else
+                    facet.ReplaceWith(new XText(this.RenderString(this.GetBind(scope, facet.Value), context).ToString()));
+            }
+            else if (facet.Name == xs_report + "expr")
+            {
+                Delegate evaluator = null;
+                if (!this.m_cachedExpressions.TryGetValue($"{scope.GetType().FullName}-{facet.Value}", out evaluator))
+                {
+                    var expression = new CompiledExpression(facet.Value);
+                    expression.TypeRegistry = new TypeRegistry();
+                    expression.TypeRegistry.RegisterDefaultTypes();
+                    expression.TypeRegistry.RegisterType<Guid>();
+                    expression.TypeRegistry.RegisterType<DateTimeOffset>();
+                    expression.TypeRegistry.RegisterType<TimeSpan>();
+                    
+                    evaluator = expression.ScopeCompile<ExpandoObject>();
+                    lock (this.m_cachedExpressions)
+                        this.m_cachedExpressions.Add($"{scope.GetType().FullName}-{facet.Value}", evaluator);
+                }
+                facet.ReplaceWith(new XText(this.RenderString(evaluator.DynamicInvoke(scope), context).ToString()));
+
+            }
+            else
+                foreach (var cel in facet.Elements())
+                    this.RenderScope(cel, scope, context);
+
         }
 
         /// <summary>
@@ -201,6 +217,7 @@ namespace OpenIZ.Mobile.Reporting
         /// </summary>
         private object GetBind(object scope, String bind)
         {
+            bind = bind.Replace("[", "").Replace("]", "").Replace("\"","");
             if (String.IsNullOrEmpty(bind))
                 return scope;
             else if (scope is IDictionary)
@@ -220,7 +237,7 @@ namespace OpenIZ.Mobile.Reporting
         /// <summary>
         /// Render parameter
         /// </summary>
-        private IEnumerable<dynamic> RenderParameter(String reportName, String parameterName, IDictionary<String, Object> pParms)
+        public IEnumerable<dynamic> RenderParameterValues(String reportName, String parameterName, IDictionary<String, Object> pParms)
         {
             var repository = ApplicationServiceContext.Current.GetService(typeof(IReportRepository)) as IReportRepository;
             if (repository == null)
@@ -256,7 +273,7 @@ namespace OpenIZ.Mobile.Reporting
 
             var regEx = new Regex(@"\$\{(\w*?)\}");
             var stmt = sql.Sql;
-            List<Object> values = null;
+            List<Object> values = new List<object>();
 
             // Replace ${ParmName} with parameter
             foreach (Match m in regEx.Matches(stmt))

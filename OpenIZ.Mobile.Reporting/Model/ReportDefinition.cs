@@ -37,11 +37,6 @@ namespace OpenIZ.Mobile.Reporting.Model
             s_serializer.Serialize(dest, this);
         }
 
-        /// <summary>
-        /// Gets or sets the name
-        /// </summary>
-        [XmlAttribute("name"), JsonProperty("name")]
-        public String Name { get; set; }
 
         /// <summary>
         /// Information description

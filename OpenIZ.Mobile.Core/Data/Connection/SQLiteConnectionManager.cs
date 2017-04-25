@@ -137,6 +137,20 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         }
 
         /// <summary>
+        /// Close and remove connection
+        /// </summary>
+        public void Remove(SQLiteConnectionWithLock connection)
+        {
+            lock (s_lockObject)
+            {
+                var kvd = this.m_connections.FirstOrDefault(o => o.Value == connection);
+                this.m_connections.Remove(kvd.Key);
+                connection.Dispose();
+            }
+
+        }
+
+        /// <summary>
         /// Start the connection manager
         /// </summary>
         public bool Start()
