@@ -37,6 +37,7 @@
     <Compile Include="AppletReportRepository.cs" />
     <Compile Include="IReportDatasource.cs" />
     <Compile Include="IReportRepository.cs" />
+    <Compile Include="Model\ReportConnectionString.cs" />
     <Compile Include="Model\ReportDatasetDefinition.cs" />
     <Compile Include="Model\ReportDefinition.cs" />
     <Compile Include="Model\ReportFormatDefinition.cs" />

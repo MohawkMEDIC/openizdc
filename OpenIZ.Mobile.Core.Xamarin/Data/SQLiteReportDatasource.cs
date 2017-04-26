@@ -1,5 +1,6 @@
 ﻿using Mono.Data.Sqlite;
 using OpenIZ.Mobile.Reporting;
+using OpenIZ.Mobile.Reporting.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -29,76 +30,91 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
         /// <summary>
         /// Executes the specified dataset
         /// </summary>
-        public IEnumerable<dynamic> ExecuteDataset(string connectionString, string sql, List<object> sqlParms)
+        public IEnumerable<dynamic> ExecuteDataset(List<ReportConnectionString> connectionString, string sql, List<object> sqlParms)
         {
             // Lock the main database
-            var connectionStringPath = ApplicationContext.Current.Configuration.GetConnectionString(connectionString).Value;
+            var connectionStringPath = ApplicationContext.Current.Configuration.GetConnectionString(connectionString.First(o => String.IsNullOrEmpty(o.Identifier)).Value).Value;
             var connection = OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.GetConnection(connectionStringPath);
             using (connection.Lock())
             using (var conn = new SqliteConnection($"Data Source={connectionStringPath}"))
-            using (var cmd = conn.CreateCommand())
             {
-                try
+                // Attach further connection strings
+                foreach (var itm in connectionString.Where(o => !String.IsNullOrEmpty(o.Identifier)))
                 {
-                    //connection.Close();
-                    cmd.CommandText = sql;
-                    cmd.CommandType = System.Data.CommandType.Text;
-                    foreach (var itm in sqlParms)
+                    using (var cmd = conn.CreateCommand())
                     {
-                        var parm = cmd.CreateParameter();
-                        parm.Value = itm;
-                        if (itm is String) parm.DbType = System.Data.DbType.String;
-                        else if (itm is DateTime || itm is DateTimeOffset)
-                        {
-                            parm.DbType = System.Data.DbType.Int64;
-                            if (itm is DateTime)
-                                parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
-                            else
-                                parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Ticks;
-                        }
-                        else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
-                        else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
-                        else if (itm is byte[])
-                        {
-                            parm.DbType = System.Data.DbType.Binary;
-                            parm.Value = itm;
-                        }
-                        else if (itm is Guid || itm is Guid?)
-                        {
-                            parm.DbType = System.Data.DbType.Binary;
-                            if (itm != null)
-                                parm.Value = ((Guid)itm).ToByteArray();
-                            else parm.Value = DBNull.Value;
-                        }
-                        else if (itm is float || itm is double) parm.DbType = System.Data.DbType.Double;
-                        else if (itm is Decimal) parm.DbType = System.Data.DbType.Decimal;
-                        else if (itm == null)
-                        {
-                            parm.Value = DBNull.Value;
-                        }
-                        cmd.Parameters.Add(parm);
+                        cmd.CommandText = $"ATTACH DATABASE '{itm.Value}' AS {itm.Identifier}";
+                        cmd.CommandType = System.Data.CommandType.Text;
+                        cmd.ExecuteNonQuery();
                     }
+                }
 
-                    // data reader
+                // Create command on main datasource
+                using (var cmd = conn.CreateCommand())
+                {
                     try
                     {
-                        conn.Open();
-                        using (var dr = cmd.ExecuteReader())
+
+                        //connection.Close();
+                        cmd.CommandText = sql;
+                        cmd.CommandType = System.Data.CommandType.Text;
+                        foreach (var itm in sqlParms)
                         {
-                            var retVal = new List<Object>();
-                            while (dr.Read())
-                                retVal.Add(this.MapExpando<ExpandoObject>(dr));
-                            return retVal;
+                            var parm = cmd.CreateParameter();
+                            parm.Value = itm;
+                            if (itm is String) parm.DbType = System.Data.DbType.String;
+                            else if (itm is DateTime || itm is DateTimeOffset)
+                            {
+                                parm.DbType = System.Data.DbType.Int64;
+                                if (itm is DateTime)
+                                    parm.Value = ((DateTime)itm).ToUniversalTime().Ticks;
+                                else
+                                    parm.Value = ((DateTimeOffset)itm).ToUniversalTime().Ticks;
+                            }
+                            else if (itm is Int32) parm.DbType = System.Data.DbType.Int32;
+                            else if (itm is Boolean) parm.DbType = System.Data.DbType.Boolean;
+                            else if (itm is byte[])
+                            {
+                                parm.DbType = System.Data.DbType.Binary;
+                                parm.Value = itm;
+                            }
+                            else if (itm is Guid || itm is Guid?)
+                            {
+                                parm.DbType = System.Data.DbType.Binary;
+                                if (itm != null)
+                                    parm.Value = ((Guid)itm).ToByteArray();
+                                else parm.Value = DBNull.Value;
+                            }
+                            else if (itm is float || itm is double) parm.DbType = System.Data.DbType.Double;
+                            else if (itm is Decimal) parm.DbType = System.Data.DbType.Decimal;
+                            else if (itm == null)
+                            {
+                                parm.Value = DBNull.Value;
+                            }
+                            cmd.Parameters.Add(parm);
+                        }
+
+                        // data reader
+                        try
+                        {
+                            conn.Open();
+                            using (var dr = cmd.ExecuteReader())
+                            {
+                                var retVal = new List<Object>();
+                                while (dr.Read())
+                                    retVal.Add(this.MapExpando<ExpandoObject>(dr));
+                                return retVal;
+                            }
+                        }
+                        finally
+                        {
+                            conn.Close();
                         }
                     }
                     finally
                     {
-                        conn.Close();
+                        //  OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.Remove(connection);
                     }
-                }
-                finally
-                {
-                  //  OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.Remove(connection);
                 }
             }
         }

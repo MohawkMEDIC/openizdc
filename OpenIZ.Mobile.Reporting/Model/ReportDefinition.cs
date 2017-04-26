@@ -48,7 +48,7 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// Gets or sets the connection
         /// </summary>
         [XmlElement("connection"), JsonProperty("connection")]
-        public String Connection { get; set; }
+        public List<ReportConnectionString> ConnectionString { get; set; }
 
         /// <summary>
         /// Format controls

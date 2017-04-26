@@ -21,6 +21,6 @@ namespace OpenIZ.Mobile.Reporting
         /// <summary>
         /// Execute dataset
         /// </summary>
-        IEnumerable<dynamic> ExecuteDataset(String connectionString, String sql, List<Object> sqlParms);
+        IEnumerable<dynamic> ExecuteDataset(List<ReportConnectionString> connectionString, String sql, List<Object> sqlParms);
     }
 }
