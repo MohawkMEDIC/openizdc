@@ -25,6 +25,12 @@ namespace OpenIZ.Mobile.Reporting.Model
         public List<ReportPropertyDefinition> Properties { get; set; }
 
         /// <summary>
+        /// Gets or sets the pivot definition
+        /// </summary>
+        [XmlElement("pivot"), JsonProperty("pivot")]
+        public ReportPivotDefinition Pivot { get; set; }
+
+        /// <summary>
         /// Gets or sets the sql
         /// </summary>
         [XmlElement("sql"), JsonProperty("sql")]

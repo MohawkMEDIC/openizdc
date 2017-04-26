@@ -338,7 +338,8 @@
     <string key="locale.reports.info.description">Description</string>
     <string key="locale.reports.info.action">Actions</string>
     <string key="locale.reports.parameters.title">Set report filter parameters</string>
-
+    <string key="locale.reports.executeWait">Generating report...</string>
+    <string key="locale.reports.error.locked">The database file this relies on is locked. There may be a background process using the database file. Please wait a few minutes and try your request again.</string>
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>

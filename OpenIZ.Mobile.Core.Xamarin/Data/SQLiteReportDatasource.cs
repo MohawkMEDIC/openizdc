@@ -38,24 +38,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
             using (connection.Lock())
             using (var conn = new SqliteConnection($"Data Source={connectionStringPath}"))
             {
-                // Attach further connection strings
-                foreach (var itm in connectionString.Where(o => !String.IsNullOrEmpty(o.Identifier)))
-                {
-                    using (var cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = $"ATTACH DATABASE '{itm.Value}' AS {itm.Identifier}";
-                        cmd.CommandType = System.Data.CommandType.Text;
-                        cmd.ExecuteNonQuery();
-                    }
-                }
 
                 // Create command on main datasource
                 using (var cmd = conn.CreateCommand())
                 {
                     try
                     {
-
                         //connection.Close();
+
                         cmd.CommandText = sql;
                         cmd.CommandType = System.Data.CommandType.Text;
                         foreach (var itm in sqlParms)
@@ -98,6 +88,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                         try
                         {
                             conn.Open();
+                            // Attach further connection strings
+                            foreach (var itm in connectionString.Where(o => !String.IsNullOrEmpty(o.Identifier)))
+                            {
+                                using (var attcmd = conn.CreateCommand())
+                                {
+                                    attcmd.CommandText = $"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString(itm.Value).Value}' AS {itm.Identifier}";
+                                    attcmd.CommandType = System.Data.CommandType.Text;
+                                    attcmd.ExecuteNonQuery();
+                                }
+                            }
+
                             using (var dr = cmd.ExecuteReader())
                             {
                                 var retVal = new List<Object>();
@@ -113,7 +114,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                     }
                     finally
                     {
-                        //  OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.Remove(connection);
+                        //connection.ope
+                        //OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.Remove(connection);
                     }
                 }
             }
@@ -129,10 +131,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
             {
                 var value = rdr[i];
                 var name = rdr.GetName(i);
+                if (value == DBNull.Value)
+                    value = null;
                 if (value is byte[] && (value as byte[]).Length == 16)
                     value = new Guid(value as byte[]);
-                else if (name.ToLower().Contains("time") ||
-                    name.ToLower().Contains("utc") && value is int)
+                else if ((name.ToLower().Contains("time") ||
+                    name.ToLower().Contains("utc")) && value is int)
                     value = new DateTime((int)value);
                 retVal.Add(name, value);
             }

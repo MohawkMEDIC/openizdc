@@ -40,7 +40,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// Get the output of a report.
         /// </summary>
         [RestOperation(Method = "GET", UriPath = "/report.htm", FaultProvider = nameof(RisiFaultHandler))]
-        [return: RestMessage(RestMessageFormat.Json)]
+        [return: RestMessage(RestMessageFormat.Raw)]
         public byte[] ExecuteReport()
         {
             String _view = MiniImsServer.CurrentContext.Request.QueryString["_view"],

@@ -266,7 +266,13 @@ namespace OpenIZ.Mobile.Core.Security
 
                 // User entity available?
                 this.m_entity = userService.GetUserEntity(principal.Identity);
-                
+                // Attempt to download 
+                if(this.m_entity == null)
+                {
+                    var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
+                    if (amiService == null) throw new InvalidOperationException("Administrative integration service not configured");
+                    this.m_entity = amiService.Find<UserEntity>(o => o.SecurityUser.UserName == principal.Identity.Name, 0, 1, null).Item?.OfType<UserEntity>().FirstOrDefault();
+                }
             }
             catch (Exception e)
             {

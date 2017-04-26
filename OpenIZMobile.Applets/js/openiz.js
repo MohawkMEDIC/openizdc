@@ -813,7 +813,7 @@ var OpenIZ = OpenIZ || {
                 onException: controlData.onException,
                 finally: controlData.finally,
                 state: controlData.state
-            });
+            }, true);
         }
     },
     /**
@@ -996,39 +996,70 @@ var OpenIZ = OpenIZ || {
          * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
          * @param {object} controlData.query The query to be included
          */
-        simpleGet: function (url, controlData) {
+        simpleGet: function (url, controlData, useRaw) {
             controlData.onException = controlData.onException || OpenIZ.Util.logException;
-            // Perform auth request
-            $.getJSON(url, controlData.query, function (data) {
+            if(!useRaw)
+                $.getJSON(url, controlData.query, function (data) {
 
-                if (data != null && data.error !== undefined)
-                    controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
-                    );
-                else if (data != null) {
-                    controlData.continueWith(data, controlData.state);
-                }
-                else
-                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
-                        data,
-                        null
-                    ), controlData.state);
-            }).error(function (data) {
-                var error = data.responseJSON;
-                if (error != null && error.error !== undefined) //  error
-                    controlData.onException(new OpenIZModel.Exception(error.type, error.error,
-                            error.error_description,
-                            null
-                        ), controlData.state);
-
-                else // unknown error
-                    controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                    if (data != null && data.error !== undefined)
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                        );
+                    else if (data != null) {
+                        controlData.continueWith(data, controlData.state);
+                    }
+                    else
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
                             data,
                             null
                         ), controlData.state);
-            }).always(function () {
-                if (controlData.finally !== undefined)
-                    controlData.finally(controlData.state);
-            });
+                }).error(function (data) {
+                    var error = data.responseJSON;
+                    if (error != null && error.error !== undefined) //  error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                null
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+                }).always(function () {
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                });
+            else
+                $.get(url, controlData.query, function (data) {
+
+                    if (data != null && data.error !== undefined)
+                        controlData.onException(new OpenIZModel.Exception(data.type, data.error), controlData.state
+                        );
+                    else if (data != null) {
+                        controlData.continueWith(data, controlData.state);
+                    }
+                    else
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general",
+                            data,
+                            null
+                        ), controlData.state);
+                }).error(function (data) {
+                    var error = data.responseJSON;
+                    if (error != null && error.error !== undefined) //  error
+                        controlData.onException(new OpenIZModel.Exception(error.type, error.error,
+                                error.error_description,
+                                null
+                            ), controlData.state);
+
+                    else // unknown error
+                        controlData.onException(new OpenIZModel.Exception("Exception", "err_general" + error,
+                                data,
+                                null
+                            ), controlData.state);
+                }).always(function () {
+                    if (controlData.finally !== undefined)
+                        controlData.finally(controlData.state);
+                });
         },
         /**
          * @summary Render address for display

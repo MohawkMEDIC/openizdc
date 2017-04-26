@@ -26,12 +26,17 @@
                     <div class="form-horizontal">
                         <div class="form-group" ng-repeat="parm in currentReport.parameter">
                             <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
-                            <div class="col-xs-10" ng-switch="parm.type">
-                                <input ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control"/>
+                            <div class="col-xs-10" ng-switch="parm.type" ng-if="!parm.valueSet">
+                                <input ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
                                 <input ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
                                 <input ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
                                 <input ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
                                 <select ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">
+                                    <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-10" ng-if="parm.valueSet">
+                                <select ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}" class="form-control select2">
                                     <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
                                 </select>
                             </div>
@@ -68,14 +73,39 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <div ng-bind-html="reportBody" ng-if="!isLoading" />
-                    <div ng-if="isLoading" style="min-height:200px">
-                        <div class="cssload-loader">
-                            <div class="cssload-inner cssload-one"></div>
-                            <div class="cssload-inner cssload-two"></div>
-                            <div class="cssload-inner cssload-three"></div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="form-group">
+                                <div ng-repeat="parm in currentReport.parameter">
+                                    <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
+                                    <div class="col-xs-4" ng-switch="parm.type" ng-if="!parm.valueSet">
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
+                                        <input ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
+                                        <select ng-change="executeReport()" ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">
+                                            <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xs-4" ng-if="parm.valueSet">
+                                        <select ng-change="executeReport()" ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}" class="form-control select2">
+                                            <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <center>{{ 'locale.reports.executeWait' | i18n }}</center>
+                        <div class="row">
+                            <hr />
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div id="reportBody" ng-show="!isLoading" />
+                                <div ng-if="isLoading" style="min-height:200px">
+                                    <center><img src="~/img/ajax-loader.gif" /> {{ 'locale.reports.executeWait' | i18n }}</center>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

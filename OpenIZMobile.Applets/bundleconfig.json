@@ -159,5 +159,11 @@
     "inputFiles": [
       "css/radial-progress.css"
     ]
+  },
+  {
+    "outputFileName": "css/radialprogress.min.css",
+    "inputFiles": [
+      "css/radialprogress.css"
+    ]
   }
 ]

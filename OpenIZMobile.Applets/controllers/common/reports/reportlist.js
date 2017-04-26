@@ -10,7 +10,12 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
     $scope.currentReport = {};
     $scope.selectItem = selectItem;
     $scope.currentFilter = {};
+    $scope.reportBody = '';
+    $scope.$watch('reportBody', function (nv, ov) {
+        $("#reportBody").html(nv);
+        $compile($("#reportBody").contents())($scope);
 
+    });
     // Get reports asynchronously
     OpenIZ.Risi.getReportsAsync({
         continueWith: function (data) {
@@ -79,17 +84,11 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
                 if (data == null)
                     $scope.reportBody = "<h2>" + OpenIZ.Localization.getString("locale.reports.nodata") + "</h2>";
                 else {
-                    data = atob(data).substring(3);
                     $scope.reportBody = data;
-                    $compile(data)($scope);
-                    $scope.$apply();
                 }
             },
             onException: function (ex) {
-                if (ex.message)
-                    alert(ex.message);
-                else
-                    console.error(ex);
+                alert(OpenIZ.Localization.getString("locale.reports.error.locked"));
             },
             finally: function () {
                 $scope.isLoading = false;

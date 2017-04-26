@@ -357,6 +357,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                         switch (invoke.Method.ReturnParameter.GetCustomAttribute<RestMessageAttribute>().MessageFormat)
                         {
                             case RestMessageFormat.Raw:
+                                response.AddHeader("Content-Security-Policy", "style-src 'unsafe-inline'");
                                 if (result is Stream)
                                     (result as Stream).CopyTo(response.OutputStream);
                                 else

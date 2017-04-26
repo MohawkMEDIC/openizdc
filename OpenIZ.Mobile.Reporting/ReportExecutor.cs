@@ -16,6 +16,7 @@ using System.Xml;
 using OpenIZ.Core.Model.Map;
 using System.Linq.Expressions;
 using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core;
 
 namespace OpenIZ.Mobile.Reporting
 {
@@ -34,15 +35,19 @@ namespace OpenIZ.Mobile.Reporting
         private class ReportExecutionContext
         {
 
+            // Last row values
+            private Dictionary<String, String> m_lastValue = new Dictionary<string, string>();
+
             /// <summary>
             /// Create new root report execution context
             /// </summary>
-            public ReportExecutionContext(ReportDefinition report, Object scope, IEnumerable dataset)
+            public ReportExecutionContext(ReportDefinition report, IDictionary<String, Object> arguments, Object scope, IEnumerable dataset)
             {
                 this.ParentScope = default(ReportExecutionContext);
                 this.Report = report;
                 this.Scope = scope;
                 this.Dataset = dataset;
+                this.Arguments = arguments;
             }
 
             /// <summary>
@@ -85,9 +90,14 @@ namespace OpenIZ.Mobile.Reporting
             public IEnumerable Dataset { get; private set; }
 
             /// <summary>
+            /// Arguments
+            /// </summary>
+            public IDictionary<String, Object>  Arguments { get; set; }
+
+            /// <summary>
             /// Get root scope
             /// </summary>
-            public object RootScope
+            public ReportExecutionContext RootScope
             {
                 get
                 {
@@ -95,6 +105,35 @@ namespace OpenIZ.Mobile.Reporting
                     while (rs.ParentScope != null) rs = rs.ParentScope;
                     return rs;
                 }
+            }
+
+            /// <summary>
+            /// Creates a sub-context from the current context
+            /// </summary>
+            public ReportExecutionContext Create(dynamic o)
+            {
+                return new ReportExecutionContext(this, o);
+            }
+
+            /// <summary>
+            /// Set last 
+            /// </summary>
+            public void SetLast(string key, string value)
+            {
+                if (!this.m_lastValue.ContainsKey(key))
+                    this.m_lastValue.Add(key, value);
+                else
+                    this.m_lastValue[key] = value;
+            }
+
+            /// <summary>
+            /// Get last row data
+            /// </summary>
+            public string GetLast(string key)
+            {
+                var value = String.Empty;
+                this.m_lastValue.TryGetValue(key, out value);
+                return value;
             }
         }
 
@@ -127,7 +166,7 @@ namespace OpenIZ.Mobile.Reporting
                     var rparm = rdl.Parameters.FirstOrDefault(o => o.Name == kv.Key);
                     if (rparm == null)
                         continue;
-                    if (kv.Value != null)
+                    else if (kv.Value != null)
                         switch (rparm.Type)
                         {
                             case ReportPropertyType.ByteArray:
@@ -149,7 +188,6 @@ namespace OpenIZ.Mobile.Reporting
                             case ReportPropertyType.Uuid:
                                 cParms[rparm.Name] = Guid.Parse(kv.Value.ToString());
                                 break;
-
                         }
                 }
                 catch { }
@@ -158,8 +196,7 @@ namespace OpenIZ.Mobile.Reporting
             // Now we want to format our report parameters to appropriate SQL
             Dictionary<String, IEnumerable<dynamic>> exeSets = new Dictionary<string, IEnumerable<dynamic>>(rdl.Datasets.Count);
             foreach (var itm in rdl.Datasets)
-                exeSets.Add(itm.Name, this.RenderDataset(rdl.ConnectionString, itm, pParms));
-            exeSets.Add("args", new List<dynamic>() { pParms });
+                exeSets.Add(itm.Name, this.RenderDataset(rdl.ConnectionString, itm, cParms));
 
             // Now we have our data, let us render it!!!
             if (view.Body != null) // HTML
@@ -167,7 +204,7 @@ namespace OpenIZ.Mobile.Reporting
                 XElement renderedBody = new XElement(view.Body);
 
                 // Look for control parameters
-                this.RenderScope(renderedBody, new ReportExecutionContext(rdl, exeSets, exeSets));
+                this.RenderScope(renderedBody, new ReportExecutionContext(rdl, cParms, exeSets, exeSets));
 
                 using (var ms = new MemoryStream())
                 {
@@ -212,16 +249,105 @@ namespace OpenIZ.Mobile.Reporting
                 facet.Add(newChildren.ToArray());
                 //facet.Remove();
             }
+            else if (facet.Name == xs_report + "switch")
+            {
+                bool success = false;
+                if (facet.Attribute("expr") == null)
+                    throw new InvalidOperationException("Switch must have expr attribute");
+                var value = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Attribute("expr").Value}", facet.Attribute("expr").Value).DynamicInvoke(context.Scope);
+                var xel = facet.Elements(xs_report + "when").FirstOrDefault();
+                while (xel != null)
+                {
+                    ExpressionType comparator = ExpressionType.Equal;
+                    switch (xel.Attribute("op")?.Value)
+                    {
+                        case "gt":
+                            comparator = ExpressionType.GreaterThan;
+                            break;
+                        case "gte":
+                            comparator = ExpressionType.GreaterThanOrEqual;
+                            break;
+                        case "lt":
+                            comparator = ExpressionType.LessThan;
+                            break;
+                        case "lte":
+                            comparator = ExpressionType.LessThanOrEqual;
+                            break;
+                        case "ne":
+                            comparator = ExpressionType.NotEqual;
+                            break;
+                    }
+                    object operand = null;
+
+                    if(value != null && !MapUtil.TryConvert(xel.Attribute("value").Value, value.GetType(), out operand))
+                        throw new InvalidCastException($"Can't convert {xel.Attribute("value")} to {value.GetType().Name}");
+
+                    bool result = false;
+                    if (value != null)
+                    {
+                        var parm = Expression.Parameter(value.GetType(), "p");
+                        var expr = Expression.Lambda(Expression.MakeBinary(comparator, parm, Expression.Constant(operand)), parm).Compile();
+                        result = (bool)expr.DynamicInvoke(value);
+                    }
+
+                    // Success an result
+                    if (!success && result)
+                    {
+                        success = true;
+                        this.RenderScope(xel, context);
+                        xel.ReplaceWith((XNode)xel.Elements().FirstOrDefault() ?? new XText(xel.Value));
+                    }
+                    else
+                        xel.Remove();
+                    xel = facet.Elements(xs_report + "when").FirstOrDefault();
+                }
+
+                // Default!!!!
+                if (facet.Element(xs_report + "default") != null)
+                {
+                    if (!success)
+                    {
+                        this.RenderScope(facet.Element(xs_report + "default"), context);
+                        facet.ReplaceWith(facet.Elements().First());
+                    }
+                    else
+                        facet.Element(xs_report + "default").Remove();
+                }
+
+            }
             else if (facet.Name == xs_report + "value")
             {
-                this.RenderValue(facet, context);
+                var when = facet.Attribute("when")?.Value;
+                var value = this.RenderValue(facet, context);
+                switch (when)
+                {
+                    case "changed":
+                        if (context.ParentScope?.GetLast(facet.Value) == value)
+                        {
+                            facet.Value = ""; // no change        
+                            return;
+                        }
+                        break;
+                }
+                context.ParentScope?.SetLast(facet.Value, value);
+                facet.ReplaceWith(new XText(value));
+            }
+            else if(facet.Name == xs_report + "parm")
+            {
+                facet.ReplaceWith(new XText(String.Format(facet.Attribute("format")?.Value ?? "{0}", context.RootScope.Arguments[facet.Value])));
             }
             else if (facet.Name == xs_report + "expr")
             {
                 Delegate evaluator = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Value}", facet.Value);
 
-                // Aggregation?
-                facet.ReplaceWith(new XText(this.RenderString(evaluator.DynamicInvoke(context.Scope), context).ToString()));
+                var toAtt = facet.Attribute("to-att")?.Value;
+                if (!String.IsNullOrEmpty(toAtt))
+                {
+                    facet.Parent.Add(new XAttribute(toAtt, String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(evaluator.DynamicInvoke(context.Scope), context))));
+                    facet.Remove();
+                }
+                else
+                    facet.ReplaceWith(new XText(String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(evaluator.DynamicInvoke(context.Scope), context))));
             }
             else if (facet.Name == xs_report + "aggregate")
             {
@@ -236,37 +362,42 @@ namespace OpenIZ.Mobile.Reporting
                 {
                     object vValue = null;
                     IEnumerable<dynamic> scopeEnum = aScope as IEnumerable<dynamic>;
+                    var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", facet.Value);
+
                     switch (function)
                     {
                         case "sum":
-                            vValue = Enumerable.Sum<dynamic>(scopeEnum, o => this.GetBind(o, facet.Value));
+                            vValue = Enumerable.Sum<dynamic>(scopeEnum, o => (decimal?)expr.DynamicInvoke(context.Create(o).Scope));
                             break;
                         case "count":
                             if (String.IsNullOrEmpty(facet.Value))
                                 vValue = Enumerable.Count<dynamic>(scopeEnum);
                             else
                             {
-                                var expr = this.CompileExpression($"{context.Report.Description.Name}.count.{facet.Value}", facet.Value);
-                                vValue = Enumerable.Count<dynamic>(scopeEnum, o => (bool)expr.DynamicInvoke(o));
+                                vValue = Enumerable.Count<dynamic>(scopeEnum, o => (bool)expr.DynamicInvoke(context.Create(o).Scope));
                             }
                             break;
                         case "min":
-                            vValue = Enumerable.Min<dynamic>(scopeEnum, o => this.GetBind(o, facet.Value));
+                            vValue = Enumerable.Min<dynamic>(scopeEnum, o => (decimal?)expr.DynamicInvoke(context.Create(o).Scope));
                             break;
                         case "max":
-                            vValue = Enumerable.Max<dynamic>(scopeEnum, o => this.GetBind(o, facet.Value));
+                            vValue = Enumerable.Max<dynamic>(scopeEnum, o => (decimal?)expr.DynamicInvoke(context.Create(o).Scope));
                             break;
                         case "avg":
-                            vValue = Enumerable.Average<dynamic>(scopeEnum, o => this.GetBind(o, facet.Value));
+                            vValue = Enumerable.Average<dynamic>(scopeEnum, o => (decimal?)expr.DynamicInvoke(context.Create(o).Scope));
                             break;
                     }
-                    facet.ReplaceWith(new XText(this.RenderString(vValue, context).ToString()));
+                    facet.ReplaceWith(new XText(String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(vValue, context))));
                 }
             }
             else
-                foreach (var cel in facet.Elements())
+            {
+                var elements = new List<XElement>(facet.Elements());
+                foreach (var cel in elements)
+                {
                     this.RenderScope(cel, context);
-
+                }
+            }
         }
 
         /// <summary>
@@ -285,6 +416,7 @@ namespace OpenIZ.Mobile.Reporting
                 expression.TypeRegistry.RegisterType<Guid>();
                 expression.TypeRegistry.RegisterType<DateTimeOffset>();
                 expression.TypeRegistry.RegisterType<TimeSpan>();
+
                 evaluator = expression.ScopeCompile<ExpandoObject>();
 
                 lock (this.m_cachedExpressions)
@@ -297,14 +429,14 @@ namespace OpenIZ.Mobile.Reporting
         /// <summary>
         /// Render value 
         /// </summary>
-        private void RenderValue(XElement valueElement, ReportExecutionContext context)
+        private String RenderValue(XElement valueElement, ReportExecutionContext context)
         {
             String format = valueElement.Attribute("format")?.Value;
 
             if (format != null)
-                valueElement.ReplaceWith(new XText(String.Format(format, valueElement.Value.Split(',').Select(o => this.RenderString(this.GetBind(context, o), context).ToString()).ToArray())));
+                return String.Format(format, valueElement.Value.Split(',').Select(o => this.RenderString(this.GetBind(context, o), context)).ToArray());
             else
-                valueElement.ReplaceWith(new XText(this.RenderString(this.GetBind(context, valueElement.Value), context).ToString()));
+                return this.RenderString(this.GetBind(context, valueElement.Value), context)?.ToString() ?? "";
 
         }
 
@@ -331,7 +463,8 @@ namespace OpenIZ.Mobile.Reporting
             bind = bind.Replace("[", "").Replace("]", "").Replace("\"", "");
             if (String.IsNullOrEmpty(bind) || context == null)
                 return null;
-            else {
+            else
+            {
                 try
                 {
                     if (context.Scope is IDictionary)
@@ -404,7 +537,46 @@ namespace OpenIZ.Mobile.Reporting
             }
             stmt = regEx.Replace(stmt, "?");
 
-            return dsProvider.ExecuteDataset(connectionString, stmt, values);
+            var retVal = dsProvider.ExecuteDataset(connectionString, stmt, values);
+
+            if (dataset.Pivot != null)
+            {
+
+                // Algorithm for pivoting : 
+                List<ExpandoObject> nRetVal = new List<ExpandoObject>();
+                IDictionary<String, Object> cobject = null;
+                foreach (IDictionary<String, Object> itm in retVal)
+                {
+                    var key = itm[dataset.Pivot.Key];
+                    if (cobject == null || !key.Equals(cobject[dataset.Pivot.Key]) && cobject.Count > 0)
+                    {
+                        if (cobject != null)
+                            nRetVal.Add(cobject as ExpandoObject);
+                        cobject = new ExpandoObject();
+                        cobject.Add(dataset.Pivot.Key, key);
+                    }
+                    // Same key, so lets create or accumulate
+                    var column = itm[dataset.Pivot.Columns];
+                    if (!cobject.ContainsKey(column.ToString()))
+                        cobject.Add(column.ToString(), itm[dataset.Pivot.Value]);
+                    else
+                    {
+                        var cvalue = cobject[column.ToString()];
+                        var avalue = itm[dataset.Pivot.Value];
+                        if (cvalue is Decimal)
+                            cvalue = (decimal)cvalue + (decimal)avalue;
+                        else if (cvalue is double)
+                            cvalue = (double)cvalue + (double)avalue;
+                        else if (cvalue is long)
+                            cvalue = (long)cvalue + (long)avalue;
+                        cobject[column.ToString()] = cvalue;
+                    }
+                }
+                nRetVal.Add(cobject as ExpandoObject);
+                retVal = nRetVal;
+
+            }
+            return retVal;
         }
     }
 }

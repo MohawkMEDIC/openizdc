@@ -125,7 +125,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
                     this.InitializeConnection(dbFile);
 
                     // Initialize the warehouse
-                    using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Warehouse.InitWarehouse.sql"))
+                    using (var initStream = typeof(SQLiteDatawarehouse).GetTypeInfo().Assembly.GetManifestResourceStream("OpenIZ.Mobile.Core.Xamarin.Data.InitWarehouse.sql"))
                     using (var sr = new StreamReader(initStream))
                     {
                         var stmts = sr.ReadToEnd().Split(';').Select(o => o.Trim()).ToArray();
