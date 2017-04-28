@@ -28,24 +28,28 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
     // Get the current scope that we're in
     //        var scope = angular.element(e).scope();
 
-    var scope = $scope.$parent;
-    // Init data
-    scope.patient = scope.patient || new OpenIZModel.Patient({});
-    scope.patient.participation = scope.patient.participation || {};
-    scope.display = scope.display || {};
+    angular.element(document).ready(init);
 
-    // Iterate through vaccinations and organize them by antigen
-    // TODO: Change this to be an AJAX call
-    scope.display._vaccineAdministrations = {};
+    function init() {
+        var scope = $scope.$parent;
+        // Init data
+        scope.patient = scope.patient || new OpenIZModel.Patient({});
+        scope.patient.participation = scope.patient.participation || {};
+        scope.display = scope.display || {};
 
-    $scope.yellowcardLegend = [
-    { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
-    { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
-    { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
-    ];
+        // Iterate through vaccinations and organize them by antigen
+        // TODO: Change this to be an AJAX call
+        scope.display._vaccineAdministrations = {};
 
-    scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
-    scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+        $scope.yellowcardLegend = [
+        { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
+        { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
+        { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
+        ];
+
+        scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+        scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+    }
 
     var refreshYellowCard = function (newValue, oldValue) {
         

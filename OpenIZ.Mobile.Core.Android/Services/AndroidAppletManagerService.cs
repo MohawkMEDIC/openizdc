@@ -40,6 +40,7 @@ namespace OpenIZ.Mobile.Core.Android.Services
                                         "assets",
                                         navigateAsset.Manifest.Info.Id,
                                         navigateAsset.Name);
+
             using (MemoryStream response = new MemoryStream())
             using (var fs = File.OpenRead(itmPath))
             {

@@ -26,43 +26,47 @@
 layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
     $scope._isCalendarInitialized = false;
     $scope.isLoading = true;
-    // Scheduling assistant shown
-    $('a[data-target="#schedulingAssistant"]').on('shown.bs.tab', function () {
-        if (!$scope._isCalendarInitialized) {
-            $scope._isCalendarInitialized = true;
-            $("#schedulingAssistantCalendar").fullCalendar({
-                defaultView: 'month',
-                defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.loadTime),
-                displayEventTime: false,
-                editable: true,
-                weekends: false,
-                navLinks: false,
-                height: "parent",
-                businessHours: {
-                    dow: [1, 2, 3, 4, 5],
-                    start: '09:00',
-                    end: '16:00'
-                },
-                header: {
-                    left: "prev, today, next",
-                    center: "title",
-                    right: null
-                },
-                eventLimit: false, // allow "more" link when too many events
-                eventSources: [
-                    {
-                        events: $scope.renderAppointments
-                    }
-                ]
-            });
-        }
-    });
 
-    // Modal shown
-    $("#appointmentScheduler").on('show.bs.modal', function () {
-        $scope.getAppointment();
-    });
+    angular.element(document).ready(init);
 
+    function init() {
+        // Scheduling assistant shown
+        $('a[data-target="#schedulingAssistant"]').on('shown.bs.tab', function () {
+            if (!$scope._isCalendarInitialized) {
+                $scope._isCalendarInitialized = true;
+                $("#schedulingAssistantCalendar").fullCalendar({
+                    defaultView: 'month',
+                    defaultDate: $scope.appointment != null ? $scope.appointment.actTime : OpenIZ.Util.toDateInputString($rootScope.page.loadTime),
+                    displayEventTime: false,
+                    editable: true,
+                    weekends: false,
+                    navLinks: false,
+                    height: "parent",
+                    businessHours: {
+                        dow: [1, 2, 3, 4, 5],
+                        start: '09:00',
+                        end: '16:00'
+                    },
+                    header: {
+                        left: "prev, today, next",
+                        center: "title",
+                        right: null
+                    },
+                    eventLimit: false, // allow "more" link when too many events
+                    eventSources: [
+                        {
+                            events: $scope.renderAppointments
+                        }
+                    ]
+                });
+            }
+        });
+
+        // Modal shown
+        $("#appointmentScheduler").on('show.bs.modal', function () {
+            $scope.getAppointment();
+        });
+    }
 
     // Gather the care plan
     $scope.getAppointment = function () {

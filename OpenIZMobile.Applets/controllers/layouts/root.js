@@ -45,21 +45,24 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
     }])
     .run(function ($rootScope, $state) {
 
-        $rootScope.isLoading = true;
-        $rootScope.extendToast = null;
+        angular.element(document).ready(init);
 
-        // HACK: Sometimes HASH is empty ... ugh... 
-        // Once we fix the panels and tabs in BS this can be removed
-        if (window.location.hash == "")
-            window.location.hash = "#/";
+        function init() {
+            $rootScope.isLoading = true;
+            $rootScope.extendToast = null;
 
-        OpenIZ.Configuration.getConfigurationAsync({
-            continueWith: function (config) {
-                $rootScope.system = {};
-                $rootScope.system.config = config;
-                $rootScope.$apply();
-            }
-        });
+            // HACK: Sometimes HASH is empty ... ugh... 
+            // Once we fix the panels and tabs in BS this can be removed
+            if (window.location.hash == "")
+                window.location.hash = "#/";
+
+            OpenIZ.Configuration.getConfigurationAsync({
+                continueWith: function (config) {
+                    $rootScope.system = {};
+                    $rootScope.system.config = config;
+                    $rootScope.$apply();
+                }
+            });
 
         $rootScope.$on("$stateChangeError", function () {
             console.log.bind(console);
@@ -87,134 +90,134 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.isLoading = false;
         });
 
-        $rootScope.page = {
-            title: OpenIZ.App.getCurrentAssetTitle(),
-            loadTime: new Date(),
-            maxEventTime: new Date().tomorrow(), // Dislike Javascript
-            minEventTime: new Date().yesterday(), // quite a bit
-            locale: OpenIZ.Localization.getLocale(),
-            onlineState: OpenIZ.App.getOnlineState()
-        };
+            $rootScope.page = {
+                title: OpenIZ.App.getCurrentAssetTitle(),
+                loadTime: new Date(),
+                maxEventTime: new Date().tomorrow(), // Dislike Javascript
+                minEventTime: new Date().yesterday(), // quite a bit
+                locale: OpenIZ.Localization.getLocale(),
+                onlineState: OpenIZ.App.getOnlineState()
+            };
 
-        // Interval to refresh online state and to check session
-        setInterval(function () {
-            $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
+            // Interval to refresh online state and to check session
+            setInterval(function () {
+                $rootScope.page.onlineState = OpenIZ.App.getOnlineState();
 
-            if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000))
-            {
-                var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
-                var mins = Math.trunc(expiry / 60),
-                    secs = expiry % 60;
-                if (("" + secs).length < 2)
-                    secs = "0" + secs;
-                expiryStr = mins + ":" + secs;
-                var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+                if ($rootScope.session && ($rootScope.session.exp - new Date() < 120000)) {
+                    var expiry = Math.round(($rootScope.session.exp - new Date()) / 1000);
+                    var mins = Math.trunc(expiry / 60),
+                        secs = expiry % 60;
+                    if (("" + secs).length < 2)
+                        secs = "0" + secs;
+                    expiryStr = mins + ":" + secs;
+                    var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
 
-                if(expiry < 0)
-                    window.location.reload(true);
-                else if (!$rootScope.extendToast)
-                    $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"),  {
-                        closeButton: false,
-                        preventDuplicates: true,
-                        onclick: function () {
-                            OpenIZ.Authentication.refreshSessionAsync({
-                                continueWith: function (s) {
-                                    $rootScope.session = s;
-                                },
-                                onException: function (e) {
-                                    if (e.message) OpenIZ.App.toast(e.message);
-                                    else console.error(e);
-                                }
-                            });
-                            $rootScope.extendToast = null;
-                            toastr.clear();
-                        },
-                        positionClass: "toast-bottom-center",
-                        timeOut: 0,
-                        extendedTimeOut: 0
-                    });
-                else
-                    $($rootScope.extendToast).children('.toast-message').html(authString);
+                    if (expiry < 0)
+                        window.location.reload(true);
+                    else if (!$rootScope.extendToast)
+                        $rootScope.extendToast = toastr.error(authString, OpenIZ.Localization.getString("locale.session.expiration"), {
+                            closeButton: false,
+                            preventDuplicates: true,
+                            onclick: function () {
+                                OpenIZ.Authentication.refreshSessionAsync({
+                                    continueWith: function (s) {
+                                        $rootScope.session = s;
+                                    },
+                                    onException: function (e) {
+                                        if (e.message) OpenIZ.App.toast(e.message);
+                                        else console.error(e);
+                                    }
+                                });
+                                $rootScope.extendToast = null;
+                                toastr.clear();
+                            },
+                            positionClass: "toast-bottom-center",
+                            timeOut: 0,
+                            extendedTimeOut: 0
+                        });
+                    else
+                        $($rootScope.extendToast).children('.toast-message').html(authString);
                     //$rootScope.extendToast.show();
-            }
-            else {
-                
-            }
-            $rootScope.$applyAsync();
-        }, 10000);
-
-
-        // Get current session
-        OpenIZ.Authentication.getSessionAsync({
-            continueWith: function (session) {
-                $rootScope.session = session;
-                if (session != null && session.entity != null) {
-                    session.entity.telecom = session.entity.telecom || {};
-                    if (Object.keys(session.entity.telecom).length == 0)
-                        session.entity.telecom.MobilePhone = { value: "" };
                 }
+                else {
 
-                OpenIZ.Configuration.getUserPreferencesAsync({
-                    continueWith: function (prefs) {
-                        $rootScope.session.prefs = {};
-                        for (var p in prefs.application.setting) {
-                            var set = prefs.application.setting[p];
-                            $rootScope.session.prefs[set.key] = set.value;
-                        }
-                        $rootScope.$apply();
-                    },
-                    onException: function (ex) { console.error(ex);}
-                });
-                $rootScope.$apply();
-            },
-            onException: function (ex) {
-                console.error(ex);
-            }
-        });
+                }
+                $rootScope.$applyAsync();
+            }, 10000);
 
-        $rootScope.changeInputType = function (controlId, type) {
-            $(controlId).attr('type', type);
-            if ($(controlId).attr('data-max-' + type) != null) {
-                $(controlId).attr('max', $(controlId).attr('data-max-' + type));
-            }
-        };
 
-        $rootScope.$watch('session', function (nv, ov) {
-            if(nv)
-                OpenIZ.App.getInfoAsync({
-                    includeUpdates: true,
-                    continueWith: function (data) {
-
-                        if (data.update && data.update.length > 0) {
-                            toastr.info(OpenIZ.Localization.getString("locale.about.updateToast.text"), OpenIZ.Localization.getString("locale.about.updateToast.title"), {
-                                closeButton: false,
-                                preventDuplicates: true,
-                                onclick: function () {
-                                    window.location.hash = "/core/about";
-                                },
-                                positionClass: "toast-bottom-center",
-                                timeOut: 4000,
-                                extendedTimeOut: 0
-                            });
-                        }
-                    },
-                    onException: function (ex) {
-                        console.error(ex);
+            // Get current session
+            OpenIZ.Authentication.getSessionAsync({
+                continueWith: function (session) {
+                    $rootScope.session = session;
+                    if (session != null && session.entity != null) {
+                        session.entity.telecom = session.entity.telecom || {};
+                        if (Object.keys(session.entity.telecom).length == 0)
+                            session.entity.telecom.MobilePhone = { value: "" };
                     }
-                });
-        });
 
-        // Set the language for select2 localization
-        var locale = OpenIZ.Localization.getLocale();
+                    OpenIZ.Configuration.getUserPreferencesAsync({
+                        continueWith: function (prefs) {
+                            $rootScope.session.prefs = {};
+                            for (var p in prefs.application.setting) {
+                                var set = prefs.application.setting[p];
+                                $rootScope.session.prefs[set.key] = set.value;
+                            }
+                            $rootScope.$apply();
+                        },
+                        onException: function (ex) { console.error(ex); }
+                    });
+                    $rootScope.$apply();
+                },
+                onException: function (ex) {
+                    console.error(ex);
+                }
+            });
 
-        // HACK: With the current version of select2 we cannot re-define the en locale, so lets change english to en-ca
-        // so the english localization can be used and we can fix the unicode character issues
-        if (locale === "en") {
-            locale = "en-ca";
+            $rootScope.changeInputType = function (controlId, type) {
+                $(controlId).attr('type', type);
+                if ($(controlId).attr('data-max-' + type) != null) {
+                    $(controlId).attr('max', $(controlId).attr('data-max-' + type));
+                }
+            };
+
+            $rootScope.$watch('session', function (nv, ov) {
+                if (nv)
+                    OpenIZ.App.getInfoAsync({
+                        includeUpdates: true,
+                        continueWith: function (data) {
+
+                            if (data.update && data.update.length > 0) {
+                                toastr.info(OpenIZ.Localization.getString("locale.about.updateToast.text"), OpenIZ.Localization.getString("locale.about.updateToast.title"), {
+                                    closeButton: false,
+                                    preventDuplicates: true,
+                                    onclick: function () {
+                                        window.location.hash = "/core/about";
+                                    },
+                                    positionClass: "toast-bottom-center",
+                                    timeOut: 4000,
+                                    extendedTimeOut: 0
+                                });
+                            }
+                        },
+                        onException: function (ex) {
+                            console.error(ex);
+                        }
+                    });
+            });
+
+            // Set the language for select2 localization
+            var locale = OpenIZ.Localization.getLocale();
+
+            // HACK: With the current version of select2 we cannot re-define the en locale, so lets change english to en-ca
+            // so the english localization can be used and we can fix the unicode character issues
+            if (locale === "en") {
+                locale = "en-ca";
+            }
+
+            $.fn.select2.defaults.set('language', locale);
+
         }
-
-        $.fn.select2.defaults.set('language', locale);
-
         $rootScope.OpenIZ = OpenIZ;
     });
 
