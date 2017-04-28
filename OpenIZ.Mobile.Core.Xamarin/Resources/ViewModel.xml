@@ -254,6 +254,7 @@
     <property name="doseUnitModel" behavior="never"/>
     <property name="routeModel" behavior="never"/>
     <property name="siteModel" behavior="never"/>
+    <property name="templateModel" behavior="always" all="true"/>
     <property name="tag" />
     <property name="relationship" all="true" behavior="always">
       <property name="HasComponent" all="true">
@@ -261,6 +262,7 @@
         <property name="relationshipTypeModel" behavior="never"/>
         <!-- Act.relationship[*].targetModel.{RecordTarget,Location,AuthorOriginator} are not included -->
         <property name="targetModel" all="true" behavior="always">
+          <property name="templateModel" behavior="always" all="true"/>
           <property name="participation" all="true">
             <property name="RecordTarget" all="false"/>
             <property name="Location" all="false"/>
