@@ -135,7 +135,7 @@
     ]
   },
   {
-    "outputFileName": "lib/lib-core.js",
+    "outputFileName": "lib/lib-core.min.js",
     "inputFiles": [
       "lib/jquery.min.js",
       "lib/jquery.datefix.min.js",

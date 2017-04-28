@@ -37,27 +37,31 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.paging = scope.search.paging || {size: 10};
     scope.act = {};
 
-    scope.$watch('search.dateOfBirthStringLow', function (nvalue, ovalue) {
-        if(nvalue !== undefined) 
-            $scope.search.query.dateOfBirth = ">=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
-    });
-    scope.$watch('search.dateOfBirthStringHigh', function (nvalue, ovalue) {
-        if (nvalue !== undefined)
-            $scope.search.query.dateOfBirth = "<=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
-    });
+    angular.element(document).ready(init);
 
-    scope.search.search = scope.search.search || search;
-    scope.search.next = scope.search.next || next;
-    scope.search.previous = scope.search.previous || previous;
-    scope.search.goPage = scope.search.goPage || goPage;
-    scope.startEncounter = startEncounter;
-    scope.goResult = scope.goResult || goResult;
+    function init() {
+        scope.$watch('search.dateOfBirthStringLow', function (nvalue, ovalue) {
+            if (nvalue !== undefined)
+                $scope.search.query.dateOfBirth = ">=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
+        });
+        scope.$watch('search.dateOfBirthStringHigh', function (nvalue, ovalue) {
+            if (nvalue !== undefined)
+                $scope.search.query.dateOfBirth = "<=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
+        });
 
-    scope.search.searchSubmitted = false;
-    var onlineOnly = false;
+        scope.search.search = scope.search.search || search;
+        scope.search.next = scope.search.next || next;
+        scope.search.previous = scope.search.previous || previous;
+        scope.search.goPage = scope.search.goPage || goPage;
+        scope.startEncounter = startEncounter;
+        scope.goResult = scope.goResult || goResult;
 
-    scope.search.minSearchDate = '2000-01-01';
-    
+        scope.search.searchSubmitted = false;
+        var onlineOnly = false;
+
+        scope.search.minSearchDate = '2000-01-01';
+    }
+
     //function updateResultEncounters() {
     //    for (var i in scope.search.results.item) {
     //        OpenIZ.Act.findAsync({

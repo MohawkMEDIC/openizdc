@@ -92,7 +92,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             AuditData audit = new AuditData(DateTime.Now, action, outcome, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.AuditLogUsed));
 
             // User actors
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
             AddUserActor(audit);
 
             // Add objects to which the thing was done
@@ -129,7 +129,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             AuditCode eventTypeId = CreateAuditActionCode(typeCode);
             AuditData audit = new AuditData(DateTime.Now, action, outcome, eventType, eventTypeId);
 
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
             AddUserActor(audit);
 
             // Objects
@@ -198,7 +198,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         public static void AuditSecurityAttributeAction(IEnumerable<Object> objects, bool success, IEnumerable<string> changedProperties)
         {
             var audit = new AuditData(DateTime.Now, ActionType.Update, success ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.SecurityAttributesChanged));
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
             AddUserActor(audit);
             
             audit.AuditableObjects = objects.Select(obj => new AuditableObject()
@@ -232,9 +232,13 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         /// </summary>
         internal static void AddUserActor(AuditData audit)
         {
+            var configService = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
+
             // For the user
             audit.Actors.Add(new AuditActorData()
             {
+                NetworkAccessPointId = configService.DeviceName,
+                NetworkAccessPointType = NetworkAccessPointType.MachineName,
                 UserName = AuthenticationContext.Current.Principal.Identity.Name,
                 AlternativeUserId = AuthenticationContext.Current.Session?.Key?.ToString(),
                 UserIdentifier = AuthenticationContext.Current.Session?.SecurityUser?.Key?.ToString(),
@@ -254,8 +258,8 @@ namespace OpenIZ.Mobile.Core.Security.Audit
             // For the current device name
             audit.Actors.Add(new AuditActorData()
             {
-                NetworkAccessPointId = networkService.GetInterfaces().FirstOrDefault().IpAddress,
-                NetworkAccessPointType = NetworkAccessPointType.IPAddress,
+                NetworkAccessPointId = configService.DeviceName,
+                NetworkAccessPointType = NetworkAccessPointType.MachineName,
                 UserName = configService.DeviceName,
                 ActorRoleCode = new List<AuditCode>() {
                     new  AuditCode("110153", "DCM") { DisplayName = "Source" }
@@ -290,15 +294,18 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         {
             if ((principal?.Identity?.Name ?? identityName) == ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceName) return; // don't worry about this
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, successfulLogin ? OutcomeIndicator.Success : OutcomeIndicator.EpicFail, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Login));
+            var configService = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
             audit.Actors.Add(new AuditActorData()
             {
+                NetworkAccessPointType = NetworkAccessPointType.MachineName,
+                NetworkAccessPointId = configService.DeviceName,
                 UserName = principal?.Identity?.Name ?? identityName,
                 UserIsRequestor = true,
                 ActorRoleCode = principal == null ? null : ApplicationContext.Current.GetService<IRoleProviderService>()?.GetAllRoles(principal.Identity.Name).Select(o=>
                     new AuditCode(o, null)
                 ).ToList()
             });
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
 
             audit.AuditableObjects.Add(new AuditableObject()
             {
@@ -321,12 +328,15 @@ namespace OpenIZ.Mobile.Core.Security.Audit
                 throw new ArgumentNullException(nameof(principal));
 
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.Success, EventIdentifierType.UserAuthentication, CreateAuditActionCode(EventTypeCodes.Logout));
+            var configService = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>();
             audit.Actors.Add(new AuditActorData()
             {
+                NetworkAccessPointId = configService.DeviceName,
+                NetworkAccessPointType = NetworkAccessPointType.MachineName,
                 UserName = principal.Identity.Name,
                 UserIsRequestor = true
             });
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
 
             SendAudit(audit);
         }
@@ -338,7 +348,7 @@ namespace OpenIZ.Mobile.Core.Security.Audit
         {
             AuditData audit = new AuditData(DateTime.Now, ActionType.Execute, OutcomeIndicator.EpicFail, EventIdentifierType.SecurityAlert, CreateAuditActionCode(EventTypeCodes.UseOfARestrictedFunction));
             AddUserActor(audit);
-            AddDeviceActor(audit);
+            //AddDeviceActor(audit);
             audit.AuditableObjects.Add(new AuditableObject()
             {
                 IDTypeCode = AuditableObjectIdType.Uri,
