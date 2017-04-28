@@ -309,11 +309,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.DeterminerConcept != null) data.DeterminerConcept = data.DeterminerConcept.EnsureExists(context);
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            if (data.Template != null) data.Template = data.Template.EnsureExists(context);
+
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.DeterminerConceptKey = data.DeterminerConcept?.Key ?? data.DeterminerConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
-
+            data.TemplateKey = data.Template?.Key ?? data.TemplateKey;
             data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.InsertInternal(context, data);

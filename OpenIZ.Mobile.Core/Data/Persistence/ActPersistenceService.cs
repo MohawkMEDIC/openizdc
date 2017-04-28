@@ -246,12 +246,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.ReasonConcept != null) data.ReasonConcept = data.ReasonConcept.EnsureExists(context);
             if (data.StatusConcept != null) data.StatusConcept = data.StatusConcept.EnsureExists(context);
             if (data.TypeConcept != null) data.TypeConcept = data.TypeConcept.EnsureExists(context);
+            if (data.Template != null) data.Template = data.Template.EnsureExists(context);
 
             data.ClassConceptKey = data.ClassConcept?.Key ?? data.ClassConceptKey;
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
             data.TypeConceptKey = data.TypeConcept?.Key ?? data.TypeConceptKey;
+            data.TemplateKey = data.Template?.Key ?? data.TemplateKey;
 
             // Do the insert
             var retVal = base.InsertInternal(context, data);

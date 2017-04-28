@@ -308,6 +308,7 @@
         <property name="sourceModel" behavior="never"/>
         <property name="actModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
@@ -328,6 +329,8 @@
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
@@ -422,6 +425,7 @@
         <property name="sourceModel" behavior="never"/>
         <property name="actModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
@@ -438,6 +442,7 @@
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
         <property name="playerModel" all="false">
           <property name="id"/>
           <property name="version"/>
