@@ -43,7 +43,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
         //$urlRouterProvider.otherwise('/');
 
     }])
-    .run(function ($rootScope) {
+    .run(function ($rootScope, $state) {
 
         $rootScope.isLoading = true;
         $rootScope.extendToast = null;
@@ -67,13 +67,20 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.isLoading = false;
         });
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-            if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
-                $('.modal-open').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-                $('body').css('padding-right', '');
+            if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
+                event.preventDefault();
+                $state.go(fromState.name);
             }
-            window.scrollTo(0, 0);
-            $rootScope.isLoading = true;
+            else {
+                if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
+                    $('.modal-open').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $('body').css('padding-right', '');
+                }
+
+                window.scrollTo(0, 0);
+                $rootScope.isLoading = true;
+            }
         });
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             OpenIZ.App.hideWait();
