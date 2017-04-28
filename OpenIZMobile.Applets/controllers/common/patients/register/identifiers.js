@@ -29,6 +29,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
+    $scope.identifiers = $scope.identifiers || [];
     var once = true;
 
     // JF- ??? Why does this need to exist?

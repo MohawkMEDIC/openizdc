@@ -43,7 +43,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
         //$urlRouterProvider.otherwise('/');
 
     }])
-    .run(function ($rootScope) {
+    .run(function ($rootScope, $state) {
 
         angular.element(document).ready(init);
 
@@ -64,24 +64,31 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                 }
             });
 
-            $rootScope.$on("$stateChangeError", function () {
-                console.log.bind(console);
-                OpenIZ.App.hideWait();
-                $rootScope.isLoading = false;
-            });
-            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+        $rootScope.$on("$stateChangeError", function () {
+            console.log.bind(console);
+            OpenIZ.App.hideWait();
+            $rootScope.isLoading = false;
+        });
+        $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+            if ($rootScope.confirmNavigation && !$rootScope.confirmNavigation(event, fromState)) {
+                event.preventDefault();
+                $state.go(fromState.name);
+            }
+            else {
                 if ($('.modal.in').length > 0 || $('.modal-backdrop').length > 0) {
                     $('.modal-open').removeClass('modal-open');
                     $('.modal-backdrop').remove();
                     $('body').css('padding-right', '');
                 }
+
                 window.scrollTo(0, 0);
                 $rootScope.isLoading = true;
-            });
-            $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-                OpenIZ.App.hideWait();
-                $rootScope.isLoading = false;
-            });
+            }
+        });
+        $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
+            OpenIZ.App.hideWait();
+            $rootScope.isLoading = false;
+        });
 
             $rootScope.page = {
                 title: OpenIZ.App.getCurrentAssetTitle(),
