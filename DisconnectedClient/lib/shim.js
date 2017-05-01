@@ -25,3 +25,13 @@ OpenIZApplicationService.Close = function () {
 OpenIZApplicationService.GetLocale = function () {
     return (navigator.language || navigator.userLanguage).substring(0, 2);
 }
+
+OpenIZApplicationService.NewGuid = function () {
+    var retVal = "";
+    $.ajax({
+        url: "/__app/uuid",
+        success: function (data) { retVal = data; },
+        async: false
+    });
+    return retVal;
+}

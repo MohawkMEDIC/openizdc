@@ -87,6 +87,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     function goResult(patientId) {
         OpenIZ.UserInterface.patientController.view(patientId);
     }
+
+    
     /** 
      * @summary Advances to the next set of results
      */

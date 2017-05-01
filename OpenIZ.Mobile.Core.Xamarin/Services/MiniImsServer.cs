@@ -362,7 +362,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services
                                     (result as Stream).CopyTo(response.OutputStream);
                                 else
                                 {
-                                    var br = result as Byte[];
+                                    var br = result as Byte[] ?? Encoding.UTF8.GetBytes(result as String);
                                     response.OutputStream.Write(br, 0, br.Length);
                                 }
                                 break;

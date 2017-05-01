@@ -119,16 +119,12 @@
                         </div>
 
                         <div class="row" style="height:auto;">
-                            <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId:patient.id, dashId: 'entry'})" ng-click="$event.stopPropagation();">
-                                    {{ 'locale.patient.action.startEncounter' | i18n }}
+                            <div class="col-xs-6" ng-repeat="act in OpenIZ.UserInterface.patientController.actions">
+                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ng-click="$event.stopPropagation(); act.action(patient.id)">
+                                    {{ act.label }}
                                 </a>
                             </div>
-                            <div class="col-xs-6">
-                                <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ui-sref="tz-timr-applet.view-patient({patientId : patient.id, dashId: 'weight'})" ng-click="$event.stopPropagation();">
-                                    {{ 'locale.patient.action.weight' | i18n }}
-                                </a>
-                            </div>
+                           
                         </div>
                     </div>
                 </div>

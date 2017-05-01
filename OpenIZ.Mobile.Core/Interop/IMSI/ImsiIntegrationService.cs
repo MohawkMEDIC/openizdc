@@ -421,11 +421,8 @@ namespace OpenIZ.Mobile.Core.Interop.IMSI
                                     (localObject as IVersionedEntity).PreviousVersionKey = null;
                                 this.Insert(Bundle.CreateBundle(localObject as IdentifiedData));
                                 break;
-
                         }
-
                     }
-
 
                     // Update the server version key
                     if (existing is IVersionedEntity &&

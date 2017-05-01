@@ -70,7 +70,8 @@
                                         <div ng-if="sequence.actTime != null">{{ sequence.actTime | date: 'dd-MM-yyyy' }}</div>
                                     </div>
                                     <div class="text-success" ng-if="!sequence.isNegated &amp;&amp; sequence.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
-                                        <span class="glyphicon glyphicon-tasks"></span> 
+                                        <i class="fa fa-universal-access"></i> 
+                                        {{ 'locale.encounters.queued' | i18n }}
                                     </div>
                                     <div class="text-danger" ng-if="sequence.isNegated">
                                         <span class="glyphicon glyphicon-question-sign"></span> {{ 'locale.encounters.notDone' | i18n }} ({{ sequence.reasonConceptModel | oizConcept }})

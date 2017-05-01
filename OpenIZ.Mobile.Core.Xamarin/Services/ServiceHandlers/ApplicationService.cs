@@ -62,6 +62,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         private Tracer m_tracer = Tracer.GetTracer(typeof(ApplicationService));
 
         /// <summary>
+        /// Get new uuid
+        /// </summary>
+        [RestOperation(UriPath = "/uuid", Method = "GET", FaultProvider = nameof(ApplicationServiceFault))]
+        [Anonymous]
+        [return: RestMessage(RestMessageFormat.Raw)]
+        public String NewGuid()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        /// <summary>
         /// Submits a bug report via the AMI interface
         /// </summary>
         [RestOperation(UriPath = "/bug", Method = "POST", FaultProvider = nameof(ApplicationServiceFault))]

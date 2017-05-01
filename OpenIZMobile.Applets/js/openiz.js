@@ -2477,6 +2477,27 @@ var OpenIZ = OpenIZ || {
                 state: controlData.state
             });
         },
+        /**
+          * @summary Downloads a patient asynchronously
+         * @memberof OpenIZ.Patient
+         * @method
+         * @param {Object} controlData An object containing search, offset, count and callback data
+         * @param {OpenIZ~continueWith} controlData.continueWith The callback to call when the operation is completed successfully
+         * @param {OpenIZ~onException} controlData.onException The callback to call when the operation encounters an exception
+         * @param {OpenIZ~finally} controlData.finally The callback of a function to call whenever the operation completes successfully or not
+         * @param {uuid} controlData.id The identifier of the patient that is to be downloaded
+         * @see {OpenIZ.IMS.get}
+         * @see OpenIZModel.Patient
+         */
+        downloadAsync: function (controlData) {
+            OpenIZ.Util.simpleGet("/__ims/Patient.Download", {
+                query: { _id: controlData.id },
+                continueWith: controlData.continueWith,
+                onException: controlData.onException,
+                finally: controlData.finally,
+                state: controlData.state
+            });
+        }
     },
 
 

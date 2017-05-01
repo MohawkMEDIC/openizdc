@@ -303,10 +303,11 @@ angular.module('openiz', [])
                                 if (currentValue && currentValue.indexOf("? string:") == 0) {
                                     $(element).val(currentValue.substring(9, currentValue.length - 2));
                                 }
-                                if (defaultValue) {
+                                else if (defaultValue) {
                                     $(element).val(defaultValue);
-                                    $(element).trigger('change');
                                 }
+                                $(element).trigger('change');
+
                             }
                         });
                     };

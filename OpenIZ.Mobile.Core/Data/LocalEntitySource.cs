@@ -25,6 +25,8 @@ using OpenIZ.Core.Model;
 using OpenIZ.Core.Model.Interfaces;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using OpenIZ.Core.Model.Acts;
+using System.Reflection;
 
 namespace OpenIZ.Mobile.Core.Data
 {
@@ -86,9 +88,13 @@ namespace OpenIZ.Mobile.Core.Data
             if (persistenceService != null)
             {
                 var tr = 0;
-                return persistenceService.QueryFast(query, 0, null, out tr, Guid.Empty);
+                if(typeof(Act).GetTypeInfo().IsAssignableFrom(typeof(TObject).GetTypeInfo()))
+                    return persistenceService.QueryFast(query, 0, null, out tr, Guid.Empty);
+                else
+                    return persistenceService.Query(query, 0, null, out tr, Guid.Empty);
+
             }
-			return new List<TObject>();
+            return new List<TObject>();
 		}
 
         #endregion

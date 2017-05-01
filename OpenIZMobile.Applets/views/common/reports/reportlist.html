@@ -15,49 +15,58 @@
     <div class="modal fade" id="reportParametersDialog" tabindex="-10" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                    <h4 class="modal-title">
-                        <span class="glyphicon glyphicon-eye-open"></span>
-                        {{ currentReport.info.title }} <small>{{ 'locale.reports.parameters.title' | i18n }}</small>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group" ng-repeat="parm in currentReport.parameter">
-                            <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
-                            <div class="col-xs-10" ng-switch="parm.type" ng-if="!parm.valueSet">
-                                <input ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
-                                <input ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
-                                <input ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
-                                <input ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
-                                <select ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">
-                                    <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
-                                </select>
-                            </div>
-                            <div class="col-xs-10" ng-if="parm.valueSet">
-                                <select ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}" class="form-control select2">
-                                    <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
-                                </select>
+                <form class="form-horizontal" novalidate="novalidate" ng-submit="executeReport(reportForm)" name="reportForm">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                            {{ currentReport.info.title }} <small>{{ 'locale.reports.parameters.title' | i18n }}</small>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <div class="form-group" ng-repeat="parm in currentReport.parameter">
+                                <label class="col-xs-2 control-label">{{ OpenIZ.Localization.getString(parm.label) }}</label>
+                                <div class="col-xs-10" ng-switch="parm.type" ng-if="!parm.valueSet">
+                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Date" type="date" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-dd'}}" min="{{ (parm.min || 0 ) | date:'yyyy-MM-dd'}}" class="form-control" />
+                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="DateTime" type="datetime" name="{{parm.name}}" max="{{ (parm.max || $root.page.loadTime) | date:'yyyy-MM-ddTHH:mm:ss'}}" min="{{ (parm.min || 0) | date:'yyyy-MM-ddTHH:mm:ss'}}" class="form-control" />
+                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="String" type="text" name="{{parm.name}}" class="form-control" />
+                                    <input ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Integer" type="number" name="{{parm.name}}" class="form-control" />
+                                    <select ng-required="parm.required" ng-model="currentFilter[parm.name]" ng-switch-when="Uuid" size="1" name="{{parm.name}}" class="form-control select2">
+                                        <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-10" ng-if="parm.valueSet">
+                                    <select ng-required="parm.required" ng-model="currentFilter[parm.name]" size="1" name="{{parm.name}}" class="form-control select2">
+                                        <option ng-repeat="opt in parm.valueSet.values" value="{{opt.key}}">{{opt.value}}</option>
+                                    </select>
+                                </div>
+                                <div ng-if="(reportForm[parm.name].$touched || reportForm.$submitted) &amp;&amp; reportForm[parm.name].$invalid" class="col-xs-12">
+                                    <span class="help-block text-danger">
+                                        {{ parm.label }} {{ 'locale.reports.error.required' | i18n }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <div class="btn-group pull-right">
-                        <button ng-click="currentReport = null" type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
-                            <span>
-                                <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
-                            </span>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#reportResultDialog" ng-click="executeReport()">
-                            <span>
-                                <span class="glyphicon glyphicon-play-circle"></span> {{ 'locale.action.run' | i18n }}
-                            </span>
-                        </button>
-                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group pull-right">
+                            <button ng-click="currentReport = null" type="button" class="btn btn-danger btn-lg" data-dismiss="modal">
+                                <span>
+                                    <span class="glyphicon glyphicon-remove"></span> {{ 'locale.action.cancel' | i18n }}
+                                </span>
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg" >
+                                <span>
+                                    <span class="glyphicon glyphicon-play-circle"></span> {{ 'locale.action.run' | i18n }}
+                                </span>
+                            </button>
+                        </div>
 
-                </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
@@ -103,6 +112,11 @@
                                 <div id="reportBody" ng-show="!isLoading" />
                                 <div ng-if="isLoading" style="min-height:200px">
                                     <center><img src="~/img/ajax-loader.gif" /> {{ 'locale.reports.executeWait' | i18n }}</center>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary" ng-class="{'active': $index == viewId}" ng-repeat="view in currentReport.view" ng-click="setView($index)">
+                                        {{view.label}}
+                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -63,7 +63,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             DbAct dbAct = dataInstance as DbAct;
             Act retVal = null;
             IDataCachingService cache = ApplicationContext.Current.GetService<IDataCachingService>();
-            if(dbAct != null)
+            if (dbAct != null)
                 switch (new Guid(dbAct.ClassConceptUuid).ToString().ToUpper())
                 {
                     case ControlAct:
@@ -111,7 +111,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Return cache value
             if (retVal != null)
+            {
+                if (retVal.LoadState < context.DelayLoadMode)
+                    retVal.LoadAssociations(context,
+                // Exclude
+                nameof(OpenIZ.Core.Model.Acts.Act.Extensions),
+                nameof(OpenIZ.Core.Model.Acts.Act.Tags),
+                nameof(OpenIZ.Core.Model.Acts.Act.Identifiers),
+                nameof(OpenIZ.Core.Model.Acts.Act.Notes),
+                nameof(OpenIZ.Core.Model.Acts.Act.Policies)
+                );
                 return retVal;
+            }
             else
                 return base.CacheConvert(dataInstance, context);
         }
@@ -325,7 +336,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.MoodConceptKey = data.MoodConcept?.Key ?? data.MoodConceptKey;
             data.ReasonConceptKey = data.ReasonConcept?.Key ?? data.ReasonConceptKey;
             data.StatusConceptKey = data.StatusConcept?.Key ?? data.StatusConceptKey ?? StatusKeys.New;
-//            data.TypeConcept?.EnsureExists(context);
+            //            data.TypeConcept?.EnsureExists(context);
 
             // Do the update
             var retVal = base.UpdateInternal(context, data);

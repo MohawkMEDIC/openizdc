@@ -58,7 +58,6 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         protected override TModel UpdateInternal(LocalDataContext context, TModel data)
         {
-            data.PreviousVersionKey = data.VersionKey;
             var key = data.Key?.ToByteArray();
             if (!data.VersionKey.HasValue)
                 data.VersionKey = Guid.NewGuid();

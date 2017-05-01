@@ -57,6 +57,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             breService?.AfterInsert(data) ;
 
             // Insert bundle to the master queue
+            // If we have a patient we must remove the participations as those will mess with the persistence
+            foreach (var itm in data.Item.OfType<Patient>())
+                itm.Participations.Clear(); // we never send these up
+
             ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem(o=> SynchronizationQueue.Outbound.Enqueue(Bundle.CreateBundle(data.Item, data.TotalResults, data.Offset), Synchronization.Model.DataOperationType.Insert));
 
             this.DataCreated?.Invoke(this, new AuditDataEventArgs(data.Item));

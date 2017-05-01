@@ -87,14 +87,7 @@ namespace DisconnectedClient
                 tw.WriteLine("\t}");
                 tw.WriteLine("}");
 
-                tw.WriteLine("OpenIZApplicationService._CUUID = 0;");
-                tw.WriteLine("OpenIZApplicationService._UUIDS = [");
-                for (int i = 0; i < 2000; i++)
-                    tw.WriteLine("\t'{0}',", Guid.NewGuid());
-                tw.WriteLine("\t''];");
-
-                tw.WriteLine("OpenIZApplicationService.NewGuid = function() { return OpenIZApplicationService._UUIDS[OpenIZApplicationService._CUUID++]; }");
-
+               
                 tw.WriteLine("OpenIZApplicationService.GetTemplateForm = function(templateId) {");
                 tw.WriteLine("\tswitch(templateId) {");
                 foreach (var itm in this.Applets.SelectMany(o => o.Templates))

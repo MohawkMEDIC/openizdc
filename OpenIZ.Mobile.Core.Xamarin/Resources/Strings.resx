@@ -180,6 +180,9 @@
   <data name="locale_downloading" xml:space="preserve">
     <value>Downloading {0}...</value>
   </data>
+  <data name="locale_downloadingExternalPatient" xml:space="preserve">
+    <value>Downloading external patient data...</value>
+  </data>
   <data name="locale_invalidSignature" xml:space="preserve">
     <value>The applet could not be installed because the verification stage failed.</value>
   </data>

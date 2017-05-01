@@ -47,5 +47,11 @@ namespace OpenIZ.Mobile.Reporting.Model
         /// </summary>
         [XmlElement("valueSet"), JsonProperty("valueSet")]
         public ReportDatasetDefinition ValueSet { get; set; }
+
+        /// <summary>
+        /// Gets or sets the required
+        /// </summary>
+        [XmlAttribute("required"), JsonProperty("required")]
+        public bool Required { get; set; }
     }
 }

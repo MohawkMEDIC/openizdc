@@ -255,6 +255,21 @@ namespace OpenIZ.Mobile.Reporting
                 if (facet.Attribute("expr") == null)
                     throw new InvalidOperationException("Switch must have expr attribute");
                 var value = this.CompileExpression($"{context.Report.Description.Name}.{context.Scope.GetType().Name}.{facet.Attribute("expr").Value}", facet.Attribute("expr").Value).DynamicInvoke(context.Scope);
+
+
+                var when = facet.Attribute("when")?.Value;
+                switch (when)
+                {
+                    case "changed":
+                        if (context.ParentScope?.GetLast(facet.Value) == value.ToString())
+                        {
+                            facet.Value = ""; // no change        
+                            return;
+                        }
+                        break;
+                }
+                context.ParentScope?.SetLast(facet.Value, value.ToString());
+
                 var xel = facet.Elements(xs_report + "when").FirstOrDefault();
                 while (xel != null)
                 {
@@ -313,6 +328,7 @@ namespace OpenIZ.Mobile.Reporting
                     else
                         facet.Element(xs_report + "default").Remove();
                 }
+
 
             }
             else if (facet.Name == xs_report + "value")

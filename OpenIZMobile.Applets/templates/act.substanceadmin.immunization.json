@@ -7,8 +7,12 @@
   "classConcept": "932A3C7E-AD77-450A-8A1F-030FC2855450",
   "typeConcept": "0331e13f-f471-4fbd-92dc-66e0a46239d5",
   "actTime": "{{now}}",
-  "value": 0.0,
-  "unitOfMeasure": "a0a8d4db-db72-4bc7-9b8c-c07cef7bc796",
+  "doseSequence": 0,
+  "doseQuantity": 1.0,
+  "doseUnitModel": {
+    "id": "a77b8d83-1cc9-4806-a268-5d1738154afa",
+    "mnemonic": "DOSE"
+  },
   "participation": {
     "Location": {
       "classConcept": "F51DFDCD-039B-4E1F-90BE-3CF56AEF8DA4",

@@ -137,4 +137,17 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         return validation;
 
     };
+
+    // Gets the next sequence based on current scope encounter
+    scope.getNextDoseSequence = scope.getNextDoseSequence || function (productId) {
+        var nextDose = 1;
+        $.grep(scope.encounters, function (a) {
+            if (nextDose <= a.doseSequence &&
+                a.statusConcept == OpenIZModel.StatusKeys.Completed &&
+                a.participation.Product &&
+                a.participation.Product.player == productId)
+                nextDose = a.doseSequence + 1;
+        });
+        return nextDose;
+    };
 }]);

@@ -31,6 +31,7 @@ using OpenIZ.Mobile.Core.Services;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -215,6 +216,39 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 throw new ArgumentNullException("_id");
         }
 
+        /// <summary>
+        /// Updates an act.
+        /// </summary>
+        /// <param name="act">The act to update.</param>
+        /// <returns>Returns the updated act.</returns>
+        [RestOperation(Method = "DELETE", UriPath = "/Act", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public Act DeleteAct([RestMessage(RestMessageFormat.SimpleJson)] Act act)
+        {
+            var query = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            Guid actKey = Guid.Empty;
+            Guid actVersionKey = Guid.Empty;
+
+            if (query.ContainsKey("_id") && Guid.TryParse(query["_id"][0], out actKey) && query.ContainsKey("_versionId") && Guid.TryParse(query["_versionId"][0], out actVersionKey))
+            {
+                if (act.Key == actKey && act.VersionKey == actVersionKey)
+                {
+                    var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
+                    return actRepositoryService.Obsolete<Act>(act.Key.Value);
+                }
+                else
+                {
+                    throw new FileNotFoundException("Act not found");
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("Act not found");
+            }
+        }
+
 
         /// <summary>
         /// Updates an act.
@@ -236,20 +270,16 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 if (act.Key == actKey && act.VersionKey == actVersionKey)
                 {
                     var actRepositoryService = ApplicationContext.Current.GetService<IActRepositoryService>();
-                    if (act.ObsoletionTime == null)
-                    {
-                        return actRepositoryService.Save(act);
-                    }
-                    return actRepositoryService.Obsolete<Act>(act.Key.Value);
+                    return actRepositoryService.Save(act);
                 }
                 else
                 {
-                    throw new ArgumentException("Act not found");
+                    throw new FileNotFoundException("Act not found");
                 }
             }
             else
             {
-                throw new ArgumentException("Act not found");
+                throw new FileNotFoundException("Act not found");
             }
         }
     }

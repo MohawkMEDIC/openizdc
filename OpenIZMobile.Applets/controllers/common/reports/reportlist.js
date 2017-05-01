@@ -11,10 +11,19 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
     $scope.selectItem = selectItem;
     $scope.currentFilter = {};
     $scope.reportBody = '';
+    $scope.viewId = 0;
+    $scope.setView = function (viewId) {
+        $scope.viewId = viewId;
+    };
+
     $scope.$watch('reportBody', function (nv, ov) {
         $("#reportBody").html(nv);
         $compile($("#reportBody").contents())($scope);
 
+    });
+    $scope.$watch('viewId', function (nv, ov) {
+        if(nv != ov)
+            $scope.executeReport();
     });
     // Get reports asynchronously
     OpenIZ.Risi.getReportsAsync({
@@ -74,11 +83,18 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
     }
 
     // Execute report
-    function executeReport() {
+    function executeReport(reportForm) {
+        if (reportForm && reportForm.$invalid) {
+            return;
+        }
+
+        $("#reportResultDialog").modal('show');
+
         $scope.isLoading = true;
+        // TODO: Make this on-demand
         OpenIZ.Risi.executeReportAsync({
             name: $scope.currentReport.info.name,
-            view: $scope.currentReport.view[0].name,
+            view: $scope.currentReport.view[$scope.viewId].name,
             query: $scope.currentFilter,
             continueWith: function (data) {
                 if (data == null)
@@ -94,6 +110,6 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
                 $scope.isLoading = false;
                 $scope.$apply();
             }
-        })
+        });
     }
 }]);

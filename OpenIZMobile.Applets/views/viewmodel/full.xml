@@ -113,7 +113,6 @@
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
-
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
@@ -128,6 +127,7 @@
     <property name="determinerConcept" behavior="never"/>
     <property name="tag" all="true" behavior="always"/>
     <property name="genderConceptModel" behavior="always" ref="Concept"/>
+    <property name="extension" all="true" behavior="always"/>
     <property name="identifier" behavior="always" ref="EntityIdentifier">
       <property name="*" all="true">
         <property name="value" behavior="always"/>

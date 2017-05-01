@@ -293,7 +293,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Return cache value
             if (retVal != null)
+            {
+                if (retVal.LoadState < context.DelayLoadMode)
+                    retVal.LoadAssociations(context,
+                        // Exclude
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Extensions),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Notes),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Participations),
+                        nameof(OpenIZ.Core.Model.Entities.Entity.Telecoms),
+                        nameof(OpenIZ.Core.Model.Entities.UserEntity.SecurityUser)
+                        );
                 return retVal;
+            }
             else
                 return base.CacheConvert(dataInstance, context);
         }

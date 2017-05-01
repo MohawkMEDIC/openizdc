@@ -18,6 +18,7 @@
  * Date: 2017-3-31
  */
 using OpenIZ.Core.Model;
+using OpenIZ.Core.Model.Acts;
 using OpenIZ.Core.Model.Collection;
 using OpenIZ.Core.Model.Constants;
 using OpenIZ.Core.Model.DataTypes;
@@ -27,8 +28,11 @@ using OpenIZ.Core.Model.Query;
 using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Caching;
+using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Mobile.Core.Services;
+using OpenIZ.Mobile.Core.Synchronization;
+using OpenIZ.Mobile.Core.Xamarin.Resources;
 using OpenIZ.Mobile.Core.Xamarin.Services.Attributes;
 using System;
 using System.Collections.Generic;
@@ -71,6 +75,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         public Patient UpdatePatient([RestMessage(RestMessageFormat.SimpleJson)]Patient patientToUpdate)
         {
             IPatientRepositoryService repository = ApplicationContext.Current.GetService<IPatientRepositoryService>();
+            patientToUpdate.VersionKey = null;
             // Get all the acts if none were supplied, and all of the relationships if none were supplied
             return repository.Save(patientToUpdate).GetLocked() as Patient;
         }
@@ -142,13 +147,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             var predicate = QueryExpressionParser.BuildLinqExpression<Patient>(
                                 new NameValueCollection() {
-                                    { tryFields[tryField++] , values }
+                                    { tryFields[tryField] , values.Select(o=>tryFields[tryField].Contains("name.component.value") ? "~" + o : o).ToList() }
                                 }
                             );
 
                             bundle = integrationService.Find(predicate, offset, count, new IntegrationQueryOptions() {
                                 Expand = new String[] { "relationship.target" }
                             });
+                            tryField++;
                         }
 
                         // Now compose bundle
@@ -222,6 +228,56 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
             }
         }
+
+        /// <summary>
+		/// Gets a patient.
+		/// </summary>
+		/// <returns>Returns the patient.</returns>
+        [RestOperation(Method = "GET", UriPath = "/Patient.Download", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.WriteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public IdentifiedData DownloadPatient()
+        {
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+            if (!search.ContainsKey("_id"))
+                throw new ArgumentNullException("Missing _id parameter");
+
+            Guid patientId = Guid.Parse(search["_id"][0]);
+
+            // Get the patient
+            var imsiIntegrationService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
+            var pdp = ApplicationContext.Current.GetService<IDataPersistenceService<Bundle>>();
+
+            // We shove the data onto the queue for import!!! :)
+            ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, 0.1f);
+            var patient = imsiIntegrationService.Get<Patient>(patientId, Guid.Empty);
+            pdp.Insert(Bundle.CreateBundle(patient));
+
+            // We now want to subscribe this patient our facility
+            var facilityId = ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities?.FirstOrDefault();
+            if (facilityId != null)
+            {
+                patient.Relationships.Add(new EntityRelationship(EntityRelationshipTypeKeys.IncidentalServiceDeliveryLocation, Guid.Parse(facilityId)));
+                imsiIntegrationService.Update(patient);
+            }
+
+            int tr = 1,
+                ofs = 0;
+            Guid qid = Guid.NewGuid();
+
+            while(ofs < tr)
+            {
+                var bundle = imsiIntegrationService.Find<Act>(o => o.Participations.Where(p=>p.ParticipationRole.Mnemonic == "RecordTarget").Any(p=>p.PlayerEntityKey == patientId), ofs, 20);
+                //bundle.Reconstitute();
+                tr = bundle.TotalResults;
+                ApplicationContext.Current.SetProgress(Strings.locale_downloadingExternalPatient, ((float)ofs / tr) * 0.9f + 0.1f);
+                ofs += 20;
+                pdp.Insert(bundle);
+            }
+
+            return patient;
+        }
+
 
         /// <summary>
         /// Get a patient

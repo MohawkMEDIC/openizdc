@@ -232,6 +232,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         "ConceptSet",
                         "AssigningAuthority",
                         "IdentifierType",
+                        "TemplateDefinition",
                         "ExtensionType",
                         "ConceptClass",
                         "Concept",
@@ -292,6 +293,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                         break;
                                     case "Person":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[IncidentalServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         break;
                                     case "Act":
@@ -310,6 +312,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "TextObservation":
                                     case "PatientEncounter":
                                         syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":

@@ -250,6 +250,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Downloading external patient data....
+        /// </summary>
+        internal static string locale_downloadingExternalPatient {
+            get {
+                return ResourceManager.GetString("locale_downloadingExternalPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The applet could not be installed because the verification stage failed..
         /// </summary>
         internal static string locale_invalidSignature {

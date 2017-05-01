@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
         /// <summary>
         /// Gets the mnemonic
         /// </summary>
-        [Column("mnemonic"), Indexed]
+        [Column("mnemonic"), Collation("NOCASE"), Unique]
         public String Mnemonic { get; set; }
 
     }

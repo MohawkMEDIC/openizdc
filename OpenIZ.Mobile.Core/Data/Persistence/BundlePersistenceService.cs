@@ -141,6 +141,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 #endif
                 var idp = typeof(IDataPersistenceService<>).MakeGenericType(new Type[] { itm.GetType() });
                 var svc = ApplicationContext.Current.GetService(idp);
+                if (svc == null) continue; // can't insert
                 String method = "Insert";
                 if (itm.TryGetExisting(context) != null)
                     method = "Update";

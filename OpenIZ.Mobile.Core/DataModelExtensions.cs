@@ -253,7 +253,7 @@ namespace OpenIZ.Mobile.Core
 
             // Is there a classifier?
             var idpInstance = LocalPersistenceService.GetPersister(me.GetType()) as ILocalPersistenceService;
-
+            if (idpInstance == null) return null;
             //if (me.Key?.ToString() == "e4d3350b-b0f5-45c1-80ba-49e3844cbcc8")
             //    System.Diagnostics.Debugger.Break();
 

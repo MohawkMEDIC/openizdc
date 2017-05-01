@@ -29,17 +29,19 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
     //        var scope = angular.element(e).scope();
 
     angular.element(document).ready(init);
+    var scope = $scope.$parent;
+    // Init data
+    scope.patient = scope.patient || new OpenIZModel.Patient({});
+    scope.patient.participation = scope.patient.participation || {};
+    scope.display = scope.display || {};
+    // Iterate through vaccinations and organize them by antigen
+    // TODO: Change this to be an AJAX call
+    scope.display._vaccineAdministrations = {};
+    scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+    scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     function init() {
-        var scope = $scope.$parent;
-        // Init data
-        scope.patient = scope.patient || new OpenIZModel.Patient({});
-        scope.patient.participation = scope.patient.participation || {};
-        scope.display = scope.display || {};
 
-        // Iterate through vaccinations and organize them by antigen
-        // TODO: Change this to be an AJAX call
-        scope.display._vaccineAdministrations = {};
 
         $scope.yellowcardLegend = [
         { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
@@ -47,8 +49,6 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
         { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
         ];
 
-        scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
-        scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
     }
 
     var refreshYellowCard = function (newValue, oldValue) {
