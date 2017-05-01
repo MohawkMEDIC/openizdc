@@ -52,7 +52,13 @@ namespace OpenIZ.Mobile.Core.Data.Model.Extensibility
 			set;
 		}
 
-	}
+        /// <summary>
+        /// Gets the display value of the object
+        /// </summary>
+        [Column("display")]
+        public String ExtensionDisplay { get; set; }
+
+    }
 
 	/// <summary>
 	/// Entity extension.

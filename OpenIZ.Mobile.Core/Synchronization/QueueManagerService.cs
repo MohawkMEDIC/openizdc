@@ -157,16 +157,16 @@ namespace OpenIZ.Mobile.Core.Synchronization
 
                         try
                         {
-                            if (bundle?.Item.Count > 250)
+                            if (bundle?.Item.Count > 2500)
                             {
                                 var ofs = 0;
                                 while (ofs < bundle.Item.Count)
                                 {
                                     this.ImportElement(new Bundle()
                                     {
-                                        Item = bundle.Item.Skip(ofs).Take(250).ToList()
+                                        Item = bundle.Item.Skip(ofs).Take(2500).ToList()
                                     });
-                                    ofs += 250;
+                                    ofs += 2500;
                                 }
                             }
                             else

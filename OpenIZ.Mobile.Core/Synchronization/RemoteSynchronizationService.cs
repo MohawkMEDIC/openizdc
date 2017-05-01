@@ -300,18 +300,18 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     // Queue the act of queueing
                     if (result != null)
                     {
-                        if (count == 2500 && perfTimer.ElapsedMilliseconds < 25000 ||
-                            count < 2500 && result.TotalResults > 50000 && perfTimer.ElapsedMilliseconds < 10000)
+                        if (count == 5000 && perfTimer.ElapsedMilliseconds < 25000 ||
+                            count < 5000 && result.TotalResults > 50000 && perfTimer.ElapsedMilliseconds < 10000)
+                            count = 5000;
+                        else if (count == 2500 && perfTimer.ElapsedMilliseconds < 25000 ||
+                            count < 2500 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 2500;
-                        else if (count == 1000 && perfTimer.ElapsedMilliseconds < 25000 ||
-                            count < 1000 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
+                        else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
+                            count < 1000 && result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
                             count = 1000;
-                        else if (count == 500 && perfTimer.ElapsedMilliseconds < 20000 ||
-                            count < 500 && result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 500;
                         else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
-                            count < 200 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 200;
+                            count < 500 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
+                            count = 500;
                         else
                             count = 100;
 

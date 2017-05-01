@@ -439,6 +439,7 @@ namespace OpenIZ.Mobile.Reporting
                     this.m_cachedExpressions.Add(name, evaluator);
 
             }
+
             return evaluator;
         }
 
@@ -450,7 +451,7 @@ namespace OpenIZ.Mobile.Reporting
             String format = valueElement.Attribute("format")?.Value;
 
             if (format != null)
-                return String.Format(format, valueElement.Value.Split(',').Select(o => this.RenderString(this.GetBind(context, o), context)).ToArray());
+                return String.Format(format, valueElement.Value.Split(',').Select(o => this.GetBind(context, o)).ToArray());
             else
                 return this.RenderString(this.GetBind(context, valueElement.Value), context)?.ToString() ?? "";
 

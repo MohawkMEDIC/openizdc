@@ -38,8 +38,10 @@
     <property name="act_date" type="date"/>
     <property name="acts" type="int"/>
     <sql provider="sqlite">
-      <![CDATA[SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM oizcp 
-    GROUP BY location_id, product_id, act_date]]>
+      <![CDATA[SELECT location_id, product_id, act_date, COUNT(act_id) AS acts FROM 
+(	
+	select location_id, product_id, cast(strftime('%s', date(act_date, 'unixepoch')) as bigint) as act_date, act_id from oizcp 
+) GROUP BY location_id, product_id, act_date]]>
     </sql>
   </sqp>
   <sqp name="defaulters_aggregate">

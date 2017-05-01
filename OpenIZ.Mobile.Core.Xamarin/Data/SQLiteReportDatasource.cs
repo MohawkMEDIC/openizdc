@@ -136,8 +136,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
                 if (value is byte[] && (value as byte[]).Length == 16)
                     value = new Guid(value as byte[]);
                 else if ((name.ToLower().Contains("time") ||
-                    name.ToLower().Contains("utc")) && value is int)
-                    value = new DateTime((int)value);
+                    name.ToLower().Contains("utc")) && (value is int || value is long))
+                    value = new DateTime(value is int ? (int)value : (long)value);
                 retVal.Add(name, value);
             }
             return (TModel)retVal;

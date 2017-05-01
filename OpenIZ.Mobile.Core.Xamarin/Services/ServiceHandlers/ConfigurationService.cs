@@ -313,7 +313,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "PatientEncounter":
                                         syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
                                         syncSetting.Filters.Add("participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
+                                        //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":
                                         syncSetting.Filters.Add("classConcept=" + EntityClassKeys.ServiceDeliveryLocation + "&_exclude=relationship&_exclude=participation");
