@@ -95,7 +95,6 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
                     alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
-                    OpenIZ.App.hideWait('#joinRealmButton');
                 },
                 onException: function (error) {
                     if (error.type == 'DuplicateNameException')
@@ -113,6 +112,7 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 },
                 finally: function () {
                     OpenIZ.App.hideWait('#joinRealmButton');
+                    $scope.$apply();
                 }
             });
         };

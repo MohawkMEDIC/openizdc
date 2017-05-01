@@ -181,7 +181,7 @@
                         <span class="glyphicon glyphicon-remove"></span> {{ 'locale.settings.cancel' | i18n }}
                     </span>
                 </button>
-                <button class="btn-success btn btn-lg" id="saveConfigButton" ng-click="save(config)">
+                <button class="btn-success btn btn-lg" id="saveConfigButton" ng-click="save(config)" ng-disabled="!config.realmName">
                     <span>
                         <span class="glyphicon glyphicon-ok"></span> {{ 'locale.settings.apply' | i18n }}
                     </span>
