@@ -90,7 +90,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
                         // Now we attach our local file based DB by requesting a lock so nobody else touches it!
                         using (var fileContext = this.CreateConnection())
-                        using (fileContext.Connection.Lock())
+                        using (fileContext.LockConnection())
                         {
                             memConnection.Execute($"ATTACH DATABASE '{ApplicationContext.Current.Configuration.GetConnectionString("openIzData").Value}' AS file_db");
 

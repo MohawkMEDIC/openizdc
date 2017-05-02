@@ -88,7 +88,8 @@ namespace OpenIZ.Mobile.Core.Data
             if (persistenceService != null)
             {
                 var tr = 0;
-                if(typeof(Act).GetTypeInfo().IsAssignableFrom(typeof(TObject).GetTypeInfo()))
+                if(typeof(Act).GetTypeInfo().IsAssignableFrom(typeof(TObject).GetTypeInfo()) ||
+                    typeof(ActParticipation).GetTypeInfo().IsAssignableFrom(typeof(TObject).GetTypeInfo()))
                     return persistenceService.QueryFast(query, 0, null, out tr, Guid.Empty);
                 else
                     return persistenceService.Query(query, 0, null, out tr, Guid.Empty);
