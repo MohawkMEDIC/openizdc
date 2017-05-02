@@ -22,7 +22,7 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
 
     });
     $scope.$watch('viewId', function (nv, ov) {
-        if(nv != ov)
+        if(nv != ov && nv != null)
             $scope.executeReport();
     });
     // Get reports asynchronously
@@ -45,6 +45,7 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
     // Select item from list
     function selectItem(rpt) {
 
+        $scope.viewId = null;
         $scope.isLoading = true;
         OpenIZ.Risi.getReportsAsync({
             name: rpt.name,
@@ -94,7 +95,7 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
         // TODO: Make this on-demand
         OpenIZ.Risi.executeReportAsync({
             name: $scope.currentReport.info.name,
-            view: $scope.currentReport.view[$scope.viewId].name,
+            view: $scope.currentReport.view[$scope.viewId || 0].name,
             query: $scope.currentFilter,
             continueWith: function (data) {
                 if (data == null)

@@ -34,8 +34,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Data
         {
             // Lock the main database
             var connectionStringPath = ApplicationContext.Current.Configuration.GetConnectionString(connectionString.First(o => String.IsNullOrEmpty(o.Identifier)).Value).Value;
-            var connection = OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.GetConnection(connectionStringPath);
-            using (connection.Lock())
+            //var connection = OpenIZ.Mobile.Core.Data.Connection.SQLiteConnectionManager.Current.GetConnection(connectionStringPath);
+            //using (connection.Lock())
             using (var conn = new SqliteConnection($"Data Source={connectionStringPath}"))
             {
 

@@ -195,8 +195,8 @@ namespace OpenIZ.Mobile.Reporting
 
             // Now we want to format our report parameters to appropriate SQL
             Dictionary<String, IEnumerable<dynamic>> exeSets = new Dictionary<string, IEnumerable<dynamic>>(rdl.Datasets.Count);
-            foreach (var itm in rdl.Datasets)
-                exeSets.Add(itm.Name, this.RenderDataset(rdl.ConnectionString, itm, cParms));
+            //foreach (var itm in rdl.Datasets)
+            //    exeSets.Add(itm.Name, null);
 
             // Now we have our data, let us render it!!!
             if (view.Body != null) // HTML
@@ -230,6 +230,13 @@ namespace OpenIZ.Mobile.Reporting
             {
                 var bind = facet.Attribute("bind");
                 var subScope = this.GetBind(context, bind?.Value);
+                if(subScope == null && !String.IsNullOrEmpty(bind?.Value))
+                {
+                    
+                    subScope = this.RenderDataset(context.Report.ConnectionString, context.Report.Datasets.FirstOrDefault(o => o.Name == bind?.Value), context.Arguments);
+                    if (context.Dataset is IDictionary<String, IEnumerable<dynamic>>)
+                        (context.Dataset as IDictionary<String, IEnumerable<dynamic>>).Add(bind.Value, (subScope as IEnumerable).OfType<dynamic>());
+                }
                 if (!(subScope is IEnumerable))
                     throw new InvalidOperationException("Repeat must be performed on a IEnumerable scope");
                 var subContext = new ReportExecutionContext(context, subScope, subScope as IEnumerable);
