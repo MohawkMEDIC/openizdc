@@ -105,6 +105,7 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
                 }
             },
             onException: function (ex) {
+                $scope.reportBody = "<h2>" + OpenIZ.Localization.getString("locale.reports.nodata") + "</h2>";
                 alert(OpenIZ.Localization.getString("locale.reports.error.locked"));
             },
             finally: function () {
