@@ -152,7 +152,8 @@ namespace OpenIZ.Mobile.Core.Caching
                 candidate.Update(data as IdentifiedData);
             else
                 lock (this.m_lock)
-                    this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
+                    if (!this.m_entryTable.ContainsKey(idData.Key.Value))
+                        this.m_entryTable.Add(idData.Key.Value, new CacheEntry(DateTime.Now, data as IdentifiedData));
 
         }
 
@@ -285,7 +286,7 @@ namespace OpenIZ.Mobile.Core.Caching
                         {
                             IEnumerable<Guid> gc = o as IEnumerable<Guid>;
                             foreach (var g in gc.ToArray())
-                                lock(this.m_lock)
+                                lock (this.m_lock)
                                     this.m_entryTable.Remove(g);
                         }, garbageBin);
                     }

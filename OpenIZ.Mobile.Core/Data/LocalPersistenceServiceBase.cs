@@ -136,6 +136,14 @@ namespace OpenIZ.Mobile.Core.Data
         }
 
         /// <summary>
+        /// Create readonly connection
+        /// </summary>
+        private LocalDataContext CreateReadonlyConnection()
+        {
+            return new LocalDataContext(SQLiteConnectionManager.Current.GetReadonlyConnection(ApplicationContext.Current.Configuration.GetConnectionString(m_configuration.MainDataSourceConnectionStringName).Value));
+        }
+
+        /// <summary>
         /// Insert the specified data.
         /// </summary>
         /// <param name="data">Data.</param>
@@ -161,7 +169,7 @@ namespace OpenIZ.Mobile.Core.Data
             using (var context = this.CreateConnection())
                 try
                 {
-                    using (context.Connection.Lock())
+                    using (context.LockConnection())
                     {
                         try
                         {
@@ -223,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Data
             using (var context = this.CreateConnection())
                 try
                 {
-                    using (context.Connection.Lock())
+                    using (context.LockConnection())
                     {
                         try
                         {
@@ -286,7 +294,7 @@ namespace OpenIZ.Mobile.Core.Data
             using (var context = this.CreateConnection())
                 try
                 {
-                    using (context.Connection.Lock())
+                    using (context.LockConnection())
                     {
                         try
                         {
@@ -410,11 +418,11 @@ namespace OpenIZ.Mobile.Core.Data
             sw.Start();
 #endif
             // Query object
-            using (var context = this.CreateConnection())
+            using (var context = this.CreateReadonlyConnection())
                 try
                 {
                     IEnumerable<TData> results = null;
-                    using (context.Connection.Lock())
+                    using (context.LockConnection())
                     {
                         this.m_tracer.TraceVerbose("QUERY {0}", query);
 
@@ -485,6 +493,7 @@ namespace OpenIZ.Mobile.Core.Data
 
         }
 
+ 
         /// <summary>
         /// Query this instance.
         /// </summary>
@@ -536,7 +545,7 @@ namespace OpenIZ.Mobile.Core.Data
                 try
                 {
                     List<TData> results = null;
-                    using (context.Connection.Lock())
+                    using (context.LockConnection())
                     {
                         this.m_tracer.TraceVerbose("STORED QUERY {0}", storedQueryName);
 

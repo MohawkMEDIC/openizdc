@@ -67,16 +67,26 @@ namespace OpenIZ.Mobile.Core.Data
         /// <summary>
         /// Local data context
         /// </summary>
-        public LocalDataContext(SQLiteConnectionWithLock connection)
+        public LocalDataContext(SQLiteConnection connection)
         {
             this.Connection = connection;
             this.m_cacheCommit = new Dictionary<Guid, IdentifiedData>();
         }
 
         /// <summary>
+        /// Lock connection
+        /// </summary>
+        public IDisposable LockConnection()
+        {
+            return (this.Connection as SQLiteConnectionWithLock)?.Lock()
+                ??
+                (this.Connection as SQLiteConnectionManager.SQLiteConnectionWrapper)?.Lock();
+        }
+
+        /// <summary>
         /// Local data connection
         /// </summary>
-        public SQLiteConnectionWithLock Connection { get; set; }
+        public SQLiteConnection Connection { get; set; }
 
         /// <summary>
         /// Cache on commit

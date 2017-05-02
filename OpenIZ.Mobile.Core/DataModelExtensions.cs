@@ -124,8 +124,8 @@ namespace OpenIZ.Mobile.Core
         /// </summary>
         public static void LoadAssociations<TModel>(this TModel me, LocalDataContext context, params string[] excludeProperties) where TModel : IIdentifiedEntity
         {
-            using (context.Connection.Lock())
-            {
+            //using (context.LockConnection())
+            //{
                 if (me == null)
                     throw new ArgumentNullException(nameof(me));
                 else if (me.LoadState == LoadState.FullLoad ||
@@ -242,7 +242,7 @@ namespace OpenIZ.Mobile.Core
                 me.LoadState = LoadState.FullLoad;
 
                 ApplicationContext.Current.GetService<IDataCachingService>()?.Add(me as IdentifiedData);
-            }
+            //}
         }
 
         /// <summary>

@@ -28,18 +28,80 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace OpenIZ.Mobile.Core.Data.Connection
 {
+
     /// <summary>
     /// SQLiteConnectionManager
     /// </summary>
     public class SQLiteConnectionManager : IDataConnectionManager
     {
+        /// <summary>
+        /// Represents a wrapper class which closes a connection when lock is released
+        /// </summary>
+        public class SQLiteConnectionWrapper : SQLiteConnection
+        {
 
+            public SQLiteConnectionWrapper(ISQLitePlatform sqlitePlatform, String databasePath, SQLiteOpenFlags openFlags, bool storeDateTimeAsTicks = true, IBlobSerializer serializer = null, IDictionary<String, TableMapping> tableMappings = null, IDictionary<Type, String> extraTypeMappings = null, IContractResolver resolver = null) :
+                base(sqlitePlatform, databasePath, openFlags, storeDateTimeAsTicks, serializer, tableMappings, extraTypeMappings, resolver)
+            {
+
+            }
+
+            /// <summary>
+            /// Wrapper lock
+            /// </summary>
+            private class SQLiteConnectionWrapperLock : IDisposable
+            {
+                // Connection
+                private SQLiteConnectionWrapper m_connection;
+
+                /// <summary>
+                /// Wrapper with lock
+                /// </summary>
+                public SQLiteConnectionWrapperLock(SQLiteConnectionWrapper wrappedConnection)
+                {
+                    this.m_connection = wrappedConnection;
+                }
+
+                /// <summary>
+                /// Dispose
+                /// </summary>
+                public void Dispose()
+                {
+                    this.m_connection.Close();
+                    this.m_connection.Dispose();
+                    SQLiteConnectionManager.Current.UnregisterReadonlyConnection(this.m_connection);
+                }
+            }
+
+            /// <summary>
+            /// Fakes a lock on the database
+            /// </summary>
+            /// <returns></returns>
+            public IDisposable Lock()
+            {
+                return new SQLiteConnectionWrapperLock(this);
+            }
+        }
+
+        /// <summary>
+        /// Un-register a readonly connection
+        /// </summary>
+        private void UnregisterReadonlyConnection(SQLiteConnectionWrapper conn)
+        {
+            lock (s_lockObject)
+                this.m_readonlyConnections.Remove(conn);
+        }
 
         // connections
         private Dictionary<String, SQLiteConnectionWithLock> m_connections = new Dictionary<string, SQLiteConnectionWithLock>();
+
+        // Readonly connections
+        private List<SQLiteConnectionWrapper> m_readonlyConnections = new List<SQLiteConnectionWrapper>();
+        private ManualResetEvent m_readonlyConnectionMre = new ManualResetEvent(true);
 
         // Tracer
         private Tracer m_tracer = Tracer.GetTracer(typeof(SQLiteConnectionManager));
@@ -102,6 +164,36 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         }
 
         /// <summary>
+        /// Get a readonly connection
+        /// </summary>
+        public SQLiteConnectionWrapper GetReadonlyConnection(String dataSource)
+        {
+            if (!this.IsRunning)
+                throw new InvalidOperationException("Cannot get connection before daemon is started");
+            this.m_readonlyConnectionMre.WaitOne(); // ask if we're allowed to create new threads
+
+            try
+            {
+                lock (s_lockObject)
+                {
+                    ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
+                    var retVal = new SQLiteConnectionWrapper(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.NoMutex);
+                    this.m_readonlyConnections.Add(retVal);
+                    this.m_tracer.TraceInfo("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
+#if DEBUG_SQL
+                conn.TraceListener = new TracerTraceListener();
+#endif
+                    return retVal;
+                }
+            }
+            catch (Exception e)
+            {
+                this.m_tracer.TraceError("Error getting connection: {0}", e);
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Get connection to the datafile
         /// </summary>
         public SQLiteConnectionWithLock GetConnection(String dataSource)
@@ -118,7 +210,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                         {
 
                             ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, true));
+                            conn = new SQLiteConnectionWithLock(platform, new SQLiteConnectionString(dataSource, true, openFlags: SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.FullMutex));
                             this.m_connections.Add(dataSource, conn);
                             this.m_tracer.TraceInfo("Connection to {0} established, {1} active connections", dataSource, this.m_connections.Count);
 #if DEBUG_SQL
@@ -186,19 +278,33 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// </summary>
         public void Compact()
         {
-            for(int i = 0; i < this.m_connections.Count; i++)
+            // Let other threads know they can't open a r/o connection
+            try
             {
-                var itm = this.m_connections[this.m_connections.Keys.ElementAt(i)];
-                using (itm.Lock())
+                m_readonlyConnectionMre.Reset();
+                while (this.m_readonlyConnections.Count > 0) ;
+                lock (s_lockObject)
                 {
-                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count*3.0f));
-                    itm.Execute("VACUUM");
-                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 1) / (this.m_connections.Count * 3.0f));
-                    itm.Execute("REINDEX");
-                    ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 2) / (this.m_connections.Count * 3.0f));
-                    itm.Execute("ANALYZE");
+                    for (int i = 0; i < this.m_connections.Count; i++)
+                    {
+                        var itm = this.m_connections[this.m_connections.Keys.ElementAt(i)];
+                        using (itm.Lock())
+                        {
+                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 0) / (this.m_connections.Count * 3.0f));
+                            itm.Execute("VACUUM");
+                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 1) / (this.m_connections.Count * 3.0f));
+                            itm.Execute("REINDEX");
+                            ApplicationContext.Current.SetProgress(Strings.locale_compacting, (i * 3 + 2) / (this.m_connections.Count * 3.0f));
+                            itm.Execute("ANALYZE");
+
+                        }
+                    }
 
                 }
+            }
+            finally
+            {
+                this.m_readonlyConnectionMre.Set();
             }
         }
     }
