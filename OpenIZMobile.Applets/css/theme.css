@@ -58,6 +58,10 @@ fieldset{
     width: 300px;
 }
 
+.nav-stacked {
+    margin-bottom: 10px;
+}
+
 .nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
     background-color: #146396;
     border-color: #146396;
