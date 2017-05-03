@@ -277,6 +277,7 @@
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
+    <property name="tag" all="true" behavior="always"/>
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
