@@ -277,6 +277,7 @@
     <property name="creationTime" behavior="never"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
+    <property name="tag" all="true" behavior="always"/>
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
@@ -352,6 +353,7 @@
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
         <property name="playerModel" all="false" behavior="always">
           <property name="id"/>
           <property name="version"/>
