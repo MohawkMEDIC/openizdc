@@ -341,6 +341,7 @@
     <string key="locale.reports.executeWait">Generating report...</string>
     <string key="locale.reports.error.locked">The database file this relies on is locked. There may be a background process using the database file. Please wait a few minutes and try your request again.</string>
     <string key="locale.reports.error.required">Parameter is required</string>
+    
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
@@ -535,6 +536,7 @@
     <string key="locale.action.update">Barua pepe</string>
     <string key="locale.action.view">Programu yako imeuganishwa sasa</string>
     <string key="locale.actions.save">Inayofata</string>
+    <string key="locale.action.run">kukimbia</string>
     <string key="locale.alert.updateSuccessful">Futa</string>
     <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
     <string key="locale.alerts.alerts">Ninaweza kuendelea licha ya hii hitilafu ingawa inaingilia ufanisi wangu</string>
@@ -557,7 +559,7 @@
     <string key="locale.debug.sendLogs">Tafadhali ingiza jina la mtumiaji</string>
     <string key="locale.debug.submit">Acha</string>
     <string key="locale.dialog.wait.text">Maelekezo ya faili kumbukumbu</string>
-    <string key="locale.encounters.addEntry">Jina la mtumiaji:</string>
+    <string key="locale.encounters.addEntry">Jina la mtumiaji</string>
     <string key="locale.encounters.overdue">Namba ya package</string>
     <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
@@ -785,5 +787,15 @@
     <string key="locale.audit.detail.title">maelezo ya ukaguzi</string>
     <string key="locale.audit.actors">watendaji</string>
     <string key="locale.audit.objects">Vitu</string>
+  
+    <!-- Reports -->
+    <string key="locale.reports.title">Kituo Ripoti Center</string>
+    <string key="locale.reports.info.name">jina</string>
+    <string key="locale.reports.info.description">Maelezo</string>
+    <string key="locale.reports.info.action">Vitendo</string>
+    <string key="locale.reports.parameters.title">Kuweka ripoti vigezo filter</string>
+    <string key="locale.reports.executeWait">ripoti kuzalisha...</string>
+    <string key="locale.reports.error.locked">database faili hili hutegemea imefungwa. Kunaweza kuwa na mchakato background kutumia faili database. Tafadhali kusubiri dakika chache na ujaribu ombi tena.</string>
+    <string key="locale.reports.error.required">Kigezo inahitajika</string>
   </strings>
 </AppletManifest>

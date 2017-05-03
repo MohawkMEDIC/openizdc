@@ -2,7 +2,7 @@
 /// <reference path="~/js/openiz.js"/>
 
 // Report list controller
-layoutApp.controller('ReportListController', ['$scope', '$compile', function ($scope, $compile) {
+layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile', function ($scope, $rootScope, $compile) {
 
     $scope.isLoading = true;
     $scope.reports = [];
@@ -105,6 +105,7 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
                 }
             },
             onException: function (ex) {
+                $scope.reportBody = "<h2>" + OpenIZ.Localization.getString("locale.reports.nodata") + "</h2>";
                 alert(OpenIZ.Localization.getString("locale.reports.error.locked"));
             },
             finally: function () {
@@ -112,5 +113,24 @@ layoutApp.controller('ReportListController', ['$scope', '$compile', function ($s
                 $scope.$apply();
             }
         });
+    }
+
+    $rootScope.confirmNavigation = function (event, fromState) {
+        var canNavigate = true;
+
+        if (fromState.name == "org-openiz-core.reports") {
+            if ($('#reportParametersDialog').hasClass('in')) {
+                if ($('#reportResultDialog').hasClass('in')) {
+                    $('#reportResultDialog').modal('hide');
+                }
+                else {
+                    $('#reportParametersDialog').modal('hide');
+                }
+
+                canNavigate = false;
+            }
+        }
+
+        return canNavigate;
     }
 }]);

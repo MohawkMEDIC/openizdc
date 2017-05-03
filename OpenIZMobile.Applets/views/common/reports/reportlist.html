@@ -44,7 +44,7 @@
                                 </div>
                                 <div ng-if="(reportForm[parm.name].$touched || reportForm.$submitted) &amp;&amp; reportForm[parm.name].$invalid" class="col-xs-12">
                                     <span class="help-block text-danger">
-                                        {{ parm.label }} {{ 'locale.reports.error.required' | i18n }}
+                                        {{ OpenIZ.Localization.getString(parm.label) }} {{ 'locale.reports.error.required' | i18n }}
                                     </span>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                                 </div>
                                 <div class="btn-group">
                                     <button class="btn btn-primary" ng-class="{'active': $index == viewId}" ng-repeat="view in currentReport.view" ng-click="setView($index)">
-                                        {{view.label}}
+                                        {{ OpenIZ.Localization.getString(view.label) }}
                                     </button>
                                 </div>
                             </div>
