@@ -44,6 +44,16 @@
 ) GROUP BY location_id, product_id, act_date]]>
     </sql>
   </sqp>
+  <sqp name="byday">
+    <property name="patient_id" type="uuid"/>
+    <property name="location_id" type="uuid"/>
+    <property name="product_id" type="uuid"/>
+    <property name="act_date" type="date"/>
+    <property name="dose_seq" type="int"/>
+    <sql provider="sqlite">
+      <![CDATA[select patient_id, product_id, location_id, dose_seq as productId, act_date as act_date from oizcp]]>
+    </sql>
+  </sqp>
   <sqp name="defaulters_aggregate">
     <property name="days_overdue" type="int"/>
     <property name="location_id" type="uuid"/>

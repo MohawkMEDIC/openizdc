@@ -47,7 +47,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
     public class SQLiteDatawarehouse : IAdHocDatawarehouseService, IDaemonService, IDisposable
     {
         // Epoch
-        private readonly DateTime m_epoch = new DateTime(1970, 1, 1).ToUniversalTime();
+        private readonly DateTime m_epoch = new DateTime(621355968000000000, DateTimeKind.Utc);
 
         // Lock 
         private Object m_lock = new object();

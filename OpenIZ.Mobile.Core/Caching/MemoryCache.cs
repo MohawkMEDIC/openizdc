@@ -160,13 +160,11 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Remove the specified object from the cache
         /// </summary>
-        public void RemoveObject(Type objectType, Guid? key)
+        public void RemoveObject(Guid? key)
         {
             this.ThrowIfDisposed();
 
             if (!key.HasValue) return;
-            else if (objectType == null)
-                throw new ArgumentNullException(nameof(objectType));
 
             CacheEntry candidate = null;
             if (this.m_entryTable.TryGetValue(key.Value, out candidate))
@@ -178,13 +176,11 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Try to get an entry from the cache returning null if not found
         /// </summary>
-        public object TryGetEntry(Type objectType, Guid? key)
+        public object TryGetEntry(Guid? key)
         {
             this.ThrowIfDisposed();
 
             if (!key.HasValue) return null;
-            else if (objectType == null)
-                throw new ArgumentNullException(nameof(objectType));
 
             CacheEntry candidate = null;
             if (this.m_entryTable.TryGetValue(key.Value, out candidate))

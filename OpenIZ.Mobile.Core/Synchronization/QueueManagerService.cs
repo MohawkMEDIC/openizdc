@@ -272,7 +272,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                     {
                         this.m_tracer.TraceError("Remote server rejected object: {0}", ex);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
-                        SynchronizationQueue.Outbound.DequeueRaw();
+                        SynchronizationQueue.Admin.DequeueRaw();
 
                         // Construct an alert
                         //this.CreateUserAlert(Strings.locale_rejectionSubject, Strings.locale_rejectionBody, String.Format(Strings.ResourceManager.GetString((ex.Response as HttpWebResponse)?.StatusDescription ?? "locale_syncErrorBody"), ex, dpe), dpe);
@@ -288,12 +288,12 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         if (syncItm.RetryCount > 3) // TODO: Make this configurable
                         {
                             SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
-                            SynchronizationQueue.Outbound.DequeueRaw(); // Get rid of the last item
+                            SynchronizationQueue.Admin.DequeueRaw(); // Get rid of the last item
                             //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         }
                         else
                         {
-                            SynchronizationQueue.Outbound.UpdateRaw(syncItm);
+                            SynchronizationQueue.Admin.UpdateRaw(syncItm);
                         }
                     }
                     catch (Exception ex)
@@ -301,7 +301,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         this.m_tracer.TraceError("Error sending object to AMI: {0}", ex);
                         //this.CreateUserAlert(Strings.locale_syncErrorSubject, Strings.locale_syncErrorBody, ex, dpe);
                         SynchronizationQueue.DeadLetter.EnqueueRaw(new DeadLetterQueueEntry(syncItm, Encoding.UTF8.GetBytes(ex.ToString())));
-                        SynchronizationQueue.Outbound.DequeueRaw();
+                        SynchronizationQueue.Admin.DequeueRaw();
 
                         throw;
                     }

@@ -50,7 +50,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             // Name and view
             if (!String.IsNullOrEmpty(_view) && !String.IsNullOrEmpty(_name))
-                return ApplicationContext.Current.GetService<ReportExecutor>().RenderReport(_name, _view, query.ToDictionary(o => o.Key, o => (Object)o.Value.FirstOrDefault()));
+                return ApplicationContext.Current.GetService<ReportExecutor>().RenderReport(_name, _view, query);
             else
                 throw new ArgumentNullException(nameof(_view));
         }
@@ -58,12 +58,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// <summary>
         /// Get query with context
         /// </summary>
-        private NameValueCollection GetQueryWithContext()
+        private IDictionary<String, Object> GetQueryWithContext()
         {
-            var retVal = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
-            retVal.Add("Context_LocationId", AuthenticationContext.Current?.Session?.UserEntity?.Relationships.FirstOrDefault(o => o.Key == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString() ??
-                ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities.FirstOrDefault()) ;
-            retVal.Add("Context_UserEntityId", AuthenticationContext.Current.Session?.UserEntity?.Key.ToString());
+            var retVal = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query).ToDictionary(o => o.Key, o => (Object)o.Value.FirstOrDefault());
+            retVal.Add("Context_LocationId", AuthenticationContext.Current?.Session?.UserEntity?.Relationships.FirstOrDefault(o => o.Key == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey ??
+                Guid.Parse(ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().Facilities.FirstOrDefault()));
+            retVal.Add("Context_UserEntityId", AuthenticationContext.Current.Session?.UserEntity?.Key);
             retVal.Add("Context_UserId", AuthenticationContext.Current.Principal?.Identity.Name);
             return retVal;
         }
@@ -84,7 +84,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (String.IsNullOrEmpty(_report) || String.IsNullOrEmpty(_name))
                 throw new ArgumentNullException("Both report and name of dataset must be specified");
             else
-                return ApplicationContext.Current.GetService<ReportExecutor>().RenderParameterValues(_report, _name, query.ToDictionary(o => o.Key, o => (Object)o.Value.FirstOrDefault()));
+                return ApplicationContext.Current.GetService<ReportExecutor>().RenderDataset(_report, _name, query);
 
         }
         /// <summary>

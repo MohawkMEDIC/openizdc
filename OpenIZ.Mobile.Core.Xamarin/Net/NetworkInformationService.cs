@@ -87,7 +87,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
             get
             {
                 return NetworkInterface.GetAllNetworkInterfaces().Any(o => o.OperationalStatus == OperationalStatus.Up &&
-                    o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211);
+                    (o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || o.NetworkInterfaceType == NetworkInterfaceType.Ethernet));
             }
         }
 		/// <summary>

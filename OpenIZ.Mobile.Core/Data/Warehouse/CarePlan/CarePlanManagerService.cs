@@ -287,6 +287,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
         /// </summary>
         public void RefreshCarePlan(bool force)
         {
+            if (m_actCarePlanPromise.Count > 0) return; 
             var patientPersistence = ApplicationContext.Current.GetService<IDataPersistenceService<Patient>>();
             var remoteSyncService = ApplicationContext.Current.GetService<ISynchronizationService>();
             var queueService = ApplicationContext.Current.GetService<QueueManagerService>();
@@ -312,8 +313,8 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     var prodPatients = patientPersistence.QueryExplicitLoad(o => o.StatusConcept.Mnemonic != "OBSOLETE" && o.CreationTime > lastRefresh, ofs, 15, out tr, queryId, new String[] { "Patient.Relationships" });
                     ofs += 15;
 
-                    if (queueService.IsBusy ||
-                        SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
+                    //if (queueService.IsBusy ||
+                    //    SynchronizationQueue.Inbound.Count() > 0) break; // bail out , we can do this later
 
                     foreach (var p in prodPatients.Where(o => !warehousePatients.Any(w => w.patient_id == o.Key)))
                         this.QueueWorkItem(p);
@@ -502,9 +503,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                     protocol_id = o.Protocols.FirstOrDefault().ProtocolKey,
                     class_id = o.ClassConceptKey.Value,
                     type_id = o.TypeConceptKey.Value,
-                    min_date = o.StartTime?.DateTime,
-                    max_date = o.StopTime?.DateTime,
-                    act_date = o.ActTime.DateTime,
+                    min_date = o.StartTime?.DateTime.Date,
+                    max_date = o.StopTime?.DateTime.Date,
+                    act_date = o.ActTime.DateTime.Date,
                     product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                     sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
                     dose_seq = (o as SubstanceAdministration)?.SequenceId
@@ -553,9 +554,9 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
                         class_id = o.ClassConceptKey.Value,
                         type_id = o.TypeConceptKey.Value,
                         protocol_id = o.Protocols.FirstOrDefault()?.ProtocolKey,
-                        min_date = o.StartTime?.DateTime,
-                        max_date = o.StopTime?.DateTime,
-                        act_date = o.ActTime.DateTime,
+                        min_date = o.StartTime?.DateTime.Date,
+                        max_date = o.StopTime?.DateTime.Date,
+                        act_date = o.ActTime.DateTime.Date,
                         product_id = o.Participations?.FirstOrDefault(r => r.ParticipationRoleKey == ActParticipationKey.Product || r.ParticipationRole?.Mnemonic == "Product")?.PlayerEntityKey.Value,
                         sequence_id = o.Protocols.FirstOrDefault()?.Sequence,
                         dose_seq=(o as SubstanceAdministration)?.SequenceId

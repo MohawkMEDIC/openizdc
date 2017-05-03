@@ -91,6 +91,7 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', 
             OpenIZ.App.showWait("#reQueueDeadModal")
         }
 
+
         OpenIZ.Queue.requeueDeadAsync({
             queueId: $scope.queue["dead"].CollectionItem[queueId || 0].id,
             continueWith: function (data, state) {

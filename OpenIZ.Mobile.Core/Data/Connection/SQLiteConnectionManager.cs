@@ -166,8 +166,10 @@ namespace OpenIZ.Mobile.Core.Data.Connection
         /// <summary>
         /// Get a readonly connection
         /// </summary>
-        public SQLiteConnectionWrapper GetReadonlyConnection(String dataSource)
+        public SQLiteConnectionWithLock GetReadonlyConnection(String dataSource)
         {
+            return this.GetConnection(dataSource);
+            /*
             if (!this.IsRunning)
                 throw new InvalidOperationException("Cannot get connection before daemon is started");
             this.m_readonlyConnectionMre.WaitOne(); // ask if we're allowed to create new threads
@@ -177,7 +179,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 lock (s_lockObject)
                 {
                     ISQLitePlatform platform = ApplicationContext.Current.GetService<ISQLitePlatform>();
-                    var retVal = new SQLiteConnectionWrapper(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.NoMutex);
+                    var retVal = new SQLiteConnectionWrapper(platform, dataSource, SQLiteOpenFlags.ReadOnly | SQLiteOpenFlags.FullMutex);
                     this.m_readonlyConnections.Add(retVal);
                     this.m_tracer.TraceInfo("Readonly connection to {0} established, {1} active connections", dataSource, this.m_connections.Count + this.m_readonlyConnections.Count);
 #if DEBUG_SQL
@@ -191,6 +193,7 @@ namespace OpenIZ.Mobile.Core.Data.Connection
                 this.m_tracer.TraceError("Error getting connection: {0}", e);
                 throw;
             }
+            */
         }
 
         /// <summary>

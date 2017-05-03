@@ -56,7 +56,7 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
                     $scope.currentFilter[data[0].parameter[i].name] = null;
                     if (data[0].parameter[i].valueSet) {
                         data[0].parameter[i].valueSet.values = [{ 0: null, 1: OpenIZ.Localization.getString('locale.dialog.wait.text') }];
-                        OpenIZ.Risi.getParameterValuesAsync({
+                        OpenIZ.Risi.executeDatasetAsync({
                             name: data[0].parameter[i].name,
                             report: rpt.name,
                             query: { locale: OpenIZ.Localization.getLocale() },

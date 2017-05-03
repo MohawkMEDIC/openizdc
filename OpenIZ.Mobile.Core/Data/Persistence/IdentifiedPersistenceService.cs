@@ -490,7 +490,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         /// </summary>
         internal override TModel Get(LocalDataContext context, Guid key)
         {
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TModel), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(typeof(TModel), key);
             if (existing != null)
                 return existing as TModel;
             // Get from the database

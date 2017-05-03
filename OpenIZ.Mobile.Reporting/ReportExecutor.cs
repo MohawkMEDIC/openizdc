@@ -156,43 +156,7 @@ namespace OpenIZ.Mobile.Reporting
             if (view == null)
                 throw new KeyNotFoundException(viewName);
 
-            var cParms = new Dictionary<String, Object>();
-
-            // Cast parms
-            foreach (var kv in pParms)
-            {
-                try
-                {
-                    var rparm = rdl.Parameters.FirstOrDefault(o => o.Name == kv.Key);
-                    if (rparm == null)
-                        continue;
-                    else if (kv.Value != null)
-                        switch (rparm.Type)
-                        {
-                            case ReportPropertyType.ByteArray:
-                                cParms[rparm.Name] = kv.Value;
-                                break;
-                            case ReportPropertyType.Date:
-                            case ReportPropertyType.DateTime:
-                                cParms[rparm.Name] = DateTime.Parse(kv.Value.ToString());
-                                break;
-                            case ReportPropertyType.Decimal:
-                                cParms[rparm.Name] = Decimal.Parse(kv.Value.ToString());
-                                break;
-                            case ReportPropertyType.Integer:
-                                cParms[rparm.Name] = Int32.Parse(kv.Value.ToString());
-                                break;
-                            case ReportPropertyType.String:
-                                cParms[rparm.Name] = kv.Value?.ToString();
-                                break;
-                            case ReportPropertyType.Uuid:
-                                cParms[rparm.Name] = Guid.Parse(kv.Value.ToString());
-                                break;
-                        }
-                }
-                catch { }
-            }
-
+            var cParms = this.CastParameters(rdl, pParms);
             // Now we want to format our report parameters to appropriate SQL
             Dictionary<String, IEnumerable<dynamic>> exeSets = new Dictionary<string, IEnumerable<dynamic>>(rdl.Datasets.Count);
             //foreach (var itm in rdl.Datasets)
@@ -219,6 +183,52 @@ namespace OpenIZ.Mobile.Reporting
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Cast parameters
+        /// </summary>
+        private IDictionary<string, object> CastParameters(ReportDefinition report, IDictionary<string, object> parameters)
+        {
+            var retVal = new Dictionary<String, Object>();
+
+            // Cast parms
+            foreach (var kv in parameters)
+            {
+                try
+                {
+                    var rparm = report.Parameters.FirstOrDefault(o => o.Name == kv.Key);
+                    if (rparm == null)
+                    {
+                        retVal.Add(kv.Key, kv.Value);
+                    }
+                    else if (kv.Value != null)
+                        switch (rparm.Type)
+                        {
+                            case ReportPropertyType.ByteArray:
+                                retVal[rparm.Name] = kv.Value;
+                                break;
+                            case ReportPropertyType.Date:
+                            case ReportPropertyType.DateTime:
+                                retVal[rparm.Name] = DateTime.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.Decimal:
+                                retVal[rparm.Name] = Decimal.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.Integer:
+                                retVal[rparm.Name] = Int32.Parse(kv.Value.ToString());
+                                break;
+                            case ReportPropertyType.String:
+                                retVal[rparm.Name] = kv.Value?.ToString();
+                                break;
+                            case ReportPropertyType.Uuid:
+                                retVal[rparm.Name] = Guid.Parse(kv.Value.ToString());
+                                break;
+                        }
+                }
+                catch { }
+            }
+            return retVal;
         }
 
         /// <summary>
@@ -510,11 +520,11 @@ namespace OpenIZ.Mobile.Reporting
                     return null;
             }
         }
-
+        
         /// <summary>
         /// Render parameter
         /// </summary>
-        public IEnumerable<dynamic> RenderParameterValues(String reportName, String parameterName, IDictionary<String, Object> pParms)
+        public IEnumerable<dynamic> RenderDataset(String reportName, String datasetOrParameterName, IDictionary<String, Object> pParms)
         {
             var repository = ApplicationServiceContext.Current.GetService(typeof(IReportRepository)) as IReportRepository;
             if (repository == null)
@@ -525,13 +535,17 @@ namespace OpenIZ.Mobile.Reporting
             if (rdl == null)
                 throw new FileNotFoundException(reportName);
 
-            var parm = rdl.Parameters.SingleOrDefault(p => p.Name == parameterName);
-
-            if (parm.ValueSet == null)
-                return null;
+            var ds = rdl.Datasets.SingleOrDefault(o => o.Name == datasetOrParameterName);
+            if (ds != null)
+                return this.RenderDataset(rdl.ConnectionString, ds, this.CastParameters(rdl, pParms));
             else
-                return this.RenderDataset(rdl.ConnectionString, parm.ValueSet, pParms);
-
+            {
+                var parm = rdl.Parameters.SingleOrDefault(p => p.Name == datasetOrParameterName);
+                if (parm.ValueSet == null)
+                    return null;
+                else
+                    return this.RenderDataset(rdl.ConnectionString, parm.ValueSet, this.CastParameters(rdl, pParms));
+            }
         }
 
         /// <summary>

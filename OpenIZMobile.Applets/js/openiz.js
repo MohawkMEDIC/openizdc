@@ -767,7 +767,7 @@ var OpenIZ = OpenIZ || {
          * @param {object} controlData.view The view of the report to fetch
          * @param {object} controlData.query The view of the report to fetch
          */
-        getParameterValuesAsync: function (controlData) {
+        executeDatasetAsync: function (controlData) {
             var query = controlData.query || {};
             query._name = controlData.name;
             query._report = controlData.report;

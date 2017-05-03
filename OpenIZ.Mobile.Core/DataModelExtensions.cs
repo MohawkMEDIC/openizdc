@@ -168,7 +168,7 @@ namespace OpenIZ.Mobile.Core
                 if (!s_runtimeProperties.TryGetValue(propertyCacheKey, out properties))
                     lock (s_runtimeProperties)
                     {
-                        properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo()));
+                        properties = me.GetType().GetRuntimeProperties().Where(o => o.GetCustomAttribute<DataIgnoreAttribute>() == null && o.GetCustomAttributes<AutoLoadAttribute>().Any(p => p.ClassCode == classValue || p.ClassCode == null) && typeof(IdentifiedData).GetTypeInfo().IsAssignableFrom(o.PropertyType.StripGeneric().GetTypeInfo())).ToList();
 
                         if (!s_runtimeProperties.ContainsKey(propertyCacheKey))
                         {
@@ -182,7 +182,7 @@ namespace OpenIZ.Mobile.Core
                     var loadAssociations = context.LoadAssociations.Where(o => o.StartsWith(me.GetType().GetTypeInfo().GetCustomAttribute<XmlTypeAttribute>()?.TypeName))
                         .Select(la => la.Contains(".") ? la.Substring(la.IndexOf(".") + 1) : la).ToArray();
                     if (loadAssociations.Length == 0) return;
-                    properties = properties.Where(p => loadAssociations.Any(la => la == p.Name));
+                    properties = properties.Where(p => loadAssociations.Any(la => la == p.Name)).ToList();
 
                 }
 

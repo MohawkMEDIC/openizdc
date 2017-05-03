@@ -339,7 +339,7 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual TData Get(Guid key)
         {
             if (key == Guid.Empty) return null;
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(typeof(TData), key);
             if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
                 var conn = this.CreateConnection();
                 using (var context = this.CreateConnection())
@@ -735,7 +735,7 @@ namespace OpenIZ.Mobile.Core.Data
         internal virtual TData Get(LocalDataContext context, Guid key)
         {
             int totalResults = 0;
-            var existing = MemoryCache.Current.TryGetEntry(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(typeof(TData), key);
             if (existing != null)
                 return existing as TData;
             return this.QueryInternal(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty, false)?.SingleOrDefault();
