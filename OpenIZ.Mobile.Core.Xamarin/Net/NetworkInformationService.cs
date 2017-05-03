@@ -79,6 +79,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Net
 			//}
 		}
 
+        /// <summary>
+        /// Returns true if the network is wifi
+        /// </summary>
+        public virtual bool IsNetworkWifi
+        {
+            get
+            {
+                return NetworkInterface.GetAllNetworkInterfaces().Any(o => o.OperationalStatus == OperationalStatus.Up &&
+                    o.NetworkInterfaceType == NetworkInterfaceType.Wireless80211);
+            }
+        }
 		/// <summary>
 		/// Return whether the network is available
 		/// </summary>

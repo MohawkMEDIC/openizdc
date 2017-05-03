@@ -97,6 +97,11 @@ namespace OpenIZ.Mobile.Core.Services
 		bool IsNetworkConnected { get; }
 
         /// <summary>
+        /// Returns true if the network is WIFI
+        /// </summary>
+        bool IsNetworkWifi { get; }
+
+        /// <summary>
         /// Fired when the network status changes
         /// </summary>
         event EventHandler NetworkStatusChanged;

@@ -39,6 +39,7 @@ namespace OpenIZ.Mobile.Core.Android.Net
     /// <summary>
     /// Android specific network information service
     /// </summary>
+    /// TODO: Add configuration for roaming
     public class AndroidNetworkInformationService : NetworkInformationService
     {
         public override IEnumerable<NetworkInterfaceInfo> GetInterfaces()
@@ -55,7 +56,21 @@ namespace OpenIZ.Mobile.Core.Android.Net
             get
             {
                 ConnectivityManager connectivityManager = (ConnectivityManager)((Xamarin.XamarinApplicationContext.Current as AndroidApplicationContext).Context).GetSystemService(Context.ConnectivityService);
-                return connectivityManager.ActiveNetworkInfo != null && connectivityManager.ActiveNetworkInfo.IsConnected;
+                return connectivityManager.ActiveNetworkInfo != null && connectivityManager.ActiveNetworkInfo.IsConnected &&
+                    !connectivityManager.ActiveNetworkInfo.IsRoaming;
+            }
+        }
+
+        /// <summary>
+        /// True if the network is wifi
+        /// </summary>
+        public override bool IsNetworkWifi
+        {
+            get
+            {
+                var androidContext = (AndroidApplicationContext.Current as AndroidApplicationContext).Context;
+                ConnectivityManager connectivityManager = (ConnectivityManager)androidContext.GetSystemService(Context.ConnectivityService);
+                return this.IsNetworkAvailable && connectivityManager.ActiveNetworkInfo?.Type == ConnectivityType.Wifi;
             }
         }
     }

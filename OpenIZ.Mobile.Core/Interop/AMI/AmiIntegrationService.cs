@@ -35,6 +35,8 @@ using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Messaging.AMI.Client;
 using OpenIZ.Core.Model.Security;
+using OpenIZ.Core.Model.AMI.Security;
+using OpenIZ.Mobile.Core.Security.Audit;
 
 namespace OpenIZ.Mobile.Core.Interop.AMI
 {
@@ -175,7 +177,12 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 switch (data.GetType().Name)
                 {
                     case "AuditInfo":
-                        //amiClient.InsertAudit(data as AuditInfo);
+                        // Only send audits over wifi
+                        if (ApplicationContext.Current.GetService<INetworkInformationService>().IsNetworkWifi)
+                        {
+                            AuditUtil.AddDeviceActor((data as AuditInfo).Audit);
+                            amiClient.SubmitAudit(data as AuditInfo);
+                        }
                         break;
                     default:
                         throw new NotSupportedException($"AMI servicing not supported for {data.GetType().Name}");
