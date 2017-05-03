@@ -105,6 +105,11 @@
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                     </select>
                 </div>
+                <div class="row">
+                    <div class="col-xs-10 help-block text-danger" ng-if="!act._enabled &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted)">
+                        {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
+                    </div>
+                </div>
             </div>
             <div class="col-xs-1" ng-if="!act._created">
                 <label class="control control--checkbox">
