@@ -233,12 +233,9 @@ namespace OpenIZ.Mobile.Core.Synchronization
                 // Exhaust the queue
                 while (SynchronizationQueue.Admin.Count() > 0)
                 {
-                    // Exhaust the outbound queue
-                    var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
-                    var syncItm = SynchronizationQueue.Admin.PeekRaw();
-                    var dpe = SynchronizationQueue.Admin.DeserializeObject(syncItm);
 
                     // TODO: Sleep thread here
+                    var amiService = OpenIZ.Mobile.Core.ApplicationContext.Current.GetService<IAdministrationIntegrationService>();
                     if (!amiService.IsAvailable())
                     {
                         // Come back in 30 seconds...
@@ -246,13 +243,14 @@ namespace OpenIZ.Mobile.Core.Synchronization
                         return;
                     }
 
+                    // Exhaust the outbound queue
+                    // Is there more than one item on the queue?
+                    var syncItm = SynchronizationQueue.Admin.PeekRaw();
+                    var dpe = SynchronizationQueue.Admin.DeserializeObject(syncItm);
+
                     // try to send
                     try
                     {
-                        // Reconstitute bundle
-                        (dpe as Bundle)?.Reconstitute();
-                        dpe = (dpe as Bundle)?.Entry ?? dpe;
-
                         // Send the object to the remote host
                         switch (syncItm.Operation)
                         {
