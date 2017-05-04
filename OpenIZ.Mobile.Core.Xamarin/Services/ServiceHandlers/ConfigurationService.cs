@@ -459,13 +459,15 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 };
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().TokenType = "urn:ietf:params:oauth:token-type:jwt";
 
+                // We should contact the AMI to ensure that the server actually exists
+
+
                 string scheme = enableSSL.FirstOrDefault() == "true" ? "https" : "http";
                 string portScheme = scheme == "http" ? "8080" : "8443";
                 String imsiUri = String.Format("{0}://{1}:{2}/imsi", scheme, realmUri, portScheme),
                     oauthUri = String.Format("{0}://{1}:{2}/auth", scheme, realmUri, portScheme),
                     amiUri = String.Format("{0}://{1}:{2}/ami", scheme, realmUri, portScheme);
 
-                // We should contact the AMI to ensure that the server actually exists
 
                 // Parse IMSI URI
                 serviceClientSection.Client.Clear();
