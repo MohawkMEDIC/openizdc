@@ -354,16 +354,6 @@ namespace OpenIZ.Mobile.Core.Security.Audit
 
                     conn.Commit();
 
-                    // Add audit info
-                    audit.AuditableObjects.Add(new AuditableObject()
-                    {
-                        IDTypeCode = AuditableObjectIdType.ReportNumber,
-                        LifecycleType = AuditableObjectLifecycle.Creation,
-                        ObjectId = dbAudit.Id.ToString(),
-                        Role = AuditableObjectRole.SecurityResource,
-                        Type = AuditableObjectType.SystemObject
-                    });
-
                     return audit;
                 }
                 catch (Exception ex)

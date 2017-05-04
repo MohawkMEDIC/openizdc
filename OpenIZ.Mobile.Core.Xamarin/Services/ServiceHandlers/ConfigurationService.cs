@@ -56,6 +56,7 @@ using OpenIZ.Mobile.Core.Caching;
 using OpenIZ.Mobile.Core.Alerting;
 using OpenIZ.Mobile.Core.Interop.AMI;
 using OpenIZ.Mobile.Core.Security.Audit;
+using System.Net;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -434,7 +435,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Stage 1 - Demand access admin policy
             try
             {
-
+                
                 new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.UnrestrictedAdministration).Demand();
 
                 // We're allowed to access server admin!!!! Yay!!!
@@ -463,6 +464,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                 String imsiUri = String.Format("{0}://{1}:{2}/imsi", scheme, realmUri, portScheme),
                     oauthUri = String.Format("{0}://{1}:{2}/auth", scheme, realmUri, portScheme),
                     amiUri = String.Format("{0}://{1}:{2}/ami", scheme, realmUri, portScheme);
+
+                // We should contact the AMI to ensure that the server actually exists
 
                 // Parse IMSI URI
                 serviceClientSection.Client.Clear();
