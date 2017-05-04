@@ -208,7 +208,7 @@ a.not-active {
 
 @media (max-width: 767px) {
     .message-summary-panel h5, .message-summary-subject, .message-summary-subject-sender {
-        color:#FFFFF
+        color:#FFFFFF
     }
 
     .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
@@ -887,7 +887,7 @@ body{
     border-radius: 50px;
     padding: 4px;
 }
-}
+
 .btn-check-in{
     position: absolute;
     right: 56px;
