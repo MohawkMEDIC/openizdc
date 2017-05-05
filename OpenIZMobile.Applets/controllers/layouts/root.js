@@ -80,6 +80,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     $('.modal-backdrop').remove();
                     $('body').css('padding-right', '');
                 }
+                $('.select2-container').remove();
 
                 window.scrollTo(0, 0);
                 $rootScope.isLoading = true;
