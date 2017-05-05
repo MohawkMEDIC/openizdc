@@ -119,7 +119,6 @@
     <property name="version" behavior="never"/>
     <property name="name" all="true" ref="EntityName" behavior="always"/>
     <property name="address" all="true" ref="EntityAddress" behavior="always"/>
-    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
     <property name="telecom" all="true" behavior="always"/>
     <property name="classConceptModel" behavior="never"/>
     <property name="classConcept" behavior="never"/>
@@ -128,11 +127,8 @@
     <property name="tag" all="true" behavior="always"/>
     <property name="genderConceptModel" behavior="always" ref="Concept"/>
     <property name="extension" all="true" behavior="always"/>
-    <property name="identifier" behavior="always" ref="EntityIdentifier">
-      <property name="*" all="true">
-        <property name="value" behavior="always"/>
-        <property name="authority" all="true"/>
-      </property>
+    <property name="identifier" all="true" behavior="always">
+      <property name="*" all="true" behavior="always" />
     </property>
     <property name="relationship" all="true" behavior="always">
       <property name="Mother" all="false">
