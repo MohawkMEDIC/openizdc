@@ -31,7 +31,7 @@
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.Act.Template">
             <summary>
-            Gets or sets the template identifier 
+            Gets or sets the template definition
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.Act.ActTimeXml">
@@ -154,6 +154,11 @@
             Forces the delay load properties in this type to reload
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeReasonConceptKey">
+            <summary>
+            True if reason concept key should be serialized
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Acts.Act.Clean">
             <summary>
             Clean the patient of any empty "noise" elements
@@ -163,6 +168,54 @@
         <member name="M:OpenIZ.Core.Model.Acts.Act.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeRelationships">
+            <summary>
+            Should serialize relationships?
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeIdentifiers">
+            <summary>
+            Should serialize identifiers
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeExtensions">
+            <summary>
+            Should serialize extensions?
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeNotes">
+            <summary>
+            Should serialize notes
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeParticipations">
+            <summary>
+            Should serialize participations
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeTags">
+            <summary>
+            Should serialize tags
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializeProtocols">
+            <summary>
+            Should serialize protocols
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Act.ShouldSerializePolicies">
+            <summary>
+            Should serialize policies
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Act.OpenIZ#Core#Model#Interfaces#ITaggable#Tags">
+            <summary>
+            Gets the tags
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActParticipation">
@@ -244,6 +297,26 @@
             Determine equality
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.ShouldSerializeSourceEntityKey">
+            <summary>
+            Don't serialize source entity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.ShouldSerializeQuantity">
+            <summary>
+            Should serialize quantity
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.ShouldSerializeActKey">
+            <summary>
+            Should serialize act key
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.ToString">
+            <summary>
+            Represent as string
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActProtocol">
             <summary>
             Represents information related to the clinical protocol to which an act is a member of
@@ -275,6 +348,11 @@
             </summary>
             <param name="obj">The object.</param>
             <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActProtocol.ShouldSerializeSourceEntityKey">
+            <summary>
+            Shoud serialize source
+            </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Acts.ActRelationship">
             <summary>
@@ -335,6 +413,42 @@
             Determine semantic equality
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.ActRelationship.ToString">
+            <summary>
+            To string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Acts.CarePlan">
+            <summary>
+            Represents a care plan
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.CarePlan.Target">
+            <summary>
+            Target of the careplan
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.CarePlan.Action">
+            <summary>
+            Action to take
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.CarePlan.#ctor">
+            <summary>
+            Default ctor
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.CarePlan.#ctor(OpenIZ.Core.Model.Roles.Patient,System.Collections.Generic.IEnumerable{OpenIZ.Core.Model.Acts.Act})">
+            <summary>
+            Create care plan with acts
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.CarePlan.CreateCarePlanRequest(OpenIZ.Core.Model.Roles.Patient)">
+            <summary>
+            Create a care plan request
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.ControlAct">
             <summary>
             Represents an act which indicates why data was created/changed
@@ -360,6 +474,11 @@
             Gets or sets the interpretation concept
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.Observation.ValueType">
+            <summary>
+            Value type
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.Observation.InterpretationConcept">
             <summary>
             Gets or sets the concept which indicates the interpretation of the observtion
@@ -375,6 +494,11 @@
             Semantic equality function
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Acts.Observation.ShouldSerializeValueType">
+            <summary>
+            Should serialize value type?
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Acts.QuantityObservation">
             <summary>
             Represents an observation that contains a quantity
@@ -383,6 +507,11 @@
         <member name="P:OpenIZ.Core.Model.Acts.QuantityObservation.Value">
             <summary>
             Gets or sets the observed quantity
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.QuantityObservation.ValueType">
+            <summary>
+            Value type
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.QuantityObservation.UnitOfMeasureKey">
@@ -410,6 +539,11 @@
             Represents an observation with a text value
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Acts.TextObservation.ValueType">
+            <summary>
+            Value type
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Acts.TextObservation.Value">
             <summary>
             Gets or sets the textual value
@@ -423,6 +557,11 @@
         <member name="T:OpenIZ.Core.Model.Acts.CodedObservation">
             <summary>
             Represents an observation with a concept value
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Acts.CodedObservation.ValueType">
+            <summary>
+            Value type
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Acts.CodedObservation.ValueKey">
@@ -569,6 +708,12 @@
             <summary>
             Semantic equality function
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Acts.SubstanceAdministration.ShouldSerializeSiteKey">
+            <summary>
+            Should serialize site key
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Attributes.AutoLoadAttribute">
             <summary>
@@ -892,209 +1037,6 @@
         <member name="M:OpenIZ.Core.Model.Collection.ILockable.GetLocked">
             <summary>
             Get a locked version of the collection
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1">
-            <summary>
-            Represents a collection of entities
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor">
-            <summary>
-            Entity collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Create simple assoc
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.#ctor(OpenIZ.Core.Model.Interfaces.IIdentifiedEntity)">
-            <summary>
-            Creates the specified entity collection in the specified context
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Ensure">
-            <summary>
-            Perform a delay load on the entire collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.AsAlwaysLoad">
-            <summary>
-            Forces the associations to be loaded from database regardless of current state
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.GetLocked">
-            <summary>
-            Forces the associations to be loaded from database regardless of current state
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Refresh">
-            <summary>
-            Forces a refresh of the current associations
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IndexOf(`0)">
-            <summary>
-            Index of the specified item
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Insert(System.Int32,`0)">
-            <summary>
-            Insert an item at the specified index
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.RemoveAt(System.Int32)">
-            <summary>
-            Remove the objects at the specified data element
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Add(`0)">
-            <summary>
-            Adds the speciifed entity
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Clear">
-            <summary>
-            Clear the specified object
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Contains(`0)">
-            <summary>
-            Return true if the array contains the list of objects
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.CopyTo(`0[],System.Int32)">
-            <summary>
-            Copy to the specified array
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Remove(`0)">
-            <summary>
-            Remove the specified item from the array
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.GetEnumerator">
-            <summary>
-            Get the specified enumerator
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.System#Collections#IEnumerable#GetEnumerator">
-            <summary>
-            Get enumerator
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Item(System.Int32)">
-            <summary>
-            Gets the entity data at the specified source
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Count">
-            <summary>
-            Gets the count of data in the array
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsReadOnly">
-            <summary>
-            Returns true if the object is readonly 
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsFixedSize">
-            <summary>
-            True if list is fixed size
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IsSynchronized">
-            <summary>
-            True if list is synchronized
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.SyncRoot">
-            <summary>
-            Gets the synchronization root
-            </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.System#Collections#IList#Item(System.Int32)">
-            <summary>
-            Get the item as an object
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.RemoveAll(System.Func{`0,System.Boolean})">
-            <summary>
-            Remove all elements matching the specified object
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Add(System.Object)">
-            <summary>
-            Add this object 
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Contains(System.Object)">
-            <summary>
-            Contains
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.IndexOf(System.Object)">
-            <summary>
-            Index of value
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Insert(System.Int32,System.Object)">
-            <summary>
-            Insert the specified object at the specified index
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.Remove(System.Object)">
-            <summary>
-            Remove the specified object
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.CopyTo(System.Array,System.Int32)">
-            <summary>
-            Copy the specified data to an array
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.OpenIZ#Core#Model#Collection#ILockable#GetLocked">
-            <summary>
-            Get locked version
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.SimpleAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.SimpleAssociationCollection{`0}">
-            <summary>
-            Creates a new simple association from the specified list
-            </summary>
-        </member>
-        <member name="T:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1">
-            <summary>
-            Represents a collection of entities
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor">
-            <summary>
-            Entity collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
-            <summary>
-            Entity collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.#ctor(OpenIZ.Core.Model.Interfaces.IVersionedEntity)">
-            <summary>
-            Creates the specified entity collection in the specified context
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.Ensure">
-            <summary>
-            Perform a delay load on the entire collection
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.Collection.VersionedAssociationCollection`1.op_Implicit(System.Collections.Generic.List{`0})~OpenIZ.Core.Model.Collection.VersionedAssociationCollection{`0}">
-            <summary>
-            Creates a new simple association from the specified list
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Constants.ActClassKeys">
@@ -2303,11 +2245,6 @@
             Gets the equals of this object
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ShouldSerializeAssigningDeviceKey">
-            <summary>
-            Should serialize assigning device key
-            </summary>
-        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.CodeSystem">
             <summary>
             Represents a code system which is a collection of reference terms
@@ -2839,9 +2776,14 @@
             Gets or sets the identifier type
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.IdentifierBase`1.AuthorityXml">
+            <summary>
+            Gets or sets a minimal assigning authority from XML data
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.IdentifierBase`1.Authority">
             <summary>
-            Gets or sets the assigning authority 
+            Represents the authority information 
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.DataTypes.IdentifierBase`1.Refresh">
@@ -3463,14 +3405,14 @@
             Gets a list of all telecommunications addresses associated with the entity
             </summary>
         </member>
-        <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
-            <summary>
-            Gets or sets the template identifier
-            </summary>
-        </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.TemplateKey">
             <summary>
             Gets the template key
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Entities.Entity.Template">
+            <summary>
+            Gets or sets the template definition
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.Entities.Entity.TypeConcept">
@@ -3499,9 +3441,49 @@
             Should serialize creation act
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTypeConcept">
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTypeConceptKey">
             <summary>
             Should serialize type concept
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeIdentifiers">
+            <summary>
+            Should serialize identifiers
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeNames">
+            <summary>
+            Should serialize Names
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeAddresses">
+            <summary>
+            Should serialize addresses
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeParticipations">
+            <summary>
+            Should serialize participations
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTags">
+            <summary>
+            Should serialize tags
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeExtensions">
+            <summary>
+            Shoudl serialize extensions
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeNotes">
+            <summary>
+            Should serialize notes
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Entity.ShouldSerializeTelecoms">
+            <summary>
+            Should serialize telecoms
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityAddress">
@@ -3785,6 +3767,16 @@
             Should serialize quantity?
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ShouldSerializeSourceEntityKey">
+            <summary>
+            Shoudl serialize source entity?
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Entities.EntityRelationship.ToString">
+            <summary>
+            Represent as string
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.Entities.EntityTelecomAddress">
             <summary>
             Represents an entity telecom address
@@ -4044,6 +4036,11 @@
             Gets the person's languages of communication
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.Entities.Person.ShouldSerializeDateOfBirthPrecision">
+            <summary>
+            Should serialize date of birth precision
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Model.Entities.Person.SemanticEquals(System.Object)">
             <summary>
             Semantic equality function
@@ -4244,6 +4241,26 @@
             Get relationships
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Model.LoadState">
+            <summary>
+            Identifies the state of loading of the object
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.LoadState.New">
+            <summary>
+            Newly created, not persisted, no data loaded
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.LoadState.PartialLoad">
+            <summary>
+            Object was partially loaded meaning some properties are not populated
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.LoadState.FullLoad">
+            <summary>
+            The object was fully loaded
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.IdentifiedData">
             <summary>
             Represents data that is identified by a key
@@ -4285,6 +4302,12 @@
             Gets or sets the modified on time
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Model.IdentifiedData.ShouldSerializeModifiedOn">
+            <summary>
+            Never serialize modified on
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:OpenIZ.Core.Model.IdentifiedData.Tag">
             <summary>
             Gets a tag which changes whenever the object is updated
@@ -4300,6 +4323,11 @@
             True if the object is empty
             </summary>
             <returns></returns>
+        </member>
+        <member name="P:OpenIZ.Core.Model.IdentifiedData.LoadState">
+            <summary>
+            Gets or sets whether the object was partial loaded
+            </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.IdentifiedData.Clone">
             <summary>
@@ -4348,6 +4376,11 @@
             Identified entity
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.Interfaces.IIdentifiedEntity.LoadState">
+            <summary>
+            Gets the load state of the entity
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.Interfaces.IIdentifiedEntity.Key">
             <summary>
             Gets the identifier for the entity
@@ -4371,6 +4404,31 @@
         <member name="M:OpenIZ.Core.Model.Interfaces.ISecurable.Mask">
             <summary>
             True if the object is masked
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Interfaces.ITaggable">
+            <summary>
+            Represents a class which can hold tags
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Interfaces.ITaggable.Tags">
+            <summary>
+            Gets the tags associated with the object
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Model.Interfaces.ITag">
+            <summary>
+            Represents a tag
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Interfaces.ITag.TagKey">
+            <summary>
+            Gets the key for the tag
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.Interfaces.ITag.Value">
+            <summary>
+            Gets the value for the tag
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.Interfaces.IVersionedAssociation">
@@ -4795,7 +4853,7 @@
             Create a traversal expression for a lambda expression
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelExpression``2(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+        <member name="M:OpenIZ.Core.Model.Map.ModelMapper.MapModelExpression``2(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Boolean)">
             <summary>
             Convert the specified lambda expression from model into query
             </summary>
@@ -5250,64 +5308,36 @@
             Reflection tools
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Convert``1(System.Object)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.LoadProperty``1(OpenIZ.Core.Model.IdentifiedData,System.String)">
             <summary>
-            The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why? 
-            Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
-            so we have to copy.
+            Delay load property
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.HashCode(System.Byte[])">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.LoadCollection``1(OpenIZ.Core.Model.IdentifiedData,System.String)">
             <summary>
-            Compute a basic hash string
+            Delay load property
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.SemanticEquals``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.LoadProperty(OpenIZ.Core.Model.IdentifiedData,System.String)">
             <summary>
-            Determine semantic equality of each item in me and other
+            Delay load property
             </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripGeneric(System.Type)">
-            <summary>
-            Strips list
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripNullable(System.Type)">
-            <summary>
-            Strips any nullable typing
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.CopyObjectData``1(``0,``0)">
-            <summary>
-            Update property data if required
-            </summary>
-        </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression,System.Object)">
-            <summary>
-            Create a version filter
-            </summary>
-            <typeparam name="TDomain"></typeparam>
-            <param name="parm"></param>
-            <param name="domainInstance"></param>
-            <returns></returns>
-        </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression)">
-            <summary>
-            Create a version filter
-            </summary>
-            <typeparam name="TDomain"></typeparam>
-            <param name="parm"></param>
-            <param name="domainInstance"></param>
-            <returns></returns>
         </member>
         <member name="M:OpenIZ.Core.Model.ExtensionMethods.Aggregate(System.Linq.Expressions.Expression,OpenIZ.Core.Model.Map.AggregationFunctionType)">
             <summary>
             Create aggregation functions
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Sort(System.Linq.Expressions.Expression,System.String,OpenIZ.Core.Model.Map.SortOrderType)">
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Convert``1(System.Object)">
             <summary>
-            Create sort expression
+            The purpose of this method is to convert object <paramref name="me"/> to <typeparamref name="TReturn"/>. Why?
+            Because if you have an instance of Act that actually needs to be a SubstanceAdministration we can't just cast
+            so we have to copy.
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.CopyObjectData``1(``0,``0)">
+            <summary>
+            Update property data if required
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.ExtensionMethods.GetGenericMethod(System.Type,System.String,System.Type[],System.Type[])">
@@ -5319,6 +5349,72 @@
             <summary>
             Get a property based on XML property and/or serialization redirect
             </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.HashCode(System.Byte[])">
+            <summary>
+            Compute a basic hash string
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.HasProperty(System.Dynamic.ExpandoObject,System.String)">
+            <summary>
+            Determines whether the specified property name has property.
+            </summary>
+            <param name="source">The source.</param>
+            <param name="propertyName">Name of the property.</param>
+            <returns><c>true</c> if the specified property name has property; otherwise, <c>false</c>.</returns>
+            <exception cref="T:System.ArgumentNullException">source - Value cannot be null</exception>
+            <exception cref="T:System.ArgumentException">Value cannot be null or empty - propertyName</exception>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression,System.Object)">
+            <summary>
+            Create a version filter
+            </summary>
+            <param name="me">Me.</param>
+            <param name="domainInstance">The domain instance.</param>
+            <returns>Expression.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.IsActive(System.Linq.Expressions.Expression)">
+            <summary>
+            Create a version filter
+            </summary>
+            <param name="me">Me.</param>
+            <returns>Expression.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.LatestVersionOnly``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Gets the latest version of the versioned entity data instance from a given list.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="source">The source.</param>
+            <returns>Returns a list of the versioned entity data which contains only the latest version of the entity.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.SemanticEquals``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Determine semantic equality of each item in me and other
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.Sort(System.Linq.Expressions.Expression,System.String,OpenIZ.Core.Model.Map.SortOrderType)">
+            <summary>
+            Create sort expression.
+            </summary>
+            <param name="me">Me.</param>
+            <param name="orderByProperty">The order by property.</param>
+            <param name="sortOrder">The sort order.</param>
+            <returns>Expression.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripGeneric(System.Type)">
+            <summary>
+            Strips list
+            </summary>
+            <param name="t">The type.</param>
+            <returns>Returns the type.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Model.ExtensionMethods.StripNullable(System.Type)">
+            <summary>
+            Strips any nullable typing.
+            </summary>
+            <param name="t">The typ.</param>
+            <returns>Returns the type.</returns>
         </member>
         <member name="T:OpenIZ.Core.Model.Roles.Patient">
             <summary>
@@ -5358,6 +5454,16 @@
         <member name="P:OpenIZ.Core.Model.Roles.Patient.GenderConcept">
             <summary>
             Gets or sets the gender concept
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Roles.Patient.ShouldSerializeDeceasedDateXml">
+            <summary>
+            Should serialize deceased date?
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Model.Roles.Patient.ShouldSerializeMultipleBirthOrder">
+            <summary>
+            Should serialize deceased date?
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Model.Roles.Patient.Refresh">
@@ -5865,6 +5971,31 @@
         <member name="M:OpenIZ.Core.Extensions.DecimalExtensionHandler.Serialize(System.Object)">
             <summary>
             Serialize the data
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Extensions.DictionaryExtensionHandler">
+            <summary>
+            Extension that emits data as kvp
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Extensions.DictionaryExtensionHandler.Name">
+            <summary>
+            Gets the name of the extension
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Extensions.DictionaryExtensionHandler.DeSerialize(System.Byte[])">
+            <summary>
+            Deserialize data from the extension
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Extensions.DictionaryExtensionHandler.GetDisplay(System.Object)">
+            <summary>
+            Get display value
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Extensions.DictionaryExtensionHandler.Serialize(System.Object)">
+            <summary>
+            Serialize actual data
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Extensions.StringExtensionHandler">
