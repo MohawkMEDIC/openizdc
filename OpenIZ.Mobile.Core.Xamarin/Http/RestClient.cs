@@ -73,7 +73,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Http
             this.m_configurationSection = ApplicationContext.Current.Configuration.GetSection<ServiceClientConfigurationSection>();
             this.m_tracer = Tracer.GetTracer(this.GetType());
             // Find the specified certificate
-            if (config.Binding.Security.ClientCertificate != null)
+            if (config.Binding.Security?.ClientCertificate != null)
             {
                 this.ClientCertificates = new X509Certificate2Collection();
                 var cert = X509CertificateUtils.FindCertificate(config.Binding.Security.ClientCertificate.FindType,

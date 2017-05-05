@@ -236,8 +236,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
 
                     SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
-                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(TAct), act.Key.Value);
-                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), act.Key.Value);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove( act.Key.Value);
+                    ApplicationContext.Current.GetService<IDataCachingService>().Remove(act.Key.Value);
                 }
                 else throw new KeyNotFoundException();
 

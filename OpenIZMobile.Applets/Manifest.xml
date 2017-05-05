@@ -212,6 +212,7 @@
 
     <!-- Settings -->
     <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
+    <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
     <string key="locale.settings.realmTitle">Join Realm</string>
     <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
     <string key="locale.settings.deviceName">Device Name:</string>

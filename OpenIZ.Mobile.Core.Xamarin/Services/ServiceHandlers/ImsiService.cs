@@ -127,7 +127,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Entity), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var entityId = Guid.Parse(search["_id"].FirstOrDefault());
                 var entity = entityService.Get(entityId);
                 return entity;
@@ -196,7 +196,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Provider), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = providerService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);
@@ -320,7 +320,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Entity), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var provider = securityService.GetUserEntity(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 // Ensure expanded
                 //JniUtil.ExpandProperties(patient, search);

@@ -112,6 +112,8 @@
     <Compile Include="Http\RestClient.cs" />
     <Compile Include="Net\NetworkInformationService.cs" />
     <Compile Include="Rules\BusinessRulesDaemonService.cs" />
+    <Compile Include="Security\HttpBasicIdentityProvider.cs" />
+    <Compile Include="Security\HttpBasicTokenCredentialProvider.cs" />
     <Compile Include="Security\TokenValidationManager.cs" />
     <Compile Include="Services\Attributes\AnonymousAttribute.cs" />
     <Compile Include="Services\Attributes\DemandAttribute.cs" />

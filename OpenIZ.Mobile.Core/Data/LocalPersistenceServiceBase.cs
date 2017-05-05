@@ -307,7 +307,7 @@ namespace OpenIZ.Mobile.Core.Data
 
                             // Remove from the cache
                             foreach (var itm in context.CacheOnCommit.AsParallel())
-                                ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.GetType(), itm.Key.Value);
+                                ApplicationContext.Current.GetService<IDataCachingService>().Remove(itm.Key.Value);
 
                         }
                         catch (Exception e)
@@ -339,7 +339,7 @@ namespace OpenIZ.Mobile.Core.Data
         public virtual TData Get(Guid key)
         {
             if (key == Guid.Empty) return null;
-            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if ((existing as IdentifiedData)?.LoadState <= LoadState.FullLoad) {
                 var conn = this.CreateConnection();
                 using (var context = this.CreateConnection())
@@ -735,7 +735,7 @@ namespace OpenIZ.Mobile.Core.Data
         internal virtual TData Get(LocalDataContext context, Guid key)
         {
             int totalResults = 0;
-            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(typeof(TData), key);
+            var existing = ApplicationContext.Current.GetService<IDataCachingService>().GetCacheItem(key);
             if (existing != null)
                 return existing as TData;
             return this.QueryInternal(context, o => o.Key == key, 0, 1, out totalResults, Guid.Empty, false)?.SingleOrDefault();

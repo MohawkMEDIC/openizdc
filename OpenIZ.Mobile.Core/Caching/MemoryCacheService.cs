@@ -320,7 +320,7 @@ namespace OpenIZ.Mobile.Core.Caching
 		/// Gets the specified cache item
 		/// </summary>
 		/// <returns></returns>
-		public Object GetCacheItem(Type tdata, Guid key)
+		public Object GetCacheItem(Guid key)
 		{
 			return MemoryCache.Current.TryGetEntry(key);
 		}
@@ -342,7 +342,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Remove the object from the cache
         /// </summary>
-        public void Remove(Type tdata, Guid key)
+        public void Remove(Guid key)
         {
             var exist = MemoryCache.Current.TryGetEntry(key);
             if (exist != null)

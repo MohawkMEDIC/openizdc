@@ -2824,7 +2824,8 @@ var OpenIZ = OpenIZ || {
                          deviceName: controlData.deviceName,
                          force: controlData.force,
                          enableTrace: controlData.enableTrace,
-                         enableSSL: controlData.enableSSL
+                         enableSSL: controlData.enableSSL,
+                         port: controlData.port
                      },
                      dataType: "json",
                      contentType: 'application/x-www-urlform-encoded',

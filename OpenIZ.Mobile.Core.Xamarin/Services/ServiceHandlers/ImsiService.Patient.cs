@@ -213,7 +213,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 				retVal = retVal.Select(o => o.Clone()).OfType<Patient>();
                 if (search.ContainsKey("_onlineOnly"))
                     retVal.ToList().ForEach((o) => {
-                        ApplicationContext.Current.GetService<IDataCachingService>().Remove(o.GetType(), o.Key.Value);
+                        ApplicationContext.Current.GetService<IDataCachingService>().Remove(o.Key.Value);
                         if (patientService.Get(o.Key.Value, Guid.Empty) == null)
                             o.Tags.Add(new EntityTag("onlineResult", "true"));
                     });

@@ -90,14 +90,15 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                 domain: realm.domain,
                 deviceName: realm.deviceName,
                 enableTrace: realm.enableTrace,
-                enableSSL : realm.enableSSL,
+                enableSSL: realm.enableSSL,
+                port : realm.port,
                 force: force,
                 continueWith: function (data) {
                     $scope.config.realmName = data.realmName;
                     alert(OpenIZ.Localization.getString("locale.settings.status.joinRealm"));
                 },
                 onException: function (error) {
-                    if (error.type == 'DuplicateNameException')
+                    if (error.type == 'DuplicateNameException') {
                         if (confirm(OpenIZ.Localization.getString('locale.settings.status.duplicateName'))) {
                             OpenIZ.Authentication.$elevationCredentials = backupCredentials;
 
@@ -109,6 +110,9 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
                             else
                                 console.log(error);
                         }
+                    }
+                    else if (error.type != "UnauthorizedAccessException")
+                        alert(OpenIZ.Localization.getString("locale.settings.status.generalRealmError"))
                 },
                 finally: function () {
                     OpenIZ.App.hideWait('#joinRealmButton');

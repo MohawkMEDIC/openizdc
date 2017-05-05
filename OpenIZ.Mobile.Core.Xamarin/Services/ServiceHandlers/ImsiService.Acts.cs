@@ -142,7 +142,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             if (search.ContainsKey("_id"))
             {
                 // Force load from DB
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), Guid.Parse(search["_id"].FirstOrDefault()));
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(Guid.Parse(search["_id"].FirstOrDefault()));
                 var act = actRepositoryService.Get(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 return act;
             }
@@ -206,7 +206,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             {
                 // Force load from DB
                 var keyid = Guid.Parse(search["_id"].FirstOrDefault());
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(typeof(Act), keyid);
+                ApplicationContext.Current.GetService<IDataCachingService>().Remove(keyid);
                 var act = actRepositoryService.Get<Act>(Guid.Parse(search["_id"].FirstOrDefault()), Guid.Empty);
                 if (act == null) throw new KeyNotFoundException();
 
