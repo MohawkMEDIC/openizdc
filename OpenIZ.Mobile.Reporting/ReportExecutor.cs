@@ -379,6 +379,11 @@ namespace OpenIZ.Mobile.Reporting
                     facet.Parent.Add(new XAttribute(toAtt, String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(evaluator.DynamicInvoke(context.Scope), context))));
                     facet.Remove();
                 }
+                else if (facet.Attribute("to-html") != null) {
+                    var htmlData = String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(evaluator.DynamicInvoke(context.Scope), context));
+                    
+                    facet.ReplaceWith(XDocument.Parse(htmlData).Elements().FirstOrDefault());
+                }
                 else
                     facet.ReplaceWith(new XText(String.Format(facet.Attribute("format")?.Value ?? "{0}", this.RenderString(evaluator.DynamicInvoke(context.Scope), context))));
             }
