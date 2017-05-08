@@ -1654,3 +1654,7 @@ fieldset[disabled] .btn-danger.active {
     pointer-events: none;
     color: grey !important;
 }
+
+.select2-dropdown {
+    z-index: 99 !important;
+}
