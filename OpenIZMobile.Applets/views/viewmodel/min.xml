@@ -109,7 +109,9 @@
     <property name="version" behavior="never"/>
     <property name="name" all="true" ref="EntityName" behavior="always"/>
     <property name="address" all="true" ref="EntityAddress" behavior="always"/>
-    <property name="identifier" all="true" ref="EntityIdentifier" behavior="always"/>
+    <property name="identifier" all="true" behavior="always">
+      <property name="*" all="true" behavior="always" />
+    </property>
     <property name="telecom" all="true" behavior="always"/>
 
     <property name="classConceptModel" behavior="never"/>
