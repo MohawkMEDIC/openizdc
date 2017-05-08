@@ -98,7 +98,7 @@ namespace OpenIZ.Mobile.Core.Caching
             // subscribe to events
             this.Added += (o, e) => this.EnsureCacheConsistency(e);
             this.Updated += (o, e) => this.EnsureCacheConsistency(e);
-            this.Removed += (o, e) => this.EnsureCacheConsistency(e);
+            this.Removed += (o, e) => this.EnsureCacheConsistency(e, true);
 
             // Initialization parameters - Load concept dictionary
             ApplicationContext.Current.Started += (os, es) => ApplicationContext.Current.GetService<IThreadPoolService>().QueueUserWorkItem((a) =>
@@ -182,7 +182,7 @@ namespace OpenIZ.Mobile.Core.Caching
         /// <summary>
         /// Ensure cache consistency
         /// </summary>
-        private void EnsureCacheConsistency(DataCacheEventArgs e)
+        private void EnsureCacheConsistency(DataCacheEventArgs e, bool remove=false)
         {
 
             //// Relationships should always be clean of source/target so the source/target will load the new relationship
@@ -198,7 +198,9 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if(idx != null)
                         sourceEntity.Participations.Remove(idx);
-                    sourceEntity.Participations.Add(ptcpt);
+
+                    if(!remove)
+                        sourceEntity.Participations.Add(ptcpt);
                 }
                 if(targetEntity != null)
                 {
@@ -206,7 +208,8 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
                         targetEntity.Participations.Remove(idx);
-                    targetEntity.Participations.Add(ptcpt);
+                    if (!remove)
+                        targetEntity.Participations.Add(ptcpt);
                 }
                 //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
             }
@@ -222,7 +225,8 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
-                    sourceEntity.Relationships.Add(rel);
+                    if (!remove)
+                        sourceEntity.Relationships.Add(rel);
                 }
                 if (targetEntity != null)
                 {
@@ -230,7 +234,8 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
-                    targetEntity.Relationships.Add(rel);
+                    if (!remove)
+                        targetEntity.Relationships.Add(rel);
                 }
             }
             else if (e.Object is EntityRelationship)
@@ -245,7 +250,8 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         sourceEntity.Relationships.Remove(idx);
-                    sourceEntity.Relationships.Add(rel);
+                    if (!remove)
+                        sourceEntity.Relationships.Add(rel);
                 }
                 if (targetEntity != null)
                 {
@@ -253,7 +259,8 @@ namespace OpenIZ.Mobile.Core.Caching
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
                         targetEntity.Relationships.Remove(idx);
-                    targetEntity.Relationships.Add(rel);
+                    if (!remove)
+                        targetEntity.Relationships.Add(rel);
                 }
             }
             else if (e.Object is Act) // We need to remove RCT 

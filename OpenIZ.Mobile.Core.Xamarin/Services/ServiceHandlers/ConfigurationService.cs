@@ -350,9 +350,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         //}
 
                         // TODO: Patient registration <> facility
+                        
                         syncConfig.SynchronizationResources.Add(syncSetting);
                     }
-
+                    syncConfig.SynchronizationResources.Add(new SynchronizationResource()
+                    {
+                        ResourceAqn = "EntityRelationship",
+                        Triggers = SynchronizationPullTriggerType.OnCommit
+                    });
                     if (optionObject["data"]["sync"]["pollInterval"].Value<String>() != "00:00:00")
                         syncConfig.PollIntervalXml = optionObject["data"]["sync"]["pollInterval"].Value<String>();
                     ApplicationContext.Current.Configuration.Sections.Add(syncConfig);

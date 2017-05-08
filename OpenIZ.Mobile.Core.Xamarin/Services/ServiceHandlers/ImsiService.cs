@@ -116,6 +116,29 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Deletes the act
+        /// </summary>
+        [RestOperation(Method = "DELETE", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+        [Demand(PolicyIdentifiers.DeleteClinicalData)]
+        [return: RestMessage(RestMessageFormat.SimpleJson)]
+        public EntityRelationship DeleteEntityRelationship()
+        {
+            var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+            var search = NameValueCollection.ParseQueryString(MiniImsServer.CurrentContext.Request.Url.Query);
+
+            if (search.ContainsKey("_id"))
+            {
+                // Force load from DB
+                var keyid = Guid.Parse(search["_id"].FirstOrDefault());
+                return erRepositoryService.Obsolete(keyid);
+            }
+            else
+                throw new ArgumentNullException("_id");
+        }
+
+
+        /// <summary>
         /// Get entity internal
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>

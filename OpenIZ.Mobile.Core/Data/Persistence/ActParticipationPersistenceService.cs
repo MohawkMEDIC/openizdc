@@ -133,7 +133,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 ActUuid = modelInstance.ActKey?.ToByteArray(),
                 EntityUuid = modelInstance.PlayerEntityKey?.ToByteArray(),
                 ParticipationRoleUuid = modelInstance.ParticipationRoleKey?.ToByteArray(),
-                Uuid = modelInstance.Key?.ToByteArray() 
+                Uuid = modelInstance.Key?.ToByteArray() ,
+                Quantity = modelInstance.Quantity.GetValueOrDefault()
             };
         }
 
