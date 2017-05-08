@@ -1656,5 +1656,9 @@ fieldset[disabled] .btn-danger.active {
 }
 
 .select2-dropdown {
-    z-index: 99 !important;
+    z-index: 99;
+}
+
+.modal-open .select2-dropdown {
+    z-index: 1051 !important;
 }
