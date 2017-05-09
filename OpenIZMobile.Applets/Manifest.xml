@@ -642,7 +642,7 @@
     <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
     <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
     <string key="locale.security.errors.unableToResetPassword">Hitilafu imetokea. Tafadhali pitia faili kumbukumbu.</string>
-    <string key="locale.security.errors.usernameRequired">Jina la mtumiaji Local Admin</string>
+    <string key="locale.security.errors.usernameRequired">Tafadhali ingiza jina la mtumiaji</string>
     <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>
     <string key="locale.security.forgotPassword.changePassword">Hii barua pepe ni batili</string>
     <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka kwenye realm?</string>
