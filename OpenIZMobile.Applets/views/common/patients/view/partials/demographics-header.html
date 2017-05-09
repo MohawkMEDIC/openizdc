@@ -54,7 +54,7 @@
             </div>
         </div>
         <div class="row">
-            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}</label>
+            <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.identifiers' | i18n }}:</label>
             <div class="col-xs-4 padding-id-header">
                 <div ng-repeat="identifier in patientViewIdentifiers|limitTo:2">
                     <span>{{ identifier.value}}</span> <span class="label label-info"> {{ identifier.authority.name }}</span>
