@@ -40,6 +40,7 @@
                                 <span class="glyphicon glyphicon-cloud"></span> {{ 'locale.patient.onlineResult' | i18n }}
                             </div>
                         </div>
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.names' | i18n }}
@@ -48,7 +49,7 @@
                                 {{ patient.name.OfficialRecord | oizEntityName }}
                             </div>
                         </div>
-                        
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.mother' | i18n }}
@@ -62,7 +63,7 @@
                                 </span>
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.identifier' | i18n }}
@@ -74,7 +75,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.dateOfBirth' | i18n }}
@@ -87,7 +88,7 @@
                                 {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.deceasedDate' | i18n }}
@@ -99,7 +100,7 @@
                                 {{ 'locale.common.na' | i18n }}
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.gender' | i18n }}
@@ -108,7 +109,7 @@
                                 {{ patient.genderConceptModel.name[$root.page.locale] }}
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row">
                             <div class="col-xs-3 search-tile-label">
                                 {{ 'locale.patient.search.header.cityVillage' | i18n }}
@@ -117,15 +118,15 @@
                                 {{ patient.address.HomeAddress | oizEntityAddress }}<spam ng-if="!patient.address.HomeAddress">N/A</spam>
                             </div>
                         </div>
-
+                        <div class="clearfix"></div>
                         <div class="row" style="height:auto;">
                             <div class="col-xs-6" ng-repeat="act in OpenIZ.UserInterface.patientController.actions">
                                 <a class="btn tile-btn" ng-if="!patient.tag.onlineResult &amp;&amp; !patient.deceasedDate" ng-click="$event.stopPropagation(); act.action(patient.id)">
                                     {{ act.label }}
                                 </a>
                             </div>
-                           
                         </div>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
             </div>
