@@ -161,6 +161,7 @@ namespace OpenIZ.Mobile.Core.Android.Configuration
                     typeof(LocalConceptService).AssemblyQualifiedName,
                     typeof(LocalEntityRepositoryService).AssemblyQualifiedName,
                     typeof(LocalOrganizationService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(LocalRoleProviderService).AssemblyQualifiedName,
                     typeof(LocalSecurityService).AssemblyQualifiedName,
                     typeof(LocalMaterialService).AssemblyQualifiedName,

@@ -194,8 +194,6 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                 var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, data, "participation");
 
                 SynchronizationQueue.Outbound.Enqueue(diff, DataOperationType.Update);
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(data.Key.Value);
-                ApplicationContext.Current.GetService<IDataCachingService>().Remove(data.Key.Value);
 
                 this.DataUpdated?.Invoke(this, new AuditDataEventArgs(data));
             }

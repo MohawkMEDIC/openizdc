@@ -128,7 +128,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             insert = breService?.BeforeInsert(insert) ?? insert;
 			insert = persistenceService.Insert(insert);
             
-            breService?.AfterInsert(insert);
+            insert = breService?.AfterInsert(insert);
             
             // Patient relationships
             if (insert.Relationships.Count > 0 || insert.Participations.Count > 0)
@@ -231,7 +231,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
                     act = persistenceService.Update(act);
 
                     // First after update
-                    breService?.AfterUpdate(act);
+                    act = breService?.AfterUpdate(act);
                     
                     var diff = ApplicationContext.Current.GetService<IPatchService>().Diff(old, act);
 
@@ -251,7 +251,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
                 act = persistenceService.Insert(act);
 
-                breService?.AfterInsert(act);
+                act = breService?.AfterInsert(act);
                 
                 // Patient relationships
                 if (act.Relationships.Count > 0 || act.Participations.Count > 0)

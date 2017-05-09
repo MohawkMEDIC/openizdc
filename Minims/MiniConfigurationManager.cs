@@ -171,6 +171,7 @@ namespace Minims
                     typeof(SQLite.Net.Platform.Generic.SQLitePlatformGeneric).AssemblyQualifiedName,
                     typeof(SearchIndexService).AssemblyQualifiedName,
                     typeof(MiniAppletManagerService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(SQLiteReportDatasource).AssemblyQualifiedName,
                     typeof(ReportExecutor).AssemblyQualifiedName,
                     typeof(AppletReportRepository).AssemblyQualifiedName

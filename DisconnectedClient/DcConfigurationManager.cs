@@ -156,6 +156,7 @@ namespace DisconnectedClient
                     typeof(LocalActService).AssemblyQualifiedName,
                     typeof(SQLiteDatawarehouse).AssemblyQualifiedName,
                     typeof(LocalProviderService).AssemblyQualifiedName,
+                    typeof(LocalTagPersistenceService).AssemblyQualifiedName,
                     typeof(NetworkInformationService).AssemblyQualifiedName,
                     typeof(CarePlanManagerService).AssemblyQualifiedName,
                     typeof(BusinessRulesDaemonService).AssemblyQualifiedName,

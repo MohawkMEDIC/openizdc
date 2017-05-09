@@ -54,7 +54,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             data = breService?.BeforeInsert(data) ?? data;
 
 			data = persistence.Insert(data);
-            breService?.AfterInsert(data) ;
+            data = breService?.AfterInsert(data) ;
 
             // Insert bundle to the master queue
             // If we have a patient we must remove the participations as those will mess with the persistence
@@ -115,7 +115,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             data = breService?.BeforeUpdate(data) ?? data;
             data = persistence.Insert(data);
-            breService?.AfterUpdate(data);
+            data = breService?.AfterUpdate(data);
 
             this.DataUpdated?.Invoke(this, new AuditDataEventArgs(data.Item));
 
