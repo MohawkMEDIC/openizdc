@@ -88,26 +88,32 @@
   </template>
   <menuItem order="50">
     <icon>/org.openiz.core/img/appbar.settings.png</icon>
-    <text>Administration</text>
+    <text lang="en">Administration</text>
+    <text lang="sw">Utawala</text>
     <menuItem asset="/org.openiz.core/views/settings/settings.html" launch="#/core/settings">
       <icon>/org.openiz.core/img/appbar.shield.png</icon>
       <text lang="en">Settings</text>
+      <text lang="sw">mazingira</text>
     </menuItem>
     <menuItem asset="/org.openiz.core/views/security/audit.html" launch="#/core/audit">
       <icon>/org.openiz.core/img/appbar.journal.png</icon>
       <text lang="en">Audit Log</text>
+      <text lang="sw">logi ukaguzi</text>
     </menuItem>
   </menuItem>
   <menuItem order="99">
     <icon>/org.openiz.core/img/appbar.code.xml.png</icon>
-    <text>Development Tools</text>
+    <text lang="en">Development Tools</text>
+    <text lang="sw">Vyombo vya Maendeleo</text>
     <menuItem asset="/org.openiz.core/views/debug/report.html" launch="#/core/report">
       <icon>/org.openiz.core/img/appbar.bug.png</icon>
-      <text>Bug Report</text>
+      <text lang="en">Bug Report</text>
+      <text lang="sw">Ripoti ya Tatizo</text>
     </menuItem>
     <menuItem asset="/org.openiz.core/views/debug/about.html" launch="#/core/about">
       <icon>/org.openiz.core/img/appbar.futurama.bender.png</icon>
-      <text>Debug Information</text>
+      <text lang="en">Debug Information</text>
+      <text lang="sw">Debug Habari</text>
     </menuItem>
   </menuItem>
   <strings lang="en">
