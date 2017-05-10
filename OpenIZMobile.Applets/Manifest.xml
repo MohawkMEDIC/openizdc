@@ -325,6 +325,8 @@
     <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
     <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
     <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
+    <string key="locale.preferences.save.success">Profile updated successfully</string>
+    <string key="locale.preferences.save.failure">Unable to update profile</string>
     
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
@@ -639,6 +641,8 @@
     <string key="locale.preferences.telephone">Ukubwa wa tatizo:</string>
     <string key="locale.preferences.username">Sehemu ya mfumo</string>
     <string key="locale.preferences.recoveryOptions.success">chaguo za kurejesha mafanikio iliyopita</string>
+    <string key="locale.preferences.save.success">wasifu imesasishwa</string>
+    <string key="locale.preferences.save.failure">Haikuweza kusasisha wasifu</string>
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
     <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
     <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>

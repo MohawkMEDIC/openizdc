@@ -58,7 +58,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,
             continueWith: function (data) {
-                OpenIZ.App.toast("Profile updated successfully");
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.save.success"));
 
                 if (data.language !== undefined)
                 {
@@ -68,7 +68,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
             },
             onException: function (ex) {
                 console.log(ex);
-                OpenIZ.App.toast("Unable to update profile");
+                OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.save.failure"));
             },
             finally: function () {
                 OpenIZ.App.hideWait('#saveUserProfileButton');
