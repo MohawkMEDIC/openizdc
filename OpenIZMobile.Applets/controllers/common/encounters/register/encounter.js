@@ -37,6 +37,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         var doBindMove = function () {
             delete (bind.targetModel._overdue);
             bind._enabled = true;
+            bind.targetModel.actTime = bind._encounter.actTime;
             bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
             bind._encounter.relationship.HasComponent.push(bind);
             if (afterFocus)

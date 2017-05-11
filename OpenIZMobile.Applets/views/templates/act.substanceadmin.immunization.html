@@ -19,7 +19,8 @@
  -->
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel._overdue}"
      id="{{act.id}}">
-    <div class="row">
+    <div class="row" ng-class="{'has-warning' : act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime}">
+
         <div class="control-label col-xs-12">
             <div class="input-group">
                 <label class="control-label">
@@ -40,7 +41,7 @@
             </div>
         </div>
         <div ng-if="!act.targetModel._overdue">
-            <div class="col-xs-7" ng-show="act._enabled">
+            <div class="col-xs-7" ng-show="act._enabled || act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
                 <div class="input-group" ng-show="act._created">
                     <label>{{ 'locale.encounters.immunizations.antigen' | i18n }}</label>
                     <select ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;classConcept.mnemonic=Material" bind:value="name[Assigned].component[null].value"
@@ -55,6 +56,7 @@
                     <select ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid}" 
                             ng-if="act.targetModel.participation.Product.player"
                             ng-required="act._enabled" 
+                            ng-disabled="!act._enabled"
                             name="consumable_{{act.targetModel.id}}"
                             class="form-control" 
                             ng-init="act.targetModel.participation.Consumable.player = $root.session.prefs['default.lot.' + act.targetModel.participation.Product.player]"
@@ -85,23 +87,30 @@
                     </div>
                 </div>
             </div>
-            <div ng-show="act._enabled" ng-class="!act._created? 'col-xs-4':'col-xs-5'">
+            <div ng-show="act._enabled || act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime" ng-class="!act._created? 'col-xs-4':'col-xs-5'">
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.immunizations.site' | i18n }}
                     </label>
-                    <select name="site_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.site" bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=AdministrationSite"
+                    <select name="site_{{act.targetModel.id}}" 
+                            ng-required="act._enabled" 
+                            class="form-control" 
+                            ng-model="act.targetModel.site" 
+                            bind:source="Concept" 
+                            bind:value="name[{{ locale }}].value" 
+                            bind:filter="conceptSet.mnemonic=AdministrationSite"
+                            ng-disabled="!act._enabled"
                             ng-change="act.targetModel.site == 'e5b6847e-91e0-4fca-ac2e-753962008080' ? act.targetModel.route = '0a1388b0-66fb-4063-bfe3-151dd8442838' : act.targetModel.route='d594f99f-0151-41a0-a359-282ab54683a1'">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.immunizations.site' | i18n }}</option>
                     </select>
                 </div>
             </div>
-            <div class="col-xs-11" ng-show="!act._enabled">
+            <div class="col-xs-11" ng-show="!act._enabled &amp;&amp; act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime">
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.protocolViolation.reason' | i18n }}
                     </label>
-                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
+                    <select name="reason_{{act.targetModel.id}}" ng-required="!act._enabled &amp;&amp; act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime" ng-model="act.targetModel.reasonConcept" bind:source="Concept" bind:filter="conceptSet.mnemonic=ProtocolViolationReason" bind:value="name[{{ locale }}].value" class="form-control">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.protocolViolation.reason' | i18n }}</option>
                     </select>
                 </div>
@@ -164,6 +173,10 @@
                     {{ 'locale.encounters.immunizations.errors.validDate' | i18n }}
                 </div>
             </div>
+        </div>
+
+        <div class="col-xs-12 alert alert-warning" ng-if="act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
+            <span><span class="glyphicon glyphicon-exclamation-sign"></span> {{ 'locale.encounters.immunizations.early' | i18n }}</span>
         </div>
     </div>
 </div>
