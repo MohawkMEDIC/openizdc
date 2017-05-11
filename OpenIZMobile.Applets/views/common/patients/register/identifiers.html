@@ -34,7 +34,7 @@
                 <div class="col-xs-12 col-sm-9">
                     <div class="margin-top-15 visible-xs"></div>
                     <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength}">
-                        <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" ng-maxlength="10" name="identifier" />
+                        <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" name="identifier" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
                                 <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
@@ -43,7 +43,6 @@
                             <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
-
                            
                         </span>
                         

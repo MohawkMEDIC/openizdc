@@ -38,6 +38,18 @@ layoutApp.controller('VaccinationHistoryController', ['$scope','$rootScope', fun
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
+    scope.harmonizeDoseTimes = harmonizeDoseTimes;
+
+    // Harmonize dose sequence times
+    function harmonizeDoseTimes(doseSequence, index) {
+        if (!doseSequence._enabled) return;
+        for (var antigenId in scope.display._vaccineAdministrations) {
+            if (scope.display._vaccineAdministrations[antigenId] &&
+                scope.display._vaccineAdministrations[antigenId][index] &&
+                OpenIZ.Util.toDateInputString(scope.display._vaccineAdministrations[antigenId][index].actTime) == OpenIZ.Util.toDateInputString(doseSequence._originalTime))
+                scope.display._vaccineAdministrations[antigenId][index].actTime = doseSequence.actTime;
+        }
+    }
 
     function vaccinationCheck(event, sequence, currentIndex) {
         if (!sequence._enabled) {

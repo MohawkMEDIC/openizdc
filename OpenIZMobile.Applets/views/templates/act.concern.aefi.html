@@ -26,7 +26,7 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-8">
                     <label>
                         {{ 'locale.encounters.aefi.drug' | i18n }}
                     </label>
@@ -36,13 +36,33 @@
                             class="form-control" 
                             data-default-key="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6"
                             ng-model="act.targetModel.relationship.RefersTo.target" 
-                            ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = act.relationship.RefersTo.targetModel.participation.Consumable.playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
+                            ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = (act.relationship.RefersTo.targetModel.participation.Consumable || act.relationship.RefersTo.targetModel.participation.Product).playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
                             oiz-databind="Act" 
                             data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450" }' 
                             data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + scope.doseSequence" 
                             data-key="scope.id">
                         <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
                     </select>
+                </div>
+                <div class="col-xs-4">
+                    <label>
+                        {{ 'locale.encounters.immunizations.lot' | i18n }}
+                    </label>
+                    <select ng-class="{'has-error':(editEncounterForm['aefiLot_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiLot_' + act.targetModel.id].$invalid}"
+                            name="aefiLot_{{act.targetModel.id}}"
+                            required="required"
+                            class="form-control"
+                            data-watch="act.targetModel.relationship.RefersTo.targetModel.participation.Product.player"
+                            data-watch-target="relationship[ManufacturedProduct].source"
+                            ng-model="act.targetModel.relationship.RefersTo.targetModel.participation.Consumable.playerModel.lotNumber"
+                            oiz-databind="ManufacturedMaterial"
+                            data-filter='{ "relationship[ManufacturedProduct].source" : "{{ act.targetModel.relationship.RefersTo.targetModel.participation.Product.player }}" }'
+                            data-display="scope.lotNumber"
+                            data-defaultEmpty="true"
+                            data-defaultFirst="true"
+                            data-key="scope.id">
+                    </select>
+
                 </div>
             </div>
             <div class="row">
@@ -51,8 +71,6 @@
                         ( {{ 'locale.encounters.date' | i18n }} : {{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}, 
                         {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
                         {{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }},
-                        {{ 'locale.encounters.immunizations.lot' | i18n }} :
-                        {{ act.targetModel.relationship.RefersTo.targetModel.participation.Consumable.playerModel.lotNumber }},
                         {{ 'locale.encounters.immunizations.site' | i18n }} :
                         {{ act.targetModel.relationship.RefersTo.targetModel.siteModel | oizConcept }} )
                     </span>

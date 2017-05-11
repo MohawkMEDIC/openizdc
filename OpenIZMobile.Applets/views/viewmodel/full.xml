@@ -155,6 +155,17 @@
           <property name="identifier" behavior="always" ref="EntityIdentifier"/>
         </property>
       </property>
+      <property name="ServiceDeliveryLocation">
+        <property name="id"/>
+        <property name="relationshipType"/>
+        <property name="source"/>
+        <property name="target"/>
+        <property name="targetModel" behavior="always">
+          <property name="id"/>
+          <property name="name" behavior="always" ref="EntityName"/>
+          <property name="identifier" behavior="always" ref="EntityIdentifier"/>
+        </property>
+      </property>
       <property name="*" ref="EntityRelationship"/>
     </property>
     <property name="participation" all="false" behavior="never"/>
@@ -277,6 +288,7 @@
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
     </property>
+    <property name="valueModel" all="true" ref="Concept" behavior="always"/>
 
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
@@ -291,7 +303,7 @@
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
-      <property name="*" all="true" ref="ActRelationship"/>
+      <property name="*" ref="ActRelationship"/>
     </property>
     <property name="participation" all="true" behavior="always">
       <property name="RecordTarget" behvior="never">
@@ -386,6 +398,17 @@
           </property>
         </property>
       </property>
+      <property name="Authororiginator" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="act" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="name" ref="EntityName"/>
+        </property>
+      </property>
+
       <property name="*" all="false">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
@@ -522,4 +545,48 @@
   </type>
 
 
+  <type type="CodedObservation" all="true">
+    <property name="createdBy" behavior="never"/>
+    <property name="creationTime" behavior="never"/>
+    <property name="creationTimeModel" behavior="never"/>
+    <property name="version" behavior="never"/>
+    <property name="templateModel" behavior="always" all="false">
+      <property name="mnemonic"/>
+    </property>
+    <property name="classConceptModel" behavior="never"/>
+    <property name="previousVersion" behavior="never"/>
+    <property name="previousVersionModel" behavior="never"/>
+    <property name="typeConceptModel" behavior="always" ref="Concept"/>
+    <property name="statusConceptModel" behavior="never"/>
+    <property name="moodConceptModel" behavior="never"/>
+    <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
+    <property name="relationship" all="true" behavior="never"/>
+    <property name="valueModel" all="true" ref="Concept" behavior="always"/>
+    <property name="participation" all="true" behavior="always">
+      <property name="Location" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="id"/>
+          <property name="version"/>
+          <property name="typeConceptModel" behavior="always" ref="Concept"/>
+          <property name="identifier" all="true" />
+          <property name="name" all="true" behavior="always"/>
+          <property name="tag" all="true"/>
+          <property name="extension" all="true"/>
+          <property name="participation" behavior="never"/>
+        </property>
+      </property>
+      <property name="*" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="act" all="true"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="player" all="true"/>
+        <property name="playerModel" behavior="never"/>
+      </property>
+    </property>
+  </type>
+  
 </ViewModel>

@@ -25,8 +25,9 @@
         <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
             <input required="required" type="datetime-local"
-                   name="encounterDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'" 
-                   class="form-control" ng-model="encounter.actTime" />
+                   name="encounterDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'"
+                   class="form-control" ng-model="encounter.actTime"
+                   ng-change="encounterDateChanged(encounter)" />
         </div>
     </div>
     <div class="col-xs-offset-2 col-xs-10" ng-if="(editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted)&amp;&amp;editEncounterForm.encounterDate.$invalid">

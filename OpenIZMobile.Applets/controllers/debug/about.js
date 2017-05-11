@@ -23,7 +23,7 @@
 /// <reference path="~/lib/jquery.min.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('AboutApplicationController', ['$scope', '$state', function ($scope, $state) {
+layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$state', function ($scope, $state, $rootScope) {
 
     $scope.data = {};
     // Get information asynchronously
@@ -108,14 +108,16 @@ layoutApp.controller('AboutApplicationController', ['$scope', '$state', function
     // @param {bool} noTimer When true, instructs the function not to re-run on a timer
     function refreshHealth(noTimer) {
 
-        OpenIZ.App.getHealthAsync({
-            continueWith: function (data) {
-                $scope.health = data;
-                $scope.$apply();
-            }
-        })
-        if (!noTimer && $state.is('org-openiz-core.about'))
-            setTimeout(refreshHealth, 5000);
+        if ($rootScope.session == null) {
+            OpenIZ.App.getHealthAsync({
+                continueWith: function (data) {
+                    $scope.health = data;
+                    $scope.$apply();
+                }
+            })
+            if (!noTimer && $state.is('org-openiz-core.about'))
+                setTimeout(refreshHealth, 5000);
+        }
     }
 
     refreshHealth();

@@ -51,6 +51,7 @@
     <Compile Include="Data\QueryBuilder\SqlQueryExpressionBuilder.cs" />
     <Compile Include="Data\QueryBuilder\SqlStatement.cs" />
     <Compile Include="Data\QueryBuilder\TableMapping.cs" />
+    <Compile Include="Exceptions\DuplicateKeyException.cs" />
     <Compile Include="Security\Audit\LocalAuditRepositoryService.cs" />
     <Compile Include="Security\Audit\LocalAuditService.cs" />
     <Compile Include="Security\Audit\Model\DbAuditActorAssociation.cs" />

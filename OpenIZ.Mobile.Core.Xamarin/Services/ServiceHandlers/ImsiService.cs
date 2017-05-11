@@ -377,12 +377,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         /// </summary>
         public ErrorResult ImsiFault(Exception e)
         {
-            return new ErrorResult()
-            {
-                Error = e is TargetInvocationException ? e.InnerException.Message : e.Message,
-                ErrorDescription = e.InnerException?.ToString(),
-                ErrorType = e.GetType().Name
-            };
+            return new ErrorResult(e);
         }
 
         /// <summary>

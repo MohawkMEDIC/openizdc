@@ -44,8 +44,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
         public ErrorResult(Exception e)
         {
             Error = e.Message;
-            ErrorDescription = e.InnerException?.Message;
             ErrorType = e.GetType().Name;
+            if (e.InnerException != null)
+                InnerError = new ErrorResult(e.InnerException);
         }
 
         [JsonProperty("type")]
@@ -54,5 +55,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.Model
 		public String Error { get; set; }
 		[JsonProperty("error_description")]
 		public String ErrorDescription { get; set; }
-	}
+
+        [JsonProperty("caused_by")]
+        public ErrorResult InnerError { get; set; }
+    }
 }

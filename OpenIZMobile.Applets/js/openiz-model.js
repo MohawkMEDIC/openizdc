@@ -9731,6 +9731,7 @@ var OpenIZModel = OpenIZModel || {
         this.type = type;
         this.message = message;
         this.details = detail;
-        this.caused_by = cause;
+        if(cause)
+            this.caused_by = new OpenIZModel.Exception(cause.type, cause.error, cause.error_description, cause.caused_by);
 
     }} // OpenIZModel

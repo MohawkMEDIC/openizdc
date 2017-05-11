@@ -30,6 +30,29 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     var scope = $scope;
 
     /** 
+     * Cascades an encounter date change
+     */
+    scope.encounterDateChanged = scope.encounterDateChanged || function (encounter) {
+
+        for (var e in encounter.relationship.HasComponent)
+            encounter.relationship.HasComponent[e].targetModel.actTime = encounter.actTime;
+    }
+
+    /**
+     * Synchronizes all doses on the same date with the date of the specified act
+     */
+    scope.synchronizeDates = scope.synchronizeDates || function (act) {
+
+        for (var e in act._encounter.relationship._OverdueHasComponent)
+            if (act._encounter.relationship._OverdueHasComponent[e].targetModel.$type == act.targetModel.$type &&
+                OpenIZ.Util.toDateInputString(act._encounter.relationship._OverdueHasComponent[e].targetModel.actTime) == OpenIZ.Util.toDateInputString(act._originalTime)) {
+                act._encounter.relationship._OverdueHasComponent[e].targetModel.actTime = act.targetModel.actTime;
+                //act._encounter.relationship._OverdueHasComponent[e]._originalTime = act.targetModel.actTime;
+            }
+    }
+
+
+    /** 
      * Removes a vaccination from the overdue list
      */
     scope.removeOverdue = scope.removeOverdue || function (bind, afterFocus) {

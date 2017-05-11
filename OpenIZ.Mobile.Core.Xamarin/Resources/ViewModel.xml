@@ -103,14 +103,8 @@
       </property>
       <property name="*" all="true">
         <property name="targetModel" all="true" behavior="always">
-          <property name="relationship" all="true">
-            <property name="*" all="true">
-              <property name="holderModel" behavior="never"/>
-              <property name="sourceModel" behavior="never"/>
-              <property name="targetModel" behavior="never"/>
-              <property name="relationshipTypeModel" behavior="never"/>
-            </property>
-          </property>
+          <property name="participation" behavior="never"/>
+          <property name="relationship" behavior="never"/>
         </property>
         <property name="holderModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>

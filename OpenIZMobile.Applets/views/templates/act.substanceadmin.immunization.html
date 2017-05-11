@@ -139,7 +139,9 @@
                            (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}" 
                            ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled &amp;&amp; $root.page.loadTime" ng-min="act._enabled &amp;&amp; patient.dateOfBirth"
                            max="{{ getMaxDate(act) | date: 'yyyy-MM-dd' }}"
-                            min="{{ getMinDate(act) | date: 'yyyy-MM-dd' }}" />
+                           min="{{ getMinDate(act) | date: 'yyyy-MM-dd' }}"
+                           ng-change="synchronizeDates(act)"
+                           ng-init="act._originalTime = act.targetModel.actTime" />
                 </div>
             </div>
             <div class="col-xs-2">

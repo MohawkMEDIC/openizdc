@@ -80,6 +80,12 @@ namespace OpenIZ.Mobile.Core.Data.Model.DataType
         [Column("val_rgx")]
         public String ValidationRegex { get; set; }
 
+        /// <summary>
+        /// True if AA is unique
+        /// </summary>
+        [Column("is_unique")]
+        public bool IsUnique { get; set; }
+
     }
 
 

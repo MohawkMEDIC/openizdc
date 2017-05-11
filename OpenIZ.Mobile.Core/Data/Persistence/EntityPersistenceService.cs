@@ -37,6 +37,8 @@ using OpenIZ.Core.Model.Roles;
 using OpenIZ.Core.Services;
 using OpenIZ.Mobile.Core.Data.Model;
 using OpenIZ.Mobile.Core.Data.Model.Roles;
+using OpenIZ.Core.Model;
+using OpenIZ.Mobile.Core.Exceptions;
 
 namespace OpenIZ.Mobile.Core.Data.Persistence
 {
@@ -45,6 +47,8 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
     /// </summary>
     public class EntityPersistenceService : VersionedDataPersistenceService<Entity, DbEntity>
     {
+
+
         private const String Entity = "E29FCFAD-EC1D-4C60-A055-039A494248AE";
         private const String ManufacturedMaterial = "FAFEC286-89D5-420B-9085-054ACA9D1EEF";
         private const String Animal = "61FCBF42-B5E0-4FB5-9392-108A5C6DBEC7";
@@ -330,14 +334,28 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             data.StatusConceptKey = data.StatusConceptKey.GetValueOrDefault() == Guid.Empty ? StatusKeys.New : data.StatusConceptKey;
 
             var retVal = base.InsertInternal(context, data);
-            
+
             // Identifiers
             if (data.Identifiers != null)
+            {
+                // Validate unique values for IDs
+                var uniqueIds = data.Identifiers.Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.Authority.Key.Value)?.IsUnique == true);
+                byte[] entId = data.Key.Value.ToByteArray();
+
+                foreach (var itm in uniqueIds)
+                {
+                    byte[] authId = itm.Authority.Key.Value.ToByteArray();
+                    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+                        throw new DuplicateKeyException(itm.Value);
+                }
+
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     new List<EntityIdentifier>(),
                     data.Identifiers,
                     retVal.Key,
                     context);
+
+            }
 
             // Relationships
             if (data.Relationships != null)
@@ -441,11 +459,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Identifiers
             if (data.Identifiers != null)
+            {
+                // Validate unique values for IDs
+                var uniqueIds = data.Identifiers.Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.Authority.Key.Value)?.IsUnique == true);
+                byte[] entId = data.Key.Value.ToByteArray();
+
+                foreach (var itm in uniqueIds)
+                {
+                    byte[] authId = itm.Key.Value.ToByteArray();
+                    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+                        throw new DuplicateKeyException(itm.Value);
+                }
+
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     context.Connection.Table<DbEntityIdentifier>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityIdentifier, EntityIdentifier>(o)).ToList(),
                     data.Identifiers,
                     retVal.Key,
                     context);
+
+            }
 
             // Relationships
             if (data.Relationships != null)
