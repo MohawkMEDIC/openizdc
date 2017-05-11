@@ -1662,3 +1662,31 @@ fieldset[disabled] .btn-danger.active {
 .modal-open .select2-dropdown {
     z-index: 1051 !important;
 }
+
+#online-indicator {
+    display: inline-block;
+    margin-left: 2px;
+}
+
+#online-indicator > div {
+    display: inline-flex;
+    align-items: center;
+}
+
+#online-indicator > div > i.fa-plug {
+    color: lawngreen;
+}
+
+#online-indicator > div > i.fa-ban {
+    position: absolute;
+    font-size: 38px;
+    margin-left: -7px;
+    color: red;
+    
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: "FlipH";
+}
