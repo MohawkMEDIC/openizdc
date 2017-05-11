@@ -91,32 +91,32 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', 
             OpenIZ.App.showWait("#reQueueDeadModal")
         }
 
+        var key =[];
+        for (var k in $scope.queue["dead"].CollectionItem)
+            key.push($scope.queue["dead"].CollectionItem[k].id);
 
-        OpenIZ.Queue.requeueDeadAsync({
-            queueId: $scope.queue["dead"].CollectionItem[queueId || 0].id,
-            continueWith: function (data, state) {
-                
-                // Last queue item?
-                var idx = ((state || queueId || 0) + 1);
-                if (idx >= $scope.queue["dead"].CollectionItem.length) {
+        for (var k in key) {
+            OpenIZ.Queue.requeueDeadAsync({
+                queueId: key[k],
+                continueWith: function (data, state) {
+                    // Last queue item?
+                    if(state == key.length - 1)
                     refreshQueueState(true);
                     OpenIZ.App.hideWait("#reQueueDead");
                     OpenIZ.App.hideWait("#reQueueDeadModal");
-                }
-                else
-                    requeueAllDead(idx, true);
-            },
-            state: queueId || 0,
-            onException: function (ex) {
-                if (ex.message)
-                    alert(OpenIZ.Localization.getString(ex.message));
-                else
-                    console.error(ex);
-                OpenIZ.App.hideWait("#reQueueDead")
-                OpenIZ.App.hideWait("#reQueueDeadModal");
+                },
+                state: k,
+                onException: function (ex) {
+                    if (ex.message)
+                        alert(OpenIZ.Localization.getString(ex.message));
+                    else
+                        console.error(ex);
+                    OpenIZ.App.hideWait("#reQueueDead")
+                    OpenIZ.App.hideWait("#reQueueDeadModal");
 
-            }
-        });
+                }
+            });
+        }
     };
 
     function renderType(typeName) {

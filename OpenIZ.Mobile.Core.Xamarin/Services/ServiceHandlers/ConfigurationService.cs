@@ -260,7 +260,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                             Triggers = new String[] { "Person", "Act", "SubstanceAdministration", "QuantityObservation", "CodedObservation", "TextObservation", "PatientEncounter" }.Contains(res) ? SynchronizationPullTriggerType.Always :
                                 SynchronizationPullTriggerType.OnNetworkChange | SynchronizationPullTriggerType.OnStart
                         };
-                        
+
                         // Subscription
                         if (optionObject["data"]["sync"]["subscribe"] == null)
                         {
@@ -350,7 +350,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         //}
 
                         // TODO: Patient registration <> facility
-                        
+
                         syncConfig.SynchronizationResources.Add(syncSetting);
                     }
                     syncConfig.SynchronizationResources.Add(new SynchronizationResource()
@@ -383,7 +383,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Audit retention.
             ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().AuditRetention = TimeSpan.Parse(optionObject["security"]["auditRetention"].Value<String>());
 
-            if(optionObject["security"]["onlySubscribedAuth"].Value<Boolean>())
+            if (optionObject["security"]["onlySubscribedAuth"].Value<Boolean>())
                 ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().OnlySubscribedFacilities = true;
 
             // Proxy
@@ -413,7 +413,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             this.m_tracer.TraceInfo("Saving configuration options {0}", optionObject);
             XamarinApplicationContext.Current.ConfigurationManager.Save();
-            
+
             return new ConfigurationViewModel(XamarinApplicationContext.Current.Configuration);
         }
 
@@ -444,7 +444,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             // Stage 1 - Demand access admin policy
             try
             {
-                
+
                 new PolicyPermission(PermissionState.Unrestricted, PolicyIdentifiers.UnrestrictedAdministration).Demand();
 
                 // We're allowed to access server admin!!!! Yay!!!
@@ -490,7 +490,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                     String serviceName = null;
                     if (!urlInfo.Any() || !endpointNames.TryGetValue(itm.ServiceType, out serviceName))
                         continue;
-                    
+
                     // Description binding
                     ServiceClientDescription description = new ServiceClientDescription()
                     {
@@ -503,14 +503,14 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BasicAuth) ? SecurityScheme.Basic :
                                     SecurityScheme.None,
                                 CredentialProvider = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BearerAuth) ? (ICredentialProvider)new TokenCredentialProvider() :
-                                    itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BasicAuth) ? 
-                                    (ICredentialProvider)(itm.ServiceType == ServiceEndpointType.AuthenticationService ? (ICredentialProvider)new OAuth2CredentialProvider() : new HttpBasicTokenCredentialProvider() ):
+                                    itm.Capabilities.HasFlag(ServiceEndpointCapabilities.BasicAuth) ?
+                                    (ICredentialProvider)(itm.ServiceType == ServiceEndpointType.AuthenticationService ? (ICredentialProvider)new OAuth2CredentialProvider() : new HttpBasicTokenCredentialProvider()) :
                                     null,
                                 PreemptiveAuthentication = itm.Capabilities != ServiceEndpointCapabilities.None
                             },
                             Optimize = itm.Capabilities.HasFlag(ServiceEndpointCapabilities.Compression),
                         },
-                        Endpoint = urlInfo.Select(o=>new ServiceClientEndpoint()
+                        Endpoint = urlInfo.Select(o => new ServiceClientEndpoint()
                         {
                             Address = o.Replace("0.0.0.0", realmUri),
                             Timeout = itm.ServiceType == ServiceEndpointType.ImmunizationIntegrationService ? 60000 : 10000
@@ -521,11 +521,33 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
                     serviceClientSection.Client.Add(description);
                 }
-                
+
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new AmiPolicyInformationService());
                 ApplicationContext.Current.Configuration.GetSection<ApplicationConfigurationSection>().Services.Add(new ImsiPersistenceService());
 
-                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Guid.NewGuid().ToString().Replace("-", "");
+                byte[] pcharArray = Guid.NewGuid().ToByteArray();
+                char[] spec = { '@', '#', '$', '*', '~' };
+                for (int i = 0; i < pcharArray.Length; i++)
+                    switch (i % 5)
+                    {
+                        case 0:
+                            pcharArray[i] = (byte)((pcharArray[i] % 10) + 48);
+                            break;
+                        case 1:
+                            pcharArray[i] = (byte)spec[pcharArray[i] % spec.Length];
+                            break;
+                        case 2:
+                            pcharArray[i] = (byte)((pcharArray[i] % 25) + 65);
+                            break;
+                        case 3:
+                            pcharArray[i] = (byte)((pcharArray[i] % 25) + 97);
+                            break;
+                        default:
+                            pcharArray[i] = (byte)((pcharArray[i] % 61) + 65);
+                            break;
+                    }
+
+                ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret = Encoding.ASCII.GetString(pcharArray);
 
                 // Create the necessary device user
                 try
@@ -553,7 +575,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         // Create user
                         amiClient.CreateUser(new OpenIZ.Core.Model.AMI.Auth.SecurityUserInfo(new OpenIZ.Core.Model.Security.SecurityUser()
                         {
-							CreationTime = DateTimeOffset.Now,
+                            CreationTime = DateTimeOffset.Now,
                             UserName = deviceName,
                             Key = Guid.NewGuid(),
                             UserClass = UserClassKeys.ApplicationUser,
@@ -562,7 +584,7 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Roles = new List<OpenIZ.Core.Model.AMI.Auth.SecurityRoleInfo>()
                             {
-								role
+                                role
                             },
                             Password = ApplicationContext.Current.Configuration.GetSection<SecurityConfigurationSection>().DeviceSecret,
                         });
@@ -578,8 +600,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                         {
                             Device = new OpenIZ.Core.Model.Security.SecurityDevice()
                             {
-								CreationTime = DateTimeOffset.Now,
-								Name = deviceName,
+                                CreationTime = DateTimeOffset.Now,
+                                Name = deviceName,
                                 DeviceSecret = Guid.NewGuid().ToString()
                             }
                         });
