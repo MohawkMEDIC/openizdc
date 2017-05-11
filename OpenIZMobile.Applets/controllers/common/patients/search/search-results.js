@@ -40,15 +40,6 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     angular.element(document).ready(init);
 
     function init() {
-        scope.$watch('search.dateOfBirthStringLow', function (nvalue, ovalue) {
-            if (nvalue !== undefined)
-                $scope.search.query.dateOfBirth = ">=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
-        });
-        scope.$watch('search.dateOfBirthStringHigh', function (nvalue, ovalue) {
-            if (nvalue !== undefined)
-                $scope.search.query.dateOfBirth = "<=" + OpenIZ.Util.toDateInputString(new Date(nvalue));
-        });
-
         scope.search.search = scope.search.search || search;
         scope.search.next = scope.search.next || next;
         scope.search.previous = scope.search.previous || previous;
@@ -129,33 +120,26 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             }
             scope.search.isSearching = true;
             $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
-            var start = $scope.search.dateOfBirthStringLow;
-            var end = $scope.search.dateOfBirthStringHigh;
-            
+
             //scope.search.orginalQuery = angular.copy(scope.search.query);
             OpenIZ.Patient.findAsync({
                 query: scope.search.query,
                 continueWith: function (r) {
 
-                    if (start !== null && start !== undefined && end != null && end != undefined && r.totalResults>0) {//Temporary fix until the query string can take a range
-                        var inRange = [];
-                        for (var i = 0; i < r.item.length; i++) {
-                            if (r.item[i].dateOfBirth <= end && r.item[i].dateOfBirth >= start) {
-                                inRange.push(r.item[i]);
-                            };
-                        };
-                        r.item = inRange;
+                    if (r.totalResults == 0 && scope.search.query._onlineFallback && !onlineOnly) {
+                        scope.search.search(true);
                     }
-
-                    scope.search.results = r;
-                    scope.search.paging = {
-                        current: 1,
-                        total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
-                        size: scope.search.paging.size,
-                        pages: []
-                    };
-                    for (var i = 0; i < scope.search.paging.total; i++)
-                        scope.search.paging.pages[i] = i + 1;
+                    else {
+                        scope.search.results = r;
+                        scope.search.paging = {
+                            current: 1,
+                            total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
+                            size: scope.search.paging.size,
+                            pages: []
+                        };
+                        for (var i = 0; i < scope.search.paging.total; i++)
+                            scope.search.paging.pages[i] = i + 1;
+                    }
 
                     //updateResultEncounters();
                 },
