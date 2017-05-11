@@ -34,6 +34,23 @@ layoutApp.controller('SyncCentreController', ['$scope', '$state', '$rootScope', 
     $scope.requeueItem = requeueItem;
     $scope.deleteQueueItem = deleteQueueItem;
     $scope.selectItem = selectItem;
+    $scope.forceSync = forceSync;
+
+    function forceSync() {
+
+        OpenIZ.App.showWait("#forceSync");
+        OpenIZ.Queue.forceResyncAsync({
+            onException: function(ex) {
+                if (ex.message)
+                    alert(OpenIZ.Localization.getString(ex.message));
+                else
+                    console.error(ex);
+            },
+            finally: function () {
+                OpenIZ.App.hideWait("#forceSync");
+            }
+        });
+    }
 
     function getQueue(queueName) {
         OpenIZ.Queue.getQueueAsync({

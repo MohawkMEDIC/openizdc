@@ -128,7 +128,9 @@
                     <span class="input-group-addon" ng-show="act._created &amp;&amp; act._enabled">{{ 'locale.encounters.date' | i18n }}</span>
                     <input ng-class="{'input-error':act._enabled &amp;&amp; (editEncounterForm['izdate_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; 
                            (editEncounterForm['izdate_' + act.targetModel.id].$error.max || editEncounterForm['izdate_' + act.targetModel.id].$error.min || editEncounterForm['izdate_' + act.targetModel.id].$error.required || editEncounterForm['izdate_' + act.targetModel.id].$error.date)}" 
-                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled &amp;&amp; $root.page.loadTime" ng-min="act._enabled &amp;&amp; patient.dateOfBirth" />
+                           ng-disabled="!act._enabled" name="izdate_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.actTime" type="date" ng-max="act._enabled &amp;&amp; $root.page.loadTime" ng-min="act._enabled &amp;&amp; patient.dateOfBirth"
+                           max="{{ getMaxDate(act) | date: 'yyyy-MM-dd' }}"
+                            min="{{ getMinDate(act) | date: 'yyyy-MM-dd' }}" />
                 </div>
             </div>
             <div class="col-xs-2">

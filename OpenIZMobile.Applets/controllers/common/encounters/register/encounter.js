@@ -150,4 +150,42 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         });
         return nextDose;
     };
+
+    // Gets the maximum date for an act based on the previous sequence identifier
+    scope.getMaxDate = scope.getMaxDate || function (act) {
+        var retVal = new Date();
+        // Find next dose sequence
+        if (!act._enabled || act.targetModel.doseSequence == null) return retVal;
+
+        // Find next dose
+        var prodId = act.targetModel.participation.Product.player;
+        var seqId = act.targetModel.doseSequence + 1;
+        for (var k in act._encounter.relationship._OverdueHasComponent)
+            if (act._encounter.relationship._OverdueHasComponent[k].targetModel.participation &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.participation.Product &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.participation.Product.player == prodId &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.doseSequence == seqId &&
+                act._encounter.relationship._OverdueHasComponent[k]._enabled)
+                return act._encounter.relationship._OverdueHasComponent[k].targetModel.actTime;
+        return retVal;
+    };
+
+    // Gets the minimum date for an act based on the previous sequence identifier
+    scope.getMinDate = scope.getMinDate || function (act) {
+        var retVal = scope.patient.dateOfBirth;
+        // Find next dose sequence
+        if (!act._enabled || act.targetModel.doseSequence == null) return retVal;
+
+        // Find next dose
+        var prodId = act.targetModel.participation.Product.player;
+        var seqId = act.targetModel.doseSequence - 1;
+        for (var k in act._encounter.relationship._OverdueHasComponent)
+            if (act._encounter.relationship._OverdueHasComponent[k].targetModel.participation &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.participation.Product &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.participation.Product.player == prodId &&
+                act._encounter.relationship._OverdueHasComponent[k].targetModel.doseSequence == seqId &&
+                act._encounter.relationship._OverdueHasComponent[k]._enabled)
+                return act._encounter.relationship._OverdueHasComponent[k].targetModel.actTime;
+        return retVal;
+    };
 }]);

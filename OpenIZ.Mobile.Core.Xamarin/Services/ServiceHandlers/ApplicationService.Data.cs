@@ -130,6 +130,26 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
         }
 
         /// <summary>
+        /// Force a re-synchronization
+        /// </summary>
+        [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "POST", UriPath = "/queue")]
+        [return: RestMessage(RestMessageFormat.Json)]
+        [Demand(PolicyIdentifiers.Login)]
+        public void ForceSync()
+        {
+            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustOutboundQueue();
+            ApplicationContext.Current.GetService<QueueManagerService>().ExhaustAdminQueue();
+
+            foreach (var itm in ApplicationContext.Current.Configuration.GetSection<SynchronizationConfigurationSection>().SynchronizationResources.Where(o=>o.Triggers.HasFlag(SynchronizationPullTriggerType.Always) || o.Triggers.HasFlag(SynchronizationPullTriggerType.OnNetworkChange)))
+                if (itm.Filters.Count > 0)
+                    foreach (var f in itm.Filters)
+                        ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType, NameValueCollection.ParseQueryString(f));
+                else
+                    ApplicationContext.Current.GetService<ISynchronizationService>().Pull(itm.ResourceType);
+            
+        }
+
+        /// <summary>
         /// Delete queue entry
         /// </summary>
         [RestOperation(FaultProvider = nameof(AdminFaultProvider), Method = "DELETE", UriPath = "/queue")]

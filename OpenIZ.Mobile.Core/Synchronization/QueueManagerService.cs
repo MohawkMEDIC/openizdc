@@ -223,7 +223,7 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// <summary>
         /// Exhaust the administrative queue
         /// </summary>
-        private void ExhaustAdminQueue()
+        public void ExhaustAdminQueue()
         {
             bool locked = false;
             try

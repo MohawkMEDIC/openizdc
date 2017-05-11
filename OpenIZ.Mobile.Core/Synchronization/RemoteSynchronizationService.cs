@@ -242,127 +242,130 @@ namespace OpenIZ.Mobile.Core.Synchronization
         /// </summary>
         private int Pull(Type modelType, NameValueCollection filter, bool always)
         {
-            var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
-            if (always)
-                lastModificationDate = null;
-
-            try
+            lock (this.m_lock)
             {
+                var lastModificationDate = SynchronizationLog.Current.GetLastTime(modelType, filter.ToString());
+                if (always)
+                    lastModificationDate = null;
 
-                this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
-
-                // Get last modified date
-                this.m_tracer.TraceVerbose("Synchronize all on {0} since {1}", modelType, lastModificationDate);
-
-                var result = new Bundle() { TotalResults = 1 };
-                var eTag = String.Empty;
-                var retVal = 0;
-                int count = 100;
-                var qid = Guid.NewGuid();
-
-                // Attempt to find an existing query
-                var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
-                if (existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
+                try
                 {
-                    qid = new Guid(existingQuery.Uuid);
-                    result.Count = existingQuery.LastSuccess;
-                    result.TotalResults = result.Count + 1;
-                }
-                else
-                {
-                    if (existingQuery != null) SynchronizationLog.Current.CompleteQuery(new Guid(existingQuery.Uuid));
-                    SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
-                }
 
-                // Performance timer for more intelligent query control
-                Stopwatch perfTimer = new Stopwatch();
+                    this.m_tracer.TraceInfo("Start synchronization on {0} (filter:{1})...", modelType, filter);
 
-                // Enqueue
-                for (int i = result.Count; i < result.TotalResults; i += result.Count)
-                {
-                    float perc = i / (float)result.TotalResults;
+                    // Get last modified date
+                    this.m_tracer.TraceVerbose("Synchronize all on {0} since {1}", modelType, lastModificationDate);
 
-                    if (result.TotalResults > result.Offset + result.Count + 1)
-                        ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
-                    NameValueCollection infopt = null;
-                    if (filter.Any(o => o.Key.StartsWith("_")))
+                    var result = new Bundle() { TotalResults = 1 };
+                    var eTag = String.Empty;
+                    var retVal = 0;
+                    int count = 100;
+                    var qid = Guid.NewGuid();
+
+                    // Attempt to find an existing query
+                    var existingQuery = SynchronizationLog.Current.FindQueryData(modelType, filter.ToString());
+                    if (existingQuery != null && DateTime.Now.Subtract(existingQuery.StartTime).TotalHours <= 1)
                     {
-                        infopt = new NameValueCollection();
-                        foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
-                            infopt.Add(itm.Key, itm.Value);
-                    }
-
-                    perfTimer.Reset();
-                    perfTimer.Start();
-                    result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 60000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
-                    perfTimer.Stop();
-
-                    // Queue the act of queueing
-                    if (result != null)
-                    {
-                        if (count == 5000 && perfTimer.ElapsedMilliseconds < 25000 ||
-                            count < 5000 && result.TotalResults > 50000 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 5000;
-                        else if (count == 2500 && perfTimer.ElapsedMilliseconds < 25000 ||
-                            count < 2500 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 2500;
-                        else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
-                            count < 1000 && result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 1000;
-                        else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
-                            count < 500 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
-                            count = 500;
-                        else
-                            count = 100;
-
-                        this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
-                        result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
-
-                        SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
-                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
-
-                        retVal = result.TotalResults;
+                        qid = new Guid(existingQuery.Uuid);
+                        result.Count = existingQuery.LastSuccess;
+                        result.TotalResults = result.Count + 1;
                     }
                     else
-                        break;
+                    {
+                        if (existingQuery != null) SynchronizationLog.Current.CompleteQuery(new Guid(existingQuery.Uuid));
+                        SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, 0);
+                    }
 
-                    if (String.IsNullOrEmpty(eTag))
-                        eTag = result?.Item.FirstOrDefault()?.Tag;
+                    // Performance timer for more intelligent query control
+                    Stopwatch perfTimer = new Stopwatch();
+
+                    // Enqueue
+                    for (int i = result.Count; i < result.TotalResults; i += result.Count)
+                    {
+                        float perc = i / (float)result.TotalResults;
+
+                        if (result.TotalResults > result.Offset + result.Count + 1)
+                            ApplicationContext.Current.SetProgress(String.Format(Strings.locale_sync, modelType.Name, i, result.TotalResults), perc);
+                        NameValueCollection infopt = null;
+                        if (filter.Any(o => o.Key.StartsWith("_")))
+                        {
+                            infopt = new NameValueCollection();
+                            foreach (var itm in filter.Where(o => o.Key.StartsWith("_")))
+                                infopt.Add(itm.Key, itm.Value);
+                        }
+
+                        perfTimer.Reset();
+                        perfTimer.Start();
+                        result = this.m_integrationService.Find(modelType, filter, i, count, new IntegrationQueryOptions() { IfModifiedSince = lastModificationDate, Timeout = 60000, Lean = true, InfrastructureOptions = infopt, QueryId = qid });
+                        perfTimer.Stop();
+
+                        // Queue the act of queueing
+                        if (result != null)
+                        {
+                            if (count == 5000 && perfTimer.ElapsedMilliseconds < 25000 ||
+                                count < 5000 && result.TotalResults > 50000 && perfTimer.ElapsedMilliseconds < 10000)
+                                count = 5000;
+                            else if (count == 2500 && perfTimer.ElapsedMilliseconds < 25000 ||
+                                count < 2500 && result.TotalResults > 5000 && perfTimer.ElapsedMilliseconds < 10000)
+                                count = 2500;
+                            else if (count == 1000 && perfTimer.ElapsedMilliseconds < 20000 ||
+                                count < 1000 && result.TotalResults > 2500 && perfTimer.ElapsedMilliseconds < 10000)
+                                count = 1000;
+                            else if (count == 200 && perfTimer.ElapsedMilliseconds < 15000 ||
+                                count < 500 && result.TotalResults > 1000 && perfTimer.ElapsedMilliseconds < 10000)
+                                count = 500;
+                            else
+                                count = 100;
+
+                            this.m_tracer.TraceVerbose("Download {0} ({1}..{2}/{3})", modelType.FullName, i, i + result.Count, result.TotalResults);
+                            result.Item.RemoveAll(o => o is SecurityUser || o is SecurityRole || o is SecurityPolicy);
+
+                            SynchronizationQueue.Inbound.Enqueue(result, DataOperationType.Sync);
+                            SynchronizationLog.Current.SaveQuery(modelType, filter.ToString(), qid, result.Offset + result.Count);
+
+                            retVal = result.TotalResults;
+                        }
+                        else
+                            break;
+
+                        if (String.IsNullOrEmpty(eTag))
+                            eTag = result?.Item.FirstOrDefault()?.Tag;
+                    }
+
+                    if (result?.TotalResults > result?.Count)
+                        ApplicationContext.Current.SetProgress(String.Empty, 0);
+
+                    // Log that we synchronized successfully
+                    SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+
+                    // Clear the query
+                    SynchronizationLog.Current.CompleteQuery(qid);
+
+                    // Fire the pull event
+                    this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), retVal));
+
+                    return retVal;
                 }
+                catch (TargetInvocationException ex)
+                {
+                    var e = ex.InnerException;
+                    this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
+                    var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                    alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
+                    this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
-                if (result?.TotalResults > result?.Count)
-                    ApplicationContext.Current.SetProgress(String.Empty, 0);
+                    return 0;
 
-                // Log that we synchronized successfully
-                SynchronizationLog.Current.Save(modelType, filter.ToString(), eTag);
+                }
+                catch (Exception e)
+                {
+                    this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
+                    var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
+                    alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
+                    this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
 
-                // Clear the query
-                SynchronizationLog.Current.CompleteQuery(qid);
-
-                // Fire the pull event
-                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), retVal));
-
-                return retVal;
-            }
-            catch (TargetInvocationException ex)
-            {
-                var e = ex.InnerException;
-                this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
-                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
-                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
-
-                return 0;
-
-            }
-            catch (Exception e)
-            {
-                this.m_tracer.TraceError("Error synchronizing {0} : {1} ", modelType, e);
-                var alertService = ApplicationContext.Current.GetService<IAlertRepositoryService>();
-                alertService?.BroadcastAlert(new AlertMessage(AuthenticationContext.Current.Principal.Identity.Name ?? "System", "everyone", Strings.locale_downloadError, String.Format(Strings.locale_downloadErrorBody, e), AlertMessageFlags.Transient));
-                this.PullCompleted?.Invoke(this, new SynchronizationEventArgs(modelType, filter, lastModificationDate.GetValueOrDefault(), 0));
-
-                return 0;
+                    return 0;
+                }
             }
         }
 
