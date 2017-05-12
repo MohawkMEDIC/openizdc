@@ -489,7 +489,7 @@ namespace OpenIZ.Mobile.Core.Data.Warehouse
 
                     // Remove for all on this patient
                     lock (this.m_lock)
-                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == patient.Key.Value || i is Patient && (i as Patient).Key == patient.Key.Value) && (i as Act).Protocols.First().ProtocolKey == act.Protocols.First().ProtocolKey);
+                        this.m_actCarePlanPromise.RemoveAll(i => i is Act && (i as Act).Participations.Any(p => p.PlayerEntityKey == patient.Key.Value || i is Patient && (i as Patient).Key == patient.Key.Value) && (i as Act).Protocols.FirstOrDefault()?.ProtocolKey == act.Protocols.FirstOrDefault()?.ProtocolKey);
 
                 }
 

@@ -300,6 +300,7 @@
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
     <property name="protocol" behavior="never"/>
     <property name="routeModel" behavior="always"  ref="Concept"/>
+    <property name="protocol" behavior="always"/>
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="relationship" all="true" behavior="always">
@@ -440,6 +441,7 @@
     <property name="routeModel" behavior="always"  ref="Concept"/>
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
+    <property name="protocol" behavior="always"/>
     <property name="relationship" all="true" behavior="never"/>
     <property name="participation" all="true" behavior="always">
       <property name="Product" all="false">
@@ -517,6 +519,7 @@
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
     <property name="relationship" all="true" behavior="never"/>
     <property name="unitOfMeasureModel" behavior="always" ref="Concept"/>
+    <property name="protocol" behavior="always"/>
     <property name="participation" all="true" behavior="always">
       <property name="Location" all="false">
         <property name="actModel" behavior="never"/>
@@ -554,6 +557,7 @@
       <property name="mnemonic"/>
     </property>
     <property name="classConceptModel" behavior="never"/>
+    <property name="protocol" behavior="always"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always" ref="Concept"/>

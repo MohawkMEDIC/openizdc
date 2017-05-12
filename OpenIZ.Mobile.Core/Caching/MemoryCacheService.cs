@@ -207,9 +207,11 @@ namespace OpenIZ.Mobile.Core.Caching
                     var idx = targetEntity.Participations.FirstOrDefault(o => o.ParticipationRoleKey == ptcpt.ParticipationRoleKey &&
                         o.ActKey == ptcpt.ActKey && o.PlayerEntityKey == ptcpt.PlayerEntityKey);
                     if (idx != null)
+                    {
                         targetEntity.Participations.Remove(idx);
-                    if (!remove)
-                        targetEntity.Participations.Add(ptcpt);
+                        if (!remove)
+                            targetEntity.Participations.Add(ptcpt);
+                    }
                 }
                 //MemoryCache.Current.RemoveObject(ptcpt.PlayerEntity?.GetType() ?? typeof(Entity), ptcpt.PlayerEntityKey);
             }
@@ -233,9 +235,11 @@ namespace OpenIZ.Mobile.Core.Caching
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetActKey == rel.TargetActKey);
                     if (idx != null)
+                    {
                         targetEntity.Relationships.Remove(idx);
-                    if (!remove)
-                        targetEntity.Relationships.Add(rel);
+                        if (!remove)
+                            targetEntity.Relationships.Add(rel);
+                    }
                 }
             }
             else if (e.Object is EntityRelationship)
@@ -258,9 +262,11 @@ namespace OpenIZ.Mobile.Core.Caching
                     var idx = targetEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == rel.RelationshipTypeKey &&
                         o.SourceEntityKey == rel.SourceEntityKey && o.TargetEntityKey == rel.TargetEntityKey);
                     if (idx != null)
+                    {
                         targetEntity.Relationships.Remove(idx);
-                    if (!remove)
-                        targetEntity.Relationships.Add(rel);
+                        if (!remove)
+                            targetEntity.Relationships.Add(rel);
+                    }
                 }
             }
             else if (e.Object is Act) // We need to remove RCT 
