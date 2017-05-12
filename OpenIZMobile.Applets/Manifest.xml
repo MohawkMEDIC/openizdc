@@ -466,7 +466,7 @@
     <string key="locale.sync.resource.CodedObservation">Coded Observation</string>
     <string key="locale.sync.resource.QuantityObservation">Quantity Observation</string>
     <string key="locale.sync.resource.TextObservation">Text Observation</string>
-
+    <string key="locale.sync.resource.TemplateDefinition">Template Definition</string>
     <string key="locale.audit.action">Action</string>
     <string key="locale.audit.class">Operation</string>
     <string key="locale.audit.date">Timestamp</string>
@@ -789,7 +789,7 @@
     <string key="locale.sync.resource.CodedObservation">coded uchunguzi</string>
     <string key="locale.sync.resource.QuantityObservation">uchunguzi kiasi</string>
     <string key="locale.sync.resource.TextObservation">uchunguzi wa maandishi</string>
-
+    <string key="locale.sync.resource.TemplateDefinition">Kigezo Ufafanuzi</string>
     <string key="locale.audit.title">Mitaa kituo cha ukaguzi</string>
     <string key="locale.audit.action">hatua</string>
     <string key="locale.audit.class">Operesheni</string>
