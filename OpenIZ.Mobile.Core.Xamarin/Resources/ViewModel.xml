@@ -59,7 +59,14 @@
     <property name="statusConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
+  </type>
 
+  <!-- Assigning Authorities -->
+  <type type="AssigningAuthority" all="false">
+    <property name="name" all="true" />
+    <property name="domainName" all="true" />
+    <property name="scope" all="true" />
+    <property name="validation" all="true" />
   </type>
 
   <!-- Entity Information -->

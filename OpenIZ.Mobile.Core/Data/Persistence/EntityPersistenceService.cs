@@ -339,15 +339,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Identifiers != null)
             {
                 // Validate unique values for IDs
-                var uniqueIds = data.Identifiers.Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.Authority.Key.Value)?.IsUnique == true);
-                byte[] entId = data.Key.Value.ToByteArray();
+                //var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.AuthorityKey.Value)?.IsUnique == true);
+                //byte[] entId = data.Key.Value.ToByteArray();
 
-                foreach (var itm in uniqueIds)
-                {
-                    byte[] authId = itm.Authority.Key.Value.ToByteArray();
-                    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
-                        throw new DuplicateKeyException(itm.Value);
-                }
+                //foreach (var itm in uniqueIds)
+                //{
+                //    byte[] authId = itm.Authority.Key.Value.ToByteArray();
+                //    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+                //        throw new DuplicateKeyException(itm.Value);
+                //}
 
                 base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     new List<EntityIdentifier>(),
