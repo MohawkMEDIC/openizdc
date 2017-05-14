@@ -79,6 +79,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return bundleService.Insert(bundleToInsert);
         }
 
+		/// <summary>
+		/// Creates the entity relationship.
+		/// </summary>
+		/// <param name="entityRelationship">The entity relationship.</param>
+		/// <returns>Returns the created entity relationship.</returns>
+		[RestOperation(Method = "POST", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+		public EntityRelationship CreateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+			var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+		    return erRepositoryService.Insert(entityRelationship);
+	    }
+
         /// <summary>
         /// Gets an entity
         /// </summary>
@@ -446,13 +460,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return repository.Save(entityToUpdate).GetLocked() as Entity;
         }
 
+		/// <summary>
+		/// Updates the entity relationship.
+		/// </summary>
+		/// <param name="entityRelationship">The entity relationship.</param>
+		/// <returns>Returns the updated entity relationship.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+	    public EntityRelationship UpdateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+		    var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
 
-        /// <summary>
-        /// Updates a manufactured material.
-        /// </summary>
-        /// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
-        /// <returns>Returns the updated manufactured material.</returns>
-        [RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+		    return erRepositoryService.Save(entityRelationship);
+	    }
+
+
+		/// <summary>
+		/// Updates a manufactured material.
+		/// </summary>
+		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
+		/// <returns>Returns the updated manufactured material.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)

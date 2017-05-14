@@ -1003,7 +1003,7 @@
             True if the bundle has a tag
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Create a bundle
             </summary>
@@ -2218,6 +2218,11 @@
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.ValidationRegex">
             <summary>
             Gets or sets the validation regex
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.IsUnique">
+            <summary>
+            True if the assigning authority values should be unique
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDevice">
