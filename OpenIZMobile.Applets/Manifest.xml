@@ -334,6 +334,7 @@
 
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
+    <string key="locale.patient.search.noduplicates">No Duplicates Found</string>
     <string key="locale.patient.search.header.mother">Mother</string>
     <string key="locale.patient.schedule.none">No Scheduled Appointments</string>
 
@@ -616,6 +617,7 @@
     <string key="locale.openiz.info">Haipatikani</string>
     <string key="locale.patient.schedule.none">uteuzi hakuna imepangwa</string>
     <string key="locale.patient.search.noresults">Imetokea hitilafu kwenye kuleta ukurasa. Tafadhali pitia faili kumbukumbu kwenye kifaa.</string>
+    <string key="locale.patient.search.noduplicates">Hakuna Nakili Kupatikana</string>
     <string key="locale.patient.search.header.mother">M</string>
     <string key="locale.preferences.changePassword">Badilisha neno la sir.</string>
     <string key="locale.preferences.confirm">Umetumiwa "siri", ingiza "siri" hapo chini. Kama hujatumiwa, bonyeza "tuma" upate "siri" mpya</string>
