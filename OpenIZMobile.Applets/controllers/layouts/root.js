@@ -111,7 +111,7 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
                     if (("" + secs).length < 2)
                         secs = "0" + secs;
                     expiryStr = mins + ":" + secs;
-                    var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + expiryStr + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
+                    var authString = OpenIZ.Localization.getString("locale.session.aboutToExpirePrefix") + " " + expiryStr + " " + OpenIZ.Localization.getString("locale.session.aboutToExpireSuffix");
 
                     if (expiry < 0)
                         window.location.reload(true);

@@ -30,17 +30,12 @@
             <a href="#/" class="navbar-brand">
                 <span class="navbar-brand-img">{{ 'locale.layout.title' | i18n }}</span>
                 <span class="navbar-brand-text">{{ ::$root.page.title }}</span>
-                <span ng-if="$root.page.onlineState">
-
-                    <span ng-if="$root.page.onlineState &amp;&amp; $root.session.method != 'LOCAL'">
-                        <span class="circle-online"></span>
-                        {{ 'locale.network.online' | i18n }}
-                    </span>
-                    <span ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'">
-                        <span class="circle-offline"></span>
-                        {{ 'locale.network.offline' | i18n }}
-                    </span>
-                </span>
+                <div id="online-indicator">
+                    <div>
+                        <i class="fa fa-plug" aria-hidden="true"></i>
+                        <i ng-if="!$root.page.onlineState || $root.session.method == 'LOCAL'" class="fa fa-ban" aria-hidden="true"></i>
+                    </div>
+                </div>
             </a>
         </div>
         <div class="navbar-collapse collapse" ng-class="{'navbar-collapse-small' : windowWidth &lt; 768}">

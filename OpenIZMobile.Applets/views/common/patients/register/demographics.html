@@ -48,12 +48,12 @@
         </label>
         <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.dateOfBirth.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.dateOfBirth.$invalid }">
             <div class="input-group">
-                <input ng-disabled="patientBackup.tag.hasBirthCertificate || patient.hasVaccines"
+                <input ng-disabled="patientBackup.tag.hasBirthCertificate"
                        ng-readonly="patient.readonly.dateOfBirth" type="date" 
                        name="dateOfBirth" id="dobInput" 
                        class="form-control" 
-                       ng-model="patient.dateOfBirth" 
-                       max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" 
+                       ng-model="patient.dateOfBirth"
+                       max="{{(earliestVaccinationDate || $root.page.loadTime) | date: 'yyyy-MM-dd'}}" 
                        ng-required="true"/>
                 <span class="input-group-addon input-group-addon-approx">
                     <label class="control control--checkbox">
@@ -70,8 +70,8 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
-            <p ng-if="patientBackup.tag.hasBirthCertificate || patient.hasVaccines">
-                {{ 'locale.patient.demographics.dateOfBirth.hasCertificateOrVaccines' | i18n }}
+            <p ng-if="patientBackup.tag.hasBirthCertificate">
+                {{ 'locale.patient.demographics.dateOfBirth.hasCertificate' | i18n }}
             </p>
             <p ng-if="(editPatientForm.dateOfBirth.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.dateOfBirth.$invalid">
                 <span ng-show="editPatientForm.dateOfBirth.$error.required"

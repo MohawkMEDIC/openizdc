@@ -75,10 +75,10 @@
             <label class="col-xs-2 header-dock-labels">{{ 'locale.patient.demographics.mothersInfo' | i18n }}</label>
             <div class="col-xs-4  hide-text-header">
                 <span ng-repeat="(typ, rel) in patient.relationship" ng-if="(rel.targetModel.$type == 'Person' || rel.targetModel.$type == 'Patient') &amp;&amp; typ=='Mother'" class="mother-info-item">
-                    <span class="list-group-item-heading">Name: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
-                    <small ng-if="rel.targetModel.identifier">ID: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
+                    <span class="list-group-item-heading">{{ 'locale.patient.mother.names' | i18n }}: {{rel.targetModel.name.OfficialRecord | oizEntityName}}</span>
+                    <small ng-if="rel.targetModel.identifier">{{ 'locale.patient.mother.identifiers' | i18n }}: {{rel.targetModel.identifier | oizEntityIdentifier}}</small>
                     <span ng-repeat="contact in rel.targetModel.telecom">
-                        <small>Contact: {{contact.value}}</small>
+                        <small>{{ 'locale.patient.mother.contact' | i18n }}: {{contact.value}}</small>
                     </span>
                 </span>
             </div>
