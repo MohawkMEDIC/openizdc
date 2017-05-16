@@ -91,6 +91,13 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
 
     function scanBarcode(identifier) {
         identifier.value = OpenIZ.App.scanBarcode();
+        
+        if ($scope.search && $scope.search.searchByBarcode) {
+            $scope.search.searchByBarcode(identifier.value, function () {
+                $('#duplicates').focus();
+                alert(OpenIZ.Localization.getString("locale.patient.search.childExists"));
+            });
+        }
     };
 
     // Add identifier
