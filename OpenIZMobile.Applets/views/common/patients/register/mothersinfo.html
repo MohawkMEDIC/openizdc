@@ -35,7 +35,7 @@
         <label class="col-xs-3 control-label" for="mothersGiven">{{ 'locale.patient.mother.givenName' | i18n }}<span ng-if="!editMotherForm &amp;&amp; !motherUnknown">*</span></label>
         <div class="col-xs-9" ng-class="{ 'has-error': (mothersInfoForm.mothersGiven.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersGiven.$invalid }">
             <div class="input-group" ng-if="!motherUnknown">
-                <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" ng-required="!motherUnknown" />
+                <input type="text" name="mothersGiven" id="mothersGiven" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Given" ng-required="!editMotherForm &amp;&amp; !motherUnknown" />
                 <span class="input-group-btn">
                     <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.mother.givenName' | i18n }}" data-content="{{ 'locale.patient.mother.givenName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
@@ -57,7 +57,7 @@
         <label class="col-xs-3 control-label" for="mothersFamily">{{ 'locale.patient.mother.familyName' | i18n }}<span ng-if="!editMotherForm &amp;&amp; !motherUnknown">*</span></label>
         <div class="col-xs-9" ng-class="{ 'has-error': (mothersInfoForm.mothersFamily.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersFamily.$invalid }">
             <div class="input-group" ng-if="!motherUnknown">
-                <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" ng-required="!motherUnknown" ng-disabled="motherUnknown" />
+                <input type="text" name="mothersFamily" id="mothersFamily" select="0" class="tagEntry form-control" oiz-tag="oiz-tag" ng-model="patient.relationship.Mother.targetModel.name.OfficialRecord.component.Family" ng-required="!editMotherForm &amp;&amp; !motherUnknown" ng-disabled="motherUnknown" />
                 <span class="input-group-btn">
                     <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.familyName' | i18n }}" data-content="{{ 'locale.patient.mother.familyName.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
