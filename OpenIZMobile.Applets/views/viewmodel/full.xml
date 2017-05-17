@@ -307,7 +307,7 @@
       <property name="*" ref="ActRelationship"/>
     </property>
     <property name="participation" all="true" behavior="always">
-      <property name="RecordTarget" behvior="never">
+      <property name="RecordTarget" behavior="never">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
         <property name="participationRoleModel" behavior="never"/>
