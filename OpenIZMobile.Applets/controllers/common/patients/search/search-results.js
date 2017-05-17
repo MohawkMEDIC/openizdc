@@ -36,6 +36,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.mode = 0;
     scope.search.paging = scope.search.paging || {size: 10};
     scope.act = {};
+    var onlineOnly = false;
 
     angular.element(document).ready(init);
 
@@ -49,7 +50,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.search.searchByBarcode = scope.search.searchByBarcode || searchByBarcode;
 
         scope.search.searchSubmitted = false;
-        var onlineOnly = false;
+        onlineOnly = false;
 
         scope.search.minSearchDate = '2000-01-01';
     }
