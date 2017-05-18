@@ -93,7 +93,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
         identifier.value = OpenIZ.App.scanBarcode();
         
         if ($scope.search && $scope.search.searchByBarcode) {
-            $scope.search.searchByBarcode(identifier.value, function () {
+            $scope.search.searchByBarcode(identifier, function () {
                 $('#duplicates').focus();
                 alert(OpenIZ.Localization.getString("locale.patient.search.childExists"));
             });

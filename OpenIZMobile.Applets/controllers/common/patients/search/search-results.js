@@ -119,17 +119,20 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     };
 
     /** 
-     * @summary Searches patients by TIMR-BARCODE
+     * @summary Searches patients by barcode
      */
-    function searchByBarcode(barcode, onFindPatient) {
+    function searchByBarcode(identifier, onFindPatient) {
         var barcodeQuery = {
             "_offset": 0,
             "_count": scope.search.paging.size,
             "_viewModel": "min",
             "_queryId": OpenIZ.App.newGuid(),
-            "identifier.value": barcode,
-            "identifier.authority.domainName": "TIMR-BARCODE"
+            "identifier.value": identifier.value
         };
+
+        if (identifier.domainName) {
+            barcodeQuery["identifier.authority.domainName"] = identifier.domainName;
+        }
 
         searchPatient(barcodeQuery, true, onFindPatient);
     }
