@@ -274,7 +274,7 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
             OpenIZ.Bundle.insertAsync({
                 data: bundle,
                 continueWith: function (data) {
-                    $scope.getAppointments();
+                    $scope.getAppointment();
                     $scope.$parent.encounters = null;
                     $scope.$parent.refreshEncounters();
                     $("#appointmentScheduler").modal("hide");
