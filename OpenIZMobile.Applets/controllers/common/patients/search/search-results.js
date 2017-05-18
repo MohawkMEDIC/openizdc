@@ -166,7 +166,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     for (var i = 0; i < scope.search.paging.total; i++)
                         scope.search.paging.pages[i] = i + 1;
 
-                    if (onFindPatient) {
+                    if (r.totalResults > 0 && onFindPatient) {
                         onFindPatient();
                     }
                 }
