@@ -24,8 +24,10 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout) {
-
+layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function ($scope, $timeout)
+{
+    // HACK: javascript lacks so much basic functionality it's pathetic...
+    $scope.now = moment().add(1, 'seconds');
     // Get the current scope that we're in
     var scope = $scope;
 

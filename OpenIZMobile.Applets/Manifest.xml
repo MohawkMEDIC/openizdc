@@ -331,6 +331,7 @@
 
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
+    <string key="locale.encounters.errors.date">Please select a valid date</string>
 
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
@@ -568,6 +569,7 @@
     <string key="locale.encounters.addEntry">Jina la mtumiaji</string>
     <string key="locale.encounters.overdue">Namba ya package</string>
     <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
+    <string key="locale.encounters.errors.date">Tafadhali chagua tarehe halali</string>
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
     <string key="locale.error.403.title">Iwapo kuna data mpya</string>
     <string key="locale.error.404.description">Rekebisha</string>
