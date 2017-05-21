@@ -266,8 +266,10 @@ namespace OpenIZ.Mobile.Core.Security
 
                 // User entity available?
                 this.m_entity = userService.GetUserEntity(principal.Identity);
-                // Attempt to download 
-                if(this.m_entity == null)
+
+                // Attempt to download if the user entity is null
+				// Or if there are no relationships of type dedicated service dedicated service delivery location to force a download of the user entity 
+                if(this.m_entity == null || this.m_entity?.Relationships.All(r => r.RelationshipTypeKey != EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation) == true)
                 {
                     var amiService = ApplicationContext.Current.GetService<IClinicalIntegrationService>();
                     if (amiService == null) throw new InvalidOperationException("Administrative integration service not configured");
