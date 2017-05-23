@@ -218,4 +218,13 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
         return encounter.relationship.HasComponent.some(x => x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath");
     }
+
+    scope.addCauseOfDeath = scope.addCauseOfDeath || function (patient, act, encounter) {
+        if (patient._deceased) {
+            if (!scope.hasCauseOfDeath(encounter))
+                scope.addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf');
+        }
+        else
+            scope.delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf');
+    }
 }]);

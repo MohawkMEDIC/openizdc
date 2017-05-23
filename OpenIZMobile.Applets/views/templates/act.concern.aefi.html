@@ -150,7 +150,7 @@
                         <div class="col-xs-1">
                             <label class="control control--checkbox">
                                 <input id="{{act.targetModel.id}}-patient-died"  type="checkbox" ng-model="patient._deceased"
-                                       ng-click="patient._deceased ? addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf') :  delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf')" />
+                                       ng-click="addCauseOfDeath(patient, act, encounter)" />
                                 <div class="control__indicator control__indicator_alt" ></div>
                             </label>
                         </div>
