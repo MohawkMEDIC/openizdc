@@ -1690,3 +1690,9 @@ fieldset[disabled] .btn-danger.active {
     filter: FlipH;
     -ms-filter: "FlipH";
 }
+a.disabled {
+    background-color: lightgray;
+    pointer-events: none;
+    cursor: not-allowed !important;
+    color: grey !important;
+}

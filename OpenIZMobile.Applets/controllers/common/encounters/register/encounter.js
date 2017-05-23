@@ -214,4 +214,8 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                 return act._encounter.relationship._OverdueHasComponent[k].targetModel.actTime;
         return retVal;
     };
+
+    scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
+        return encounter.relationship.HasComponent.some(x => x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath");
+    }
 }]);
