@@ -150,7 +150,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
             // Try to use the login code
             OpenIZ.Authentication.loginAsync({
                 userName: $scope.resetRequest.userName,
-                tfaSecret: $scope.resetRequest.tfaSecret,
+                tfaSecret: ('0000' + $scope.resetRequest.tfaSecret).slice(-4),
                 continueWith: function (data) {
                     // Set scope next
                     $scope.onNext = null;
