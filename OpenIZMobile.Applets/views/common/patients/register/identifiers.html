@@ -40,7 +40,7 @@
                                 <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                             </button>
 
-                            <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
+                            <button class="btn btn-default" type="button" ng-disabled="identifiers.length &lt;= 1" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
                            
