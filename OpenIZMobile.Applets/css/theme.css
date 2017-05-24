@@ -1696,3 +1696,7 @@ a.disabled {
     cursor: not-allowed !important;
     color: grey !important;
 }
+
+#settings-nav-wrapper {
+    margin: 0 -15px;
+}
