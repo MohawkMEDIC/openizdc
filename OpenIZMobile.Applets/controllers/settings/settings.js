@@ -64,6 +64,9 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         }
     });
     
+    $('[data-toggle="popover"]').popover({
+        placement: 'top'
+    });
     
     $scope.master = {};
 

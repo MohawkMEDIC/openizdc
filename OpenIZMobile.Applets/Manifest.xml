@@ -218,15 +218,23 @@
     <string key="locale.settings.realmTitle">Join Realm</string>
     <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
     <string key="locale.settings.deviceName">Device Name:</string>
+    <string key="locale.settings.deviceName.help">This setting controls the device name of this tablet</string>
     <string key="locale.settings.realmName">Realm ID:</string>
+    <string key="locale.settings.realmName.help">This setting controls the realm ID</string>
     <string key="locale.settings.realmPort">Alternate Port#:</string>
+    <string key="locale.settings.realmPort.help">This setting controls the port number</string>
     <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
     <string key="locale.settings.dataMode">Data Mode:</string>
+    <string key="locale.settings.dataMode.synchronized">Synchronized</string>
+    <string key="locale.settings.dataMode.onlineOnly">Online Only</string>
+    <string key="locale.settings.dataMode.offlineOnly">Offline Only</string>
+    <string key="locale.settings.dataMode.help">This setting controls the data mode for this tablet</string>
     <string key="locale.settings.enableTracing">Enable Tracing</string>
     <string key="locale.settings.logTitle">Log Settings</string>
     <string key="locale.settings.logDescription">OpenIZ Disconnected Client keeps application log files which can be sent to a centralized diagnosis server in the case of application crash. Use this panel to configure the verbosity of those logs</string>
     <string key="locale.settings.logMode">Log Detail:</string>
+    <string key="locale.settings.logMode.help">This setting controls the level of log detail for this tablet</string>
     <string key="locale.settings.log.debugging">Debugging</string>
     <string key="locale.settings.log.production">Production</string>
     <string key="locale.settings.log.critical">Critical Alerts (crashes) only</string>
@@ -238,6 +246,7 @@
     <string key="locale.settings.securityTitle">Security Settings</string>
     <string key="locale.settings.securityDescription">Use this panel to configure the manner in which security policies are enforced on this device.</string>
     <string key="locale.settings.passwordFormat">Password Store:</string>
+    <string key="locale.settings.passwordFormat.help">This setting controls the strength of password encryption for this tablet</string>
     <string key="locale.settings.allowLocalAuth">Authorization:</string>
     <string key="locale.settings.allowLocalAuthDescription">Allow local authorization, this will allow clients to log into the app even if the internet is down</string>
     <string key="locale.settings.security.sha256">SHA256 Hashing - Very Strong</string>
@@ -246,6 +255,7 @@
     <string key="locale.settings.save">Save Settings</string>
     <string key="locale.settings.cancel">Cancel</string>
     <string key="locale.settings.syncEvents">Synchronize On:</string>
+    <string key="locale.settings.syncEvents.help">This setting controls the synchronize events for this tablet</string>
     <string key="locale.settings.syncEvents.start">When the application starts</string>
     <string key="locale.settings.syncEvents.stop">When the application closes</string>
     <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
@@ -254,6 +264,7 @@
     <string key="locale.settings.pollEvent.network">Network</string>
     <string key="locale.settings.pollEvent.commit">Commit</string>
     <string key="locale.settings.pollInterval">Enable Polling:</string>
+    <string key="locale.settings.pollInterval.help">This setting controls the polling interval for this tablet</string>
     <string key="locale.settings.pollInterval.0">Never</string>
     <string key="locale.settings.pollInterval.1">Every 1 minute</string>
     <string key="locale.settings.pollInterval.5">Every 5 minutes</string>
@@ -287,6 +298,7 @@
     <string key="locale.settings.proxyAddress">Proxy Address</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
+    <string key="locale.settings.subscribe.help">This setting controls the subscribed facility for this tablet</string>
     <string key="locale.settings.security.audit">Audit Retention</string>
     <string key="locale.settings.security.audit.none">Do not retain audits (erase when app starts)</string>
     <string key="locale.settings.security.audit.48hr">Retain audits for 48 hrs</string>
@@ -741,7 +753,19 @@
     <string key="locale.settings.security.audit.week">kurejesha ukaguzi kwa wiki 1</string>
     <string key="locale.settings.security.audit.month">kurejesha ukaguzi kwa mwezi 1</string>
     <string key="locale.settings.security.audit.help">udhibiti huu kuweka muda gani kijiprogramu kushika uchaguzi ukaguzi wa ndani</string>
-
+    <string key="locale.settings.dataMode.synchronized">Synchronized</string>
+    <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
+    <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
+    <string key="locale.settings.dataMode.help">Kuweka hii udhibiti mode data kwa kompyuta hii</string>
+    <string key="locale.settings.syncEvents.help">Kuweka hii udhibiti matukio synchronize kwa kompyuta hii</string>
+    <string key="locale.settings.pollInterval.help">Kuweka hii udhibiti kupigia kura muda kwa kompyuta hii</string>
+    <string key="locale.settings.subscribe.help">Kuweka hii udhibiti kituo waliojisajili kwa kompyuta hii</string>
+    <string key="locale.settings.logMode.help">Kuweka hii udhibiti ngazi ya kumbukumbu undani kwa kompyuta hii</string>
+    <string key="locale.settings.passwordFormat.help">Kuweka hii udhibiti nguvu ya encryption password kwa kompyuta hii</string>
+    <string key="locale.settings.deviceName.help">Kuweka hii linadhibiti kifaa jina la kompyuta hii</string>
+    <string key="locale.settings.realmName.help">Kuweka hii udhibiti ulimwengu ID</string>
+    <string key="locale.settings.realmPort.help">Kuweka hii udhibiti nambari ya lango</string>
+    <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu katika vituo umejisajili kuingia</string>
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
     <string key="locale.sync.queue">Foleni</string>
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
