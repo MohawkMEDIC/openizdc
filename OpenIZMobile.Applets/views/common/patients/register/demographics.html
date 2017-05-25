@@ -59,7 +59,7 @@
                     <label class="control control--checkbox">
                         <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                         <input type="checkbox"
-                               ng-disabled="patient.tag.hasBirthCertificate"
+                               ng-disabled="patient.tag.hasBirthCertificate === 'True'"
                                ng-model="patient.dateOfBirthPrecision"
                                value="1"
                                name="approximateDob" />
