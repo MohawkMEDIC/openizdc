@@ -100,6 +100,7 @@
     <!-- Encounters -->
     <string key="locale.encounters.overdue">Overdue</string>
     <string key="locale.encounters.addEntry">Add Entry</string>
+    <string key="locale.encounters.actionsPerformed.title">Actions done this visit</string>
 
     <!-- Actions -->
     <string key="locale.action.submit">Submit</string>
@@ -589,6 +590,7 @@
     <string key="locale.encounters.overdue">Namba ya package</string>
     <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
     <string key="locale.encounters.errors.date">Tafadhali chagua tarehe halali</string>
+    <string key="locale.encounters.actionsPerformed.title">Vitu kukamilika miadi hii</string>
 
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
     <string key="locale.error.403.title">Iwapo kuna data mpya</string>
