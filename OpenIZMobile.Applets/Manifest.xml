@@ -1,19 +1,19 @@
 <!--
  - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
  -
- - 
- - Licensed under the Apache License, Version 2.0 (the "License"); you 
- - may not use this file except in compliance with the License. You may 
- - obtain a copy of the License at 
- - 
- - http://www.apache.org/licenses/LICENSE-2.0 
- - 
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
  - Unless required by applicable law or agreed to in writing, software
  - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- - License for the specific language governing permissions and limitations under 
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
  - the License.
- - 
+ -
  - User: justi
  - Date: 2016-7-17
  -->
@@ -59,7 +59,6 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
     <definition>/org.openiz.core/templates/act.concern.aefi.json</definition>
     <form>/org.openiz.core/views/templates/act.concern.aefi.html</form>
-
   </template>
   <template mnemonic="act.patientencounter.appointment">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.2.0</oid>
@@ -140,6 +139,7 @@
     <string key="locale.dialog.wait.text">Please wait</string>
 
     <!-- Login -->
+    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
     <string key="locale.security.login.helpText">Please log into OpenIZ to continue</string>
     <string key="locale.security.login.label.username">Username</string>
     <string key="locale.security.login.label.password">Password</string>
@@ -152,6 +152,7 @@
     <string key="locale.security.forgotPassword.mechanism">Method</string>
     <string key="locale.security.forgotPassword.challenge">Verify</string>
     <string key="locale.security.forgotPassword.changePassword">Set Password</string>
+
     <string key="locale.forgotPassword.userName.title">Enter Username</string>
     <string key="locale.forgotPassword.userName.help">Enter the name of the user for which you wish to reset the password.</string>
     <string key="locale.forgotPassword.userName.label">Username</string>
@@ -173,6 +174,7 @@
     <string key="locale.forgotPassword.error.onlineOnly">To reset your password you must be Online</string>
     <string key="locale.forgotPassword.error.validation">Your identity could not be validated</string>
     <string key="locale.forgotPassword.error.invalidCode">Your secret code was invalid</string>
+
     <string key="locale.security.errors.usernameRequired">Please enter a username</string>
     <string key="locale.security.errors.passwordRequired">Please enter a password</string>
     <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
@@ -208,12 +210,15 @@
     <string key="locale.settings.realmPort.help">This setting controls the port number</string>
     <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
+
     <string key="locale.settings.dataMode">Data Mode:</string>
     <string key="locale.settings.dataMode.synchronized">Synchronized</string>
     <string key="locale.settings.dataMode.onlineOnly">Online Only</string>
     <string key="locale.settings.dataMode.offlineOnly">Offline Only</string>
     <string key="locale.settings.dataMode.help">This setting controls the data mode for this tablet</string>
+
     <string key="locale.settings.enableTracing">Enable Tracing</string>
+
     <string key="locale.settings.logTitle">Log Settings</string>
     <string key="locale.settings.logDescription">OpenIZ Disconnected Client keeps application log files which can be sent to a centralized diagnosis server in the case of application crash. Use this panel to configure the verbosity of those logs</string>
     <string key="locale.settings.logMode">Log Detail:</string>
@@ -225,6 +230,7 @@
     <string key="locale.settings.log.informational">Verbose</string>
     <string key="locale.settings.log.verbose">Very Verbose</string>
     <string key="locale.settings.log.error">Errors Only</string>
+
     <string key="locale.settings.log.warning">Errors and Warnings Only</string>
     <string key="locale.settings.securityTitle">Security Settings</string>
     <string key="locale.settings.securityDescription">Use this panel to configure the manner in which security policies are enforced on this device.</string>
@@ -237,15 +243,18 @@
     <string key="locale.settings.security.plain">Plaintext (not-recommended)</string>
     <string key="locale.settings.save">Save Settings</string>
     <string key="locale.settings.cancel">Cancel</string>
+
     <string key="locale.settings.syncEvents">Synchronize On:</string>
     <string key="locale.settings.syncEvents.help">This setting controls the synchronize events for this tablet</string>
     <string key="locale.settings.syncEvents.start">When the application starts</string>
     <string key="locale.settings.syncEvents.stop">When the application closes</string>
     <string key="locale.settings.syncEvents.commit">Everytime new data is available</string>
     <string key="locale.settings.syncEvents.ip">When the internet status changes</string>
+
     <string key="locale.settings.pollEvent.start">Start</string>
     <string key="locale.settings.pollEvent.network">Network</string>
     <string key="locale.settings.pollEvent.commit">Commit</string>
+
     <string key="locale.settings.pollInterval">Enable Polling:</string>
     <string key="locale.settings.pollInterval.help">This setting controls the polling interval for this tablet</string>
     <string key="locale.settings.pollInterval.0">Never</string>
@@ -254,6 +263,7 @@
     <string key="locale.settings.pollInterval.15">Every 15 minutes</string>
     <string key="locale.settings.pollInterval.30">Every 30 minutes</string>
     <string key="locale.settings.pollInterval.push">When new data is available</string>
+
     <string key="locale.settings.leaveRealm">Leave</string>
     <string key="locale.settings.joinRealm">Join</string>
     <string key="locale.settings.apply">Apply</string>
@@ -273,7 +283,6 @@
     <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
     <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
     <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
-    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
     <string key="locale.settings.networkTitle">Network Settings</string>
     <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
     <string key="locale.settings.useProxy">Use a Proxy</string>
@@ -282,13 +291,16 @@
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <string key="locale.settings.subscribe.help">This setting controls the subscribed facility for this tablet</string>
+
     <string key="locale.settings.security.audit">Audit Retention</string>
     <string key="locale.settings.security.audit.none">Do not retain audits (erase when app starts)</string>
     <string key="locale.settings.security.audit.48hr">Retain audits for 48 hrs</string>
     <string key="locale.settings.security.audit.week">Retain audits for 1 week</string>
     <string key="locale.settings.security.audit.month">Retain audits for 1 month</string>
     <string key="locale.settings.security.audit.help">This setting controls how long the applet will keep an audit trail locally</string>
+
     <string key="locale.settings.onlySubscribedFacilities">Only allow people in the subscribed facilities to login</string>
+
     <!-- Preferences -->
     <string key="locale.preferences.changePassword">Save</string>
     <string key="locale.preferences.username">Username</string>
@@ -318,7 +330,7 @@
     <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
     <string key="locale.preferences.save.success">Profile updated successfully</string>
     <string key="locale.preferences.save.failure">Unable to update profile</string>
-    
+
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
     <string key="locale.legend.completed">Completed</string>
@@ -343,7 +355,7 @@
     <string key="locale.reports.executeWait">Generating report...</string>
     <string key="locale.reports.error.locked">The database file this relies on is locked. There may be a background process using the database file. Please wait a few minutes and try your request again.</string>
     <string key="locale.reports.error.required">Parameter is required</string>
-    
+
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
@@ -395,10 +407,12 @@
     <string key="locale.about.workLoad">Threadpool Use</string>
     <string key="locale.about.versions.verified"> Verified</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
+
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>
     <string key="locale.alerts.newAlerts">New alerts</string>
+
     <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
     <string key="locale.network.online">Online</string>
@@ -438,6 +452,7 @@
     <string key="locale.sync.conflict">Conflict</string>
     <string key="locale.sync.retry">Retry Conflicted</string>
     <string key="locale.sync.force">Synchronize Now</string>
+
     <string key="locale.sync.resource.AlertMessage">Alert Messages</string>
     <string key="locale.sync.resource.ConceptSet">Terminology Sets</string>
     <string key="locale.sync.resource.AssigningAuthority">Identifier Types</string>
@@ -460,6 +475,7 @@
     <string key="locale.sync.resource.QuantityObservation">Quantity Observation</string>
     <string key="locale.sync.resource.TextObservation">Text Observation</string>
     <string key="locale.sync.resource.TemplateDefinition">Template Definition</string>
+
     <string key="locale.audit.action">Action</string>
     <string key="locale.audit.class">Operation</string>
     <string key="locale.audit.date">Timestamp</string>
@@ -485,6 +501,7 @@
     <string key="AUTH_TFA">Idadi ya Processor kwenye CPU</string>
     <string key="err_generalnull">Runtime Environment</string>
     <string key="invalid_grant">Maelekezo ya Kupakua data</string>
+
     <string key="locale.about.environment.cpu">Utumaji wa fomu ni batili</string>
     <string key="locale.about.environment.mem">Faili data</string>
     <string key="locale.about.environment.os">Hapana</string>
@@ -521,6 +538,7 @@
     <string key="locale.about.updateToast.title">Updates Inapatikana</string>
     <string key="locale.about.updateToast.text">Habari njema! Kuna toleo jipya la programu inapatikana. Gonga hapa ili kwenda kwenye ukurasa update.</string>
     <string key="locale.about.workLoad">ThreadPool Matumizi</string>
+
     <string key="locale.action.acknowledge">Siwezi kuendelea kwasababu ya hitilafu hii</string>
     <string key="locale.action.back">Hii namba ni batili</string>
     <string key="locale.action.cancel">kufuta</string>
@@ -539,19 +557,23 @@
     <string key="locale.action.view">Programu yako imeuganishwa sasa</string>
     <string key="locale.actions.save">Inayofata</string>
     <string key="locale.action.run">kukimbia</string>
+
     <string key="locale.alert.updateSuccessful">Futa</string>
     <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
     <string key="locale.alerts.alerts">Ninaweza kuendelea licha ya hii hitilafu ingawa inaingilia ufanisi wangu</string>
     <string key="locale.alerts.details">Bonyeza hapa kuongeza kipindi chako</string>
     <string key="locale.alerts.newAlerts">Tafadhali ingiza neno siri la sasa</string>
     <string key="locale.alerts.noneSelected">Hifadhi</string>
+
     <string key="locale.common.invalidForm">Neno siri Local Admin:</string>
     <string key="locale.common.na">Toleo la Mfumo wa uendeshaji </string>
     <string key="locale.common.no">Hapana</string>
     <string key="locale.common.of">Kubadili neno siri, mfumo unahitaji kukutambua. Chagua njia ya uthibitisho.</string>
     <string key="locale.common.unknown">haijulikani</string>
     <string key="locale.common.yes">Imekamilika</string>
+
     <string key="locale.confirm.cascade">Je, unataka kurudisha hifadhi taarifa katika hali ya nyuma? Hiki kitendo kitafuta taarifa za sasa na kurudisha hifadhi katika hali ya mwisho ya uhifadhi. Endelea tu iwapo una uhakika.</string>
+
     <string key="locale.debug.bugReport">Kubali kurudisha hifadhidata tarehe ya awali</string>
     <string key="locale.debug.reportSubmitted">Sasisha</string>
     <string key="locale.debug.reportTicketId">Ambatanisha taarifa ya programu(matoleo, faili kumbukumbu, maelekezo n.k)</string>
@@ -560,17 +582,21 @@
     <string key="locale.debug.reproductionPlaceholder">Jina</string>
     <string key="locale.debug.sendLogs">Tafadhali ingiza jina la mtumiaji</string>
     <string key="locale.debug.submit">Acha</string>
+
     <string key="locale.dialog.wait.text">Maelekezo ya faili kumbukumbu</string>
+
     <string key="locale.encounters.addEntry">Jina la mtumiaji</string>
     <string key="locale.encounters.overdue">Namba ya package</string>
     <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
     <string key="locale.encounters.errors.date">Tafadhali chagua tarehe halali</string>
+
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
     <string key="locale.error.403.title">Iwapo kuna data mpya</string>
     <string key="locale.error.404.description">Rekebisha</string>
     <string key="locale.error.404.title">Hewani</string>
     <string key="locale.error.500.description">Kila dakika 15</string>
     <string key="locale.error.500.title">Ingia</string>
+
     <string key="locale.error.bug.description">Thibitisha Kufuta data</string>
     <string key="locale.error.bug.input.blocker">Toa</string>
     <string key="locale.error.bug.input.description">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utahifadhi na kusawazisha taarifa kwenye hifadhi kuu</string>
@@ -581,6 +607,7 @@
     <string key="locale.error.bug.input.title">Ingiza jina la mtumiaji</string>
     <string key="locale.error.bug.input.trivial">Jina la mtumiaji</string>
     <string key="locale.error.bug.title">Aina data:</string>
+
     <string key="locale.forgotPassword.challenge.placeholder">Toa kutoka hifadhi mama</string>
     <string key="locale.forgotPassword.challenge.resend">Ukubwa wa faili kumbukumbu</string>
     <string key="locale.forgotPassword.challenge.response">neno siri</string>
@@ -602,20 +629,26 @@
     <string key="locale.forgotPassword.error.onlineOnly">Ili kuweka upya nenosiri lako lazima uwe mtandaoni</string>
     <string key="locale.forgotPassword.error.validation">utambulisho yako haikuweza kuthibitishwa</string>
     <string key="locale.forgotPassword.error.invalidCode">Nambari yako ya siri ni batili</string>
+
     <string key="locale.legend.completed">Tafuta</string>
     <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.legend.upcoming">Tahadhari</string>
+
     <string key="locale.login.doLogin">Faili kumbukumbu</string>
     <string key="locale.login.header">Ruhusu idhini ya kuingia kupitia kifaa pekee, hii itaruhusu kuingia kwenye mfumo iwapo hakuna intaneti</string>
     <string key="locale.login.password">Neno siri</string>
     <string key="locale.login.username">Hii hitilafu ni kikwazo kikubwa na siwezi kuendelea</string>
+
     <string key="locale.network.offline">Maelezo</string>
     <string key="locale.network.online">Fafanua hitilafu:</string>
+
     <string key="locale.openiz.info">Haipatikani</string>
+
     <string key="locale.patient.schedule.none">uteuzi hakuna imepangwa</string>
     <string key="locale.patient.search.noresults">Imetokea hitilafu kwenye kuleta ukurasa. Tafadhali pitia faili kumbukumbu kwenye kifaa.</string>
     <string key="locale.patient.search.noduplicates">Hakuna Nakili Kupatikana</string>
     <string key="locale.patient.search.header.mother">M</string>
+
     <string key="locale.preferences.changePassword">Badilisha neno la sir.</string>
     <string key="locale.preferences.confirm">Umetumiwa "siri", ingiza "siri" hapo chini. Kama hujatumiwa, bonyeza "tuma" upate "siri" mpya</string>
     <string key="locale.preferences.email">Tayari</string>
@@ -639,16 +672,20 @@
     <string key="locale.preferences.recoveryOptions.success">chaguo za kurejesha mafanikio iliyopita</string>
     <string key="locale.preferences.save.success">wasifu imesasishwa</string>
     <string key="locale.preferences.save.failure">Haikuweza kusasisha wasifu</string>
+
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
+
     <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
     <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
     <string key="locale.security.errors.unableToResetPassword">Hitilafu imetokea. Tafadhali pitia faili kumbukumbu.</string>
     <string key="locale.security.errors.usernameRequired">Tafadhali ingiza jina la mtumiaji</string>
+
     <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>
     <string key="locale.security.forgotPassword.changePassword">Hii barua pepe ni batili</string>
     <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka kwenye realm?</string>
     <string key="locale.security.forgotPassword.title">Maelekezo</string>
     <string key="locale.security.forgotPassword.userName">Imepita muda</string>
+
     <string key="locale.security.login.button.forgotPassword">Mwandishi</string>
     <string key="locale.security.login.button.login">Kata</string>
     <string key="locale.security.login.helpText">Akaunti imefungwa</string>
@@ -656,6 +693,7 @@
     <string key="locale.security.login.label.username">Sasisho limekamilika</string>
     <string key="locale.security.login.placeholder.password">Maelezo ya faili data</string>
     <string key="locale.security.login.placeholder.username">Umesahau neno siri</string>
+
     <string key="locale.session.aboutToExpirePrefix">Jiunge</string>
     <string key="locale.session.aboutToExpireSuffix">Kila dakika 30</string>
     <string key="locale.session.expiration">Jina la ukoo</string>
@@ -665,6 +703,7 @@
     <string key="locale.settings.cancel">Simu/Barua pepe</string>
     <string key="locale.settings.confirm.leaveRealm">Kwa ufupi:</string>
     <string key="locale.settings.createLocalAdmin">Neno siri jipya</string>
+
     <string key="locale.settings.data.pull">Fuata hatua zile zile kabla ya kupata hii hitilafu.</string>
     <string key="locale.settings.data.purge">Jina la mtumiaji na neno siri ni batili</string>
     <string key="locale.settings.data.purge.backup">Hifadhi ya neno siri:</string>
@@ -677,6 +716,7 @@
     <string key="locale.settings.dataMode">Ingia</string>
     <string key="locale.settings.dataTitle">Kwa kumbukumbu, namba ya tiketi yako ni: </string>
     <string key="locale.settings.data.compact">kuongeza hifadhidata</string>
+
     <string key="locale.settings.deviceName">Ingia</string>
     <string key="locale.settings.enableTracing">Tatizo lako limeripotiwa</string>
     <string key="locale.settings.error.noRealm">Programu ikifungwa </string>
@@ -684,6 +724,7 @@
     <string key="locale.settings.leaveRealm">Tuma hitilafu</string>
     <string key="locale.settings.localAdminName">Hitilafu kwenye seva</string>
     <string key="locale.settings.localAdminPassword">Jina la mtumiaji</string>
+
     <string key="locale.settings.logTitle">Ingia Mipangilio</string>
     <string key="locale.settings.log.debugging">utatuzi</string>
     <string key="locale.settings.log.production">uzalishaji</string>
@@ -695,53 +736,68 @@
     <string key="locale.settings.log.warning">Neno siri</string>
     <string key="locale.settings.logDescription">Chaguzi za kupata neno siri</string>
     <string key="locale.settings.logMode">Simu ya mkononi</string>
+
     <string key="locale.settings.networkDescription">Akaunti inahitaji uthibitisho wa aina mbili</string>
     <string key="locale.settings.networkTitle">Neno siri la sasa</string>
+
     <string key="locale.settings.passwordFormat">Tafadhali ingiza neno siri</string>
     <string key="locale.settings.passwordNoMatch">Hewani pekee</string>
+
     <string key="locale.settings.pollEvent.commit">Imepita muda</string>
     <string key="locale.settings.pollEvent.network">SHA1 Hashing - Njia ya utangamano</string>
     <string key="locale.settings.pollEvent.start">Haihusu</string>
+
     <string key="locale.settings.pollInterval">Progamu ikianza</string>
+    <string key="locale.settings.pollInterval.help">Kuweka hii udhibiti kupigia kura muda kwa kompyuta hii</string>
     <string key="locale.settings.pollInterval.0">Realm ni sehemu ya usalama ambayo OpenIZ imejiunga. Kazi ya realm ni kuratibu maelekezo ya usalama, usawazishaji wa taarifa na kazi za utawala wa mfumo kama vile kamusi kompyuta</string>
     <string key="locale.settings.pollInterval.1">Hatua za kurudia</string>
     <string key="locale.settings.pollInterval.15">Tahadhari mpya</string>
     <string key="locale.settings.pollInterval.30">Njia</string>
     <string key="locale.settings.pollInterval.5">http://proxy:8888/</string>
     <string key="locale.settings.pollInterval.push">Ninaweza kuendelea licha ya hii hitilafu</string>
+
     <string key="locale.settings.proxyAddress">Ambatanisha faili kumbukumbu</string>
     <string key="locale.settings.proxyAddressPlaceHolder">Tengeneza neno siri</string>
+
     <string key="locale.settings.realmDescription">Ruhusu ufatiliaji wa mfumo(tracing)</string>
     <string key="locale.settings.realmName">Haijulikani</string>
     <string key="locale.settings.realmTitle">Maelezo mengi sana</string>
+
     <string key="locale.settings.save">Kitendo hakiruhusiwi</string>
+
     <string key="locale.settings.security.plain">Tunza kila kitu(inasababisha faili kumbukumbu kuwa kubwa)</string>
     <string key="locale.settings.security.sha1">Kubali</string>
     <string key="locale.settings.security.sha256">Kila dakika 5</string>
     <string key="locale.settings.securityDescription">Tarehe ya mwisho ya Uandishi</string>
     <string key="locale.settings.securityTitle">Nyuma</string>
+
     <string key="locale.settings.status.duplicateName">Tahadhari haijachaguliwa, chaugua moja wapo kuona maelezo yake.</string>
     <string key="locale.settings.status.joinRealm">Kila dakika 1</string>
+
     <string key="locale.settings.subscribe">Ingiza kodi ya siri</string>
+
     <string key="locale.settings.syncEvents">Tumia proxy</string>
+    <string key="locale.settings.syncEvents.help">Kuweka hii udhibiti matukio synchronize kwa kompyuta hii</string>
     <string key="locale.settings.syncEvents.commit">Angalia</string>
     <string key="locale.settings.syncEvents.ip">Kuna sehemu nyingine zinazohusu hili chaguo. Je, ungependa kusasisha hizi sehemu pia?</string>
     <string key="locale.settings.syncEvents.start">Kubali</string>
     <string key="locale.settings.syncEvents.stop">Mtandao</string>
+
     <string key="locale.settings.useProxy">Thibitisha neno siri</string>
     <string key="locale.settings.useProxyDescription">Mpangilio Usalama wa mfumo</string>
+
     <string key="locale.settings.security.audit">retention ukaguzi</string>
     <string key="locale.settings.security.audit.none">wala kurejesha ukaguzi (kufuta wakati programu kuanza)</string>
     <string key="locale.settings.security.audit.48hr">kurejesha ukaguzi kwa 48 hrs</string>
     <string key="locale.settings.security.audit.week">kurejesha ukaguzi kwa wiki 1</string>
     <string key="locale.settings.security.audit.month">kurejesha ukaguzi kwa mwezi 1</string>
     <string key="locale.settings.security.audit.help">udhibiti huu kuweka muda gani kijiprogramu kushika uchaguzi ukaguzi wa ndani</string>
+
     <string key="locale.settings.dataMode.synchronized">Synchronized</string>
     <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
     <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
     <string key="locale.settings.dataMode.help">Kuweka hii udhibiti mode data kwa kompyuta hii</string>
-    <string key="locale.settings.syncEvents.help">Kuweka hii udhibiti matukio synchronize kwa kompyuta hii</string>
-    <string key="locale.settings.pollInterval.help">Kuweka hii udhibiti kupigia kura muda kwa kompyuta hii</string>
+
     <string key="locale.settings.subscribe.help">Kuweka hii udhibiti kituo waliojisajili kwa kompyuta hii</string>
     <string key="locale.settings.logMode.help">Kuweka hii udhibiti ngazi ya kumbukumbu undani kwa kompyuta hii</string>
     <string key="locale.settings.passwordFormat.help">Kuweka hii udhibiti nguvu ya encryption password kwa kompyuta hii</string>
@@ -749,32 +805,44 @@
     <string key="locale.settings.realmName.help">Kuweka hii udhibiti ulimwengu ID</string>
     <string key="locale.settings.realmPort.help">Kuweka hii udhibiti nambari ya lango</string>
     <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu katika vituo umejisajili kuingia</string>
+
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
     <string key="locale.sync.queue">Foleni</string>
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
     <string key="locale.sync.conflicted">migogoro seva na meza</string>
-    <string key="locale.sync.outbound">Mitaa Server (kikasha toezi)</string>
     <string key="locale.sync.inbound">seva ili ndani (Inbox)</string>
+    <string key="locale.sync.outbound">Mitaa Server (kikasha toezi)</string>
     <string key="locale.sync.admin">utawala (ukaguzi, watumiaji, na kadhalika)</string>
     <string key="locale.sync.objects">Vitu katika foleni</string>
     <string key="locale.sync.resolve.resolve">Tatua</string>
     <string key="locale.sync.resolve.takeMine">Upachikaji Server</string>
+    <string key="locale.sync.conflict">Migogoro</string>
+    <string key="locale.sync.retry">Jaribu tena umekinzana</string>
+    <string key="locale.sync.force">Sawazisha Sasa</string>
+
     <string key="locale.sync.batchForceConfirm">Unakaribia kutekeleza kitendo itajaribu nguvu IMS server kukubali data. Hii inaweza overwrite mabadiliko ya awali yaliyotolewa na watumiaji wengine. Inapendekezwa si kufanya hatua hiyo isipokuwa kama una uhakika data ni sahihi. Je, unataka kuendelea?</string>
     <string key="locale.sync.forceConfirm">Unakaribia kutekeleza hatua ambayo nguvu IMS server kukubali mabadiliko hayo. Hii inaweza kuondoa mabadiliko mengine ya mtumiaji. Una uhakika unataka kuendelea?</string>
     <string key="locale.sync.deleteConfirm">Una uhakika unataka kupuuza kutuma data hii kwa server? Kama data ni kuingiza itakuwa kuwepo tu kwenye kompyuta yako ya ndani na si kwenye seva.</string>
     <string key="locale.sync.deleteConfirm.insert">bidhaa wewe ni kufuta mara ingiza, ukiendelea data chochote zilizomo katika kuingiza haitakuwa kwenye seva. Una uhakika unataka kuendelea?</string>
+
+    <string key="locale.sync.resolve.resolve">Tatua</string>
+    <string key="locale.sync.resolve.takeMine">Upachikaji Server</string>
     <string key="locale.sync.resolve.title">kutatua migogoro</string>
-    <string key="locale.sync.queue.date">awali ya tarehe ya kuwasilisha</string>
     <string key="locale.sync.resolve.reason">sababu hii kitu ilikataliwa</string>
     <string key="locale.sync.resolve.data">Data kwamba alikuwa alijaribu kuwasilishwa</string>
     <string key="locale.sync.resolve.leaveServer">kuondoka server version</string>
+
+    <string key="locale.sync.queue">Foleni</string>
+    <string key="locale.sync.queue.date">awali ya tarehe ya kuwasilisha</string>
     <string key="locale.sync.queue.id">ID#</string>
     <string key="locale.sync.queue.content">aina ya data</string>
     <string key="locale.sync.queue.operation">Operesheni</string>
     <string key="locale.sync.queue.action">hatua</string>
+
     <string key="locale.sync.conflict">Migogoro</string>
     <string key="locale.sync.retry">Jaribu tena umekinzana</string>
     <string key="locale.sync.force">Sawazisha Sasa</string>
+
     <string key="locale.sync.resource.AlertMessage">ujumbe wa arifa</string>
     <string key="locale.sync.resource.ConceptSet">seti istilahi</string>
     <string key="locale.sync.resource.AssigningAuthority">Kitambulisho Aina</string>
@@ -797,6 +865,7 @@
     <string key="locale.sync.resource.QuantityObservation">uchunguzi kiasi</string>
     <string key="locale.sync.resource.TextObservation">uchunguzi wa maandishi</string>
     <string key="locale.sync.resource.TemplateDefinition">Kigezo Ufafanuzi</string>
+
     <string key="locale.audit.title">Mitaa kituo cha ukaguzi</string>
     <string key="locale.audit.action">hatua</string>
     <string key="locale.audit.class">Operesheni</string>
@@ -807,7 +876,7 @@
     <string key="locale.audit.detail.title">maelezo ya ukaguzi</string>
     <string key="locale.audit.actors">watendaji</string>
     <string key="locale.audit.objects">Vitu</string>
-  
+
     <!-- Reports -->
     <string key="locale.reports.title">Kituo Ripoti Center</string>
     <string key="locale.reports.info.name">jina</string>
