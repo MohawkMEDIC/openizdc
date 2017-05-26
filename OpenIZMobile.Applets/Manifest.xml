@@ -55,23 +55,6 @@
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.4.1</oid>
     <definition>/org.openiz.core/templates/act.observation.causeofdeath.json</definition>
   </template>
-  <template mnemonic="act.transferstock">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.0</oid>
-    <definition>/org.openiz.core/templates/act.transferstock.json</definition>
-  </template>
-  <template mnemonic="act.adjuststock">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.1</oid>
-    <definition>/org.openiz.core/templates/act.adjuststock.json</definition>
-  </template>
-  <template mnemonic="act.countstock">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.2</oid>
-    <definition>/org.openiz.core/templates/act.countstock.json</definition>
-  </template>
-  <template mnemonic="act.neworder">
-    <oid>1.3.6.1.4.1.33349.3.1.5.9.4.3.3</oid>
-    <definition>/org.openiz.core/templates/act.neworder.json</definition>
-  </template>
-
   <template mnemonic="act.concern.aefi">
     <oid>1.3.6.1.4.1.33349.3.1.5.9.4.5.0</oid>
     <definition>/org.openiz.core/templates/act.concern.aefi.json</definition>
