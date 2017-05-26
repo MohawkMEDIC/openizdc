@@ -230,8 +230,10 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.#ctor(System.Nullable{System.Guid},OpenIZ.Core.Model.Entities.Entity)">
             <summary>
-            Act participation relationship between <paramref name="source"/> and <paramref name="player"/>
+            Act participation relationship between <paramref name="source" /> and <paramref name="player" />
             </summary>
+            <param name="roleType">Type of the role.</param>
+            <param name="player">The player.</param>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.#ctor(System.Nullable{System.Guid},System.Nullable{System.Guid})">
             <summary>

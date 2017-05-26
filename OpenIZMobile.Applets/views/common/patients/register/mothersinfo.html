@@ -78,7 +78,7 @@
         <div class="col-xs-9 col-sm-4">
             <div class="input-group" ng-class="{ 'has-error': (mothersInfoForm.mothersIdentifierValue.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.required}">
                 <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
-                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"
+                        bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:data-validation="ValidationRegex" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"
                         ng-disabled="motherUnknown" >
                 </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
