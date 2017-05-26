@@ -127,7 +127,12 @@
                             </select>
                         </td>
                         <td>
-                            <input class="form-control" type="date" ng-model="audit.queryTimestamp" ng-change="audit.query._offset = 0; audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)" />
+                            <input class="form-control"
+                                   type="date"
+                                   ng-model="audit.queryTimestamp"
+                                   ng-change="audit.query._offset = 0; audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)"
+                                   ng-max="page.maxEventTime"
+                                   max="{{ page.maxEventTime | date: 'yyyy-MM-dd' }}"/>
                         </td>
                         <td>
                             <select class="form-control" 
