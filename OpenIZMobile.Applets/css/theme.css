@@ -15,7 +15,7 @@
     }
 }
 @media screen and (orientation:portrait) {
-    .hidden-xs, .hidden-portrait {
+    .hidden-portrait {
         display:none !important;
     }
     .full-width-portrait{
