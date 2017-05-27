@@ -339,6 +339,7 @@
     <string key="locale.legend.overdue">Overdue</string>
     <string key="locale.legend.completed">Completed</string>
     <string key="locale.legend.upcoming">Upcoming</string>
+    <string key="locale.legend.appointment">Appointment</string>
 
     <!-- Encounters -->
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
@@ -638,6 +639,7 @@
     <string key="locale.legend.completed">Tafuta</string>
     <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.legend.upcoming">Tahadhari</string>
+    <string key="locale.legend.appointment">uteuzi</string>
 
     <string key="locale.login.doLogin">Faili kumbukumbu</string>
     <string key="locale.login.header">Ruhusu idhini ya kuingia kupitia kifaa pekee, hii itaruhusu kuingia kwenye mfumo iwapo hakuna intaneti</string>
