@@ -331,6 +331,8 @@
     <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
     <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
     <string key="locale.preferences.save.success">Profile updated successfully</string>
+    <string key="locale.preferences.errors.givenNameRequired">Please enter a given name</string>
+    <string key="locale.preferences.errors.familyNameRequired">Please enter a surname</string>
     <string key="locale.preferences.save.failure">Unable to update profile</string>
 
     <!-- Chart Legend -->
@@ -675,6 +677,8 @@
     <string key="locale.preferences.recoveryOptions.success">chaguo za kurejesha mafanikio iliyopita</string>
     <string key="locale.preferences.save.success">wasifu imesasishwa</string>
     <string key="locale.preferences.save.failure">Haikuweza kusasisha wasifu</string>
+    <string key="locale.preferences.errors.givenNameRequired">Tafadhali ingiza jina aliyopewa</string>
+    <string key="locale.preferences.errors.familyNameRequired">Tafadhali weka jina</string>
 
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
 

@@ -22,11 +22,17 @@
     <div class="container-fluid">
         <div class="form-group">
             <label class="col-xs-3 col-sm-2 control-label" for="givenNameInput">{{ 'locale.preferences.givenName' | i18n }}</label>
-            <div class="col-xs-9 col-sm-9"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="givenNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Given" /> </div>
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.givenNameInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.givenNameInput.$invalid }">
+                <input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" id="givenNameInput" name="givenNameInput" ng-required="true" ng-model="editObject.entity.name.OfficialRecord.component.Given"/>
+                <p ng-show="userProfileForm.givenNameInput.$error.required" class="help-block text-danger">{{ 'locale.preferences.errors.givenNameRequired' | i18n }}</p>
+            </div>
         </div>
         <div class="form-group">
             <label class="col-xs-3 col-sm-2 control-label" for="familyNameInput">{{ 'locale.preferences.familyName' | i18n }}</label>
-            <div class="col-xs-9 col-sm-9"><input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" name="familyNameInput" ng-model="editObject.entity.name.OfficialRecord.component.Family" /> </div>
+            <div class="col-xs-9 col-sm-9" ng-class="{ 'has-error': (userProfileForm.familyNameInput.$touched || userProfileForm.$submitted) &amp;&amp; userProfileForm.familyNameInput.$invalid }">
+                <input type="text" class="tagEntry form-control" oiz-tag="oiz-tag" id="familyNameInput" name="familyNameInput" ng-required="true" ng-model="editObject.entity.name.OfficialRecord.component.Family"/>
+                <p ng-show="userProfileForm.familyNameInput.$error.required" class="help-block text-danger">{{ 'locale.preferences.errors.familyNameRequired' | i18n }}</p>
+            </div>
         </div>
         <!--<div class="form-group" ng-repeat="(use,tel) in editObject.entity.telecom">
             <label class="col-xs-2 control-label" for="telephone">{{ 'locale.preferences.telephone' | i18n }}</label>
