@@ -27,6 +27,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using OpenIZ.Core.Model.AMI.Auth;
+using OpenIZ.Core.Model.Security;
 
 namespace OpenIZ.Mobile.Core.Services
 {
@@ -106,6 +108,11 @@ namespace OpenIZ.Mobile.Core.Services
     /// </summary>
     public interface IAdministrationIntegrationService : IIntegrationService
     {
-
+		/// <summary>
+		/// Gets the security user.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the security user for the given key or null if no security user is found.</returns>
+		SecurityUser GetSecurityUser(Guid key);
     }
 }

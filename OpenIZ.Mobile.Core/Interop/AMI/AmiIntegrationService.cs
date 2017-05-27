@@ -31,6 +31,7 @@ using System.Reflection;
 using System.Security.Principal;
 using OpenIZ.Core.Diagnostics;
 using OpenIZ.Core.Http;
+using OpenIZ.Core.Model.AMI.Auth;
 using OpenIZ.Mobile.Core.Configuration;
 using OpenIZ.Mobile.Core.Security;
 using OpenIZ.Messaging.AMI.Client;
@@ -245,5 +246,27 @@ namespace OpenIZ.Mobile.Core.Interop.AMI
                 throw;
             }
         }
+
+		/// <summary>
+		/// Gets the security user.
+		/// </summary>
+		/// <param name="key">The key.</param>
+		/// <returns>Returns the security user for the given key or null if no security user is found.</returns>
+		public SecurityUser GetSecurityUser(Guid key)
+	    {
+		    try
+		    {
+			    var amiClient = new AmiServiceClient(ApplicationContext.Current.GetRestClient("ami"));
+			    amiClient.Client.Requesting += IntegrationQueryOptions.CreateRequestingHandler(null);
+			    amiClient.Client.Credentials = this.GetCredentials(amiClient.Client);
+
+			    return amiClient.GetUser(key.ToString())?.User;
+		    }
+		    catch (Exception ex)
+		    {
+			    this.m_tracer.TraceError("Error contacting AMI: {0}", ex);
+			    throw;
+		    }
+		}
     }
 }
