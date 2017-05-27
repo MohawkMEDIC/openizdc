@@ -153,6 +153,7 @@
     <string key="locale.security.forgotPassword.mechanism">Method</string>
     <string key="locale.security.forgotPassword.challenge">Verify</string>
     <string key="locale.security.forgotPassword.changePassword">Set Password</string>
+    <string key="locale.security.forgotPassword.onlineOnly">Forgot password is available online only</string>
 
     <string key="locale.forgotPassword.userName.title">Enter Username</string>
     <string key="locale.forgotPassword.userName.help">Enter the name of the user for which you wish to reset the password.</string>
@@ -687,6 +688,7 @@
     <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka kwenye realm?</string>
     <string key="locale.security.forgotPassword.title">Maelekezo</string>
     <string key="locale.security.forgotPassword.userName">Imepita muda</string>
+    <string key="locale.security.forgotPassword.onlineOnly">Umesahau nywila inapatikana online tu</string>
 
     <string key="locale.security.login.button.forgotPassword">Mwandishi</string>
     <string key="locale.security.login.button.login">Kata</string>
