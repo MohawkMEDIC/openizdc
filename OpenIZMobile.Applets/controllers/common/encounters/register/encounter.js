@@ -216,7 +216,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     };
 
     scope.hasCauseOfDeath = scope.hasCauseOfDeath || function (encounter) {
-        return encounter.relationship.HasComponent.some(x => x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath");
+        return encounter.relationship.HasComponent.some(x => x.targetModel && x.targetModel.templateModel && x.targetModel.templateModel.mnemonic === "act.observation.causeofdeath");
     }
 
     scope.addCauseOfDeath = scope.addCauseOfDeath || function (patient, act, encounter) {
