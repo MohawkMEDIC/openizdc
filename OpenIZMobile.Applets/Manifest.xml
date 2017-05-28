@@ -122,6 +122,7 @@
     <string key="locale.action.run">Run</string>
     <string key="locale.action.confirm">Confirm</string>
     <string key="locale.action.onlineOnly">Online Only</string>
+    <string key="locale.action.clear">Clear</string>
 
     <!-- Alerts -->
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
@@ -562,6 +563,7 @@
     <string key="locale.action.view">Programu yako imeuganishwa sasa</string>
     <string key="locale.actions.save">Inayofata</string>
     <string key="locale.action.run">kukimbia</string>
+    <string key="locale.action.clear">wazi</string>
 
     <string key="locale.alert.updateSuccessful">Futa</string>
     <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>

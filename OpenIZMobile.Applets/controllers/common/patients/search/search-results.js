@@ -98,7 +98,12 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             for (var k in Object.keys(scope.search.query))
             {
                 var key = Object.keys(scope.search.query)[k];
-                if (key.startsWith("_")) continue;
+
+                if (key === undefined)
+                    continue;
+
+                if (key.startsWith("_"))
+                    continue;
 
                 if (Array.isArray(scope.search.query[key])) {
                     for (var i in scope.search.query[key])
