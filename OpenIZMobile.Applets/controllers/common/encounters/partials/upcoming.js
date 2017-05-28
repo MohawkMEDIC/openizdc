@@ -40,25 +40,36 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
             maxDate: new Date().addDays(90),
             continueWith: function (proposals) {
 
-                // Grab the first appointment
-                $scope.appointments = proposals.item;
-                $scope.appointments.sort(
-                          function (a, b) {
-                              return a.actTime > b.actTime ? 1 : -1;
-                          }
-                        );
-
-                for (var i in $scope.appointments) {
-                    if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
-                        $scope.appointments[i].startTime = $rootScope.page.loadTime
-                    }
-                    if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
-                        $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
+                if (!proposals.item)
+                {
+                    $scope.appointments = [];
                 }
+                else
+                {
+                    // Grab the first appointment
+                    $scope.appointments = proposals.item;
+                    $scope.appointments.sort(
+                        function (a, b)
+                        {
+                            return a.actTime > b.actTime ? 1 : -1;
+                        }
+                    );
+
+                    for (var i in $scope.appointments)
+                    {
+                        if ($scope.appointments[i].startTime < $rootScope.page.loadTime)
+                        {
+                            $scope.appointments[i].startTime = $rootScope.page.loadTime
+                        }
+                        if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
+                            $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
+                    }
+                }
+
                 $scope.$apply();
             },
             onException: function (ex) {
-                if (ex.type == "FileNotFoundException")
+                if (ex.type === "FileNotFoundException")
                     ;
                 else if (ex.message)
                     alert(ex.message);
