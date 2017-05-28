@@ -242,22 +242,24 @@ namespace OpenIZ.Mobile.Core.Xamarin.Security
 
 								if (localUser == null)
 	                            {
-		                            if (networkIsAvailable)
-		                            {
-			                            // force download the security user from the AMI
-			                            // to be able to retrive any updated security information
-			                            // such as the email and phone number
-			                            securityUser = adminService.GetSecurityUser(userKey);
-		                            }
+		       //                     if (networkIsAvailable)
+		       //                     {
+			      //                      // force download the security user from the AMI
+			      //                      // to be able to retrive any updated security information
+			      //                      // such as the email and phone number
+			      //                      securityUser = adminService.GetSecurityUser(userKey);
+		       //                     }
 
-									if (securityUser != null)
-		                            {
-			                            localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
-									}
-		                            else
-		                            {
-										localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
-									}
+									//if (securityUser != null)
+		       //                     {
+			      //                      localIdp.CreateIdentity(securityUser, password, new SystemPrincipal());
+									//}
+		       //                     else
+		       //                     {
+									//	localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
+									//}
+
+									localIdp.CreateIdentity(userKey, principal.Identity.Name, password, new SystemPrincipal());
 								}
                                 else
                                 {
