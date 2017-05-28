@@ -129,6 +129,7 @@
                         <td>
                             <input class="form-control"
                                    type="date"
+                                   ng-value="audit.queryTimestamp"
                                    ng-model="audit.queryTimestamp"
                                    ng-change="audit.query._offset = 0; audit.query.timestamp = '~' + OpenIZ.Util.toDateInputString(audit.queryTimestamp)"
                                    ng-max="page.maxEventTime"
@@ -155,7 +156,7 @@
                             </select>
                         </td>
                         <td>
-                            <button class="btn btn-info" ng-click="audit.query = { _offset: 0, _count: 10, 'type.code': '!SecurityAuditCode-AuditLogUsed' }">
+                            <button class="btn btn-info" ng-click="audit.query = { _offset: 0, _count: 10, 'type.code': '!SecurityAuditCode-AuditLogUsed' }; resetQueryTimestamp();">
                                 <span>
                                     <span class="glyphicon glyphicon-remove"/>
                                 </span>
