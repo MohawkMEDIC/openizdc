@@ -193,6 +193,19 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         });
     }
 
+    $scope.determineDateOfBirthPrecision = function(patient)
+    {
+        switch(patient.dateOfBirthPrecision)
+        {
+            case 0:
+            case 1:
+            case 2:
+                return true;
+            default:
+                return false;
+        }
+    };
+
     /** 
      * @summary Advances to the next set of results
      */
