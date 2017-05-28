@@ -24,12 +24,12 @@
 
 layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope) {
 
-    $scope.rebindDomain = rebindDomain;
     $scope.addIdentifier = addIdentifier;
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
     $scope.Array = Array;
     $scope.identifiers = $scope.identifiers || [];
+    $scope.regexValidation = $scope.regexValidation || [];
     var once = true;
 
     // JF- ??? Why does this need to exist?
@@ -57,6 +57,13 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
                     $scope.identifiers.push({});
                 }
             }
+            // Update the identifier regex validation
+            if ($('.identifier-domain-select').length > 0) {
+                $('.identifier-domain-select').each(function (e) {
+                    var regex = $(this).find(':selected').first().attr('data-validation');
+                    $scope.regexValidation[e] = regex ? regex : '';
+                });
+            }
         }, true);
 
         //builds the identifier back onto the patient
@@ -83,10 +90,6 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
         }, true);
     }
 
-    // Rebind the domain scope
-    function rebindDomain(authority, identifier, index) {
-        
-    };
     // Scan the specified barcode
 
     function scanBarcode(identifier) {

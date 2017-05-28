@@ -18,8 +18,9 @@
  - Date: 2016-8-6
  -->
 <fieldset xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
-          xmlns:bind="http://openiz.org/applet/binding" class="form-horizontal form-group">
-
+          xmlns:bind="http://openiz.org/applet/binding" class="oiz-mothers-information form-horizontal form-group"
+          ng-controller="MothersInformationController">
+    <oiz:script>/org.openiz.core/controllers/common/patients/register/mother.js</oiz:script>
     <div class="form-group" ng-hide="editMotherForm">
         <div class="col-xs-offset-3 col-xs-9">
             <div class="checkbox">
@@ -86,8 +87,8 @@
         </div>
         <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
             <div class="margin-top-15 visible-xs"></div>
-            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierValue.$error.maxlength}">
-                <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-model-options="{debounce: 400 }" class="form-control" ng-disabled="motherUnknown"  />
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierValue.$error.maxlength || mothersInfoForm.mothersIdentifierValue.$error.pattern}">
+                <input type="text" ng-maxlength="10" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-pattern="mothersRegexValidation" ng-model-options="{debounce: 400 }" class="form-control" ng-disabled="motherUnknown"  />
                 <span class="input-group-btn">
                     <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
@@ -96,8 +97,18 @@
                 </span>
             </div>
         </div>
-        <p class="col-xs-offset-3 col-xs-4 help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersIdentifierType.$error.required">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
-        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersIdentifierValue.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+        <div ng-show="mothersInfoForm.mothersIdentifierType.$error.required">
+            <div class="col-xs-3"></div>
+            <p class="col-xs-4 help-block text-danger ng-cloak">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
+        </div>
+        <div ng-show="mothersInfoForm.mothersIdentifierValue.$error.maxlength">
+            <div class="col-xs-3 col-sm-7"></div>
+            <p class="col-xs-9 col-sm-5 help-block text-danger ng-cloak">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+        </div>
+        <div ng-show="patient.relationship.Mother.targetModel.identifier.authority.domainName &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.pattern">
+            <div class="col-xs-3 col-sm-7"></div>
+            <p class="col-xs-9 col-sm-5 help-block text-danger ng-cloak">{{ 'locale.patient.errors.pattern' | i18n}}</p>
+        </div>
     </div>
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
