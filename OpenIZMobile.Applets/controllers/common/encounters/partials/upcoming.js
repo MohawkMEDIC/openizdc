@@ -59,7 +59,7 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
                     {
                         if ($scope.appointments[i].startTime < $rootScope.page.loadTime)
                         {
-                            $scope.appointments[i].startTime = $rootScope.page.loadTime
+                            $scope.appointments[i].startTime = $rootScope.page.loadTime;
                         }
                         if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
                             $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
