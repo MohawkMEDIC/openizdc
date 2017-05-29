@@ -95,6 +95,16 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
     function scanBarcode(identifier) {
         identifier.value = OpenIZ.App.scanBarcode();
         if ($scope.search && $scope.search.searchByBarcode && identifier.value !== undefined) {
+
+            // Focus the next input after the scan
+            var identifierIndex = $scope.identifiers.indexOf(identifier) + 1;
+            if (identifierIndex < ($scope.identifiers.length)) {
+                $('input[name="identifier"]')[identifierIndex].focus();
+            }
+            else {
+                $('#givenName-tokenfield').focus();
+            }
+            
             $scope.search.searchByBarcode(identifier, function () {
                 $('#duplicates').focus();
                 alert(OpenIZ.Localization.getString("locale.patient.search.childExists"));

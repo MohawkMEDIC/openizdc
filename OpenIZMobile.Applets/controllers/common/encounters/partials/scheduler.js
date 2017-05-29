@@ -26,6 +26,7 @@
 layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', '$stateParams', function ($scope, $rootScope, $stateParams) {
     $scope._isCalendarInitialized = false;
     $scope.isLoading = true;
+    var appointmentBundleSubmitted;
 
     angular.element(document).ready(init);
 
@@ -220,8 +221,9 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
     $scope.scheduleAppointment = function (form) {
         if (form.$invalid) return;
 
-        OpenIZ.App.showWait();
+        OpenIZ.App.showWait('#saveAppointmentButton');
         try {
+            appointmentBundleSubmitted = false;
             var bundle = new OpenIZModel.Bundle();
 
             // schedule the appointment
@@ -287,15 +289,18 @@ layoutApp.controller('AppointmentSchedulerController', ['$scope', '$rootScope', 
                         console.error(ex);
                 },
                 finally: function () {
-                    OpenIZ.App.hideWait();
+                    OpenIZ.App.hideWait('#saveAppointmentButton');
                 }
             });
+
+            appointmentBundleSubmitted = true;
         }
         catch (e) {
             console.error(e);
         }
         finally {
-            OpenIZ.App.hideWait();
+            if (!appointmentBundleSubmitted)
+                OpenIZ.App.hideWait('#saveAppointmentButton');
         }
 
     }
