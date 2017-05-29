@@ -61,7 +61,9 @@
                         <input type="checkbox"
                                ng-disabled="patientBackup.tag.hasBirthCertificate"
                                ng-model="patient.dateOfBirthPrecision"
-                               value="1"
+                               ng-checked="patient.dateOfBirthPrecision == 2"
+                               ng-true-value="2"
+                               ng-false-value="3"
                                name="approximateDob" />
                         <div class="control__indicator" style="top: 8px;"></div>
                     </label>
