@@ -658,17 +658,6 @@ body{
     background: none;
  }
 
-
- /**stock snapshot*/
- .stock-snapshot-tile{
-    padding: 13px 15px 10px 15px;
-    background: #386582;
-    color: white;
-    position: relative;
-    font-size: 16px;
- }
-
-
  .card-left-border-safe{
      border-left: solid 10px #009933;
  }
@@ -691,10 +680,7 @@ body{
     font-size: 18px;
     right:9px;
  }
- .stock-tile-button-row{
-    height:auto;
-    padding-top:5px;
- }
+
 
  /**History*/
  .encounter-group-title{
