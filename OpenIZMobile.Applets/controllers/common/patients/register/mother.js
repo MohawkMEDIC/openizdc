@@ -24,7 +24,8 @@
 
 layoutApp.controller('MothersInformationController', ['$scope', function ($scope) {
 
-    $scope.mothersRegexValidation = $scope.mothersRegexValidation || '';
+    $scope.scanBarcode = scanBarcode;
+    $scope.mothersRegexValidation = '';
 
     angular.element(document).ready(init);
 
@@ -34,4 +35,11 @@ layoutApp.controller('MothersInformationController', ['$scope', function ($scope
             $scope.mothersRegexValidation = regex ? regex : '';
         });
     }
+
+    function scanBarcode(mother) {
+        if (!mother.targetModel.identifier) {
+            mother.targetModel.identifier = {};
+        }
+        mother.targetModel.identifier.value = OpenIZ.App.scanBarcode();
+    };
 }]);

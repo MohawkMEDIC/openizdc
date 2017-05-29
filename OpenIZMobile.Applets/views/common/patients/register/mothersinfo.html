@@ -77,7 +77,7 @@
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersIdentifier">{{ 'locale.patient.mother.identifier' | i18n }}</label>
         <div class="col-xs-9 col-sm-4">
-            <div class="input-group" ng-class="{ 'has-error': (mothersInfoForm.mothersIdentifierValue.$touched || (mothersInfoForm.$submitted || formSubmitted)) &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.required}">
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierType.$error.required}">
                 <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
                         bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:data-validation="ValidationRegex" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"
                         ng-disabled="motherUnknown" >
@@ -87,10 +87,10 @@
         </div>
         <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
             <div class="margin-top-15 visible-xs"></div>
-            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierValue.$error.maxlength || mothersInfoForm.mothersIdentifierValue.$error.pattern}">
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersIdentifierValue.$error.maxlength || (patient.relationship.Mother.targetModel.identifier.authority.domainName &amp;&amp; mothersInfoForm.mothersIdentifierValue.$error.pattern)}">
                 <input type="text" name="mothersIdentifierValue" ng-model="patient.relationship.Mother.targetModel.identifier.value" ng-pattern="mothersRegexValidation" ng-model-options="{debounce: 400 }" class="form-control" ng-disabled="motherUnknown"  />
                 <span class="input-group-btn">
-                    <button disabled="disabled" class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother.targetModel.identifier.value)">
+                    <button class="btn btn-default" type="button" ng-click="scanBarcode(patient.relationship.Mother)">
                         <span><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                     </button>
                     <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.mother.identifier' | i18n }}" data-content="{{ 'locale.patient.mother.identifier.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
