@@ -29,6 +29,16 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
     angular.element(document).ready(init);
     function init() {
         // Gather the care plan
+        updateCarePlan();
+    }
+
+    $scope.$watch("encounters.length", function (newValue, oldValue) {
+        if (newValue !== oldValue) {
+            updateCarePlan();
+        }
+    });
+
+    function updateCarePlan() {
         //OpenIZ.CarePlan.getCarePlanAsync({
         //    query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
         //    onDate: new Date(),
@@ -40,25 +50,20 @@ layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams',
             maxDate: new Date().addDays(90),
             continueWith: function (proposals) {
 
-                if (!proposals.item)
-                {
+                if (!proposals.item) {
                     $scope.appointments = [];
                 }
-                else
-                {
+                else {
                     // Grab the first appointment
                     $scope.appointments = proposals.item;
                     $scope.appointments.sort(
-                        function (a, b)
-                        {
+                        function (a, b) {
                             return a.actTime > b.actTime ? 1 : -1;
                         }
                     );
 
-                    for (var i in $scope.appointments)
-                    {
-                        if ($scope.appointments[i].startTime < $rootScope.page.loadTime)
-                        {
+                    for (var i in $scope.appointments) {
+                        if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
                             $scope.appointments[i].startTime = $rootScope.page.loadTime;
                         }
                         if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))

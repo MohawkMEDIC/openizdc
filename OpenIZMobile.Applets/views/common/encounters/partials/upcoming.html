@@ -20,7 +20,7 @@
 <div id="upcomingAppointments" xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet"
      xmlns:bind="http://openiz.org/applet/binding" ng-controller="UpcomingAppointmentController" class="container-fluid margin-top-15">
     <oiz:script>~/controllers/common/encounters/partials/upcoming.js</oiz:script>
-    <div class="container-fluid" ng-if="appointments &amp;&amp; !isLoading">
+    <div class="container-fluid" ng-if="appointments &amp;&amp; appointments.length > 0 &amp;&amp; !isLoading">
         <div class="row" ng-repeat="apt in appointments track by $index">
             <div class="col-sm-12 panel" ng-if="apt.relationship.HasComponent">
                 <div class="margin-top-10">
@@ -86,7 +86,7 @@
             </div>
         </div>
     </div>
-    <div ng-if="!appointments &amp;&amp; !isLoading">
+    <div ng-if="(!appointments || appointments.length &lt;= 0) &amp;&amp; !isLoading">
         <div class="text-center">
             <h4>
                 {{'locale.patient.schedule.none' | i18n}}
