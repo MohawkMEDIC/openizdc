@@ -59,6 +59,6 @@ layoutApp.controller('AuditController', ['$scope', function ($scope) {
     };
 
     function resetQueryTimestamp() {
-        $scope.audit.queryTimestamp = new Date(moment().format("YYYY-MM-DD"));
+        $scope.audit.queryTimestamp = moment().toDate();
     }
 }]);

@@ -37,7 +37,6 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
         continueWith: function (data) {
             
             // HACK: the TFA mechanisms are stored in the database in english, get the locale string for it
-            console.log(data);
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].id) {
                     case 'd919457d-e015-435c-bd35-42e425e2c60c':
