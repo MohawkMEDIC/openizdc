@@ -2598,6 +2598,41 @@
             Represents a date precision object
             </summary>
         </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Full">
+            <summary>
+            Represents full date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Year">
+            <summary>
+            Represents year date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Month">
+            <summary>
+            Represents month date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Day">
+            <summary>
+            Represents day date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Hour">
+            <summary>
+            Represents hour date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Minute">
+            <summary>
+            Represents minute date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Second">
+            <summary>
+            Represents second date precision.
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.Extension`1">
             <summary>
             Represents a base entity extension
