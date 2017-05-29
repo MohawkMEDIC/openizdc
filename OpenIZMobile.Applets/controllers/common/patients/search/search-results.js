@@ -193,9 +193,9 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         });
     }
 
-    $scope.determineDateOfBirthPrecision = function(patient)
+    $scope.isApproxDob = function (patient)
     {
-        switch(patient.dateOfBirthPrecision)
+        switch (patient.dateOfBirthPrecision)
         {
             case 0:
             case 1:

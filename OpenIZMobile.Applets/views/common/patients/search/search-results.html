@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
                                 {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
-                                <span class="label label-info" ng-if="determineDateOfBirthPrecision(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                                <span class="label label-info" ng-if="isApproxDob(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                             </div>
                             <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
                                 {{ 'locale.common.na' | i18n }}
