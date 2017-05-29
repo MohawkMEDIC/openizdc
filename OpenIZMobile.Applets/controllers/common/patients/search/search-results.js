@@ -126,7 +126,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     /** 
      * @summary Searches patients by barcode
      */
-    function searchByBarcode(identifier, onFindPatient) {
+    function searchByBarcode(identifier, searchOnline, onSearchResults) {
         var barcodeQuery = {
             "_offset": 0,
             "_count": scope.search.paging.size,
@@ -139,13 +139,13 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             barcodeQuery["identifier.authority.domainName"] = identifier.domainName;
         }
 
-        searchPatient(barcodeQuery, true, onFindPatient);
+        searchPatient(barcodeQuery, searchOnline, onSearchResults);
     }
 
     /** 
      * @summary Searches patients by the provided query
      */
-    function searchPatient(query, searchOnlineOnly, onFindPatient) {
+    function searchPatient(query, searchOnlineOnly, onSearchResults) {
         if (searchOnlineOnly)
             query["_onlineOnly"] = searchOnlineOnly;
         else
@@ -174,8 +174,8 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     for (var i = 0; i < scope.search.paging.total; i++)
                         scope.search.paging.pages[i] = i + 1;
 
-                    if (r.totalResults > 0 && onFindPatient) {
-                        onFindPatient();
+                    if (onSearchResults) {
+                        onSearchResults.call(this, r.totalResults);
                     }
                 }
 

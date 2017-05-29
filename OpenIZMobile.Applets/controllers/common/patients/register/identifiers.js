@@ -105,9 +105,19 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
                 $('#givenName-tokenfield').focus();
             }
             
-            $scope.search.searchByBarcode(identifier, function () {
-                $('#duplicates').focus();
-                alert(OpenIZ.Localization.getString("locale.patient.search.childExists"));
+            // Search offline only
+            $scope.search.searchByBarcode(identifier, false, function (count) {
+                if (count > 0) {
+                    focusDuplicates();
+                }
+                else {
+                    // No duplicates found, search online
+                    $scope.search.searchByBarcode(identifier, true, function (count) {
+                        if (count > 0) {
+                            focusDuplicates();
+                        }
+                    });
+                }
             });
         }
     };
@@ -123,5 +133,10 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
             identifiers.splice(index, 1);
         }
     };
+
+    function focusDuplicates() {
+        $('#duplicates').focus();
+        alert(OpenIZ.Localization.getString("locale.patient.search.childExists"));
+    }
     
 }]);
