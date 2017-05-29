@@ -2871,7 +2871,7 @@ var OpenIZ = OpenIZ || {
         */
         leaveRealm: function () {
             try {
-                if (!confirm('You are about to leave the realm ' + configuration.realm.address + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
+                if (!confirm('You are about to leave the realm ' + OpenIZ.Configuration.$configuration.realmName + '. Doing so will force the OpenIZ back into an initial configuration mode. Are you sure you want to do this?'))
                     return false;
                 return OpenIZConfigurationService.LeaveRealm();
             }

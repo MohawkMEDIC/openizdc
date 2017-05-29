@@ -73,14 +73,16 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
     // leave realm
     $scope.leaveRealm = function (realm) {
         if (confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm")))
-            OpenIZ.Configuration.leaveRealmAsync();
+            OpenIZ.Configuration.leaveRealm();
     };
 
     // join realm
     $scope.joinRealm = function (realm) {
 
         var doJoin = function (force) {
-            OpenIZ.App.showWait('#joinRealmButton');
+            if (!$('#joinRealmButton')[0].hasAttribute('disabled')) {
+                OpenIZ.App.showWait('#joinRealmButton');
+            }
 
             var backupCredentials = {
                 continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith,
