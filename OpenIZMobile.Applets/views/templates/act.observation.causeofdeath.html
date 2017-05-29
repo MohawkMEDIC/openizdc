@@ -33,7 +33,13 @@
         </div>
         <div class="col-xs-5">
             <label> {{ 'locale.patient.demographics.deceasedDate' | i18n }}</label>
-            <input ng-required="true" name="deceasedDate" ng-init="act.targetModel.relationship.HasComponent.targetModel.actTime = $root.page.loadTime" type="date" ng-model="act.targetModel.relationship.HasComponent.targetModel.actTime" ng-min="patient.dateOfBirth" min="{{patient.dateOfBirth | date: 'yyyy-MM-dd'}}" max="{{$root.page.loadTime | date: 'yyyy-MM-dd'}}" class="form-control" />
+            <input class="form-control" name="deceasedDate" type="date" ng-required="true"
+                   ng-model="act.targetModel.relationship.HasComponent.targetModel.actTime"
+                   ng-init="act.targetModel.relationship.HasComponent.targetModel.actTime = $root.page.loadTime"
+                   ng-min="patient.dateOfBirth"
+                   min="{{patient.dateOfBirth | date: 'yyyy-MM-dd'}}"
+                   ng-max="page.maxEventTime"
+                   max="{{page.maxEventTime | date: 'yyyy-MM-dd'}}" />
             
         </div>
         <div class="col-xs-12 help-block text-danger" ng-if="(editEncounterForm.deceasedDate.$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm.deceasedDate.$error.min">
