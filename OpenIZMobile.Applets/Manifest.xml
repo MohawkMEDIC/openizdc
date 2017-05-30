@@ -96,38 +96,38 @@
   </menuItem>
   <strings lang="en">
 
-    <string key="err_generalnull">A general error occurred. Please check the logs.</string>
     <!-- Encounters -->
     <string key="locale.encounters.overdue">Overdue</string>
     <string key="locale.encounters.addEntry">Add Entry</string>
     <string key="locale.encounters.actionsPerformed.title">Actions done this visit</string>
 
     <!-- Actions -->
-    <string key="locale.action.submit">Submit</string>
-    <string key="locale.action.next">Next</string>
-    <string key="locale.action.back">Back</string>
-    <string key="locale.action.done">Done</string>
-    <string key="locale.action.delete">Delete</string>
     <string key="locale.action.acknowledge">Acknowledge</string>
-    <string key="locale.action.cancel">Cancel</string>
-    <string key="locale.action.save">Save</string>
-    <string key="locale.action.finish">Finish</string>
-    <string key="locale.action.view">View</string>
-    <string key="locale.action.verify">Verify</string>
-    <string key="locale.action.update">Update</string>
-    <string key="locale.action.edit">Edit</string>
-    <string key="locale.action.remove">Remove</string>
     <string key="locale.action.activate">Activate</string>
-    <string key="locale.action.search">Search</string>
-    <string key="locale.action.run">Run</string>
-    <string key="locale.action.confirm">Confirm</string>
-    <string key="locale.action.onlineOnly">Online Only</string>
+    <string key="locale.action.back">Back</string>
+    <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.clear">Clear</string>
+    <string key="locale.action.confirm">Confirm</string>
+    <string key="locale.action.delete">Delete</string>
+    <string key="locale.action.done">Done</string>
+    <string key="locale.action.edit">Edit</string>
+    <string key="locale.action.finish">Finish</string>
+    <string key="locale.action.next">Next</string>
+    <string key="locale.action.onlineOnly">Online Only</string>
+    <string key="locale.action.remove">Remove</string>
+    <string key="locale.action.run">Run</string>
+    <string key="locale.action.save">Save</string>
+    <string key="locale.action.search">Search</string>
+    <string key="locale.action.submit">Submit</string>
+    <string key="locale.action.update">Update</string>
+    <string key="locale.action.verify">Verify</string>
+    <string key="locale.action.view">View</string>
 
     <!-- Alerts -->
-    <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
-    <string key="locale.alerts.details">Details</string>
     <string key="locale.alerts.alerts">Alerts</string>
+    <string key="locale.alerts.details">Details</string>
+    <string key="locale.alerts.newAlerts">New alerts</string>
+    <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
     <string key="locale.alert.updateSuccessful">Update Successful</string>
     <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
 
@@ -376,6 +376,7 @@
     <string key="locale.debug.submit">Send Report</string>
     <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
     <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
+
     <string key="locale.about.tabs.versions">Version Information</string>
     <string key="locale.about.tabs.log">Log Files</string>
     <string key="locale.about.tabs.runtime">Environment</string>
@@ -389,9 +390,10 @@
     <string key="locale.about.versions.assembly">Assembly</string>
     <string key="locale.about.versions.version">Version</string>
     <string key="locale.about.versions.info">Description</string>
+    <string key="locale.about.versions.verified">Verified</string>
     <string key="locale.about.machineInfo">Runtime Environment</string>
     <string key="locale.about.fileInfo">Datafile Information</string>
-    <string key="locale.about.syncInfo">Synchronizaton Information</string>
+    <string key="locale.about.syncInfo">Synchronization Information</string>
     <string key="locale.about.environment.os">Operating System Version</string>
     <string key="locale.about.environment.cpu">CPU Processor Count</string>
     <string key="locale.about.environment.runtimeVersion">.NET Runtime Version</string>
@@ -410,23 +412,24 @@
     <string key="locale.about.sync.logSize">Log File Size</string>
     <string key="locale.about.sync.logContents">Log File Contents</string>
     <string key="locale.about.updateToast.title">Updates Available</string>
-    <string key="locale.about.workLoad">Threadpool Use</string>
-    <string key="locale.about.versions.verified"> Verified</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
+    <string key="locale.about.workLoad">Threadpool Use</string>
 
     <!-- Generic confirmations-->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>
-    <string key="locale.alerts.newAlerts">New alerts</string>
 
     <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
     <string key="locale.network.online">Online</string>
-    <string key="invalid_grant">Can't login</string>
+
+    <string key="invalid_grant">Invalid grant - Can't login</string>
     <string key="AUTH_INV">Invalid username or password</string>
     <string key="AUTH_LCK">Account is locked</string>
     <string key="AUTH_TFA">Account requires two-factor authentication</string>
+    <string key="err_generalnull">A general error occurred. Please check the logs.</string>
     <string key="err_generalundefined">A general error occurred: </string>
+
     <string key="locale.session.aboutToExpirePrefix">Your session is about to expire in</string>
     <string key="locale.session.aboutToExpireSuffix">Tap this message to extend your session.</string>
     <string key="locale.session.expiration">Session Warning</string>
@@ -502,75 +505,77 @@
     <string key="locale.error.403.description">Vous ne possedez pas de privileges suffisants pour voir la page.</string>
   </strings>
   <strings lang="sw">
-    <string key="AUTH_INV">Wezesha polling:</string>
-    <string key="AUTH_LCK">Usajili wa kituo</string>
-    <string key="AUTH_TFA">Idadi ya Processor kwenye CPU</string>
-    <string key="err_generalnull">Runtime Environment</string>
-    <string key="invalid_grant">Maelekezo ya Kupakua data</string>
+    <string key="AUTH_INV">Jina la mtumiaji au nenosiri ni batili</string>
+    <string key="AUTH_LCK">Akaunti imefungwa</string>
+    <string key="AUTH_TFA">Akaunti inahitaji mbili sababu uthibitisho</string>
+    <string key="invalid_grant">Ruzuku batili - Imeshindwa kuingia</string>
+    <string key="err_generalnull">Makosa majenerali ilitokea. Tafadhali angalia rekodi.</string>
+    <string key="err_generalundefined">Makosa majenerali ilitokea: </string>
 
-    <string key="locale.about.environment.cpu">Utumaji wa fomu ni batili</string>
-    <string key="locale.about.environment.mem">Faili data</string>
-    <string key="locale.about.environment.os">Hapana</string>
+    <string key="locale.about.environment.cpu">Idadi ya CPU</string>
+    <string key="locale.about.environment.mem">Kutumika kumbukumbu</string>
+    <string key="locale.about.environment.os">Mfumo wa uendeshaji toleo</string>
     <string key="locale.about.environment.runtimeVersion">Ingiza jina la mtumiaji unayetaka kubadili neno siri</string>
-    <string key="locale.about.fileInfo">Kubali</string>
-    <string key="locale.about.files.date">Namba ya Realm</string>
-    <string key="locale.about.files.name">Thibitisha</string>
-    <string key="locale.about.files.size">Wakati wowote kukiwa na data </string>
+    <string key="locale.about.fileInfo">Taarifa kuhusu faili data</string>
+    <string key="locale.about.files.date">Mwisho kuandika tarehe</string>
+    <string key="locale.about.files.name">Faili data</string>
+    <string key="locale.about.files.size">Jumla ya ukubwa</string>
     <string key="locale.about.logFiles.logFile">Ingia faili</string>
-    <string key="locale.about.logFiles.logSize">kuingia faili</string>
-    <string key="locale.about.logFiles.logContents">kuingia yaliyomo ya faili</string>
-    <string key="locale.about.machineInfo">Jina la mtumiaji</string>
-    <string key="locale.about.sync.date">Anza</string>
-    <string key="locale.about.sync.etag">mwisho version</string>
-    <string key="locale.about.sync.filter">Nafasi iliyotumika</string>
-    <string key="locale.about.sync.logContents">Sawazisha kwenye:</string>
+    <string key="locale.about.logFiles.logSize">Ingia faili ukubwa</string>
+    <string key="locale.about.logFiles.logContents">Ingia faili yaliyomo</string>
+    <string key="locale.about.machineInfo">Mazingira Runtime</string>
+    <string key="locale.about.sync.date">Usawazishaji wa Mwisho Tarehe</string>
+    <string key="locale.about.sync.etag">Toleo la awali</string>
+    <string key="locale.about.sync.filter">Chujio</string>
+    <string key="locale.about.sync.logContents">Ingia faili yaliyomo</string>
     <string key="locale.about.sync.logFile">Ingia faili</string>
-    <string key="locale.about.sync.logSize">Maelezo</string>
-    <string key="locale.about.sync.resource">Taarifa ya usawazishaji</string>
-    <string key="locale.about.syncInfo">Lugha</string>
-    <string key="locale.about.tabs.log">Toleo la mwisho</string>
-    <string key="locale.about.tabs.runtime">Faili kumbukumbu</string>
-    <string key="locale.about.tabs.versions">Jina la mtumiaji</string>
-    <string key="locale.about.versions.applet">Programu zilizopakiwa</string>
-    <string key="locale.about.versions.applets.title">Tuma</string>
-    <string key="locale.about.versions.assemblies.title">Ukubwa wa faili</string>
-    <string key="locale.about.versions.assembly">Tengeneza hifadhi mbadala ya taarifa za sasa.</string>
+    <string key="locale.about.sync.logSize">Ingia faili ukubwa</string>
+    <string key="locale.about.sync.resource">Rasilimali data</string>
+    <string key="locale.about.syncInfo">Taarifa kuhusu usawazishaji</string>
+    <string key="locale.about.tabs.log">Ingia mafaili</string>
+    <string key="locale.about.tabs.runtime">Mazingira</string>
+    <string key="locale.about.tabs.versions">Toleo habari</string>
+    <string key="locale.about.versions.applet">Jina</string>
+    <string key="locale.about.versions.applets.title">Kubeba programu</string>
+    <string key="locale.about.versions.assemblies.title">Kubeba kusaidia programu</string>
+    <string key="locale.about.versions.assembly">Kusaidia programu</string>
     <string key="locale.about.versions.update">Boresha hadi </string>
     <string key="locale.about.versions.update.confirm">Una uhakika unataka kuboresha kijiprogramu hii? Maombi yako upya baada ya usasishaji inatumika</string>
-    <string key="locale.about.versions.author">Ingiza neno siri</string>
-    <string key="locale.about.versions.id">Maelezo yangu</string>
-    <string key="locale.about.versions.info">Chaguo/chujo</string>
-    <string key="locale.about.versions.version">Toleo la .NET Runtime</string>
-    <string key="locale.about.updateToast.title">Updates Inapatikana</string>
-    <string key="locale.about.updateToast.text">Habari njema! Kuna toleo jipya la programu inapatikana. Gonga hapa ili kwenda kwenye ukurasa update.</string>
+    <string key="locale.about.versions.author">Mwandishi</string>
+    <string key="locale.about.versions.id">Mfuko ID</string>
+    <string key="locale.about.versions.info">Maelezo</string>
+    <string key="locale.about.versions.version">Toleo</string>
+    <string key="locale.about.versions.verified">Imethibitishwa</string>
+    <string key="locale.about.updateToast.title">Sasisha inapatikana</string>
+    <string key="locale.about.updateToast.text">Habari njema! Kuna toleo jipya la programu inapatikana. Gonga hapa ili kwenda kwenye ukurasa sasisha.</string>
     <string key="locale.about.workLoad">ThreadPool Matumizi</string>
 
-    <string key="locale.action.acknowledge">Siwezi kuendelea kwasababu ya hitilafu hii</string>
-    <string key="locale.action.back">Hii namba ni batili</string>
-    <string key="locale.action.cancel">kufuta</string>
-    <string key="locale.action.confirm">Hifadhi</string>
-    <string key="locale.action.delete">Tumia sehemu hii kusanidi/kuelekeza mfumo jinsi ya kulinda usiri wa taarifa kwenye kifaa</string>
-    <string key="locale.action.done">Inayokuja</string>
-    <string key="locale.action.edit">Ukubwa wa Maelezo</string>
-    <string key="locale.action.finish">Hali ya mtandao ikibadilika</string>
-    <string key="locale.action.next">Jina la kifaa</string>
+    <string key="locale.action.acknowledge">Tambua</string>
+    <string key="locale.action.back">Nyuma</string>
+    <string key="locale.action.cancel">Kufuta</string>
+    <string key="locale.action.clear">Kufuta</string>
+    <string key="locale.action.confirm">Thibitisha</string>
+    <string key="locale.action.delete">Futa</string>
+    <string key="locale.action.done">Yamekamilika</string>
+    <string key="locale.action.edit">Hariri</string>
+    <string key="locale.action.finish">Kumaliza</string>
+    <string key="locale.action.next">Baadaye</string>
     <string key="locale.action.onlineOnly">Jina la mtumiaji</string>
-    <string key="locale.action.remove">Ongeza </string>
-    <string key="locale.action.save">Hitilafu na Onyo pekee</string>
-    <string key="locale.action.search">ya</string>
-    <string key="locale.action.submit">Thibitisha utambulisho wako</string>
-    <string key="locale.action.update">Barua pepe</string>
-    <string key="locale.action.view">Programu yako imeuganishwa sasa</string>
-    <string key="locale.actions.save">Inayofata</string>
-    <string key="locale.action.run">kukimbia</string>
-    <string key="locale.action.clear">wazi</string>
+    <string key="locale.action.remove">Ondoa</string>
+    <string key="locale.action.run">Kukimbia</string>
+    <string key="locale.action.save">Kuokoa</string>
+    <string key="locale.action.search">Pekesheni</string>
+    <string key="locale.action.submit">Wasilisha</string>
+    <string key="locale.action.update">Kupata mabadiliko</string>
+    <string key="locale.action.verify">Thibitisha</string>
+    <string key="locale.action.view">Mtazamo</string>
 
-    <string key="locale.alert.updateSuccessful">Futa</string>
-    <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
-    <string key="locale.alerts.alerts">Ninaweza kuendelea licha ya hii hitilafu ingawa inaingilia ufanisi wangu</string>
+    <string key="locale.alerts.alerts">Tahadhari</string>
     <string key="locale.alerts.details">Bonyeza hapa kuongeza kipindi chako</string>
     <string key="locale.alerts.newAlerts">Tafadhali ingiza neno siri la sasa</string>
     <string key="locale.alerts.noneSelected">Hifadhi</string>
+    <string key="locale.alert.updateSuccessful">Futa</string>
+    <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
 
     <string key="locale.common.invalidForm">Neno siri Local Admin:</string>
     <string key="locale.common.na">Toleo la Mfumo wa uendeshaji </string>
@@ -698,11 +703,11 @@
     <string key="locale.security.forgotPassword.userName">Imepita muda</string>
     <string key="locale.security.forgotPassword.onlineOnly">Umesahau nywila inapatikana online tu</string>
 
-    <string key="locale.security.login.button.forgotPassword">Mwandishi</string>
-    <string key="locale.security.login.button.login">Kata</string>
+    <string key="locale.security.login.button.forgotPassword">Kosa Nywila</string>
+    <string key="locale.security.login.button.login">Ingia</string>
     <string key="locale.security.login.helpText">Akaunti imefungwa</string>
-    <string key="locale.security.login.label.password">Taarifa ya Uzito</string>
-    <string key="locale.security.login.label.username">Sasisho limekamilika</string>
+    <string key="locale.security.login.label.password">Neno la kificho</string>
+    <string key="locale.security.login.label.username">Jina la mtumiaji</string>
     <string key="locale.security.login.placeholder.password">Maelezo ya faili data</string>
     <string key="locale.security.login.placeholder.username">Umesahau neno siri</string>
 
