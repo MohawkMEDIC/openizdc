@@ -294,6 +294,7 @@
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <string key="locale.settings.subscribe.help">This setting controls the subscribed facility for this tablet</string>
+    <string key="locale.settings.subscribe.error.required">Please subscribe to a facility</string>
 
     <string key="locale.settings.security.audit">Audit Retention</string>
     <string key="locale.settings.security.audit.none">Do not retain audits (erase when app starts)</string>
@@ -822,6 +823,8 @@
     <string key="locale.settings.realmName.help">Kuweka hii udhibiti ulimwengu ID</string>
     <string key="locale.settings.realmPort.help">Kuweka hii udhibiti nambari ya lango</string>
     <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu katika vituo umejisajili kuingia</string>
+    
+    <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
     <string key="locale.sync.queue">Foleni</string>

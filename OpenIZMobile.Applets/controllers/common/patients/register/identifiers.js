@@ -22,7 +22,7 @@
 /// <reference path="~/js/openiz-model.js"/>
 /// <reference path="~/lib/angular.min.js"/>
 
-layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope) {
+layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', function ($scope, $rootScope) {
 
     $scope.addIdentifier = addIdentifier;
     $scope.scanBarcode = scanBarcode;
@@ -110,7 +110,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', function ($scope
                 if (count > 0) {
                     focusDuplicates();
                 }
-                else {
+                else if ($rootScope.page.onlineState && $rootScope.session.method !== 'LOCAL') {
                     // No duplicates found, search online
                     $scope.search.searchByBarcode(identifier, true, function (count) {
                         if (count > 0) {
