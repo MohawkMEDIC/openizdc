@@ -48,6 +48,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.startEncounter = startEncounter;
         scope.goResult = scope.goResult || goResult;
         scope.search.searchByBarcode = scope.search.searchByBarcode || searchByBarcode;
+        scope.search.searchPatient = scope.search.searchPatient || searchPatient;
 
         scope.search.searchSubmitted = false;
         onlineOnly = false;
