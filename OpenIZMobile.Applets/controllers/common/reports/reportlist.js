@@ -15,6 +15,8 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
     $scope.setView = function (viewId) {
         $scope.viewId = viewId;
     };
+    $scope.getParameterMaxDate = getParameterMaxDate;
+    $scope.getParameterMinDate = getParameterMinDate;
 
     $scope.$watch('reportBody', function (nv, ov) {
         $("#reportBody").html(nv);
@@ -132,5 +134,27 @@ layoutApp.controller('ReportListController', ['$scope', '$rootScope', '$compile'
         }
 
         return canNavigate;
+    }
+
+    /* Gets the maximum date for the parameter */
+    function getParameterMaxDate(parameter) {
+        var max = parameter.max || $rootScope.page.loadTime;
+
+        if (parameter.name === "DateFrom" && $scope.currentFilter["DateTo"]) {
+            max = $scope.currentFilter["DateTo"];
+        }
+
+        return max;
+    }
+
+    /* Gets the minimum date for the parameter */
+    function getParameterMinDate(parameter) {
+        var min = parameter.min || 0;
+
+        if (parameter.name === "DateTo" && $scope.currentFilter["DateFrom"]) {
+            min = $scope.currentFilter["DateFrom"];
+        }
+
+        return min;
     }
 }]);
