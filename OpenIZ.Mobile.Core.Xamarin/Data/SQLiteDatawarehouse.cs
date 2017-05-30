@@ -552,7 +552,12 @@ namespace OpenIZ.Mobile.Core.Xamarin.Warehouse
             throw new NotImplementedException();
         }
 
-        /// <summary>
+	    public void Truncate(Guid datamartId)
+	    {
+		    throw new NotImplementedException();
+	    }
+
+	    /// <summary>
         /// Dispose the 
         /// </summary>
         public void Dispose()
