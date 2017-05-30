@@ -131,7 +131,16 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
     // Save config
     $scope.save = function (config) {
-        
+        $scope.settingsForm.$setSubmitted();
+
+        // Check if the form is valid
+        if (!$scope.settingsForm.$valid) {
+            // Focus any required field
+            console.log($('[name=' + $scope.settingsForm.$error.required[0].$name + ']'));
+            $('[name=' + $scope.editPatientForm.$error.required[0].$name + ']').focus();
+            return;
+        }
+
         if ($scope.config.realmName == null)
             alert(OpenIZ.Localization.getString("locale.settings.error.noRealm"));
         else {
