@@ -30,7 +30,7 @@
 
   <type type="EntityName" all="false">
     <property name="source" behavior="never"/>
-    <property name="use" />
+    <property name="use" behavior="always" ref="Concept"/>
     <property name="id"  />
     <property name="component" all="true" behavior="always" >
       <property name="*" all="true"/>
