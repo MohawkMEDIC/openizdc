@@ -886,11 +886,11 @@
     <string key="locale.sync.resource.TextObservation">uchunguzi wa maandishi</string>
     <string key="locale.sync.resource.TemplateDefinition">Kigezo Ufafanuzi</string>
 
-    <string key="locale.audit.title">Mitaa kituo cha ukaguzi</string>
-    <string key="locale.audit.action">hatua</string>
+    <string key="locale.audit.title">kituo cha ukaguzi wa ndani</string>
+    <string key="locale.audit.action">kitendo</string>
     <string key="locale.audit.class">Operesheni</string>
     <string key="locale.audit.date">Muhuri wa muda</string>
-    <string key="locale.audit.user">User</string>
+    <string key="locale.audit.user">mtumiaji</string>
     <string key="locale.audit.event">tukio</string>
     <string key="locale.audit.outcome">matokeo</string>
     <string key="locale.audit.detail.title">maelezo ya ukaguzi</string>
@@ -898,13 +898,13 @@
     <string key="locale.audit.objects">Vitu</string>
 
     <!-- Reports -->
-    <string key="locale.reports.title">Kituo Ripoti Center</string>
+    <string key="locale.reports.title">kituo cha ripoti kituo</string>
     <string key="locale.reports.info.name">jina</string>
     <string key="locale.reports.info.description">Maelezo</string>
     <string key="locale.reports.info.action">Vitendo</string>
-    <string key="locale.reports.parameters.title">Kuweka ripoti vigezo filter</string>
+    <string key="locale.reports.parameters.title">chujio pembejeo taarifa</string>
     <string key="locale.reports.executeWait">ripoti kuzalisha...</string>
-    <string key="locale.reports.error.locked">database faili hili hutegemea imefungwa. Kunaweza kuwa na mchakato background kutumia faili database. Tafadhali kusubiri dakika chache na ujaribu ombi tena.</string>
-    <string key="locale.reports.error.required">Kigezo inahitajika</string>
+    <string key="locale.reports.error.locked">The computer system file this relies on is locked. There may be a hidden process using the computer system file. Please wait a few minutes and try your request again.</string>
+    <string key="locale.reports.error.required">pembejeo zinazohitajika</string>
   </strings>
 </AppletManifest>
