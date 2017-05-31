@@ -97,9 +97,11 @@
   <strings lang="en">
 
     <!-- Encounters -->
-    <string key="locale.encounters.overdue">Overdue</string>
-    <string key="locale.encounters.addEntry">Add Entry</string>
     <string key="locale.encounters.actionsPerformed.title">Actions done this visit</string>
+    <string key="locale.encounters.addEntry">Add Entry</string>
+    <string key="locale.encounters.overdue">Overdue</string>
+    <string key="locale.encounters.weightSummary.title">Weight Summary</string>
+    <string key="locale.encounters.errors.date">Please select a valid date</string>
 
     <!-- Actions -->
     <string key="locale.action.acknowledge">Acknowledge</string>
@@ -126,18 +128,19 @@
     <!-- Alerts -->
     <string key="locale.alerts.alerts">Alerts</string>
     <string key="locale.alerts.details">Details</string>
-    <string key="locale.alerts.newAlerts">New alerts</string>
+    <string key="locale.alerts.newAlerts">New Alerts</string>
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
     <string key="locale.alert.updateSuccessful">Update Successful</string>
     <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
 
     <!-- Common -->
+    <string key="locale.common.invalidForm">Form submission is invalid</string>
+    <string key="locale.common.na">N/A</string>
     <string key="locale.common.no">No</string>
     <string key="locale.common.yes">Yes</string>
     <string key="locale.common.of">of</string>
     <string key="locale.common.unknown">Unknown</string>
-    <string key="locale.common.invalidForm">Form submission is invalid</string>
-    <string key="locale.common.na">N/A</string>
+
     <string key="locale.dialog.wait.text">Please wait</string>
 
     <!-- Login -->
@@ -183,12 +186,13 @@
     <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
     <string key="locale.security.errors.passwordInvalid">Your password must be at least 8 characters long and contain one Uppercase letter</string>
 
+    <string key="locale.error.403.title">Forbidden</string>
+    <string key="locale.error.403.description">The requested action is forbidden</string>
     <string key="locale.error.404.title">Not Found</string>
     <string key="locale.error.404.description">The requested resource was not found: </string>
     <string key="locale.error.500.title">Internal Server Error</string>
     <string key="locale.error.500.description">There was an internal error rendering the page. Please check the mobile log files.</string>
-    <string key="locale.error.403.title">Forbidden</string>
-    <string key="locale.error.403.description">The requested action is forbidden</string>
+
     <string key="locale.error.bug.title">Submit Bug</string>
     <string key="locale.error.bug.description">Use this form to submit a bug or feedback on this page.</string>
     <string key="locale.error.bug.input.title">Summary:</string>
@@ -239,6 +243,7 @@
     <string key="locale.settings.securityDescription">Use this panel to configure the manner in which security policies are enforced on this device.</string>
     <string key="locale.settings.passwordFormat">Password Store:</string>
     <string key="locale.settings.passwordFormat.help">This setting controls the strength of password encryption for this tablet</string>
+    <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
     <string key="locale.settings.allowLocalAuth">Authorization:</string>
     <string key="locale.settings.allowLocalAuthDescription">Allow local authorization, this will allow clients to log into the app even if the internet is down</string>
     <string key="locale.settings.security.sha256">SHA256 Hashing - Very Strong</string>
@@ -323,7 +328,6 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
-    <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
     <string key="locale.preferences.password.onlineOnly">Password Reset Can Only Be Done When Online</string>
     <string key="locale.preferences.email">E-Mail</string>
     <string key="locale.preferences.recoveryOptions.success">Recovery Options Successfully Changed</string>
@@ -342,10 +346,6 @@
     <string key="locale.legend.completed">Completed</string>
     <string key="locale.legend.upcoming">Upcoming</string>
     <string key="locale.legend.appointment">Appointment</string>
-
-    <!-- Encounters -->
-    <string key="locale.encounters.weightSummary.title">Weight Summary</string>
-    <string key="locale.encounters.errors.date">Please select a valid date</string>
 
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
@@ -370,13 +370,13 @@
     <string key="locale.login.doLogin">Login</string>
 
     <string key="locale.debug.bugReport">Submit Bug Report</string>
+    <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
+    <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
     <string key="locale.debug.reporter">Reporter</string>
     <string key="locale.debug.reproduction">Steps to Reproduce</string>
     <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
     <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
     <string key="locale.debug.submit">Send Report</string>
-    <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
-    <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
 
     <string key="locale.about.tabs.versions">Version Information</string>
     <string key="locale.about.tabs.log">Log Files</string>
@@ -540,7 +540,7 @@
     <string key="locale.about.versions.applets.title">Kubeba programu</string>
     <string key="locale.about.versions.assemblies.title">Kubeba kusaidia programu</string>
     <string key="locale.about.versions.assembly">Kusaidia programu</string>
-    <string key="locale.about.versions.update">Boresha hadi </string>
+    <string key="locale.about.versions.update">Mwisho</string>
     <string key="locale.about.versions.update.confirm">Una uhakika unataka kuboresha kijiprogramu hii? Maombi yako upya baada ya usasishaji inatumika</string>
     <string key="locale.about.versions.author">Mwandishi</string>
     <string key="locale.about.versions.id">Mfuko ID</string>
@@ -553,16 +553,16 @@
 
     <string key="locale.action.acknowledge">Tambua</string>
     <string key="locale.action.back">Nyuma</string>
-    <string key="locale.action.cancel">Kufuta</string>
+    <string key="locale.action.cancel">Batili</string>
     <string key="locale.action.clear">Kufuta</string>
     <string key="locale.action.confirm">Thibitisha</string>
-    <string key="locale.action.delete">Futa</string>
+    <string key="locale.action.delete">Kufuta</string>
     <string key="locale.action.done">Yamekamilika</string>
     <string key="locale.action.edit">Hariri</string>
     <string key="locale.action.finish">Kumaliza</string>
     <string key="locale.action.next">Baadaye</string>
-    <string key="locale.action.onlineOnly">Jina la mtumiaji</string>
-    <string key="locale.action.remove">Ondoa</string>
+    <string key="locale.action.onlineOnly">Intaneti inahitajika</string>
+    <string key="locale.action.remove">Chukua</string>
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
     <string key="locale.action.search">Pekesheni</string>
@@ -572,55 +572,55 @@
     <string key="locale.action.view">Mtazamo</string>
 
     <string key="locale.alerts.alerts">Tahadhari</string>
-    <string key="locale.alerts.details">Bonyeza hapa kuongeza kipindi chako</string>
-    <string key="locale.alerts.newAlerts">Tafadhali ingiza neno siri la sasa</string>
-    <string key="locale.alerts.noneSelected">Hifadhi</string>
-    <string key="locale.alert.updateSuccessful">Futa</string>
-    <string key="locale.alert.updateUnsuccessful">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utasawazisha taarifa kati ya kifaa na server(hifadhi)</string>
+    <string key="locale.alerts.details">Maelezo</string>
+    <string key="locale.alerts.newAlerts">Mpya Tahadhari</string>
+    <string key="locale.alerts.noneSelected">Hakuna tahadhari kuchaguliwa, tafadhali chagua moja ili kuona maudhui yake.</string>
+    <string key="locale.alert.updateSuccessful">Mwisho mafanikio</string>
+    <string key="locale.alert.updateUnsuccessful">Mwisho halikufanikiwa</string>
 
-    <string key="locale.common.invalidForm">Neno siri Local Admin:</string>
-    <string key="locale.common.na">Toleo la Mfumo wa uendeshaji </string>
+    <string key="locale.common.invalidForm">Kuwasilisha fomu ni batili</string>
+    <string key="locale.common.na">Hakuna inapatikana</string>
     <string key="locale.common.no">Hapana</string>
-    <string key="locale.common.of">Kubadili neno siri, mfumo unahitaji kukutambua. Chagua njia ya uthibitisho.</string>
-    <string key="locale.common.unknown">haijulikani</string>
-    <string key="locale.common.yes">Imekamilika</string>
+    <string key="locale.common.of">ya</string>
+    <string key="locale.common.unknown">Haijulikani</string>
+    <string key="locale.common.yes">Ndiyo</string>
 
-    <string key="locale.confirm.cascade">Je, unataka kurudisha hifadhi taarifa katika hali ya nyuma? Hiki kitendo kitafuta taarifa za sasa na kurudisha hifadhi katika hali ya mwisho ya uhifadhi. Endelea tu iwapo una uhakika.</string>
+    <string key="locale.confirm.cascade">Kuna maeneo mengine ambapo thamani hii ni kutumika. Je, ungependa pia update maadili hizo?</string>
 
-    <string key="locale.debug.bugReport">Kubali kurudisha hifadhidata tarehe ya awali</string>
-    <string key="locale.debug.reportSubmitted">Sasisha</string>
-    <string key="locale.debug.reportTicketId">Ambatanisha taarifa ya programu(matoleo, faili kumbukumbu, maelekezo n.k)</string>
-    <string key="locale.debug.reporter">Tarehe ya mwisho ya usawazishaji</string>
-    <string key="locale.debug.reproduction">Tengeneza neno siri jipya hapo chini</string>
-    <string key="locale.debug.reproductionPlaceholder">Jina</string>
-    <string key="locale.debug.sendLogs">Tafadhali ingiza jina la mtumiaji</string>
-    <string key="locale.debug.submit">Acha</string>
+    <string key="locale.debug.bugReport">Wasilisha Tatizo Ripoti</string>
+    <string key="locale.debug.reportSubmitted">Tatizo lako limewasilishwa kwa mfumo mkuu wa tiketi</string>
+    <string key="locale.debug.reportTicketId">Kwa ajili ya kumbukumbu yako, tiketi yako ID# ni</string>
+    <string key="locale.debug.reporter">Mwandishi</string>
+    <string key="locale.debug.reproduction">Hatua za Kuzaliana</string>
+    <string key="locale.debug.reproductionPlaceholder">Nukulu hatua zilizochukuliwa kabla ya suala mkutano</string>
+    <string key="locale.debug.sendLogs">Ambatanisha maelezo ya maombi (matoleo, kuingia faili, mipangilio, nk)</string>
+    <string key="locale.debug.submit">Kuwasilisha</string>
 
-    <string key="locale.dialog.wait.text">Maelekezo ya faili kumbukumbu</string>
+    <string key="locale.dialog.wait.text">Tafadhali subiri</string>
 
-    <string key="locale.encounters.addEntry">Jina la mtumiaji</string>
-    <string key="locale.encounters.overdue">Namba ya package</string>
-    <string key="locale.encounters.weightSummary.title">Hitilafu pekee</string>
+    <string key="locale.encounters.actionsPerformed.title">Vitendo kufanyika ziara hii</string>
+    <string key="locale.encounters.addEntry">Kuongeza kuingia</string>
+    <string key="locale.encounters.overdue">Siku za nyuma kutokana</string>
+    <string key="locale.encounters.weightSummary.title">Uzito muhtasari</string>
     <string key="locale.encounters.errors.date">Tafadhali chagua tarehe halali</string>
-    <string key="locale.encounters.actionsPerformed.title">Vitu kukamilika miadi hii</string>
 
+    <string key="locale.error.403.title">Upatikanaji ni haramu</string>
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
-    <string key="locale.error.403.title">Iwapo kuna data mpya</string>
-    <string key="locale.error.404.description">Rekebisha</string>
-    <string key="locale.error.404.title">Hewani</string>
-    <string key="locale.error.500.description">Kila dakika 15</string>
-    <string key="locale.error.500.title">Ingia</string>
+    <string key="locale.error.404.title">Haipatikani</string>
+    <string key="locale.error.404.description">Rasilimali ya ombi lake halikupatikana</string>
+    <string key="locale.error.500.title">Ndani ya seva ilitokea</string>
+    <string key="locale.error.500.description">Kulikuwa na hitilafu ya ndani utoaji ukurasa. Tafadhali angalia files mkononi kumbukumbu.</string>
 
-    <string key="locale.error.bug.description">Thibitisha Kufuta data</string>
+    <string key="locale.error.bug.title">Kuwasilisha mdudu</string>
+    <string key="locale.error.bug.description">Tumia fomu hii kuwasilisha mdudu au maoni kwenye ukurasa huu.</string>
+    <string key="locale.error.bug.input.title">Muhtasari</string>
+    <string key="locale.error.bug.input.severity">Hifadhi</string>
     <string key="locale.error.bug.input.blocker">Toa</string>
+    <string key="locale.error.bug.input.severe">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
+    <string key="locale.error.bug.input.minimal">Tengeneza neno siri</string>
+    <string key="locale.error.bug.input.trivial">Jina la mtumiaji</string>
     <string key="locale.error.bug.input.description">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utahifadhi na kusawazisha taarifa kwenye hifadhi kuu</string>
     <string key="locale.error.bug.input.logFile">Maelezo ya faili kumbukumbu</string>
-    <string key="locale.error.bug.input.minimal">Tengeneza neno siri</string>
-    <string key="locale.error.bug.input.severe">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
-    <string key="locale.error.bug.input.severity">Hifadhi</string>
-    <string key="locale.error.bug.input.title">Ingiza jina la mtumiaji</string>
-    <string key="locale.error.bug.input.trivial">Jina la mtumiaji</string>
-    <string key="locale.error.bug.title">Aina data:</string>
 
     <string key="locale.forgotPassword.challenge.placeholder">Toa kutoka hifadhi mama</string>
     <string key="locale.forgotPassword.challenge.resend">Ukubwa wa faili kumbukumbu</string>
@@ -823,7 +823,7 @@
     <string key="locale.settings.realmName.help">Kuweka hii udhibiti ulimwengu ID</string>
     <string key="locale.settings.realmPort.help">Kuweka hii udhibiti nambari ya lango</string>
     <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu katika vituo umejisajili kuingia</string>
-    
+
     <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
