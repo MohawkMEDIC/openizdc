@@ -30,15 +30,13 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
     $scope.Array = Array;
     $scope.identifiers = $scope.identifiers || [];
     $scope.regexValidation = $scope.regexValidation || [];
-    var once = true;
 
     // JF- ??? Why does this need to exist?
     angular.element(document).ready(init);
 
     function init() {
         $scope.$watch('patient.identifier', function (identifier, o) {
-            if (identifier && identifier != o && once) {
-                once = false;
+            if (identifier && identifier != o) {
                 $scope.identifiers = [];
                 for (key in identifier) {
                     if (identifier[key]) {
