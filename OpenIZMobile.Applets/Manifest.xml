@@ -167,6 +167,8 @@
     <string key="locale.forgotPassword.mechanism.help">To reset your password we need to verify it is you. Select a verification method:</string>
     <string key="locale.forgotPassword.challenge.title">Verify Your Identity</string>
     <string key="locale.forgotPassword.challenge.placeholder">Enter the secret code</string>
+    <string key="locale.forgotPassword.challenge.resend">Send</string>
+    <string key="locale.forgotPassword.challenge.response">A secret has been sent to you, enter the secret below. If you do not receive the secret you can press "send" to get a new secret sent to you.</string>
     <string key="locale.forgotPassword.challengeRequest.email">Send me an E-Mail</string>
     <string key="locale.forgotPassword.challengeRequest.emailText">Please enter the first part of your e-mail address (ex: john@domain.com would be "john")</string>
     <string key="locale.forgotPassword.challengeRequest.phone">Send me an SMS</string>
@@ -175,8 +177,6 @@
     <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
     <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
-    <string key="locale.forgotPassword.challenge.resend">Send</string>
-    <string key="locale.forgotPassword.challenge.response">A secret has been sent to you, enter the secret below. If you do not receive the secret you can press "send" to get a new secret sent to you.</string>
     <string key="locale.forgotPassword.error.onlineOnly">To reset your password you must be Online</string>
     <string key="locale.forgotPassword.error.validation">Your identity could not be validated</string>
     <string key="locale.forgotPassword.error.invalidCode">Your secret code was invalid</string>
@@ -318,8 +318,8 @@
     <string key="locale.preferences.passwordChanged">Password was successfully changed</string>
     <string key="locale.preferences.confirm">Confirm Password</string>
     <string key="locale.preferences.tabs.password">Password</string>
-    <string key="locale.preferences.tabs.passwordRecovery">Password Recovery</string>
     <string key="locale.preferences.tabs.profile">My Profile</string>
+    <string key="locale.preferences.tabs.recoveryMethods">Change Recovery Information</string>
     <string key="locale.preferences.givenName">Name(s)</string>
     <string key="locale.preferences.familyName">Surname(s)</string>
     <string key="locale.preferences.telephone">Tel / E-Mail</string>
@@ -506,7 +506,7 @@
     <string key="locale.error.403.description">Vous ne possedez pas de privileges suffisants pour voir la page.</string>
   </strings>
   <strings lang="sw">
-    <string key="AUTH_INV">Jina la mtumiaji au nenosiri ni batili</string>
+    <string key="AUTH_INV">Jina la mtumiaji au neno siri ni batili</string>
     <string key="AUTH_LCK">Akaunti imefungwa</string>
     <string key="AUTH_TFA">Akaunti inahitaji mbili sababu uthibitisho</string>
     <string key="invalid_grant">Ruzuku batili - Imeshindwa kuingia</string>
@@ -614,81 +614,86 @@
     <string key="locale.error.bug.title">Kuwasilisha mdudu</string>
     <string key="locale.error.bug.description">Tumia fomu hii kuwasilisha mdudu au maoni kwenye ukurasa huu.</string>
     <string key="locale.error.bug.input.title">Muhtasari</string>
-    <string key="locale.error.bug.input.severity">Hifadhi</string>
-    <string key="locale.error.bug.input.blocker">Toa</string>
-    <string key="locale.error.bug.input.severe">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
-    <string key="locale.error.bug.input.minimal">Tengeneza neno siri</string>
-    <string key="locale.error.bug.input.trivial">Jina la mtumiaji</string>
-    <string key="locale.error.bug.input.description">Hii sehemu inakuwezesha kusanidi/kuelekeza mfumo jinsi gani utahifadhi na kusawazisha taarifa kwenye hifadhi kuu</string>
-    <string key="locale.error.bug.input.logFile">Maelezo ya faili kumbukumbu</string>
+    <string key="locale.error.bug.input.severity">Ukali</string>
+    <string key="locale.error.bug.input.blocker">Siwezi kufanya kazi yangu kwa sababu ya kupewa mdudu hii</string>
+    <string key="locale.error.bug.input.severe">Mdudu hii ni muhimu siwezi kufanya kazi na hii</string>
+    <string key="locale.error.bug.input.minimal">Siwezi kufanya kazi karibu mdudu hii lakini hutatiza kazi yangu</string>
+    <string key="locale.error.bug.input.trivial">Mimi ni uwezo wa kufanya kazi karibu mdudu hii</string>
+    <string key="locale.error.bug.input.description">Elezea mdudu hii</string>
+    <string key="locale.error.bug.input.logFile">Ambatanisha ya kumbukumbu faili</string>
 
-    <string key="locale.forgotPassword.challenge.placeholder">Toa kutoka hifadhi mama</string>
-    <string key="locale.forgotPassword.challenge.resend">Ukubwa wa faili kumbukumbu</string>
-    <string key="locale.forgotPassword.challenge.response">neno siri</string>
-    <string key="locale.forgotPassword.challenge.title">Sasisho limekamilika</string>
-    <string key="locale.forgotPassword.changePassword.help">Neno siri</string>
-    <string key="locale.forgotPassword.changePassword.title">Hakuna wagonjwa </string>
-    <string key="locale.forgotPassword.mechanism.help">Onyo: kipindi kuisha</string>
-    <string key="locale.forgotPassword.mechanism.title">Toleo</string>
-    <string key="locale.forgotPassword.userName.help">Ingiza jina la mtumiaji</string>
-    <string key="locale.forgotPassword.userName.label">Maelezo ya toleo</string>
-    <string key="locale.forgotPassword.userName.placeholder">Kipindi chako kinakaribia kuisha</string>
-    <string key="locale.forgotPassword.userName.title">Jina la kifaa tayari limesajiliwa. Je, unataka kubadilisha huu usajili?(kama ndio, kifaa kingine chenye jina hili kitashindwa kuunga)</string>
+    <string key="locale.forgotPassword.userName.title">Ingiza jina la mtumiaji</string>
+    <string key="locale.forgotPassword.userName.help">Ingiza jina la mtumiaji kwa ajili ya ambayo unataka kuweka upya ya nenosiri.</string>
+    <string key="locale.forgotPassword.userName.label">Jina la mtumiaji</string>
+    <string key="locale.forgotPassword.userName.placeholder">Jina la mtumiaji</string>
+    <string key="locale.forgotPassword.mechanism.title">Rudisha njia</string>
+    <string key="locale.forgotPassword.mechanism.help">Ili kuweka upya nenosiri lako, tunahitaji kuthibitisha ni wewe. Kuchagua njia ya kuthibitisha:</string>
+    <string key="locale.forgotPassword.challenge.title">Kuthibitisha utambulisho wako</string>
+    <string key="locale.forgotPassword.challenge.placeholder">Pembejeo nambari ya siri</string>
+    <string key="locale.forgotPassword.challenge.resend">Tuma</string>
+    <string key="locale.forgotPassword.challenge.response">Nenosiri alitumwa, ingiza msimbo hapo chini. Kama hakuwa na kupokea siri unaweza bonyeza "Tuma" kupokea nambari ya siri mpya.</string>
     <string key="locale.forgotPassword.challengeRequest.email">Nitumie E-Mail</string>
     <string key="locale.forgotPassword.challengeRequest.emailText">Tafadhali weka sehemu ya kwanza ya barua pepe yako (kwa mfano: john@domain.com itakuwa "john")</string>
     <string key="locale.forgotPassword.challengeRequest.phone">Nitumie SMS</string>
     <string key="locale.forgotPassword.challengeRequest.phoneText">Tafadhali ingiza tarakimu nne za mwisho za nambari yako ya</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderEmail">Weka sehemu ya kwanza ya barua pepe yako</string>
     <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Ingiza tarakimu nne za mwisho za nambari yako ya</string>
-    <string key="locale.forgotPassword.error.onlineOnly">Ili kuweka upya nenosiri lako lazima uwe mtandaoni</string>
+    <string key="locale.forgotPassword.changePassword.title">Kuweka Neno siri</string>
+    <string key="locale.forgotPassword.changePassword.help">Weka neno siri yako mpya chini</string>
+    <string key="locale.forgotPassword.error.onlineOnly">Ili kuweka upya neno siri lako, lazima uwe mtandaoni</string>
     <string key="locale.forgotPassword.error.validation">utambulisho yako haikuweza kuthibitishwa</string>
     <string key="locale.forgotPassword.error.invalidCode">Nambari yako ya siri ni batili</string>
 
-    <string key="locale.legend.completed">Tafuta</string>
-    <string key="locale.legend.overdue">Ingiza sehemu ya kwanza ya barua pepe yako</string>
-    <string key="locale.legend.upcoming">Tahadhari</string>
-    <string key="locale.legend.appointment">uteuzi</string>
+    <string key="locale.legend.completed">Kukamilika</string>
+    <string key="locale.legend.overdue">Siku za nyuma kutokana</string>
+    <string key="locale.legend.upcoming">Ujao</string>
+    <string key="locale.legend.appointment">Kipambio</string>
 
-    <string key="locale.login.doLogin">Faili kumbukumbu</string>
-    <string key="locale.login.header">Ruhusu idhini ya kuingia kupitia kifaa pekee, hii itaruhusu kuingia kwenye mfumo iwapo hakuna intaneti</string>
+    <string key="locale.login.header">Ingia Kwa</string>
+    <string key="locale.login.username">Jina la mtumiaji</string>
     <string key="locale.login.password">Neno siri</string>
-    <string key="locale.login.username">Hii hitilafu ni kikwazo kikubwa na siwezi kuendelea</string>
+    <string key="locale.login.doLogin">Ingia</string>
 
-    <string key="locale.network.offline">Maelezo</string>
-    <string key="locale.network.online">Fafanua hitilafu:</string>
+    <string key="locale.network.offline">Haiwezi Kuunganisha</string>
+    <string key="locale.network.online">Unaweza Kuunganisha</string>
 
-    <string key="locale.openiz.info">Haipatikani</string>
+    <string key="locale.openiz.info"><![CDATA[<h2>Karibu OpenIZ Core Mteja Disconnected!</h2><p>Kuwa na uwezo wa kutumia kurasa kinga, kufunga maombi sambamba na mabadiliko kuanza mali kwa uhakika wa programu hii! Ili kuanza kutekeleza OpenIZ yako applets mwenyewe unaweza kutumia template nifty <a href="http://openizdctpl.codeplex.com/">hapa</a></p>]]></string>
 
-    <string key="locale.patient.schedule.none">uteuzi hakuna imepangwa</string>
-    <string key="locale.patient.search.noresults">Imetokea hitilafu kwenye kuleta ukurasa. Tafadhali pitia faili kumbukumbu kwenye kifaa.</string>
-    <string key="locale.patient.search.noduplicates">Hakuna Nakili Kupatikana</string>
-    <string key="locale.patient.search.header.mother">M</string>
+    <string key="locale.patient.search.noresults">Hakuna Wagonjwa Kupatikana</string>
+    <string key="locale.patient.search.noduplicates">Hapana Sawa Kiingilio</string>
+    <string key="locale.patient.search.header.mother">Mama</string>
+    <string key="locale.patient.schedule.none">Uteuzi Hakuna Imepangwa</string>
 
-    <string key="locale.preferences.changePassword">Badilisha neno la sir.</string>
-    <string key="locale.preferences.confirm">Umetumiwa "siri", ingiza "siri" hapo chini. Kama hujatumiwa, bonyeza "tuma" upate "siri" mpya</string>
-    <string key="locale.preferences.email">Tayari</string>
-    <string key="locale.preferences.errors.confirmationEmailInvalid">Kusahau neno siri</string>
-    <string key="locale.preferences.errors.confirmationPasswordRequired">Chimbuko la taarifa</string>
-    <string key="locale.preferences.errors.confirmationPhoneInvalid">Futa hifadhidata</string>
-    <string key="locale.preferences.errors.existingPasswordRequired">Tafadhali ingiza neno siri jipya</string>
-    <string key="locale.preferences.errors.newPasswordRequired">Tafadhali ingiza neno siri jipya tena</string>
-    <string key="locale.preferences.existingPassword">Tuma</string>
-    <string key="locale.preferences.facility">Thibitisha</string>
-    <string key="locale.preferences.familyName">Kushindwa kuingia</string>
-    <string key="locale.preferences.givenName">Uthibitisho:</string>
-    <string key="locale.preferences.language">Chagua hapa kufanya maombi kutoka kwenye kifaa yatumie HTTP</string>
-    <string key="locale.preferences.password">Tafadhali subiri</string>
-    <string key="locale.preferences.phone">Kata</string>
-    <string key="locale.preferences.tabs.password">Kamwe</string>
-    <string key="locale.preferences.tabs.passwordRecovery">kuokoa nenosiri</string>
-    <string key="locale.preferences.tabs.profile">Ndio</string>
-    <string key="locale.preferences.telephone">Ukubwa wa tatizo:</string>
-    <string key="locale.preferences.username">Sehemu ya mfumo</string>
-    <string key="locale.preferences.recoveryOptions.success">chaguo za kurejesha mafanikio iliyopita</string>
-    <string key="locale.preferences.save.success">wasifu imesasishwa</string>
-    <string key="locale.preferences.save.failure">Haikuweza kusasisha wasifu</string>
-    <string key="locale.preferences.errors.givenNameRequired">Tafadhali ingiza jina aliyopewa</string>
-    <string key="locale.preferences.errors.familyNameRequired">Tafadhali weka jina</string>
+    <!-- Preferences -->
+    <string key="locale.preferences.tabs.password">Neno siri</string>
+    <string key="locale.preferences.tabs.profile">My Profile</string>
+    <string key="locale.preferences.tabs.recoveryMethods">Badilisha ahueni ya habari</string>
+    <string key="locale.preferences.changePassword">Kuokoa</string>
+    <string key="locale.preferences.username">Jina la mtumiaji</string>
+    <string key="locale.preferences.existingPassword">Sasa neno siri</string>
+    <string key="locale.preferences.password">Mpya neno siri</string>
+    <string key="locale.preferences.passwordChanged">Neno siri ilifaulu kubadilishwa</string>
+    <string key="locale.preferences.confirm">Kuthibitisha neno siri</string>
+    <string key="locale.preferences.givenName">Jina(s)</string>
+    <string key="locale.preferences.familyName">Jina la Ukoo(s)</string>
+    <string key="locale.preferences.telephone">Idadi simu / Email</string>
+    <string key="locale.preferences.facility">Kituo</string>
+    <string key="locale.preferences.language">Lugha</string>
+    <string key="locale.preferences.password.onlineOnly">Neno siri upya inaweza tu kufanyika wakati mtandao ni juu ya</string>
+    <string key="locale.preferences.email">E-Mail</string>
+    <string key="locale.preferences.recoveryOptions.success">Chaguo za kurejesha mafanikio iliyopita</string>
+    <string key="locale.preferences.phone">Simu ya rununu</string>
+    <string key="locale.preferences.save.success">Profile updated successfully</string>
+    <string key="locale.preferences.save.failure">Unable to update profile</string>
+    <string key="locale.preferences.errors.givenNameRequired">Please enter a given name</string>
+    <string key="locale.preferences.errors.familyNameRequired">Please enter a surname</string>
+    <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
+    <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
+    <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
+    <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
 
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
 
@@ -715,6 +720,7 @@
     <string key="locale.session.aboutToExpirePrefix">Jiunge</string>
     <string key="locale.session.aboutToExpireSuffix">Kila dakika 30</string>
     <string key="locale.session.expiration">Jina la ukoo</string>
+
     <string key="locale.settings.allowLocalAuth">Hujajiunga na realm</string>
     <string key="locale.settings.allowLocalAuthDescription">Rudisha hifadhidata tarehe ya awali</string>
     <string key="locale.settings.apply">Sio hewani</string>
