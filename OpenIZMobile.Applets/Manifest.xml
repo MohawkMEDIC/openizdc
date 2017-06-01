@@ -852,13 +852,18 @@
     <string key="locale.settings.security.audit.month">kurejesha ukaguzi kwa mwezi 1</string>
     <string key="locale.settings.security.audit.help">udhibiti huu kuweka muda gani kijiprogramu kushika uchaguzi ukaguzi wa ndani</string>
 
-    <string key="locale.settings.subscribe.help">Kuweka hii udhibiti kituo waliojisajili kwa kompyuta hii</string>
-    <string key="locale.settings.logMode.help">Kuweka hii udhibiti ngazi ya kumbukumbu undani kwa kompyuta hii</string>
-    <string key="locale.settings.passwordFormat.help">Kuweka hii udhibiti nguvu ya encryption password kwa kompyuta hii</string>
-    <string key="locale.settings.deviceName.help">Kuweka hii linadhibiti kifaa jina la kompyuta hii</string>
-    <string key="locale.settings.realmName.help">Kuweka hii udhibiti ulimwengu ID</string>
-    <string key="locale.settings.realmPort.help">Kuweka hii udhibiti nambari ya lango</string>
-    <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu katika vituo umejisajili kuingia</string>
+    <string key="locale.settings.dataMode.synchronized">Synchronized</string>
+    <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
+    <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
+    <string key="locale.settings.dataMode.help">Fursa hii utapata mabadiliko mfumo wa data kwenye kompyuta hii</string>
+
+    <string key="locale.settings.subscribe.help">chaguzi Hii utapata mabadiliko kituo ambayo imekuwa kusajiliwa kwenye kompyuta hii</string>
+    <string key="locale.settings.logMode.help">chaguzi hii utapata kubadilisha hitilafu ya kurekodi maelezo ya kompyuta hii</string>
+    <string key="locale.settings.passwordFormat.help">Fursa hii utapata mabadiliko ya nguvu ya password encryption kwenye kompyuta hii</string>
+    <string key="locale.settings.deviceName.help">Fursa hii utapata mabadiliko ya kompyuta jina la kifaa hiki</string>
+    <string key="locale.settings.realmName.help">Uchaguzi huu utapata kubadili jina domain</string>
+    <string key="locale.settings.realmPort.help">Fursa hii utapata mabadiliko nambari ya mabandari</string>
+    <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu tu katika vituo kusajiliwa kujiunga</string>
 
     <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
