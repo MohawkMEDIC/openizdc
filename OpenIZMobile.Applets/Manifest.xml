@@ -216,24 +216,38 @@
     <!-- End Error -->
 
     <!-- Settings -->
-    <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
-    <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
-    <string key="locale.settings.realmTitle">Join Realm</string>
-    <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
-    <string key="locale.settings.deviceName">Device Name:</string>
-    <string key="locale.settings.deviceName.help">This setting controls the device name of this tablet</string>
-    <string key="locale.settings.realmName">Realm ID:</string>
-    <string key="locale.settings.realmName.help">This setting controls the realm ID</string>
-    <string key="locale.settings.realmPort">Alternate Port#:</string>
-    <string key="locale.settings.realmPort.help">This setting controls the port number</string>
+    <string key="locale.settings.allowLocalAuth">Authorization:</string>
+    <string key="locale.settings.allowLocalAuthDescription">Allow local authorization, this will allow clients to log into the app even if the internet is down</string>
+    <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm?</string>
+    <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
+
+    <string key="locale.settings.data.compact">Optimize Databases</string>
+    <string key="locale.settings.data.pull">Synchronize Now</string>
+    <string key="locale.settings.data.purge">Purge Data</string>
+    <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
+    <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
+    <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
+    <string key="locale.settings.data.restore">Restore Data</string>
+    <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
+    <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
     <string key="locale.settings.dataTitle">Data Retrieval Settings</string>
     <string key="locale.settings.dataDescription">This panel allows you to configure manner in which data is stored and synchronized with the central environment.</string>
-
     <string key="locale.settings.dataMode">Data Mode:</string>
     <string key="locale.settings.dataMode.synchronized">Synchronized</string>
     <string key="locale.settings.dataMode.onlineOnly">Online Only</string>
     <string key="locale.settings.dataMode.offlineOnly">Offline Only</string>
     <string key="locale.settings.dataMode.help">This setting controls the data mode for this tablet</string>
+
+    <string key="locale.settings.deviceName">Device Name:</string>
+    <string key="locale.settings.deviceName.help">This setting controls the device name of this tablet</string>
+    <string key="locale.settings.realmTitle">Join Realm</string>
+    <string key="locale.settings.realmDescription">A realm is a security domain to which OpenIZ is joined. This realm is responsible for controlling security settings, data synchronization as well administrative functions such as the concept dictionary.</string>
+    <string key="locale.settings.realmName">Realm ID:</string>
+    <string key="locale.settings.realmName.help">This setting controls the realm ID</string>
+    <string key="locale.settings.realmPort">Alternate Port#:</string>
+    <string key="locale.settings.realmPort.help">This setting controls the port number</string>
+    <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
+    <string key="locale.settings.status.generalRealmError">There was an error contacting the realm using the settings you entered. Please ensure you are online, the realm server root is accessable, and you're using the correct settings.</string>
 
     <string key="locale.settings.enableTracing">Enable Tracing</string>
 
@@ -248,20 +262,17 @@
     <string key="locale.settings.log.informational">Verbose</string>
     <string key="locale.settings.log.verbose">Very Verbose</string>
     <string key="locale.settings.log.error">Errors Only</string>
-
     <string key="locale.settings.log.warning">Errors and Warnings Only</string>
+
     <string key="locale.settings.securityTitle">Security Settings</string>
     <string key="locale.settings.securityDescription">Use this panel to configure the manner in which security policies are enforced on this device.</string>
     <string key="locale.settings.passwordFormat">Password Store:</string>
     <string key="locale.settings.passwordFormat.help">This setting controls the strength of password encryption for this tablet</string>
     <string key="locale.settings.passwordNoMatch">Passwords do not match</string>
-    <string key="locale.settings.allowLocalAuth">Authorization:</string>
-    <string key="locale.settings.allowLocalAuthDescription">Allow local authorization, this will allow clients to log into the app even if the internet is down</string>
     <string key="locale.settings.security.sha256">SHA256 Hashing - Very Strong</string>
     <string key="locale.settings.security.sha1">SHA1 Hashing - Compatibility mode</string>
     <string key="locale.settings.security.plain">Plaintext (not-recommended)</string>
     <string key="locale.settings.save">Save Settings</string>
-    <string key="locale.settings.cancel">Cancel</string>
 
     <string key="locale.settings.syncEvents">Synchronize On:</string>
     <string key="locale.settings.syncEvents.help">This setting controls the synchronize events for this tablet</string>
@@ -285,23 +296,12 @@
 
     <string key="locale.settings.leaveRealm">Leave</string>
     <string key="locale.settings.joinRealm">Join</string>
-    <string key="locale.settings.apply">Apply</string>
     <string key="locale.settings.error.noRealm">Your application is not joined to any realm!</string>
-    <string key="locale.settings.confirm.leaveRealm">This operation will remove all local unsynchronized data. Are you sure you want to leave the realm </string>
     <string key="locale.settings.status.joinRealm">Your application is now joined to this realm</string>
-    <string key="locale.settings.createLocalAdmin">Create local administrator account</string>
     <string key="locale.settings.localAdminPassword">Local Admin Password:</string>
     <string key="locale.settings.localAdminName">Local Admin Username:</string>
-    <string key="locale.settings.data.restore">Restore Data</string>
-    <string key="locale.settings.data.purge">Purge Data</string>
-    <string key="locale.settings.data.pull">Synchronize Now</string>
-    <string key="locale.settings.data.compact">Optimize Databases</string>
     <string key="locale.settings.enableSSL">Enable TLS/SSL for connection</string>
-    <string key="locale.settings.data.restore.confirmTitle">Confirm Data Restore</string>
-    <string key="locale.settings.data.restore.description">You are about to restore the database back to the last backed-up state. This operation will erase the current application database and will replace it with the last backup. Only continue if you are sure you wish to perform this action.</string>
-    <string key="locale.settings.data.purge.confirmTitle">Confirm Data Purge</string>
-    <string key="locale.settings.data.purge.description">You are about to purge all data in this installation. This will force the application to download a fresh set of clinic data (as though you've never opened the application before). You will also lose any changes which have not been synchronized to the server. Only continue if you're sure you want to perform this action.</string>
-    <string key="locale.settings.data.purge.backup">Create a backup of my current data</string>
+
     <string key="locale.settings.networkTitle">Network Settings</string>
     <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
     <string key="locale.settings.useProxy">Use a Proxy</string>
@@ -754,33 +754,35 @@
     <string key="locale.session.expiration">Kikao onyo</string>
     <!-- End Session -->
 
-    <string key="locale.settings.allowLocalAuth">Hujajiunga na realm</string>
-    <string key="locale.settings.allowLocalAuthDescription">Rudisha hifadhidata tarehe ya awali</string>
-    <string key="locale.settings.apply">Sio hewani</string>
-    <string key="locale.settings.cancel">Simu/Barua pepe</string>
-    <string key="locale.settings.confirm.leaveRealm">Kwa ufupi:</string>
-    <string key="locale.settings.createLocalAdmin">Neno siri jipya</string>
+    <string key="locale.settings.allowLocalAuth">Idhini:</string>
+    <string key="locale.settings.allowLocalAuthDescription">Ruhusu idhini ya ndani, hii itawawezesha wateja kuingia katika programu hata kama mtandao ni chini</string>
+    <string key="locale.settings.confirm.leaveRealm">Operesheni hii itaondoa data zote za ndani unsynchronized. Una uhakika unataka kuondoka eneo?</string>
+    <string key="locale.settings.createLocalAdmin">Fungua ndani ya msimamizi akaunti</string>
 
-    <string key="locale.settings.data.pull">Fuata hatua zile zile kabla ya kupata hii hitilafu.</string>
-    <string key="locale.settings.data.purge">Jina la mtumiaji na neno siri ni batili</string>
-    <string key="locale.settings.data.purge.backup">Hifadhi ya neno siri:</string>
-    <string key="locale.settings.data.purge.confirmTitle">DLL zilizopakiwa</string>
-    <string key="locale.settings.data.purge.description">Tafadhali ingiza jina la mtumiaji na neno siri, uweze kuendelea</string>
-    <string key="locale.settings.data.restore">Hifadhi maelekezo</string>
-    <string key="locale.settings.data.restore.confirmTitle">Kushindwa kutengeneza neno siri</string>
-    <string key="locale.settings.data.restore.description">Haitakiwi</string>
-    <string key="locale.settings.dataDescription">Jina</string>
-    <string key="locale.settings.dataMode">Ingia</string>
-    <string key="locale.settings.dataTitle">Kwa kumbukumbu, namba ya tiketi yako ni: </string>
-    <string key="locale.settings.data.compact">kuongeza hifadhidata</string>
+    <string key="locale.settings.data.compact">Kuongeza hifadhidata ufanisi</string>
+    <string key="locale.settings.data.pull">Sawazisha Sasa</string>
+    <string key="locale.settings.data.purge">Kufuta taarifa</string>
+    <string key="locale.settings.data.purge.backup">Unda nakala ya taarifa yangu</string>
+    <string key="locale.settings.data.purge.confirmTitle">Kuthibitisha taarifa ya kuondolewa mchakato</string>
+    <string key="locale.settings.data.purge.description">Unakaribia kuondoa data yote katika ufungaji hii. Hii inalazimisha programu kupakua seti mpya ya habari (kama ilikuwa haijawahi kufunguliwa kabla). Pia kupoteza mabadiliko yoyote ambayo si synchronized na mtandao. Uendelee tu kama una uhakika unataka kufanya tendo hili.</string>
+    <string key="locale.settings.data.restore">Kurejesha habari</string>
+    <string key="locale.settings.data.restore.confirmTitle">Thibitisha kurejesha habari</string>
+    <string key="locale.settings.data.restore.description">Unakaribia kubadilisha programu kwa mechi ya mwisho iliyohifadhiwa hali. Operesheni hii itafuta programu ya sasa database na badala yake pamoja mwisho kuhifadhiwa. Uendelee tu kama una uhakika unataka kufanya tendo hili.</string>
+    <string key="locale.settings.dataTitle">Habari chunga chaguzi</string>
+    <string key="locale.settings.dataDescription">Jopo hili utapata configure njia ambayo habari ni kuhifadhiwa na synchronized na wa mtandao</string>
+    <string key="locale.settings.dataMode">Habari chaguzi</string>
+    <string key="locale.settings.dataMode.synchronized">Sawazisha</string>
+    <string key="locale.settings.dataMode.onlineOnly">Intaneti zinahitajika</string>
+    <string key="locale.settings.dataMode.offlineOnly">Hakuna intaneti</string>
+    <string key="locale.settings.dataMode.help">Kubadilisha habari udhibiti chaguo kwa ajili ya kompyuta hii</string>
 
-    <string key="locale.settings.deviceName">Ingia</string>
-    <string key="locale.settings.enableTracing">Tatizo lako limeripotiwa</string>
-    <string key="locale.settings.error.noRealm">Programu ikifungwa </string>
+    <string key="locale.settings.deviceName">Jina la kifaa</string>
+    <string key="locale.settings.enableTracing">Wezesha kufuatilia</string>
     <string key="locale.settings.joinRealm">Jiunge Realm</string>
-    <string key="locale.settings.leaveRealm">Tuma hitilafu</string>
+    <string key="locale.settings.leaveRealm">Acha Realm</string>
     <string key="locale.settings.localAdminName">Hitilafu kwenye seva</string>
     <string key="locale.settings.localAdminPassword">Jina la mtumiaji</string>
+    <string key="locale.settings.error.noRealm">Programu ikifungwa </string>
 
     <string key="locale.settings.logTitle">Ingia Mipangilio</string>
     <string key="locale.settings.log.debugging">utatuzi</string>
@@ -849,11 +851,6 @@
     <string key="locale.settings.security.audit.week">kurejesha ukaguzi kwa wiki 1</string>
     <string key="locale.settings.security.audit.month">kurejesha ukaguzi kwa mwezi 1</string>
     <string key="locale.settings.security.audit.help">udhibiti huu kuweka muda gani kijiprogramu kushika uchaguzi ukaguzi wa ndani</string>
-
-    <string key="locale.settings.dataMode.synchronized">Synchronized</string>
-    <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
-    <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
-    <string key="locale.settings.dataMode.help">Kuweka hii udhibiti mode data kwa kompyuta hii</string>
 
     <string key="locale.settings.subscribe.help">Kuweka hii udhibiti kituo waliojisajili kwa kompyuta hii</string>
     <string key="locale.settings.logMode.help">Kuweka hii udhibiti ngazi ya kumbukumbu undani kwa kompyuta hii</string>
