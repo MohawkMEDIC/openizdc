@@ -311,35 +311,35 @@
     <string key="locale.settings.onlySubscribedFacilities">Only allow people in the subscribed facilities to login</string>
 
     <!-- Preferences -->
+    <string key="locale.preferences.tabs.password">Password</string>
+    <string key="locale.preferences.tabs.profile">My Profile</string>
+    <string key="locale.preferences.tabs.recoveryMethods">Change Recovery Information</string>
     <string key="locale.preferences.changePassword">Save</string>
     <string key="locale.preferences.username">Username</string>
     <string key="locale.preferences.existingPassword">Existing Password</string>
     <string key="locale.preferences.password">New Password</string>
     <string key="locale.preferences.passwordChanged">Password was successfully changed</string>
     <string key="locale.preferences.confirm">Confirm Password</string>
-    <string key="locale.preferences.tabs.password">Password</string>
-    <string key="locale.preferences.tabs.profile">My Profile</string>
-    <string key="locale.preferences.tabs.recoveryMethods">Change Recovery Information</string>
     <string key="locale.preferences.givenName">Name(s)</string>
     <string key="locale.preferences.familyName">Surname(s)</string>
     <string key="locale.preferences.telephone">Tel / E-Mail</string>
     <string key="locale.preferences.facility">Facility</string>
     <string key="locale.preferences.language">Language</string>
-    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
-    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
-    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
     <string key="locale.preferences.password.onlineOnly">Password Reset Can Only Be Done When Online</string>
     <string key="locale.preferences.email">E-Mail</string>
     <string key="locale.preferences.recoveryOptions.success">Recovery Options Successfully Changed</string>
     <string key="locale.preferences.phone">Mobile</string>
+    <string key="locale.preferences.save.success">Profile updated successfully</string>
+    <string key="locale.preferences.save.failure">Unable to update profile</string>
     <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
     <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
     <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
     <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
-    <string key="locale.preferences.save.success">Profile updated successfully</string>
     <string key="locale.preferences.errors.givenNameRequired">Please enter a given name</string>
     <string key="locale.preferences.errors.familyNameRequired">Please enter a surname</string>
-    <string key="locale.preferences.save.failure">Unable to update profile</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
 
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
@@ -666,7 +666,7 @@
 
     <!-- Preferences -->
     <string key="locale.preferences.tabs.password">Neno siri</string>
-    <string key="locale.preferences.tabs.profile">My Profile</string>
+    <string key="locale.preferences.tabs.profile">Maelezo yangu</string>
     <string key="locale.preferences.tabs.recoveryMethods">Badilisha ahueni ya habari</string>
     <string key="locale.preferences.changePassword">Kuokoa</string>
     <string key="locale.preferences.username">Jina la mtumiaji</string>
@@ -683,17 +683,17 @@
     <string key="locale.preferences.email">E-Mail</string>
     <string key="locale.preferences.recoveryOptions.success">Chaguo za kurejesha mafanikio iliyopita</string>
     <string key="locale.preferences.phone">Simu ya rununu</string>
-    <string key="locale.preferences.save.success">Profile updated successfully</string>
-    <string key="locale.preferences.save.failure">Unable to update profile</string>
-    <string key="locale.preferences.errors.givenNameRequired">Please enter a given name</string>
-    <string key="locale.preferences.errors.familyNameRequired">Please enter a surname</string>
-    <string key="locale.preferences.errors.confirmationEmailInvalid">This e-mail address appears to be invalid</string>
-    <string key="locale.preferences.errors.confirmationPhoneInvalid">This mobile appears to be invalid</string>
-    <string key="locale.preferences.errors.changePasswordFailure">There was an error changing your password</string>
-    <string key="locale.preferences.errors.changePasswordRecoveryFailure">There was an error changing your password recovery details</string>
-    <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
-    <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
-    <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
+    <string key="locale.preferences.save.success">Wasifu imesasishwa</string>
+    <string key="locale.preferences.save.failure">Haikuweza kusasisha wasifu</string>
+    <string key="locale.preferences.errors.givenNameRequired">Tafadhali ingiza aliyopewa jina</string>
+    <string key="locale.preferences.errors.familyNameRequired">Tafadhali ingiza jina la ukoo</string>
+    <string key="locale.preferences.errors.confirmationEmailInvalid">Anwani hii ya barua pepe inaonekana si sahihi</string>
+    <string key="locale.preferences.errors.confirmationPhoneInvalid">Idadi hii ya mkononi inaonekana si sahihi</string>
+    <string key="locale.preferences.errors.changePasswordFailure">Kulikuwa na hitilafu kubadilisha nywila</string>
+    <string key="locale.preferences.errors.changePasswordRecoveryFailure">Kulikuwa na hitilafu kubadilisha password maelezo yako ya uokoaji</string>
+    <string key="locale.preferences.errors.existingPasswordRequired">Tafadhali weka neno siri lako la sasa</string>
+    <string key="locale.preferences.errors.newPasswordRequired">Tafadhali weka neno siri jipya</string>
+    <string key="locale.preferences.errors.confirmationPasswordRequired">Tafadhali kuthibitisha neno siri mpya</string>
 
     <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
 
