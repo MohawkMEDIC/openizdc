@@ -102,6 +102,7 @@
     <string key="locale.encounters.overdue">Overdue</string>
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
     <string key="locale.encounters.errors.date">Please select a valid date</string>
+    <!-- End Encounters -->
 
     <!-- Actions -->
     <string key="locale.action.acknowledge">Acknowledge</string>
@@ -124,6 +125,7 @@
     <string key="locale.action.update">Update</string>
     <string key="locale.action.verify">Verify</string>
     <string key="locale.action.view">View</string>
+    <!-- End Actions -->
 
     <!-- Alerts -->
     <string key="locale.alerts.alerts">Alerts</string>
@@ -132,6 +134,7 @@
     <string key="locale.alerts.noneSelected">No alert selected, please select one to view its contents.</string>
     <string key="locale.alert.updateSuccessful">Update Successful</string>
     <string key="locale.alert.updateUnsuccessful">Update Unsuccessful</string>
+    <!-- End Alerts -->
 
     <!-- Common -->
     <string key="locale.common.invalidForm">Form submission is invalid</string>
@@ -142,9 +145,11 @@
     <string key="locale.common.unknown">Unknown</string>
 
     <string key="locale.dialog.wait.text">Please wait</string>
+    <!-- End Common -->
 
-    <!-- Login -->
+    <!-- Security -->
     <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; User Elevation Required</string>
+
     <string key="locale.security.login.helpText">Please log into OpenIZ to continue</string>
     <string key="locale.security.login.label.username">Username</string>
     <string key="locale.security.login.label.password">Password</string>
@@ -152,6 +157,7 @@
     <string key="locale.security.login.placeholder.password">Enter your password</string>
     <string key="locale.security.login.button.forgotPassword">Forgot Password</string>
     <string key="locale.security.login.button.login">Login</string>
+
     <string key="locale.security.forgotPassword.title">Forgot Password</string>
     <string key="locale.security.forgotPassword.userName">Username</string>
     <string key="locale.security.forgotPassword.mechanism">Method</string>
@@ -159,6 +165,13 @@
     <string key="locale.security.forgotPassword.changePassword">Set Password</string>
     <string key="locale.security.forgotPassword.onlineOnly">Forgot password is available online only</string>
 
+    <string key="locale.security.errors.usernameRequired">Please enter a username</string>
+    <string key="locale.security.errors.passwordRequired">Please enter a password</string>
+    <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
+    <string key="locale.security.errors.passwordInvalid">Your password must be at least 8 characters long and contain one Uppercase letter</string>
+    <!-- End Security -->
+
+    <!-- Forgot Password -->
     <string key="locale.forgotPassword.userName.title">Enter Username</string>
     <string key="locale.forgotPassword.userName.help">Enter the name of the user for which you wish to reset the password.</string>
     <string key="locale.forgotPassword.userName.label">Username</string>
@@ -177,15 +190,12 @@
     <string key="locale.forgotPassword.challengeRequest.placeholderPhone">Enter the last four digits of your phone number</string>
     <string key="locale.forgotPassword.changePassword.title">Set Password</string>
     <string key="locale.forgotPassword.changePassword.help">Set your new password below</string>
-    <string key="locale.forgotPassword.error.onlineOnly">To reset your password you must be Online</string>
+    <string key="locale.forgotPassword.error.onlineOnly">To reset your password, you must be online</string>
     <string key="locale.forgotPassword.error.validation">Your identity could not be validated</string>
     <string key="locale.forgotPassword.error.invalidCode">Your secret code was invalid</string>
+    <!-- End Forgot Password -->
 
-    <string key="locale.security.errors.usernameRequired">Please enter a username</string>
-    <string key="locale.security.errors.passwordRequired">Please enter a password</string>
-    <string key="locale.security.errors.unableToResetPassword">Unable to reset password</string>
-    <string key="locale.security.errors.passwordInvalid">Your password must be at least 8 characters long and contain one Uppercase letter</string>
-
+    <!-- Error -->
     <string key="locale.error.403.title">Forbidden</string>
     <string key="locale.error.403.description">The requested action is forbidden</string>
     <string key="locale.error.404.title">Not Found</string>
@@ -203,6 +213,7 @@
     <string key="locale.error.bug.input.trivial">I am able to work around this bug</string>
     <string key="locale.error.bug.input.description">Describe this bug:</string>
     <string key="locale.error.bug.input.logFile">Attach Log File:</string>
+    <!-- End Error -->
 
     <!-- Settings -->
     <string key="locale.settings.status.duplicateName">This device name has already been registered. Do you want to replace this device registration on the server? (If you do, another deivce with this name may not be able to connect)</string>
@@ -309,6 +320,7 @@
     <string key="locale.settings.security.audit.help">This setting controls how long the applet will keep an audit trail locally</string>
 
     <string key="locale.settings.onlySubscribedFacilities">Only allow people in the subscribed facilities to login</string>
+    <!-- End Settings -->
 
     <!-- Preferences -->
     <string key="locale.preferences.tabs.password">Password</string>
@@ -340,18 +352,21 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Please enter your existing password</string>
     <string key="locale.preferences.errors.newPasswordRequired">Please enter your new password</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Please enter your new password confirmation</string>
+    <!-- End Preferences -->
 
     <!-- Chart Legend -->
     <string key="locale.legend.overdue">Overdue</string>
     <string key="locale.legend.completed">Completed</string>
     <string key="locale.legend.upcoming">Upcoming</string>
     <string key="locale.legend.appointment">Appointment</string>
+    <!-- End Chart Legend -->
 
     <!-- Patient -->
     <string key="locale.patient.search.noresults">No Patients Found</string>
     <string key="locale.patient.search.noduplicates">No Duplicates Found</string>
     <string key="locale.patient.search.header.mother">Mother</string>
     <string key="locale.patient.schedule.none">No Scheduled Appointments</string>
+    <!-- End Patient -->
 
     <!-- Reports -->
     <string key="locale.reports.title">Facility Report Centre</string>
@@ -362,13 +377,16 @@
     <string key="locale.reports.executeWait">Generating report...</string>
     <string key="locale.reports.error.locked">The database file this relies on is locked. There may be a background process using the database file. Please wait a few minutes and try your request again.</string>
     <string key="locale.reports.error.required">Parameter is required</string>
+    <!-- End Reports -->
 
     <!-- Login -->
     <string key="locale.login.header">Log-in to</string>
     <string key="locale.login.username">Username:</string>
     <string key="locale.login.password">Password:</string>
     <string key="locale.login.doLogin">Login</string>
+    <!-- End Login -->
 
+    <!-- Debug -->
     <string key="locale.debug.bugReport">Submit Bug Report</string>
     <string key="locale.debug.reportSubmitted">Your issue has been successfully submitted to the central ticketing system</string>
     <string key="locale.debug.reportTicketId">For your reference, your ticket ID# is:</string>
@@ -377,7 +395,9 @@
     <string key="locale.debug.reproductionPlaceholder">Enter the steps that you performed prior to encountering the bug/issue</string>
     <string key="locale.debug.sendLogs">Attach application information (versions, log files, settings, etc.)</string>
     <string key="locale.debug.submit">Send Report</string>
+    <!-- End Debug -->
 
+    <!-- About -->
     <string key="locale.about.tabs.versions">Version Information</string>
     <string key="locale.about.tabs.log">Log Files</string>
     <string key="locale.about.tabs.runtime">Environment</string>
@@ -415,14 +435,17 @@
     <string key="locale.about.updateToast.title">Updates Available</string>
     <string key="locale.about.updateToast.text">Good news! There's a new version of the application available. Tap here to go to the update page.</string>
     <string key="locale.about.workLoad">Threadpool Use</string>
+    <!-- End About -->
 
-    <!-- Generic confirmations-->
+    <!-- Generic Confirmations -->
     <string key="locale.confirm.cascade">There are other places this value is used. Would you like to also update those values?</string>
     <string key="locale.openiz.info"><![CDATA[<h2>Welcome to OpenIZ Disconnected Client Core!</h2><p>You might be wondering where the Immunization Screens are, well that's easy, all you have to do is install an application with a startup asset and point this application at it! To get started implementing your own OpenIZ applets you can use the nifty template <a href="http://openizdctpl.codeplex.com/">here</a></p>]]></string>
+    <!-- End Generic Confirmations -->
 
     <!-- Common Dialog -->
     <string key="locale.network.offline">Offline</string>
     <string key="locale.network.online">Online</string>
+    <!-- End Common Dialog -->
 
     <string key="invalid_grant">Invalid grant - Can't login</string>
     <string key="AUTH_INV">Invalid username or password</string>
@@ -485,7 +508,9 @@
     <string key="locale.sync.resource.QuantityObservation">Quantity Observation</string>
     <string key="locale.sync.resource.TextObservation">Text Observation</string>
     <string key="locale.sync.resource.TemplateDefinition">Template Definition</string>
+    <!-- End Sync Centre -->
 
+    <!-- Audit -->
     <string key="locale.audit.action">Action</string>
     <string key="locale.audit.class">Operation</string>
     <string key="locale.audit.date">Timestamp</string>
@@ -496,6 +521,7 @@
     <string key="locale.audit.detail.title">Audit Detail</string>
     <string key="locale.audit.actors">Actors</string>
     <string key="locale.audit.objects">Objects</string>
+    <!-- End Audit -->
   </strings>
   <strings lang="fr">
     <string key="locale.error.404.title">Non trouvee</string>
@@ -694,32 +720,39 @@
     <string key="locale.preferences.errors.existingPasswordRequired">Tafadhali weka neno siri lako la sasa</string>
     <string key="locale.preferences.errors.newPasswordRequired">Tafadhali weka neno siri jipya</string>
     <string key="locale.preferences.errors.confirmationPasswordRequired">Tafadhali kuthibitisha neno siri mpya</string>
+    <!-- End Preferences -->
 
-    <string key="locale.security.authenticateHeader">Neno siri hazifanani</string>
+    <!-- Security -->
+    <string key="locale.security.authenticateHeader">&lt;span class="glyphicon glyphicon-lock"&gt;&lt;/span&gt; Matumiaji mwinuko kutakiwa</string>
 
-    <string key="locale.security.errors.passwordRequired">Tahadhari muhimu (hitilafu) pekee</string>
-    <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
-    <string key="locale.security.errors.unableToResetPassword">Hitilafu imetokea. Tafadhali pitia faili kumbukumbu.</string>
-    <string key="locale.security.errors.usernameRequired">Tafadhali ingiza jina la mtumiaji</string>
-
-    <string key="locale.security.forgotPassword.challenge">Taarifa ilyoombwa hakuweza kupatikana.</string>
-    <string key="locale.security.forgotPassword.changePassword">Hii barua pepe ni batili</string>
-    <string key="locale.security.forgotPassword.mechanism">Kitendo hiki kitaondoa data zote ambazo hazijasawazishwa. Una uhakika unataka kutoka kwenye realm?</string>
-    <string key="locale.security.forgotPassword.title">Maelekezo</string>
-    <string key="locale.security.forgotPassword.userName">Imepita muda</string>
-    <string key="locale.security.forgotPassword.onlineOnly">Umesahau nywila inapatikana online tu</string>
-
-    <string key="locale.security.login.button.forgotPassword">Kosa Nywila</string>
-    <string key="locale.security.login.button.login">Ingia</string>
-    <string key="locale.security.login.helpText">Akaunti imefungwa</string>
-    <string key="locale.security.login.label.password">Neno la kificho</string>
+    <!-- Security - Login -->
+    <string key="locale.security.login.helpText">Tafadhali ingia katika kuendelea kwa OpenIZ</string>
     <string key="locale.security.login.label.username">Jina la mtumiaji</string>
-    <string key="locale.security.login.placeholder.password">Maelezo ya faili data</string>
-    <string key="locale.security.login.placeholder.username">Umesahau neno siri</string>
+    <string key="locale.security.login.label.password">Neno siri</string>
+    <string key="locale.security.login.placeholder.username">Ingiza jina la mtumiaji lako</string>
+    <string key="locale.security.login.placeholder.password">Ingiza neno siri lako</string>
+    <string key="locale.security.login.button.forgotPassword">Umesahau neno siri</string>
+    <string key="locale.security.login.button.login">Ingia</string>
+    <!-- End Security - Login -->
 
-    <string key="locale.session.aboutToExpirePrefix">Jiunge</string>
-    <string key="locale.session.aboutToExpireSuffix">Kila dakika 30</string>
-    <string key="locale.session.expiration">Jina la ukoo</string>
+    <string key="locale.security.forgotPassword.title">Umesahau neno siri</string>
+    <string key="locale.security.forgotPassword.userName">Jina la mtumiaji</string>
+    <string key="locale.security.forgotPassword.mechanism">Rudisha njia</string>
+    <string key="locale.security.forgotPassword.challenge">Thibitisha</string>
+    <string key="locale.security.forgotPassword.changePassword">Kuweka neno siri</string>
+    <string key="locale.security.forgotPassword.onlineOnly">Ili kuweka upya neno siri lako, lazima uwe mtandaoni</string>
+
+    <string key="locale.security.errors.usernameRequired">Tafadhali ingiza jina la mtumiaji</string>
+    <string key="locale.security.errors.passwordRequired">Tafadhali ingiza neno siri</string>
+    <string key="locale.security.errors.unableToResetPassword">Kulikuwa na hitilafu kubadilisha nywila</string>
+    <string key="locale.security.errors.passwordInvalid">Nywila yako lazima angalau herufi 8 na vyenye moja herufi kubwa mbili</string>
+    <!-- End Security -->
+
+    <!-- Session -->
+    <string key="locale.session.aboutToExpirePrefix">Kipindi chako kinakaribia kwisha muda katika</string>
+    <string key="locale.session.aboutToExpireSuffix">Gonga ujumbe huu kwa kupanua kikao.</string>
+    <string key="locale.session.expiration">Kikao onyo</string>
+    <!-- End Session -->
 
     <string key="locale.settings.allowLocalAuth">Hujajiunga na realm</string>
     <string key="locale.settings.allowLocalAuthDescription">Rudisha hifadhidata tarehe ya awali</string>
