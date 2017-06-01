@@ -777,63 +777,73 @@
     <string key="locale.settings.dataMode.help">Kubadilisha habari udhibiti chaguo kwa ajili ya kompyuta hii</string>
 
     <string key="locale.settings.deviceName">Jina la kifaa</string>
+    <string key="locale.settings.deviceName.help">Fursa hii utapata mabadiliko ya kompyuta jina la kifaa hiki</string>
+    <string key="locale.settings.localAdminName">Msimamizi wa ndani jina la mtumiaji</string>
+    <string key="locale.settings.localAdminPassword">Msimamizi wa ndani neno siri</string>
+    <string key="locale.settings.enableSSL">Enable TLS/SSL for connection</string>
+    <string key="locale.settings.joinRealm">Jiunge</string>
+    <string key="locale.settings.leaveRealm">Acha</string>
+    <string key="locale.settings.status.joinRealm">Programu yako sasa alijiunga na ulimwengu huu</string>
+    <string key="locale.settings.error.noRealm">Programu yako hawajajiunga kwenye makao yoyote!</string>
+
+    <string key="locale.settings.realmTitle">Kujiunga Ulimwengu</string>
+    <string key="locale.settings.realmDescription">Ulimwengu ni uwanja wa usalama ambayo OpenIZ imeunganishwa. ulimwengu huu ni wajibu kwa ajili ya kudhibiti mipangilio ya usalama, usawazishaji data pamoja kazi ya utawala kama vile kamusi dhana.</string>
+    <string key="locale.settings.realmName">Ulimwengu ID</string>
+    <string key="locale.settings.realmName.help">Kuweka udhibiti huu ulimwengu ID</string>
+    <string key="locale.settings.realmPort">Bandari mbadala#:</string>
+    <string key="locale.settings.realmPort.help">Fursa hii utapata mabadiliko nambari ya mabandari</string>
+    <string key="locale.settings.status.duplicateName">Jina hili kifaa tayari imesajiliwa. Je, unataka kubadilisha hii usajili kifaa kwenye kompyuta? (Kama hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
+    <string key="locale.settings.status.generalRealmError">Kulikuwa na hitilafu ya kuwasiliana na ulimwengu kwa kutumia mipangilio uliyoweka. Tafadhali kuhakikisha una online, ulimwengu server mzizi kufikiwa, na wewe ni kutumia mazingira sahihi.</string>
+
     <string key="locale.settings.enableTracing">Wezesha kufuatilia</string>
-    <string key="locale.settings.joinRealm">Jiunge Realm</string>
-    <string key="locale.settings.leaveRealm">Acha Realm</string>
-    <string key="locale.settings.localAdminName">Hitilafu kwenye seva</string>
-    <string key="locale.settings.localAdminPassword">Jina la mtumiaji</string>
-    <string key="locale.settings.error.noRealm">Programu ikifungwa </string>
 
     <string key="locale.settings.logTitle">Ingia Mipangilio</string>
-    <string key="locale.settings.log.debugging">utatuzi</string>
-    <string key="locale.settings.log.production">uzalishaji</string>
-    <string key="locale.settings.log.always">Mtumaji taarifa</string>
-    <string key="locale.settings.log.critical">Maandishi wazi(haipendekezwi)</string>
-    <string key="locale.settings.log.error">Maelezo ya kumbukumbu</string>
-    <string key="locale.settings.log.informational">Tumia fomu hii kutuma hitilafu au mrejesho kuhusu ukurasa huu</string>
-    <string key="locale.settings.log.verbose">Anzisha upya Njia</string>
-    <string key="locale.settings.log.warning">Neno siri</string>
-    <string key="locale.settings.logDescription">Chaguzi za kupata neno siri</string>
+    <string key="locale.settings.logDescription">OpenIZ Disconnected Mteja files maombi logi ambayo inaweza Imetumwa kwa kati ya utambuzi server katika kesi ya ajali ya maombi. Matumizi ya jopo hili configure verbosity kumbukumbu hizo</string>
     <string key="locale.settings.logMode">Simu ya mkononi</string>
+    <string key="locale.settings.logMode.help">chaguzi hii utapata kubadilisha hitilafu ya kurekodi maelezo ya kompyuta hii</string>
+    <string key="locale.settings.log.debugging">Utatuzi</string>
+    <string key="locale.settings.log.production">Uzalishaji</string>
+    <string key="locale.settings.log.critical">Matatizo muhimu (Programu inashindwa) pekee</string>
+    <string key="locale.settings.log.error">Makosa tu</string>
+    <string key="locale.settings.log.warning">Makosa na Maonyo Tu</string>
+    <string key="locale.settings.log.always">Tunza kila kitu (inasababisha faili kumbukumbu kuwa kubwa) </string>
+    <string key="locale.settings.log.informational">Baadhi ya maelezo</string>
+    <string key="locale.settings.log.verbose">Kura ya maelezo</string>
 
     <string key="locale.settings.networkDescription">Akaunti inahitaji uthibitisho wa aina mbili</string>
     <string key="locale.settings.networkTitle">Neno siri la sasa</string>
 
     <string key="locale.settings.passwordFormat">Tafadhali ingiza neno siri</string>
+    <string key="locale.settings.passwordFormat.help">Fursa hii utapata mabadiliko ya nguvu ya password encryption kwenye kompyuta hii</string>
     <string key="locale.settings.passwordNoMatch">Hewani pekee</string>
 
     <string key="locale.settings.pollEvent.commit">Imepita muda</string>
-    <string key="locale.settings.pollEvent.network">SHA1 Hashing - Njia ya utangamano</string>
+    <string key="locale.settings.pollEvent.network"></string>
     <string key="locale.settings.pollEvent.start">Haihusu</string>
 
     <string key="locale.settings.pollInterval">Progamu ikianza</string>
     <string key="locale.settings.pollInterval.help">Kuweka hii udhibiti kupigia kura muda kwa kompyuta hii</string>
     <string key="locale.settings.pollInterval.0">Realm ni sehemu ya usalama ambayo OpenIZ imejiunga. Kazi ya realm ni kuratibu maelekezo ya usalama, usawazishaji wa taarifa na kazi za utawala wa mfumo kama vile kamusi kompyuta</string>
     <string key="locale.settings.pollInterval.1">Hatua za kurudia</string>
+    <string key="locale.settings.pollInterval.5">Kila dakika 5</string>
     <string key="locale.settings.pollInterval.15">Tahadhari mpya</string>
     <string key="locale.settings.pollInterval.30">Njia</string>
-    <string key="locale.settings.pollInterval.5">http://proxy:8888/</string>
     <string key="locale.settings.pollInterval.push">Ninaweza kuendelea licha ya hii hitilafu</string>
 
     <string key="locale.settings.proxyAddress">Ambatanisha faili kumbukumbu</string>
     <string key="locale.settings.proxyAddressPlaceHolder">Tengeneza neno siri</string>
 
-    <string key="locale.settings.realmDescription">Ruhusu ufatiliaji wa mfumo(tracing)</string>
-    <string key="locale.settings.realmName">Haijulikani</string>
-    <string key="locale.settings.realmTitle">Maelezo mengi sana</string>
-
     <string key="locale.settings.save">Kitendo hakiruhusiwi</string>
 
-    <string key="locale.settings.security.plain">Tunza kila kitu(inasababisha faili kumbukumbu kuwa kubwa)</string>
-    <string key="locale.settings.security.sha1">Kubali</string>
-    <string key="locale.settings.security.sha256">Kila dakika 5</string>
+    <string key="locale.settings.security.plain">Maandishi wazi (haipendekezwi)</string>
+    <string key="locale.settings.security.sha1">SHA1 Hashing - Njia ya utangamano</string>
+    <string key="locale.settings.security.sha256"></string>
     <string key="locale.settings.securityDescription">Tarehe ya mwisho ya Uandishi</string>
     <string key="locale.settings.securityTitle">Nyuma</string>
 
-    <string key="locale.settings.status.duplicateName">Tahadhari haijachaguliwa, chaugua moja wapo kuona maelezo yake.</string>
-    <string key="locale.settings.status.joinRealm">Kila dakika 1</string>
-
     <string key="locale.settings.subscribe">Ingiza kodi ya siri</string>
+    <string key="locale.settings.subscribe.help">chaguzi Hii utapata mabadiliko kituo ambayo imekuwa kusajiliwa kwenye kompyuta hii</string>
+    <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
     <string key="locale.settings.syncEvents">Tumia proxy</string>
     <string key="locale.settings.syncEvents.help">Kuweka hii udhibiti matukio synchronize kwa kompyuta hii</string>
@@ -857,15 +867,7 @@
     <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
     <string key="locale.settings.dataMode.help">Fursa hii utapata mabadiliko mfumo wa data kwenye kompyuta hii</string>
 
-    <string key="locale.settings.subscribe.help">chaguzi Hii utapata mabadiliko kituo ambayo imekuwa kusajiliwa kwenye kompyuta hii</string>
-    <string key="locale.settings.logMode.help">chaguzi hii utapata kubadilisha hitilafu ya kurekodi maelezo ya kompyuta hii</string>
-    <string key="locale.settings.passwordFormat.help">Fursa hii utapata mabadiliko ya nguvu ya password encryption kwenye kompyuta hii</string>
-    <string key="locale.settings.deviceName.help">Fursa hii utapata mabadiliko ya kompyuta jina la kifaa hiki</string>
-    <string key="locale.settings.realmName.help">Uchaguzi huu utapata kubadili jina domain</string>
-    <string key="locale.settings.realmPort.help">Fursa hii utapata mabadiliko nambari ya mabandari</string>
     <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu tu katika vituo kusajiliwa kujiunga</string>
-
-    <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
