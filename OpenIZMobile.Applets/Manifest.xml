@@ -833,28 +833,22 @@
     <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
 
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
-    <string key="locale.sync.queue">Foleni</string>
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
-    <string key="locale.sync.conflicted">migogoro seva na meza</string>
+    <string key="locale.sync.conflicted">migogoro kati ya seva na kompyuta</string>
     <string key="locale.sync.inbound">seva ili ndani (Inbox)</string>
     <string key="locale.sync.outbound">Mitaa Server (kikasha toezi)</string>
     <string key="locale.sync.admin">utawala (ukaguzi, watumiaji, na kadhalika)</string>
     <string key="locale.sync.objects">Vitu katika foleni</string>
-    <string key="locale.sync.resolve.resolve">Tatua</string>
-    <string key="locale.sync.resolve.takeMine">Upachikaji Server</string>
-    <string key="locale.sync.conflict">Migogoro</string>
-    <string key="locale.sync.retry">Jaribu tena umekinzana</string>
-    <string key="locale.sync.force">Sawazisha Sasa</string>
 
     <string key="locale.sync.batchForceConfirm">Unakaribia kutekeleza kitendo itajaribu nguvu IMS server kukubali data. Hii inaweza overwrite mabadiliko ya awali yaliyotolewa na watumiaji wengine. Inapendekezwa si kufanya hatua hiyo isipokuwa kama una uhakika data ni sahihi. Je, unataka kuendelea?</string>
     <string key="locale.sync.forceConfirm">Unakaribia kutekeleza hatua ambayo nguvu IMS server kukubali mabadiliko hayo. Hii inaweza kuondoa mabadiliko mengine ya mtumiaji. Una uhakika unataka kuendelea?</string>
     <string key="locale.sync.deleteConfirm">Una uhakika unataka kupuuza kutuma data hii kwa server? Kama data ni kuingiza itakuwa kuwepo tu kwenye kompyuta yako ya ndani na si kwenye seva.</string>
-    <string key="locale.sync.deleteConfirm.insert">bidhaa wewe ni kufuta mara ingiza, ukiendelea data chochote zilizomo katika kuingiza haitakuwa kwenye seva. Una uhakika unataka kuendelea?</string>
+    <string key="locale.sync.deleteConfirm.insert">wewe ni kufuta kumbukumbu kuingizwa, rekodi zitatolewa kutoka server kama utaendelea. Una uhakika unataka kuendelea?</string>
 
     <string key="locale.sync.resolve.resolve">Tatua</string>
-    <string key="locale.sync.resolve.takeMine">Upachikaji Server</string>
+    <string key="locale.sync.resolve.takeMine">ubatilishaji server</string>
     <string key="locale.sync.resolve.title">kutatua migogoro</string>
-    <string key="locale.sync.resolve.reason">sababu hii kitu ilikataliwa</string>
+    <string key="locale.sync.resolve.reason">Sababu za kukataliwa ni</string>
     <string key="locale.sync.resolve.data">Data kwamba alikuwa alijaribu kuwasilishwa</string>
     <string key="locale.sync.resolve.leaveServer">kuondoka server version</string>
 
@@ -863,33 +857,33 @@
     <string key="locale.sync.queue.id">ID#</string>
     <string key="locale.sync.queue.content">aina ya data</string>
     <string key="locale.sync.queue.operation">Operesheni</string>
-    <string key="locale.sync.queue.action">hatua</string>
+    <string key="locale.sync.queue.action">tendo</string>
 
-    <string key="locale.sync.conflict">Migogoro</string>
-    <string key="locale.sync.retry">Jaribu tena umekinzana</string>
+    <string key="locale.sync.conflict">migogoro</string>
+    <string key="locale.sync.retry">kujaribu migogoro tena</string>
     <string key="locale.sync.force">Sawazisha Sasa</string>
 
-    <string key="locale.sync.resource.AlertMessage">ujumbe wa arifa</string>
-    <string key="locale.sync.resource.ConceptSet">seti istilahi</string>
+    <string key="locale.sync.resource.AlertMessage">tahadhari ujumbe</string>
+    <string key="locale.sync.resource.ConceptSet">seti ya istilahi</string>
     <string key="locale.sync.resource.AssigningAuthority">Kitambulisho Aina</string>
     <string key="locale.sync.resource.IdentifierType">utambulisho uainishaji</string>
-    <string key="locale.sync.resource.ExtensionType">Iliyoongezwa Sifa Data</string>
+    <string key="locale.sync.resource.ExtensionType">Makala kupanuliwa kwa Data</string>
     <string key="locale.sync.resource.ConceptClass">madarasa dhana</string>
-    <string key="locale.sync.resource.Material">aina ya vifaa</string>
+    <string key="locale.sync.resource.Material">Aina ya vipengele</string>
     <string key="locale.sync.resource.SecurityRole">Usalama wa habari</string>
     <string key="locale.sync.resource.Concept">dhana (Kushuka chini maadili)</string>
     <string key="locale.sync.resource.Place">vifaa na vijiji</string>
     <string key="locale.sync.resource.Organization">Mashirika</string>
-    <string key="locale.sync.resource.UserEntity">mwandishi habari</string>
-    <string key="locale.sync.resource.Provider">habari mtoa</string>
-    <string key="locale.sync.resource.ManufacturedMaterial">mambo nyenzo hisa</string>
+    <string key="locale.sync.resource.UserEntity">Mtunzi ya Habari</string>
+    <string key="locale.sync.resource.Provider">Mtoa ya habari</string>
+    <string key="locale.sync.resource.ManufacturedMaterial">vipengele hesabu nyenzo</string>
     <string key="locale.sync.resource.Person">watu (wagonjwa na jamaa)</string>
     <string key="locale.sync.resource.Act">Matendo (Chanjo, Uzito, Marekebisho, na kadhalika)</string>
     <string key="locale.sync.resource.PatientEncounter">mgonjwa kukutana</string>
     <string key="locale.sync.resource.SubstanceAdministration">Madawa ya Utawala</string>
     <string key="locale.sync.resource.CodedObservation">coded uchunguzi</string>
-    <string key="locale.sync.resource.QuantityObservation">uchunguzi kiasi</string>
-    <string key="locale.sync.resource.TextObservation">uchunguzi wa maandishi</string>
+    <string key="locale.sync.resource.QuantityObservation">kiasi ukaguzi</string>
+    <string key="locale.sync.resource.TextObservation">Nakala ya ukaguzi</string>
     <string key="locale.sync.resource.TemplateDefinition">Kigezo Ufafanuzi</string>
 
     <string key="locale.audit.title">kituo cha ukaguzi wa ndani</string>
