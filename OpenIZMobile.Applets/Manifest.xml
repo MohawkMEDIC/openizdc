@@ -304,10 +304,12 @@
 
     <string key="locale.settings.networkTitle">Network Settings</string>
     <string key="locale.settings.networkDescription">This panel allows you to configure the behavior of the OpenIZ synchronization process.</string>
+
     <string key="locale.settings.useProxy">Use a Proxy</string>
     <string key="locale.settings.useProxyDescription">Select this option to proxy all requests sent from the mobile device through an HTTP proxy.</string>
     <string key="locale.settings.proxyAddress">Proxy Address</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
+
     <string key="locale.settings.subscribe">Facility Subscription(s)</string>
     <string key="locale.settings.subscribe.help">This setting controls the subscribed facility for this tablet</string>
     <string key="locale.settings.subscribe.error.required">Please subscribe to a facility</string>
@@ -771,10 +773,10 @@
     <string key="locale.settings.dataTitle">Habari chunga chaguzi</string>
     <string key="locale.settings.dataDescription">Jopo hili utapata configure njia ambayo habari ni kuhifadhiwa na synchronized na wa mtandao</string>
     <string key="locale.settings.dataMode">Habari chaguzi</string>
-    <string key="locale.settings.dataMode.synchronized">Sawazisha</string>
-    <string key="locale.settings.dataMode.onlineOnly">Intaneti zinahitajika</string>
-    <string key="locale.settings.dataMode.offlineOnly">Hakuna intaneti</string>
-    <string key="locale.settings.dataMode.help">Kubadilisha habari udhibiti chaguo kwa ajili ya kompyuta hii</string>
+    <string key="locale.settings.dataMode.synchronized">kibao imesasishwa</string>
+    <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
+    <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
+    <string key="locale.settings.dataMode.help">Fursa hii utapata mabadiliko mfumo wa data kwenye kompyuta hii</string>
 
     <string key="locale.settings.deviceName">Jina la kifaa</string>
     <string key="locale.settings.deviceName.help">Fursa hii utapata mabadiliko ya kompyuta jina la kifaa hiki</string>
@@ -833,10 +835,6 @@
     <string key="locale.settings.proxyAddress">mbadala ya mahali</string>
     <string key="locale.settings.proxyAddressPlaceHolder">http://proxy:8888/</string>
 
-    <string key="locale.settings.realmDescription">dunia ni uwanja na dhamana ambayo OpenIZ imeunganishwa. ulimwengu huu ni wajibu kwa ajili ya kudhibiti mipangilio ya usalama, data ya upatanishi na kazi za usimamizi kama vile kamusi dhana.</string>
-    <string key="locale.settings.realmName">jina la uwanja</string>
-    <string key="locale.settings.realmTitle">kujiunga shamba</string>
-
     <string key="locale.settings.save">kuokoa chaguzi</string>
 
     <string key="locale.settings.security.plain">Maandishi wazi (si-ilipendekeza)</string>
@@ -845,10 +843,13 @@
     <string key="locale.settings.securityDescription">Matumizi ya jopo hili configure namna ambayo sera za usalama ni kutekelezwa kwa kifaa hiki.</string>
     <string key="locale.settings.securityTitle">mipangilio ya usalama</string>
 
-    <string key="locale.settings.status.duplicateName">Jina hili tayari kusajiliwa kifaa. Je, unataka kubadilisha kifaa usajili kwenye kompyuta? (Kama ni hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
     <string key="locale.settings.status.joinRealm">Maombi yako sasa alijiunga uwanja huu</string>
+    <string key="locale.settings.status.duplicateName">Jina hili tayari kusajiliwa kifaa. Je, unataka kubadilisha kifaa usajili kwenye kompyuta? (Kama ni hivyo, kifaa kingine kwa jina hili inaweza kuwa na uwezo wa kuungana)</string>
 
     <string key="locale.settings.subscribe">kituo michango</string>
+    <string key="locale.settings.subscribe.help">chaguzi Hii utapata mabadiliko kituo ambayo imekuwa kusajiliwa kwenye kompyuta hii</string>
+    <string key="locale.settings.subscribe.error.required">Tafadhali kujiunga na kituo</string>
+    <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu tu katika vituo kusajiliwa kujiunga</string>
 
     <string key="locale.settings.syncEvents">Mwisho juu ya:</string>
     <string key="locale.settings.syncEvents.help">Fursa hii mabadiliko matukio ya upatanishi wa kompyuta hii</string>
@@ -866,13 +867,6 @@
     <string key="locale.settings.security.audit.week">Weka ukaguzi kwa wiki 1</string>
     <string key="locale.settings.security.audit.month">Weka ukaguzi kwa mwezi 1</string>
     <string key="locale.settings.security.audit.help">Fursa hii utapata mabadiliko ya muda gani kuweka ndani uchaguzi ukaguzi</string>
-
-    <string key="locale.settings.dataMode.synchronized">kibao imesasishwa</string>
-    <string key="locale.settings.dataMode.onlineOnly">Online tu</string>
-    <string key="locale.settings.dataMode.offlineOnly">nje ya mtandao tu</string>
-    <string key="locale.settings.dataMode.help">Fursa hii utapata mabadiliko mfumo wa data kwenye kompyuta hii</string>
-
-    <string key="locale.settings.onlySubscribedFacilities">Ruhusu watu tu katika vituo kusajiliwa kujiunga</string>
 
     <string key="locale.sync.title">Usawazishaji kituo cha</string>
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
@@ -940,13 +934,13 @@
     <string key="locale.audit.objects">Vitu</string>
 
     <!-- Reports -->
-    <string key="locale.reports.title">kituo cha ripoti kituo</string>
-    <string key="locale.reports.info.name">jina</string>
+    <string key="locale.reports.title">Kituo cha ripoti kituo</string>
+    <string key="locale.reports.info.name">Jina</string>
     <string key="locale.reports.info.description">Maelezo</string>
     <string key="locale.reports.info.action">Vitendo</string>
-    <string key="locale.reports.parameters.title">chujio pembejeo taarifa</string>
-    <string key="locale.reports.executeWait">ripoti kuzalisha...</string>
-    <string key="locale.reports.error.locked">The computer system file this relies on is locked. There may be a hidden process using the computer system file. Please wait a few minutes and try your request again.</string>
-    <string key="locale.reports.error.required">pembejeo zinazohitajika</string>
+    <string key="locale.reports.parameters.title">Chujio pembejeo taarifa</string>
+    <string key="locale.reports.executeWait">Ripoti kuzalisha...</string>
+    <string key="locale.reports.error.locked">Mfumo wa kompyuta faili hili hutegemea imefungwa. Kunaweza kuwa na mchakato siri kwa kutumia mfumo wa kompyuta file. Tafadhali kusubiri dakika chache na ujaribu ombi tena.</string>
+    <string key="locale.reports.error.required">Pembejeo zinazohitajika</string>
   </strings>
 </AppletManifest>
