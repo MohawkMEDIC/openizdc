@@ -812,8 +812,8 @@
     <string key="locale.settings.log.informational">Baadhi ya maelezo</string>
     <string key="locale.settings.log.verbose">Kura ya maelezo</string>
 
-    <string key="locale.settings.networkDescription">Akaunti inahitaji uthibitisho wa aina mbili</string>
-    <string key="locale.settings.networkTitle">Neno siri la sasa</string>
+    <string key="locale.settings.networkDescription">Mipangilio ya mtandao</string>
+    <string key="locale.settings.networkTitle">Jopo hili utapata configure tabia ya mchakato OpenIZ maingiliano.</string>
 
     <string key="locale.settings.passwordFormat">Tafadhali ingiza neno siri</string>
     <string key="locale.settings.passwordFormat.help">Fursa hii utapata mabadiliko ya nguvu ya password encryption kwenye kompyuta hii</string>
