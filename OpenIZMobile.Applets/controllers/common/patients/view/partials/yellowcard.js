@@ -37,7 +37,7 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
-    scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+    scope.$watch('encounters', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
     scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     function init() {
