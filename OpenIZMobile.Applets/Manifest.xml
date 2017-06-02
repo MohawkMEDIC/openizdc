@@ -554,7 +554,7 @@
     <string key="locale.about.logFiles.logContents">Ingia faili yaliyomo</string>
     <string key="locale.about.machineInfo">Mazingira Runtime</string>
     <string key="locale.about.sync.date">Usawazishaji wa Mwisho Tarehe</string>
-    <string key="locale.about.sync.etag">Toleo la awali</string>
+    <string key="locale.about.sync.etag">Toleo la karibuni</string>
     <string key="locale.about.sync.filter">Chujio</string>
     <string key="locale.about.sync.logContents">Ingia faili yaliyomo</string>
     <string key="locale.about.sync.logFile">Ingia faili</string>
@@ -599,8 +599,8 @@
     <string key="locale.action.verify">Thibitisha</string>
     <string key="locale.action.view">Mtazamo</string>
 
-    <string key="locale.alerts.alerts">Tahadhari</string>
-    <string key="locale.alerts.details">Maelezo</string>
+    <string key="locale.alerts.alerts">Ujumbe</string>
+    <string key="locale.alerts.details">Habari</string>
     <string key="locale.alerts.newAlerts">Mpya Tahadhari</string>
     <string key="locale.alerts.noneSelected">Hakuna tahadhari kuchaguliwa, tafadhali chagua moja ili kuona maudhui yake.</string>
     <string key="locale.alert.updateSuccessful">Mwisho mafanikio</string>
@@ -751,7 +751,7 @@
     <!-- End Security -->
 
     <!-- Session -->
-    <string key="locale.session.aboutToExpirePrefix">Kipindi chako kinakaribia kwisha muda katika</string>
+    <string key="locale.session.aboutToExpirePrefix">Kipindi chako kinakaribia kwisha muda katika: </string>
     <string key="locale.session.aboutToExpireSuffix">Gonga ujumbe huu kwa kupanua kikao.</string>
     <string key="locale.session.expiration">Kikao onyo</string>
     <!-- End Session -->
@@ -872,7 +872,7 @@
     <string key="locale.sync.inspectQueue">kukagua yaliyomo</string>
     <string key="locale.sync.conflicted">migogoro kati ya seva na kompyuta</string>
     <string key="locale.sync.inbound">seva ili ndani (Inbox)</string>
-    <string key="locale.sync.outbound">Mitaa Server (kikasha toezi)</string>
+    <string key="locale.sync.outbound">Mitaa seva (kikasha toezi)</string>
     <string key="locale.sync.admin">utawala (ukaguzi, watumiaji, na kadhalika)</string>
     <string key="locale.sync.objects">Vitu katika foleni</string>
 
@@ -895,7 +895,7 @@
     <string key="locale.sync.queue.operation">Operesheni</string>
     <string key="locale.sync.queue.action">tendo</string>
 
-    <string key="locale.sync.conflict">migogoro</string>
+    <string key="locale.sync.conflict">migogoro seva na kibao</string>
     <string key="locale.sync.retry">kujaribu migogoro tena</string>
     <string key="locale.sync.force">Sawazisha Sasa</string>
 
