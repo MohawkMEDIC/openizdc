@@ -590,10 +590,10 @@
     <string key="locale.action.finish">Kumaliza</string>
     <string key="locale.action.next">Baadaye</string>
     <string key="locale.action.onlineOnly">Intaneti inahitajika</string>
-    <string key="locale.action.remove">Chukua</string>
+    <string key="locale.action.remove">kuondoa</string>
     <string key="locale.action.run">Kukimbia</string>
     <string key="locale.action.save">Kuokoa</string>
-    <string key="locale.action.search">Pekesheni</string>
+    <string key="locale.action.search">Tafuta</string>
     <string key="locale.action.submit">Wasilisha</string>
     <string key="locale.action.update">Kupata mabadiliko</string>
     <string key="locale.action.verify">Thibitisha</string>
@@ -694,11 +694,11 @@
 
     <!-- Preferences -->
     <string key="locale.preferences.tabs.password">Neno siri</string>
-    <string key="locale.preferences.tabs.profile">Maelezo yangu</string>
+    <string key="locale.preferences.tabs.profile">maelezo yangu</string>
     <string key="locale.preferences.tabs.recoveryMethods">Badilisha ahueni ya habari</string>
     <string key="locale.preferences.changePassword">Kuokoa</string>
     <string key="locale.preferences.username">Jina la mtumiaji</string>
-    <string key="locale.preferences.existingPassword">Sasa neno siri</string>
+    <string key="locale.preferences.existingPassword">Nenosiri la sasa</string>
     <string key="locale.preferences.password">Mpya neno siri</string>
     <string key="locale.preferences.passwordChanged">Neno siri ilifaulu kubadilishwa</string>
     <string key="locale.preferences.confirm">Kuthibitisha neno siri</string>
@@ -708,7 +708,7 @@
     <string key="locale.preferences.facility">Kituo</string>
     <string key="locale.preferences.language">Lugha</string>
     <string key="locale.preferences.password.onlineOnly">Neno siri upya inaweza tu kufanyika wakati mtandao ni juu ya</string>
-    <string key="locale.preferences.email">E-Mail</string>
+    <string key="locale.preferences.email">Barua pepe</string>
     <string key="locale.preferences.recoveryOptions.success">Chaguo za kurejesha mafanikio iliyopita</string>
     <string key="locale.preferences.phone">Simu ya rununu</string>
     <string key="locale.preferences.save.success">Wasifu imesasishwa</string>
