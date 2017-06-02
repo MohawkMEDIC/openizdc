@@ -111,7 +111,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.telephone' | i18n }}</label>
+        <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.contact' | i18n }}</label>
         <div class="col-xs-9 col-sm-4">
             <div class="input-group">
                 <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].use"
@@ -127,7 +127,7 @@
                 <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value" class="form-control" ng-pattern="phoneRegex" ng-disabled="motherUnknown" />
                 <input type="tel" autocomplete="off" autocapitalize="off" name="mothersPhoneNumber" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex" ng-disabled="motherUnknown" />
                 <span class="input-group-btn">
-                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.telephone' | i18n }}" data-content="{{ 'locale.patient.mother.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                    <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.contact' | i18n }}" data-content="{{ 'locale.patient.mother.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
         </div>

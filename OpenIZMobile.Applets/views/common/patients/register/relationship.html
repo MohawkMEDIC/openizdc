@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.telephone' | i18n }}</label>
+            <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.contact' | i18n }}</label>
             <div class="col-xs-9 col-sm-4">
                 <div class="input-group">
                     <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
@@ -83,7 +83,7 @@
                     <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value" class="form-control" ng-pattern="phoneRegex" />
                     <input type="tel" autocomplete="off" autocapitalize="off" name="relationPhoneNumber" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.value" class="form-control" ng-pattern="phoneRegex" />
                     <span class="input-group-btn">
-                        <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.telephone' | i18n }}" data-content="{{ 'locale.patient.relative.telephone.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                        <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.contact' | i18n }}" data-content="{{ 'locale.patient.relative.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                     </span>
 
                 </div>
