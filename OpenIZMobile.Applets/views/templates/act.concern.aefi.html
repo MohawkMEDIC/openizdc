@@ -91,7 +91,7 @@
             <div class="row">
                 <div class="col-xs-6">
                     <label>{{ 'locale.encounters.aefi.dateReactionStarted.title' | i18n }}</label>
-                    <input class="form-control" name="aefiReactionStarted_{{act.targetModel.id}}" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime" type="date" max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}" required="required" />
+                    <input class="form-control" name="aefiReactionStarted_{{act.targetModel.id}}" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime" type="date" ng-max="$root.page.maxEventTime" max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}" required="required" />
                     <div class="help-block text-danger" ng-if="editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
                         {{ 'locale.encounters.aefi.errors.dateReactionStartedRequired' | i18n }}
                     </div>
