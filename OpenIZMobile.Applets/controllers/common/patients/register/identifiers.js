@@ -67,11 +67,15 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
         //builds the identifier back onto the patient
         $scope.$watch('identifiers', function (identifiers, o) {
             if (identifiers && identifiers != o) {
-                $scope.patient.identifier = {};
                 for (key in identifiers) {
                     authority = identifiers[key].authority;
                     domainName = identifiers[key].domainName;
                     value = identifiers[key].value;
+                    if (value == null)
+                        continue;
+                    else
+                        delete ($scope.patient.identifier[domainName]); // need to rebind
+
                     if (Array.isArray($scope.patient.identifier[domainName])) {
                         $scope.patient.identifier[domainName].push({
                             authority: authority,
@@ -84,6 +88,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
                         }]
                     }
                 }
+                //$scope.patient.identifier = tIdentifiers;
             }
         }, true);
     }
