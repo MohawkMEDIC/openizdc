@@ -99,27 +99,16 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             var retVal = base.InsertInternal(context, data);
             byte[] sourceKey = retVal.Key.Value.ToByteArray();
 
-	        if (context.Connection.Table<DbPersonLanguageCommunication>().Any(o => o.SourceUuid == sourceKey))
+			// Insert language communication
+	        context.Connection.InsertAll(data.LanguageCommunication.Select(l => new DbPersonLanguageCommunication()
 	        {
-				base.UpdateAssociatedItems<PersonLanguageCommunication, Entity>(
-					context.Connection.Table<DbPersonLanguageCommunication>().Where(o => o.SourceUuid == sourceKey).ToList().Select(o => m_mapper.MapDomainInstance<DbPersonLanguageCommunication, PersonLanguageCommunication>(o)).ToList(),
-					data.LanguageCommunication,
-					retVal.Key,
-					context);
-			}
-	        else
-	        {
-				// Insert language communication
-		        context.Connection.InsertAll(data.LanguageCommunication.Select(l => new DbPersonLanguageCommunication()
-		        {
-			        IsPreferred = l.IsPreferred,
-			        Uuid = l.Key?.ToByteArray() ?? Guid.NewGuid().ToByteArray(),
-			        LanguageCode = l.LanguageCode,
-			        SourceUuid = sourceKey
-		        }));
-			}
+		        IsPreferred = l.IsPreferred,
+		        Uuid = l.Key?.ToByteArray() ?? Guid.NewGuid().ToByteArray(),
+		        LanguageCode = l.LanguageCode,
+		        SourceUuid = sourceKey
+	        }));
 
-            return retVal;
+			return retVal;
         }
 
         /// <summary>
