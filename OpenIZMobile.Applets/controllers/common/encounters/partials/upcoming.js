@@ -26,14 +26,8 @@
 layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
     $scope._isCalendarInitialized = false;
 
-    angular.element(document).ready(init);
-    function init() {
-        // Gather the care plan
-        updateCarePlan();
-    }
-
     $scope.$watch("encounters.length", function (newValue, oldValue) {
-        if (newValue !== oldValue) {
+        if ($scope.encounters && $scope.encounters.length > 0 && newValue !== oldValue) {
             updateCarePlan();
         }
     });
