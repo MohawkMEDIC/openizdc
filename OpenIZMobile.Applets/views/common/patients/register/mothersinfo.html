@@ -81,6 +81,7 @@
                 <select name="mothersIdentifierType" id="mothersIdentifierType" ng-required="patient.relationship.Mother.targetModel.identifier.value" class="form-control" ng-model="patient.relationship.Mother.targetModel.identifier.authority.domainName"
                         bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:data-validation="ValidationRegex" bind:filter="assigningDevice=null&amp;scope.id=9DE2A846-DDF2-4EBC-902E-84508C5089EA"
                         ng-disabled="motherUnknown" >
+                    <option></option>
                 </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
             </div>
@@ -113,13 +114,18 @@
     <div class="form-group">
         <label class="col-xs-3 control-label" for="mothersPhoneNumber">{{ 'locale.patient.mother.contact' | i18n }}</label>
         <div class="col-xs-9 col-sm-4">
-            <div class="input-group">
-                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].use"
-                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-disabled="motherUnknown"></select>
-                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use"
-                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-disabled="motherUnknown"></select>
+            <div class="input-group" ng-class="{ 'has-error': mothersInfoForm.mothersPhoneType.$error.required}">
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom[motherPhoneType].use" ng-disabled="motherUnknown"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.Mother.targetModel.telecom[motherPhoneType].value">
+                    <option></option>
+                </select>
+                <select name="mothersPhoneType" id="mothersPhoneType" class="form-control" ng-if="!motherPhoneType" ng-model="patient.relationship.Mother.targetModel.telecom.$other.use" ng-disabled="motherUnknown"
+                        bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.Mother.targetModel.telecom.$other.value">
+                    <option></option>
+                </select>
                 <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
              </div>
+            <p class="help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersPhoneType.$error.required">{{ 'locale.patient.errors.contactType' | i18n}}</p>
         </div>
         <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
             <div class="margin-top-15 visible-xs"></div>
@@ -130,7 +136,7 @@
                     <a class="btn btn-default" data-toggle="popover" tabindex="1" data-trigger="focus" title="{{ 'locale.patient.mother.contact' | i18n }}" data-content="{{ 'locale.patient.mother.contact.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
                 </span>
             </div>
+            <p class="help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
         </div>
-        <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="mothersInfoForm.mothersPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
     </div>
 </fieldset>

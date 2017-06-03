@@ -69,13 +69,18 @@
         <div class="form-group">
             <label class="col-xs-3 control-label" for="relationPhoneNumber">{{ 'locale.patient.relative.contact' | i18n }}</label>
             <div class="col-xs-9 col-sm-4">
-                <div class="input-group">
+                <div class="input-group" ng-class="{ 'has-error': editPatientForm.relativePhoneNumberType.$error.required || editRelationshipForm.relativePhoneNumberType.$error.required}">
                     <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].use"
-                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.NextOfKin.targetModel.telecom[nextOfKinPhoneType].value">
+                        <option></option>
+                    </select>
                     <select name="relativePhoneNumberType" id="relationPhoneNumberType" class="form-control" ng-if="!nextOfKinPhoneType" ng-model="patient.relationship.NextOfKin.targetModel.telecom.$other.use"
-                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse"></select>
+                            bind:source="Concept" bind:value="name[{{ locale }}].value" bind:filter="conceptSet.mnemonic=TelecomAddressUse" ng-required="patient.relationship.NextOfKin.targetModel.telecom.$other.value">
+                        <option></option>
+                    </select>
                     <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 </div>
+                <p class="help-block text-danger ng-cloak" ng-show="editPatientForm.relativePhoneNumberType.$error.required || editRelationshipForm.relativePhoneNumberType.$error.required">{{ 'locale.patient.errors.contactType' | i18n}}</p>
             </div>
             <div class="col-xs-offset-3 col-sm-offset-0 col-xs-9 col-sm-5">
                 <div class="margin-top-15 visible-xs"></div>
@@ -87,8 +92,8 @@
                     </span>
 
                 </div>
+                <p class="help-block text-danger ng-cloak" ng-show="editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
             </div>
-            <p class="col-xs-offset-7 help-block text-danger ng-cloak" ng-show="editPatientForm.relationPhoneNumber.$error.pattern || editRelationshipForm.relationPhoneNumber.$error.pattern">{{ 'locale.patient.errors.phoneNumber' | i18n}}</p>
         </div>
     </div>
 </fieldset>
