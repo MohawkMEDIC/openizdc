@@ -448,7 +448,13 @@
     <property name="siteModel" behavior="always"  ref="Concept"/>
     <property name="reasonConceptModel" behavior="always"  ref="Concept"/>
     <property name="protocol" behavior="always"/>
-    <property name="relationship" all="true" behavior="never"/>
+    <property name="relationship" all="true" behavior="always">
+      <property name="Replaces" all="false">
+        <property name="target"/>
+        <property name="source"/>
+      </property>
+      <property name="*" behavior="never" all="false"/>
+    </property>
     <property name="participation" all="true" behavior="always">
       <property name="Product" all="false">
         <property name="sourceModel" behavior="never"/>
@@ -497,6 +503,14 @@
           <property name="participation" behavior="never"/>
         </property>
       </property>
+      <property name="Authororiginator" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="name" all="true" behavior="always"/>
+        </property>
+      </property>
       <property name="*" all="false">
         <property name="actModel" behavior="never"/>
         <property name="sourceModel" behavior="never"/>
@@ -523,7 +537,13 @@
     <property name="statusConceptModel" behavior="never"/>
     <property name="moodConceptModel" behavior="never"/>
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true" behavior="never"/>
+    <property name="relationship" all="true" behavior="always">
+      <property name="Replaces" all="false">
+        <property name="target"/>
+        <property name="source"/>
+      </property>
+      <property name="*" behavior="never" all="false"/>
+    </property>
     <property name="unitOfMeasureModel" behavior="always" ref="Concept"/>
     <property name="protocol" behavior="always"/>
     <property name="participation" all="true" behavior="always">
@@ -540,6 +560,14 @@
           <property name="tag" all="true"/>
           <property name="extension" all="true"/>
           <property name="participation" behavior="never"/>
+        </property>
+      </property>
+      <property name="Authororiginator" all="false">
+        <property name="actModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="participationRoleModel" behavior="never"/>
+        <property name="playerModel" all="false" behavior="always">
+          <property name="name" all="true" behavior="always"/>
         </property>
       </property>
       <property name="*" all="false">

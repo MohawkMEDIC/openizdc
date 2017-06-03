@@ -121,7 +121,7 @@ var OpenIZBre = OpenIZBre || {
         // Execute the rule
         var retVal = instance;
         for (var t in this._triggers)
-            if (this._triggers[t].type == instance.$type) {
+            if (this._triggers[t].type == instance.$type && this._triggers[t].trigger == trigger) {
                 var triggerResult = this._triggers[t].callback(retVal);
                 retVal = triggerResult || retVal;
             }

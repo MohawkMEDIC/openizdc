@@ -99,6 +99,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                     relateTo[relateAs] = new OpenIZModel.ActRelationship({
                         target: d.id
                     });
+
                 scope.$apply();
             }
         });

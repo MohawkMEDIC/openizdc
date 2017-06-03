@@ -93,7 +93,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.query["_viewModel"] = "min";
-            scope.search.query["_queryId"] = OpenIZ.App.newGuid();
+            //scope.search.query["_queryId"] = OpenIZ.App.newGuid();
 
             // Search shouldn't include null parameters
             for (var k in Object.keys(scope.search.query))
@@ -132,7 +132,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
             "_offset": 0,
             "_count": scope.search.paging.size,
             "_viewModel": "min",
-            "_queryId": OpenIZ.App.newGuid(),
+            //"_queryId": OpenIZ.App.newGuid(),
             "identifier.value": identifier.value
         };
 
