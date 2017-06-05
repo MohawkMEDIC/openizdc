@@ -786,7 +786,6 @@ body{
 .header-dock{
     background: #007FD1;
     color: whitesmoke;
-    padding: 20px 0px;
     box-shadow: 0 1px 5px rgba(0, 0, 0, .7) !important;
 }
 .index-dock{
@@ -940,7 +939,6 @@ body{
     margin-bottom: 0;
     text-align: right;
     font-size: 14px;
-    white-space: nowrap;
 }
 @media screen and (max-width: 605px){
     .nav-tabs>li>a {
