@@ -67,13 +67,14 @@
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <span ng-if="act.targetModel.relationship.RefersTo">
-                        ( {{ 'locale.encounters.date' | i18n }} : {{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}, 
-                        {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
-                        {{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }},
-                        {{ 'locale.encounters.immunizations.site' | i18n }} :
-                        {{ act.targetModel.relationship.RefersTo.targetModel.siteModel | oizConcept }} )
-                    </span>
+                    <div ng-if="act.targetModel.relationship.RefersTo">
+                        ( {{ 'locale.encounters.date' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.actTime">{{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.actTime">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>, 
+                        {{ 'locale.encounters.immunization.doseSequence' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence !== undefined">{{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }}</span><span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence === undefined">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>,
+                        {{ 'locale.encounters.immunizations.site' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.siteModel">{{ act.targetModel.relationship.RefersTo.targetModel.siteModel | oizConcept }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.siteModel">{{ 'locale.encounters.aefi.unknown' | i18n }}</span> )
+                    </div>
                 </div>
             </div>
             <div class="row">

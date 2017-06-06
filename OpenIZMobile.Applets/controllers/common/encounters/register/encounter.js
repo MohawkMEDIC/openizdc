@@ -113,7 +113,10 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     scope.bindRelationship = function (act, relationshipType, targetId, final) {
 
         OpenIZ.Act.findAsync({
-            query: { "_id": targetId },
+            query: {
+                "_id": targetId,
+                "_viewModel": "full"
+            },
             continueWith: function (targetAct) {
 
                 act.relationship = act.relationship || {};
