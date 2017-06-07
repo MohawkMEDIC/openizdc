@@ -92,7 +92,15 @@
             <div class="row">
                 <div class="col-xs-6">
                     <label>{{ 'locale.encounters.aefi.dateReactionStarted.title' | i18n }}</label>
-                    <input class="form-control" name="aefiReactionStarted_{{act.targetModel.id}}" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime" type="date" ng-min="patient.dateOfBirth" min="{{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}" ng-max="$root.page.maxEventTime" max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}" required="required" />
+                    <input class="form-control"
+                           name="aefiReactionStarted_{{act.targetModel.id}}"
+                           ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime"
+                           type="date"
+                           ng-min="patient.dateOfBirth"
+                           min="{{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}"
+                           ng-max="$root.page.maxEventTime"
+                           max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}"
+                           required="required" />
                     <div class="help-block text-danger" ng-if="editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
                         {{ 'locale.encounters.aefi.errors.dateReactionStartedRequired' | i18n }}
                     </div>
@@ -117,7 +125,16 @@
                             </label>
                         </div>
                         <div class="col-xs-10">
-                            <input class="form-control" name="aefiReactionEnded_{{act.targetModel.id}}" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime" type="date" min="{{act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime | date: 'yyyy-MM-dd' }}" max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}" ng-disabled="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'" ng-required="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'" />
+                            <input class="form-control"
+                                   name="aefiReactionEnded_{{act.targetModel.id}}"
+                                   ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime"
+                                   type="date"
+                                   ng-min="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime"
+                                   min="{{act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime | date: 'yyyy-MM-dd' }}"
+                                   ng-max="$root.page.maxEventTime"
+                                   max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}"
+                                   ng-disabled="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'"
+                                   ng-required="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'" />
                             <div class="help-block text-danger" ng-if="editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
                                 {{ 'locale.encounters.aefi.errors.dateReactionStoppedRequired' | i18n }}
                             </div>
