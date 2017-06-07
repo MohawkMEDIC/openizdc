@@ -27,6 +27,7 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
     $scope.addIdentifier = addIdentifier;
     $scope.scanBarcode = scanBarcode;
     $scope.removeIdentifier = removeIdentifier;
+    $scope.searchDuplicates = searchDuplicates;
     $scope.Array = Array;
     $scope.identifiers = $scope.identifiers || [];
     $scope.regexValidation = $scope.regexValidation || [];
@@ -97,8 +98,11 @@ layoutApp.controller('PatientIdentifiersController', ['$scope', '$rootScope', fu
 
     function scanBarcode(identifier) {
         identifier.value = OpenIZ.App.scanBarcode();
-        if ($scope.search && $scope.search.searchByBarcode && identifier.value !== undefined) {
+        searchDuplicates(identifier);
+    };
 
+    function searchDuplicates(identifier) {
+        if ($scope.search && $scope.search.searchByBarcode && identifier.value !== undefined) {
             // Focus the next input after the scan
             var identifierIndex = $scope.identifiers.indexOf(identifier) + 1;
             if (identifierIndex < ($scope.identifiers.length)) {

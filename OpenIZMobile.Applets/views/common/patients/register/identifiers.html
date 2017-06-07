@@ -34,7 +34,9 @@
                 <div class="col-xs-12 col-sm-9">
                     <div class="margin-top-15 visible-xs"></div>
                     <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.pattern || identifierForm.identifier.$error.pattern}">
-                        <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" ng-pattern="regexValidation[$index]" class="form-control" name="identifier" />
+                        <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value"
+                               ng-pattern="regexValidation[$index]" class="form-control" name="identifier"
+                               ng-attr-autofocus="{{ !editIdentifiersForm }}" ng-keyup="$event.keyCode == 13 ? searchDuplicates(identifier) : null" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
                                 <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
