@@ -53,7 +53,8 @@
                        name="dateOfBirth" id="dobInput" 
                        class="form-control" 
                        ng-model="patient.dateOfBirth"
-                       max="{{(earliestVaccinationDate || $root.page.loadTime) | date: 'yyyy-MM-dd'}}" 
+                       ng-max="getDateOfBirthMaximum()"
+                       max="{{getDateOfBirthMaximum() | date: 'yyyy-MM-dd'}}" 
                        ng-required="true"/>
                 <span class="input-group-addon input-group-addon-approx">
                     <label class="control control--checkbox">
