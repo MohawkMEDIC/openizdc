@@ -229,7 +229,9 @@ var OpenIZ = OpenIZ || {
             }
 
             // Re-assign the identifier
-            fulfills._overdue = act.stopTime < new Date();
+            fulfills.tag = {};
+            if (act.stopTime < new Date())
+                fulfills.tag.backEntry = true;
             fulfills.id = OpenIZ.App.newGuid();
             fulfills.moodConcept = OpenIZModel.ActMoodKeys.Eventoccurrence;
             fulfills.moodConceptModel = null;
@@ -264,7 +266,7 @@ var OpenIZ = OpenIZ || {
                     })
             }
 
-            if (fulfills._overdue) {
+            if (fulfills.tag.backEntry) {
                 fulfills.actTime = act.actTime;
             }
             else {
@@ -823,6 +825,15 @@ var OpenIZ = OpenIZ || {
      * @memberof OpenIZ
      */
     Util: {
+        /** 
+         * @summary Renders the specified concept name from a DOM option
+         * @memberof OpenIZ.Util
+         * @method
+         * @param {OpenIZModel.ConceptName} name The concept name to be rendered
+         */
+        renderConceptFromDom: function (val) {
+            return $("option[value=" + val + "]").first().text();
+        },
         /** 
          * @summary Renders the specified concept name
          * @memberof OpenIZ.Util

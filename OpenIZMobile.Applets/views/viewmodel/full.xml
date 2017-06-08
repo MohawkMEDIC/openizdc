@@ -29,7 +29,7 @@
       <property name="definition" behavior="never"/>
     </property>
   </type>
-  
+
   <type type="EntityRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
@@ -44,7 +44,7 @@
   <type type="ActRelationship" all="false">
     <property name="source" all="true"/>
     <property name="target" all="true"/>
-    <property name="targetModel" all="true" ref="Act" behavior="always"/>
+    <property name="targetModel" all="true" behavior="always" ref="Act"/>
     <property name="relationshipType" all="true"/>
     <property name="holderModel" behavior="never"/>
     <property name="sourceModel" behavior="never"/>
@@ -108,7 +108,7 @@
     <property name="determinerConceptModel" behavior="never"/>
     <property name="determinerConcept" behavior="never"/>
   </type>
-  
+
   <type type="Patient" all="true">
     <property name="templateModel" behavior="always" all="false">
       <property name="mnemonic"/>
@@ -287,7 +287,7 @@
   <type type="Act" all="true">
 
     <property name="createdBy" behavior="never"/>
-    <property name="creationTime" behavior="never"/>
+    <property name="creationTime"/>
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
     <property name="tag" all="true" behavior="always"/>
@@ -295,7 +295,7 @@
       <property name="mnemonic"/>
     </property>
     <property name="valueModel" all="true" ref="Concept" behavior="always"/>
-
+  
     <property name="classConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
@@ -429,7 +429,8 @@
 
   <type type="SubstanceAdministration" all="true">
     <property name="createdBy" behavior="never"/>
-    <property name="creationTime" behavior="never"/>
+    <property name="creationTime"/>
+
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
     <property name="templateModel" behavior="always" all="false">
@@ -521,10 +522,11 @@
       </property>
     </property>
   </type>
-  
+
   <type type="QuantityObservation" all="true">
     <property name="createdBy" behavior="never"/>
-    <property name="creationTime" behavior="never"/>
+    <property name="creationTime"/>
+
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
     <property name="templateModel" behavior="always" all="false">
@@ -584,7 +586,7 @@
 
   <type type="CodedObservation" all="true">
     <property name="createdBy" behavior="never"/>
-    <property name="creationTime" behavior="never"/>
+    <property name="creationTime" />
     <property name="creationTimeModel" behavior="never"/>
     <property name="version" behavior="never"/>
     <property name="templateModel" behavior="always" all="false">
@@ -626,5 +628,5 @@
       </property>
     </property>
   </type>
-  
+
 </ViewModel>

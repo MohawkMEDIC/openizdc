@@ -108,7 +108,7 @@ layoutApp.controller('AboutApplicationController', ['$scope', '$rootScope', '$st
     // @param {bool} noTimer When true, instructs the function not to re-run on a timer
     function refreshHealth(noTimer) {
 
-        if ($rootScope.session == null) {
+        if ($rootScope.session != null) {
             OpenIZ.App.getHealthAsync({
                 continueWith: function (data) {
                     $scope.health = data;

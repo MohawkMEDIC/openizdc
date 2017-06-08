@@ -264,7 +264,7 @@ namespace OpenIZ.Mobile.Core
             else if (!context.Connection.IsInTransaction)
                 existing = context.TryGetData(me.Key.Value.ToString()) as IdentifiedData;
 
-            if (forceDbSearch)
+            if (forceDbSearch && me.Key.HasValue)
                 ApplicationContext.Current.GetService<IDataCachingService>().Remove(me.Key.Value);
 
             // Is the key not null?

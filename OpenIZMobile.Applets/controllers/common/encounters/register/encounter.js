@@ -57,7 +57,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     scope.removeOverdue = scope.removeOverdue || function (bind, afterFocus) {
 
         var doBindMove = function () {
-            delete (bind.targetModel._overdue);
+            delete (bind.targetModel.tag.backEntry);
             bind._enabled = true;
             bind.targetModel.actTime = bind._encounter.actTime;
             bind._encounter.relationship._OverdueHasComponent.splice($.inArray(bind, bind._encounter.relationship._OverdueHasComponent), 1);
@@ -86,6 +86,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         OpenIZ.CarePlan.getActTemplateAsync({
             templateId: templateName,
             continueWith: function (d) {
+                d.tag = d.tag || {};
                 bind.push({
                     _created: true,
                     _enabled: true,

@@ -46,6 +46,7 @@ using System.Reflection;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Applets.Services;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -327,16 +328,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             //if (templateString.StartsWith(c_utf8bom))
             //    templateString = templateString.Remove(0, c_utf8bom.Length);
+            var regex = new Regex(@"\{\{uuid\}\}");
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityUser = AuthenticationContext.Current.Session.SecurityUser;
             var userEntity = AuthenticationContext.Current.Session.UserEntity;
             templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
-                .Replace("{{uuid}}", Guid.NewGuid().ToString())
                 .Replace("{{now}}", DateTime.Now.ToString("o"))
                 .Replace("{{userId}}", securityUser.Key.ToString())
                 .Replace("{{userEntityId}}", userEntity?.Key.ToString())
                 .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString());
+            templateString = regex.Replace(templateString, (o)=> Guid.NewGuid().ToString() );
             this.m_tracer.TraceVerbose("Template {0} (Post-Populated): {1}", templateId, templateString);
             return templateString;
         }

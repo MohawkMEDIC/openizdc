@@ -98,10 +98,14 @@
 
     <!-- Encounters -->
     <string key="locale.encounters.actionsPerformed.title">Actions done this visit</string>
+    <string key="locale.encounters.actionsNotPerformed.title">Actions NOT done this visit</string>
     <string key="locale.encounters.addEntry">Add Entry</string>
-    <string key="locale.encounters.overdue">Overdue</string>
+    <string key="locale.encounters.overdue">Overdue / Back-Entered</string>
     <string key="locale.encounters.weightSummary.title">Weight Summary</string>
     <string key="locale.encounters.errors.date">Please select a valid date</string>
+    <string key="locale.encounters.confirm">Confirm Submission</string>
+    <string key="locale.encounters.confirm.instructions">Please ensure that the following information is accurate before it is submitted. Please note only limited editing of this data can be performed once the visit is finished.</string>
+    <string key="locale.encounters.confirm.agree">This data is accurate</string>
     <!-- End Encounters -->
 
     <!-- Actions -->
