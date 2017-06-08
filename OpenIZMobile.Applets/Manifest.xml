@@ -129,6 +129,7 @@
     <string key="locale.action.update">Update</string>
     <string key="locale.action.verify">Verify</string>
     <string key="locale.action.view">View</string>
+    <string key="locale.action.backEnter">Back-Enter</string>
     <!-- End Actions -->
 
     <!-- Alerts -->
