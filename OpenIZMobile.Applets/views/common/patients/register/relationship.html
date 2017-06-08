@@ -21,11 +21,16 @@
           xmlns:bind="http://openiz.org/applet/binding" class="oiz-patient-identifiers form-horizontal form-group">
     <oiz:script>/org.openiz.core/controllers/common/patients/register/identifiers.js</oiz:script>
     <div class="form-group">
-        <label class="col-xs-3 control-label" for="relationType">{{ 'locale.patient.relative.type' | i18n }}</label>
-        <div class="col-xs-9">
+        <label class="col-xs-3 control-label" for="relationType">{{ 'locale.patient.relative.type' | i18n }}<span ng-if="motherUnknown">*</span></label>
+        <div class="col-xs-9" ng-class="{ 'has-error': (editPatientForm.nextOfKinRelationshipType.$touched || (editPatientForm.$submitted || formSubmitted)) &amp;&amp; editPatientForm.nextOfKinRelationshipType.$invalid }">
             <div class="input-group">
-                <select ng-model="patient.relationship.NextOfKin.relationshipType" class="form-control" id="nextOfKinRelationshipType"
-                        bind:source="Concept" bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother" bind:key="mnemonic" bind:value="name[{{ locale }}].value"></select>
+                <select id="nextOfKinRelationshipType" class="form-control" name="nextOfKinRelationshipType"
+                        ng-model="patient.relationship.NextOfKin.relationshipType"
+                        bind:source="Concept"
+                        bind:key="mnemonic"
+                        bind:filter="conceptSet.mnemonic=ChildFamilyMember&amp;mnemonic=!Mother"
+                        bind:value="name[{{ locale }}].value">
+                </select>
                 <span class="select-arrow-container-alt" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                 <span class="input-group-btn">
                     <a class="btn btn-default" data-toggle="popover" tabindex="0" data-trigger="focus" title="{{ 'locale.patient.relative.type' | i18n }}" data-content="{{ 'locale.patient.relative.type.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
