@@ -40,6 +40,8 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
      * Synchronizes all doses on the same date with the date of the specified act
      */
     scope.synchronizeDates = scope.synchronizeDates || function (act) {
+        if (!act.targetModel.actTime) return;
+
         for (var e in act._encounter.relationship._OverdueHasComponent)
             if (act._encounter.relationship._OverdueHasComponent[e].targetModel.$type == act.targetModel.$type &&
                 OpenIZ.Util.toDateInputString(act._encounter.relationship._OverdueHasComponent[e].targetModel.actTime) == OpenIZ.Util.toDateInputString(act._originalTime)) {
@@ -48,7 +50,53 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             }
     }
 
-    /**
+    /** Moves a record to overdue status */
+    scope.makeOverdue = scope.makeOverdue || function (bind) {
+        bind.targetModel.tag = bind.targetModel.tag || {};
+        bind.targetModel.tag.backEntry = true;
+        delete (bind.targetModel.participation.Consumable);
+        delete (bind.targetModel.isNegated);
+        delete (bind.targetModel.reasonConcept);
+        delete (bind.targetModel.reasonConceptModel);
+        bind._encounter.relationship.HasComponent.splice($.inArray(bind, bind._encounter.relationship.HasComponent), 1);
+        bind._encounter.relationship._OverdueHasComponent.push(bind);
+
+        bind._enabled = true;
+        // Call care planner to suggest the next item
+        OpenIZ.App.showWait("#makeOvd_" + bind.targetModel.id);
+        OpenIZ.CarePlan.getCarePlanAsync({
+            query: "_patientId=" + scope.patient.id + "&_protocolId=" + bind.targetModel.protocol[0].protocol,
+            onDate: new Date(),
+            continueWith: function (dat) {
+                for (var i in dat.item) {
+                    if (dat.item[i].doseSequence == bind.targetModel.doseSequence + 1) {
+                        var enc = new OpenIZ.Act.createFulfillment(dat.item[i]);
+                        enc.actTime = bind._encounter.actTime;
+
+                        var relationship = new OpenIZModel.ActRelationship({
+                            targetModel: enc,
+                            target: enc.id,
+                        });
+                        relationship._created = false;
+                        relationship._enabled = bind._enabled;
+                        relationship._encounter = bind._encounter;
+                        relationship._originalTime = dat.item[i].actTime;
+                        bind._encounter.relationship.HasComponent.push(relationship);
+
+                        scope.$apply();
+                    }
+                    else if (dat.item[i].doseSequence == bind.targetModel.doseSequence) {
+                        bind.targetModel.actTime = dat.item[i].actTime;
+                    }
+                }
+            },
+            finally: function () {
+                OpenIZ.App.hideWait("#makeOvd_" + bind.targetModel.id);
+            }
+        });
+    }
+
+    /** 
      * Removes a vaccination from the overdue list
      */
     scope.removeOverdue = scope.removeOverdue || function (bind, afterFocus) {
@@ -64,7 +112,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
 
         // Is there a previous or later step in the has component? if so warn
         var laterStep = $.grep(bind._encounter.relationship.HasComponent, /** @param {OpenIZModel.Act} e */ function (e) {
-            return e.targetModel.protocol[0].protocol == bind.targetModel.protocol[0].protocol;
+            return e.targetModel.protocol[0].protocol == bind.targetModel.protocol[0].protocol && e.targetModel.id != bind.targetModel.id;
         });
         if (laterStep.length && confirm(OpenIZ.Localization.getString("locale.encounters.errors.laterStepConflict"))) {
             bind._encounter.relationship.HasComponent.splice($.inArray(laterStep[0], bind._encounter.relationship.HasComponent), 1);

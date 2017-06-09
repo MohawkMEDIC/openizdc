@@ -118,10 +118,14 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
                             //model._enabled = true;
                         }
 
-                        if(model.moodConcept != OpenIZModel.ActMoodKeys.Eventoccurrence && scope.display._vaccineAdministrations[antigenId][model.doseSequence] == null ||
+                        if (model.moodConcept != OpenIZModel.ActMoodKeys.Eventoccurrence && scope.display._vaccineAdministrations[antigenId][model.doseSequence] == null ||
                             (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence)
-                            )
-                            scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
+                            ) {
+                            var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
+
+                            if(existing && model.creationTime > existing.creationTime || !existing)
+                                scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
+                        }
                     }
                     
                     ;;

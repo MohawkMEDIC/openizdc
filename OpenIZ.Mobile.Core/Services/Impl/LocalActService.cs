@@ -169,6 +169,10 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 			act = persistenceService.Obsolete(act);
             act = breService?.AfterObsolete(act) ?? act;
 
+            // Obsolete child-acts
+            if (act.Relationships != null)
+                foreach (var itm in act.Relationships.Where(o => o.RelationshipTypeKey == ActRelationshipTypeKeys.HasComponent))
+                    this.Obsolete<Act>(itm.TargetActKey.Value);
             
             SynchronizationQueue.Outbound.Enqueue(act, DataOperationType.Obsolete);
             this.DataObsoleted?.Invoke(this, new AuditDataEventArgs(act));

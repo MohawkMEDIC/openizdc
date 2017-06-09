@@ -20,7 +20,6 @@
 <div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group" ng-style="{'background-color:#fdd':act.targetModel.tag.backEntry}"
      id="{{act.id}}">
     <div class="row" ng-class="{'has-warning' : act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime}">
-
         <div class="control-label col-xs-12">
             <div class="input-group">
                 <label class="control-label">
@@ -28,7 +27,6 @@
                 <span ng-if="act._created">
                     ({{ 'locale.encounters.immunization.isBooster' | i18n }})
                 </span>
-
                 </label><br />
                 <span ng-if="act.targetModel.tag.backEntry">
                     <small>{{ 'locale.encounters.overdue' | i18n }} <br />({{ act.targetModel.relationship.Fulfills.targetModel.startTime | date : 'yyyy-MMM-dd' }} - {{ act.targetModel.relationship.Fulfills.targetModel.stopTime | date: 'yyyy-MMM-dd' }})</small>
@@ -40,8 +38,10 @@
                 </span>
             </div>
         </div>
+    </div>
+    <div class="row">
         <div ng-if="!act.targetModel.tag.backEntry">
-            <div class="col-xs-7" ng-show="act._enabled || act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
+            <div ng-class="!act._created? 'col-xs-5':'col-xs-7'" ng-show="act._enabled || act.targetModel.relationship.Fulfills.targetModel.startTime &gt; $root.page.maxEventTime">
                 <div class="input-group" ng-show="act._created">
                     <label>{{ 'locale.encounters.immunizations.antigen' | i18n }}</label>
                     <select ng-class="{'has-error':act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid}" name="product_{{act.targetModel.id}}" ng-required="act._enabled" class="form-control" ng-model="act.targetModel.participation.Product.player" bind:source="Material" bind:filter="statusConcept.mnemonic=ACTIVE&amp;typeConcept.mnemonic=~VaccineType&amp;classConcept.mnemonic=Material" bind:value="name[Assigned].component[null].value"
@@ -105,7 +105,7 @@
                     </select>
                 </div>
             </div>
-            <div class="col-xs-11" ng-show="!act._enabled &amp;&amp; act.targetModel.relationship.Fulfills.targetModel.startTime &lt; $root.page.maxEventTime">
+            <div class="col-xs-9" ng-if="!act._enabled">
                 <div class="input-group">
                     <label>
                         {{ 'locale.encounters.protocolViolation.reason' | i18n }}
@@ -119,6 +119,14 @@
                         {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
                     </div>
                 </div>
+            </div>
+            <div class="col-xs-2" ng-show="act._encounter.relationship._OverdueHasComponent &amp;&amp; !act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
+                <a style="margin:auto 0px 0px 0px" class="btn btn-lg btn-info pull-right" ng-click="makeOverdue(act)" id="makeOvd_{{act.targetModel.id}}">
+                    <span>
+                        <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                        <span class="hidden-xs">{{ 'locale.action.backEnter' | i18n }}</span>
+                    </span>
+                </a>
             </div>
             <div class="col-xs-1" ng-if="!act._created &amp;&amp; act.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'">
                 <label class="control control--checkbox">
@@ -157,7 +165,9 @@
                     <input type="checkbox"
                            ng-model="act._enabled"
                            checked="checked"
-                           value="1" />
+                           value="1" 
+                           id="enable_{{act.targetModel.id}}" />
+
                     <div class="control__indicator control__indicator_alt" style="top: 14px; left: 0px;"></div>
                 </label>
             </div>

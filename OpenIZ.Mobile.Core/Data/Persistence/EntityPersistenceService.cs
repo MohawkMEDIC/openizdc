@@ -359,11 +359,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships.Where(o=>!o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
+                    data.Relationships.Where(o => !o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)
@@ -481,11 +484,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
-                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
+                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
                     data.Relationships.Where(o => !o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)
