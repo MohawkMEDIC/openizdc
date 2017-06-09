@@ -112,7 +112,7 @@
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.activate">Activate</string>
     <string key="locale.action.back">Back</string>
-    <string key="locale.action.backEnter">Back-Enter</string>
+    <string key="locale.action.backEnter">Historical</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.clear">Clear</string>
     <string key="locale.action.confirm">Confirm</string>

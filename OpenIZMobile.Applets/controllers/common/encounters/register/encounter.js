@@ -50,6 +50,23 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             }
     }
 
+    /** 
+     * Fills in missing data for the specified participation
+     */
+    scope.fillParticipationPlayerEntity = scope.fillParticipationPlayerEntity || /** @param {OpenIZModel.ActParticipation} bind */ function (bind) {
+        if(bind.player)
+        {
+            OpenIZ.Ims.get({
+                resource: "Entity",
+                query: { _id: bind.player, _viewModel: "min" },
+                continueWith: function (ent) {
+                    bind.playerModel = ent;
+                    scope.$apply();
+                }
+            });
+        }
+    }
+
     /** Moves a record to overdue status */
     scope.makeOverdue = scope.makeOverdue || function (bind) {
         bind.targetModel.tag = bind.targetModel.tag || {};

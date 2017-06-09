@@ -466,7 +466,7 @@
           <property name="id"/>
           <property name="version"/>
           <property name="typeConceptModel" behavior="always" ref="Concept"/>
-          <property name="identifier" all="true"/>
+          <property name="identifier" all="true" />
           <property name="name" all="true" behavior="always"/>
           <property name="tag" all="true"/>
           <property name="extension" all="true"/>

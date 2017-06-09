@@ -294,9 +294,9 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                             syncSetting.Filters.Add("relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_exclude=relationship&_exclude=participation");
                                         break;
                                     case "Person":
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[IncidentalServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[DedicatedServiceDeliveryLocation].target=" + itm );
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Patient + "&relationship[IncidentalServiceDeliveryLocation].target=" + itm);
+                                        syncSetting.Filters.Add("classConcept=" + EntityClassKeys.Person + "&relationship.source.classConcept=" + EntityClassKeys.Patient + "&relationship.source.relationship[DedicatedServiceDeliveryLocation].target=" + itm );
                                         break;
                                     case "Act":
                                         syncSetting.Filters.Add("classConcept=" + ActClassKeys.Supply + "&participation[Destination].player=" + itm + "&_expand=relationship&_expand=participation");
@@ -314,8 +314,8 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
                                     case "CodedObservation":
                                     case "TextObservation":
                                     case "PatientEncounter":
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
-                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm + "&_expand=relationship&_expand=participation");
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=" + itm);
+                                        syncSetting.Filters.Add("participation[RecordTarget].player.relationship[IncidentalServiceDeliveryLocation].target=" + itm);
                                         //syncSetting.Filters.Add("participation[Location].player=" + itm + "&participation[RecordTarget].player.relationship[DedicatedServiceDeliveryLocation].target=!" + itm + "&_expand =relationship&_expand=participation");
                                         break;
                                     case "Place":
