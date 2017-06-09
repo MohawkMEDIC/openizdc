@@ -638,6 +638,9 @@
     <string key="locale.encounters.overdue">Siku za nyuma kutokana</string>
     <string key="locale.encounters.weightSummary.title">Uzito muhtasari</string>
     <string key="locale.encounters.errors.date">Tafadhali chagua tarehe halali</string>
+    <string key="locale.encounters.confirm">Thibitisha Kuwasilisha</string>
+    <string key="locale.encounters.confirm.instructions">Tafadhali kuhakikisha kwamba taarifa zifuatazo ni sahihi kabla ya kuwasilishwa. Tafadhali kumbuka tu mdogo uhariri wa taarifa hii unaweza kufanywa mara moja ziara umeisha.</string>
+    <string key="locale.encounters.confirm.agree">Habari hii ni sahihi</string>
 
     <string key="locale.error.403.title">Upatikanaji ni haramu</string>
     <string key="locale.error.403.description">Tuma taarifa ya hitalafu</string>
