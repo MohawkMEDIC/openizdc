@@ -1,19 +1,19 @@
 ﻿/*
  * Copyright 2015-2017 Mohawk College of Applied Arts and Technology
- * 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you 
- * may not use this file except in compliance with the License. You may 
- * obtain a copy of the License at 
- * 
- * http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you
+ * may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the 
- * License for the specific language governing permissions and limitations under 
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * User: justi
  * Date: 2016-8-17
  */
@@ -28,11 +28,10 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
     // Get the current scope that we're in
     var scope = $scope;
 
-    /** 
+    /**
      * Cascades an encounter date change
      */
     scope.encounterDateChanged = scope.encounterDateChanged || function (encounter) {
-
         for (var e in encounter.relationship.HasComponent)
             encounter.relationship.HasComponent[e].targetModel.actTime = encounter.actTime;
     }
@@ -41,7 +40,6 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
      * Synchronizes all doses on the same date with the date of the specified act
      */
     scope.synchronizeDates = scope.synchronizeDates || function (act) {
-
         for (var e in act._encounter.relationship._OverdueHasComponent)
             if (act._encounter.relationship._OverdueHasComponent[e].targetModel.$type == act.targetModel.$type &&
                 OpenIZ.Util.toDateInputString(act._encounter.relationship._OverdueHasComponent[e].targetModel.actTime) == OpenIZ.Util.toDateInputString(act._originalTime)) {
@@ -50,12 +48,10 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             }
     }
 
-
-    /** 
+    /**
      * Removes a vaccination from the overdue list
      */
     scope.removeOverdue = scope.removeOverdue || function (bind, afterFocus) {
-
         var doBindMove = function () {
             delete (bind.targetModel.tag.backEntry);
             bind._enabled = true;
@@ -70,7 +66,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         var laterStep = $.grep(bind._encounter.relationship.HasComponent, /** @param {OpenIZModel.Act} e */ function (e) {
             return e.targetModel.protocol[0].protocol == bind.targetModel.protocol[0].protocol;
         });
-        if (laterStep.length && confirm(OpenIZ.Localization.getString("locale.encounter.laterStepConflict"))) {
+        if (laterStep.length && confirm(OpenIZ.Localization.getString("locale.encounters.errors.laterStepConflict"))) {
             bind._encounter.relationship.HasComponent.splice($.inArray(laterStep[0], bind._encounter.relationship.HasComponent), 1);
             doBindMove();
         }
@@ -79,7 +75,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         }
     }
 
-    /** 
+    /**
     * Add sub-encounter sub-encounter
     */
     scope.addSubEncounter = scope.addSubEncounter || function (bind, templateName, relateTo, relateAs) {
@@ -101,7 +97,6 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
                 scope.$apply();
             }
         });
-
     };
 
     /**
@@ -109,14 +104,12 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
      * @param {OpenIZModel.Act} act
      */
     scope.bindRelationship = function (act, relationshipType, targetId, final) {
-
         OpenIZ.Act.findAsync({
             query: {
                 "_id": targetId,
                 "_viewModel": "full"
             },
             continueWith: function (targetAct) {
-
                 act.relationship = act.relationship || {};
                 act.relationship[relationshipType] = new OpenIZModel.ActRelationship({
                     relationshipType: OpenIZModel.ActRelationshipTypeKeys[relationshipType],
@@ -131,7 +124,7 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         })
     }
 
-    /** 
+    /**
      * Delete sub-encounter
      */
     scope.delSubEncounter = function (bind, index, removeFrom, removeAs) {
@@ -150,20 +143,17 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
             bind.splice(index, 1);
     };
 
-    // Encounter 
+    // Encounter
     scope.validateAct = scope.validateAct || function (act) {
-
         var validation = [];
 
         // Act not done!?
-        if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ... 
+        if (act.negationInd && act.reasonConcept == null) // not done - There must be a reason why ...
             validation.push(OpenIZ.Localization.getString('locale.encounter.validation.reasonRequired'));
         else {
-
         }
 
         return validation;
-
     };
 
     // Gets the next sequence based on current scope encounter
