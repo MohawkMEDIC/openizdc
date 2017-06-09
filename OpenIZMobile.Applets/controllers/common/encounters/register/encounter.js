@@ -267,4 +267,31 @@ layoutApp.controller('EncounterEntryController', ['$scope', '$timeout', function
         else
             scope.delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf');
     }
+
+    // TODO: change these functions to not adjust the date, however returning a new date object causes an infinite digest cycle
+    scope.getMaxDateValidation = function (date) {
+        if (date) {
+            date.setHours(23);
+            date.setMinutes(59);
+            date.setSeconds(59);
+            date.setMilliseconds(999);
+            return date;
+        }
+        else {
+            return false;
+        }
+    }
+
+    scope.getMinDateValidation = function (date) {
+        if (date) {
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+            date.setMilliseconds(0);
+            return date;
+        }
+        else {
+            return false;
+        }
+    }
 }]);

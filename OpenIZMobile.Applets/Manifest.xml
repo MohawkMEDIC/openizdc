@@ -112,6 +112,7 @@
     <string key="locale.action.acknowledge">Acknowledge</string>
     <string key="locale.action.activate">Activate</string>
     <string key="locale.action.back">Back</string>
+    <string key="locale.action.backEnter">Back-Enter</string>
     <string key="locale.action.cancel">Cancel</string>
     <string key="locale.action.clear">Clear</string>
     <string key="locale.action.confirm">Confirm</string>
@@ -129,7 +130,6 @@
     <string key="locale.action.update">Update</string>
     <string key="locale.action.verify">Verify</string>
     <string key="locale.action.view">View</string>
-    <string key="locale.action.backEnter">Back-Enter</string>
     <!-- End Actions -->
 
     <!-- Alerts -->
@@ -585,7 +585,9 @@
     <string key="locale.about.workLoad">ThreadPool Matumizi</string>
 
     <string key="locale.action.acknowledge">Tambua</string>
+    <string key="locale.action.activate">Kuamsha</string>
     <string key="locale.action.back">Nyuma</string>
+    <string key="locale.action.backEnter">Nyuma-kuingia</string>
     <string key="locale.action.cancel">Batili</string>
     <string key="locale.action.clear">Kufuta</string>
     <string key="locale.action.confirm">Thibitisha</string>
