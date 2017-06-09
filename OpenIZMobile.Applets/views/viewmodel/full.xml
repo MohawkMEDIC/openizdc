@@ -583,7 +583,6 @@
     </property>
   </type>
 
-
   <type type="CodedObservation" all="true">
     <property name="createdBy" behavior="never"/>
     <property name="creationTime" />
@@ -600,7 +599,7 @@
     <property name="statusConceptModel" behavior="never"/>
     <property name="moodConceptModel" behavior="never"/>
     <property name="interpretationConceptModel" behavior="always" ref="Concept"/>
-    <property name="relationship" all="true" behavior="never"/>
+    <property name="relationship" all="true" behavior="always" ref="ActRelationship"/>
     <property name="valueModel" all="true" ref="Concept" behavior="always"/>
     <property name="participation" all="true" behavior="always">
       <property name="Location" all="false">

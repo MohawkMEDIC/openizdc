@@ -43,7 +43,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <exception cref="System.NotImplementedException"></exception>
         public IEnumerable<EntityRelationship> Find(Expression<Func<EntityRelationship, bool>> query)
         {
-            throw new NotImplementedException();
+            int t = 0;
+            return this.Find(query, 0, null, out t);
         }
 
         /// <summary>
@@ -57,7 +58,7 @@ namespace OpenIZ.Mobile.Core.Services.Impl
         /// <exception cref="System.NotImplementedException"></exception>
         public IEnumerable<EntityRelationship> Find(Expression<Func<EntityRelationship, bool>> query, int offset, int? count, out int totalResults)
         {
-            throw new NotImplementedException();
+            return base.FindFast<EntityRelationship>(query, offset, count, out totalResults, Guid.Empty);
         }
 
         /// <summary>

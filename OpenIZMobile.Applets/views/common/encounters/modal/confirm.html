@@ -13,7 +13,7 @@
                             {{ 'locale.encounters.confirm.instructions' | i18n }}
                         </div>
                     </div>
-                    <div class="row" >
+                    <div class="row">
                         <div class="col-md-12">
                             <h4>{{ 'locale.encounters.overdue' | i18n }}</h4>
                             <ul>
@@ -55,7 +55,7 @@
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.syringe.png" ng-if="act.targetModel.route == 'd594f99f-0151-41a0-a359-282ab54683a1' || act.targetModel.participation.Product.playerModel.formConcept == '9902267c-8f77-4233-bfd3-e6b068ab326a'" />
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pipette.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == '66cbce3a-2e77-401d-95d8-ee0361f4f076') &amp;&amp; act.targetModel.typeConcept != '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.pill.png" ng-if="(act.targetModel.route == '0a1388b0-66fb-4063-bfe3-151dd8442838'  || act.targetModel.participation.Product.playerModel.formConcept == 'aa02267c-8f77-4233-bfd3-e6b068ab326a')&amp;&amp; act.targetModel.typeConcept == '7d84a057-1fcc-4054-a51f-b77d230fc6d1'" />
-                                            {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }} 
+                                            {{ act.targetModel.participation.Product.playerModel.name.Assigned | oizEntityName }}
                                             {{ 'locale.encounters.immunization.doseSequence' | i18n }}
                                             {{ act.targetModel.doseSequence }}
                                             <span ng-if="act.targetModel.participation.Consumable">
@@ -65,39 +65,47 @@
                                         </span>
                                         <span ng-switch-when="QuantityObservation">
                                             <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
-                                            {{ act.targetModel.typeConceptModel | oizConcept }} - 
-                                            <span ng-if="act.targetModel.unitOfMeasure">
-                                                {{ act.targetModel.value }}
-                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.unitOfMeasure) }}
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            {{ act.targetModel.value }}
+                                            {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.unitOfMeasure) }}
+                                        </span>
+                                        <span ng-switch-when="CodedObservation">
+                                            <img style="width:25px; height:25px" src="/org.openiz.core/img/appbar.scale.png" ng-if="act.targetModel.typeConcept == 'a261f8cd-69b0-49aa-91f4-e6d3e5c612ed'" />
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            <span ng-if="act.targetModel.valueModel">
+                                                {{ act.targetModel.valueModel | oizConcept}}
                                             </span>
-                                            <span ng-if="!act.targetModel.unitOfMeasure">
-                                                {{ act.targetModel.value }}
+                                            <span ng-if="!act.targetModel.valueModel">
+                                                {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.value) }}
                                             </span>
                                         </span>
                                         <span ng-switch-when="Act">
-                                            {{ act.targetModel.typeConceptModel | oizConcept }} - 
-                                            <span ng-if="act.targetModel.relationship.HasComponent">
-                                                {{ act.targetModel.relationship.HasComponent.targetModel.typeConceptModel | oizConcept }} - 
-                                                
-                                                <span ng-if="act.targetModel.relationship.HasComponent.targetModel.unitOfMeasure">
-                                                    {{ act.targetModel.relationship.HasComponent.targetModel.value }}
-                                                    {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.relationship.HasComponent.targetModel.unitOfMeasure) }}
+                                            
+                                            {{ act.targetModel.typeConceptModel | oizConcept }} -
+                                            <span ng-if="act.targetModel.relationship.HasSubject">
+                                                {{ act.targetModel.relationship.HasSubject.targetModel.typeConceptModel | oizConcept }} -
+                                                <span ng-if="act.targetModel.relationship.RefersTo">
+                                                    {{ act.targetModel.relationship.RefersTo.targetModel.participation.Product.playerModel.name.OfficialRecord | oizEntityName }}
                                                 </span>
-                                                <span ng-if="!act.targetModel.relationship.HasComponent.targetModel.unitOfMeasure">
-                                                    {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.relationship.HasComponent.targetModel.value)}}
+                                                <span ng-if="!act.targetModel.relationship.RefersTo">
+                                                    <span ng-if="act.targetModel.relationship.HasSubject.targetModel.valueModel">
+                                                        {{ act.targetModel.relationship.HasSubject.targetModel.valueModel | oizConcept }}
+                                                    </span>
+                                                    <span ng-if="!act.targetModel.relationship.HasSubject.targetModel.valueModel">
+                                                        {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.relationship.HasSubject.targetModel.value)}}
+                                                    </span>
                                                 </span>
-
                                             </span>
                                         </span>
                                         <span class="label label-danger" ng-if="!act._enabled">
-                                            {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.reasonConcept) }}
+                                            {{ 'locale.encounters.protocolViolation.reason' | i18n }} : {{ OpenIZ.Util.renderConceptFromDom(act.targetModel.reasonConcept) }}
                                         </span>
                                     </div>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
             <div class="modal-footer">
