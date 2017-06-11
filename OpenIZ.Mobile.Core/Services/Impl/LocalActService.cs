@@ -281,13 +281,13 @@ namespace OpenIZ.Mobile.Core.Services.Impl
             // Correct author information and controlling act information
             data = data.Clean() as TAct;
 
-			ISecurityRepositoryService userService = ApplicationContext.Current.GetService<ISecurityRepositoryService>();
-
 			var currentUserEntity = AuthenticationContext.Current.Session?.UserEntity;
-            var currentLocation = currentUserEntity.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
+            var currentLocation = currentUserEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation);
+
             // Set authororiginator
             if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.Authororiginator || o.ParticipationRole?.Mnemonic == "Authororiginator"))
-				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity));
+				data.Participations.Add(new ActParticipation(ActParticipationKey.Authororiginator, currentUserEntity.Key));
+
             // Set location if not done
             if (currentUserEntity != null && !data.Participations.Any(o => o.ParticipationRoleKey == ActParticipationKey.EntryLocation|| o.ParticipationRole?.Mnemonic == "EntryLocation" || o.ParticipationRoleKey == ActParticipationKey.Location || o.ParticipationRole?.Mnemonic == "Location") && currentLocation != null)
                 data.Participations.Add(new ActParticipation(ActParticipationKey.EntryLocation, currentLocation?.TargetEntityKey));
