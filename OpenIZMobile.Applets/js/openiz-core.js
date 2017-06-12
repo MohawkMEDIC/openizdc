@@ -9951,7 +9951,11 @@ var OpenIZModel = OpenIZModel || {
         /** 
          * 
          */
-        Roomate : 'bbfac1ed-5464-4100-93c3-8685b052a2cf',
+        Roomate: 'bbfac1ed-5464-4100-93c3-8685b052a2cf',
+        /** 
+         * Source replaces target
+         */
+        Replaces: 'e998ca72-3b6a-4099-ab6e-7cf6861a5b61',
         /** 
          * 
          */
