@@ -2312,6 +2312,12 @@
             <param name="referenceTerm">The reference term to be saved.</param>
             <returns>Returns a reference term.</returns>
         </member>
+        <member name="M:OpenIZ.Core.Services.IConceptRepositoryService.GetConceptReferenceTerm(System.Guid,System.String)">
+            <summary>
+            Gets the concept reference term for the specified code system 
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:OpenIZ.Core.Services.DataCacheEventArgs">
             <summary>
             Data cache event args
@@ -2403,6 +2409,11 @@
         <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.DeleteDatamart(System.Guid)">
             <summary>
             Deletes a datamart
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Truncate(System.Guid)">
+            <summary>
+            Truncates (drops all data) the specified data mart
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Services.IAdHocDatawarehouseService.Get(System.Guid,System.Guid)">
