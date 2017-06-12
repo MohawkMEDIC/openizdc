@@ -79,18 +79,18 @@
        
     </div>
     <div class="row form-group">
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['product_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['product_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingProduct' | i18n }}
         </div>
         <!--
             TODO: Do we track supplements for stock?
-            <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
+            <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['consumable_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['consumable_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingConsumable' | i18n }}
         </div>-->
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="act._enabled &amp;&amp; (editEncounterForm['site_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['site_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingSite' | i18n }}
         </div>
-        <div class="col-xs-10 col-xs-offset-2 help-block text-danger" ng-if="!act._enabled &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid">
+        <div class="col-xs-12 help-block text-danger" ng-if="!act._enabled &amp;&amp; (editEncounterForm['reason_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['reason_' + act.targetModel.id].$invalid">
             {{ 'locale.encounters.immunizations.errors.missingReason' | i18n }}
         </div>
     </div>
