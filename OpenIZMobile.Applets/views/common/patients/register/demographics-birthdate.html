@@ -1,0 +1,71 @@
+﻿<!--
+ - Copyright 2015-2017 Mohawk College of Applied Arts and Technology
+ -
+ -
+ - Licensed under the Apache License, Version 2.0 (the "License"); you
+ - may not use this file except in compliance with the License. You may
+ - obtain a copy of the License at
+ -
+ - http://www.apache.org/licenses/LICENSE-2.0
+ -
+ - Unless required by applicable law or agreed to in writing, software
+ - distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ - WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ - License for the specific language governing permissions and limitations under
+ - the License.
+ -
+ - User: kirkleyd
+ - Date: 2017-6-7
+ -->
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:oiz="http://openiz.org/applet" xmlns:bind="http://openiz.org/applet/binding" class="form-group">
+    <ng-form name="dateOfBirthForm">
+        <label class="col-xs-3 control-label ng-cloak" for="dobInput">
+            {{ 'locale.patient.demographics.dateOfBirth' | i18n }}*
+        </label>
+        <div class="col-xs-9" ng-class="{ 'has-error': (dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid }">
+            <div class="input-group">
+                <input ng-disabled="patientBackup.tag.hasBirthCertificate"
+                       ng-readonly="patient.readonly.dateOfBirth" type="date"
+                       name="dateOfBirth" id="dobInput"
+                       class="form-control"
+                       ng-model="patient.dateOfBirth"
+                       ng-max="getDateOfBirthMaximum() || $root.page.maxEventTime"
+                       max="{{(getDateOfBirthMaximum() || $root.page.maxEventTime) | date: 'yyyy-MM-dd'}}" 
+                       ng-required="true" />
+                <span class="input-group-addon input-group-addon-approx">
+                    <label class="control control--checkbox">
+                        <span class="approx-add-in">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                        <input type="checkbox"
+                               ng-disabled="patientBackup.tag.hasBirthCertificate"
+                               ng-model="patient.dateOfBirthPrecision"
+                               ng-checked="patient.dateOfBirthPrecision == 2"
+                               ng-true-value="2"
+                               ng-false-value="3"
+                               name="approximateDob" />
+                        <div class="control__indicator" style="top: 8px;"></div>
+                    </label>
+                </span>
+                <span class="input-group-btn">
+                    <a class="btn btn-default" data-toggle="popover" tabindex="2" data-trigger="focus" title="{{ 'locale.patient.demographics.dateOfBirthFull' | i18n }}" data-content="{{ 'locale.patient.demographics.dateOfBirthPrecision.help' | i18n }}"><span class="glyphicon glyphicon-question-sign"></span></a>
+                </span>
+            </div>
+            <p ng-if="patientBackup.tag.hasBirthCertificate">
+                {{ 'locale.patient.demographics.dateOfBirth.hasCertificate' | i18n }}
+            </p>
+            <p ng-if="(dateOfBirthForm.dateOfBirth.$touched || (dateOfBirthForm.$submitted || formSubmitted)) &amp;&amp; dateOfBirthForm.dateOfBirth.$invalid">
+                <span ng-show="dateOfBirthForm.dateOfBirth.$error.required"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.required' | i18n }}
+                </span>
+                <span ng-show="dateOfBirthForm.dateOfBirth.$error.date"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.date' | i18n }}
+                </span>
+                <span ng-show="dateOfBirthForm.dateOfBirth.$error.max"
+                      class="help-block text-danger">
+                    {{ 'locale.patient.errors.dob.max' | i18n }}
+                </span>
+            </p>
+        </div>
+    </ng-form>
+</div>

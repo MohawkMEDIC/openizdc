@@ -37,7 +37,6 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
         continueWith: function (data) {
             
             // HACK: the TFA mechanisms are stored in the database in english, get the locale string for it
-            console.log(data);
             for (var i = 0; i < data.length; i++) {
                 switch (data[i].id) {
                     case 'd919457d-e015-435c-bd35-42e425e2c60c':
@@ -150,7 +149,7 @@ layoutApp.controller('ForgotPasswordController', ['$scope', '$window', 'regexSer
             // Try to use the login code
             OpenIZ.Authentication.loginAsync({
                 userName: $scope.resetRequest.userName,
-                tfaSecret: $scope.resetRequest.tfaSecret,
+                tfaSecret: ('0000' + $scope.resetRequest.tfaSecret).slice(-4),
                 continueWith: function (data) {
                     // Set scope next
                     $scope.onNext = null;

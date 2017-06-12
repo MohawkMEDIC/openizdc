@@ -64,20 +64,25 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
         }
     });
     
+    $('[data-toggle="popover"]').popover({
+        placement: 'top'
+    });
     
     $scope.master = {};
 
     // leave realm
     $scope.leaveRealm = function (realm) {
         if (confirm(OpenIZ.Localization.getString("locale.settings.confirm.leaveRealm")))
-            OpenIZ.Configuration.leaveRealmAsync();
+            OpenIZ.Configuration.leaveRealm();
     };
 
     // join realm
     $scope.joinRealm = function (realm) {
 
         var doJoin = function (force) {
-            OpenIZ.App.showWait('#joinRealmButton');
+            if (!$('#joinRealmButton')[0].hasAttribute('disabled')) {
+                OpenIZ.App.showWait('#joinRealmButton');
+            }
 
             var backupCredentials = {
                 continueWith: OpenIZ.Authentication.$elevationCredentials.continueWith,
@@ -126,7 +131,16 @@ layoutApp.controller('SettingsController', ['$scope', function ($scope) {
 
     // Save config
     $scope.save = function (config) {
-        
+        $scope.settingsForm.$setSubmitted();
+
+        // Check if the form is valid
+        if (!$scope.settingsForm.$valid) {
+            // Focus any required field
+            console.log($('[name=' + $scope.settingsForm.$error.required[0].$name + ']'));
+            $('[name=' + $scope.editPatientForm.$error.required[0].$name + ']').focus();
+            return;
+        }
+
         if ($scope.config.realmName == null)
             alert(OpenIZ.Localization.getString("locale.settings.error.noRealm"));
         else {

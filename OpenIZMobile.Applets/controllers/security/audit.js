@@ -14,6 +14,8 @@ layoutApp.controller('AuditController', ['$scope', function ($scope) {
     $scope.getAudit = getAudit;
     $scope.searchAudits = searchAudits;
     $scope.trunc = function (i) { return Math.trunc(i); };
+    $scope.resetQueryTimestamp = resetQueryTimestamp;
+    $scope.resetQueryTimestamp();
 
     // Get audits
     function searchAudits() {
@@ -56,5 +58,7 @@ layoutApp.controller('AuditController', ['$scope', function ($scope) {
         }
     };
 
-
+    function resetQueryTimestamp() {
+        $scope.audit.queryTimestamp = moment().toDate();
+    }
 }]);

@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-xs-9 search-result-field" ng-if="patient.dateOfBirth">
                                 {{ patient.dateOfBirth | date: 'yyyy-MMM-dd'}} 
-                                <span class="label label-info" ng-if="patient.dateOfBirthPrecision">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
+                                <span class="label label-info" ng-if="isApproxDob(patient)">{{ 'locale.patient.demographics.dob.fuzzy' | i18n }}</span>
                             </div>
                             <div class="col-xs-9 search-result-field" ng-if="!patient.dateOfBirth">
                                 {{ 'locale.common.na' | i18n }}
@@ -165,7 +165,8 @@
         </table>
     </div>
     <div class="search-results-tile text-center margin-bottom-10" ng-if="!search.results.item.length &amp;&amp; search.isSearching == false">
-        <h4>{{ 'locale.patient.search.noresults' | i18n }}</h4>
+        <h4 ng-if="editPatientForm === undefined">{{ 'locale.patient.search.noresults' | i18n }}</h4>
+        <h4 ng-if="editPatientForm !== undefined">{{ 'locale.patient.search.noduplicates' | i18n }}</h4>
     </div>
     <div class="progress margin-top-10" ng-if="search.isSearching == true">
         <div class="progress-bar ng-cloak progress-bar-info progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">

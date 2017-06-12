@@ -230,8 +230,10 @@
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.#ctor(System.Nullable{System.Guid},OpenIZ.Core.Model.Entities.Entity)">
             <summary>
-            Act participation relationship between <paramref name="source"/> and <paramref name="player"/>
+            Act participation relationship between <paramref name="source" /> and <paramref name="player" />
             </summary>
+            <param name="roleType">Type of the role.</param>
+            <param name="player">The player.</param>
         </member>
         <member name="M:OpenIZ.Core.Model.Acts.ActParticipation.#ctor(System.Nullable{System.Guid},System.Nullable{System.Guid})">
             <summary>
@@ -1003,7 +1005,7 @@
             True if the bundle has a tag
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData)">
+        <member name="M:OpenIZ.Core.Model.Collection.Bundle.CreateBundle(OpenIZ.Core.Model.IdentifiedData,System.Boolean)">
             <summary>
             Create a bundle
             </summary>
@@ -2220,6 +2222,11 @@
             Gets or sets the validation regex
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.IsUnique">
+            <summary>
+            True if the assigning authority values should be unique
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Model.DataTypes.AssigningAuthority.AssigningDevice">
             <summary>
             Gets or sets the assigning device
@@ -2589,6 +2596,41 @@
         <member name="T:OpenIZ.Core.Model.DataTypes.DatePrecision">
             <summary>
             Represents a date precision object
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Full">
+            <summary>
+            Represents full date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Year">
+            <summary>
+            Represents year date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Month">
+            <summary>
+            Represents month date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Day">
+            <summary>
+            Represents day date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Hour">
+            <summary>
+            Represents hour date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Minute">
+            <summary>
+            Represents minute date precision.
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Model.DataTypes.DatePrecision.Second">
+            <summary>
+            Represents second date precision.
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Model.DataTypes.Extension`1">

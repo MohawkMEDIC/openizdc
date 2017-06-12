@@ -53,7 +53,7 @@ layoutApp.controller('UserProfileController', ['$scope', '$rootScope', '$window'
             delete (userEntity.relationship.DedicatedServiceDeliveryLocation.targetModel);
         userEntity.securityUser = $rootScope.session.user.id;
         userEntity.statusConcept = 'C8064CBD-FA06-4530-B430-1A52F1530C27';
-        userEntity.language
+
         // Update async
         OpenIZ.UserEntity.updateAsync({
             data: userEntity,

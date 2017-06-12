@@ -3,7 +3,6 @@
  */
 OpenIZBre.AddBusinessRule("Bundle", "BeforeInsert", /** @param {OpenIZModel.Bundle} bundle */ function (bundle) {
     if (bundle.$type != 'Bundle') return bundle;
-
     return OpenIZBre.ExecuteBundleRules("BeforeInsert", bundle);
 });
 /** 

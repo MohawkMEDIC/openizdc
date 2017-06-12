@@ -146,7 +146,8 @@ namespace OpenIZ.Mobile.Core.Services.Impl
 
             var result = persistenceService.Get(key);
 
-            result = businessRulesService?.AfterRetrieve(result) ?? result;
+			if (result != null)
+				result = businessRulesService?.AfterRetrieve(result) ?? result;
 
             this.DataDisclosed?.Invoke(this, new AuditDataDisclosureEventArgs(key.ToString(), new object[] { result }));
             return result;

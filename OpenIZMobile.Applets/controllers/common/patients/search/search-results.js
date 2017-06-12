@@ -36,6 +36,7 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
     scope.search.mode = 0;
     scope.search.paging = scope.search.paging || {size: 10};
     scope.act = {};
+    var onlineOnly = false;
 
     angular.element(document).ready(init);
 
@@ -46,9 +47,11 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
         scope.search.goPage = scope.search.goPage || goPage;
         scope.startEncounter = startEncounter;
         scope.goResult = scope.goResult || goResult;
+        scope.search.searchByBarcode = scope.search.searchByBarcode || searchByBarcode;
+        scope.search.searchPatient = scope.search.searchPatient || searchPatient;
 
         scope.search.searchSubmitted = false;
-        var onlineOnly = false;
+        onlineOnly = false;
 
         scope.search.minSearchDate = '2000-01-01';
     }
@@ -84,26 +87,24 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
      * @summary Advances to the next set of results
      */
     function search(searchOnlineOnly) {
-        onlineOnly = searchOnlineOnly
         scope.search.searchSubmitted = true;
 
         if (!scope.searchForm || scope.searchForm.$valid) {
-            if (onlineOnly)
-                scope.search.query["_onlineOnly"] = onlineOnly;
-            else
-                delete (scope.search.query["_onlineOnly"]);
-
-
             scope.search.query["_offset"] = 0;
             scope.search.query["_count"] = scope.search.paging.size;
             scope.search.query["_viewModel"] = "min";
-            scope.search.query["_queryId"] = OpenIZ.App.newGuid();
+            //scope.search.query["_queryId"] = OpenIZ.App.newGuid();
 
             // Search shouldn't include null parameters
             for (var k in Object.keys(scope.search.query))
             {
                 var key = Object.keys(scope.search.query)[k];
-                if (key.startsWith("_")) continue;
+
+                if (key === undefined)
+                    continue;
+
+                if (key.startsWith("_"))
+                    continue;
 
                 if (Array.isArray(scope.search.query[key])) {
                     for (var i in scope.search.query[key])
@@ -118,43 +119,91 @@ layoutApp.controller('SearchResultsController', ['$scope', function ($scope) {
                     scope.search.query[key] = "~" + scope.search.query[key];
 
             }
-            scope.search.isSearching = true;
-            $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled','disabled');
 
-            //scope.search.orginalQuery = angular.copy(scope.search.query);
-            OpenIZ.Patient.findAsync({
-                query: scope.search.query,
-                continueWith: function (r) {
+            searchPatient(scope.search.query, searchOnlineOnly, null);
+        }
+    };
 
-                    if (r.totalResults == 0 && scope.search.query._onlineFallback && !onlineOnly) {
-                        scope.search.search(true);
-                    }
-                    else {
-                        scope.search.results = r;
-                        scope.search.paging = {
-                            current: 1,
-                            total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
-                            size: scope.search.paging.size,
-                            pages: []
-                        };
-                        for (var i = 0; i < scope.search.paging.total; i++)
-                            scope.search.paging.pages[i] = i + 1;
-                    }
+    /** 
+     * @summary Searches patients by barcode
+     */
+    function searchByBarcode(identifier, searchOnline, onSearchResults) {
+        var barcodeQuery = {
+            "_offset": 0,
+            "_count": scope.search.paging.size,
+            "_viewModel": "min",
+            //"_queryId": OpenIZ.App.newGuid(),
+            "identifier.value": identifier.value
+        };
 
-                    //updateResultEncounters();
-                },
-                onException: function (e) {
-                    OpenIZ.App.toast(e.message);
-                },
-                finally: function () {
-                    scope.search.isSearching = false;
-                    //OpenIZ.App.hideWait(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton");
-                    $(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
-                    scope.$applyAsync();
+        if (identifier.domainName) {
+            barcodeQuery["identifier.authority.domainName"] = identifier.domainName;
+        }
+
+        searchPatient(barcodeQuery, searchOnline, onSearchResults);
+    }
+
+    /** 
+     * @summary Searches patients by the provided query
+     */
+    function searchPatient(query, searchOnlineOnly, onSearchResults) {
+        if (searchOnlineOnly)
+            query["_onlineOnly"] = searchOnlineOnly;
+        else
+            delete (query["_onlineOnly"]);
 
 
+        scope.search.isSearching = true;
+        $(searchOnlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").attr('disabled', 'disabled');
+
+        //scope.search.orginalQuery = angular.copy(scope.search.query);
+        OpenIZ.Patient.findAsync({
+            query: query,
+            continueWith: function (r) {
+
+                if (r.totalResults == 0 && scope.search.query._onlineFallback && !searchOnlineOnly) {
+                    scope.search.search(true);
                 }
-            });
+                else {
+                    scope.search.results = r;
+                    scope.search.paging = {
+                        current: 1,
+                        total: r.totalResults == 0 ? 1 : r.totalResults / scope.search.paging.size,
+                        size: scope.search.paging.size,
+                        pages: []
+                    };
+                    for (var i = 0; i < scope.search.paging.total; i++)
+                        scope.search.paging.pages[i] = i + 1;
+
+                    if (onSearchResults) {
+                        onSearchResults.call(this, r.totalResults);
+                    }
+                }
+
+                //updateResultEncounters();
+            },
+            onException: function (e) {
+                OpenIZ.App.toast(e.message);
+            },
+            finally: function () {
+                scope.search.isSearching = false;
+                //OpenIZ.App.hideWait(onlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton");
+                $(searchOnlineOnly ? "#patientOnlineSearchButton" : "#patientSearchButton").removeAttr('disabled');
+                scope.$applyAsync();
+            }
+        });
+    }
+
+    $scope.isApproxDob = function (patient)
+    {
+        switch (patient.dateOfBirthPrecision)
+        {
+            case 0:
+            case 1:
+            case 2:
+                return true;
+            default:
+                return false;
         }
     };
 

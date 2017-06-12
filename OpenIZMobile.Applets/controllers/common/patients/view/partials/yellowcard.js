@@ -23,11 +23,8 @@
 /// <reference path="~/lib/angular.min.js"/>
 /// <reference path="~/lib/jquery.min.js"/>
 
-layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
-    //    $('.oiz-vaccination-history').each(function (i, e) {
-    // Get the current scope that we're in
-    //        var scope = angular.element(e).scope();
-
+layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function ($scope, $stateParams)
+{
     angular.element(document).ready(init);
     var scope = $scope.$parent;
     // Init data
@@ -37,7 +34,13 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
+    
+   // for patient dob
+    scope.$watch('encounters', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+
+    // for encounters & care plan
     scope.$watch('encounters.length', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
+
     scope.$watch('patient.deceasedDate', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
 
     function init() {
@@ -46,9 +49,9 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
         $scope.yellowcardLegend = [
         { title: OpenIZ.Localization.getString('locale.legend.overdue'), color: '#d13333', icon: 'glyphicon-exclamation-sign' },
         { title: OpenIZ.Localization.getString('locale.legend.completed'), color: '#3c763d', icon: 'glyphicon-ok' },
-        { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' }
+        { title: OpenIZ.Localization.getString('locale.legend.upcoming'), color: '#31708f', icon: 'glyphicon-th-large' },
+        { title: OpenIZ.Localization.getString('locale.legend.appointment'), color: '#31708f', icon: 'glyphicon-calendar' }
         ];
-
     }
 
     var refreshYellowCard = function (newValue, oldValue) {
@@ -115,10 +118,14 @@ layoutApp.controller('YellowCardController', ['$scope' , function ($scope) {
                             //model._enabled = true;
                         }
 
-                        if(model.moodConcept != OpenIZModel.ActMoodKeys.Eventoccurrence && scope.display._vaccineAdministrations[antigenId][model.doseSequence] == null ||
+                        if (model.moodConcept != OpenIZModel.ActMoodKeys.Eventoccurrence && scope.display._vaccineAdministrations[antigenId][model.doseSequence] == null ||
                             (model.moodConcept == OpenIZModel.ActMoodKeys.Eventoccurrence)
-                            )
-                            scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
+                            ) {
+                            var existing = scope.display._vaccineAdministrations[antigenId][model.doseSequence];
+
+                            if(existing && model.creationTime > existing.creationTime || !existing)
+                                scope.display._vaccineAdministrations[antigenId][model.doseSequence] = model;
+                        }
                     }
                     
                     ;;

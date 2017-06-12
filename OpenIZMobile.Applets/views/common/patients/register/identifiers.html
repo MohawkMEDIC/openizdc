@@ -26,30 +26,43 @@
             <ng-form name="identifierForm">
                 <div class="col-xs-12 col-sm-3">
                     <div class="input-group" ng-class="{ 'has-error': identifierForm.identifierType.$error.required || editIdentifiersForm.identifierType.$error.required}">
-                        <select ng-model="identifier.domainName" class="small-select form-control " ng-change="rebindDomain(authority, identifier)" name="identifierType" ng-required="identifier.value"
-                                bind:source="AssigningAuthority" bind:key="domainName" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
+                        <select ng-model="identifier.domainName" class="small-select form-control identifier-domain-select" name="identifierType" ng-required="identifier.value"
+                                bind:source="AssigningAuthority" bind:key="domainName" bind:data-validation="ValidationRegex" bind:value="name" bind:filter="assigningDevice=null&amp;scope.id=BACD9C6F-3FA9-481E-9636-37457962804D"></select>
                         <span class="select-arrow-container" role="presentation"><span class="select-arrow" role="presentation"></span></span>
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-9">
                     <div class="margin-top-15 visible-xs"></div>
-                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength}">
-                        <input  type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value" class="form-control" name="identifier" />
+                    <div class="input-group" ng-class="{ 'has-error': identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.pattern || identifierForm.identifier.$error.pattern}">
+                        <input type="text" autocomplete="off" autocapitalize="off" ng-model="identifier.value"
+                               ng-pattern="regexValidation[$index]" class="form-control" name="identifier"
+                               ng-attr-autofocus="{{ !editIdentifiersForm }}" ng-keyup="$event.keyCode == 13 ? searchDuplicates(identifier) : null" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button" ng-if="scanBarcode" ng-click="scanBarcode(identifier)">
                                 <span class="ng-cloak"><span class="glyphicon glyphicon-barcode"></span> {{ 'locale.action.scan' | i18n }}</span>
                             </button>
 
-                            <button class="btn btn-default" type="button" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
+                            <button class="btn btn-default" type="button" ng-disabled="identifiers.length &lt;= 1" ng-if="removeIdentifier" ng-click="removeIdentifier(identifiers, $index)">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </button>
-                           
+
                         </span>
-                        
+
                     </div>
                 </div>
                 <p class="col-xs-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifierType.$error.required || editIdentifiersForm.identifierType.$error.required">{{ 'locale.patient.errors.identifier.required' | i18n}}</p>
-                <p class="col-xs-offset-3 help-block text-danger ng-cloak" ng-show="identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+                <div ng-show="identifierForm.identifier.$error.maxlength || editIdentifiersForm.identifier.$error.maxlength">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-9">
+                        <p class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.identifier' | i18n}}</p>
+                    </div>
+                </div>
+                <div ng-show="identifierForm.identifier.$error.pattern || editIdentifiersForm.identifier.$error.pattern">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-9">
+                        <p class="help-block text-danger ng-cloak">{{ 'locale.patient.errors.pattern' | i18n}}</p>
+                    </div>
+                </div>
             </ng-form>
         </div>
     </div>

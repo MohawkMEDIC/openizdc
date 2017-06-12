@@ -338,18 +338,18 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Identifiers
             if (data.Identifiers != null)
             {
-                // Validate unique values for IDs
-                var uniqueIds = data.Identifiers.Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.Authority.Key.Value)?.IsUnique == true);
-                byte[] entId = data.Key.Value.ToByteArray();
+				// Validate unique values for IDs
+				var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.AuthorityKey.Value)?.IsUnique == true);
+				byte[] entId = data.Key.Value.ToByteArray();
 
-                foreach (var itm in uniqueIds)
-                {
-                    byte[] authId = itm.Authority.Key.Value.ToByteArray();
-                    if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
-                        throw new DuplicateKeyException(itm.Value);
-                }
+				foreach (var itm in uniqueIds)
+				{
+					byte[] authId = itm.Authority.Key.Value.ToByteArray();
+					if (context.Connection.Table<DbEntityIdentifier>().Count(o => o.SourceUuid != entId && o.AuthorityUuid == authId && o.Value == itm.Value) > 0)
+						throw new DuplicateKeyException(itm.Value);
+				}
 
-                base.UpdateAssociatedItems<EntityIdentifier, Entity>(
+				base.UpdateAssociatedItems<EntityIdentifier, Entity>(
                     new List<EntityIdentifier>(),
                     data.Identifiers,
                     retVal.Key,
@@ -359,11 +359,14 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
                     new List<EntityRelationship>(),
-                    data.Relationships.Where(o=>!o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
+                    data.Relationships.Where(o => !o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)
@@ -461,7 +464,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             if (data.Identifiers != null)
             {
                 // Validate unique values for IDs
-                var uniqueIds = data.Identifiers.Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.Authority.Key.Value)?.IsUnique == true);
+                var uniqueIds = data.Identifiers.Where(o => o.AuthorityKey.HasValue).Where(o => ApplicationContext.Current.GetService<IDataPersistenceService<AssigningAuthority>>().Get(o.AuthorityKey.Value)?.IsUnique == true);
                 byte[] entId = data.Key.Value.ToByteArray();
 
                 foreach (var itm in uniqueIds)
@@ -481,11 +484,15 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
 
             // Relationships
             if (data.Relationships != null)
+            {
+                data.Relationships.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<EntityRelationship, Entity>(
-                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid== entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
+                    context.Connection.Table<DbEntityRelationship>().Where(o => o.SourceUuid == entityUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbEntityRelationship, EntityRelationship>(o)).ToList(),
                     data.Relationships.Where(o => !o.InversionIndicator).Distinct(new EntityRelationshipPersistenceService.Comparer()).ToList(),
                     retVal.Key,
                     context);
+            }
 
             // Telecoms
             if (data.Telecoms != null)

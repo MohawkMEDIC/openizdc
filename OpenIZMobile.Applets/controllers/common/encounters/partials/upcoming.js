@@ -26,46 +26,59 @@
 layoutApp.controller('UpcomingAppointmentController', ['$scope', '$stateParams', '$rootScope', function ($scope, $stateParams, $rootScope) {
     $scope._isCalendarInitialized = false;
 
-    angular.element(document).ready(init);
-    function init() {
-        // Gather the care plan
+    $scope.$watch("encounters.length", function (newValue, oldValue) {
+        if ($scope.encounters && $scope.encounters.length > 0 && newValue !== oldValue) {
+            updateCarePlan();
+        }
+    });
+
+    function updateCarePlan() {
         //OpenIZ.CarePlan.getCarePlanAsync({
         //    query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full&stopTime=>" + OpenIZ.Util.toDateInputString(new Date()),
         //    onDate: new Date(),
         //    /** @param {OpenIZModel.Bundle} proposals */
         //    continueWith: function (proposalsToday) {
-        OpenIZ.CarePlan.getCarePlanAsync({
-            query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
-            minDate: new Date(),
-            maxDate: new Date().addDays(90),
-            continueWith: function (proposals) {
+        if ($scope.appointments == null) {
+            $scope.appointments = {};
+            OpenIZ.CarePlan.getCarePlanAsync({
+                query: "_patientId=" + $stateParams.patientId + "&_appointments=true&_viewModel=full",
+                minDate: new Date(),
+                maxDate: new Date().addDays(90),
+                continueWith: function (proposals) {
 
-                // Grab the first appointment
-                $scope.appointments = proposals.item;
-                $scope.appointments.sort(
-                          function (a, b) {
-                              return a.actTime > b.actTime ? 1 : -1;
-                          }
+                    if (!proposals.item) {
+                        $scope.appointments = [];
+                    }
+                    else {
+                        // Grab the first appointment
+                        $scope.appointments = proposals.item;
+                        $scope.appointments.sort(
+                            function (a, b) {
+                                return a.actTime > b.actTime ? 1 : -1;
+                            }
                         );
 
-                for (var i in $scope.appointments) {
-                    if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
-                        $scope.appointments[i].startTime = $rootScope.page.loadTime
+                        for (var i in $scope.appointments) {
+                            if ($scope.appointments[i].startTime < $rootScope.page.loadTime) {
+                                $scope.appointments[i].startTime = $rootScope.page.loadTime;
+                            }
+                            if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
+                                $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
+                        }
                     }
-                    if (!Array.isArray($scope.appointments[i]) && !Array.isArray($scope.appointments[i].relationship.HasComponent))
-                        $scope.appointments[i].relationship.HasComponent = [$scope.appointments[i].relationship.HasComponent];
+
+                    $scope.$apply();
+                },
+                onException: function (ex) {
+                    if (ex.type === "FileNotFoundException")
+                        ;
+                    else if (ex.message)
+                        alert(ex.message);
+                    else
+                        console.error(ex);
                 }
-                $scope.$apply();
-            },
-            onException: function (ex) {
-                if (ex.type == "FileNotFoundException")
-                    ;
-                else if (ex.message)
-                    alert(ex.message);
-                else
-                    console.error(ex);
-            }
-        });
+            });
+        }
         //    },
         //    onException: function (ex) {
         //        if (ex.message)

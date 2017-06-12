@@ -200,6 +200,11 @@
             Stored query
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.DataSource">
+            <summary>
+            Attachments
+            </summary>
+        </member>
         <member name="P:OpenIZ.Core.Data.Warehouse.DatamartStoredQuery.Id">
             <summary>
             Gets or sets the provider identifier
@@ -283,6 +288,11 @@
         <member name="P:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.Properties">
             <summary>
             Gets or sets the properties
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Data.Warehouse.DataWarehouseObject.ToExpando">
+            <summary>
+            Create an expando object
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Data.Warehouse.IDatamartSchemaPropertyContainer">
@@ -459,6 +469,11 @@
         <member name="M:OpenIZ.Core.Exceptions.DetectedIssueException.#ctor(System.Collections.Generic.List{OpenIZ.Core.Services.DetectedIssue})">
             <summary>
             Creates a new detected issue exception with the specified issue list
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Exceptions.DetectedIssueException.ToString">
+            <summary>
+            Write to string
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Exceptions.PatchException">
@@ -1440,6 +1455,56 @@
             </summary>
             <param name="clientName">Client name.</param>
         </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointType">
+            <summary>
+            Service endpoint type
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointCapabilities">
+            <summary>
+            Represents service capabilities
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.None">
+            <summary>
+            No options
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.BasicAuth">
+            <summary>
+            Basic auth
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.BearerAuth">
+            <summary>
+            Bearer auth
+            </summary>
+        </member>
+        <member name="F:OpenIZ.Core.Interop.ServiceEndpointCapabilities.Compression">
+            <summary>
+            Endpoint supports compression
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Interop.ServiceEndpointOptions">
+            <summary>
+            Service endpoint options
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.ServiceType">
+            <summary>
+            Gets or sets the service endpoint type
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.Capabilities">
+            <summary>
+            Capabilities
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceEndpointOptions.BaseUrl">
+            <summary>
+            Base URL type
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Interop.ServiceOptions">
             <summary>
             Service options
@@ -1458,6 +1523,11 @@
         <member name="P:OpenIZ.Core.Interop.ServiceOptions.Services">
             <summary>
             Gets the service resource options
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Interop.ServiceOptions.Endpoints">
+            <summary>
+            Gets or sets the endpoint options
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Interop.ServiceOptions.ModifiedOn">
@@ -1532,6 +1602,21 @@
         <member name="M:OpenIZ.Core.Services.Impl.SimplePatchService.Test(OpenIZ.Core.Model.Patch.Patch,OpenIZ.Core.Model.IdentifiedData)">
             <summary>
             Test that a patch can be applied
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.Impl.RegexPasswordValidator">
+            <summary>
+            Represents a regular expression password validator
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.RegexPasswordValidator.#ctor(System.String)">
+            <summary>
+            Create regex password validator with specified expression
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.Impl.RegexPasswordValidator.Validate(System.String)">
+            <summary>
+            Validate the specified password
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.Impl.BaseBusinessRulesService`1">
@@ -2268,7 +2353,7 @@
             Get the specified cache item
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem(System.Type,System.Guid)">
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.GetCacheItem(System.Guid)">
             <summary>
             Gets the specified cache item
             </summary>
@@ -2278,7 +2363,7 @@
             Adds the specified item to the cache
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Services.IDataCachingService.Remove(System.Type,System.Guid)">
+        <member name="M:OpenIZ.Core.Services.IDataCachingService.Remove(System.Guid)">
             <summary>
             Removes an object from the cache
             </summary>
@@ -2449,6 +2534,16 @@
         <member name="M:OpenIZ.Core.Services.IFastQueryRepositoryService.FindFast``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}},System.Int32,System.Nullable{System.Int32},System.Int32@,System.Guid)">
             <summary>
             Perform a quick search (instructs the data persistence layer not to load as many properties)
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Services.IPasswordValidatorService">
+            <summary>
+            Represents a password validation service
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IPasswordValidatorService.Validate(System.String)">
+            <summary>
+            Validate the password
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IPatchService">
@@ -2916,6 +3011,16 @@
             </summary>
             <param name="codeSystem">The code system.</param>
             <returns>Returns the updated code system.</returns>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.GetTemplateDefinition(System.String)">
+            <summary>
+            Get tempate definition
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Services.IMetadataRepositoryService.CreateTemplateDefinition(OpenIZ.Core.Model.DataTypes.TemplateDefinition)">
+            <summary>
+            Create a template definition
+            </summary>
         </member>
         <member name="T:OpenIZ.Core.Services.IClientRegistryNotificationService">
             <summary>

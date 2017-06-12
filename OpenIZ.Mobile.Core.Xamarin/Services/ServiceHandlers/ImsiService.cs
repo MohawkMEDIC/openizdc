@@ -46,6 +46,7 @@ using System.Reflection;
 using OpenIZ.Core.Applets.ViewModel.Json;
 using OpenIZ.Core.Model.Security;
 using OpenIZ.Core.Applets.Services;
+using System.Text.RegularExpressions;
 
 namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 {
@@ -78,6 +79,20 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             IBatchRepositoryService bundleService = ApplicationContext.Current.GetService<IBatchRepositoryService>();
             return bundleService.Insert(bundleToInsert);
         }
+
+		/// <summary>
+		/// Creates the entity relationship.
+		/// </summary>
+		/// <param name="entityRelationship">The entity relationship.</param>
+		/// <returns>Returns the created entity relationship.</returns>
+		[RestOperation(Method = "POST", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+		public EntityRelationship CreateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+			var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
+
+		    return erRepositoryService.Insert(entityRelationship);
+	    }
 
         /// <summary>
         /// Gets an entity
@@ -313,16 +328,17 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
 
             //if (templateString.StartsWith(c_utf8bom))
             //    templateString = templateString.Remove(0, c_utf8bom.Length);
+            var regex = new Regex(@"\{\{uuid\}\}");
 
             this.m_tracer.TraceVerbose("Template {0} (Pre-Populated): {1}", templateId, templateString);
             var securityUser = AuthenticationContext.Current.Session.SecurityUser;
             var userEntity = AuthenticationContext.Current.Session.UserEntity;
             templateString = templateString.Replace("{{today}}", DateTime.Today.ToString("o"))
-                .Replace("{{uuid}}", Guid.NewGuid().ToString())
                 .Replace("{{now}}", DateTime.Now.ToString("o"))
                 .Replace("{{userId}}", securityUser.Key.ToString())
                 .Replace("{{userEntityId}}", userEntity?.Key.ToString())
                 .Replace("{{facilityId}}", userEntity?.Relationships.FirstOrDefault(o => o.RelationshipTypeKey == EntityRelationshipTypeKeys.DedicatedServiceDeliveryLocation)?.TargetEntityKey.ToString());
+            templateString = regex.Replace(templateString, (o)=> Guid.NewGuid().ToString() );
             this.m_tracer.TraceVerbose("Template {0} (Post-Populated): {1}", templateId, templateString);
             return templateString;
         }
@@ -446,13 +462,27 @@ namespace OpenIZ.Mobile.Core.Xamarin.Services.ServiceHandlers
             return repository.Save(entityToUpdate).GetLocked() as Entity;
         }
 
+		/// <summary>
+		/// Updates the entity relationship.
+		/// </summary>
+		/// <param name="entityRelationship">The entity relationship.</param>
+		/// <returns>Returns the updated entity relationship.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/EntityRelationship", FaultProvider = nameof(ImsiFault))]
+	    [Demand(PolicyIdentifiers.WriteClinicalData)]
+	    public EntityRelationship UpdateEntityRelationship([RestMessage(RestMessageFormat.SimpleJson)] EntityRelationship entityRelationship)
+	    {
+		    var erRepositoryService = ApplicationContext.Current.GetService<IRepositoryService<EntityRelationship>>();
 
-        /// <summary>
-        /// Updates a manufactured material.
-        /// </summary>
-        /// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
-        /// <returns>Returns the updated manufactured material.</returns>
-        [RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
+		    return erRepositoryService.Save(entityRelationship);
+	    }
+
+
+		/// <summary>
+		/// Updates a manufactured material.
+		/// </summary>
+		/// <param name="manufacturedMaterial">The manufactured material to be updated.</param>
+		/// <returns>Returns the updated manufactured material.</returns>
+		[RestOperation(Method = "PUT", UriPath = "/ManufacturedMaterial", FaultProvider = nameof(ImsiFault))]
         [Demand(PolicyIdentifiers.Login)]
         [return: RestMessage(RestMessageFormat.SimpleJson)]
         public ManufacturedMaterial UpdateManufacturedMaterial([RestMessage(RestMessageFormat.SimpleJson)] ManufacturedMaterial manufacturedMaterial)

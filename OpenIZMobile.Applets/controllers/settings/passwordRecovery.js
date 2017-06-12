@@ -58,6 +58,7 @@ layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', 
                                 continueWith: function (result) {
                                     OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.recoveryOptions.success"));
                                     $rootScope.session.user = result;
+                                    resetChangePasswordRecoveryForm();
                                 },
                                 onException: function (ex) {
                                     if (ex.message != null)
@@ -71,6 +72,7 @@ layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', 
                         else {
                             // email and password aren't different, no changes needed
                             OpenIZ.App.toast(OpenIZ.Localization.getString("locale.preferences.recoveryOptions.success"));
+                            resetChangePasswordRecoveryForm();
                         }
                     }
                 },
@@ -88,4 +90,12 @@ layoutApp.controller('UserPasswordRecoveryController', ['$scope', '$rootScope', 
             })
         }
     };
+
+    function resetChangePasswordRecoveryForm() {
+        $scope.changeData.existing = "";
+        $scope.changePasswordRecoveryForm.$setPristine();
+        $scope.changePasswordRecoveryForm.$setValidity();
+        $scope.changePasswordRecoveryForm.$setUntouched();
+        $scope.$apply();
+    }
 }]);

@@ -67,7 +67,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
         public override Bundle Insert(Bundle data)
         {
             // first, are we just doing a normal insert?
-            if (data.Item.Count <= 500)
+            if (data.Item.Count <= 15000)
                 return base.Insert(data);
             else
             { // It is cheaper to open a mem-db and let other threads access the main db for the time being
@@ -143,7 +143,7 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                 var svc = ApplicationContext.Current.GetService(idp);
                 if (svc == null) continue; // can't insert
                 String method = "Insert";
-                if (itm.TryGetExisting(context) != null)
+                if (itm.TryGetExisting(context, true) != null)
                     method = "Update";
                 var mi = svc.GetType().GetRuntimeMethod(method, new Type[] { typeof(LocalDataContext), itm.GetType() });
                 data.Item[i] = mi.Invoke(svc, new object[] { context, itm }) as IdentifiedData;

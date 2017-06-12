@@ -291,18 +291,25 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context);
 
             if (retVal.Participations != null)
+            {
+                // Remove all empty participations
+                retVal.Participations.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     new List<ActParticipation>(),
                     retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Relationships != null)
+            {
+                retVal.Relationships.RemoveAll(o => o.IsEmpty());
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     new List<ActRelationship>(),
                     retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<ActTag, Act>(
@@ -378,18 +385,26 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
                     context);
 
             if (retVal.Participations != null)
+            {
+                retVal.Participations.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<ActParticipation, Act>(
                     context.Connection.Table<DbActParticipation>().Where(a => ruuid == a.ActUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActParticipation, ActParticipation>(o)).ToList(),
                     retVal.Participations.Distinct(new ActParticipationPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Relationships != null)
+            {
+                retVal.Relationships.RemoveAll(o => o.IsEmpty());
+
                 base.UpdateAssociatedItems<ActRelationship, Act>(
                     context.Connection.Table<DbActRelationship>().Where(a => ruuid == a.SourceUuid).ToList().Select(o => m_mapper.MapDomainInstance<DbActRelationship, ActRelationship>(o)).ToList(),
                     retVal.Relationships.Distinct(new ActRelationshipPersistenceService.Comparer()),
                     retVal.Key,
                     context);
+            }
 
             if (retVal.Tags != null)
                 base.UpdateAssociatedItems<ActTag, Act>(

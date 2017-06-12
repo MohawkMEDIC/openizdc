@@ -17,7 +17,7 @@
  - User: justi
  - Date: 2017-3-31
  -->
-<div class="container" xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
+<div xmlns="http://www.w3.org/1999/xhtml" xmlns:openiz="http://openiz.org/applet">
     <openiz:script>/org.openiz.core/controllers/settings/settings.js</openiz:script>
     <openiz:state name="org-openiz-core.settings">
         <openiz:url>/settings</openiz:url>
@@ -30,19 +30,23 @@
         </openiz:view>
     </openiz:state>
     
-    <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#dataBody" data-toggle="tab">{{ 'locale.settings.dataTitle' | i18n }}</a></li>
-        <li role="presentation"><a href="#logBody" data-toggle="tab">{{ 'locale.settings.logTitle' | i18n }}</a></li>
-        <li role="presentation"><a href="#securityBody" data-toggle="tab">{{ 'locale.settings.securityTitle' | i18n }}</a></li>
-        <li role="presentation"><a href="#networkBody" data-toggle="tab">{{ 'locale.settings.networkTitle' | i18n }}</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div role="tabpanel" class="tab-pane active" id="dataBody"><!-- #include virtual="~/views/settings/tabs/data.html" --></div>
-        <div role="tabpanel" class="tab-pane" id="logBody"><!-- #include virtual="~/views/settings/tabs/log.html" --></div>
-        <div role="tabpanel" class="tab-pane" id="securityBody"><!-- #include virtual="~/views/settings/tabs/security.html" --></div>
-        <div role="tabpanel" class="tab-pane" id="networkBody"><!-- #include virtual="~/views/settings/tabs/network.html" --></div>
+    <div id="settings-nav-wrapper" class="nav-tabs">
+        <div class="container">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#dataBody" data-toggle="tab">{{ 'locale.settings.dataTitle' | i18n }}</a></li>
+                <li role="presentation"><a href="#logBody" data-toggle="tab">{{ 'locale.settings.logTitle' | i18n }}</a></li>
+                <li role="presentation"><a href="#securityBody" data-toggle="tab">{{ 'locale.settings.securityTitle' | i18n }}</a></li>
+                <li role="presentation"><a href="#networkBody" data-toggle="tab">{{ 'locale.settings.networkTitle' | i18n }}</a></li>
+            </ul>
+        </div>
     </div>
 
-  
+    <div class="container">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="dataBody"><!-- #include virtual="~/views/settings/tabs/data.html" --></div>
+            <div role="tabpanel" class="tab-pane" id="logBody"><!-- #include virtual="~/views/settings/tabs/log.html" --></div>
+            <div role="tabpanel" class="tab-pane" id="securityBody"><!-- #include virtual="~/views/settings/tabs/security.html" --></div>
+            <div role="tabpanel" class="tab-pane" id="networkBody"><!-- #include virtual="~/views/settings/tabs/network.html" --></div>
+        </div>
+    </div>
 </div>

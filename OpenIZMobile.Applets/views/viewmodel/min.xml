@@ -197,7 +197,15 @@
     <property name="determinerConcept" behavior="never"/>
     <property name="statusConceptModel" behavior="never"/>
     <property name="typeConceptModel" behavior="always"/>
-    <property name="relationship" all="true">
+    <property name="relationship" all="true" behavior="always">
+      <property name="UsedEntity" all="true">
+        <property name="targetModel" all="true" behavior="always">
+          <property name="name" behavior="always" all="true"/>
+        </property>
+        <property name="holderModel" behavior="never"/>
+        <property name="sourceModel" behavior="never"/>
+        <property name="relationshipTypeModel" behavior="never"/>
+      </property>
       <property name="*" all="true">
         <property name="targetModel" all="true">
           <property name="relationship" all="true">
@@ -315,6 +323,15 @@
           <property name="name" all="true" behavior="always"/>
           <property name="tag" all="true"/>
           <property name="extension" all="true"/>
+          <property name="relationship" all="true" behavior="always">
+            <property name="UsedEntity" all="false">
+              <property name="target"/>
+              <property name="targetModel" behavior="always" all="false">
+                <property name="name" all="true" behavior="always"/>
+              </property>
+            </property>
+            <property name="*" all="false" behavior="never"/>
+          </property>
           <property name="participation" all="true">
             <property name="*" all="false">
               <property name="participationRole"/>

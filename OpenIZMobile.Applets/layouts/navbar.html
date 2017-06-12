@@ -88,7 +88,10 @@
                     </a>
                 </li>
                 <li id="syncCtrDropDown" ng-show="$root.session">
-                    <a ui-sref="org-openiz-core.sync()">
+                    <a ui-sref="org-openiz-core.sync()"
+                       class="dropdown-toggle" role="button"
+                       data-toggle="collapse" data-target=".navbar-collapse-small"
+                       aria-haspopup="true" aria-expanded="false">
                         <img src="/org.openiz.core/img/appbar.arrow.down.up.png" class="navbar-icon"/> <span class="oiz-menu-text">{{ 'locale.sync.title' | i18n }}</span>
                         <span ng-if="conflicts.Size > 0" class="glyphicon glyphicon-exclamation-sign"></span>
                     </a>

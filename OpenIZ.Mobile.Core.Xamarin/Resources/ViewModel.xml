@@ -25,7 +25,7 @@
     <property name="target" all="true"/>
     <property name="key" all="true"/>
     <property name="quantity" all="true"/>
-    <property name="relationshipType" all="true"/>
+    <property name="relationshipType" all="true" behavior="always"/>
   </type>
   <type type="IdentifiedData" all="true">
     <property name="etag" behavior="never"/>
@@ -59,7 +59,14 @@
     <property name="statusConceptModel" behavior="never"/>
     <property name="previousVersion" behavior="never"/>
     <property name="previousVersionModel" behavior="never"/>
+  </type>
 
+  <!-- Assigning Authorities -->
+  <type type="AssigningAuthority" all="false">
+    <property name="name" all="true" />
+    <property name="domainName" all="true" />
+    <property name="scope" all="true" />
+    <property name="validation" all="true" />
   </type>
 
   <!-- Entity Information -->

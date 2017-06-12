@@ -58,7 +58,6 @@ layoutApp.controller('ViewAlertController', ['$scope', '$stateParams', '$state',
                 continueWith: function (data)
                 {
                     $scope.alert = data[0];
-                    console.log($scope.alert);
                     $scope.alert.body = $scope.alert.body.replace("\n", "<br/>");
                     $scope.$apply();
                 }

@@ -9,6 +9,36 @@
             Represents a asset content resolver
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Applets.ReadonlyAppletCollection">
+            <summary>
+            A readonly applet collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ReadonlyAppletCollection.#ctor(OpenIZ.Core.Applets.AppletCollection)">
+            <summary>
+            Wrapper for the readonly applet collection
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ReadonlyAppletCollection.IsReadOnly">
+            <summary>
+            Collection is readonly
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ReadonlyAppletCollection.Resolver">
+            <summary>
+            Resolver
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ReadonlyAppletCollection.BaseUrl">
+            <summary>
+            Gets the base URL
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ReadonlyAppletCollection.CachePages">
+            <summary>
+            Get the page caching setting
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.AppletCollection">
             <summary>
             Represents a collection of applets
@@ -17,6 +47,16 @@
         <member name="P:OpenIZ.Core.Applets.AppletCollection.CachePages">
             <summary>
             Gets or sets whether caching is enabled
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.AppletCollection.AuthenticationAssets">
+            <summary>
+            Get authentication assets
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.AppletCollection.BaseUrl">
+            <summary>
+            Gets or sets the base url
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.AppletCollection.Resolver">
@@ -156,9 +196,24 @@
             Injection for HTML headers
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.AppletCollection.VerifyDependencies(OpenIZ.Core.Applets.Model.AppletInfo)">
+            <summary>
+            Verify dependencies are met for the specified applet
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.AppletCollection.AsReadonly">
+            <summary>
+            Readonly applet collection
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.AppletCollection.XElementEquityComparer">
             <summary>
             Xelement comparer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.AppletCollection.XElementEquityComparer.GetHashCode(System.Xml.Linq.XElement)">
+            <summary>
+            Get Hash code
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Applets.BindingExpressionVisitor">
@@ -258,6 +313,16 @@
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletTemplateDefinition.Definition">
+            <summary>
+            Gets or sets the definition
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletTemplateDefinition.Description">
+            <summary>
+            Gets or sets the definition
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletTemplateDefinition.Oid">
             <summary>
             Gets or sets the definition
             </summary>
@@ -483,6 +548,11 @@
             Content of the element
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletAssetHtml.Static">
+            <summary>
+            Identifies whether the asset is static
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.Model.AppletInitialConfiguration">
             <summary>
             Represents a configuration of an applet
@@ -558,6 +628,13 @@
             Gets or sets the applet's dependencies
             </summary>
         </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletInfo.Hash">
+            <summary>
+            A hash which validates the file has not changed on the disk. Different from signature which 
+            indicates the manifest has not changed since installed.
+            </summary>
+            <value><c>true</c> if this instance hash; otherwise, <c>false</c>.</value>
+        </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletInfo.AsReference">
             <summary>
             Return this applet reference
@@ -571,6 +648,11 @@
         <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.Load(System.IO.Stream)">
             <summary>
             Load the specified manifest name
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.Save(System.IO.Stream)">
+            <summary>
+            Save this applet manifest to the stream
             </summary>
         </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletManifest.Initialize">
@@ -595,6 +677,11 @@
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.Model.AppletManifest.StartAsset">
+            <summary>
+            Instructs the host which asset can be used as a starting point
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletManifest.LoginAsset">
             <summary>
             Instructs the host which asset can be used as a starting point
             </summary>
@@ -640,6 +727,11 @@
             Applet package used for installations only
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.Load(System.Byte[])">
+            <summary>
+            Load the specified manifest name
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.Load(System.IO.Stream)">
             <summary>
             Load the specified manifest name
@@ -656,9 +748,19 @@
             </summary>
             <value>The manifest.</value>
         </member>
+        <member name="P:OpenIZ.Core.Applets.Model.AppletPackage.PublicKey">
+            <summary>
+            Public signing certificate
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.Unpack">
             <summary>
             Unpack the package
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Model.AppletPackage.Save(System.IO.Stream)">
+            <summary>
+            Save the compressed applet manifest
             </summary>
         </member>
         <member name="T:OpenIZ.Core.Applets.Model.AppletName">
@@ -696,13 +798,6 @@
             <summary>
             Gets or sets the signature which can be used to validate the file
             </summary>
-        </member>
-        <member name="P:OpenIZ.Core.Applets.Model.AppletName.Hash">
-            <summary>
-            A hash which validates the file has not changed on the disk. Different from signature which 
-            indicates the manifest has not changed since installed.
-            </summary>
-            <value><c>true</c> if this instance hash; otherwise, <c>false</c>.</value>
         </member>
         <member name="M:OpenIZ.Core.Applets.Model.AppletName.ToString">
             <summary>
@@ -855,6 +950,41 @@
             Header element
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Applets.Services.IAppletManagerService">
+            <summary>
+            Represents a service which manages applets in the host environment
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.Services.IAppletManagerService.Applets">
+            <summary>
+            Gets the loaded applets from the manager
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Services.IAppletManagerService.UnInstall(System.String)">
+            <summary>
+            Uninstall a package
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Services.IAppletManagerService.Install(OpenIZ.Core.Applets.Model.AppletPackage,System.Boolean)">
+            <summary>
+            Installs or upgrades an existing applet collection via package
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Services.IAppletManagerService.GetApplet(System.String)">
+            <summary>
+            Get the specified applet manifest
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Services.IAppletManagerService.LoadApplet(OpenIZ.Core.Applets.Model.AppletManifest)">
+            <summary>
+            Performs necessary loading functions for an applet
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.Services.IAppletManagerService.GetPackage(System.String)">
+            <summary>
+            Gets the installed applet package source for the specified applet
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.Description.ClassifierModelDescription">
             <summary>
             View model description for classifiers
@@ -985,6 +1115,21 @@
             Find description
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.Merge(System.Collections.Generic.IEnumerable{OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription})">
+            <summary>
+            Merge several view model descriptions into one
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.MergeInternal(OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription,OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription)">
+            <summary>
+            Merge internal
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Description.ViewModelDescription.MergeInternal(OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription,OpenIZ.Core.Applets.ViewModel.Description.PropertyContainerDescription)">
+            <summary>
+            Merge internal
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.Description.TypeModelDescription">
             <summary>
             Represents model descriptions
@@ -1093,6 +1238,11 @@
             Perform a re-classification of values
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.LoadClassifier(System.Type,System.String)">
+            <summary>
+            Load classifier
+            </summary>
+        </member>
         <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionClassifier.GetClassifierObj(System.Object,OpenIZ.Core.Model.Attributes.ClassifierAttribute)">
             <summary>
             Get classifier object
@@ -1128,7 +1278,7 @@
             Get property information for the specified type
             </summary>
         </member>
-        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo)">
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo,System.Boolean)">
             <summary>
             Get property name
             </summary>
@@ -1282,6 +1432,13 @@
             Serialize to the specified text writer
             </summary>
         </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Json.JsonViewModelSerializer.Serialize(Newtonsoft.Json.JsonWriter,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize data
+            </summary>
+            <param name="jw"></param>
+            <param name="data"></param>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.IViewModelSerializer">
             <summary>
             Represents a view model serializer instance
@@ -1327,6 +1484,136 @@
             Loads the specified related object
             </summary>
         </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.INullTypeFormatter">
+            <summary>
+            View model serializer which is a null view model serializer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.INullTypeFormatter.Serialize(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext)">
+            <summary>
+            Serialize specified object <paramref name="o"/> into the oblivion known as null
+            </summary>
+            <param name="o">The object to be graphed</param>
+            <param name="context">The current serialization context</param>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter">
+            <summary>
+            Memory based reflection type formatter
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.#ctor(System.Type)">
+            <summary>
+            Constructs a new reflection type formatter
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.HandlesType">
+            <summary>
+            Gets the type this handles
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.GetPropertyName(System.Reflection.PropertyInfo)">
+            <summary>
+            Get property name
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullReflectionTypeFormatter.Serialize(OpenIZ.Core.Model.IdentifiedData,OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext)">
+            <summary>
+            Serialize the specified instance
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext">
+            <summary>
+            Serialization context
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
+            <summary>
+            Serialization context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullSerializationContext.NullContext">
+            <summary>
+            Null context
+            </summary>
+        </member>
+        <member name="T:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer">
+            <summary>
+            Represents a serializer that 
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.ViewModel">
+            <summary>
+            Gets or sets the view model definnition
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.DeSerialize(System.IO.Stream,System.Type)">
+            <summary>
+            Deserialize a memory stream obbject
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.DeSerialize``1(System.IO.Stream)">
+            <summary>
+            Deserialize the memory stream
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadRelated(System.Type,System.Guid)">
+            <summary>
+            Load related object
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadCollection(System.Type,System.Guid)">
+            <summary>
+            Load collection
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadCollection``1(System.Guid)">
+            <summary>
+            Delay loads the specified collection association
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadRelated``1(System.Nullable{System.Guid})">
+            <summary>
+            Load the related information
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.LoadSerializerAssembly(System.Reflection.Assembly)">
+            <summary>
+            Load a serializer assembly (not supported)
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.GetFormatter(System.Type)">
+            <summary>
+            Get the specified formatter
+            </summary>
+            <param name="type">The type to retrieve the formatter for</param>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.GetClassifier(System.Type)">
+            <summary>
+            Gets the appropriate classifier for the specified type
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.WritePropertyUtil(System.String,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext,System.Boolean)">
+            <summary>
+            Write property utility
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(System.IO.TextWriter,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serializer the object to the specified text writer
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(System.IO.Stream,OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize the specified object to the stream (null writer doesn't do anything)
+            </summary>
+            <param name="s"></param>
+            <param name="data"></param>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.Null.NullViewModelSerializer.Serialize(OpenIZ.Core.Model.IdentifiedData)">
+            <summary>
+            Serialize
+            </summary>
+        </member>
         <member name="T:OpenIZ.Core.Applets.ViewModel.SerializationContext">
             <summary>
             Represents a serialization context
@@ -1340,6 +1627,11 @@
         <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.#ctor(System.String,OpenIZ.Core.Applets.ViewModel.IViewModelSerializer,System.Object,OpenIZ.Core.Applets.ViewModel.SerializationContext)">
             <summary>
             Gets the serialization context
+            </summary>
+        </member>
+        <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.DebugView">
+            <summary>
+            Get the debug view
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.PropertyName">
@@ -1380,6 +1672,11 @@
         <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.ShouldForceLoad(System.String,System.Guid)">
             <summary>
             Returns true when child property information should be force loaded
+            </summary>
+        </member>
+        <member name="M:OpenIZ.Core.Applets.ViewModel.SerializationContext.RegisterMissTarget(System.String,System.Guid)">
+            <summary>
+            Register that this property was missed
             </summary>
         </member>
         <member name="P:OpenIZ.Core.Applets.ViewModel.SerializationContext.ObjectId">

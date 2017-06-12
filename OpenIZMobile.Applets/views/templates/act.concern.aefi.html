@@ -26,31 +26,30 @@
         </div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-8">
+                <div ng-class="{'col-xs-8': act.targetModel.relationship.RefersTo.target !== '70fe34ce-caff-4f46-b6e6-9cd6d8f289d6', 'col-xs-12': act.targetModel.relationship.RefersTo.target === '70fe34ce-caff-4f46-b6e6-9cd6d8f289d6', 'has-error':(editEncounterForm['aefiDrug_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiDrug_' + act.targetModel.id].$invalid}">
                     <label>
                         {{ 'locale.encounters.aefi.drug' | i18n }}
                     </label>
-                    <select ng-class="{'has-error':(editEncounterForm['aefiDrug_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiDrug_' + act.targetModel.id].$invalid}" 
-                            name="aefiDrug_{{act.targetModel.id}}" 
+                    <select name="aefiDrug_{{act.targetModel.id}}" 
                             required="required" 
                             class="form-control" 
                             data-default-key="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6"
                             ng-model="act.targetModel.relationship.RefersTo.target" 
                             ng-change="bindRelationship(act.targetModel, 'RefersTo', act.targetModel.relationship.RefersTo.target, 'act.relationship.HasSubject.targetModel.value = (act.relationship.RefersTo.targetModel.participation.Consumable || act.relationship.RefersTo.targetModel.participation.Product).playerModel.typeConceptModel.id; act.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime = act.relationship.RefersTo.targetModel.actTime')"
                             oiz-databind="Act" 
-                            data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450" }' 
+                            data-filter='{ "participation[RecordTarget].player" : "{{ patient.id }}", "statusConcept" : "afc33800-8225-4061-b168-bacc09cdbae3", "classConcept" : "932a3c7e-ad77-450a-8a1f-030fc2855450", "isNegated": "false" }' 
                             data-display="OpenIZ.Util.renderName(scope.participation.Product.playerModel.name.Assigned) + ' ' + OpenIZ.Localization.getString('locale.encounters.immunization.doseSequence') + ' ' + scope.doseSequence" 
                             data-key="scope.id">
                         <option value="70fe34ce-caff-4f46-b6e6-9cd6d8f289d6" selected="selected">{{ 'locale.encounters.aefi.unknown' | i18n }}</option>
                     </select>
                 </div>
-                <div class="col-xs-4">
+                <div class="col-xs-4" ng-if="act.targetModel.relationship.RefersTo.target !== '70fe34ce-caff-4f46-b6e6-9cd6d8f289d6'" ng-class="{'has-error':(editEncounterForm['aefiLot_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiLot_' + act.targetModel.id].$invalid}">
                     <label>
                         {{ 'locale.encounters.immunizations.lot' | i18n }}
                     </label>
-                    <select ng-class="{'has-error':(editEncounterForm['aefiLot_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiLot_' + act.targetModel.id].$invalid}"
-                            name="aefiLot_{{act.targetModel.id}}"
+                    <select name="aefiLot_{{act.targetModel.id}}"
                             required="required"
+                            disabled="{{act.targetModel.relationship.RefersTo.target === '70fe34ce-caff-4f46-b6e6-9cd6d8f289d6'}}"
                             class="form-control"
                             data-watch="act.targetModel.relationship.RefersTo.targetModel.participation.Product.player"
                             data-watch-target="relationship[ManufacturedProduct].source"
@@ -62,24 +61,27 @@
                             data-defaultFirst="true"
                             data-key="scope.id">
                     </select>
-
+                    <div class="help-block text-danger" ng-if="editEncounterForm['aefiLot_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiLot_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                        {{ 'locale.encounters.aefi.errors.lotNumberRequired' | i18n }}
+                    </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <span ng-if="act.targetModel.relationship.RefersTo">
-                        ( {{ 'locale.encounters.date' | i18n }} : {{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}, 
-                        {{ 'locale.encounters.immunization.doseSequence' | i18n }} :
-                        {{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }},
-                        {{ 'locale.encounters.immunizations.site' | i18n }} :
-                        {{ act.targetModel.relationship.RefersTo.targetModel.siteModel | oizConcept }} )
-                    </span>
+                    <div ng-if="act.targetModel.relationship.RefersTo">
+                        ( {{ 'locale.encounters.date' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.actTime">{{ act.targetModel.relationship.RefersTo.targetModel.actTime | date: 'yyyy-MM-dd' }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.actTime">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>, 
+                        {{ 'locale.encounters.immunization.doseSequence' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence !== undefined">{{ act.targetModel.relationship.RefersTo.targetModel.doseSequence }}</span><span ng-if="act.targetModel.relationship.RefersTo.targetModel.doseSequence === undefined">{{ 'locale.encounters.aefi.unknown' | i18n }}</span>,
+                        {{ 'locale.encounters.immunizations.site' | i18n }}:
+                        <span ng-if="act.targetModel.relationship.RefersTo.targetModel.siteModel">{{ act.targetModel.relationship.RefersTo.targetModel.siteModel | oizConcept }}</span><span ng-if="!act.targetModel.relationship.RefersTo.targetModel.siteModel">{{ 'locale.encounters.aefi.unknown' | i18n }}</span> )
+                    </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-xs-12" ng-class="{'has-error':(editEncounterForm['aefiReaction_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiReaction_' + act.targetModel.id].$invalid}">
                     <label>{{ 'locale.encounters.aefi.detailsOfAdverseReaction.title' | i18n }}</label>
-                    <select required="required" ng-class="{'has-error':(editEncounterForm['aefiReaction_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiReaction_' + act.targetModel.id].$invalid}" name="aefiReaction_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=ReactionObservation" bind:value="name[{{ locale }}].value">
+                    <select required="required" name="aefiReaction_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=ReactionObservation" bind:value="name[{{ locale }}].value">
                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.manifestation' | i18n }}</option>
                     </select>
 
@@ -89,9 +91,23 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6">
+                <div class="col-xs-6" ng-class="{'has-error':(editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$invalid}">
                     <label>{{ 'locale.encounters.aefi.dateReactionStarted.title' | i18n }}</label>
-                    <input class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime" type="date" required="required" />
+                    <input class="form-control"
+                           name="aefiReactionStarted_{{act.targetModel.id}}"
+                           ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime"
+                           type="date"
+                           ng-min="patient.dateOfBirth"
+                           min="{{ patient.dateOfBirth | date: 'yyyy-MM-dd' }}"
+                           ng-max="getMaxDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime) || $root.page.maxEventTime"
+                           max="{{ getMaxDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime) || $root.page.maxEventTime | date: 'yyyy-MM-dd' }}"
+                           required="required" />
+                    <div class="help-block text-danger" ng-if="editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                        {{ 'locale.encounters.aefi.errors.dateReactionStartedRequired' | i18n }}
+                    </div>
+                    <div class="help-block text-danger" ng-if="(editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.max || editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.date || editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$error.min) &amp;&amp; (editEncounterForm['aefiReactionStarted_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                        {{ 'locale.encounters.aefi.errors.dateReactionStartedFormat' | i18n }}
+                    </div>
                 </div>
                 <div class="col-xs-6">
                     <div class="row">
@@ -109,8 +125,23 @@
                                 <div class="control__indicator control__indicator_alt"></div>
                             </label>
                         </div>
-                        <div class="col-xs-10">
-                            <input class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime" type="date" min="{{act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime | date: 'yyyy-MM-dd' }}" max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}" ng-disabled="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'" ng-required="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'" />
+                        <div class="col-xs-10" ng-class="{'has-error': (editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$touched || editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$invalid}">
+                            <input class="form-control"
+                                   name="aefiReactionEnded_{{act.targetModel.id}}"
+                                   ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.stopTime"
+                                   type="date"
+                                   ng-min="getMinDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime) || patient.dateOfBirth"
+                                   min="{{getMinDateValidation(act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.startTime) || patient.dateOfBirth | date: 'yyyy-MM-dd' }}"
+                                   ng-max="$root.page.maxEventTime"
+                                   max="{{ $root.page.maxEventTime | date: 'yyyy-MM-dd' }}"
+                                   ng-disabled="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept != 'afc33800-8225-4061-b168-bacc09cdbae3'"
+                                   ng-required="act.targetModel.relationship.HasSubject.targetModel.relationship.HasManifestation.targetModel.statusConcept == 'afc33800-8225-4061-b168-bacc09cdbae3'" />
+                            <div class="help-block text-danger" ng-if="editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$error.required &amp;&amp; (editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                                {{ 'locale.encounters.aefi.errors.dateReactionStoppedRequired' | i18n }}
+                            </div>
+                            <div class="help-block text-danger" ng-if="(editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$error.max || editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$error.date || editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$error.min) &amp;&amp; (editEncounterForm['aefiReactionEnded_' + act.targetModel.id].$touched || editEncounterForm.$submitted)">
+                                {{ 'locale.encounters.aefi.errors.dateReactionStoppedFormat' | i18n }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,8 +156,8 @@
                     <div class="row">
                         <div class="col-xs-6">
                             <div class="row">
-                                <div class="col-xs-12">
-                                    <select required="required" ng-class="{'has-error':(editEncounterForm['aefiSeverity_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiSeverity_' + act.targetModel.id].$invalid}" name="aefiSeverity_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasComponent.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=SeverityObservation" bind:value="name[{{ locale }}].value">
+                                <div class="col-xs-12" ng-class="{'has-error':(editEncounterForm['aefiSeverity_' + act.targetModel.id].$touched||editEncounterForm.$submitted) &amp;&amp; editEncounterForm['aefiSeverity_' + act.targetModel.id].$invalid}">
+                                    <select required="required" name="aefiSeverity_{{act.targetModel.id}}" class="form-control" ng-model="act.targetModel.relationship.HasSubject.targetModel.relationship.HasComponent.targetModel.value" bind:source="Concept" bind:filter="statusConcept.mnemonic=ACTIVE&amp;conceptSet.mnemonic=SeverityObservation" bind:value="name[{{ locale }}].value">
                                         <option value="" disabled="disabled" selected="selected">{{ 'locale.encounters.aefi.severity' | i18n }}</option>
                                     </select>
                                 </div>
@@ -138,7 +169,7 @@
                         <div class="col-xs-1">
                             <label class="control control--checkbox">
                                 <input id="{{act.targetModel.id}}-patient-died"  type="checkbox" ng-model="patient._deceased"
-                                       ng-click="patient._deceased ? addSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf') :  delSubEncounter(encounter.relationship.HasComponent, 'act.observation.causeofdeath', act.targetModel.relationship, 'IsCauseOf')" />
+                                       ng-click="addCauseOfDeath(patient, act, encounter)" />
                                 <div class="control__indicator control__indicator_alt" ></div>
                             </label>
                         </div>

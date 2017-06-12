@@ -60,13 +60,13 @@ namespace OpenIZ.Mobile.Core.Data.Persistence
             // Ensure created by exists
             if(data.CreatedBy != null) data.CreatedBy = data.CreatedBy?.EnsureExists(context);
 			data.CreatedByKey = domainObject.CreatedByKey = domainObject.CreatedByKey == Guid.Empty ? base.CurrentUserUuid (context) : domainObject.CreatedByKey;
-			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null ? DateTimeOffset.Now : domainObject.CreationTime;
+			domainObject.CreationTime = domainObject.CreationTime == DateTimeOffset.MinValue || domainObject.CreationTime == null || domainObject.CreationTime.Value.DateTime == DateTime.MinValue ? DateTimeOffset.Now : domainObject.CreationTime;
 			data.CreationTime = (DateTimeOffset)domainObject.CreationTime;
 
-            //if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
-            context.Connection.Insert(domainObject);
-            //else
-            //    context.Connection.Update(domainObject);
+            if (!context.Connection.Table<TDomain>().Where(o => o.Uuid == domainObject.Uuid).Any())
+				context.Connection.Insert(domainObject);
+			else
+                context.Connection.Update(domainObject);
 
 			return data;
 		}

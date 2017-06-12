@@ -25,13 +25,15 @@
         <label for="encounterDate" class="col-xs-12 col-sm-2">{{ 'locale.encounters.date' | i18n }}</label>
         <div class="col-xs-12 col-sm-10">
             <input required="required" type="datetime-local"
-                   name="encounterDate" ng-max="$root.page.loadTime | date: 'yyyy-MM-dd'"
+                   ng-min="patient.dateOfBirth"
+                   min="{{patient.dateOfBirth | date: 'yyyy-MM-ddTHH:mm:ss'}}"
+                   name="encounterDate" max="{{page.maxEventTime | date: 'yyyy-MM-ddTHH:mm:ss'}}"
                    class="form-control" ng-model="encounter.actTime"
                    ng-change="encounterDateChanged(encounter)" />
         </div>
-    </div>
-    <div class="col-xs-offset-2 col-xs-10" ng-if="(editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted)&amp;&amp;editEncounterForm.encounterDate.$invalid">
-        <p class="help-block text-danger">{{ 'locale.encounter.errors.date' | i18n }}</p>
+        <div class="col-sm-offset-2 col-sm-10 col-xs-12" ng-if="(editEncounterForm.encounterDate.$touched||editEncounterForm.$submitted)&amp;&amp;editEncounterForm.encounterDate.$invalid">
+            <p class="help-block text-danger">{{ 'locale.encounters.errors.date' | i18n }}</p>
+        </div>
     </div>
     <div class="form-group row">
         <label class="col-xs-12 col-sm-2">{{ 'locale.encounters.facility' | i18n }}</label>

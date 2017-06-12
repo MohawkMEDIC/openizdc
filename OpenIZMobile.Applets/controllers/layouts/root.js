@@ -94,11 +94,16 @@ var layoutApp = angular.module('layout', ['openiz', 'ngSanitize', 'ui.router', '
             $rootScope.page = {
                 title: OpenIZ.App.getCurrentAssetTitle(),
                 loadTime: new Date(),
-                maxEventTime: new Date().tomorrow(), // Dislike Javascript
+                maxEventTime: new Date(), // Dislike Javascript
                 minEventTime: new Date().yesterday(), // quite a bit
                 locale: OpenIZ.Localization.getLocale(),
                 onlineState: OpenIZ.App.getOnlineState()
             };
+
+            $rootScope.page.maxEventTime.setHours(23);
+            $rootScope.page.maxEventTime.setMinutes(59);
+            $rootScope.page.maxEventTime.setSeconds(59);
+            $rootScope.page.maxEventTime.setMilliseconds(999);
 
             // Interval to refresh online state and to check session
             setInterval(function () {

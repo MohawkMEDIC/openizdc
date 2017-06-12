@@ -314,13 +314,13 @@ angular.module('openiz', [])
 
                     if (watchString !== null)
                         scope.$watch(watchString, function (newValue, oldValue) {
-                            var $root = scope.$root;
-                            if (watchTargetString !== null && newValue !== undefined) {
-                                filter[watchTargetString] = newValue;
-                                if (defaultValueExpression)
-                                    defaultValue = eval(defaultValueExpression) || defaultValue;
-                            }
-                            bind();
+                                var $root = scope.$root;
+                                if (watchTargetString !== null && newValue !== undefined) {
+                                    filter[watchTargetString] = newValue;
+                                    if (defaultValueExpression)
+                                        defaultValue = eval(defaultValueExpression) || defaultValue;
+                                }
+                                bind();
                         });
 
                 });

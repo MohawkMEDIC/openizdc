@@ -75,7 +75,7 @@ namespace OpenIZ.Core.Data.QueryBuilder
     public class QueryBuilder
     {
         // Regex to extract property, guards and cast
-        private const string m_extractionRegex = @"^(\w*?)(\[(\w*)\])?(\@(\w*))?(\.(.*))?$";
+        private const string m_extractionRegex = @"^(\w*?)(\[(.*?)\])?(\@(\w*))?(\.(.*))?$";
 
         // Join cache
         private Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>> s_joinCache = new Dictionary<String, KeyValuePair<SqlStatement, List<TableMapping>>>();
