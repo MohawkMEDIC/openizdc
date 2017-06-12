@@ -34,6 +34,7 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
     // Iterate through vaccinations and organize them by antigen
     // TODO: Change this to be an AJAX call
     scope.display._vaccineAdministrations = {};
+    scope.showVaccineTab = showVaccineTab;
     
    // for patient dob
     scope.$watch('encounters', function (newValue, oldValue) { refreshYellowCard(newValue, oldValue) });
@@ -135,4 +136,8 @@ layoutApp.controller('YellowCardController', ['$scope', '$stateParams', function
             }
         }
     };
+
+    function showVaccineTab() {
+        $('a[data-target="#vaccinations"]').tab('show');
+    }
 }]);
